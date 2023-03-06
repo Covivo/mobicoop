@@ -96,6 +96,11 @@ class MobConnectSubscriptionManager
     private $_ceeSubscription;
     private $_ceeEligibleProofs;
 
+    /**
+     * @var string
+     */
+    private $_operatorPrefix;
+
     public function __construct(
         EntityManagerInterface $em,
         Security $security,
@@ -106,7 +111,8 @@ class MobConnectSubscriptionManager
         ShortDistanceJourneyRepository $shortDistanceJourneyRepository,
         array $ssoServices,
         array $mobConnectParams,
-        int $proofDeadline
+        int $proofDeadline,
+        string $prefix
     ) {
         $this->_em = $em;
         $this->_eventDispatcher = $eventDispatcher;
@@ -121,6 +127,7 @@ class MobConnectSubscriptionManager
         $this->_mobConnectParams = $mobConnectParams;
         $this->_ceeEligibleProofs = [];
         $this->_carpoolProofDeadline = $proofDeadline;
+        $this->_operatorPrefix = $prefix;
     }
 
     private function __createAuth(User $user, SsoUser $ssoUser)
@@ -174,7 +181,7 @@ class MobConnectSubscriptionManager
 
     private function __getRpcJourneyId(int $id): string
     {
-        return 'Mobicoop_'.$id;
+        return $this->_operatorPrefix.$id;
     }
 
     private function __getSubscriptionId(): string
