@@ -122,7 +122,7 @@ class CsvMaker
             mkdir($folder);
         }
 
-        $path = $folder.'/'.$resultsFileName.'.csv';
+        $path = $folder.'/'.date('YmdHis').'-'.$resultsFileName.'.csv';
         $file = fopen($path, 'w+');
         $header = false;
         foreach ($this->_queryResults as $result) {
