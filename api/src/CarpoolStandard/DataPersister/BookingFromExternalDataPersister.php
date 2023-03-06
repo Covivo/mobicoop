@@ -86,7 +86,7 @@ final class BookingFromExternalDataPersister implements ContextAwareDataPersiste
                 $data = $this->bookingManager->treatExternalPostBooking($data);
             } elseif (isset($context['item_operation_name']) && 'carpool_standard_patch' == $context['item_operation_name']) {
                 // for a patch operation, we update only some fields, we pass them to the method for further checkings
-                $data = $this->bookingManager->patchBooking($data);
+                $data = $this->bookingManager->treatExternalPatchBooking($data);
             }
 
             return $data;
