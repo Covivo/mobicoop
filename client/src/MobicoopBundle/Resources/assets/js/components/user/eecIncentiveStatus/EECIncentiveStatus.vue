@@ -2,7 +2,7 @@
   <div>
     <div v-if="!loading">
       <EECIncentiveInitiateSubscription
-        v-if="!subscriptionInitiated"
+        v-if="subscriptionInitiated"
         :confirmed-phone-number="confirmedPhoneNumber"
         :driving-licence-number-filled="drivingLicenceNumberFilled"
       />

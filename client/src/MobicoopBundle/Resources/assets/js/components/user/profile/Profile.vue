@@ -301,7 +301,6 @@ export default {
   data(){
     return{
       modelTabsV:(this.tabDefault !== "") ? this.tabDefault : "myAds",
-      modelTabsH:(this.selectedTab !== "") ? this.selectedTab : "myAccount",
       publishedAds: {},
       acceptedAds: {}
     }
@@ -310,6 +309,20 @@ export default {
     gamificationActive(){
       return this.$store.getters['g/isActive'];
     },
+    modelTabsH(){
+      if(window.location.hash !== ""){
+        console.log(window.location.hash);
+        return window.location.hash.substring(1);
+      }
+      else if(this.selectedTab !== ""){
+        console.log(`selected ${this.selectedTab}`);
+        return this.selectedTab;
+      }
+
+      console.log("default tab");
+      return "myAccount";
+
+    }
   },
   mounted(){
     this.getAds();

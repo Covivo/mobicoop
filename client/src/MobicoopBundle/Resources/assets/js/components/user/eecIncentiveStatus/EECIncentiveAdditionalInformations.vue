@@ -23,6 +23,7 @@
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>{{ $t('additional.mandatory1') }}</v-list-item-title>
+                <a href="/utilisateur/profil/modifier/mon-profil#bankCoordinates">{{ $t('goToBankCoordinates') }}</a>
               </v-list-item-content>
 
               <v-list-item-icon>
