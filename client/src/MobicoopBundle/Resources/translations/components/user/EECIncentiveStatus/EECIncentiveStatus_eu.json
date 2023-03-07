@@ -23,6 +23,7 @@
     "subtitle": "Informations complémentaires",
     "intro": "Pour recevoir votre prime et le paiement de vos passagers, vous devez :",
     "mandatory1": "Renseigner vos coordonnées bancaires",
+    "goToBankCoordinates": "Pour réaliser ces opérations, rendez-vous dans l'onglet \"identité bancaire\"",
     "mandatory2": "Envoyer une photo d'une pièce d'identité valide",
     "uri": {
       "getCoordinates": "/utilisateur/coordonnees-bancaires"
