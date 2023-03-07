@@ -88,6 +88,7 @@
                   :gamification-active="gamificationActive"
                   :carpool-settings-display="carpoolSettingsDisplay"
                   :cee-display="ceeDisplay"
+                  @changeTab="changeTab"
                 />
               </v-tab-item>
 
@@ -301,6 +302,7 @@ export default {
   data(){
     return{
       modelTabsV:(this.tabDefault !== "") ? this.tabDefault : "myAds",
+      modelTabsH:(this.selectedTab !== "") ? this.selectedTab : "myAccount",
       publishedAds: {},
       acceptedAds: {}
     }
@@ -308,20 +310,6 @@ export default {
   computed:{
     gamificationActive(){
       return this.$store.getters['g/isActive'];
-    },
-    modelTabsH(){
-      if(window.location.hash !== ""){
-        console.log(window.location.hash);
-        return window.location.hash.substring(1);
-      }
-      else if(this.selectedTab !== ""){
-        console.log(`selected ${this.selectedTab}`);
-        return this.selectedTab;
-      }
-
-      console.log("default tab");
-      return "myAccount";
-
     }
   },
   mounted(){
@@ -340,6 +328,9 @@ export default {
     },
     deleteAd() {
       this.getAds()
+    },
+    changeTab(tab){
+      this.modelTabsH = tab;
     }
   }
 }

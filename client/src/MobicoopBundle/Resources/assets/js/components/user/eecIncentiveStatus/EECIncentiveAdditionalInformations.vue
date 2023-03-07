@@ -23,7 +23,6 @@
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>{{ $t('additional.mandatory1') }}</v-list-item-title>
-                <a href="/utilisateur/profil/modifier/mon-profil#bankCoordinates">{{ $t('goToBankCoordinates') }}</a>
               </v-list-item-content>
 
               <v-list-item-icon>
@@ -44,6 +43,12 @@
               </v-list-item-icon>
             </v-list-item>
           </v-list>
+          <br>
+          <a
+            class="subtitle-1"
+            href="#"
+            @click="changeTab"
+          >{{ $t('additional.goToBankCoordinates') }}</a>
         </p>
       </v-card-text>
     </v-card>
@@ -139,6 +144,9 @@ export default {
           console.error(error);
         });
     },
+    changeTab(){
+      this.$emit('changeTab', 'bankCoordinates');
+    }
   }
 
 };

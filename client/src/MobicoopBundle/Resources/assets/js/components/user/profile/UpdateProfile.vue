@@ -607,6 +607,7 @@
       v-if="ceeDisplay"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+      @changeTab="changeTab"
     />
 
     <!-- PUBLIC PROFILE DIALOG -->
@@ -1142,6 +1143,9 @@ export default {
             this.ssoConnection = response.data[0];
           }
         });
+    },
+    changeTab(tab){
+      this.$emit('changeTab', tab);
     }
   }
 }
