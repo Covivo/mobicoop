@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Incentive\Service\Checker;
+namespace App\Incentive\Service\Validation;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Matching;
@@ -9,10 +9,13 @@ use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\LoggerService;
 use App\User\Entity\User;
 
-abstract class Checker
+abstract class Validation
 {
     public const LONG_DISTANCE_THRESHOLD = CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS;
     public const REFERENCE_COUNTRY = 'France';
+
+    public const REFERENCE_DATE = '2023-01-01';
+    public const REFERENCE_PERIOD = 3;                   // Period expressed in years
 
     /**
      * @var User
@@ -51,6 +54,29 @@ abstract class Checker
         }
     }
 
+    protected function isDateAfterReferenceDate(\DateTime $date): bool
+    {
+        return new \DateTime(self::REFERENCE_DATE) <= $date;
+    }
+
+    protected static function isDateInPeriod(\DateTime $dateToCheck): bool
+    {
+        $dateEndPeriod = new \DateTime('now');
+        $dateStartPeriod = clone $dateEndPeriod;
+        $dateStartPeriod = $dateStartPeriod->sub(new \DateInterval('P'.self::REFERENCE_PERIOD.'M'));
+
+        return $dateStartPeriod <= $dateToCheck && $dateToCheck <= $dateEndPeriod;
+    }
+
+    protected function isUserValid()
+    {
+        return
+            !is_null($this->_driver->getDrivingLicenceNumber())
+            && !is_null($this->_driver->getTelephone())
+            && !is_null($this->_driver->getPhoneValidatedDate())
+        ;
+    }
+
     protected function setDriver(User $driver): self
     {
         $this->_driver = $driver;
@@ -62,12 +88,12 @@ abstract class Checker
         return $this;
     }
 
-    private function _isOriginOrDestinationFromFranceForCarpoolProof(CarpoolProof $carpoolProof)
+    private function _isOriginOrDestinationFromFranceForCarpoolProof(CarpoolProof $carpoolProof): bool
     {
         return $this->_isOriginOrDestinationFromFranceForMatching($carpoolProof->getAsk()->getMatching());
     }
 
-    private function _isOriginOrDestinationFromFranceForMatching(Matching $matching)
+    private function _isOriginOrDestinationFromFranceForMatching(Matching $matching): bool
     {
         return $this->_isOriginOrDestinationFromFranceForWaypoints($matching->getWaypoints());
     }
@@ -77,7 +103,7 @@ abstract class Checker
         return $this->_isOriginOrDestinationFromFranceForWaypoints($proposal->getWaypoints());
     }
 
-    private function _isOriginOrDestinationFromFranceForWaypoints($waypoints)
+    private function _isOriginOrDestinationFromFranceForWaypoints($waypoints): bool
     {
         if (empty($waypoints)) {
             return false;

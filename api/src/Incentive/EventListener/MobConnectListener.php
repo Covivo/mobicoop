@@ -6,8 +6,9 @@ use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
+use App\Incentive\Service\Manager\AuthManager;
 use App\Incentive\Service\Manager\JourneyManager;
-use App\Incentive\Service\MobConnectSubscriptionManager;
+use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
@@ -34,18 +35,24 @@ class MobConnectListener implements EventSubscriberInterface
     private $_request;
 
     /**
+     * @var AuthManager
+     */
+    private $_authManager;
+
+    /**
      * @var JourneyManager
      */
     private $_journeyManager;
 
     /**
-     * @var MobConnectSubscriptionManager
+     * @var SubscriptionManager
      */
     private $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, JourneyManager $journeyManager, MobConnectSubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, JourneyManager $journeyManager, SubscriptionManager $subscriptionManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
+        $this->_authManager = $authManager;
         $this->_journeyManager = $journeyManager;
         $this->_subscriptionManager = $subscriptionManager;
     }
@@ -78,7 +85,7 @@ class MobConnectListener implements EventSubscriberInterface
     {
         $decodeRequest = json_decode($this->_request->getContent());
 
-        $this->_subscriptionManager->updateAuth($event->getUser(), $event->getSsoUser());
+        $this->_authManager->updateAuth($event->getUser(), $event->getSsoUser());
 
         if (
             property_exists($decodeRequest, 'ssoProvider')

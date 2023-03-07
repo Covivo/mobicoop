@@ -23,7 +23,7 @@
 
 namespace App\Incentive\Command;
 
-use App\Incentive\Service\MobConnectSubscriptionManager;
+use App\Incentive\Service\Manager\SubscriptionManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,13 +31,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class JourneysVerificationCommand extends Command
 {
     /**
-     * @var MobConnectSubscriptionManager
+     * @var SubscriptionManager
      */
     private $_subscriptionManager;
 
-    public function __construct(MobConnectSubscriptionManager $mobConnectSubscriptionManager)
+    public function __construct(SubscriptionManager $subscriptionManager)
     {
-        $this->_subscriptionManager = $mobConnectSubscriptionManager;
+        $this->_subscriptionManager = $subscriptionManager;
 
         parent::__construct();
     }
@@ -53,6 +53,6 @@ class JourneysVerificationCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->_subscriptionManager->verifyJourneys();
+        return $this->_subscriptionManager->verifySubscriptions();
     }
 }

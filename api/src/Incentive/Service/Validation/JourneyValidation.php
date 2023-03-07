@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Incentive\Service\Checker;
+namespace App\Incentive\Service\Validation;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Service\LoggerService;
 
-class JourneyChecker extends Checker
+class JourneyValidation extends Validation
 {
     public function __construct(LoggerService $loggerService)
     {
@@ -70,39 +70,40 @@ class JourneyChecker extends Checker
      */
     public function isPublishedJourneyValidLongECCJourney(Proposal $proposal): bool
     {
-        $this->_loggerService->log('Checks if the '.$proposal->getId().' journey corresponding to the long distance EEC standard');
+        $this->_loggerService->log('Checks if the '.$proposal->getId().' proposal corresponding to the long distance EEC standard');
 
         if (
             is_null($proposal->getCriteria())
             || is_null($proposal->getCriteria()->isDriver())
+            || !$proposal->getCriteria()->isDriver()
         ) {
-            $this->_loggerService->log('The journey '.$proposal->getId().' is not a driver journey');
+            $this->_loggerService->log('The proposal '.$proposal->getId().' is not a driver journey');
 
             return false;
         }
 
         $this->setDriver($proposal->getUser());
 
-        if (!$this->isFirstValidLongECCJourney($proposal)) {
-            return false;
-        }
-
         if (
             is_null($proposal->getCriteria()->getDirectionDriver())
             || !$this->isDistanceLongDistance($proposal->getCriteria()->getDirectionDriver()->getDistance())
         ) {
-            $this->_loggerService->log('The journey '.$proposal->getId().' is not a long distance journey');
+            $this->_loggerService->log('The proposal '.$proposal->getId().' is not a long distance journey');
 
             return false;
         }
 
         if (!$this->isOriginOrDestinationFromFrance($proposal)) {
-            $this->_loggerService->log('The journey '.$proposal->getId().' is not from or to the '.self::REFERENCE_COUNTRY);
+            $this->_loggerService->log('The proposal '.$proposal->getId().' is not from or to the '.self::REFERENCE_COUNTRY);
 
             return false;
         }
 
-        $this->_loggerService->log('The journey '.$proposal->getId().' corresponding to the long distance EEC standard');
+        if (!$this->isFirstValidLongECCJourney($proposal)) {
+            return false;
+        }
+
+        $this->_loggerService->log('The proposal '.$proposal->getId().' corresponding to the long distance EEC standard');
 
         return true;
     }
@@ -115,16 +116,12 @@ class JourneyChecker extends Checker
         $this->_loggerService->log('Checks if the '.$carpoolProof->getId().' carpool proof corresponding to the short distance EEC standard');
 
         if (is_null($carpoolProof->getDriver())) {
-            $this->_loggerService->log('The journey '.$carpoolProof->getId().' has no defined driver');
+            $this->_loggerService->log('The carpool proof '.$carpoolProof->getId().' has no defined driver');
 
             return false;
         }
 
         $this->setDriver($carpoolProof->getDriver());
-
-        if (!$this->isFirstValidShortECCJourney()) {
-            return false;
-        }
 
         if (
             is_null($carpoolProof->getAsk())
@@ -140,6 +137,10 @@ class JourneyChecker extends Checker
         if (is_null($carpoolProof->getPickUpDriverAddress()) || is_null($carpoolProof->getPickUpPassengerAddress())) {
             $this->_loggerService->log('For the carpool proof '.$carpoolProof->getId().' one of the 2 carpoolers has not certified the pick-up');
 
+            return false;
+        }
+
+        if (!$this->isFirstValidShortECCJourney()) {
             return false;
         }
 

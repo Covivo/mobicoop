@@ -3,7 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
-use App\Incentive\Service\CeeJourneyService;
+use App\Incentive\Service\Manager\SubscriptionManager;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -180,7 +180,7 @@ class ShortDistanceSubscription
      *
      * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
      */
-    private $bonusStatus = CeeJourneyService::BONUS_STATUS_PENDING;
+    private $bonusStatus = SubscriptionManager::BONUS_STATUS_PENDING;
 
     /**
      * The long distance ECC commitment proof date.

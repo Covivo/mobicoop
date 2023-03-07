@@ -2,8 +2,8 @@
 
 namespace App\User\Controller;
 
+use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Incentive\Service\MobConnectMessages;
-use App\Incentive\Service\MobConnectSubscriptionManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +20,7 @@ class EECSubscription
     private $_isSubscriptionServiceActive = false;
 
     /**
-     * @var MobConnectSubscriptionManager
+     * @var SubscriptionManager
      */
     private $_subscriptionManager;
 
@@ -29,7 +29,7 @@ class EECSubscription
      */
     private $_request;
 
-    public function __construct(RequestStack $requestStack, MobConnectSubscriptionManager $subscriptionManager, string $ceeSubscriptionProvider)
+    public function __construct(RequestStack $requestStack, SubscriptionManager $subscriptionManager, string $ceeSubscriptionProvider)
     {
         $this->_request = $requestStack->getCurrentRequest();
         $this->_subscriptionManager = $subscriptionManager;

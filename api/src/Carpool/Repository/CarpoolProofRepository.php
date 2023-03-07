@@ -26,7 +26,7 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Resource\CeeSubscriptions;
-use App\Incentive\Service\CeeJourneyService;
+use App\Incentive\Service\Validation\Validation;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -154,10 +154,10 @@ class CarpoolProofRepository
 
         $parameters = [
             'class' => CarpoolProof::TYPE_HIGH,
-            'country' => CeeJourneyService::REFERENCE_COUNTRY,
+            'country' => Validation::REFERENCE_COUNTRY,
             'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
             'driver' => $driver,
-            'referenceDate' => \DateTime::createFromFormat('Y-m-d', CeeJourneyService::REFERENCE_DATE),
+            'referenceDate' => \DateTime::createFromFormat('Y-m-d', Validation::REFERENCE_DATE),
             'status' => CarpoolProof::STATUS_VALIDATED,
         ];
 

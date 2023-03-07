@@ -3,7 +3,7 @@
 namespace App\Incentive\Repository;
 
 use App\Incentive\Entity\LongDistanceJourney;
-use App\Incentive\Service\CeeJourneyService;
+use App\Incentive\Service\Manager\SubscriptionManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -47,11 +47,9 @@ class LongDistanceJourneyRepository
         $qb
             ->where('j.createdAt <= :deadline')
             ->andWhere('j.verificationStatus = :pending')
-            ->andWhere('j.rank = :first')
             ->setParameters([
                 'deadline' => $deadline,
-                'pending' => CeeJourneyService::VERIFICATION_STATUS_PENDING,
-                'first' => CeeJourneyService::LOW_THRESHOLD_PROOF,
+                'pending' => SubscriptionManager::VERIFICATION_STATUS_PENDING,
             ])
         ;
 

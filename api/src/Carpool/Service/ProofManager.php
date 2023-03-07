@@ -41,7 +41,7 @@ use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
-use App\Incentive\Service\Checker\JourneyChecker;
+use App\Incentive\Service\Validation\JourneyValidation;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\User\Entity\User;
@@ -70,9 +70,9 @@ class ProofManager
     private $paymentProfileRepository;
 
     /**
-     * @var JourneyChecker
+     * @var JourneyValidation
      */
-    private $_journeyChecker;
+    private $_journeyValidation;
 
     /**
      * Constructor.
@@ -100,7 +100,7 @@ class ProofManager
         GeoTools $geoTools,
         EventDispatcherInterface $eventDispatcher,
         PaymentProfileRepository $paymentProfileRepository,
-        JourneyChecker $journeyChecker,
+        JourneyValidation $journeyValidation,
         string $prefix,
         string $provider,
         string $uri,
@@ -118,7 +118,7 @@ class ProofManager
         $this->minIdentityDistance = $minIdentityDistance;
         $this->eventDispatcher = $eventDispatcher;
         $this->paymentProfileRepository = $paymentProfileRepository;
-        $this->_journeyChecker = $journeyChecker;
+        $this->_journeyValidation = $journeyValidation;
 
         $this->addressCompleter = new AddressCompleter(new MobicoopGeocoderPointProvider($mobicoopGeocoder));
 
@@ -520,7 +520,7 @@ class ProofManager
         $this->entityManager->persist($carpoolProof);
         $this->entityManager->flush();
 
-        if ($this->_journeyChecker->isStartedJourneyValidShortECCJourney($carpoolProof)) {
+        if ($this->_journeyValidation->isStartedJourneyValidShortECCJourney($carpoolProof)) {
             $event = new FirstShortDistanceJourneyPublishedEvent($carpoolProof);
             $this->eventDispatcher->dispatch(FirstShortDistanceJourneyPublishedEvent::NAME, $event);
         }

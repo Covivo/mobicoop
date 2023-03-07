@@ -3,14 +3,11 @@
 namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
-use App\Incentive\Service\Checker\JourneyChecker;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
-use App\Payment\Entity\CarpoolItem;
-use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -32,11 +29,6 @@ abstract class MobConnectManager
      * @var EntityManagerInterface
      */
     protected $_em;
-
-    /**
-     * @var JourneyChecker
-     */
-    protected $_journeyChecker;
 
     /**
      * @var LoggerService
@@ -70,7 +62,6 @@ abstract class MobConnectManager
 
     public function __construct(
         EntityManagerInterface $em,
-        JourneyChecker $journeyChecker,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
         string $carpoolProofPrefix,
@@ -78,13 +69,46 @@ abstract class MobConnectManager
         array $ssoServices
     ) {
         $this->_em = $em;
-        $this->_journeyChecker = $journeyChecker;
         $this->_loggerService = $loggerService;
         $this->_honourCertificateService = $honourCertificateService;
 
         $this->_carpoolProofPrefix = $carpoolProofPrefix;
         $this->_mobConnectParams = $mobConnectParams;
         $this->_ssoServices = $ssoServices;
+    }
+
+    protected function isValidParameters(): bool
+    {
+        return
+                !empty($this->_ssoServices)
+                && array_key_exists(MobConnectApiProvider::SERVICE_NAME, $this->_ssoServices)
+
+            && (
+                !empty($this->_mobConnectParams)
+                && (
+                    array_key_exists('api_uri', $this->_mobConnectParams)
+                    && !is_null($this->_mobConnectParams['api_uri'])
+                    && !empty($this->_mobConnectParams['api_uri'])
+                )
+                && (
+                    array_key_exists('credentials', $this->_mobConnectParams)
+                    && is_array($this->_mobConnectParams['credentials'])
+                    && !empty($this->_mobConnectParams['credentials'])
+                    && array_key_exists('client_id', $this->_mobConnectParams['credentials'])
+                    && !empty($this->_mobConnectParams['credentials']['client_id'])
+                    && array_key_exists('api_key', $this->_mobConnectParams['credentials'])
+                )
+                && (
+                    array_key_exists('subscription_ids', $this->_mobConnectParams)
+                    && is_array($this->_mobConnectParams['subscription_ids'])
+                    && !empty($this->_mobConnectParams['subscription_ids'])
+                    && array_key_exists('short_distance', $this->_mobConnectParams['subscription_ids'])
+                    && !empty($this->_mobConnectParams['subscription_ids']['short_distance'])
+                    && array_key_exists('long_distance', $this->_mobConnectParams['subscription_ids'])
+                    && !empty($this->_mobConnectParams['subscription_ids']['long_distance'])
+                )
+            )
+        ;
     }
 
     protected function getRPCOperatorId(int $id): string
@@ -102,11 +126,25 @@ abstract class MobConnectManager
         return $this->getDriver()->getShortDistanceSubscription()->getSubscriptionId();
     }
 
+    protected function postSubscription(bool $isLongDistance = true): MobConnectSubscriptionResponse
+    {
+        $this->setApiProvider();
+
+        return $this->_apiProvider->postSubscription($isLongDistance);
+    }
+
     protected function patchSubscription(string $subscriptionId, array $params)
     {
         $this->setApiProvider();
 
         return $this->_apiProvider->patchUserSubscription($subscriptionId, $params);
+    }
+
+    protected function verifySubscription(string $subscriptionId)
+    {
+        $this->setApiProvider();
+
+        return $this->_apiProvider->verifyUserSubscription($subscriptionId);
     }
 
     protected function setApiProvider()
@@ -124,53 +162,6 @@ abstract class MobConnectManager
         $stmt->execute();
 
         return count($stmt->fetchAll(\PDO::FETCH_COLUMN)) + 1;
-    }
-
-    protected function getCarpoolProofsFromCarpoolPayment(CarpoolPayment $carpoolPayment): array
-    {
-        /**
-         * @var CarpoolItem[]
-         */
-        $filteredCarpoolItems = array_filter($carpoolPayment->getCarpoolItems(), function (CarpoolItem $carpoolItem) {
-            $driver = $carpoolItem->getCreditorUser();
-
-            return
-                !is_null($driver)
-                && !is_null($driver->getMobConnectAuth())
-            ;
-        });
-
-        $carpoolProofs = [];
-
-        foreach ($filteredCarpoolItems as $carpoolItem) {
-            /**
-             * @var User
-             */
-            $driver = $carpoolItem->getCreditorUser();
-
-            // Checks :
-            //    - The driver has purchased a long-distance journey incentive
-            //    - The journey is a long distance journey
-            //    - The journey origin and/or destination is the référence country
-            if (
-                !is_null($driver)
-                && !is_null($driver->getMobConnectAuth())
-                && !is_null($driver->getLongDistanceSubscription())
-                && !is_null($carpoolItem->getAsk())
-                && !is_null($carpoolItem->getAsk()->getMatching())
-                && $this->_journeyChecker->isDistanceLongDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance())
-                && !empty($carpoolItem->getAsk()->getMatching()->getWaypoints())
-                && $this->_journeyChecker->isOriginOrDestinationFromFrance($carpoolItem->getAsk()->getMatching())
-            ) {
-                $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) use ($driver) {
-                    return $carpoolProof->getDriver() === $driver;
-                });
-
-                $carpoolProofs = array_merge($carpoolProofs, $filteredCarpoolProofs);
-            }
-
-            return $carpoolProofs;
-        }
     }
 
     protected function getDriver(): User

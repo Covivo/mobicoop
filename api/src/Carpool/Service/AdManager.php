@@ -54,6 +54,7 @@ use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Service\Checker\JourneyChecker;
+use App\Incentive\Service\Validation\JourneyValidation;
 use App\Rdex\Entity\RdexError;
 use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
@@ -101,9 +102,9 @@ class AdManager
     private $currentMargin;
 
     /**
-     * @var JourneyChecker
+     * @var JourneyValidation
      */
-    private $_journeyChecher;
+    private $_journeyValidation;
 
     /**
      * Constructor.
@@ -132,7 +133,7 @@ class AdManager
         AntiFraudManager $antiFraudManager,
         UserRepository $userRepository,
         MobicoopGeocoder $mobicoopGeocoder,
-        JourneyChecker $journeyChecker
+        JourneyValidation $journeyValidation
     ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -161,7 +162,7 @@ class AdManager
             $this->params['paymentActiveDate']->setTime(0, 0);
             $this->params['paymentActive'] = true;
         }
-        $this->_journeyChecher = $journeyChecker;
+        $this->_journeyValidation = $journeyValidation;
     }
 
     /**
@@ -660,7 +661,7 @@ class AdManager
         $ad->setId($outwardProposal->getId());
         $ad->setExternalId($outwardProposal->getExternalId());
 
-        if ($this->_journeyChecher->isPublishedJourneyValidLongECCJourney($outwardProposal)) {
+        if ($this->_journeyValidation->isPublishedJourneyValidLongECCJourney($outwardProposal)) {
             $event = new FirstLongDistanceJourneyPublishedEvent($outwardProposal);
             $this->eventDispatcher->dispatch(FirstLongDistanceJourneyPublishedEvent::NAME, $event);
         }
