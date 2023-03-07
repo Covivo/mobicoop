@@ -6,7 +6,7 @@ use App\User\Entity\User;
 
 class HonourCertificateService
 {
-    public const HONOUR_CERTIFICATE_PATH = __DIR__.'../../../../public/eec-certificates';
+    public const HONOUR_CERTIFICATE_PATH = __DIR__.'../../../../public/incentive-certificates';
     public const HONOUR_CERTIFICATE_EXTENSION = '.txt';
     public const LONG_DISTANCE_SPECIFIC_PATH = '/long-distance-honour-certificate';
     public const SHORT_DISTANCE_SPECIFIC_PATH = '/short-distance-honour-certificate';
@@ -30,14 +30,14 @@ class HonourCertificateService
     {
     }
 
-    public function generateHonourCertificate(bool $longDistance = true): array
+    public function generateHonourCertificate(bool $longDistance = true): string
     {
         $this->_longDistance = $longDistance;
 
         $this->_getCertificate();
         $this->_parseCertificate();
 
-        return explode(PHP_EOL, $this->_certificate);
+        return $this->_certificate;
     }
 
     public function setDriver(User $driver): self

@@ -6,12 +6,11 @@ use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
-use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Repository\LongDistanceJourneyRepository;
-use App\Incentive\Repository\ShortDistanceJourneyRepository;
+use App\Incentive\Repository\LongDistanceSubscriptionRepository;
+use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
@@ -34,19 +33,14 @@ class SubscriptionManager extends MobConnectManager
     private $_ceeEligibleProofs = [];
 
     /**
-     * @var LongDistanceJourneyRepository
+     * @var LongDistanceSubscriptionRepository
      */
-    private $_longDistanceJourneyRepository;
+    private $_longDistanceSubscriptionRepository;
 
     /**
-     * @var ShortDistanceJourneyRepository
+     * @var ShortDistanceSubscriptionRepository
      */
-    private $_shortDistanceJourneyRepository;
-
-    /**
-     * @var LongDistanceSubscription|ShortDistanceSubscription
-     */
-    private $_subscription;
+    private $_shortDistanceSubscriptionRepository;
 
     /**
      * @var CeeSubscriptions
@@ -63,16 +57,16 @@ class SubscriptionManager extends MobConnectManager
         UserValidation $userValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
-        LongDistanceJourneyRepository $longDistanceJourneyRepository,
-        ShortDistanceJourneyRepository $shortDistanceJourneyRepository,
+        LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
+        ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
         string $carpoolProofPrefix,
         array $mobConnectParams,
         array $ssoServices
     ) {
         parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
-        $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
-        $this->_shortDistanceJourneyRepository = $shortDistanceJourneyRepository;
+        $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
+        $this->_shortDistanceSubscriptionRepository = $shortDistanceSubscriptionRepository;
         $this->_userValidation = $userValidation;
     }
 
@@ -147,50 +141,44 @@ class SubscriptionManager extends MobConnectManager
      */
     public function verifySubscriptions()
     {
-        $shortDistanceJourneys = $this->_shortDistanceJourneyRepository->getReadyForVerify();
+        $shortDistanceSubscriptions = $this->_shortDistanceSubscriptionRepository->getReadyForVerify();
 
         $this->_loggerService->log('Obtaining eligible long-distance journeys');
-        $longDistanceJourneys = $this->_longDistanceJourneyRepository->getReadyForVerify();
+        $longDistanceSubscriptions = $this->_longDistanceSubscriptionRepository->getReadyForVerify();
 
-        $journeys = array_merge($shortDistanceJourneys, $longDistanceJourneys);
+        $subscriptions = array_merge($shortDistanceSubscriptions, $longDistanceSubscriptions);
 
-        $this->_loggerService->log('There is '.count($journeys).' journeys to process');
+        $this->_loggerService->log('There is '.count($subscriptions).' journeys to process');
 
-        foreach ($journeys as $key => $journey) {
+        foreach ($subscriptions as $key => $subscription) {
             switch (true) {
-                case $journey instanceof LongDistanceJourney:
-                    $this->_loggerService->log('Verification for the long-distance journey with the ID '.$journey->getId());
+                case $subscription instanceof LongDistanceSubscription:
+                    $this->_loggerService->log('Verification for the long-distance subscription with the ID '.$subscription->getId());
 
                     break;
 
-                case $journey instanceof ShortDistanceJourney:
-                    $this->_loggerService->log('Verification for the short-distance journey with the ID '.$journey->getId());
+                case $subscription instanceof ShortDistanceSubscription:
+                    $this->_loggerService->log('Verification for the short-distance subscription with the ID '.$subscription->getId());
 
                     break;
             }
 
-            $this->_subscription = $journey->getSubscription();
+            $this->_driver = $subscription->getUser();
 
-            if (is_null($this->_subscription)) {
-                continue;
-            }
-
-            $this->_driver = $this->_subscription->getUser();
-
-            $response = $this->verifySubscription($this->_subscription->getSubscriptionId());
+            $response = $this->verifySubscription($subscription->getSubscriptionId());
 
             if (!in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
-                $this->_subscription->setStatus($response->getStatus());
+                $subscription->setStatus($response->getStatus());
 
-                if (self::STATUS_VALIDATED === $this->_subscription->getStatus()) {
-                    $this->_subscription->setBonusStatus(self::BONUS_STATUS_OK);
-                    $this->_subscription->setStatus(self::STATUS_VALIDATED);
+                if (self::STATUS_VALIDATED === $subscription->getStatus()) {
+                    $subscription->setBonusStatus(self::BONUS_STATUS_OK);
+                    $subscription->setStatus(self::STATUS_VALIDATED);
                 } else {
-                    $this->_subscription->setBonusStatus(self::BONUS_STATUS_NO);
-                    $this->_subscription->setStatus(self::STATUS_REJECTED);
+                    $subscription->setBonusStatus(self::BONUS_STATUS_NO);
+                    $subscription->setStatus(self::STATUS_REJECTED);
                 }
 
-                $this->_subscription->setVerificationDate();
+                $subscription->setVerificationDate();
             }
         }
 

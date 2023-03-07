@@ -2,12 +2,11 @@
 
 namespace App\Incentive\Repository;
 
-use App\Incentive\Entity\LongDistanceJourney;
-use App\Incentive\Service\Manager\SubscriptionManager;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class LongDistanceJourneyRepository
+class ShortDistanceSubscriptionRepository
 {
     /**
      * @var EntityManagerInterface
@@ -27,7 +26,7 @@ class LongDistanceJourneyRepository
     public function __construct(EntityManagerInterface $em, int $deadline)
     {
         $this->_em = $em;
-        $this->_repository = $this->_em->getRepository(LongDistanceJourney::class);
+        $this->_repository = $this->_em->getRepository(ShortDistanceSubscription::class);
 
         $this->_deadline = $deadline;
     }
@@ -42,14 +41,14 @@ class LongDistanceJourneyRepository
         $deadline = new \DateTime('now');
         $deadline->sub(new \DateInterval('P'.$this->_deadline.'D'));
 
-        $qb = $this->_repository->createQueryBuilder('j');
+        $qb = $this->_repository->createQueryBuilder('s');
 
         $qb
-            ->where('j.createdAt <= :deadline')
-            ->andWhere('j.verificationStatus = :pending')
+            ->innerJoin('s.shortDistanceJourneys', 'j', 'WITH', 'j.createdAt <= :deadline')
+            ->where('s.commitmentProofDate IS NOT NULL')
+            ->andWhere('s.verificationDate IS NULL')
             ->setParameters([
                 'deadline' => $deadline,
-                'pending' => SubscriptionManager::VERIFICATION_STATUS_PENDING,
             ])
         ;
 

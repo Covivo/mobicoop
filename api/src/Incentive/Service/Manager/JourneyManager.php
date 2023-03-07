@@ -167,7 +167,7 @@ class JourneyManager extends MobConnectManager
 
         $journey = new ShortDistanceJourney();
 
-        if (empty($subscription->getShortDistanceJourneys())) {
+        if (empty($subscription->getShortDistanceJourneys()->toArray())) {
             $params = [
                 "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(false),
             ];

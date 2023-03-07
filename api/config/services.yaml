@@ -756,10 +756,10 @@ services:
           command: "app:incentive:journeys-verification",
         }
 
-  App\Incentive\Repository\LongDistanceJourneyRepository:
+  App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
       $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
-  App\Incentive\Repository\ShortDistanceJourneyRepository:
+  App\Incentive\Repository\ShortDistanceSubscriptionRepository:
     arguments:
       $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
 
@@ -771,7 +771,7 @@ services:
   
   App\Incentive\Service\Manager\AuthManager:
     arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)"
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $mobConnectParams:
         api_uri: "%env(string:MOBCONNECT_API_URI)%"
         credentials:
@@ -786,7 +786,7 @@ services:
 
   App\Incentive\Service\Manager\JourneyManager:
     arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)"
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $mobConnectParams:
         api_uri: "%env(string:MOBCONNECT_API_URI)%"
         credentials:
@@ -801,7 +801,7 @@ services:
 
   App\Incentive\Service\Manager\SubscriptionManager:
     arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)"
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $mobConnectParams:
         api_uri: "%env(string:MOBCONNECT_API_URI)%"
         credentials:

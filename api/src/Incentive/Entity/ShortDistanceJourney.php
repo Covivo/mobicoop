@@ -407,6 +407,7 @@ class ShortDistanceJourney
 
     public function updateJourney(CarpoolProof $carpoolProof, string $rpcJourneyId, int $carpoolersNumber)
     {
+        $this->setCarpoolProof($carpoolProof);
         $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
         $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
         $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
