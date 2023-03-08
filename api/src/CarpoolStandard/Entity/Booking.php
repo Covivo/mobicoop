@@ -74,6 +74,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *           "carpool_standard_patch"={
  *              "path"="/bookings/{id}",
  *              "method"="PATCH",
+ *              "read"=false,
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
@@ -88,18 +89,23 @@ class Booking
     public const DEFAULT_ID = 999999999999;
 
     /**
+     * @var string the uuid of the booking
+     *
+     * @Groups({"read", "write"})
+     */
+    private $id;
+
+    /**
      * @var null|string the uuid of the booking
      *
      * @Groups({"read", "write"})
      *
      * @ApiProperty(identifier=true)
      */
-    private $id;
+    private $bookingId;
 
     /**
      * @var User the driver of the carpool
-     *
-     * @Assert\NotBlank
      *
      * @Groups({"read", "write"})
      */
@@ -108,16 +114,12 @@ class Booking
     /**
      * @var User the passenger of the carpool
      *
-     * @Assert\NotBlank
-     *
      * @Groups({"read", "write"})
      */
     private $passenger;
 
     /**
      * @var int Passenger pickup datetime as a UNIX UTC timestamp in seconds
-     *
-     * @Assert\NotBlank
      *
      * @Groups({"read", "write"})
      */
@@ -126,16 +128,12 @@ class Booking
     /**
      * @var float latitude of the passenger pick-up point
      *
-     * @Assert\NotBlank
-     *
      * @Groups({"read", "write"})
      */
     private $passengerPickupLat;
 
     /**
      * @var float longitude of the passenger pick-up point
-     *
-     * @Assert\NotBlank
      *
      * @Groups({"read", "write"})
      */
@@ -144,16 +142,12 @@ class Booking
     /**
      * @var float latitude of the passenger drop-off point
      *
-     * @Assert\NotBlank
-     *
      * @Groups({"read", "write"})
      */
     private $passengerDropLat;
 
     /**
      * @var float longitude of the passenger drop-off point
-     *
-     * @Assert\NotBlank
      *
      * @Groups({"read", "write"})
      */
@@ -206,8 +200,6 @@ class Booking
     /**
      * @var Price Price
      *
-     * @Assert\NotBlank
-     *
      * @Groups({"read", "write"})
      */
     private $price;
@@ -249,6 +241,18 @@ class Booking
     public function setId(string $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getBookingId(): string
+    {
+        return $this->bookingId;
+    }
+
+    public function setBookingId(string $bookingId): self
+    {
+        $this->bookingId = $bookingId;
 
         return $this;
     }

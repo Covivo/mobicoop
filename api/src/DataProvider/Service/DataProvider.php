@@ -304,7 +304,14 @@ class DataProvider
                 }
             }
 
+            // echo json_encode($body);
+            // var_dump($options);
+
+            // exit;
             $clientResponse = $this->client->patch($this->resource, $options);
+            var_dump($clientResponse->getStatusCode());
+
+            exit;
 
             switch ($clientResponse->getStatusCode()) {
                 case 200:
