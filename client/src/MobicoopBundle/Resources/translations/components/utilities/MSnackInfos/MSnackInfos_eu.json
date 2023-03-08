@@ -1,4 +1,4 @@
 {
-    "close":"Fermer",
-    "text":"<p>Bénéficiez jusqu'à 200€ de prime covoiturage sur notre plateforme pour tous vos nouveaux trajets. Activez votre demande de prime tout de suite et préparez vos prochains covoiturages <a href='/utilisateur/profil/modifier/mon-profil'>ici</a>.</p>"
+  "close": "Fermer",
+  "text": "<p>Bénéficiez d’une prime de covoiturage de 100€ sur notre plateforme pour tous vos trajets du quotidien.<br />Vous souhaitez activer votre demande de prime tout de suite et préparer vos prochains covoiturages ? <a href='/utilisateur/profil/modifier/mon-profil#cee-incentive'>Lancez-vous ici</a> !</p><p>Vous pouvez même bénéficier de 100€ supplémentaires pour des trajets longue distance.</p><p><a href='/mobilite'>En savoir plus</a></p>"
 }

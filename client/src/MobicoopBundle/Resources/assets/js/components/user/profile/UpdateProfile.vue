@@ -605,6 +605,7 @@
     </v-card>
     <EECIncentiveStatus
       v-if="ceeDisplay"
+      id="cee-incentive"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
     />
