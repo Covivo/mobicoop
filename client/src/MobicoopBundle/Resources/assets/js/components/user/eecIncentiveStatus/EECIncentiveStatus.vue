@@ -12,6 +12,7 @@
         :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
         :pending-proofs="subscriptions.nbPendingProofs"
         :refused-proofs="subscriptions.nbRejectedProofs"
+        @changeTab="changeTab"
       />
     </div>
     <div v-else>
@@ -89,6 +90,9 @@ export default {
         .catch(function (error) {
 
         });
+    },
+    changeTab(tab){
+      this.$emit('changeTab', tab);
     }
   },
 };
