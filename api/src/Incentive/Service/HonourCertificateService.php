@@ -6,7 +6,7 @@ use App\User\Entity\User;
 
 class HonourCertificateService
 {
-    public const HONOUR_CERTIFICATE_PATH = __DIR__.'../../../../public/incentive-certificates';
+    public const HONOUR_CERTIFICATE_PATH = __DIR__.'/../Resource/certificates';
     public const HONOUR_CERTIFICATE_EXTENSION = '.txt';
     public const LONG_DISTANCE_SPECIFIC_PATH = '/long-distance-honour-certificate';
     public const SHORT_DISTANCE_SPECIFIC_PATH = '/short-distance-honour-certificate';
