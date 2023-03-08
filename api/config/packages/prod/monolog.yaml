@@ -14,6 +14,7 @@ monolog:
           "!communication",
           "!community",
           "!consumptionFeedback",
+          "!csvMaker",
           "!faker",
           "!gamification",
           "!geography",
@@ -82,6 +83,12 @@ monolog:
       max_files: 30
       path: "%kernel.logs_dir%/consumptionFeedback.log"
       channels: [consumptionFeedback]
+    csvMaker:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/csvMaker.log"
+      channels: [csvMaker]
     faker:
       type: rotating_file
       level: debug
