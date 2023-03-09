@@ -18,7 +18,11 @@
                 :href="downloadLink"
                 :title="textDownload"
               >
-                <v-img :src="image" />
+                <v-img
+                  :src="image"
+                  contain
+                  max-width="90"
+                />
               </a>
             </v-avatar>
           </v-col>
@@ -48,7 +52,7 @@
                 download
                 target="_blank"
               >
-                {{ textDownload }}        
+                {{ textDownload }}
               </a>
               <br>
             </div>
@@ -128,7 +132,7 @@ export default {
     textLogo2:{
       type: String,
       default: null
-    },  
+    },
     textLogo3:{
       type: String,
       default: null
