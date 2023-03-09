@@ -32,6 +32,7 @@
     :signup-rgpd-infos = "{{ signup_rgpd_infos|json_encode }}"
     :news-subscription-default = "{{ newsSubscription ? "true" : "false" }}"
     :birth-date-display = "{{ birthDateDisplay ? "true" : "false" }}"
+    :specific-sso-services="{{ specificSsoServices|json_encode }}"
     :sso-button-display = "{{ ssoButtonDisplay ? "true" : "false" }}"
   />
 

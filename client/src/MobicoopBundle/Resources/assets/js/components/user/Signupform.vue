@@ -86,6 +86,7 @@
         >
           <SsoLogins
             v-if="ssoButtonDisplay"
+            :specific-sso-services="specificSsoServices"
             class="justify-self-center"
           />
         </v-col>
@@ -627,6 +628,10 @@ export default {
     communityId: {
       type: Number,
       default: null
+    },
+    specificSsoServices: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
