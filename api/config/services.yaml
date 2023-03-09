@@ -756,17 +756,10 @@ services:
           command: "app:incentive:journeys-verification",
         }
 
-  App\Incentive\Command\RestartUserJourneysCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:restart-user-journeys",
-        }
-
-  App\Incentive\Repository\LongDistanceJourneyRepository:
+  App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
       $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
-  App\Incentive\Repository\ShortDistanceJourneyRepository:
+  App\Incentive\Repository\ShortDistanceSubscriptionRepository:
     arguments:
       $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
 
@@ -775,10 +768,10 @@ services:
       $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
-
-  App\Incentive\Service\MobConnectSubscriptionManager:
+  
+  App\Incentive\Service\Manager\AuthManager:
     arguments:
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $mobConnectParams:
         api_uri: "%env(string:MOBCONNECT_API_URI)%"
         credentials:
@@ -787,8 +780,37 @@ services:
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
-      $proofDeadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
-      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+    tags:
+      - { name: monolog.logger, channel: incentive_subscription }
+
+  App\Incentive\Service\Manager\JourneyManager:
+    arguments:
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $mobConnectParams:
+        api_uri: "%env(string:MOBCONNECT_API_URI)%"
+        credentials:
+          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
+          api_key: "%env(string:MOBCONNECT_API_KEY)%"
+        subscription_ids:
+          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
+          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+    tags:
+      - { name: monolog.logger, channel: incentive_subscription }
+
+  App\Incentive\Service\Manager\SubscriptionManager:
+    arguments:
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $mobConnectParams:
+        api_uri: "%env(string:MOBCONNECT_API_URI)%"
+        credentials:
+          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
+          api_key: "%env(string:MOBCONNECT_API_KEY)%"
+        subscription_ids:
+          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
+          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
