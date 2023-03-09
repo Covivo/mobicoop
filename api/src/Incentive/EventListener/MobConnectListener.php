@@ -5,6 +5,8 @@ namespace App\Incentive\EventListener;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\Incentive\Service\MobConnectSubscriptionManager;
+use App\Payment\Event\ConfirmDirectPaymentEvent;
+use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
@@ -45,7 +47,9 @@ class MobConnectListener implements EventSubscriberInterface
     {
         return [
             CarpoolProofValidatedEvent::NAME => 'onProofValidated',
-            ElectronicPaymentValidatedEvent::NAME => 'onPaymentValidated',
+            ConfirmDirectPaymentEvent::NAME => 'onDirectPaymentConfirmed',
+            ConfirmDirectPaymentRegularEvent::NAME => 'onDirectPaymentRegularConfirmed',
+            ElectronicPaymentValidatedEvent::NAME => 'onElectronicPaymentValidated',
             SsoAssociationEvent::NAME => 'onUserAssociated',
         ];
     }
@@ -70,11 +74,27 @@ class MobConnectListener implements EventSubscriberInterface
     }
 
     /**
+     * Listener called when an direct payment is confirmed.
+     */
+    public function onDirectPaymentConfirmed(ConfirmDirectPaymentEvent $event)
+    {
+        $this->_subscriptionManager->updateLongDistanceSubscriptionForCarpoolItem($event->getCarpoolItem());
+    }
+
+    /**
+     * Listener called when an direct payment for regular is confirmed.
+     */
+    public function onDirectPaymentRegularConfirmed(ConfirmDirectPaymentRegularEvent $event)
+    {
+        $this->_subscriptionManager->updateLongDistanceSubscriptionForCarpoolItem($event->getCarpoolItem());
+    }
+
+    /**
      * Listener called when an electronic payment is validated.
      */
-    public function onPaymentValidated(ElectronicPaymentValidatedEvent $event): void
+    public function onElectronicPaymentValidated(ElectronicPaymentValidatedEvent $event): void
     {
-        $this->_subscriptionManager->updateLongDistanceSubscriptionAfterPayment($event->getCarpoolPayment());
+        $this->_subscriptionManager->updateLongDistanceSubscriptionAfterElectronicPayment($event->getCarpoolPayment());
     }
 
     /**

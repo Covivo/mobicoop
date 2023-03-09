@@ -1276,7 +1276,7 @@ class PaymentManager
         $this->entityManager->persist($carpoolPayment);
         $this->entityManager->flush();
 
-        if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus) {
+        if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) {
             $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
             $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
 
