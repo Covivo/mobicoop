@@ -309,9 +309,6 @@ class DataProvider
 
             // exit;
             $clientResponse = $this->client->patch($this->resource, $options);
-            var_dump($clientResponse->getStatusCode());
-
-            exit;
 
             switch ($clientResponse->getStatusCode()) {
                 case 200:
