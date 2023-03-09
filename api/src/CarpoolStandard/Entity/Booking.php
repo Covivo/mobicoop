@@ -74,7 +74,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *           "carpool_standard_patch"={
  *              "path"="/bookings/{id}",
  *              "method"="PATCH",
- *              "read"=false,
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
@@ -89,20 +88,13 @@ class Booking
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var string the uuid of the booking
-     *
-     * @Groups({"read", "write"})
-     */
-    private $id;
-
-    /**
-     * @var null|string the uuid of the booking
+     * @var string the id of the booking
      *
      * @Groups({"read", "write"})
      *
      * @ApiProperty(identifier=true)
      */
-    private $bookingId;
+    private $id;
 
     /**
      * @var User the driver of the carpool
@@ -241,18 +233,6 @@ class Booking
     public function setId(string $id): self
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    public function getBookingId(): string
-    {
-        return $this->bookingId;
-    }
-
-    public function setBookingId(string $bookingId): self
-    {
-        $this->bookingId = $bookingId;
 
         return $this;
     }
