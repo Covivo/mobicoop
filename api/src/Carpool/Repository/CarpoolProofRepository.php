@@ -26,7 +26,7 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Resource\CeeSubscriptions;
-use App\Incentive\Service\CeeJourneyService;
+use App\Incentive\Service\Validation\Validation;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -154,10 +154,10 @@ class CarpoolProofRepository
 
         $parameters = [
             'class' => CarpoolProof::TYPE_HIGH,
-            'country' => CeeJourneyService::REFERENCE_COUNTRY,
+            'country' => Validation::REFERENCE_COUNTRY,
             'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
             'driver' => $driver,
-            'referenceDate' => \DateTime::createFromFormat('Y-m-d', CeeJourneyService::REFERENCE_DATE),
+            'referenceDate' => \DateTime::createFromFormat('Y-m-d', Validation::REFERENCE_DATE),
             'status' => CarpoolProof::STATUS_VALIDATED,
         ];
 
@@ -190,9 +190,10 @@ class CarpoolProofRepository
             $qb
                 ->innerJoin('a.carpoolItems', 'c', 'WITH', 'c.creditorUser = :driver')
                 ->andWhere('m.commonDistance >= :distance')
-                ->andWhere('c.creditorStatus = :creditorStatus')
+                ->andWhere('c.creditorStatus = :creditorStatusOnline OR c.creditorStatus = :creditorStatusDirect')
             ;
-            $parameters['creditorStatus'] = CarpoolItem::DEBTOR_STATUS_ONLINE;
+            $parameters['creditorStatusOnline'] = CarpoolItem::DEBTOR_STATUS_ONLINE;
+            $parameters['creditorStatusDirect'] = CarpoolItem::DEBTOR_STATUS_DIRECT;
         } else {
             $qb->andWhere('m.commonDistance < :distance');
         }

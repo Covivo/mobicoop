@@ -302,18 +302,42 @@ class UserRepository
         return $query->getQuery()->getResult();
     }
 
-    public function findTerritoriesUsers(array $territoryIds)
+    public function findForExport(array $filters, array $restrictionTerritoryIds)
     {
         $qb = $this->repository->createQueryBuilder('u');
 
-        $qb
-            ->innerJoin('u.addresses', 'a', 'WITH', 'a.home = 1')
-            ->innerJoin('a.territories', 't')
-            ->where('t.id IN(:territoryIds)')
-            ->setParameters([
-                'territoryIds' => $territoryIds,
-            ])
-        ;
+        $parameters = [];
+
+        if (!empty($restrictionTerritoryIds)) {
+            $parameters['territoryIds'] = $restrictionTerritoryIds;
+
+            $qb
+                ->innerJoin('u.addresses', 'a', 'WITH', 'a.home = 1')
+                ->innerJoin('a.territories', 't')
+                ->andWhere('t.id IN(:territoryIds)')
+            ;
+        }
+
+        foreach ($filters as $filter => $value) {
+            switch ($filter) {
+                case 'community':
+                    $qb
+                        ->innerJoin('u.communityUsers', 'cu')
+                        ->innerJoin('cu.community', 'c', 'WITH', 'c.id = :community')
+                    ;
+
+                    $parameters[$filter] = $value;
+
+                    break;
+
+                case 'isHitchHiker':
+                    $qb->andWhere('u.hitchHikeDriver is not null OR u.hitchHikePassenger is not null');
+
+                    break;
+            }
+        }
+
+        $qb->setParameters($parameters);
 
         return $qb->getQuery()->getResult();
     }

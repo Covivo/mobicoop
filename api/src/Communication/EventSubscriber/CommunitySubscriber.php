@@ -75,7 +75,7 @@ class CommunitySubscriber implements EventSubscriberInterface
         $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
         foreach ($communityUsers as $communityUser) {
             if (CommunityUser::STATUS_ACCEPTED_AS_MODERATOR === $communityUser->getStatus()
-                    && $communityCreator->getId() !== $communityUser->getUser()->gitId()) {
+                    && $communityCreator->getId() !== $communityUser->getUser()->getId()) {
                 $communityRecipient = $communityUser->getUser();
                 $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
             }
@@ -97,7 +97,7 @@ class CommunitySubscriber implements EventSubscriberInterface
         $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
         foreach ($communityUsers as $communityUser) {
             if (CommunityUser::STATUS_ACCEPTED_AS_MODERATOR === $communityUser->getStatus()
-                    && $communityCreator->getId() !== $communityUser->getUser()->gitId()) {
+                    && $communityCreator->getId() !== $communityUser->getUser()->getId()) {
                 $communityRecipient = $communityUser->getUser();
                 $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
             }

@@ -23,6 +23,7 @@
     "subtitle": "Informations complémentaires",
     "intro": "Pour recevoir votre prime et le paiement de vos passagers, vous devez :",
     "mandatory1": "Renseigner vos coordonnées bancaires",
+    "goToBankCoordinates": "Pour réaliser ces opérations, rendez-vous dans l'onglet \"identité bancaire\"",
     "mandatory2": "Envoyer une photo d'une pièce d'identité valide",
     "uri": {
       "getCoordinates": "/utilisateur/coordonnees-bancaires"
@@ -35,14 +36,16 @@
       "progress": "{nb}/3 trajets longs",
       "hints": {
         "hint1": "Preuve géolocalisée du conducteur et du passager",
-        "hint2": "Trajet payé en ligne"
+        "hint2": "Trajet payé en ligne",
+        "hint3": "Passager et Conducteur ont donné leur identité bancaire complète et validé leur numéro de téléphone puis ensuite, activé la géolocalisation et certifié TOUS LES DEUX le Départ et Arrivée pour chaque trajet via l'onglet \"covoiturages acceptés\" depuis le mobile"
       }
     },
     "shortDistance": {
       "header": "Prime courte distance (jusqu'à 80km)",
       "progress": "{nb}/10 trajets courts",
       "hints": {
-        "hint1": "Preuve géolocalisée du conducteur et du passager"
+        "hint1": "Preuve géolocalisée du conducteur et du passager",
+        "hint2": "Passager et Conducteur ont donné leur identité bancaire complète et validé leur numéro de téléphone puis ensuite, activé la géolocalisation et certifié TOUS LES DEUX le Départ et Arrivée pour chaque trajet via l'onglet \"covoiturages acceptés\" depuis le mobile"
       }
     },
     "proofs": {

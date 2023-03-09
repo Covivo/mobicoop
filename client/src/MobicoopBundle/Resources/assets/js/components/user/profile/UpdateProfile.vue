@@ -499,8 +499,10 @@
     <!-- EEC form -->
     <EECIncentiveStatus
       v-if="ceeDisplay"
+      id="cee-incentive"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+      @changeTab="changeTab"
     />
 
     <!-- Delete form -->
@@ -1144,6 +1146,9 @@ export default {
             this.ssoConnection = response.data[0];
           }
         });
+    },
+    changeTab(tab){
+      this.$emit('changeTab', tab);
     }
   }
 }

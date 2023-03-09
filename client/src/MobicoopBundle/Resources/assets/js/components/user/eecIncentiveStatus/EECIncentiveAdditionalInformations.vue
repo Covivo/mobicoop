@@ -44,6 +44,12 @@
               </v-list-item-icon>
             </v-list-item>
           </v-list>
+          <br>
+          <a
+            class="subtitle-1"
+            href="#"
+            @click="changeTab"
+          >{{ $t('additional.goToBankCoordinates') }}</a>
         </p>
       </v-card-text>
     </v-card>
@@ -139,6 +145,9 @@ export default {
           console.error(error);
         });
     },
+    changeTab(){
+      this.$emit('changeTab', 'bankCoordinates');
+    }
   }
 
 };

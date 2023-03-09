@@ -2,13 +2,12 @@
 
 namespace App\Incentive\Controller;
 
-use App\Carpool\Entity\CarpoolProof;
-use App\Incentive\Service\MobConnectSubscriptionManager;
-use App\User\Entity\User;
+use App\Incentive\Service\Manager\JourneyManager;
+use App\Incentive\Service\Manager\SubscriptionManager;
+use App\Incentive\Service\Validation\JourneyValidation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,14 +22,37 @@ class TestController extends AbstractController
     private $_em;
 
     /**
-     * @var MobConnectSubscriptionManager
+     * @var EventDispatcherInterface
      */
-    private $_mobConnectSubscriptionManager;
+    private $_eventDispatcher;
 
-    public function __construct(EntityManagerInterface $em, MobConnectSubscriptionManager $mobConnectSubscriptionManager)
-    {
+    /**
+     * @var JourneyValidation
+     */
+    private $_journeyValidation;
+
+    /**
+     * @var JourneyManager
+     */
+    private $_journeyManager;
+
+    /**
+     * @var SubscriptionManager
+     */
+    private $_subscriptionManager;
+
+    public function __construct(
+        EntityManagerInterface $em,
+        EventDispatcherInterface $eventDispatcher,
+        JourneyValidation $journeyValidation,
+        JourneyManager $journeyManager,
+        SubscriptionManager $subscriptionManager
+    ) {
         $this->_em = $em;
-        $this->_mobConnectSubscriptionManager = $mobConnectSubscriptionManager;
+        $this->_eventDispatcher = $eventDispatcher;
+        $this->_journeyValidation = $journeyValidation;
+        $this->_journeyManager = $journeyManager;
+        $this->_subscriptionManager = $subscriptionManager;
     }
 
     /**
@@ -38,63 +60,6 @@ class TestController extends AbstractController
      */
     public function test()
     {
-        $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find(24);
-
-        $this->_mobConnectSubscriptionManager->updateSubscription($carpoolProof);
-
         return new Response('Ok');
-    }
-
-    /**
-     * TODO:
-     * Writes the eligibility test logs of carpool proofs passed in parameters.
-     *
-     * @Route("/carpools/check")
-     */
-    public function checkCarpools(Request $request)
-    {
-        $carpoolProofIds = explode(',', $request->get('carpoolProofs'));
-
-        $carpoolProofs = [];
-
-        foreach ($carpoolProofIds as $key => $id) {
-            $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find(intval($id));
-
-            if (!is_null($carpoolProof)) {
-                array_push($carpoolProofs, $carpoolProof);
-            }
-        }
-
-        return new JsonResponse($carpoolProofs);
-    }
-
-    /**
-     * Returns users EEC subscriptions.
-     *
-     * @Route("/users/check")
-     */
-    public function checkSubscriptions(Request $request)
-    {
-        $ids = explode(',', $request->get('users'));
-
-        $returnedSubscriptions = [];
-
-        foreach ($ids as $key => $id) {
-            $user = $this->_em->getRepository(User::class)->find(intval($id));
-
-            $userSubscriptions = $this->_mobConnectSubscriptionManager->getUserSubscriptions($user);
-
-            $subscription = new \stdClass();
-            $subscription->userId = $user->getId();
-            $subscription->shortDistanceSubscription = $userSubscriptions[0]->getShortDistanceSubscriptions();
-            $subscription->longDistanceSubscription = $userSubscriptions[0]->getLongDistanceSubscriptions();
-            $subscription->nbPendingProofs = $userSubscriptions[0]->getNbPendingProofs();
-            $subscription->nbValidatedProofs = $userSubscriptions[0]->getNbValidatedProofs();
-            $subscription->nbRejectedProofs = $userSubscriptions[0]->getNbRejectedProofs();
-
-            array_push($returnedSubscriptions, $subscription);
-        }
-
-        return new JsonResponse($returnedSubscriptions);
     }
 }

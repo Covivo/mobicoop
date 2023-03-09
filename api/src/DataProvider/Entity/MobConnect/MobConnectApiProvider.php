@@ -126,6 +126,26 @@ class MobConnectApiProvider extends MobConnectProvider
         return $mobConnectAuth->getAccessToken();
     }
 
+    public function postSubscription(bool $isLongDistance = true): MobConnectSubscriptionResponse
+    {
+        $data = [
+            'incentiveId' => $isLongDistance ? $this->_apiParams->getLongDistanceSubscriptionId() : $this->_apiParams->getShortDistanceSubscriptionId(),
+            'consent' => true,
+            'Type de trajet' => true === $isLongDistance ? [self::LONG_DISTANCE_LABEL] : [self::SHORT_DISTANCE_LABEL],
+            'Numéro de permis de conduire' => $this->_user->getDrivingLicenceNumber(),
+        ];
+
+        if ($isLongDistance) {
+            $data['Numéro de téléphone'] = $this->_user->getTelephone();
+        }
+
+        $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS);
+
+        return new MobConnectSubscriptionResponse(
+            $this->_getResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($this->__getToken())))
+        );
+    }
+
     public function postSubscriptionForShortDistance()
     {
         $this->_loggerService->log('We create the short distance subscription on mobConnect', 'info', true);
@@ -148,20 +168,8 @@ class MobConnectApiProvider extends MobConnectProvider
      * @param bool              $isShortDistance Specifies whether the trip is a short distance trip
      * @param DateTimeInterface $costSharingDate The date of payment for the trip
      */
-    public function patchUserSubscription(
-        string $subscriptionId,
-        ?string $rpcJourneyId = null,
-        bool $isShortDistance = false,
-        ?\DateTimeInterface $costSharingDate = null
-    ): MobConnectSubscriptionResponse {
-        $data = [];
-
-        if (true === $isShortDistance) {
-            $data['Identifiant du trajet'] = $rpcJourneyId;
-        } else {
-            $data['Date de partage des frais'] = $costSharingDate->format('Y-m-d');
-        }
-
+    public function patchUserSubscription(string $subscriptionId, array $data): MobConnectSubscriptionResponse
+    {
         $this->_loggerService->log('We PATCH the subscription on mobConnect', 'info', true);
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
