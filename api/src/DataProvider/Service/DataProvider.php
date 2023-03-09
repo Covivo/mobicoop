@@ -304,10 +304,6 @@ class DataProvider
                 }
             }
 
-            // echo json_encode($body);
-            // var_dump($options);
-
-            // exit;
             $clientResponse = $this->client->patch($this->resource, $options);
 
             switch ($clientResponse->getStatusCode()) {
