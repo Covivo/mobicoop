@@ -25,6 +25,7 @@ namespace App\CarpoolStandard\Service;
 
 use App\CarpoolStandard\Entity\Booking;
 use App\CarpoolStandard\Event\BookingReceivedEvent;
+use App\CarpoolStandard\Event\BookingUpdatedEvent;
 use App\Geography\Service\PointSearcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -52,12 +53,26 @@ class BookingManager
         $this->carpoolStandardProvider->postBooking($booking);
     }
 
-    public function treatExternalBooking(Booking $booking)
+    public function patchBooking(Booking $booking)
+    {
+        $this->carpoolStandardProvider->patchBooking($booking);
+    }
+
+    public function treatExternalPostBooking(Booking $booking)
     {
         $this->reverseGeocodeAddresses($booking);
 
         $event = new BookingReceivedEvent($booking);
         $this->eventDispatcher->dispatch(BookingReceivedEvent::NAME, $event);
+    }
+
+    public function treatExternalPatchBooking(Booking $booking)
+    {
+        $fullBooking = $this->carpoolStandardProvider->getBooking($booking->getId());
+        $this->reverseGeocodeAddresses($fullBooking);
+
+        $event = new BookingUpdatedEvent($fullBooking);
+        $this->eventDispatcher->dispatch(BookingUpdatedEvent::NAME, $event);
     }
 
     public function reverseGeocodeAddresses(Booking $booking)

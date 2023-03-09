@@ -87,4 +87,18 @@ class CarpoolStandardProvider
 
         return $this->providerInstance->postBooking($booking);
     }
+
+    public function patchBooking(Booking $booking)
+    {
+        $this->checkCarpoolStandardConfiguration();
+
+        return $this->providerInstance->patchBooking($booking);
+    }
+
+    public function getBooking(int $bookingId)
+    {
+        $this->checkCarpoolStandardConfiguration();
+
+        return $this->providerInstance->getBooking($bookingId);
+    }
 }
