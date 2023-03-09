@@ -316,6 +316,12 @@ services:
       $provider: "%env(string:CARPOOL_STANDARD_PROVIDER)%"
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
       $baseUri: "%env(string:CARPOOL_STANDARD_BASE_URI)%"
+  App\Communication\EventSubscriber\BookingSubscriber:    
+    arguments:
+      $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"
+  App\CarpoolStandard\Service\CarpoolStandardManager:    
+    arguments:
+      $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
 
   # Commands
   App\Command\CarpoolAskPostedRelaunch1Command:
@@ -1177,6 +1183,12 @@ services:
     arguments:
       $repositoryFile: "%env(string:MOBILE_JSON_REPOSITORY)%"
       $appId: "%env(string:MOBILE_APP_ID)%"
+
+  App\Utility\Entity\CsvMaker\CsvMaker:
+    arguments:
+      $csvExports: "%env(json:file:resolve:CSV_EXPORTS)%"
+    tags:
+      - { name: monolog.logger, channel: csvMaker }
 
   App\Validator\Phone\PhoneValidator:
     arguments:

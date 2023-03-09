@@ -142,6 +142,39 @@ class InteropProvider implements CarpoolStandardProviderInterface
         return $dataProvider->postCollection($body, $headers);
     }
 
+    public function patchBooking(Booking $booking)
+    {
+        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_BOOKING.'/'.$booking->getId());
+
+        $headers = [
+            'X-API-KEY' => $this->apiKey,
+            'Content-Type' => 'application/json',
+        ];
+        // Build the body
+        $params = [
+            'status' => $booking->getStatus(),
+            'message' => $booking->getMessage(),
+        ];
+
+        return $dataProvider->patchItem(null, $headers, $params);
+    }
+
+    public function getBooking(int $bookingId)
+    {
+        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_BOOKING.'/'.$bookingId);
+
+        $headers = [
+            'X-API-KEY' => $this->apiKey,
+            'Content-Type' => 'application/json',
+        ];
+        // Build the body
+        $body = [
+            'bookingId' => $bookingId,
+        ];
+
+        return $dataProvider->getItem($body, $headers);
+    }
+
     private function _generateUuid()
     {
         // Generate a random string of bytes

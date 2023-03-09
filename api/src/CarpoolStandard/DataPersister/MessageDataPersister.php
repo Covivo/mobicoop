@@ -33,7 +33,7 @@ use Symfony\Component\Security\Core\Security;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-final class MessageCollectionDataPersister implements ContextAwareDataPersisterInterface
+final class MessageDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
     private $messageManager;

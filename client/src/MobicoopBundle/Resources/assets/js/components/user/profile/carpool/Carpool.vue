@@ -48,6 +48,7 @@
         :user="user"
         :show-carpooler="showCarpooler"
         :payment-electronic-active="paymentElectronicActive"
+        :communities="ad.communities ? ad.communities : []"
       />
     </v-card-actions>
   </v-card>

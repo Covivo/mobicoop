@@ -53,6 +53,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
+ *          },
+ *          "carpool_standard_post_from_external"={
+ *              "method"="POST",
+ *              "path"="/from_external/bookings",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Standard"}
+ *              }
  *          }
  *      },
  *      itemOperations={
@@ -63,7 +70,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
- *          }
+ *          },
+ *           "carpool_standard_patch"={
+ *              "path"="/bookings/{id}",
+ *              "method"="PATCH",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Standard"}
+ *              }
+ *          },
  *      }
  * )
  *
@@ -74,7 +88,7 @@ class Booking
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var null|string the uuid of the booking
+     * @var string the id of the booking
      *
      * @Groups({"read", "write"})
      *
@@ -85,16 +99,12 @@ class Booking
     /**
      * @var User the driver of the carpool
      *
-     * @Assert\NotBlank
-     *
      * @Groups({"read", "write"})
      */
     private $driver;
 
     /**
      * @var User the passenger of the carpool
-     *
-     * @Assert\NotBlank
      *
      * @Groups({"read", "write"})
      */
@@ -103,16 +113,12 @@ class Booking
     /**
      * @var int Passenger pickup datetime as a UNIX UTC timestamp in seconds
      *
-     * @Assert\NotBlank
-     *
      * @Groups({"read", "write"})
      */
     private $passengerPickupDate;
 
     /**
      * @var float latitude of the passenger pick-up point
-     *
-     * @Assert\NotBlank
      *
      * @Groups({"read", "write"})
      */
@@ -121,8 +127,6 @@ class Booking
     /**
      * @var float longitude of the passenger pick-up point
      *
-     * @Assert\NotBlank
-     *
      * @Groups({"read", "write"})
      */
     private $passengerPickupLng;
@@ -130,16 +134,12 @@ class Booking
     /**
      * @var float latitude of the passenger drop-off point
      *
-     * @Assert\NotBlank
-     *
      * @Groups({"read", "write"})
      */
     private $passengerDropLat;
 
     /**
      * @var float longitude of the passenger drop-off point
-     *
-     * @Assert\NotBlank
      *
      * @Groups({"read", "write"})
      */
@@ -192,8 +192,6 @@ class Booking
     /**
      * @var Price Price
      *
-     * @Assert\NotBlank
-     *
      * @Groups({"read", "write"})
      */
     private $price;
@@ -211,6 +209,13 @@ class Booking
      * @Groups({"read", "write"})
      */
     private $passengerJourneyId;
+
+    /**
+     * @var null|string Free text content of a message. The message can contain explanations on the status change
+     *
+     * @Groups({"read", "write"})
+     */
+    private $message;
 
     public function __construct($id = null)
     {
@@ -420,6 +425,18 @@ class Booking
     public function setPassengerJourneyId(?string $passengerJourneyId): self
     {
         $this->passengerJourneyId = $passengerJourneyId;
+
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?string $message): self
+    {
+        $this->message = $message;
 
         return $this;
     }

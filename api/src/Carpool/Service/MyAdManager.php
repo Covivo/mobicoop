@@ -26,6 +26,7 @@ namespace App\Carpool\Service;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\MyAdCommunity;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\MatchingRepository;
@@ -115,6 +116,19 @@ class MyAdManager
         $myAd->setRoleDriver((true === $proposal->getCriteria()->isDriver()) ? true : false);
         $myAd->setRolePassenger((true === $proposal->getCriteria()->isPassenger()) ? true : false);
         $myAd->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive() ? true : false);
+
+        if (is_array($proposal->getCommunities()) && count($proposal->getCommunities()) > 0) {
+            foreach ($proposal->getCommunities() as $community) {
+                $myAdCommunity = new MyAdCommunity();
+                $myAdCommunity->setId($community->getId());
+                $myAdCommunity->setName($community->getName());
+                if (count($community->getImages()) > 0) {
+                    $versions = $community->getImages()[0]->getVersions();
+                    $myAdCommunity->setImage(isset($versions['square_100']) ? $versions['square_100'] : $versions['original']);
+                }
+                $myAd->addCommunity($myAdCommunity);
+            }
+        }
 
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:

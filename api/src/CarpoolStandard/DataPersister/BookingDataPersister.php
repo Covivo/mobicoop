@@ -33,7 +33,7 @@ use Symfony\Component\Security\Core\Security;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-final class BookingCollectionDataPersister implements ContextAwareDataPersisterInterface
+final class BookingDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
     private $bookingManager;
@@ -48,12 +48,38 @@ final class BookingCollectionDataPersister implements ContextAwareDataPersisterI
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Booking && isset($context['collection_operation_name']) && 'carpool_standard_post' == $context['collection_operation_name'];
+        if ($data instanceof Booking) {
+            switch ($context) {
+                case isset($context['collection_operation_name']):
+                    return 'carpool_standard_post' == $context['collection_operation_name'];
+
+                    break;
+
+                case isset($context['item_operation_name']):
+                    return 'carpool_standard_patch' == $context['item_operation_name'];
+
+                    break;
+
+                default:
+                    return false;
+
+                    break;
+            }
+        } else {
+            return false;
+        }
     }
 
     public function persist($data, array $context = [])
     {
-        return $this->bookingManager->postBooking($data);
+        if (isset($context['collection_operation_name']) && 'carpool_standard_post' == $context['collection_operation_name']) {
+            $data = $this->bookingManager->postBooking($data);
+        } elseif (isset($context['item_operation_name']) && 'carpool_standard_patch' == $context['item_operation_name']) {
+            // for a patch operation, we update only some fields, we pass them to the method for further checkings
+            $data = $this->bookingManager->patchBooking($data);
+        }
+
+        return $data;
     }
 
     public function remove($data, array $context = [])

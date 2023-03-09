@@ -2,6 +2,7 @@
   <div>
     <v-card
       v-if="!hasBankCoordinates || !validatedIdentity"
+      flat
       color="grey lighten-4"
     >
       <v-card-title

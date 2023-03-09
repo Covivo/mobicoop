@@ -496,6 +496,15 @@
       </v-card-text>
     </v-card>
 
+    <!-- EEC form -->
+    <EECIncentiveStatus
+      v-if="ceeDisplay"
+      id="cee-incentive"
+      :confirmed-phone-number="user.phoneValidatedDate ? true : false"
+      :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+      @changeTab="changeTab"
+    />
+
     <!-- Delete form -->
     <v-card
       flat
@@ -603,13 +612,6 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <EECIncentiveStatus
-      v-if="ceeDisplay"
-      id="cee-incentive"
-      :confirmed-phone-number="user.phoneValidatedDate ? true : false"
-      :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
-      @changeTab="changeTab"
-    />
 
     <!-- PUBLIC PROFILE DIALOG -->
     <v-dialog
