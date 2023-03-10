@@ -624,9 +624,30 @@ class MobConnectSubscriptionManager
     }
 
     /**
-     * Updates long distance subscription after a payment has been validated.
+     * Updates long distance subscription after a direct payment has been confirmed.
      */
-    public function updateLongDistanceSubscriptionAfterPayment(CarpoolPayment $carpoolPayment): void
+    public function updateLongDistanceSubscriptionForCarpoolItem(CarpoolItem $carpoolItem, CarpoolPayment $carpoolPayment = null)
+    {
+        $driver = $carpoolItem->getCreditorUser();
+
+        // Array of carpoolProof where driver is the carpoolItem driver
+        $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) use ($driver) {
+            return $carpoolProof->getDriver() === $driver;
+        });
+
+        foreach ($filteredCarpoolProofs as $carpoolProof) {
+            if (is_null($carpoolPayment)) {
+                $carpoolPayment = $this->_getCarpoolPaymentFromCarpoolItem($carpoolItem, $carpoolProof);
+            }
+
+            $this->updateSubscription($carpoolProof, $carpoolPayment);
+        }
+    }
+
+    /**
+     * Updates long distance subscription after an electronic payment has been validated.
+     */
+    public function updateLongDistanceSubscriptionAfterElectronicPayment(CarpoolPayment $carpoolPayment): void
     {
         if (!$this->__isValidParameters()) {
             return;
@@ -644,16 +665,7 @@ class MobConnectSubscriptionManager
         });
 
         foreach ($filteredCarpoolItems as $carpoolItem) {
-            $driver = $carpoolItem->getCreditorUser();
-
-            // Array of carpoolProof where driver is the carpoolItem driver
-            $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) use ($driver) {
-                return $carpoolProof->getDriver() === $driver;
-            });
-
-            foreach ($filteredCarpoolProofs as $carpool) {
-                $this->updateSubscription($carpool, $carpoolPayment);
-            }
+            $this->updateLongDistanceSubscriptionForCarpoolItem($carpoolItem, $carpoolPayment);
         }
     }
 
@@ -706,5 +718,18 @@ class MobConnectSubscriptionManager
 
         $this->_em->flush();
         $this->_loggerService->log('Process processing is complete');
+    }
+
+    private function _getCarpoolPaymentFromCarpoolItem(CarpoolItem $carpoolItem, CarpoolProof $carpoolProof): CarpoolPayment
+    {
+        $carpoolPayments = array_values(array_filter($carpoolItem->getCarpoolPayments(), function ($payment) use ($carpoolProof) {
+            return $payment->getUser()->getId() === $carpoolProof->getPassenger()->getId();
+        }));
+
+        if (count($carpoolPayments) > 1) {
+            return null;
+        }
+
+        return $carpoolPayments[0];
     }
 }
