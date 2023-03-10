@@ -14,138 +14,101 @@ class JourneyValidation extends Validation
     }
 
     /**
-     * Checks if the journey is a valid first long distance journey.
+     * Checks if the journey is a valid first long distance journey. true if:
+     *      - there is a driver and he has subscribed to a long distance subscription
+     *      - the subscription has not been initialized
+     *      - there is no recorded journey.
      */
     public function isFirstValidLongECCJourney(): bool
     {
-        if (is_null($this->_driver->getLongDistanceSubscription())) {
-            $this->_loggerService->log('The driver '.$this->_driver->getId().' has not subscribed to long distance incentive');
-
-            return false;
-        }
-
-        if (!is_null($this->_driver->getLongDistanceSubscription()->getCommitmentProofDate())) {
-            $this->_loggerService->log('The long distance subscription has already been initialized with a journey');
-
-            return false;
-        }
-
-        if (!empty($this->_driver->getLongDistanceSubscription()->getLongDistanceJourneys()->toArray())) {
-            $this->_loggerService->log('There is already at least one declared long-distance journey');
-
-            return false;
-        }
-
-        return true;
+        return
+            !is_null($this->_driver)
+            && !is_null($this->_driver->getLongDistanceSubscription())
+            && is_null($this->_driver->getLongDistanceSubscription()->getCommitmentProofDate())
+            && empty($this->_driver->getLongDistanceSubscription()->getLongDistanceJourneys()->toArray())
+        ;
     }
 
     /**
-     * Checks if the journey is a valid first short distance journey.
+     * Checks if the journey is a valid first short distance journey. true if:
+     *      - there is a driver and he has subscribed to a short distance subscription
+     *      - the subscription has not been initialized
+     *      - there is no recorded journey.
      */
     public function isFirstValidShortECCJourney(): bool
     {
-        if (is_null($this->_driver->getShortDistanceSubscription())) {
-            $this->_loggerService->log('The driver '.$this->_driver->getId().' has not subscribed to short distance incentive');
-
-            return false;
-        }
-
-        if (!is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate())) {
-            $this->_loggerService->log('The short distance subscription has already been initialized with a journey');
-
-            return false;
-        }
-
-        if (!empty($this->_driver->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray())) {
-            $this->_loggerService->log('There is already at least one declared short-distance journey');
-
-            return false;
-        }
-
-        return true;
+        return
+            !is_null($this->_driver)
+            && !is_null($this->_driver->getShortDistanceSubscription())
+            && is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate())
+            && empty($this->_driver->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray())
+        ;
     }
 
     /**
-     * Checks if the published journey corresponding with the long distance EEC standard.
+     * Checks if the published journey (a Proposal) corresponding with the long distance EEC standard. true if:
+     *      - the journey is a driver journey
+     *      - the journey is a long distance journey
+     *      - the origin or destination is from the reference country
+     *      - the journey is valid and the first.
      */
     public function isPublishedJourneyValidLongECCJourney(Proposal $proposal): bool
     {
-        $this->_loggerService->log('Checks if the '.$proposal->getId().' proposal corresponding to the long distance EEC standard');
-
-        if (
-            is_null($proposal->getCriteria())
-            || is_null($proposal->getCriteria()->isDriver())
-            || !$proposal->getCriteria()->isDriver()
-        ) {
-            $this->_loggerService->log('The proposal '.$proposal->getId().' is not a driver journey');
-
-            return false;
-        }
-
         $this->setDriver($proposal->getUser());
 
-        if (
-            is_null($proposal->getCriteria()->getDirectionDriver())
-            || !$this->isDistanceLongDistance($proposal->getCriteria()->getDirectionDriver()->getDistance())
-        ) {
-            $this->_loggerService->log('The proposal '.$proposal->getId().' is not a long distance journey');
-
-            return false;
-        }
-
-        if (!$this->isOriginOrDestinationFromFrance($proposal)) {
-            $this->_loggerService->log('The proposal '.$proposal->getId().' is not from or to the '.self::REFERENCE_COUNTRY);
-
-            return false;
-        }
-
-        if (!$this->isFirstValidLongECCJourney($proposal)) {
-            return false;
-        }
-
-        $this->_loggerService->log('The proposal '.$proposal->getId().' corresponding to the long distance EEC standard');
-
-        return true;
+        return
+            !is_null($proposal->getCriteria())
+            && $proposal->getCriteria()->isDriver()
+            && !is_null($proposal->getCriteria()->getDirectionDriver())
+            && !is_null($proposal->getCriteria()->getDirectionDriver()->getDistance())
+            && $this->isDistanceLongDistance($proposal->getCriteria()->getDirectionDriver()->getDistance())
+            && $this->isOriginOrDestinationFromFrance($proposal)
+            && $this->isFirstValidLongECCJourney($proposal)
+        ;
     }
 
     /**
-     * Checks if the published journey corresponding with the short distance EEC standard.
+     * Checks if the published journey corresponding with the short distance EEC standard. true if:
+     *      - the driver is defined
+     *      - the journey is a short distance journey
+     *      - the driver and passenger pick-up addresses are defined
+     *      - the journey is valid and the first.
      */
     public function isStartedJourneyValidShortECCJourney(CarpoolProof $carpoolProof): bool
     {
-        $this->_loggerService->log('Checks if the '.$carpoolProof->getId().' carpool proof corresponding to the short distance EEC standard');
-
-        if (is_null($carpoolProof->getDriver())) {
-            $this->_loggerService->log('The carpool proof '.$carpoolProof->getId().' has no defined driver');
-
-            return false;
-        }
-
         $this->setDriver($carpoolProof->getDriver());
 
-        if (
-            is_null($carpoolProof->getAsk())
-            || is_null($carpoolProof->getAsk()->getMatching())
-            || is_null($carpoolProof->getAsk()->getMatching()->getCommonDistance())
-            || $this->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
-        ) {
-            $this->_loggerService->log('The carpool proof '.$carpoolProof->getId().' is not a short distance proof');
+        return
+            !is_null($this->_driver)
+            && !is_null($carpoolProof->getAsk())
+            && !is_null($carpoolProof->getAsk()->getMatching())
+            && !is_null($carpoolProof->getAsk()->getMatching()->getCommonDistance())
+            && !$this->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
+            && !is_null($carpoolProof->getPickUpDriverAddress())
+            && !is_null($carpoolProof->getPickUpPassengerAddress())
+            && $this->isFirstValidShortECCJourney()
+        ;
+    }
 
-            return false;
-        }
+    /**
+     * Checks if the journey is a valid long distance journey. true if :
+     *       - there is a driver and he has subscribed to a long distance subscription
+     *       - the journey is a long distance journey
+     *       - the origin or the destination is from the reference country
+     *       - the journey has not yet been declared.
+     */
+    public function isCarpoolProofValidLongDistanceJourney(CarpoolProof $carpoolProof): bool
+    {
+        $this->setDriver($carpoolProof->getDriver());
 
-        if (is_null($carpoolProof->getPickUpDriverAddress()) || is_null($carpoolProof->getPickUpPassengerAddress())) {
-            $this->_loggerService->log('For the carpool proof '.$carpoolProof->getId().' one of the 2 carpoolers has not certified the pick-up');
-
-            return false;
-        }
-
-        if (!$this->isFirstValidShortECCJourney()) {
-            return false;
-        }
-
-        $this->_loggerService->log('The carpool proof '.$carpoolProof->getId().' corresponding to the short distance EEC standard');
-
-        return true;
+        return
+            !is_null($this->_driver)
+            && !is_null($this->_driver->getLongDistanceSubscription())
+            && !is_null($carpoolProof->getAsk())
+            && !is_null($carpoolProof->getAsk()->getMatching())
+            && $this->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
+            && $this->isOriginOrDestinationFromFrance($carpoolProof)
+            && !$this->_hasLongDistanceJourneyAlreadyDeclared($carpoolProof)
+        ;
     }
 }
