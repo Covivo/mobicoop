@@ -53,7 +53,6 @@ use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
-use App\Incentive\Service\Checker\JourneyChecker;
 use App\Incentive\Service\Validation\JourneyValidation;
 use App\Rdex\Entity\RdexError;
 use App\Solidary\Repository\SubjectRepository;
@@ -661,7 +660,7 @@ class AdManager
         $ad->setId($outwardProposal->getId());
         $ad->setExternalId($outwardProposal->getExternalId());
 
-        if ($this->_journeyValidation->isPublishedJourneyValidLongECCJourney($outwardProposal)) {
+        if (!$outwardProposal->isPrivate() && $this->_journeyValidation->isPublishedJourneyValidLongECCJourney($outwardProposal)) {
             $event = new FirstLongDistanceJourneyPublishedEvent($outwardProposal);
             $this->eventDispatcher->dispatch(FirstLongDistanceJourneyPublishedEvent::NAME, $event);
         }
