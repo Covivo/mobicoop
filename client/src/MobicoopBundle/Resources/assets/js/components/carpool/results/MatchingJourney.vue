@@ -255,7 +255,7 @@
                           v-if="
                             step == 3 &&
                               (outwardTrip.length > 0 ||
-                              returnTrip.length > 0) &&
+                                returnTrip.length > 0) &&
                               lResult.pendingAsk == false &&
                               lResult.acceptedAsk == false &&
                               lResult.initiatedAsk == false

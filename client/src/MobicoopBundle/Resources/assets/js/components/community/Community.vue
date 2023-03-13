@@ -382,6 +382,7 @@
   </div>
 </template>
 <script>
+import { merge } from "lodash";
 import maxios from "@utils/maxios";
 import {
   messages_en,
@@ -389,6 +390,12 @@ import {
   messages_eu,
   messages_nl
 } from "@translations/components/community/Community/";
+import {
+  messages_client_en,
+  messages_client_fr,
+  messages_client_eu,
+  messages_client_nl
+} from "@clientTranslations/components/community/Community/";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
@@ -396,6 +403,11 @@ import LoginOrRegisterFirst from "@components/utilities/LoginOrRegisterFirst";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap/MMap";
 import L, { LatLng } from "leaflet";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   components: {
@@ -408,10 +420,10 @@ export default {
   },
   i18n: {
     messages: {
-      en: messages_en,
-      nl: messages_nl,
-      fr: messages_fr,
-      eu: messages_eu
+      'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   props: {
