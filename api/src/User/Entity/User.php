@@ -571,7 +571,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "ADMIN_get"={
  *              "path"="/admin/users/{id}",
  *              "method"="GET",
- *              "normalization_context"={"groups"={"aRead"}},
+ *              "normalization_context"={"groups"={"aRead"}, "skip_null_values"=false},
  *              "security"="is_granted('admin_user_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
