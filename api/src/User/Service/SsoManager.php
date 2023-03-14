@@ -176,7 +176,7 @@ class SsoManager
                 $service['baseUri'],
                 $service['clientId'],
                 $service['clientSecret'],
-                !is_null($redirectUri) ? $redirectUri : (isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL),
+                !is_null($redirectUri) && !empty(trim($redirectUri)) ? $redirectUri : (isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL),
                 $service['autoCreateAccount'],
                 $service['logOutRedirectUri'],
                 $service['codeVerifier'],
