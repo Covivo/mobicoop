@@ -287,7 +287,7 @@ class UserRepository
     public function findBeforeLastActivityDate(\DateTime $lastActivityDate): ?array
     {
         $dateCondition = '
-            (u.lastActivityDate is not null u.lastActivityDate <= :lastActivityDateUp)
+            (u.lastActivityDate is not null and u.lastActivityDate <= :lastActivityDateUp)
             OR
             (u.lastActivityDate is null and u.createdDate <= :lastActivityDateUp)
         ';
