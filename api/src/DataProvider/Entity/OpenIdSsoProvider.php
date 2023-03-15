@@ -78,18 +78,6 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
             self::LOGOUT_URL => '',
         ],
-        self::SSO_PROVIDER_MOBCONNECTAUTH => [
-            self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=offline_access&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge={CODE_CHALLENGE}&kc_idp_hint=franceconnect-particulier',
-            self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
-            self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/mcm/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
-        ],
-        self::SSO_PROVIDER_MOBCONNECTAUTH => [
-            self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=offline_access&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge={CODE_CHALLENGE}&kc_idp_hint=franceconnect-particulier',
-            self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
-            self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/mcm/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
-        ],
         self::SSO_PROVIDER_MOBCONNECTBASIC => [
             self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge={CODE_CHALLENGE}',
             self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
