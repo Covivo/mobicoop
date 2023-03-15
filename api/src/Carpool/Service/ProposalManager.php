@@ -209,6 +209,7 @@ class ProposalManager
             // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
             $this->entityManager->flush();
+
             $this->logger->info('ProposalManager : end persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         }
 
