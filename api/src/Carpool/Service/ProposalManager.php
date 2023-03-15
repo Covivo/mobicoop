@@ -204,6 +204,14 @@ class ProposalManager
         // we have the directions, we can compute the lacking prices
         $proposal = $this->setPrices($proposal);
 
+        if ($persist) {
+            $this->logger->info('ProposalManager : start persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // TODO : here we should remove the previously matched proposal if they already exist
+            $this->entityManager->persist($proposal);
+            $this->entityManager->flush();
+            $this->logger->info('ProposalManager : end persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        }
+
         // matching analyze
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
 
@@ -242,9 +250,9 @@ class ProposalManager
     }
 
     /**
-     * @throws \Exception
-     *
      * @return Response
+     *
+     * @throws \Exception
      */
     public function deleteProposal(Proposal $proposal, ?array $body = null)
     {
@@ -287,7 +295,7 @@ class ProposalManager
                         $event = new AskAdDeletedEvent($ask, $deleter->getId());
                         $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
-                    // Ask user is passenger
+                // Ask user is passenger
                 } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
                     // TO DO check if the deletion is just before 24h and in that case send an other email
                     // /** @var Criteria $criteria */
