@@ -45,7 +45,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A solidary record.
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -158,6 +160,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *      }
  * )
+ *
  * @ApiFilter(
  *      SearchFilter::class,
  *      properties={
@@ -297,8 +300,11 @@ class Solidary
      * @var int the id of this solidary record
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"aReadItem","aReadCol","aReadCreated","readSolidary","writeSolidary","readSolidarySearch"})
      */
     private $id;
@@ -307,7 +313,9 @@ class Solidary
      * @var int status of the record (0 = asked; 1 = refused; 2 = pending, 3 = looking for solution; 4 = follow up; 5 = closed, 6 = closed for update)
      *
      * @Assert\NotBlank(groups={"writeSolidary"})
+     *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $status;
@@ -316,6 +324,7 @@ class Solidary
      * @var int original frequency of the proposal (a punctual proposal could be transformed to a regular proposal in case of a flexible demand)
      *
      * @ORM\Column(type="smallint", nullable=true)
+     *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $frequency;
@@ -324,6 +333,7 @@ class Solidary
      * @var string detail for regular ask
      *
      * @ORM\Column(type="string", nullable=true, length=255)
+     *
      * @Groups({"readSolidary"})
      */
     private $regularDetail;
@@ -332,6 +342,7 @@ class Solidary
      * @var \DateTimeInterface deadline date of the solidary record
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $deadlineDate;
@@ -340,8 +351,11 @@ class Solidary
      * @var null|Solidary original solidary record if updated solidary record
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Solidary", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups("aRead")
+     *
      * @MaxDepth(1)
      */
     private $solidary;
@@ -350,6 +364,7 @@ class Solidary
      * @var \DateTimeInterface creation date of the solidary record
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"readSolidary"})
      */
     private $createdDate;
@@ -358,6 +373,7 @@ class Solidary
      * @var \DateTimeInterface updated date of the solidary record
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readSolidary"})
      */
     private $updatedDate;
@@ -367,6 +383,7 @@ class Solidary
      *                           Ordered desc to get the last entry first.
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="solidary")
+     *
      * @ORM\OrderBy({"id" = "DESC"})
      */
     private $diaries;
@@ -375,8 +392,11 @@ class Solidary
      * @var SolidaryUserStructure the SolidaryUserStructure related with the solidary record
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"writeSolidary", "readSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidaryUserStructure;
@@ -387,8 +407,11 @@ class Solidary
      *               The proposal will then be set a short time after the solidary record is created.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"writeSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $proposal;
@@ -397,8 +420,11 @@ class Solidary
      * @var Subject subject of the solidary record
      *
      * @Assert\NotBlank(groups={"writeSolidary"})
+     *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries", cascade={"persist"})
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"aRead","readSolidary","writeSolidary"})
      */
     private $subject;
@@ -407,7 +433,9 @@ class Solidary
      * @var null|ArrayCollection the special needs for this solidary record
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist"})
+     *
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $needs;
@@ -416,8 +444,11 @@ class Solidary
      * @var null|ArrayCollection solidary solutions
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary")
+     *
      * @Groups({"writeSolidary"})
+     *
      * @MaxDepth(1)
+     *
      * @ApiSubresource(maxDepth=1)
      */
     private $solidarySolutions;
@@ -426,7 +457,9 @@ class Solidary
      * @var null|ArrayCollection solidary matchings
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary")
+     *
      * @Groups({"writeSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidaryMatchings;
@@ -435,6 +468,7 @@ class Solidary
      * @var int punctual outward date choice
      *
      * @ORM\Column(type="smallint", nullable=true)
+     *
      * @Groups("aReadItem")
      */
     private $punctualOutwardDateChoice;
@@ -443,6 +477,7 @@ class Solidary
      * @var int punctual outward time choice
      *
      * @ORM\Column(type="smallint", nullable=true)
+     *
      * @Groups("aReadItem")
      */
     private $punctualOutwardTimeChoice;
@@ -451,6 +486,7 @@ class Solidary
      * @var int punctual return date choice
      *
      * @ORM\Column(type="smallint", nullable=true)
+     *
      * @Groups("aReadItem")
      */
     private $punctualReturnDateChoice;
@@ -459,6 +495,7 @@ class Solidary
      * @var int regular date choice
      *
      * @ORM\Column(type="smallint", nullable=true)
+     *
      * @Groups("aReadItem")
      */
     private $regularDateChoice;
@@ -467,61 +504,72 @@ class Solidary
      * @var float Progression of this solidary
      *
      * @ORM\Column(type="decimal", precision=6, scale=2)
+     *
      * @Groups({"aReadCol","aReadItem","readSolidary", "writeSolidary"})
      */
     private $progression;
 
     /**
      * @var array List of the Asks of this solidary (special route)
+     *
      * @Groups({"asksList","writeSolidary", "readSolidary"})
      */
     private $asksList;
 
     /**
      * @var SolidaryUser SolidaryUser associated to the ask
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidaryUser;
 
     /**
      * @var null|array Address of the user who create the solidary demand
+     *
      * @Groups ({"writeSolidary"})
      */
     private $homeAddress;
 
     /**
      * @var null|array Origin address of the solidary
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $origin;
 
     /**
      * @var null|array Destination address of the solidary
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $destination;
 
     /**
      * @var \DateTimeInterface outward date and time of the solidary demand PUNCTUAL (and only DATE for REGULAR)
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $outwardDatetime;
 
     /**
      * @var null|\DateTimeInterface outward deadline date and time of the solidary demand
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $outwardDeadlineDatetime;
 
     /**
      * @var null|\DateTimeInterface return date and time of the solidary demand PUNCTUAL (and only DATE for REGULAR)
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnDatetime;
 
     /**
      * @var null|\DateTimeInterface Return deadline date and time of the solidary demand
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnDeadlineDatetime;
@@ -535,78 +583,91 @@ class Solidary
 
     /**
      * @var null|string Email of the user who ask for the solidary demand
+     *
      * @Groups ({"writeSolidary"})
      */
     private $email;
 
     /**
      * @var null|string Password of the user who ask for the solidary demand
+     *
      * @Groups ({"writeSolidary"})
      */
     private $password;
 
     /**
      * @var null|string Telephone of the user who ask for the solidary demand
+     *
      * @Groups ({"writeSolidary"})
      */
     private $telephone;
 
     /**
      * @var null|string familyname of the user who ask for the solidary demand
+     *
      * @Groups ({"writeSolidary"})
      */
     private $familyName;
 
     /**
      * @var null|string given name of the user who ask for the solidary demand
+     *
      * @Groups ({"writeSolidary"})
      */
     private $givenName;
 
     /**
      * @var null|int Gender of the user who ask for the solidary demand (1=female, 2=male, 3=nc)
+     *
      * @Groups ({"writeSolidary"})
      */
     private $gender;
 
     /**
      * @var null|\DateTimeInterface Birthdate of the user who ask for the solidary demand
+     *
      * @Groups ({"writeSolidary"})
      */
     private $birthDate;
 
     /**
      * @var null|array proofs needed for the solidary demand
+     *
      * @Groups ({"writeSolidary"})
      */
     private $proofs;
 
     /**
      * @var null|string structure of the solidary demand
+     *
      * @Groups ({"writeSolidary"})
      */
     private $structure;
 
     /**
      * @var null|array Days for the solidary if it's regular
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $days;
 
     /**
      * @var null|array Outward times for the solidary if it's regular
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $outwardTimes;
 
     /**
      * @var null|array Return times for the solidary if it's regular
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnTimes;
 
     /**
      * @var null|int margin time of the solidary demand
+     *
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $marginDuration;
@@ -648,6 +709,7 @@ class Solidary
 
     /**
      * @var null|array Solutions associated to this demand
+     *
      * @Groups ({"readSolidary"})
      */
     private $solutions;
@@ -661,102 +723,119 @@ class Solidary
 
     /**
      * @var null|int Solidary id of the child solidary record
+     *
      * @Groups("aReadItem")
      */
     private $adminsolidaryChildId;
 
     /**
      * @var null|string Given name of the operator
+     *
      * @Groups("aReadItem")
      */
     private $adminoperatorGivenName;
 
     /**
      * @var null|string Family name of the operator
+     *
      * @Groups("aReadItem")
      */
     private $adminoperatorFamilyName;
 
     /**
      * @var null|string Avatar of the operator
+     *
      * @Groups("aReadItem")
      */
     private $adminoperatorAvatar;
 
     /**
-     * @var DateTime Outward time for the solidary record, if punctual
+     * @var \DateTime Outward time for the solidary record, if punctual
+     *
      * @Groups("aReadItem")
      */
     private $adminoutwardTime;
 
     /**
-     * @var null|DateTime Return time for the solidary record, if punctual
+     * @var null|\DateTime Return time for the solidary record, if punctual
+     *
      * @Groups("aReadItem")
      */
     private $adminreturnTime;
 
     /**
-     * @var DateTime Outward min time for the solidary record, if flexible
+     * @var \DateTime Outward min time for the solidary record, if flexible
+     *
      * @Groups("aReadItem")
      */
     private $adminoutwardMinTime;
 
     /**
-     * @var DateTime Outward max time for the solidary record, if flexible
+     * @var \DateTime Outward max time for the solidary record, if flexible
+     *
      * @Groups("aReadItem")
      */
     private $adminoutwardMaxTime;
 
     /**
-     * @var DateTime Return min time for the solidary record, if flexible
+     * @var \DateTime Return min time for the solidary record, if flexible
+     *
      * @Groups("aReadItem")
      */
     private $adminreturnMinTime;
 
     /**
-     * @var DateTime Return max time for the solidary record, if flexible
+     * @var \DateTime Return max time for the solidary record, if flexible
+     *
      * @Groups("aReadItem")
      */
     private $adminreturnMaxTime;
 
     /**
      * @var array Regular schedule for the solidary record
+     *
      * @Groups("aReadItem")
      */
     private $adminschedules;
 
     /**
      * @var array Diary entries for the solidary record
+     *
      * @Groups("aReadItem")
      */
     private $admindiary;
 
     /**
      * @var array Carpools for the solidary record
+     *
      * @Groups("aReadItem")
      */
     private $admincarpools;
 
     /**
      * @var array Transporters for the solidary record
+     *
      * @Groups("aReadItem")
      */
     private $admintransporters;
 
     /**
      * @var array Solutions for the solidary record
+     *
      * @Groups("aReadItem")
      */
     private $adminsolutions;
 
     /**
      * @var array Proofs for the solidary record
+     *
      * @Groups("aReadItem")
      */
     private $adminproofs;
 
     /**
      * @var float Distance of the solidary in km
+     *
      * @Groups("aReadItem")
      */
     private $distance;
@@ -1444,6 +1523,7 @@ class Solidary
 
     /**
      * @var null|int Solidary id of the parent solidary record
+     *
      * @Groups("aReadItem")
      */
     public function getAdminsolidaryId(): ?int
@@ -1465,6 +1545,7 @@ class Solidary
 
     /**
      * @var null|string Subject of the solidary record
+     *
      * @Groups({"aReadCol", "aReadItem"})
      */
     public function getAdminsubject(): ?string
@@ -1474,6 +1555,7 @@ class Solidary
 
     /**
      * @var null|int Subject id of the solidary record
+     *
      * @Groups("aReadItem")
      */
     public function getAdminsubjectId(): ?int
@@ -1483,78 +1565,119 @@ class Solidary
 
     /**
      * @var null|int Id of the beneficiary
+     *
      * @Groups({"aReadCol", "aReadItem"})
      */
-    public function getAdminuserId(): int
+    public function getAdminuserId(): ?int
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getId();
+        if (!is_null($this->getSolidaryUserStructure()->getSolidaryUser()->getUser())) {
+            return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getId();
+        }
+
+        return null;
     }
 
     /**
      * @var null|string Given name of the beneficiary
+     *
      * @Groups({"aReadCol", "aReadItem"})
      */
     public function getAdmingivenName(): ?string
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getGivenName();
+        if (!is_null($this->getSolidaryUserStructure()->getSolidaryUser()->getUser())) {
+            return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getGivenName();
+        }
+
+        return null;
     }
 
     /**
      * @var null|string Family name of the beneficiary
+     *
      * @Groups({"aReadCol", "aReadItem"})
      */
     public function getAdminfamilyName(): ?string
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getFamilyName();
+        if (!is_null($this->getSolidaryUserStructure()->getSolidaryUser()->getUser())) {
+            return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getFamilyName();
+        }
+
+        return null;
     }
 
     /**
      * @var null|string Email of the beneficiary
+     *
      * @Groups("aReadItem")
      */
     public function getAdminemail(): ?string
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getEmail();
+        if (!is_null($this->getSolidaryUserStructure()->getSolidaryUser()->getUser())) {
+            return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getEmail();
+        }
+
+        return null;
     }
 
     /**
      * @var null|string Avatar of the beneficiary
+     *
      * @Groups("aReadItem")
      */
     public function getAdminavatar(): ?string
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getAvatar();
+        if (!is_null($this->getSolidaryUserStructure()->getSolidaryUser()->getUser())) {
+            return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getAvatar();
+        }
+
+        return null;
     }
 
     /**
      * @var null|int Gender of the beneficiary
+     *
      * @Groups("aReadItem")
      */
     public function getAdmingender(): ?int
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getGender();
+        if (!is_null($this->getSolidaryUserStructure()->getSolidaryUser()->getUser())) {
+            return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getGender();
+        }
+
+        return null;
     }
 
     /**
      * @var null|DateTimeInterface Birthdate of the beneficiary
+     *
      * @Groups("aReadItem")
      */
     public function getAdminbirthDate(): ?\DateTimeInterface
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getBirthDate();
+        if (!is_null($this->getSolidaryUserStructure()->getSolidaryUser()->getUser())) {
+            return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getBirthDate();
+        }
+
+        return null;
     }
 
     /**
      * @var null|bool News subscription for the beneficiary
+     *
      * @Groups("aReadItem")
      */
     public function hasAdminnewsSubscription(): bool
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->hasNewsSubscription() ? true : false;
+        if (!is_null($this->getSolidaryUserStructure()->getSolidaryUser()->getUser())) {
+            return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->hasNewsSubscription() ? true : false;
+        }
+
+        return null;
     }
 
     /**
      * @var null|array Home address of the beneficiary
+     *
      * @Groups("aReadItem")
      */
     public function getAdminhomeAddress(): ?array
@@ -1600,15 +1723,21 @@ class Solidary
 
     /**
      * @var null|string Telephone of the beneficiary
+     *
      * @Groups({"aReadCol", "aReadItem"})
      */
     public function getAdmintelephone(): ?string
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getTelephone();
+        if (!is_null($this->getSolidaryUserStructure()->getSolidaryUser()->getUser())) {
+            return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getTelephone();
+        }
+
+        return null;
     }
 
     /**
      * @var null|string Structure of the solidary record
+     *
      * @Groups("aReadItem")
      */
     public function getAdminstructure(): ?string
@@ -1618,6 +1747,7 @@ class Solidary
 
     /**
      * @var null|string Structure id of the solidary record
+     *
      * @Groups("aReadItem")
      */
     public function getAdminstructureId(): ?int
@@ -1627,6 +1757,7 @@ class Solidary
 
     /**
      * @var int Mode of the solidary record
+     *
      * @Groups("aReadItem")
      */
     public function getAdminmode(): int
@@ -1636,6 +1767,7 @@ class Solidary
 
     /**
      * @var null|string Last action for the solidary record
+     *
      * @Groups({"aReadCol", "aReadItem"})
      */
     public function getAdminlastAction(): ?string
@@ -1644,16 +1776,18 @@ class Solidary
     }
 
     /**
-     * @var null|DateTime Last action date for the solidary record
+     * @var null|\DateTime Last action date for the solidary record
+     *
      * @Groups({"aReadCol", "aReadItem"})
      */
-    public function getAdminlastActionDate(): ?DateTime
+    public function getAdminlastActionDate(): ?\DateTime
     {
         return count($this->getDiaries()) > 0 ? $this->getDiaries()[0]->getCreatedDate() : null;
     }
 
     /**
      * @var null|Address Origin for the solidary record
+     *
      * @Groups({"aReadCol", "aReadItem"})
      */
     public function getAdminorigin(): ?Address
@@ -1663,6 +1797,7 @@ class Solidary
 
     /**
      * @var null|Address Destination for the solidary record
+     *
      * @Groups({"aReadCol", "aReadItem"})
      */
     public function getAdmindestination(): ?Address
@@ -1678,6 +1813,7 @@ class Solidary
 
     /**
      * @var string Proposal type for the solidary record
+     *
      * @Groups({"aReadCol","aReadItem"})
      */
     public function getAdminproposalType(): string
@@ -1687,6 +1823,7 @@ class Solidary
 
     /**
      * @var int Original frequency for the solidary record
+     *
      * @Groups("aReadItem")
      */
     public function getAdminfrequency(): int
@@ -1700,107 +1837,111 @@ class Solidary
     }
 
     /**
-     * @var DateTime Start date for the solidary record
+     * @var \DateTime Start date for the solidary record
+     *
      * @Groups({"aReadItem", "aReadCol"})
      */
-    public function getAdminfromDate(): ?DateTime
+    public function getAdminfromDate(): ?\DateTime
     {
         return $this->getProposal()->getCriteria()->getFromDate();
     }
 
     /**
-     * @var null|DateTime End date for the solidary record
+     * @var null|\DateTime End date for the solidary record
+     *
      * @Groups("aReadItem")
      */
-    public function getAdmintoDate(): ?DateTime
+    public function getAdmintoDate(): ?\DateTime
     {
         return $this->getProposal()->getCriteria()->getToDate();
     }
 
     /**
-     * @var DateTime Outward date for the solidary record, if punctual
+     * @var \DateTime Outward date for the solidary record, if punctual
+     *
      * @Groups("aReadItem")
      */
-    public function getAdminoutwardDate(): ?DateTime
+    public function getAdminoutwardDate(): ?\DateTime
     {
         return $this->getProposal()->getCriteria()->getFromDate();
     }
 
     /**
-     * @var null|DateTime Return date for the solidary record, if punctual
+     * @var null|\DateTime Return date for the solidary record, if punctual
+     *
      * @Groups("aReadItem")
      */
-    public function getAdminreturnDate(): ?DateTime
+    public function getAdminreturnDate(): ?\DateTime
     {
         return $this->getProposal()->getProposalLinked() ? $this->getProposal()->getProposalLinked()->getCriteria()->getFromDate() : null;
     }
 
-    public function getAdminoutwardTime(): ?DateTime
+    public function getAdminoutwardTime(): ?\DateTime
     {
         return $this->adminoutwardTime;
     }
 
-    public function setAdminoutwardTime(DateTime $adminoutwardTime): self
+    public function setAdminoutwardTime(\DateTime $adminoutwardTime): self
     {
         $this->adminoutwardTime = $adminoutwardTime;
 
         return $this;
     }
 
-    public function getAdminreturnTime(): ?DateTime
+    public function getAdminreturnTime(): ?\DateTime
     {
         return $this->adminreturnTime;
     }
 
-    public function setAdminreturnTime(DateTime $adminreturnTime): self
+    public function setAdminreturnTime(\DateTime $adminreturnTime): self
     {
         $this->adminreturnTime = $adminreturnTime;
 
         return $this;
     }
 
-    public function getAdminoutwardMinTime(): ?DateTime
+    public function getAdminoutwardMinTime(): ?\DateTime
     {
         return $this->adminoutwardMinTime;
     }
 
-    public function setAdminoutwardMinTime(DateTime $adminoutwardMinTime): self
+    public function setAdminoutwardMinTime(\DateTime $adminoutwardMinTime): self
     {
         $this->adminoutwardMinTime = $adminoutwardMinTime;
 
         return $this;
     }
 
-    public function getAdminoutwardMaxTime(): ?DateTime
+    public function getAdminoutwardMaxTime(): ?\DateTime
     {
         return $this->adminoutwardMaxTime;
     }
 
-    public function setAdminoutwardMaxTime(DateTime $adminoutwardMaxTime): self
+    public function setAdminoutwardMaxTime(\DateTime $adminoutwardMaxTime): self
     {
         $this->adminoutwardMaxTime = $adminoutwardMaxTime;
 
         return $this;
     }
 
-    public function getAdminreturnMinTime(): ?DateTime
+    public function getAdminreturnMinTime(): ?\DateTime
     {
         return $this->adminreturnMinTime;
     }
 
-    public function setAdminreturnMinTime(DateTime $adminreturnMinTime): self
+    public function setAdminreturnMinTime(\DateTime $adminreturnMinTime): self
     {
         $this->adminreturnMinTime = $adminreturnMinTime;
 
         return $this;
     }
 
-    public function getAdminreturnMaxTime(): ?DateTime
+    public function getAdminreturnMaxTime(): ?\DateTime
     {
         return $this->adminreturnMaxTime;
     }
 
-    public function setAdminreturnMaxTime(DateTime $adminreturnMaxTime): self
+    public function setAdminreturnMaxTime(\DateTime $adminreturnMaxTime): self
     {
         $this->adminreturnMaxTime = $adminreturnMaxTime;
 
@@ -1820,10 +1961,11 @@ class Solidary
     }
 
     /**
-     * @var null|DateTime Creation date for the solidary record
+     * @var null|\DateTime Creation date for the solidary record
+     *
      * @Groups("aReadItem")
      */
-    public function getAdmincreatedDate(): ?DateTime
+    public function getAdmincreatedDate(): ?\DateTime
     {
         return $this->getCreatedDate();
     }
