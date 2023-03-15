@@ -98,8 +98,8 @@ class CsvMaker
     {
         $this->_logger->info('makeCsvFileFromMultipleQuery : '.$file);
 
-        include self::PATH_TO_QUERIES.'/'.$file.'.'.self::MULTI_QUERY_FILE_EXTENTION;
-        $this->_executeMultipleQuery($multipleQueries);
+        $query = new $file();
+        $this->_executeMultipleQuery($query->getMultipleQueries());
         $this->_writeResults($file);
     }
 
