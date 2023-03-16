@@ -1,0 +1,171 @@
+<?php
+
+/**
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ */
+
+namespace App\Carpool\Entity\MobicoopMatcher;
+
+class Search implements \JsonSerializable
+{
+    public const DEFAULT_SEATS_PASSENGER = 1;
+    public const DEFAULT_SEATS_DRIVER = 3;
+
+    /**
+     * @var Waypoint[]
+     */
+    private $waypoints;
+
+    /**
+     * @var null|string
+     */
+    private $departure;
+
+    /**
+     * @var null|string
+     */
+    private $from_date;
+
+    /**
+     * @var null|bool
+     */
+    private $driver;
+
+    /**
+     * @var null|bool
+     */
+    private $passenger;
+
+    /**
+     * @var null|int
+     */
+    private $seatsPassenger;
+
+    /**
+     * @var null|int
+     */
+    private $seatsDriver;
+
+    public function __construct()
+    {
+        $this->driver = false;
+        $this->passenger = false;
+        $this->seatsDriver = self::DEFAULT_SEATS_DRIVER;
+        $this->seatsPassenger = self::DEFAULT_SEATS_PASSENGER;
+    }
+
+    public function setWaypoints(?array $waypoints)
+    {
+        $this->waypoints = $waypoints;
+
+        return $this;
+    }
+
+    public function getWaypoints(): ?array
+    {
+        return $this->waypoints;
+    }
+
+    public function setDeparture(?string $departure)
+    {
+        $this->departure = $departure;
+
+        return $this;
+    }
+
+    public function getDeparture(): ?string
+    {
+        return $this->departure;
+    }
+
+    public function setFromDate(?string $fromDate)
+    {
+        $this->from_date = $fromDate;
+
+        return $this;
+    }
+
+    public function getFromDate(): ?string
+    {
+        return $this->from_date;
+    }
+
+    public function setDriver(?bool $driver)
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    public function isDriver(): ?bool
+    {
+        return $this->driver;
+    }
+
+    public function setPassenger(?bool $passenger)
+    {
+        $this->passenger = $passenger;
+
+        return $this;
+    }
+
+    public function isPassenger(): ?bool
+    {
+        return $this->passenger;
+    }
+
+    public function setSeatsDriver(?int $seatsDriver)
+    {
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsDriver(): ?int
+    {
+        return $this->seatsDriver;
+    }
+
+    public function setSeatsPassenger(?int $seatsPassenger)
+    {
+        $this->seatsPassenger = $seatsPassenger;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'waypoints' => $this->getWaypoints(),
+                'departure' => $this->getDeparture(),
+                'from_date' => $this->getFromDate(),
+                'driver' => $this->isDriver(),
+                'passenger' => $this->isPassenger(),
+                'seats_driver' => $this->getSeatsDriver(),
+                'seats_passenger' => $this->getSeatsPassenger(),
+            ];
+    }
+}

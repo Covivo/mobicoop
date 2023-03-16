@@ -40,6 +40,7 @@ use App\Carpool\Repository\CriteriaRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
 use App\Communication\Service\InternalMessageManager;
+use App\DataProvider\Entity\MobicoopMatcherProvider;
 use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
@@ -92,6 +93,7 @@ class ProposalManager
     private $actionRepository;
     private $mobicoopGeocoderPointProvider;
     private $geoTools;
+    private $mobicoopMatcherProvider;
 
     /**
      * Constructor.
@@ -112,6 +114,7 @@ class ProposalManager
         ActionRepository $actionRepository,
         MobicoopGeocoder $mobicoopGeocoder,
         GeoTools $geoTools,
+        MobicoopMatcherProvider $mobicoopMatcherProvider,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -131,6 +134,7 @@ class ProposalManager
         $this->actionRepository = $actionRepository;
         $this->mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
         $this->geoTools = $geoTools;
+        $this->mobicoopMatcherProvider = $mobicoopMatcherProvider;
     }
 
     /**
@@ -206,7 +210,6 @@ class ProposalManager
 
         if ($persist) {
             $this->logger->info('ProposalManager : start persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-            // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
             $this->entityManager->flush();
 

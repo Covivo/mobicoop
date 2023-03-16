@@ -316,10 +316,10 @@ services:
       $provider: "%env(string:CARPOOL_STANDARD_PROVIDER)%"
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
       $baseUri: "%env(string:CARPOOL_STANDARD_BASE_URI)%"
-  App\Communication\EventSubscriber\BookingSubscriber:    
+  App\Communication\EventSubscriber\BookingSubscriber:
     arguments:
       $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"
-  App\CarpoolStandard\Service\CarpoolStandardManager:    
+  App\CarpoolStandard\Service\CarpoolStandardManager:
     arguments:
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
 
@@ -774,7 +774,7 @@ services:
       $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
-  
+
   App\Incentive\Service\Manager\AuthManager:
     arguments:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
@@ -920,6 +920,14 @@ services:
         roundTripCompute: "%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%"
     tags:
       - { name: monolog.logger, channel: mass }
+
+  App\DataProvider\Entity\MobicoopMatcherProvider:
+    arguments:
+      $uri: "%env(string:MATCHER_URI)%"
+      $username: "%env(string:MATCHER_USERNAME)%"
+      $password: "%env(string:MATCHER_PASSWORD)%"
+    tags:
+      - { name: monolog.logger, channel: matcherV3 }
 
   # Payment
   App\Payment\Controller\:
