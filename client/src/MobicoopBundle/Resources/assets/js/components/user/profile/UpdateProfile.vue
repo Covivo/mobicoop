@@ -502,6 +502,7 @@
       id="cee-incentive"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+      :is-after-eec-subscription="isAfterEecSubscription"
       @changeTab="changeTab"
     />
 
@@ -732,6 +733,10 @@ export default {
     ceeDisplay: {
       type: Boolean,
       default: true
+    },
+    isAfterEecSubscription: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
