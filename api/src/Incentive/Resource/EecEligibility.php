@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={
  *          "get"={
  *              "method"="get",
- *              "path"="/is_eec_eligible",
+ *              "path"="/my_eec_eligibility",
  *              "swagger_context" = {
  *                  "tags"={"Subscription"}
  *              }
