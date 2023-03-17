@@ -85,6 +85,7 @@ use Mobicoop\Bundle\MobicoopBundle\Territory\Entity\Territory;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\CeeSubscription;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\EecEligibility;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
@@ -360,6 +361,9 @@ class Deserializer
 
             case CeeSubscription::class:
                 return $this->deserializeCeeSubscripton($data);
+
+            case EecEligibility::class:
+                return $this->deserializeEecEligibility($data);
 
             default:
                 break;
@@ -1202,6 +1206,13 @@ class Deserializer
         $ceeSubscription = new CeeSubscription();
 
         return $this->autoset($ceeSubscription, $data);
+    }
+
+    private function deserializeEecEligibility($data)
+    {
+        $eecEligibility = new EecEligibility();
+
+        return $this->autoset($eecEligibility, $data);
     }
 
     private function autoSet($object, $data)

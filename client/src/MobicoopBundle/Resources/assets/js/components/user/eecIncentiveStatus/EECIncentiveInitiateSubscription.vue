@@ -61,6 +61,15 @@
             :value="i"
           />
         </p>
+        <v-alert
+          v-if="alert.text"
+          border="right"
+          colored-border
+          type="warning"
+          elevation="1"
+        >
+          <span v-html="alert.text" />
+        </v-alert>
         <SsoLogins
           class="mt-5"
           :specific-service="$t('service')"
@@ -104,6 +113,7 @@
 
 <script>
 import { merge } from "lodash";
+import maxios from "@utils/maxios";
 import SsoLogins from '@components/user/SsoLogins';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
@@ -147,13 +157,16 @@ export default {
         this.$t('item4', {eecProvider: this.$t('EEC-provider')}),
         this.$t('item5', {eecProvider: this.$t('EEC-provider')})
       ],
-
-
+      eligibility: null,
+      loading: false,
+      alert: {
+        text: null
+      }
     }
   },
   computed:{
     canSubscribe(){
-      return this.confirmedPhoneNumber && this.drivingLicenceNumberFilled && this.checkboxesAllChecked;
+      return this.confirmedPhoneNumber && this.drivingLicenceNumberFilled && this.checkboxesAllChecked && (this.eligibility.longDistanceEligibility || this.shortDistanceEligibility);
     }
   },
   watch:{
@@ -167,6 +180,9 @@ export default {
       this.updateStore(this.canSubscribe);
     }
   },
+  mounted() {
+    this.verifyEECSubscriptionEligibility();
+  },
   methods:{
     updateStore(status){
       this.$store.commit('sso/setSsoButtonsActiveStatus', {
@@ -174,6 +190,34 @@ export default {
         status: status
       });
       this.$store.commit('sso/setRefreshActiveButtons', true);
+    },
+    verifyEECSubscriptionEligibility() {
+      this.loading = true;
+      maxios.get(this.$t("routes.getMyEecEligibility"))
+        .then(res => {
+          this.eligibility = res.data;
+          this.loading = false;
+
+          switch (true) {
+          case !this.eligibility.longDistanceEligibility && !this.eligibility.shortDistanceEligibility:
+            this.alert.text = this.$t('EEC-eligibility.alert.ineligibility');
+
+            break;
+
+          case !this.eligibility.longDistanceEligibility:
+            this.alert.text = this.$t('EEC-eligibility.alert.longDistance-ineligibility-text');
+
+            break;
+
+          case !this.eligibility.shortDistanceEligibility:
+            this.alert.text = this.$t('EEC-eligibility.alert.shortDistance-ineligibility-text');
+
+            break;
+          }
+        })
+        .catch(function (error) {
+
+        });
     }
   },
 };

@@ -22,7 +22,8 @@
   "service": "mobConnect",
   "specificPath": "user/sso",
   "routes": {
-    "getMyCeeSubscriptions": "/getMyCeeSubscriptions"
+    "getMyCeeSubscriptions": "/getMyCeeSubscriptions",
+    "getMyEecEligibility": "/getMyEecEligibility"
   },
   "additional": {
     "subtitle": "Informations complémentaires",
@@ -61,5 +62,12 @@
   "EEC-provider": "Esso SAF",
   "EEC-provider-siren": "Esso SAF (SIREN: 542 010 053)",
   "EEC-platform": "Rezo Mobicoop",
-  "EEC-form": "prime-covoiturage"
+  "EEC-form": "prime-covoiturage",
+  "EEC-eligibility": {
+    "alert": {
+      "ineligibility-text": "Vous avez déjà réalisé des trajets courte et longue distance.<br><span class='warning--text font-weight-bold'>Vous ne pouvez pas souscrire aux offres de mobilité.</span>",
+      "longDistance-ineligibility-text": "Vous avez déjà réalisé des trajets longue distance depuis le 1<sup>er</sup> janvier 2023.<br><span class='warning--text font-weight-bold'>Vous ne pourrez souscrire à l'offre correspondante.</span>",
+      "shortDistance-ineligibility-text": "Vous avez déjà réalisé des trajets courte distance depuis le 1<sup>er</sup> janvier 2023.<br><span class='warning--text font-weight-bold'>Vous ne pourrez souscrire à l'offre correspondante.</span>"
+    }
+  }
 }
