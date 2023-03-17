@@ -43,7 +43,7 @@ final class AdPostDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
-        return $this->adManager->createAd($data, true, false, true, false, Ad::MATCHING_ALGORITHM_V3);
+        return $this->adManager->createAd($data, true, false, true, false, Ad::MATCHING_ALGORITHM_V2);
     }
 
     public function remove($data, array $context = [])
