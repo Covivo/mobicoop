@@ -28,6 +28,7 @@ namespace App\Command\Command;
 use App\Carpool\Repository\ProposalRepository;
 use App\DataProvider\Entity\MobicoopMatcherProvider;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -47,15 +48,14 @@ class TestMatcherV3Command extends Command
     {
         $this
             ->setName('app:commands:testMatcherV3')
+            ->addArgument('proposalId', InputArgument::REQUIRED, 'The id of the search/ad proposal')
             ->setDescription('Test matcher V3')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $proposalId = 162;
-
-        $this->mobicoopMatcherProvider->match($this->proposalRepository->find($proposalId));
+        $this->mobicoopMatcherProvider->match($this->proposalRepository->find((int) $input->getArgument('proposalId')));
 
         return 0;
     }
