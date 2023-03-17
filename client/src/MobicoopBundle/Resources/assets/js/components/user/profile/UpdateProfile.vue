@@ -504,6 +504,7 @@
       id="cee-incentive"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+      :api-uri="apiUri"
       @changeTab="changeTab"
     />
 
@@ -734,6 +735,10 @@ export default {
     ceeDisplay: {
       type: Boolean,
       default: true
+    },
+    apiUri: {
+      type: String,
+      default: null
     }
   },
   data() {

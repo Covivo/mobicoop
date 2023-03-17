@@ -134,8 +134,8 @@
         </v-card-title>
         <v-card-text>
           <ul class="mt-5">
-            <li v-html="$t('dialogs.tutorial.item-1')" />
-            <li v-html="$t('dialogs.tutorial.item-2')" />
+            <li v-html="$t('dialogs.tutorial.item-1', {apiUri: apiUri})" />
+            <li v-html="$t('dialogs.tutorial.item-2', {apiUri: apiUri})" />
           </ul>
         </v-card-text>
 
@@ -188,6 +188,10 @@ export default {
     drivingLicenceNumberFilled:{
       type: Boolean,
       default: false
+    },
+    apiUri: {
+      type: String,
+      default: null
     }
   },
   data() {

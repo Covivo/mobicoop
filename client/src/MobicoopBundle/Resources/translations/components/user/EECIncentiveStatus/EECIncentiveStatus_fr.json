@@ -65,8 +65,8 @@
   "dialogs": {
     "tutorial": {
       "title": "Où trouver votre numéro de permis ou code NPEH ?",
-      "item-1": "<p>Sur le <span class='font-weight-bold'>nouveau permis</span> au format carte bancaire européen, le numéro de dossier se trouve au verso (au dos de la carte) en haut à gauche au dessus de la puce sur 2 lignes horizontales.</p><p><img src='http://localhost:8080/upload/eec-incentives/images/driving-licence-number-tutorial/new-permis.png'/></p>",
-      "item-2": "<p>Sur le <span class='font-weight-bold'>permis ancien format</span>, le numéro de permis se trouve à l'intérieur sur le premier volet, en dessous de la date d'obtention de votre permis de conduire.</p><p><img src='http://localhost:8080/upload/eec-incentives/images/driving-licence-number-tutorial/old-permis.png'/></p>",
+      "item-1": "<p>Sur le <span class='font-weight-bold'>nouveau permis</span> au format carte bancaire européen, le numéro de dossier se trouve au verso (au dos de la carte) en haut à gauche au dessus de la puce sur 2 lignes horizontales.</p><p><img src='{apiUri}upload/eec-incentives/images/driving-licence-number-tutorial/new-permis.png'/></p>",
+      "item-2": "<p>Sur le <span class='font-weight-bold'>permis ancien format</span>, le numéro de permis se trouve à l'intérieur sur le premier volet, en dessous de la date d'obtention de votre permis de conduire.</p><p><img src='{apiUri}upload/eec-incentives/images/driving-licence-number-tutorial/old-permis.png'/></p>",
       "close-btn": {
         "text": "Fermer"
       }

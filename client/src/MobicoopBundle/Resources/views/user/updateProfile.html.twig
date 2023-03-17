@@ -9,6 +9,7 @@
 {% block main %}
 
 	<Profile
+      api-uri="{{ app.request.server.get('API_URI') }}"
 	  geo-search-url="{{ geoCompleteUri }}"
       :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
       :geo-complete-palette="{{geoCompletePalette|json_encode}}"
