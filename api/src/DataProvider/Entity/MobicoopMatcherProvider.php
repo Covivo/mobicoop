@@ -86,7 +86,7 @@ class MobicoopMatcherProvider
         $this->_logger->error(MobicoopMatcherDataProviderException::GET_ERROR.' '.$route);
         $this->_logger->error($response->getCode());
         $this->_logger->error($response->getValue());
-        $this->_logger->error($body);
+        $this->_logger->error('Request Body : '.$body);
 
         throw new MobicoopMatcherDataProviderException(MobicoopMatcherDataProviderException::GET_ERROR.' '.$route);
     }

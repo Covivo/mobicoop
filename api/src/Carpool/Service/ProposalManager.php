@@ -216,6 +216,11 @@ class ProposalManager
             $this->logger->info('ProposalManager : end persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         }
 
+        // Matcher V3 - Search
+        if ($proposal->isPrivate()) {
+            $this->mobicoopMatcherProvider->match($proposal);
+        }
+
         // matching analyze
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
 

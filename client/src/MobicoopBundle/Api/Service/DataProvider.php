@@ -595,8 +595,9 @@ class DataProvider
      */
     public function post(ResourceInterface $object, ?string $operation = null): Response
     {
-        // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]));
-        // exit;
+        var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups' => ['post']]));
+
+        exit;
         $op = '';
         if (!is_null($operation)) {
             $op = '/'.$operation;

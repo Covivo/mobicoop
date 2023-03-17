@@ -72,11 +72,9 @@ class CurlDataProvider
             $results = curl_exec($curl);
             $response = curl_getinfo($curl);
 
-            if (200 == $response['http_code']) {
-                return new Response($response['http_code'], $results);
-            }
+            return new Response($response['http_code'], $results);
         } catch (TransferException $e) {
-            return new Response($response['http_code']);
+            return new Response($response['http_code'], $results);
         }
 
         return new Response();
@@ -92,9 +90,7 @@ class CurlDataProvider
             $results = curl_exec($curl);
             $response = curl_getinfo($curl);
 
-            if (200 == $response['http_code']) {
-                return new Response($response['http_code'], $results);
-            }
+            return new Response($response['http_code'], $results);
         } catch (TransferException $e) {
             return new Response($response['http_code']);
         }
