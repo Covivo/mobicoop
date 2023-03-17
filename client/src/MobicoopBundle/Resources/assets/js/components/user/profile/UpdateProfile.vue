@@ -104,6 +104,7 @@
             </v-col>
           </v-row>
           <v-row
+            id="phone-number"
             no-gutters
           >
             <!-- Telephone -->
@@ -308,6 +309,7 @@
                   @change="save"
                 />
               </v-menu>
+              <span id="driving-licence-number" />
               <v-text-field
                 v-model="drivingLicenceNumber"
                 :label="$t('drivingLicenceNumber.label')"
