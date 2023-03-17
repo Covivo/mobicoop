@@ -169,16 +169,17 @@ class AdManager
      * This method creates a proposal, and its linked proposal for a return trip.
      * It returns the ad created, with its outward and return results.
      *
-     * @param Ad   $ad              The ad to create
-     * @param bool $doPrepare       When we prepare the Proposal
-     * @param bool $withSolidaries  Return also the matching solidary asks
-     * @param bool $forceNotUseTime For to set useTime at false
+     * @param Ad     $ad                The ad to create
+     * @param bool   $doPrepare         When we prepare the Proposal
+     * @param bool   $withSolidaries    Return also the matching solidary asks
+     * @param bool   $forceNotUseTime   For to set useTime at false
+     * @param string $matchingAlgorithm Version of the matching algorithm
      *
      * @return Ad
      *
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
+    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_V2)
     {
         /** Anti-Fraud check */
         $antiFraudResponse = $this->antiFraudManager->validAd($ad);
@@ -436,7 +437,7 @@ class AdManager
 
         $outwardProposal->setCriteria($outwardCriteria);
         if ($doPrepare) {
-            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
+            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, $matchingAlgorithm);
         }
 
         // $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -562,7 +563,7 @@ class AdManager
 
             $returnProposal->setCriteria($returnCriteria);
             if ($doPrepare) {
-                $returnProposal = $this->proposalManager->prepareProposal($returnProposal);
+                $returnProposal = $this->proposalManager->prepareProposal($returnProposal, $matchingAlgorithm);
             }
             $this->entityManager->persist($returnProposal);
         }

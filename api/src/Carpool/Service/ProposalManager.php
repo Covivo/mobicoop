@@ -39,6 +39,7 @@ use App\Carpool\Exception\AdException;
 use App\Carpool\Repository\CriteriaRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
+use App\Carpool\Ressource\Ad;
 use App\Communication\Service\InternalMessageManager;
 use App\DataProvider\Entity\MobicoopMatcherProvider;
 use App\DataProvider\Entity\Response;
@@ -181,9 +182,9 @@ class ProposalManager
      * Prepare a proposal for persist.
      * Used when posting a proposal to populate default values like proposal validity.
      */
-    public function prepareProposal(Proposal $proposal): Proposal
+    public function prepareProposal(Proposal $proposal, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_V2): Proposal
     {
-        return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true);
+        return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true, $matchingAlgorithm);
     }
 
     /**
@@ -192,10 +193,11 @@ class ProposalManager
      * @param Proposal $proposal            The proposal to treat
      * @param bool     $persist             If we persist the proposal in the database (false for a simple search)
      * @param bool     $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @param string   $matchingAlgorithm   Version of the matching algorithm
      *
      * @return Proposal The treated proposal
      */
-    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
+    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_V2)
     {
         $this->logger->info('ProposalManager : treatProposal '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
@@ -216,13 +218,14 @@ class ProposalManager
             $this->logger->info('ProposalManager : end persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         }
 
-        // Matcher V3 - Search
-        if ($proposal->isPrivate()) {
-            $this->mobicoopMatcherProvider->match($proposal);
-        }
-
         // matching analyze
-        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+        if (Ad::MATCHING_ALGORITHM_V2 == $matchingAlgorithm) {
+            $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+        } elseif (Ad::MATCHING_ALGORITHM_V3 == $matchingAlgorithm) {
+            if ($proposal->isPrivate()) {
+                $this->mobicoopMatcherProvider->match($proposal);
+            }
+        }
 
         if ($persist) {
             $this->logger->info('ProposalManager : start persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));

@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Carpool\Controller\AdAskPost;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Carpool\Controller\AdAskGet;
-use App\User\Entity\User;
+use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\UpdateCarpoolsLimits;
 use App\Solidary\Entity\Solidary;
+use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Carpooling : an ad.
@@ -46,10 +46,10 @@ use App\Solidary\Entity\Solidary;
  *              "method"="GET",
  *              "path"="/carpools",
  *              "security_post_denormalize"="is_granted('ad_list',object)",
-  *              "swagger_context" = {
+ *              "swagger_context" = {
  *                  "tags"={"Carpool"}
  *              }
-*          },
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/carpools",
@@ -178,377 +178,381 @@ use App\Solidary\Entity\Solidary;
  *          }
  *       }
  * )
- *
  */
 class Ad
 {
-    const DEFAULT_ID = 999999999999;
-    
-    const ROLE_DRIVER = 1;
-    const ROLE_PASSENGER = 2;
-    const ROLE_DRIVER_OR_PASSENGER = 3;
+    public const DEFAULT_ID = 999999999999;
+
+    public const ROLE_DRIVER = 1;
+    public const ROLE_PASSENGER = 2;
+    public const ROLE_DRIVER_OR_PASSENGER = 3;
+
+    public const MATCHING_ALGORITHM_V2 = 'V2';
+    public const MATCHING_ALGORITHM_V3 = 'V3';
 
     /**
-     * @var int The id of this ad.
+     * @var int the id of this ad
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"read","write","results"})
      */
     private $id;
 
     /**
-     * @var boolean|null The ad is a search only.
+     * @var null|bool the ad is a search only
      *
      * @Groups({"read","write"})
      */
     private $search;
 
     /**
-     * @var int The role for this ad.
+     * @var int the role for this ad
      *
      * @Groups({"read","write"})
      */
     private $role;
 
     /**
-     * @var boolean|null The ad is a one way trip.
+     * @var null|bool the ad is a one way trip
      *
      * @Groups({"read","write"})
      */
     private $oneWay;
 
     /**
-     * @var int|null The frequency for this ad.
+     * @var null|int the frequency for this ad
      *
      * @Groups({"read","write","readCommunity","readEvent"})
      */
     private $frequency;
 
     /**
-     * @var array|null The waypoints for the outward.
+     * @var null|array the waypoints for the outward
      *
      * @Groups({"read","write","results","readCommunity","readEvent"})
      */
     private $outwardWaypoints;
 
     /**
-     * @var array|null The waypoints for the return.
+     * @var null|array the waypoints for the return
      *
      * @Groups({"read","write"})
      */
     private $returnWaypoints;
 
     /**
-     * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
+     * @var null|\DateTimeInterface the date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular
      *
      * @Groups({"read","write", "readCommunity","readEvent"})
      */
     private $outwardDate;
 
     /**
-     * @var \DateTimeInterface|null The limit date for the outward if the frequency is regular.
+     * @var null|\DateTimeInterface the limit date for the outward if the frequency is regular
      *
      * @Groups({"read","write"})
      */
     private $outwardLimitDate;
 
     /**
-     * @var \DateTimeInterface|null The date for the return if the frequency is punctual, the start date of the return if the frequency is regular.
+     * @var null|\DateTimeInterface the date for the return if the frequency is punctual, the start date of the return if the frequency is regular
      *
      * @Groups({"read","write"})
      */
     private $returnDate;
 
     /**
-     * @var \DateTimeInterface|null The limit date for the return if the frequency is regular.
+     * @var null|\DateTimeInterface the limit date for the return if the frequency is regular
      *
      * @Groups({"read","write"})
      */
     private $returnLimitDate;
 
     /**
-     * @var string|null The time for the outward if the frequency is punctual.
+     * @var null|string the time for the outward if the frequency is punctual
      *
      * @Groups({"read","write"})
      */
     private $outwardTime;
 
     /**
-     * @var string|null The time for the return if the frequency is punctual.
+     * @var null|string the time for the return if the frequency is punctual
      *
      * @Groups({"read","write"})
      */
     private $returnTime;
 
     /**
-     * @var array|null The schedule if the frequency is regular.
-     * The schedule contains the outward and return elements.
+     * @var null|array The schedule if the frequency is regular.
+     *                 The schedule contains the outward and return elements.
      *
      * @Groups({"read","write"})
      */
     private $schedule;
 
     /**
-     * @var boolean|null For punctual proposals, the user accepts only matchings for the defined date (no ranges).
+     * @var null|bool for punctual proposals, the user accepts only matchings for the defined date (no ranges)
      *
      * @Groups({"read","write"})
      */
     private $strictDate;
 
     /**
-     * @var boolean|null For punctual proposals, the user accepts only matchings with punctual trips (no regular trips).
+     * @var null|bool for punctual proposals, the user accepts only matchings with punctual trips (no regular trips)
      *
      * @Groups({"read","write"})
      */
     private $strictPunctual;
 
     /**
-     * @var boolean|null For regular proposals, the user accepts only matchings with regular trips (no punctual trips).
+     * @var null|bool for regular proposals, the user accepts only matchings with regular trips (no punctual trips)
      *
      * @Groups({"read","write"})
      */
     private $strictRegular;
-    
+
     /**
-    * @var string|null The price per km.
-    *
-    * @Groups({"read","write"})
-    */
+     * @var null|string the price per km
+     *
+     * @Groups({"read","write"})
+     */
     private $priceKm;
 
     /**
-    * @var string|null The total price of the outward selected by the user as a driver.
-    *
-    * @Groups({"read","write"})
-    */
+     * @var null|string the total price of the outward selected by the user as a driver
+     *
+     * @Groups({"read","write"})
+     */
     private $outwardDriverPrice;
 
     /**
-    * @var string|null The total price of the return selected by the user as a driver.
-    *
-    * @Groups({"read","write"})
-    */
+     * @var null|string the total price of the return selected by the user as a driver
+     *
+     * @Groups({"read","write"})
+     */
     private $returnDriverPrice;
 
     /**
-    * @var string|null The total price of the outward selected by the user as a passenger.
-    *
-    * @Groups({"read","write"})
-    */
+     * @var null|string the total price of the outward selected by the user as a passenger
+     *
+     * @Groups({"read","write"})
+     */
     private $outwardPassengerPrice;
 
     /**
-    * @var string|null The total price of the return selected by the user as a passenger.
-    *
-    * @Groups({"read","write"})
-    */
+     * @var null|string the total price of the return selected by the user as a passenger
+     *
+     * @Groups({"read","write"})
+     */
     private $returnPassengerPrice;
 
     /**
-     * @var int|null The number of seats available.
+     * @var null|int the number of seats available
      *
      * @Groups({"read","write"})
      */
     private $seatsDriver;
 
     /**
-     * @var int|null The number of seats required.
+     * @var null|int the number of seats required
      *
      * @Groups({"read","write"})
      */
     private $seatsPassenger;
 
     /**
-     * @var boolean|null Big luggage accepted / asked.
+     * @var null|bool big luggage accepted / asked
      *
      * @Groups({"read","write"})
      */
     private $luggage;
 
     /**
-     * @var boolean|null Bike accepted / asked.
+     * @var null|bool bike accepted / asked
      *
      * @Groups({"read","write"})
      */
     private $bike;
 
     /**
-     * @var boolean|null 2 passengers max on the back seats.
+     * @var null|bool 2 passengers max on the back seats
      *
      * @Groups({"read","write"})
      */
     private $backSeats;
 
     /**
-     * @var boolean|null Solidary request.
+     * @var null|bool solidary request
      *
      * @Groups({"read","write"})
      */
     private $solidary;
 
     /**
-     * @var boolean|null Solidary exclusive.
+     * @var null|bool solidary exclusive
      *
      * @Groups({"read","write"})
      */
     private $solidaryExclusive;
 
     /**
-     * @var boolean|null Avoid motorway.
+     * @var null|bool avoid motorway
      *
      * @Groups({"read","write"})
      */
     private $avoidMotorway;
 
     /**
-     * @var boolean|null Avoid toll.
+     * @var null|bool avoid toll
      *
      * @Groups({"read","write"})
      */
     private $avoidToll;
 
     /**
-     * @var string|null A comment about the ad.
+     * @var null|string a comment about the ad
      *
      * @Groups({"read","write"})
      */
     private $comment;
 
     /**
-     * @var User|null The ad owner. Null for an anonymous search.
+     * @var null|User The ad owner. Null for an anonymous search.
      *
      * @Groups({"readCommunity","readEvent","write"})
      */
     private $user;
-    
+
     /**
-     * @var int|null The user id of the ad owner. Null for an anonymous search.
+     * @var null|int The user id of the ad owner. Null for an anonymous search.
      *
      * @Groups({"read","write"})
      */
     private $userId;
 
     /**
-     * @var int|null The user id of the poster (used for delegation).
+     * @var null|int the user id of the poster (used for delegation)
      *
      *@Groups({"read","write"})
      */
     private $posterId;
 
     /**
-     * @var int|null The app id of the poster (used for delegation).
+     * @var null|int the app id of the poster (used for delegation)
      *
      *@Groups({"read","write"})
      */
     private $appPosterId;
-    
+
     /**
-     * @var array|null The communities associated with the ad.
+     * @var null|array the communities associated with the ad
      *
      * @Groups({"read","write"})
      */
     private $communities;
 
     /**
-     * @var int|null The event id associated with the ad.
+     * @var null|int the event id associated with the ad
      *
      * @Groups({"read","write"})
      */
     private $eventId;
 
     /**
-     * @var int|null The subject id associated with the ad.
+     * @var null|int the subject id associated with the ad
      *
      * @Groups({"read","write"})
      */
     private $subjectId;
-    
+
     /**
-     * @var array|null The carpool results.
+     * @var null|array the carpool results
      *
      * @Groups("results")
      */
     private $results;
 
     /**
-     * @var int|null The number of results.
+     * @var null|int the number of results
      *
      * @Groups("results")
      */
     private $nbResults;
 
     /**
-     * @var int|null The ad id for which the current ad is an ask.
+     * @var null|int the ad id for which the current ad is an ask
      *
      * @Groups({"read","write"})
      */
     private $adId;
 
     /**
-     * @var int|null The matching id related to the above ad id.
+     * @var null|int the matching id related to the above ad id
      *
      * @Groups({"read","write"})
      */
     private $matchingId;
 
     /**
-     * @var int The ask status if the ad concerns a given ask.
+     * @var int the ask status if the ad concerns a given ask
      *
      * @Groups({"read","write"})
      */
     private $askStatus;
 
     /**
-     * @var int The ask id if the ad concerns a given ask.
+     * @var int the ask id if the ad concerns a given ask
      *
      * @Groups({"read","write","results"})
      */
     private $askId;
 
     /**
-     * @var boolean|null The given user can update the ask if the ad concerns a given ask.
+     * @var null|bool the given user can update the ask if the ad concerns a given ask
      *
      * @Groups({"read","write"})
      */
     private $canUpdateAsk;
 
     /**
-     * @var array|null The filters to apply to the results.
+     * @var null|array the filters to apply to the results
      *
      * @Groups("write")
      */
     private $filters;
 
     /**
-    * @var boolean Paused ad.
-    * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
-    *
-    * @Groups({"read","write"})
-    */
+     * @var bool Paused ad.
+     *           A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
+     *
+     * @Groups({"read","write"})
+     */
     private $paused;
 
     /**
-    * @var boolean Ad without destination.
-    */
+     * @var bool ad without destination
+     */
     private $noDestination;
 
     /**
-     * @var int The Id of the proposal associated to the ad.
+     * @var int the Id of the proposal associated to the ad
      *
      * @Groups({"read","write"})
      */
     private $proposalId;
 
     /**
-     * @var int The Id of the proposalLinked associated to the ad.
+     * @var int the Id of the proposalLinked associated to the ad
      *
      * @Groups({"read","write"})
      */
     private $proposalLinkedId;
 
     /**
-     * @var int $potentialCarpoolers
-     * Potential carpoolers count
+     * @var int
+     *          Potential carpoolers count
+     *
      * @Groups({"read","write"})
      */
     private $potentialCarpoolers;
@@ -561,83 +565,87 @@ class Ad
     private $external;
 
     /**
-     * @var boolean Exposed ad.
+     * @var bool exposed ad
      *
      * @Groups({"read","write"})
      */
     private $exposed;
 
     /**
-     * @var array|null The asks associated to the ad
+     * @var null|array The asks associated to the ad
      *
      * @Groups({"read","write"})
      */
     private $asks;
 
     /**
-     * @var string|null The message if Ad owner is making major updates to his Ad
+     * @var null|string The message if Ad owner is making major updates to his Ad
      *
      * @Groups({"write"})
      */
     private $cancellationMessage;
 
     /**
-     * @var int|null The margin of the ad
+     * @var null|int The margin of the ad
      *
      * @Groups({"read","write"})
      */
     private $marginDuration;
 
     /**
-     * @var int|null The margin of the return of the ad
+     * @var null|int The margin of the return of the ad
      *
      * @Groups({"read","write"})
      */
     private $returnMarginDuration;
 
     /**
-     * @var \DateTimeInterface Creation date of the Ad.
+     * @var \DateTimeInterface creation date of the Ad
      */
     private $createdDate;
 
     /**
-     * @var string|null The external Id if the ad was created for an external search.
+     * @var null|string the external Id if the ad was created for an external search
      */
     private $externalId;
 
     /**
-     * @var int|null The payment status of the Ad
+     * @var null|int The payment status of the Ad
+     *
      * @Groups({"read","readPaymentStatus"})
      */
     private $paymentStatus;
 
     /**
-     * @var int|null The id of the PaymentItem of the Ad
+     * @var null|int The id of the PaymentItem of the Ad
+     *
      * @Groups({"read","readPaymentStatus"})
      */
     private $paymentItemId;
 
     /**
-    * @var int|null The default week of the PaymentItem
-    * @Groups({"read","readPaymentStatus"})
-    */
+     * @var null|int The default week of the PaymentItem
+     *
+     * @Groups({"read","readPaymentStatus"})
+     */
     private $paymentItemWeek;
 
     /**
-     * @var \DateTimeInterface|null The date of an unpaid declaration for this Ad
+     * @var null|\DateTimeInterface The date of an unpaid declaration for this Ad
+     *
      * @Groups({"read","readPaymentStatus"})
      */
     private $unpaidDate;
 
     /**
-     * @var array|null The current carpool proof id associated to the ad (for ask context)
+     * @var null|array The current carpool proof id associated to the ad (for ask context)
      *
      * @Groups("read")
      */
     private $carpoolProofId;
 
     /**
-     * @var Solidary|null The solidary record if the ad concerns a solidary record.
+     * @var null|Solidary the solidary record if the ad concerns a solidary record
      */
     private $solidaryRecord;
 
@@ -652,7 +660,7 @@ class Ad
         $this->filters = [];
         $this->asks = [];
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -676,7 +684,7 @@ class Ad
 
         return $this;
     }
-    
+
     public function getRole(): ?int
     {
         return $this->role;
@@ -700,7 +708,7 @@ class Ad
 
         return $this;
     }
-    
+
     public function getFrequency(): ?int
     {
         return $this->frequency;
@@ -717,11 +725,11 @@ class Ad
     {
         return $this->outwardWaypoints;
     }
-    
+
     public function setOutwardWaypoints(?array $outwardWaypoints): self
     {
         $this->outwardWaypoints = $outwardWaypoints;
-        
+
         return $this;
     }
 
@@ -729,11 +737,11 @@ class Ad
     {
         return $this->returnWaypoints;
     }
-    
+
     public function setReturnWaypoints(?array $returnWaypoints): self
     {
         $this->returnWaypoints = $returnWaypoints;
-        
+
         return $this;
     }
 
@@ -813,11 +821,11 @@ class Ad
     {
         return $this->schedule;
     }
-    
+
     public function setSchedule(?array $schedule): self
     {
         $this->schedule = $schedule;
-        
+
         return $this;
     }
 
@@ -825,11 +833,11 @@ class Ad
     {
         return $this->communities;
     }
-    
+
     public function setCommunities(?array $communities): self
     {
         $this->communities = $communities;
-        
+
         return $this;
     }
 
@@ -861,11 +869,11 @@ class Ad
     {
         return $this->strictDate;
     }
-    
+
     public function setStrictDate(?bool $isStrictDate): self
     {
         $this->strictDate = $isStrictDate;
-        
+
         return $this;
     }
 
@@ -873,11 +881,11 @@ class Ad
     {
         return $this->strictPunctual;
     }
-    
+
     public function setStrictPunctual(?bool $isStrictPunctual): self
     {
         $this->strictPunctual = $isStrictPunctual;
-        
+
         return $this;
     }
 
@@ -885,11 +893,11 @@ class Ad
     {
         return $this->strictRegular;
     }
-    
+
     public function setStrictRegular(?bool $isStrictRegular): self
     {
         $this->strictRegular = $isStrictRegular;
-        
+
         return $this;
     }
 
@@ -897,7 +905,7 @@ class Ad
     {
         return $this->priceKm;
     }
-    
+
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
@@ -907,7 +915,7 @@ class Ad
     {
         return $this->outwardDriverPrice;
     }
-    
+
     public function setOutwardDriverPrice(?string $outwardDriverPrice)
     {
         $this->outwardDriverPrice = $outwardDriverPrice;
@@ -917,7 +925,7 @@ class Ad
     {
         return $this->returnDriverPrice;
     }
-    
+
     public function setReturnDriverPrice(?string $returnDriverPrice)
     {
         $this->returnDriverPrice = $returnDriverPrice;
@@ -927,7 +935,7 @@ class Ad
     {
         return $this->outwardPassengerPrice;
     }
-    
+
     public function setOutwardPassengerPrice(?string $outwardPassengerPrice)
     {
         $this->outwardPassengerPrice = $outwardPassengerPrice;
@@ -937,7 +945,7 @@ class Ad
     {
         return $this->returnPassengerPrice;
     }
-    
+
     public function setReturnPassengerPrice(?string $returnPassengerPrice)
     {
         $this->returnPassengerPrice = $returnPassengerPrice;
@@ -971,11 +979,11 @@ class Ad
     {
         return $this->luggage;
     }
-    
+
     public function setLuggage(?bool $hasLuggage): self
     {
         $this->luggage = $hasLuggage;
-        
+
         return $this;
     }
 
@@ -983,11 +991,11 @@ class Ad
     {
         return $this->bike;
     }
-    
+
     public function setBike(?bool $hasBike): self
     {
         $this->bike = $hasBike;
-        
+
         return $this;
     }
 
@@ -995,11 +1003,11 @@ class Ad
     {
         return $this->backSeats;
     }
-    
+
     public function setBackSeats(?bool $hasBackSeats): self
     {
         $this->backSeats = $hasBackSeats;
-        
+
         return $this;
     }
 
@@ -1007,11 +1015,11 @@ class Ad
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?bool $isSolidary): self
     {
         $this->solidary = $isSolidary;
-        
+
         return $this;
     }
 
@@ -1019,11 +1027,11 @@ class Ad
     {
         return $this->solidaryExclusive;
     }
-    
+
     public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
     {
         $this->solidaryExclusive = $isSolidaryExclusive;
-        
+
         return $this;
     }
 
@@ -1031,11 +1039,11 @@ class Ad
     {
         return $this->avoidMotorway;
     }
-    
+
     public function setAvoidMotorway(?bool $avoidMotorway): self
     {
         $this->avoidMotorway = $avoidMotorway;
-        
+
         return $this;
     }
 
@@ -1043,11 +1051,11 @@ class Ad
     {
         return $this->avoidToll;
     }
-    
+
     public function setAvoidToll(?bool $avoidToll): self
     {
         $this->avoidToll = $avoidToll;
-        
+
         return $this;
     }
 
@@ -1055,11 +1063,11 @@ class Ad
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -1199,11 +1207,11 @@ class Ad
     {
         return $this->canUpdateAsk;
     }
-    
+
     public function setCanUpdateAsk(?bool $canUpdateAsk): self
     {
         $this->canUpdateAsk = $canUpdateAsk;
-        
+
         return $this;
     }
 
@@ -1275,10 +1283,11 @@ class Ad
     public function setPotentialCarpoolers(int $potentialCarpoolers): self
     {
         $this->potentialCarpoolers = $potentialCarpoolers;
+
         return $this;
     }
 
-    public function getExternal(): ?String
+    public function getExternal(): ?string
     {
         return $this->external;
     }
@@ -1322,6 +1331,7 @@ class Ad
     public function setCancellationMessage(?string $cancellationMessage): Ad
     {
         $this->cancellationMessage = $cancellationMessage;
+
         return $this;
     }
 
@@ -1361,7 +1371,7 @@ class Ad
         return $this;
     }
 
-    public function getExternalId(): ?String
+    public function getExternalId(): ?string
     {
         return $this->externalId;
     }
