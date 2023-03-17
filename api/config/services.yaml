@@ -929,6 +929,13 @@ services:
     tags:
       - { name: monolog.logger, channel: matcherV3 }
 
+  App\Carpool\Service\MobicoopMatcherMatchingBuilder:
+    arguments:
+      $maxDetourDistancePercent: "%env(int:ALGORITHM_MAX_DETOUR_DISTANCE_PERCENT)%"
+      $maxDetourDurationPercent: "%env(int:ALGORITHM_MAX_DETOUR_DURATION_PERCENT)%"
+    tags:
+      - { name: monolog.logger, channel: matcherV3 }
+
   # Payment
   App\Payment\Controller\:
     resource: "../src/Payment/Controller"

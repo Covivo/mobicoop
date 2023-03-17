@@ -223,7 +223,7 @@ class ProposalManager
             $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
         } elseif (Ad::MATCHING_ALGORITHM_V3 == $matchingAlgorithm) {
             if ($proposal->isPrivate()) {
-                $this->mobicoopMatcherProvider->match($proposal);
+                $proposal = $this->mobicoopMatcherProvider->match($proposal);
             }
         }
 

@@ -24,6 +24,7 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\MobicoopMatcher\Search;
 use App\Carpool\Entity\MobicoopMatcher\Waypoint;
 use App\Carpool\Entity\Proposal;
@@ -46,6 +47,13 @@ class MobicoopMatcherAdapter
      */
     private $_search;
 
+    private $_matchingBuilder;
+
+    public function __construct(MobicoopMatcherMatchingBuilder $matchingBuilder)
+    {
+        $this->_matchingBuilder = $matchingBuilder;
+    }
+
     public function buildSearchFromProposal(Proposal $proposal): Search
     {
         $this->_proposal = $proposal;
@@ -57,6 +65,25 @@ class MobicoopMatcherAdapter
         $this->_treatRole();
 
         return $this->_search;
+    }
+
+    /**
+     * @return Matching[]
+     */
+    public function buildMatchingFromMatcherResult(Proposal $proposal, array $matcherResults): array
+    {
+        $matchings = [];
+        foreach ($matcherResults as $result) {
+            $matchings[] = $this->_matchingBuilder->build($proposal, $result);
+        }
+
+        foreach ($matchings as $matching) {
+            // var_dump('proposalOffer : '.$matching->getProposalOffer()->getId());
+            // var_dump('proposalRequest : '.$matching->getProposalRequest()->getId());
+            var_dump($matching);
+        }
+
+        return $matchings;
     }
 
     private function _treatStartDate()
