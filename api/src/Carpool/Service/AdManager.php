@@ -1908,7 +1908,7 @@ class AdManager
      *
      * @return ClassicProof The classic proof updated
      */
-    public function updateCarpoolProof(int $id, ClassicProof $classicProofData)
+    public function updateCarpoolProof(int $id, ClassicProof $classicProofData): ClassicProof
     {
         // search the proof
         if (!$carpoolProof = $this->proofManager->getProof($id)) {
@@ -1925,6 +1925,7 @@ class AdManager
         } catch (ProofException $proofException) {
             throw new AdException($proofException->getMessage());
         }
+        $classicProofData->setId($id);
 
         return $classicProofData;
     }
