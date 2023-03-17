@@ -28,6 +28,7 @@
 	  :show-reviews="{{ showReviews ? "true" : "false" }}"
 	  :user="{{app.user|json_encode}}"
 	  :cee-display="{{ ceeDisplay ? "true" : "false" }}"
+      :is-after-eec-subscription="{{ isAfterEECSubscription ? "true" : "false" }}"
 	></Profile>
 
 {% endblock %}

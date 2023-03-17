@@ -88,6 +88,7 @@
                   :gamification-active="gamificationActive"
                   :carpool-settings-display="carpoolSettingsDisplay"
                   :cee-display="ceeDisplay"
+                  :is-after-eec-subscription="isAfterEecSubscription"
                   @changeTab="changeTab"
                 />
               </v-tab-item>
@@ -297,6 +298,10 @@ export default {
     ceeDisplay: {
       type: Boolean,
       default: true
+    },
+    isAfterEecSubscription: {
+      type: Boolean,
+      default: false
     }
   },
   data(){

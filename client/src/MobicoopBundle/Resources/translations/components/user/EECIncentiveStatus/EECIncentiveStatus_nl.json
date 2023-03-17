@@ -55,5 +55,11 @@
   },
   "EEC-provider": "Esso SAF",
   "EEC-provider-siren": "Esso SAF (SIREN: 542 010 053)",
-  "EEC-form": "prime-covoiturage"
+  "EEC-form": "prime-covoiturage",
+  "EEC-subscription-snackbar": {
+    "success": "La souscription aux aides a été effectuée.",
+    "failed": "La souscription aux aides a échouée.",
+    "longDistanceFailed": "La souscription à l'aide pour les trajets longue distance n'a pas pu être réalisée.",
+    "shortDistanceFailed": "La souscription à l'aide pour les trajets courte distance n'a pas pu être réalisée."
+  }
 }
