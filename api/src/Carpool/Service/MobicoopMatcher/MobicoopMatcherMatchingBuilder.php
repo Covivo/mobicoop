@@ -49,6 +49,7 @@ class MobicoopMatcherMatchingBuilder
     private $_maxDetourDistancePercent;
     private $_maxDetourDurationPercent;
     private $_criteriaBuilder;
+    private $_waypointExtractor;
 
     public function __construct(
         int $maxDetourDistancePercent,
@@ -66,6 +67,7 @@ class MobicoopMatcherMatchingBuilder
     {
         $this->_proposal = $proposal;
         $this->_result = $result;
+        $this->_waypointExtractor = new MobicoopMatcherWaypointExtractor($this->_result['journeys'][0]['waypoints']);
 
         $this->_matching = new Matching();
         $this->_matching->setCreatedDate(new \DateTime('now'));
@@ -112,39 +114,6 @@ class MobicoopMatcherMatchingBuilder
         $this->_matching->setAcceptedDetourDuration($this->_result['initial_duration'] * $this->_maxDetourDurationPercent / 100);
     }
 
-    private function _findFirstWaypoint($waypoints): array
-    {
-        foreach ($waypoints as $waypoint) {
-            foreach ($waypoint['actors'] as $actor) {
-                if (self::ROLE_DRIVER == $actor['role'] && self::STEP_START == $actor['step']) {
-                    return $waypoint;
-                }
-            }
-        }
-    }
-
-    private function _findPickUpPoint($waypoints): array
-    {
-        foreach ($waypoints as $waypoint) {
-            foreach ($waypoint['actors'] as $actor) {
-                if (self::ROLE_PASSENGER == $actor['role'] && self::STEP_START == $actor['step']) {
-                    return $waypoint;
-                }
-            }
-        }
-    }
-
-    private function _findDropOffPoint($waypoints): array
-    {
-        foreach ($waypoints as $waypoint) {
-            foreach ($waypoint['actors'] as $actor) {
-                if (self::ROLE_PASSENGER == $actor['role'] && self::STEP_FINISH == $actor['step']) {
-                    return $waypoint;
-                }
-            }
-        }
-    }
-
     private function _computeElapsedTimeInSeconds($start, $end): int
     {
         $startTime = \DateTime::createFromFormat(self::TIME_FORMAT, $start);
@@ -155,12 +124,12 @@ class MobicoopMatcherMatchingBuilder
 
     private function _treatPickUpsAndDropOffsDurations()
     {
-        $firstWaypoint = $this->_findFirstWaypoint($this->_result['journeys'][0]['waypoints']);
-        $pickUpPoint = $this->_findPickUpPoint($this->_result['journeys'][0]['waypoints']);
+        $firstWaypoint = $this->_waypointExtractor->findFirstWaypoint();
+        $pickUpPoint = $this->_waypointExtractor->findPickUpPoint();
 
         $this->_matching->setPickUpDuration($this->_computeElapsedTimeInSeconds($firstWaypoint['time'], $pickUpPoint['time']));
 
-        $dropOffPoint = $this->_findDropOffPoint($this->_result['journeys'][0]['waypoints']);
+        $dropOffPoint = $this->_waypointExtractor->findDropOffPoint();
 
         $this->_matching->setDropOffDuration($this->_computeElapsedTimeInSeconds($firstWaypoint['time'], $dropOffPoint['time']));
     }

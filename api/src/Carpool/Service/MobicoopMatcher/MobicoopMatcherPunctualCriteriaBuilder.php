@@ -80,21 +80,12 @@ class MobicoopMatcherPunctualCriteriaBuilder
     private function _setDateAndTime()
     {
         $this->_criteria->setFromDate(\DateTime::createFromFormat(self::DATE_FORMAT, $this->_journey['first_date']));
-        $waypoint = $this->_findFirstWaypoint($this->_journey['waypoints']);
+
+        $waypointExtractor = new MobicoopMatcherWaypointExtractor($this->_journey['waypoints']);
+        $waypoint = $waypointExtractor->findFirstWaypoint();
         $this->_criteria->setFromTime(\DateTime::createFromFormat(self::TIME_FORMAT, $waypoint['time']));
 
         $this->_criteria->setStrictDate($this->_searchProposal->getCriteria()->isStrictDate());
-    }
-
-    private function _findFirstWaypoint($waypoints): array
-    {
-        foreach ($waypoints as $waypoint) {
-            foreach ($waypoint['actors'] as $actor) {
-                if (self::ROLE_DRIVER == $actor['role'] && self::STEP_START == $actor['step']) {
-                    return $waypoint;
-                }
-            }
-        }
     }
 
     private function _setMarginMinAndMaxTime()
