@@ -36,6 +36,7 @@ class MobicoopMatcherMatchingBuilder
     public const ROLE_PASSENGER = 'passenger';
     public const STEP_START = 'start';
     public const STEP_FINISH = 'finish';
+    public const TIME_FORMAT = 'H:i:s';
 
     /**
      * @var Matching
@@ -47,13 +48,16 @@ class MobicoopMatcherMatchingBuilder
     private $_proposalRepository;
     private $_maxDetourDistancePercent;
     private $_maxDetourDurationPercent;
+    private $_criteriaBuilder;
 
     public function __construct(
         int $maxDetourDistancePercent,
         int $maxDetourDurationPercent,
-        ProposalRepository $proposalRepository
+        ProposalRepository $proposalRepository,
+        MobicoopMatcherCriteriaBuilder $criteriaBuilder
     ) {
         $this->_proposalRepository = $proposalRepository;
+        $this->_criteriaBuilder = $criteriaBuilder;
         $this->_maxDetourDistancePercent = $maxDetourDistancePercent;
         $this->_maxDetourDurationPercent = $maxDetourDurationPercent;
     }
@@ -65,10 +69,11 @@ class MobicoopMatcherMatchingBuilder
 
         $this->_matching = new Matching();
         $this->_matching->setCreatedDate(new \DateTime('now'));
-        $this->_treatProposals();
+        // $this->_treatProposals();
         $this->_treatDistances();
         $this->_treatDurations();
         $this->_treatPickUpsAndDropOffsDurations();
+        $this->_matching->setCriteria($this->_criteriaBuilder->build($proposal, $this->_result));
 
         return $this->_matching;
     }
@@ -141,8 +146,8 @@ class MobicoopMatcherMatchingBuilder
 
     private function _computeElapsedTimeInSeconds($start, $end): int
     {
-        $startTime = \DateTime::createFromFormat('H:i:s', $start);
-        $endTime = \DateTime::createFromFormat('H:i:s', $end);
+        $startTime = \DateTime::createFromFormat(self::TIME_FORMAT, $start);
+        $endTime = \DateTime::createFromFormat(self::TIME_FORMAT, $end);
 
         return $endTime->getTimestamp() - $startTime->getTimestamp();
     }

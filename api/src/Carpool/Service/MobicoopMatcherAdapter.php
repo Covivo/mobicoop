@@ -40,7 +40,7 @@ class MobicoopMatcherAdapter
     /**
      * @var Proposal
      */
-    private $_proposal;
+    private $_searchProposal;
 
     /**
      * @var Search
@@ -54,9 +54,9 @@ class MobicoopMatcherAdapter
         $this->_matchingBuilder = $matchingBuilder;
     }
 
-    public function buildSearchFromProposal(Proposal $proposal): Search
+    public function buildSearchFromProposal(Proposal $searchProposal): Search
     {
-        $this->_proposal = $proposal;
+        $this->_searchProposal = $searchProposal;
 
         $this->_search = new Search();
 
@@ -70,11 +70,11 @@ class MobicoopMatcherAdapter
     /**
      * @return Matching[]
      */
-    public function buildMatchingsFromMatcherResult(Proposal $proposal, array $matcherResults): array
+    public function buildMatchingsFromMatcherResult(Proposal $searchProposal, array $matcherResults): array
     {
         $matchings = [];
         foreach ($matcherResults as $result) {
-            $matchings[] = $this->_matchingBuilder->build($proposal, $result);
+            $matchings[] = $this->_matchingBuilder->build($searchProposal, $result);
         }
 
         return $matchings;
@@ -82,21 +82,21 @@ class MobicoopMatcherAdapter
 
     private function _treatStartDate()
     {
-        if (Criteria::FREQUENCY_PUNCTUAL == $this->_proposal->getCriteria()->getFrequency()) {
-            $departure = $this->_proposal->getCriteria()->getFromDate()->format(self::DATE_FORMAT).' '.$this->_proposal->getCriteria()->getFromTime()->format(self::TIME_FORMAT);
+        if (Criteria::FREQUENCY_PUNCTUAL == $this->_searchProposal->getCriteria()->getFrequency()) {
+            $departure = $this->_searchProposal->getCriteria()->getFromDate()->format(self::DATE_FORMAT).' '.$this->_searchProposal->getCriteria()->getFromTime()->format(self::TIME_FORMAT);
             $this->_search->setDeparture($departure);
         } else {
-            $this->_search->setFromDate($this->_proposal->getCriteria()->getFromDate()->format(self::DATE_FORMAT));
+            $this->_search->setFromDate($this->_searchProposal->getCriteria()->getFromDate()->format(self::DATE_FORMAT));
         }
     }
 
     private function _treatWaypoints()
     {
         $waypoints = [];
-        foreach ($this->_proposal->getWaypoints() as $proposalWaypoint) {
+        foreach ($this->_searchProposal->getWaypoints() as $searchProposalWaypoint) {
             $waypoint = new Waypoint();
-            $waypoint->setLat($proposalWaypoint->getAddress()->getLatitude());
-            $waypoint->setLon($proposalWaypoint->getAddress()->getLongitude());
+            $waypoint->setLat($searchProposalWaypoint->getAddress()->getLatitude());
+            $waypoint->setLon($searchProposalWaypoint->getAddress()->getLongitude());
             $waypoints[] = $waypoint;
         }
 
@@ -105,10 +105,10 @@ class MobicoopMatcherAdapter
 
     private function _treatRole()
     {
-        if ($this->_proposal->getCriteria()->isDriver()) {
+        if ($this->_searchProposal->getCriteria()->isDriver()) {
             $this->_search->setDriver(true);
         }
-        if ($this->_proposal->getCriteria()->isPassenger()) {
+        if ($this->_searchProposal->getCriteria()->isPassenger()) {
             $this->_search->setPassenger(true);
         }
     }

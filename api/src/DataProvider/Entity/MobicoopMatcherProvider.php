@@ -64,15 +64,15 @@ class MobicoopMatcherProvider
         $this->_curlDataProvider = $curlDataProvider;
     }
 
-    public function match(Proposal $proposal): Proposal
+    public function match(Proposal $searchProposal): Proposal
     {
-        $this->_logger->info('GET match for proposal '.$proposal->getId());
+        $this->_logger->info('GET match for proposal '.$searchProposal->getId());
         $this->_auth();
-        $search = $this->_buildSearchRequestBody($this->_mobicoopMatcherAdapter->buildSearchFromProposal($proposal));
+        $search = $this->_buildSearchRequestBody($this->_mobicoopMatcherAdapter->buildSearchFromProposal($searchProposal));
         $results = $this->_get(self::ROUTE_MATCH, $search);
         $this->_logger->info(json_encode($results));
 
-        $matchings = $this->_mobicoopMatcherAdapter->buildMatchingsFromMatcherResult($proposal, $results);
+        $matchings = $this->_mobicoopMatcherAdapter->buildMatchingsFromMatcherResult($searchProposal, $results);
         foreach ($matchings as $matching) {
             // var_dump('proposalOffer : '.$matching->getProposalOffer()->getId());
             // var_dump('proposalRequest : '.$matching->getProposalRequest()->getId());
@@ -81,7 +81,7 @@ class MobicoopMatcherProvider
 
         // To Do : add the matchings as matchingOffer or matchingRequest
 
-        return $proposal;
+        return $searchProposal;
     }
 
     private function _get(string $route, string $body): array
