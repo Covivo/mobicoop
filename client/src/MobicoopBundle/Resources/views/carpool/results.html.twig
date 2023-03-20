@@ -35,6 +35,8 @@
         origin-literal = "{{ originLiteral is defined ? originLiteral : 'null' }}"
         platform-name="{{ platformName }}"
         time = "{{ time is defined ? time : '' }}"
+        :carpool-standard-booking-enabled="{{ carpoolStandardBookingEnabled ? "true" : "false" }}"
+	    :carpool-standard-messaging-enabled="{{ carpoolStandardMessagingEnabled ? "true" : "false" }}"
     />
 
 {% endblock %}
