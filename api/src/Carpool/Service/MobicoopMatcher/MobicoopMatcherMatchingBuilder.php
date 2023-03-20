@@ -21,7 +21,7 @@
  *    LICENSE
  */
 
-namespace App\Carpool\Service;
+namespace App\Carpool\Service\MobicoopMatcher;
 
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;

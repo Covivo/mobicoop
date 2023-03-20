@@ -25,7 +25,7 @@ namespace App\DataProvider\Entity;
 
 use App\Carpool\Entity\MobicoopMatcher\Search;
 use App\Carpool\Entity\Proposal;
-use App\Carpool\Service\MobicoopMatcherAdapter;
+use App\Carpool\Service\MobicoopMatcher\MobicoopMatcherAdapter;
 use App\DataProvider\Exception\MobicoopMatcherDataProviderException;
 use App\DataProvider\Service\CurlDataProvider;
 use Psr\Log\LoggerInterface;
@@ -75,13 +75,13 @@ class MobicoopMatcherProvider
         $matchings = $this->_mobicoopMatcherAdapter->buildMatchingsFromMatcherResult($searchProposal, $results);
 
         // REMOVE THIS PART AFTER DEV
-        // foreach ($matchings as $matching) {
-        //     $matching->setProposalOffer(null);
-        //     $matching->setProposalRequest(null);
-        //     var_dump($matching);
-        // }
+        foreach ($matchings as $matching) {
+            $matching->setProposalOffer(null);
+            $matching->setProposalRequest(null);
+            var_dump($matching);
+        }
 
-        // exit;
+        exit;
         // END REMOVE THIS PART AFTER DEV
 
         foreach ($matchings as $matching) {

@@ -929,7 +929,7 @@ services:
     tags:
       - { name: monolog.logger, channel: matcherV3 }
 
-  App\Carpool\Service\MobicoopMatcherMatchingBuilder:
+  App\Carpool\Service\MobicoopMatcher\MobicoopMatcherMatchingBuilder:
     arguments:
       $maxDetourDistancePercent: "%env(int:ALGORITHM_MAX_DETOUR_DISTANCE_PERCENT)%"
       $maxDetourDurationPercent: "%env(int:ALGORITHM_MAX_DETOUR_DURATION_PERCENT)%"
