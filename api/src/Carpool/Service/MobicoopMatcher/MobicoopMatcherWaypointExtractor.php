@@ -23,17 +23,13 @@
 
 namespace App\Carpool\Service\MobicoopMatcher;
 
+use App\Carpool\Entity\MobicoopMatcher\Waypoint;
+
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class MobicoopMatcherWaypointExtractor
 {
-    public const ROLE_DRIVER = 'driver';
-    public const ROLE_PASSENGER = 'passenger';
-
-    public const STEP_START = 'start';
-    public const STEP_FINISH = 'finish';
-
     private $_waypoints;
 
     public function __construct(array $waypoints)
@@ -45,7 +41,7 @@ class MobicoopMatcherWaypointExtractor
     {
         foreach ($this->_waypoints as $waypoint) {
             foreach ($waypoint['actors'] as $actor) {
-                if (self::ROLE_DRIVER == $actor['role'] && self::STEP_START == $actor['step']) {
+                if (Waypoint::ROLE_DRIVER == $actor['role'] && Waypoint::STEP_START == $actor['step']) {
                     return $waypoint;
                 }
             }
@@ -56,7 +52,7 @@ class MobicoopMatcherWaypointExtractor
     {
         foreach ($this->_waypoints as $waypoint) {
             foreach ($waypoint['actors'] as $actor) {
-                if (self::ROLE_PASSENGER == $actor['role'] && self::STEP_START == $actor['step']) {
+                if (Waypoint::ROLE_PASSENGER == $actor['role'] && Waypoint::STEP_START == $actor['step']) {
                     return $waypoint;
                 }
             }
@@ -67,7 +63,7 @@ class MobicoopMatcherWaypointExtractor
     {
         foreach ($this->_waypoints as $waypoint) {
             foreach ($waypoint['actors'] as $actor) {
-                if (self::ROLE_PASSENGER == $actor['role'] && self::STEP_FINISH == $actor['step']) {
+                if (Waypoint::ROLE_PASSENGER == $actor['role'] && Waypoint::STEP_FINISH == $actor['step']) {
                     return $waypoint;
                 }
             }

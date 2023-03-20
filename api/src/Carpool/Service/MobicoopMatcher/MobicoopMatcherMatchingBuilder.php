@@ -24,6 +24,7 @@
 namespace App\Carpool\Service\MobicoopMatcher;
 
 use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\MobicoopMatcher\Waypoint;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\ProposalRepository;
 
@@ -32,10 +33,6 @@ use App\Carpool\Repository\ProposalRepository;
  */
 class MobicoopMatcherMatchingBuilder
 {
-    public const ROLE_DRIVER = 'driver';
-    public const ROLE_PASSENGER = 'passenger';
-    public const STEP_START = 'start';
-    public const STEP_FINISH = 'finish';
     public const TIME_FORMAT = 'H:i:s';
 
     /**
@@ -50,17 +47,20 @@ class MobicoopMatcherMatchingBuilder
     private $_maxDetourDurationPercent;
     private $_criteriaBuilder;
     private $_waypointExtractor;
+    private $_classicWaypointsBuilder;
 
     public function __construct(
         int $maxDetourDistancePercent,
         int $maxDetourDurationPercent,
         ProposalRepository $proposalRepository,
-        MobicoopMatcherCriteriaBuilder $criteriaBuilder
+        MobicoopMatcherCriteriaBuilder $criteriaBuilder,
+        MobicoopMatcherClassicWaypointsBuilder $classicWaypointsBuilder
     ) {
         $this->_proposalRepository = $proposalRepository;
         $this->_criteriaBuilder = $criteriaBuilder;
         $this->_maxDetourDistancePercent = $maxDetourDistancePercent;
         $this->_maxDetourDurationPercent = $maxDetourDurationPercent;
+        $this->_classicWaypointsBuilder = $classicWaypointsBuilder;
     }
 
     public function build(Proposal $proposal, array $result): Matching
@@ -76,6 +76,7 @@ class MobicoopMatcherMatchingBuilder
         $this->_treatDurations();
         $this->_treatPickUpsAndDropOffsDurations();
         $this->_matching->setCriteria($this->_criteriaBuilder->build($proposal, $this->_result, $this->_matching));
+        $this->_classicWaypointsBuilder->build($this->_matching, $this->_result['journeys'][0]['waypoints']);
 
         return $this->_matching;
     }
@@ -83,7 +84,7 @@ class MobicoopMatcherMatchingBuilder
     private function _treatProposals()
     {
         $matchingProposal = $this->_proposalRepository->find($this->_result['proposal']);
-        if (self::ROLE_DRIVER == $this->_result['role']) {
+        if (Waypoint::ROLE_DRIVER == $this->_result['role']) {
             $this->_matching->setProposalOffer($matchingProposal);
             $this->_matching->setProposalRequest($this->_proposal);
         } else {

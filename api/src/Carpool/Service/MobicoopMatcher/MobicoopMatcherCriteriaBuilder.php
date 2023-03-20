@@ -25,6 +25,7 @@ namespace App\Carpool\Service\MobicoopMatcher;
 
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\MobicoopMatcher\Waypoint;
 use App\Carpool\Entity\Proposal;
 
 /**
@@ -32,11 +33,6 @@ use App\Carpool\Entity\Proposal;
  */
 class MobicoopMatcherCriteriaBuilder
 {
-    public const ROLE_DRIVER = 'driver';
-    public const ROLE_PASSENGER = 'passenger';
-    public const STEP_START = 'start';
-    public const STEP_FINISH = 'finish';
-
     /**
      * @var Criteria
      */
@@ -68,11 +64,11 @@ class MobicoopMatcherCriteriaBuilder
 
     private function _setRoles()
     {
-        if (self::ROLE_DRIVER == $this->_result['role']) {
+        if (Waypoint::ROLE_DRIVER == $this->_result['role']) {
             $this->_criteria->setDriver(true);
             $this->_criteria->setPassenger(false);
         }
-        if (self::ROLE_PASSENGER == $this->_result['role']) {
+        if (Waypoint::ROLE_PASSENGER == $this->_result['role']) {
             $this->_criteria->setDriver(false);
             $this->_criteria->setPassenger(true);
         }

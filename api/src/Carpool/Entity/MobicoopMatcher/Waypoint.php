@@ -25,6 +25,12 @@ namespace App\Carpool\Entity\MobicoopMatcher;
 
 class Waypoint implements \JsonSerializable
 {
+    public const ROLE_DRIVER = 'driver';
+    public const ROLE_PASSENGER = 'passenger';
+
+    public const STEP_START = 'start';
+    public const STEP_FINISH = 'finish';
+
     /**
      * @var float
      */
