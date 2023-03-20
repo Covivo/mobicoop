@@ -72,7 +72,14 @@ class MobicoopMatcherProvider
         $results = $this->_get(self::ROUTE_MATCH, $search);
         $this->_logger->info(json_encode($results));
 
-        $this->_mobicoopMatcherAdapter->buildMatchingFromMatcherResult($proposal, $results);
+        $matchings = $this->_mobicoopMatcherAdapter->buildMatchingsFromMatcherResult($proposal, $results);
+        foreach ($matchings as $matching) {
+            // var_dump('proposalOffer : '.$matching->getProposalOffer()->getId());
+            // var_dump('proposalRequest : '.$matching->getProposalRequest()->getId());
+            var_dump($matching);
+        }
+
+        // To Do : add the matchings as matchingOffer or matchingRequest
 
         return $proposal;
     }

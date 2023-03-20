@@ -70,17 +70,11 @@ class MobicoopMatcherAdapter
     /**
      * @return Matching[]
      */
-    public function buildMatchingFromMatcherResult(Proposal $proposal, array $matcherResults): array
+    public function buildMatchingsFromMatcherResult(Proposal $proposal, array $matcherResults): array
     {
         $matchings = [];
         foreach ($matcherResults as $result) {
             $matchings[] = $this->_matchingBuilder->build($proposal, $result);
-        }
-
-        foreach ($matchings as $matching) {
-            // var_dump('proposalOffer : '.$matching->getProposalOffer()->getId());
-            // var_dump('proposalRequest : '.$matching->getProposalRequest()->getId());
-            var_dump($matching);
         }
 
         return $matchings;

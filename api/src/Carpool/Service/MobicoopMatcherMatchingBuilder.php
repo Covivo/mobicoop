@@ -34,6 +34,8 @@ class MobicoopMatcherMatchingBuilder
 {
     public const ROLE_DRIVER = 'driver';
     public const ROLE_PASSENGER = 'passenger';
+    public const STEP_START = 'start';
+    public const STEP_FINISH = 'finish';
 
     /**
      * @var Matching
@@ -63,7 +65,7 @@ class MobicoopMatcherMatchingBuilder
 
         $this->_matching = new Matching();
         $this->_matching->setCreatedDate(new \DateTime('now'));
-        $this->_treatProposals();
+        // $this->_treatProposals();
         $this->_treatDistances();
         $this->_treatDurations();
         $this->_treatPickUpsAndDropOffsDurations();
@@ -104,8 +106,56 @@ class MobicoopMatcherMatchingBuilder
         $this->_matching->setAcceptedDetourDuration($this->_result['initial_duration'] * $this->_maxDetourDurationPercent / 100);
     }
 
+    private function _findFirstWaypoint($waypoints): array
+    {
+        foreach ($waypoints as $waypoint) {
+            foreach ($waypoint['actors'] as $actor) {
+                if (self::ROLE_DRIVER == $actor['role'] && self::STEP_START == $actor['step']) {
+                    return $waypoint;
+                }
+            }
+        }
+    }
+
+    private function _findPickUpPoint($waypoints): array
+    {
+        foreach ($waypoints as $waypoint) {
+            foreach ($waypoint['actors'] as $actor) {
+                if (self::ROLE_PASSENGER == $actor['role'] && self::STEP_START == $actor['step']) {
+                    return $waypoint;
+                }
+            }
+        }
+    }
+
+    private function _findDropOffPoint($waypoints): array
+    {
+        foreach ($waypoints as $waypoint) {
+            foreach ($waypoint['actors'] as $actor) {
+                if (self::ROLE_PASSENGER == $actor['role'] && self::STEP_FINISH == $actor['step']) {
+                    return $waypoint;
+                }
+            }
+        }
+    }
+
+    private function _computeElapsedTimeInSeconds($start, $end): int
+    {
+        $startTime = \DateTime::createFromFormat('H:i:s', $start);
+        $endTime = \DateTime::createFromFormat('H:i:s', $end);
+
+        return $endTime->getTimestamp() - $startTime->getTimestamp();
+    }
+
     private function _treatPickUpsAndDropOffsDurations()
     {
-        // TO DO
+        $firstWaypoint = $this->_findFirstWaypoint($this->_result['journeys'][0]['waypoints']);
+        $pickUpPoint = $this->_findPickUpPoint($this->_result['journeys'][0]['waypoints']);
+
+        $this->_matching->setPickUpDuration($this->_computeElapsedTimeInSeconds($firstWaypoint['time'], $pickUpPoint['time']));
+
+        $dropOffPoint = $this->_findDropOffPoint($this->_result['journeys'][0]['waypoints']);
+
+        $this->_matching->setDropOffDuration($this->_computeElapsedTimeInSeconds($firstWaypoint['time'], $dropOffPoint['time']));
     }
 }
