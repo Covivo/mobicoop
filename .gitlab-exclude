@@ -111,6 +111,7 @@
 /api/public/upload/export/carpool
 /api/public/upload/export/carpool/*.*
 /api/public/upload/eec-incentives/*.*
+/api/public/upload/eec-incentives/images/driving-licence-number-tutorial/*.*
 /api/public/upload/eec-incentives/initial-commitment-proof/*.*
 /api/public/upload/eec-incentives/long-distance-subscription/*.*
 /api/public/upload/eec-incentives/long-distance-subscription/honour-certificate/*.*

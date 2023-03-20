@@ -104,6 +104,7 @@
             </v-col>
           </v-row>
           <v-row
+            id="phone-number"
             no-gutters
           >
             <!-- Telephone -->
@@ -308,6 +309,7 @@
                   @change="save"
                 />
               </v-menu>
+              <span id="driving-licence-number" />
               <v-text-field
                 v-model="drivingLicenceNumber"
                 :label="$t('drivingLicenceNumber.label')"
@@ -502,151 +504,158 @@
       id="cee-incentive"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+      <<<<<<<
+      h-e-a-d
       :is-after-eec-subscription="isAfterEecSubscription"
+      =="====="
+      :api-uri="apiUri"
+    >
+      >>>>>> evol#5800-dev
       @changeTab="changeTab"
-    />
+      />
 
-    <!-- Delete form -->
-    <v-card
-      flat
-      color="grey lighten-4"
-      class="mb-8"
-    >
-      <v-card-title>
-        {{ $t('buttons.supprimerAccount') }}
-      </v-card-title>
-      <v-card-text v-if="!ssoExternalAccountDeletion">
-        <v-row justify="center">
-          <v-col class="d-flex justify-center">
-            <v-dialog
-              v-model="dialogDelete"
-              width="500"
-            >
-              <template v-slot:activator="{ on }">
-                <!--Delete button -->
-                <v-btn
-                  class="button"
-                  color="error"
-                  rounded
-                  :disabled="!valid || disabledCreatedEvents || disabledOwnedCommunities"
-                  :loading="loading"
-                  type="button"
-                  :value="$t('save')"
-                  v-on="on"
-                >
-                  {{ $t('buttons.supprimerAccount') }}
-                </v-btn>
-              </template>
-
-              <v-card>
-                <v-card-title
-                  v-if="hasCreatedEvents || hasOwnedCommunities"
-                  class="text-h5 error--text"
-                  primary-title
-                >
-                  {{ $t('dialog.titles.deletionImpossible') }}
-                </v-card-title>
-                <v-card-title
-                  v-else
-                  class="text-h5"
-                  primary-title
-                >
-                  {{ $t('dialog.titles.deleteAccount') }}
-                </v-card-title>
-
-                <v-card-text>
-                  <p
-                    v-if="hasOwnedCommunities"
-                    v-html="$t('dialog.content.errorCommunities')"
-                  />
-                  <p
-                    v-else-if="hasCreatedEvents"
-                    v-html="$t('dialog.content.errorEvents')"
-                  />
-                  <p
-                    v-else
-                    v-html="$t('dialog.content.deleteAccount')"
-                  />
-                </v-card-text>
-
-                <v-divider />
-                <v-card-actions v-if="hasCreatedEvents || hasOwnedCommunities">
-                  <v-spacer />
-                  <v-btn
-                    color="primary darken-1"
-                    text
-                    @click="dialogDelete = false; newsSubscription = true"
-                  >
-                    {{ $t('dialog.buttons.close') }}
-                  </v-btn>
-                </v-card-actions>
-                <v-card-actions v-else>
-                  <v-spacer />
-                  <v-btn
-                    color="primary darken-1"
-                    text
-                    @click="dialogDelete = false; newsSubscription = true"
-                  >
-                    {{ $t('no') }}
-                  </v-btn>
-                  <v-btn
-                    color="primary"
-                    text
-                    :href="$t('route.supprimer')"
-                    @click="dialogDelete = false"
-                  >
-                    {{ $t('dialog.buttons.confirmDelete') }}
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-col>
-        </v-row>
-      </v-card-text>
-      <v-card-text v-else>
-        <v-row>
-          <v-col
-            col="12"
-          >
-            {{ $t('ssoDeleteAccountWarning',{'service':ssoConnection.service}) }}
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
-
-    <!-- PUBLIC PROFILE DIALOG -->
-    <v-dialog
-      v-model="dialogPublicProfile"
-      width="100%"
-    >
-      <v-card>
-        <v-card-title class="headline grey lighten-2">
-          {{ $t('publicProfile.title') }}
+      <!-- Delete form -->
+      <v-card
+        flat
+        color="grey lighten-4"
+        class="mb-8"
+      >
+        <v-card-title>
+          {{ $t('buttons.supprimerAccount') }}
         </v-card-title>
+        <v-card-text v-if="!ssoExternalAccountDeletion">
+          <v-row justify="center">
+            <v-col class="d-flex justify-center">
+              <v-dialog
+                v-model="dialogDelete"
+                width="500"
+              >
+                <template v-slot:activator="{ on }">
+                  <!--Delete button -->
+                  <v-btn
+                    class="button"
+                    color="error"
+                    rounded
+                    :disabled="!valid || disabledCreatedEvents || disabledOwnedCommunities"
+                    :loading="loading"
+                    type="button"
+                    :value="$t('save')"
+                    v-on="on"
+                  >
+                    {{ $t('buttons.supprimerAccount') }}
+                  </v-btn>
+                </template>
 
-        <v-card-text>
-          <PublicProfile
-            :user-id="user.id"
-            :show-report-button="false"
-            :age-display="ageDisplay"
-            :carpool-settings-display="carpoolSettingsDisplay"
-          />
+                <v-card>
+                  <v-card-title
+                    v-if="hasCreatedEvents || hasOwnedCommunities"
+                    class="text-h5 error--text"
+                    primary-title
+                  >
+                    {{ $t('dialog.titles.deletionImpossible') }}
+                  </v-card-title>
+                  <v-card-title
+                    v-else
+                    class="text-h5"
+                    primary-title
+                  >
+                    {{ $t('dialog.titles.deleteAccount') }}
+                  </v-card-title>
+
+                  <v-card-text>
+                    <p
+                      v-if="hasOwnedCommunities"
+                      v-html="$t('dialog.content.errorCommunities')"
+                    />
+                    <p
+                      v-else-if="hasCreatedEvents"
+                      v-html="$t('dialog.content.errorEvents')"
+                    />
+                    <p
+                      v-else
+                      v-html="$t('dialog.content.deleteAccount')"
+                    />
+                  </v-card-text>
+
+                  <v-divider />
+                  <v-card-actions v-if="hasCreatedEvents || hasOwnedCommunities">
+                    <v-spacer />
+                    <v-btn
+                      color="primary darken-1"
+                      text
+                      @click="dialogDelete = false; newsSubscription = true"
+                    >
+                      {{ $t('dialog.buttons.close') }}
+                    </v-btn>
+                  </v-card-actions>
+                  <v-card-actions v-else>
+                    <v-spacer />
+                    <v-btn
+                      color="primary darken-1"
+                      text
+                      @click="dialogDelete = false; newsSubscription = true"
+                    >
+                      {{ $t('no') }}
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      text
+                      :href="$t('route.supprimer')"
+                      @click="dialogDelete = false"
+                    >
+                      {{ $t('dialog.buttons.confirmDelete') }}
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-col>
+          </v-row>
         </v-card-text>
-
-        <v-divider />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            text
-            @click="dialogPublicProfile = false"
-          >
-            {{ $t('publicProfile.close') }}
-          </v-btn>
-        </v-card-actions>
+        <v-card-text v-else>
+          <v-row>
+            <v-col
+              col="12"
+            >
+              {{ $t('ssoDeleteAccountWarning',{'service':ssoConnection.service}) }}
+            </v-col>
+          </v-row>
+        </v-card-text>
       </v-card>
-    </v-dialog>
+
+      <!-- PUBLIC PROFILE DIALOG -->
+      <v-dialog
+        v-model="dialogPublicProfile"
+        width="100%"
+      >
+        <v-card>
+          <v-card-title class="headline grey lighten-2">
+            {{ $t('publicProfile.title') }}
+          </v-card-title>
+
+          <v-card-text>
+            <PublicProfile
+              :user-id="user.id"
+              :show-report-button="false"
+              :age-display="ageDisplay"
+              :carpool-settings-display="carpoolSettingsDisplay"
+            />
+          </v-card-text>
+
+          <v-divider />
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="primary"
+              text
+              @click="dialogPublicProfile = false"
+            >
+              {{ $t('publicProfile.close') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </eecincentivestatus>
   </v-container>
 </template>
 
@@ -737,6 +746,10 @@ export default {
     isAfterEecSubscription: {
       type: Boolean,
       default: false
+    },
+    apiUri: {
+      type: String,
+      default: null
     }
   },
   data() {
