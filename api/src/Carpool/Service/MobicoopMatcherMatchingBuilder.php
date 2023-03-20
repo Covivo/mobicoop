@@ -65,7 +65,7 @@ class MobicoopMatcherMatchingBuilder
 
         $this->_matching = new Matching();
         $this->_matching->setCreatedDate(new \DateTime('now'));
-        // $this->_treatProposals();
+        $this->_treatProposals();
         $this->_treatDistances();
         $this->_treatDurations();
         $this->_treatPickUpsAndDropOffsDurations();
