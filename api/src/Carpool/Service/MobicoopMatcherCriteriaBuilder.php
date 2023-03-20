@@ -56,7 +56,7 @@ class MobicoopMatcherCriteriaBuilder
 
         if (Criteria::FREQUENCY_PUNCTUAL == $this->_criteria->getFrequency()) {
             // punctual
-            $punctualCriteriaBuilder = new MobicoopMatcherPunctualCriteriaBuilder($this->_criteria, $result['journeys'][0], $this->_searchProposal);
+            $punctualCriteriaBuilder = new MobicoopMatcherPunctualCriteriaBuilder($this->_criteria, $result, $this->_searchProposal);
             $this->_criteria = $punctualCriteriaBuilder->build();
         }
 
@@ -73,8 +73,10 @@ class MobicoopMatcherCriteriaBuilder
     {
         if (self::ROLE_DRIVER == $this->_result['role']) {
             $this->_criteria->setDriver(true);
+            $this->_criteria->setPassenger(false);
         }
         if (self::ROLE_PASSENGER == $this->_result['role']) {
+            $this->_criteria->setDriver(false);
             $this->_criteria->setPassenger(true);
         }
     }

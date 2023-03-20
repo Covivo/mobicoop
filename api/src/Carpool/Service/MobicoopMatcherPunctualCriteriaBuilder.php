@@ -33,9 +33,15 @@ class MobicoopMatcherPunctualCriteriaBuilder
 {
     public const ROLE_DRIVER = 'driver';
     public const ROLE_PASSENGER = 'passenger';
+
     public const STEP_START = 'start';
+    public const STEP_FINISH = 'finish';
+
     public const DATE_FORMAT = 'Y-m-d';
     public const TIME_FORMAT = 'H:i:s';
+
+    public const DEFAULT_SEATS_DRIVER = 3;
+    public const DEFAULT_SEATS_PASSENGER = 1;
 
     /**
      * @var Criteria
@@ -43,12 +49,16 @@ class MobicoopMatcherPunctualCriteriaBuilder
     private $_criteria;
 
     private $_searchProposal;
+    private $_role;
+    private $_seats;
     private $_journey;
 
-    public function __construct(Criteria $criteria, array $journey, Proposal $searchProposal)
+    public function __construct(Criteria $criteria, array $result, Proposal $searchProposal)
     {
         $this->_criteria = $criteria;
-        $this->_journey = $journey;
+        $this->_role = $result['role'];
+        $this->_seats = $result['seats'];
+        $this->_journey = $result['journeys'][0];
         $this->_searchProposal = $searchProposal;
     }
 
@@ -56,6 +66,8 @@ class MobicoopMatcherPunctualCriteriaBuilder
     {
         $this->_setDateAndTime();
         $this->_setMarginMinAndMaxTime();
+        $this->_setSeats();
+        $this->_setModes();
 
         return $this->_criteria;
     }
@@ -65,6 +77,8 @@ class MobicoopMatcherPunctualCriteriaBuilder
         $this->_criteria->setFromDate(\DateTime::createFromFormat(self::DATE_FORMAT, $this->_journey['first_date']));
         $waypoint = $this->_findFirstWaypoint($this->_journey['waypoints']);
         $this->_criteria->setFromTime(\DateTime::createFromFormat(self::TIME_FORMAT, $waypoint['time']));
+
+        $this->_criteria->setStrictDate($this->_searchProposal->getCriteria()->isStrictDate());
     }
 
     private function _findFirstWaypoint($waypoints): array
@@ -81,5 +95,26 @@ class MobicoopMatcherPunctualCriteriaBuilder
     private function _setMarginMinAndMaxTime()
     {
         $this->_criteria->setMarginDuration($this->_searchProposal->getCriteria()->getMarginDuration());
+        $minTime = clone $this->_criteria->getFromTime();
+        $this->_criteria->setMinTime($minTime->modify('-'.$this->_criteria->getMarginDuration().' seconds'));
+        $maxTime = clone $this->_criteria->getFromTime();
+        $this->_criteria->setMaxTime($maxTime->modify('+'.$this->_criteria->getMarginDuration().' seconds'));
+    }
+
+    private function _setSeats()
+    {
+        $this->_criteria->setSeatsDriver(self::DEFAULT_SEATS_DRIVER);
+        $this->_criteria->setSeatsPassenger(self::DEFAULT_SEATS_PASSENGER);
+        if (self::ROLE_DRIVER == $this->_role) {
+            $this->_criteria->setSeatsDriver($this->_seats);
+        } elseif (self::ROLE_PASSENGER == $this->_role) {
+            $this->_criteria->setSeatsPassenger($this->_seats);
+        }
+    }
+
+    private function _setModes()
+    {
+        $this->_criteria->setAnyRouteAsPassenger($this->_searchProposal->getCriteria()->getAnyRouteAsPassenger());
+        $this->_criteria->setMultiTransportMode($this->_searchProposal->getCriteria()->getMultiTransportMode());
     }
 }
