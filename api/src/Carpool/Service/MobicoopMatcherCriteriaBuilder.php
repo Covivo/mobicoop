@@ -24,6 +24,7 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 
 /**
@@ -44,7 +45,7 @@ class MobicoopMatcherCriteriaBuilder
     private $_searchProposal;
     private $_result;
 
-    public function build(Proposal $searchProposal, array $result): Criteria
+    public function build(Proposal $searchProposal, array $result, Matching $currentMatching): Criteria
     {
         $this->_searchProposal = $searchProposal;
         $this->_result = $result;
@@ -56,15 +57,11 @@ class MobicoopMatcherCriteriaBuilder
 
         if (Criteria::FREQUENCY_PUNCTUAL == $this->_criteria->getFrequency()) {
             // punctual
-            $punctualCriteriaBuilder = new MobicoopMatcherPunctualCriteriaBuilder($this->_criteria, $result, $this->_searchProposal);
+            $punctualCriteriaBuilder = new MobicoopMatcherPunctualCriteriaBuilder($this->_criteria, $result, $this->_searchProposal, $currentMatching);
             $this->_criteria = $punctualCriteriaBuilder->build();
         }
 
         // TO DO : regular
-
-        var_dump($this->_criteria);
-
-        exit;
 
         return $this->_criteria;
     }

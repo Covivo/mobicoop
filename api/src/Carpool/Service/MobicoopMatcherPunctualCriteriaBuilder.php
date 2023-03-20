@@ -24,7 +24,9 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
+use App\Service\FormatDataManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -52,14 +54,16 @@ class MobicoopMatcherPunctualCriteriaBuilder
     private $_role;
     private $_seats;
     private $_journey;
+    private $_currentMatching;
 
-    public function __construct(Criteria $criteria, array $result, Proposal $searchProposal)
+    public function __construct(Criteria $criteria, array $result, Proposal $searchProposal, Matching $currentMatching)
     {
         $this->_criteria = $criteria;
         $this->_role = $result['role'];
         $this->_seats = $result['seats'];
         $this->_journey = $result['journeys'][0];
         $this->_searchProposal = $searchProposal;
+        $this->_currentMatching = $currentMatching;
     }
 
     public function build(): Criteria
@@ -68,6 +72,7 @@ class MobicoopMatcherPunctualCriteriaBuilder
         $this->_setMarginMinAndMaxTime();
         $this->_setSeats();
         $this->_setModes();
+        $this->_setPrices();
 
         return $this->_criteria;
     }
@@ -116,5 +121,14 @@ class MobicoopMatcherPunctualCriteriaBuilder
     {
         $this->_criteria->setAnyRouteAsPassenger($this->_searchProposal->getCriteria()->getAnyRouteAsPassenger());
         $this->_criteria->setMultiTransportMode($this->_searchProposal->getCriteria()->getMultiTransportMode());
+    }
+
+    private function _setPrices()
+    {
+        $formatDataManager = new FormatDataManager();
+        $this->_criteria->setDriverComputedPrice(($this->_currentMatching->getCommonDistance() + $this->_currentMatching->getDetourDistance()) * $this->_currentMatching->getProposalOffer()->getCriteria()->getPriceKm() / 1000);
+        $this->_criteria->setDriverComputedRoundedPrice($formatDataManager->roundPrice((float) $this->_criteria->getDriverComputedPrice(), $this->_criteria->getFrequency()));
+        $this->_criteria->setPassengerComputedPrice($this->_criteria->getDriverComputedPrice());
+        $this->_criteria->setPassengerComputedRoundedPrice($this->_criteria->getDriverComputedRoundedPrice());
     }
 }

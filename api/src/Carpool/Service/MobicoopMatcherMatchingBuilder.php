@@ -69,11 +69,11 @@ class MobicoopMatcherMatchingBuilder
 
         $this->_matching = new Matching();
         $this->_matching->setCreatedDate(new \DateTime('now'));
-        // $this->_treatProposals();
+        $this->_treatProposals();
         $this->_treatDistances();
         $this->_treatDurations();
         $this->_treatPickUpsAndDropOffsDurations();
-        $this->_matching->setCriteria($this->_criteriaBuilder->build($proposal, $this->_result));
+        $this->_matching->setCriteria($this->_criteriaBuilder->build($proposal, $this->_result, $this->_matching));
 
         return $this->_matching;
     }
@@ -100,6 +100,7 @@ class MobicoopMatcherMatchingBuilder
 
         // TO DO : CommonDistance
         // Ajouter dans le matcher la distance parcourue à chaque waypoint : si possible on calcul avec distance à DEPOSE – distance à PEC
+        $this->_matching->setCommonDistance($this->_result['final_distance']);
     }
 
     private function _treatDurations()
