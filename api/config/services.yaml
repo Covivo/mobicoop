@@ -217,6 +217,7 @@ services:
         defaultSeatsPassenger: "%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%"
         carpoolProofDistance: "%env(int:CARPOOL_PROOF_DISTANCE)%"
         paymentActive: "%env(string:PAYMENT_ACTIVE)%"
+        matcherCustomization: "%env(bool:MATCHER_CUSTOMIZATION)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 

@@ -75,6 +75,8 @@ use Symfony\Component\Security\Core\Security;
  */
 class AdManager
 {
+    public const AUTHORIZED_MATCHING_ALGORITHMS = [Ad::MATCHING_ALGORITHM_V2, Ad::MATCHING_ALGORITHM_V3];
+
     private $entityManager;
     private $proposalManager;
     private $userManager;
@@ -104,6 +106,8 @@ class AdManager
      * @var JourneyValidation
      */
     private $_journeyValidation;
+
+    private $_matcherCustomization;
 
     /**
      * Constructor.
@@ -162,6 +166,7 @@ class AdManager
             $this->params['paymentActive'] = true;
         }
         $this->_journeyValidation = $journeyValidation;
+        $this->_matcherCustomization = $params['matcherCustomization'];
     }
 
     /**
@@ -179,12 +184,16 @@ class AdManager
      *
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_V2)
+    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
         /** Anti-Fraud check */
         $antiFraudResponse = $this->antiFraudManager->validAd($ad);
         if (!$antiFraudResponse->isValid()) {
             throw new AntiFraudException($antiFraudResponse->getMessage());
+        }
+
+        if (!$this->_matcherCustomization || !in_array($matchingAlgorithm, self::AUTHORIZED_MATCHING_ALGORITHMS)) {
+            $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT;
         }
 
         // $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);

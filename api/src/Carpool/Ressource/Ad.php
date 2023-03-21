@@ -187,6 +187,7 @@ class Ad
     public const ROLE_PASSENGER = 2;
     public const ROLE_DRIVER_OR_PASSENGER = 3;
 
+    public const MATCHING_ALGORITHM_DEFAULT = self::MATCHING_ALGORITHM_V2;
     public const MATCHING_ALGORITHM_V2 = 'V2';
     public const MATCHING_ALGORITHM_V3 = 'V3';
 

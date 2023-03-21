@@ -182,7 +182,7 @@ class ProposalManager
      * Prepare a proposal for persist.
      * Used when posting a proposal to populate default values like proposal validity.
      */
-    public function prepareProposal(Proposal $proposal, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_V2): Proposal
+    public function prepareProposal(Proposal $proposal, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT): Proposal
     {
         return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true, $matchingAlgorithm);
     }
@@ -197,7 +197,7 @@ class ProposalManager
      *
      * @return Proposal The treated proposal
      */
-    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_V2)
+    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
         $this->logger->info('ProposalManager : treatProposal '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
