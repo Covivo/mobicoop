@@ -72,6 +72,13 @@ class MobicoopMatcherClassicWaypointsBuilder
     {
         foreach ($waypoint['actors'] as $actor) {
             $classicWaypoint = new ClassicWaypoint();
+
+            if (Waypoint::ROLE_DRIVER == $actor['role']) {
+                $classicWaypoint->setRole(ClassicWaypoint::ROLE_DRIVER);
+            } elseif (Waypoint::ROLE_PASSENGER == $actor['role']) {
+                $classicWaypoint->setRole(ClassicWaypoint::ROLE_PASSENGER);
+            }
+
             if (Waypoint::ROLE_DRIVER == $actor['role'] && Waypoint::STEP_START == $actor['step']) {
                 $classicWaypoint->setPosition(0);
             }

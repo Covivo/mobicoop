@@ -75,13 +75,13 @@ class MobicoopMatcherProvider
         $matchings = $this->_mobicoopMatcherAdapter->buildMatchingsFromMatcherResult($searchProposal, $results);
 
         // REMOVE THIS PART AFTER DEV
-        foreach ($matchings as $matching) {
-            $matching->setProposalOffer(null);
-            $matching->setProposalRequest(null);
-            var_dump($matching);
-        }
+        // foreach ($matchings as $matching) {
+        //     $matching->setProposalOffer(null);
+        //     $matching->setProposalRequest(null);
+        //     var_dump($matching);
+        // }
 
-        exit;
+        // exit;
         // END REMOVE THIS PART AFTER DEV
 
         foreach ($matchings as $matching) {
