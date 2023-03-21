@@ -34,14 +34,18 @@ class MobicoopMatcherClassicWaypointsBuilder
 {
     private $_classicWaypoints;
     private $_addressBuilder;
+    private $_waypointExtractor;
+    private $_computingTools;
 
-    public function __construct(MobicoopMatcherAddressBuilder $addressBuilder)
+    public function __construct(MobicoopMatcherAddressBuilder $addressBuilder, MobicoopMatcherComputingTools $computingTools)
     {
         $this->_addressBuilder = $addressBuilder;
+        $this->_computingTools = $computingTools;
     }
 
     public function build(Matching $currentMatching, array $waypoints): Matching
     {
+        $this->_waypointExtractor = new MobicoopMatcherWaypointExtractor($waypoints);
         $this->_classicWaypoints = [];
 
         foreach ($waypoints as $waypoint) {
@@ -52,6 +56,13 @@ class MobicoopMatcherClassicWaypointsBuilder
         }
 
         return $currentMatching;
+    }
+
+    private function _computeDurationFromStart(array $waypoint)
+    {
+        $startPoint = $this->_waypointExtractor->findFirstWaypoint();
+
+        return $this->_computingTools->computeElapsedTimeInSeconds($startPoint['time'], $waypoint['time']);
     }
 
     /**
@@ -71,6 +82,8 @@ class MobicoopMatcherClassicWaypointsBuilder
             if (is_null($classicWaypoint->getPosition())) {
                 $this->_setUniquePosition($classicWaypoint);
             }
+
+            $classicWaypoint->setDuration($this->_computeDurationFromStart($waypoint));
 
             $classicWaypoint->setAddress($this->_addressBuilder->build($waypoint['point']));
 

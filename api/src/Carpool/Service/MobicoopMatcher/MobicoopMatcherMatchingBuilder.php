@@ -33,8 +33,6 @@ use App\Carpool\Repository\ProposalRepository;
  */
 class MobicoopMatcherMatchingBuilder
 {
-    public const TIME_FORMAT = 'H:i:s';
-
     /**
      * @var Matching
      */
@@ -48,19 +46,22 @@ class MobicoopMatcherMatchingBuilder
     private $_criteriaBuilder;
     private $_waypointExtractor;
     private $_classicWaypointsBuilder;
+    private $_computingTools;
 
     public function __construct(
         int $maxDetourDistancePercent,
         int $maxDetourDurationPercent,
         ProposalRepository $proposalRepository,
         MobicoopMatcherCriteriaBuilder $criteriaBuilder,
-        MobicoopMatcherClassicWaypointsBuilder $classicWaypointsBuilder
+        MobicoopMatcherClassicWaypointsBuilder $classicWaypointsBuilder,
+        MobicoopMatcherComputingTools $computingTools
     ) {
         $this->_proposalRepository = $proposalRepository;
         $this->_criteriaBuilder = $criteriaBuilder;
         $this->_maxDetourDistancePercent = $maxDetourDistancePercent;
         $this->_maxDetourDurationPercent = $maxDetourDurationPercent;
         $this->_classicWaypointsBuilder = $classicWaypointsBuilder;
+        $this->_computingTools = $computingTools;
     }
 
     public function build(Proposal $proposal, array $result): Matching
@@ -115,23 +116,15 @@ class MobicoopMatcherMatchingBuilder
         $this->_matching->setAcceptedDetourDuration($this->_result['initial_duration'] * $this->_maxDetourDurationPercent / 100);
     }
 
-    private function _computeElapsedTimeInSeconds($start, $end): int
-    {
-        $startTime = \DateTime::createFromFormat(self::TIME_FORMAT, $start);
-        $endTime = \DateTime::createFromFormat(self::TIME_FORMAT, $end);
-
-        return $endTime->getTimestamp() - $startTime->getTimestamp();
-    }
-
     private function _treatPickUpsAndDropOffsDurations()
     {
         $firstWaypoint = $this->_waypointExtractor->findFirstWaypoint();
         $pickUpPoint = $this->_waypointExtractor->findPickUpPoint();
 
-        $this->_matching->setPickUpDuration($this->_computeElapsedTimeInSeconds($firstWaypoint['time'], $pickUpPoint['time']));
+        $this->_matching->setPickUpDuration($this->_computingTools->computeElapsedTimeInSeconds($firstWaypoint['time'], $pickUpPoint['time']));
 
         $dropOffPoint = $this->_waypointExtractor->findDropOffPoint();
 
-        $this->_matching->setDropOffDuration($this->_computeElapsedTimeInSeconds($firstWaypoint['time'], $dropOffPoint['time']));
+        $this->_matching->setDropOffDuration($this->_computingTools->computeElapsedTimeInSeconds($firstWaypoint['time'], $dropOffPoint['time']));
     }
 }
