@@ -27,6 +27,7 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\ResultRole;
 use App\Geography\Entity\Address;
+use App\Service\FormatDataManager;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -45,8 +46,19 @@ class ExternalJourneyManager
     private $params;
     private $journeySearcher;
 
-    public function __construct(?array $operator = [], ?array $clients = [], ?array $providers = [], JourneySearcher $journeySearcher)
-    {
+    /**
+     * @var FormatDataManager
+     */
+    private $_formatDataManager;
+
+    public function __construct(
+        FormatDataManager $formatDataManager,
+        ?array $operator = [],
+        ?array $clients = [],
+        ?array $providers = [],
+        JourneySearcher $journeySearcher
+    ) {
+        $this->_formatDataManager = $formatDataManager;
         $this->operator = $operator;
         $this->clients = $clients;
         $this->providers = $providers;
@@ -228,6 +240,10 @@ class ExternalJourneyManager
 
             // price - seats - distance - duration
             $result->setTime(('' !== $time) ? $time : null);
+            $result->setRoundedPrice($this->_formatDataManager->roundPrice(
+                ($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'],
+                $result->getFrequency()
+            ));
             $result->setRoundedPrice(round(($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'], 2));
             $result->setSeats(isset($currentJourney['driver']['seats']) ? $currentJourney['driver']['seats'] : 0);
 
