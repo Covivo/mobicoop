@@ -173,11 +173,11 @@ class AskManager
 
         if ($ad->getAdId() == $matching->getProposalOffer()->getId()) {
             // the carpooler is the driver, the requester is the passenger
-            $ask->setType($matching->getProposalRequest()->getType());
+            $ask->setType(Proposal::TYPE_ONE_WAY == $matching->getProposalRequest()->getType() ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD);
             $ask->setUser($matching->getProposalRequest()->getUser());
         } else {
             // the carpooler is the passenger, the requester is the driver
-            $ask->setType($matching->getProposalOffer()->getType());
+            $ask->setType(Proposal::TYPE_ONE_WAY == $matching->getProposalOffer()->getType() ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD);
             $ask->setUser($matching->getProposalOffer()->getUser());
         }
 
