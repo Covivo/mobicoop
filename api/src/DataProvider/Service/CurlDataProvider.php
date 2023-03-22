@@ -33,6 +33,7 @@ class CurlDataProvider
 {
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
+    public const METHOD_DELETE = 'DELETE';
     public const DEFAULT_CONTENT_TYPE = 'application/json';
 
     /**
@@ -93,6 +94,24 @@ class CurlDataProvider
             return new Response($response['http_code'], $results);
         } catch (TransferException $e) {
             return new Response($response['http_code']);
+        }
+
+        return new Response();
+    }
+
+    public function delete(array $headers = null): Response
+    {
+        try {
+            $curl = curl_init();
+
+            $this->_initRequest($curl, self::METHOD_DELETE, $headers);
+
+            $results = curl_exec($curl);
+            $response = curl_getinfo($curl);
+
+            return new Response($response['http_code'], $results);
+        } catch (TransferException $e) {
+            return new Response($response['http_code'], $results);
         }
 
         return new Response();

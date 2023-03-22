@@ -30,4 +30,5 @@ class MobicoopMatcherDataProviderException extends DataProviderException
     public const AUTH_ERROR = 'Authentication error';
     public const GET_ERROR = 'Error in GET Method';
     public const POST_ERROR = 'Error in POST Method';
+    public const DELETE_ERROR = 'Error in DELETE Method';
 }

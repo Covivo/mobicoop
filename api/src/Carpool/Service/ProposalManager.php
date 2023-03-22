@@ -341,8 +341,13 @@ class ProposalManager
             }
         }
 
+        $proposalId = $proposal->getId();
         $this->entityManager->remove($proposal);
         $this->entityManager->flush();
+
+        if ($this->params['matcherCustomization']) {
+            $this->mobicoopMatcherProvider->delete($proposalId);
+        }
 
         return new Response(204, 'Deleted with success');
     }

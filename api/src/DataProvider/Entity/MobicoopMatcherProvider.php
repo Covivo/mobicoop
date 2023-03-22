@@ -40,6 +40,10 @@ class MobicoopMatcherProvider
     private const ROUTE_AUTH = '/auth';
     private const ROUTE_MATCH = '/match';
     private const ROUTE_POST = '/ad';
+    private const ROUTE_DELETE = '/ad';
+
+    private const HTTP_CODE_OK = 200;
+    private const HTTP_CODE_NO_CONTENT = 204;
 
     private $_uri;
     private $_username;
@@ -91,6 +95,12 @@ class MobicoopMatcherProvider
         return $searchProposal;
     }
 
+    public function delete(int $proposalId)
+    {
+        $this->_auth();
+        $results = $this->_delete(self::ROUTE_DELETE, $proposalId);
+    }
+
     private function _feedSearchProposalWithMatchings(Proposal $searchProposal, array $results)
     {
         $matchings = $this->_mobicoopMatcherAdapter->buildMatchingsFromMatcherResult($searchProposal, $results);
@@ -123,13 +133,13 @@ class MobicoopMatcherProvider
         $this->_logger->info('Request :');
         $this->_logger->info($body);
         $response = $this->_curlDataProvider->get(null, $headers, $body);
-        if (200 == $response->getCode()) {
+        if (self::HTTP_CODE_OK == $response->getCode()) {
             return json_decode($response->getValue(), true);
         }
 
         $this->_logger->error(MobicoopMatcherDataProviderException::GET_ERROR.' '.$route);
         $this->_logger->error($response->getCode());
-        $this->_logger->error($response->getValue());
+        $this->_logger->error(strip_tags($response->getValue()));
         $this->_logger->error('Request Body : '.$body);
 
         throw new MobicoopMatcherDataProviderException(MobicoopMatcherDataProviderException::GET_ERROR.' '.$route);
@@ -144,16 +154,32 @@ class MobicoopMatcherProvider
         $this->_logger->info('Request :');
         $this->_logger->info($body);
         $response = $this->_curlDataProvider->post($headers, $body);
-        if (200 == $response->getCode()) {
+        if (self::HTTP_CODE_OK == $response->getCode()) {
             return json_decode($response->getValue(), true);
         }
 
         $this->_logger->error(MobicoopMatcherDataProviderException::POST_ERROR.' '.$route);
         $this->_logger->error($response->getCode());
-        $this->_logger->error($response->getValue());
+        $this->_logger->error(strip_tags($response->getValue()));
         $this->_logger->error('Request Body : '.$body);
 
         throw new MobicoopMatcherDataProviderException(MobicoopMatcherDataProviderException::POST_ERROR.' '.$route);
+    }
+
+    private function _delete(string $route, int $id)
+    {
+        $this->_curlDataProvider->setUrl($this->_uri.''.$route.'/'.$id);
+
+        $headers = ['Authorization: Bearer '.$this->_token];
+
+        $this->_logger->info('Request id :'.$id);
+        $response = $this->_curlDataProvider->delete($headers);
+        if (self::HTTP_CODE_OK != $response->getCode()) {
+            $this->_logger->error(MobicoopMatcherDataProviderException::DELETE_ERROR.' '.$route);
+            $this->_logger->error($response->getCode());
+            $this->_logger->error(strip_tags($response->getValue()));
+            $this->_logger->error('Request Id : '.$id);
+        }
     }
 
     private function _auth()
