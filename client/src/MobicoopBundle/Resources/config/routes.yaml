@@ -1892,6 +1892,15 @@ my_cee_subscriptions:
     nl: /getMyCeeSubscriptions
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::myCeeSubscriptions
 
+
+my_eec_subscriptions_eligibility:
+  path:
+    fr: /getMyEecEligibility
+    en: /getMyEecEligibility
+    nl: /getMyEecEligibility
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::myEecSubscriptionsEligibility
+
+
 ###############
 # misc routes #
 ###############

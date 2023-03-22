@@ -1720,6 +1720,11 @@ class UserController extends AbstractController
         return new JsonResponse($this->ceeSubscriptionManager->myCeeSubscriptions());
     }
 
+    public function myEecSubscriptionsEligibility()
+    {
+        return new JsonResponse($this->ceeSubscriptionManager->myEecSubscriptionsEligibility());
+    }
+
     private function mobileRedirect(string $host, string $path, array $params)
     {
         $redirectUri = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
