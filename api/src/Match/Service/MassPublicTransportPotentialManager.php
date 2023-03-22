@@ -112,6 +112,9 @@ class MassPublicTransportPotentialManager
         $TPPotential = [];
         // $cpt = 0;
         foreach ($mass->getPersons() as $person) {
+            if (is_null($person->getPersonalAddress()->getLatitude()) || is_null($person->getPersonalAddress()->getLongitude()) || is_null($person->getWorkAddress()->getLatitude()) || is_null($person->getWorkAddress()->getLongitude())) {
+                continue;
+            }
             // $cpt++;
             // if ($cpt>10) {
             //     break;
@@ -119,6 +122,7 @@ class MassPublicTransportPotentialManager
 
             $this->logger->info('Mass PT Potential | Get PT potential for person id = '.$person->getId().' '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $this->logger->info('Mass PT Potential | From = '.$person->getPersonalAddress()->getLatitude().':'.$person->getPersonalAddress()->getLongitude().' To : '.$person->getWorkAddress()->getLatitude().':'.$person->getWorkAddress()->getLongitude().' '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+
             /**
              * @var MassPerson $person
              */
