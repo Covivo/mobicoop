@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Utility\Entity\CsvMaker\queries;
+
 use App\Utility\Interfaces\MultipleQueriesInterface;
 
 class UsersTerritories implements MultipleQueriesInterface
