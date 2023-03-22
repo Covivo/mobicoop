@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity;
 
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,8 +32,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class Message implements \JsonSerializable
+class Message implements ResourceInterface, \JsonSerializable
 {
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int the id of the message
      *
@@ -44,6 +47,7 @@ class Message implements \JsonSerializable
      * @var User the sender of the message
      *
      * @Assert\NotBlank
+     *
      * @Groups({"get","post","put"})
      */
     private $from;
@@ -52,6 +56,7 @@ class Message implements \JsonSerializable
      * @var User the recipient of the message
      *
      * @Assert\NotBlank
+     *
      * @Groups({"get","post","put"})
      */
     private $to;
@@ -60,6 +65,7 @@ class Message implements \JsonSerializable
      * @var string the content of the message
      *
      * @Assert\NotBlank
+     *
      * @Groups({"get","post","put"})
      */
     private $message;
@@ -68,6 +74,7 @@ class Message implements \JsonSerializable
      * @var string Defines if the recipient of this message is either the driver or the passenger. [DRIVER, PASSENGER]
      *
      * @Assert\NotBlank
+     *
      * @Groups({"get","post","put"})
      */
     private $recipientCarpoolerType;
@@ -92,6 +99,14 @@ class Message implements \JsonSerializable
      * @Groups({"get","post","put"})
      */
     private $bookingId;
+
+    public function __construct($id = null)
+    {
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
+    }
 
     public function getId(): int
     {

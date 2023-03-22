@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity;
 
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,10 +32,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class Booking implements \JsonSerializable
+class Booking implements ResourceInterface, \JsonSerializable
 {
+    public const DEFAULT_ID = 999999999999;
+    public const RESOURCE_NAME = 'carpool_Standard/booking';
+    public const WAITING_CONFIRMATION = 'WAITING_CONFIRMATION';
+    public const CONFIRMED = 'CONFIRMED';
+    public const CANCELLED = 'CANCELLED';
+    public const COMPLETED_PENDING_VALIDATION = 'COMPLETED_PENDING_VALIDATION';
+    public const VALIDATED = 'VALIDATED';
+
     /**
-     * @var string the id of the booking
+     * @var int the id of the booking
      *
      * @Groups({"get","post","put"})
      */
@@ -161,12 +170,20 @@ class Booking implements \JsonSerializable
      */
     private $message;
 
-    public function getId(): string
+    public function __construct($id = null)
+    {
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(string $id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
 

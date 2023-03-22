@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity;
 
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,16 +32,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class User
+class User implements ResourceInterface, \JsonSerializable
 {
     public const DEFAULT_ID = 999999999999;
+
+    /**
+     * @var null|int The id of this user
+     *
+     * @Groups({"get","post","put"})
+     */
+    private $id;
 
     /**
      * @var null|string The id of this user
      *
      * @Groups({"get","post","put"})
      */
-    private $id;
+    private $externalId;
 
     /**
      * @var string the operator identifier
@@ -110,14 +118,26 @@ class User
         }
     }
 
-    public function getId(): ?string
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(?string $id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
 
         return $this;
     }

@@ -857,6 +857,26 @@ export default {
     launchExternalBooking(params) {
 
       console.log(params);
+      maxios.post(this.$t("bookingUrl"), params,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          if(response.status == 200){
+            // window.location = this.$t("carpoolMailBoxUrl");
+          }
+          else{
+            console.log(response);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.carpoolDialog = false;
+        })
       this.bookingDialog = false;
     },
     updateFilters(data){
