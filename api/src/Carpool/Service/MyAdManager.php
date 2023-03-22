@@ -216,9 +216,7 @@ class MyAdManager
         $today = new \DateTime('now');
         foreach ($this->matchingRepository->getProposalMatchingAsOffersWithBothUsers($proposal) as $matchingOffer) {
             // the user is passenger
-            /**
-             * @var Matching $matchingOffer
-             */
+            // @var Matching $matchingOffer
             // we exclude private proposals and expired matchings for the carpooler count
             // We need them though to treat former ask without sending another request
             if (!$matchingOffer->getProposalOffer()->isPrivate() && !$this->_hasJourneyReachedDeadline($matchingOffer->getCriteria())) {
@@ -275,9 +273,7 @@ class MyAdManager
 
         foreach ($this->matchingRepository->getProposalMatchingAsRequestsWithBothUsers($proposal) as $matchingRequest) {
             // the user is driver
-            /**
-             * @var Matching $matchingRequest
-             */
+            // @var Matching $matchingRequest
             // we exclude private proposals for the carpooler count, as well as solidaries and expired matching
             // We need them though to treat former ask without sending another request
             if (
@@ -350,7 +346,7 @@ class MyAdManager
 
         $date = !is_null($criteria->getToDate()) ? $criteria->getToDate() : $criteria->getFromDate();
 
-        return is_null($date) ? false : $date->format('Y-m-d') >= $today->format('Y-m-d');
+        return is_null($date) ? false : $date->format('Y-m-d') < $today->format('Y-m-d');
     }
 
     /**
