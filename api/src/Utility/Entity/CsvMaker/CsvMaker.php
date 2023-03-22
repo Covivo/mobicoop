@@ -36,6 +36,8 @@ class CsvMaker
 {
     public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/csvExport';
     public const PATH_TO_QUERIES = __DIR__.'/queries';
+    public const PATH_TO_QUERIES_CLASSES = 'App\\Utility\\Entity\\CsvMaker\\queries\\';
+
     public const CSV_DELIMITER = ';';
     public const SINGLE_QUERY_FILE_EXTENTION = 'sql';
     public const MULTI_QUERY_FILE_EXTENTION = 'php';
@@ -97,8 +99,8 @@ class CsvMaker
     private function _makeCsvFileFromMultipleQuery(string $file)
     {
         $this->_logger->info('makeCsvFileFromMultipleQuery : '.$file);
-
-        $query = new $file();
+        $cname = self::PATH_TO_QUERIES_CLASSES.$file;
+        $query = new $cname();
         $this->_executeMultipleQuery($query->getMultipleQueries());
         $this->_writeResults($file);
     }
