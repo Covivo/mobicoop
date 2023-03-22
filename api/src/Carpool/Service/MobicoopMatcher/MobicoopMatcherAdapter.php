@@ -63,6 +63,7 @@ class MobicoopMatcherAdapter
         $this->_treatStartDate();
         $this->_treatWaypoints();
         $this->_treatRole();
+        $this->_treatMargins();
 
         return $this->_search;
     }
@@ -111,5 +112,10 @@ class MobicoopMatcherAdapter
         if ($this->_searchProposal->getCriteria()->isPassenger()) {
             $this->_search->setPassenger(true);
         }
+    }
+
+    private function _treatMargins()
+    {
+        $this->_search->setMarginDuration($this->_searchProposal->getCriteria()->getMarginDuration());
     }
 }

@@ -78,6 +78,10 @@ class ProposalManager
     public const CHECK_REMOVE_ORPHANS_RUNNING_FILE = 'removeOrphans.txt';
     public const HOMOGENIZE_REGULAR_PROPOSAL_ADDRESS_DISTANCE = 5000;
 
+    public const TWELVE_HOURS_MARGIN_IN_SECONDS = 43199;
+
+    public const NOON = '12:00';
+
     private $entityManager;
     private $proposalMatcher;
     private $proposalRepository;
@@ -222,6 +226,7 @@ class ProposalManager
         if (Ad::MATCHING_ALGORITHM_V2 == $matchingAlgorithm) {
             $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
         } elseif (Ad::MATCHING_ALGORITHM_V3 == $matchingAlgorithm) {
+            $this->_handleNoTimeInRequest($proposal);
             if ($proposal->isPrivate()) {
                 $proposal = $this->mobicoopMatcherProvider->match($proposal);
             }
@@ -603,6 +608,18 @@ class ProposalManager
         $addressesToRecode = $this->getActiveRegularProposalAddressesToRecode($addresses);
 
         return $this->recodeActiveRegularProposalAddresses($addressesToRecode);
+    }
+
+    private function _handleNoTimeInRequest(Proposal $proposal): Proposal
+    {
+        if (!$proposal->getUseTime()) {
+            $criteria = $proposal->getCriteria();
+            $criteria->setFromTime(\DateTime::createFromFormat('H:i', self::NOON));
+            $criteria->setMarginDuration(self::TWELVE_HOURS_MARGIN_IN_SECONDS);
+            $proposal->setCriteria($criteria);
+        }
+
+        return $proposal;
     }
 
     private function getActiveRegularProposalsWithLocalityOnly(): array

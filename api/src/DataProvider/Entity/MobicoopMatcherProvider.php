@@ -66,7 +66,7 @@ class MobicoopMatcherProvider
 
     public function match(Proposal $searchProposal): Proposal
     {
-        $this->_logger->info('GET match for proposal '.$searchProposal->getId());
+        $this->_logger->info('----- GET match for proposal '.$searchProposal->getId());
         $this->_auth();
         $search = $this->_buildSearchRequestBody($this->_mobicoopMatcherAdapter->buildSearchFromProposal($searchProposal));
         $results = $this->_get(self::ROUTE_MATCH, $search);
@@ -101,6 +101,8 @@ class MobicoopMatcherProvider
 
         $headers = ['Authorization: Bearer '.$this->_token];
 
+        $this->_logger->info('Request :');
+        $this->_logger->info($body);
         $response = $this->_curlDataProvider->get(null, $headers, $body);
         if (200 == $response->getCode()) {
             return json_decode($response->getValue(), true);

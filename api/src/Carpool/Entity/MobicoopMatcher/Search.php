@@ -63,6 +63,13 @@ class Search implements \JsonSerializable
      */
     private $seatsDriver;
 
+    /**
+     * Margin duration for punctual journey (in seconds).
+     *
+     * @var null|int
+     */
+    private $marginDuration;
+
     public function __construct()
     {
         $this->driver = false;
@@ -155,6 +162,18 @@ class Search implements \JsonSerializable
         return $this->seatsPassenger;
     }
 
+    public function setMarginDuration(?int $marginDuration)
+    {
+        $this->marginDuration = $marginDuration;
+
+        return $this;
+    }
+
+    public function getMarginDuration(): ?int
+    {
+        return $this->marginDuration;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -166,6 +185,7 @@ class Search implements \JsonSerializable
                 'passenger' => $this->isPassenger(),
                 'seats_driver' => $this->getSeatsDriver(),
                 'seats_passenger' => $this->getSeatsPassenger(),
+                'margin_duration' => $this->getMarginDuration(),
             ];
     }
 }
