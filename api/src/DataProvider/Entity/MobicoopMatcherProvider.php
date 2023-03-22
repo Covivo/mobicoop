@@ -39,6 +39,7 @@ class MobicoopMatcherProvider
 {
     private const ROUTE_AUTH = '/auth';
     private const ROUTE_MATCH = '/match';
+    private const ROUTE_POST = '/ad';
 
     private $_uri;
     private $_username;
@@ -72,6 +73,26 @@ class MobicoopMatcherProvider
         $results = $this->_get(self::ROUTE_MATCH, $search);
         $this->_logger->info(json_encode($results));
 
+        $this->_feedSearchProposalWithMatchings($searchProposal, $results);
+
+        return $searchProposal;
+    }
+
+    public function post(Proposal $searchProposal): Proposal
+    {
+        $this->_logger->info('----- POST proposal '.$searchProposal->getId());
+        $this->_auth();
+        $ad = $this->_buildSearchRequestBody($this->_mobicoopMatcherAdapter->buildAdFromProposal($searchProposal));
+        $results = $this->_post(self::ROUTE_POST, $ad);
+        $this->_logger->info(json_encode($results));
+
+        $this->_feedSearchProposalWithMatchings($searchProposal, $results);
+
+        return $searchProposal;
+    }
+
+    private function _feedSearchProposalWithMatchings(Proposal $searchProposal, array $results)
+    {
         $matchings = $this->_mobicoopMatcherAdapter->buildMatchingsFromMatcherResult($searchProposal, $results);
 
         // REMOVE THIS PART AFTER DEV
@@ -91,8 +112,6 @@ class MobicoopMatcherProvider
                 $searchProposal->addMatchingOffer($matching);
             }
         }
-
-        return $searchProposal;
     }
 
     private function _get(string $route, string $body): array
@@ -114,6 +133,27 @@ class MobicoopMatcherProvider
         $this->_logger->error('Request Body : '.$body);
 
         throw new MobicoopMatcherDataProviderException(MobicoopMatcherDataProviderException::GET_ERROR.' '.$route);
+    }
+
+    private function _post(string $route, string $body): array
+    {
+        $this->_curlDataProvider->setUrl($this->_uri.''.$route);
+
+        $headers = ['Authorization: Bearer '.$this->_token];
+
+        $this->_logger->info('Request :');
+        $this->_logger->info($body);
+        $response = $this->_curlDataProvider->post($headers, $body);
+        if (200 == $response->getCode()) {
+            return json_decode($response->getValue(), true);
+        }
+
+        $this->_logger->error(MobicoopMatcherDataProviderException::POST_ERROR.' '.$route);
+        $this->_logger->error($response->getCode());
+        $this->_logger->error($response->getValue());
+        $this->_logger->error('Request Body : '.$body);
+
+        throw new MobicoopMatcherDataProviderException(MobicoopMatcherDataProviderException::POST_ERROR.' '.$route);
     }
 
     private function _auth()

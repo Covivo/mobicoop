@@ -25,6 +25,7 @@ namespace App\Carpool\Service\MobicoopMatcher;
 
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\MobicoopMatcher\Ad;
 use App\Carpool\Entity\MobicoopMatcher\Search;
 use App\Carpool\Entity\MobicoopMatcher\Waypoint;
 use App\Carpool\Entity\Proposal;
@@ -60,10 +61,18 @@ class MobicoopMatcherAdapter
 
         $this->_search = new Search();
 
-        $this->_treatStartDate();
-        $this->_treatWaypoints();
-        $this->_treatRole();
-        $this->_treatMargins();
+        $this->_build();
+
+        return $this->_search;
+    }
+
+    public function buildAdFromProposal(Proposal $searchProposal): Ad
+    {
+        $this->_searchProposal = $searchProposal;
+
+        $this->_search = new Ad($searchProposal->getId());
+
+        $this->_build();
 
         return $this->_search;
     }
@@ -79,6 +88,14 @@ class MobicoopMatcherAdapter
         }
 
         return $matchings;
+    }
+
+    private function _build()
+    {
+        $this->_treatStartDate();
+        $this->_treatWaypoints();
+        $this->_treatRole();
+        $this->_treatMargins();
     }
 
     private function _treatStartDate()

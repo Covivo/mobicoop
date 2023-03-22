@@ -229,6 +229,8 @@ class ProposalManager
             $this->_handleNoTimeInRequest($proposal);
             if ($proposal->isPrivate()) {
                 $proposal = $this->mobicoopMatcherProvider->match($proposal);
+            } else {
+                $proposal = $this->mobicoopMatcherProvider->post($proposal);
             }
         }
 
