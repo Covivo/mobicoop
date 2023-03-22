@@ -1315,7 +1315,7 @@ class AdManager
             $this->entityManager->persist($proposal);
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
-            $ad = $this->createAd($ad, true, $withSolidaries);
+            $ad = $this->createAd($ad, true, $withSolidaries, true, false, Ad::MATCHING_ALGORITHM_V3);
             $this->proposalManager->deleteProposal($proposal);
         // minor update
         } elseif (
@@ -1773,7 +1773,7 @@ class AdManager
             $ad->setMarginDuration($this->params['defaultMarginDuration']);
         }
 
-        return $this->createAd($ad, true, true, true, true);
+        return $this->createAd($ad, true, true, true, true, Ad::MATCHING_ALGORITHM_V3);
     }
 
     /**
