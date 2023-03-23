@@ -1,125 +1,125 @@
 {
-    "title": "Register",
-    "urlSignUp": "/user/registration",
-    "urlSignUpResult": "/user/registration/{id}",
-    "urlSignUpEvent": "/user/registration/event/{id}",
-    "urlRedirectAfterSignUp": "/user/registration/validation/{email}",
-    "urlRedirectAfterSignUpResult": "/user/login/{id}",
-    "urlRedirectAfterSignUpEvent": "/user/login/event/{id}",
-    "urlRedirectAfterSignUpCommunity": "/user/login/community/{id}",
-    "urlRedirectAfterSignUpPublish": "/user/login/redirect/post",
-    "gender": {
-        "label": "Gender",
-        "placeholder": "Gender",
-        "values": {
-            "male": "Mr",
-            "female": "Mrs/Ms",
-            "other": "Other"
-        },
-        "errors": {
-            "required": "Gender is required"
-        }
+  "title": "Register",
+  "urlSignUp": "/user/registration",
+  "urlSignUpResult": "/user/registration/{id}",
+  "urlSignUpEvent": "/user/registration/event/{id}",
+  "urlRedirectAfterSignUp": "/user/registration/validation/{email}",
+  "urlRedirectAfterSignUpResult": "/user/login/{id}",
+  "urlRedirectAfterSignUpEvent": "/user/login/event/{id}",
+  "urlRedirectAfterSignUpCommunity": "/user/login/community/{id}",
+  "urlRedirectAfterSignUpPublish": "/user/login/redirect/post",
+  "gender": {
+    "label": "Gender",
+    "placeholder": "Gender",
+    "values": {
+      "male": "Mr",
+      "female": "Mrs/Ms",
+      "other": "Other"
     },
-    "givenName": {
-        "placeholder": "First name",
-        "errors": {
-            "required": "First name is required"
-        }
-    },
-    "familyName": {
-        "placeholder": "Name",
-        "errors": {
-            "required": "Name is required"
-        }
-    },
-    "birthDate": {
-        "placeholder": "Date of birth"
-    },
-    "birthDay": {
-        "errors": {
-            "required": "Date of birth is required",
-            "notadult": "You must be 16 years old to register on the platform"
-        }
-    },
-    "homeTown": {
-        "placeholder": "Place of residence"
-    },
-    "email": {
-        "placeholder": "Email",
-        "errors": {
-            "required": "Email address is required",
-            "valid": "The email address must be valid"
-        }
-    },
-    "phone": {
-        "placeholder": "Mobile phone",
-        "errors": {
-            "required": "Phone number is required",
-            "valid": "The phone number must be valid"
-        }
-    },
-    "password": {
-        "placeholder": "Password",
-        "errors": {
-            "required": "Password is required",
-            "min": "The password must be at least 8 characters in length.",
-            "upper": "The password must contain 1 uppercase letter.",
-            "lower": "The password must contain 1 lower case letter.",
-            "number": "The password must contain 1 digit."
-        }
-    },
-    "checkEmail": {
-        "url": "/user/verify/email",
-        "error": "This email is already in use"
-    },
-    "checkPhoneValidity": {
-        "url": "/utilisateur/verif/telephone",
-        "error": "Ce numéro de téléphone n'est pas valide"
-    },
-    "chart": {
-      "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>",
-      "required": "Validation of the charter is required"
-    },
-    "newsSubscription": {
-        "text": "I agree to receive news about the service (useful information for carpooling, and new services or new features)"
-    },
-    "legalAge": {
-        "text": "I confirm that I am at least 18 years old",
-        "required": "Required"
-    },
-    "communities": {
-        "route": "/user/register/community-list",
-        "label": "Join a community"
-    },
-    "step": "Step",
-    "steps": {
-        "1": "Identifiers",
-        "2": "Identity",
-        "3": "Gender",
-        "4": "Date of Birth",
-        "5": "City of residence"
-    },
-    "login": "Already have an account? Login!",
-    "urlLogin": "/user/login/",
-    "button": {
-        "previous": "Previous",
-        "next": "Next",
-        "register": "I am registering"
-    },
-    "rgpd": {
-        "infos": "The information collected from this form is necessary for using the services offered by the Mobicoop application.",
-        "link": {
-            "label": "Learn more about the management of your data and your rights.",
-            "route": "/gcu"
-        },
-        "consent": "To be able to login in you must have agreed to \"Keep your connection active\" using the \"Cookie management\" tool accessible from a link at the bottom of the page then refresh the page.",
-        "socialServicesUnavailableWithoutConsent": "To be used, the login functionality via social networks must be accepted using the \"Cookie management\" tool accessible from a link at the bottom of the page."
-    },
-    "snackbar": {
-        "joinCommunity": {
-            "textError": "An error has occurred, please try again.",
-            "textOkAutoValidation": "Your membership request is validated.",
-            "textOkManualValidation": "Your membership request has been sent to the referrer. You will be informed by email."
-        }
+    "errors": {
+      "required": "Gender is required"
     }
+  },
+  "givenName": {
+    "placeholder": "First name",
+    "errors": {
+      "required": "First name is required"
+    }
+  },
+  "familyName": {
+    "placeholder": "Name",
+    "errors": {
+      "required": "Name is required"
+    }
+  },
+  "birthDate": {
+    "placeholder": "Date of birth"
+  },
+  "birthDay": {
+    "errors": {
+      "required": "Date of birth is required",
+      "notadult": "You must be {age} years old to register on the platform"
+    }
+  },
+  "homeTown": {
+    "placeholder": "Place of residence"
+  },
+  "email": {
+    "placeholder": "Email",
+    "errors": {
+      "required": "Email address is required",
+      "valid": "The email address must be valid"
+    }
+  },
+  "phone": {
+    "placeholder": "Mobile phone",
+    "errors": {
+      "required": "Phone number is required",
+      "valid": "The phone number must be valid"
+    }
+  },
+  "password": {
+    "placeholder": "Password",
+    "errors": {
+      "required": "Password is required",
+      "min": "The password must be at least 8 characters in length.",
+      "upper": "The password must contain 1 uppercase letter.",
+      "lower": "The password must contain 1 lower case letter.",
+      "number": "The password must contain 1 digit."
+    }
+  },
+  "checkEmail": {
+    "url": "/user/verify/email",
+    "error": "This email is already in use"
+  },
+  "checkPhoneValidity": {
+    "url": "/utilisateur/verif/telephone",
+    "error": "Ce numéro de téléphone n'est pas valide"
+  },
+  "chart": {
+    "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>",
+    "required": "Validation of the charter is required"
+  },
+  "newsSubscription": {
+    "text": "I agree to receive news about the service (useful information for carpooling, and new services or new features)"
+  },
+  "legalAge": {
+    "text": "I confirm that I am at least 18 years old",
+    "required": "Required"
+  },
+  "communities": {
+    "route": "/user/register/community-list",
+    "label": "Join a community"
+  },
+  "step": "Step",
+  "steps": {
+    "1": "Identifiers",
+    "2": "Identity",
+    "3": "Gender",
+    "4": "Date of Birth",
+    "5": "City of residence"
+  },
+  "login": "Already have an account? Login!",
+  "urlLogin": "/user/login/",
+  "button": {
+    "previous": "Previous",
+    "next": "Next",
+    "register": "I am registering"
+  },
+  "rgpd": {
+    "infos": "The information collected from this form is necessary for using the services offered by the Mobicoop application.",
+    "link": {
+      "label": "Learn more about the management of your data and your rights.",
+      "route": "/gcu"
+    },
+    "consent": "To be able to login in you must have agreed to \"Keep your connection active\" using the \"Cookie management\" tool accessible from a link at the bottom of the page then refresh the page.",
+    "socialServicesUnavailableWithoutConsent": "To be used, the login functionality via social networks must be accepted using the \"Cookie management\" tool accessible from a link at the bottom of the page."
+  },
+  "snackbar": {
+    "joinCommunity": {
+      "textError": "An error has occurred, please try again.",
+      "textOkAutoValidation": "Your membership request is validated.",
+      "textOkManualValidation": "Your membership request has been sent to the referrer. You will be informed by email."
+    }
+  }
 }

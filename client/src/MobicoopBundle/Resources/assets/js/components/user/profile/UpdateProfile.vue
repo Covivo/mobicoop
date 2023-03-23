@@ -496,6 +496,15 @@
       </v-card-text>
     </v-card>
 
+    <!-- EEC form -->
+    <EECIncentiveStatus
+      v-if="ceeDisplay"
+      :id="$t('eec-incentive')"
+      :confirmed-phone-number="user.phoneValidatedDate ? true : false"
+      :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+      @changeTab="changeTab"
+    />
+
     <!-- Delete form -->
     <v-card
       flat
@@ -603,11 +612,6 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <EECIncentiveStatus
-      v-if="ceeDisplay"
-      :confirmed-phone-number="user.phoneValidatedDate ? true : false"
-      :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
-    />
 
     <!-- PUBLIC PROFILE DIALOG -->
     <v-dialog
@@ -1142,6 +1146,9 @@ export default {
             this.ssoConnection = response.data[0];
           }
         });
+    },
+    changeTab(tab){
+      this.$emit('changeTab', tab);
     }
   }
 }

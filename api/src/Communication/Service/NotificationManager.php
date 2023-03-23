@@ -32,6 +32,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
 use App\Carpool\Service\ProposalManager;
+use App\CarpoolStandard\Entity\Booking;
 use App\Communication\Entity\Email;
 use App\Communication\Entity\Medium;
 use App\Communication\Entity\Message;
@@ -57,6 +58,8 @@ use App\Solidary\Entity\SolidaryContact;
 use App\User\Entity\PushToken;
 use App\User\Entity\Review;
 use App\User\Entity\User;
+use App\User\Event\TooLongInactivityFirstWarningEvent;
+use App\User\Event\TooLongInactivityLastWarningEvent;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Service\UserManager;
 use Doctrine\Common\Util\ClassUtils;
@@ -295,7 +298,6 @@ class NotificationManager
         $signature = [];
         $titleContext = [];
         $bodyContext = [];
-
         if ($object) {
             switch (ClassUtils::getRealClass(get_class($object))) {
                 case Proposal::class:
@@ -350,6 +352,7 @@ class NotificationManager
                     $titleContext = [];
                     $outwardOrigin = null;
                     $outwardDestination = null;
+                    $result = null;
                     $returnOrigin = null;
                     $returnDestination = null;
                     foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
@@ -359,39 +362,41 @@ class NotificationManager
                             $passengerDestinationWaypoint = $waypoint;
                         }
                     }
-                    if (null !== $object->getAd()->getResults()[0]->getResultPassenger()) {
-                        $result = $object->getAd()->getResults()[0]->getResultPassenger();
-                    } else {
-                        $result = $object->getAd()->getResults()[0]->getResultDriver();
-                    }
-                    if (null !== $result->getOutward()) {
-                        foreach ($result->getOutward()->getWaypoints() as $waypoint) {
-                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
-                                $outwardOrigin = $waypoint;
-                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
-                                $outwardDestination = $waypoint;
+                    if (!is_null($object->getAd())) {
+                        if (null !== $object->getAd()->getResults()[0]->getResultPassenger()) {
+                            $result = $object->getAd()->getResults()[0]->getResultPassenger();
+                        } else {
+                            $result = $object->getAd()->getResults()[0]->getResultDriver();
+                        }
+                        if (null !== $result->getOutward()) {
+                            foreach ($result->getOutward()->getWaypoints() as $waypoint) {
+                                if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
+                                    $outwardOrigin = $waypoint;
+                                } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
+                                    $outwardDestination = $waypoint;
+                                }
+                            }
+                            // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
+                            // It's the case when the user who made the ask only checked return days
+                            if (Criteria::FREQUENCY_REGULAR == $object->getAd()->getFrequency()
+                            && !$result->getOutward()->isMonCheck()
+                            && !$result->getOutward()->isTueCheck()
+                            && !$result->getOutward()->isWedCheck()
+                            && !$result->getOutward()->isThuCheck()
+                            && !$result->getOutward()->isFriCheck()
+                            && !$result->getOutward()->isSatCheck()
+                            && !$result->getOutward()->isSunCheck()
+                            ) {
+                                $result->setOutward(null);
                             }
                         }
-                        // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
-                        // It's the case when the user who made the ask only checked return days
-                        if (Criteria::FREQUENCY_REGULAR == $object->getAd()->getFrequency()
-                        && !$result->getOutward()->isMonCheck()
-                        && !$result->getOutward()->isTueCheck()
-                        && !$result->getOutward()->isWedCheck()
-                        && !$result->getOutward()->isThuCheck()
-                        && !$result->getOutward()->isFriCheck()
-                        && !$result->getOutward()->isSatCheck()
-                        && !$result->getOutward()->isSunCheck()
-                        ) {
-                            $result->setOutward(null);
-                        }
-                    }
-                    if (null !== $result->getReturn()) {
-                        foreach ($result->getReturn()->getWaypoints() as $waypoint) {
-                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
-                                $returnOrigin = $waypoint;
-                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
-                                $returnDestination = $waypoint;
+                        if (null !== $result->getReturn()) {
+                            foreach ($result->getReturn()->getWaypoints() as $waypoint) {
+                                if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
+                                    $returnOrigin = $waypoint;
+                                } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
+                                    $returnDestination = $waypoint;
+                                }
                             }
                         }
                     }
@@ -497,6 +502,7 @@ class NotificationManager
                         'community' => $object,
                     ];
                     $bodyContext = [
+                        'user' => $recipient,
                         'recipient' => $recipient,
                         'community' => $object,
                     ];
@@ -506,6 +512,7 @@ class NotificationManager
                 case CommunityUser::class:
                     $sender = null;
                     $bodyContext = [
+                        'user' => $recipient,
                         'recipient' => $recipient,
                         'community' => $object->getCommunity(),
                         'senderGivenName' => $object->getUser()->getGivenName(),
@@ -656,6 +663,31 @@ class NotificationManager
                 case Scammer::class:
                     $titleContext = [];
                     $bodyContext = ['scammer' => $object];
+
+                    break;
+
+                case Booking::class:
+                    if ($recipient->getId() == $object->getPassenger()->getId()) {
+                        $senderAlias = $object->getDriver()->getAlias();
+                        $senderOperator = $object->getDriver()->getOperator();
+                    } elseif ($recipient->getId() == $object->getDriver()->getId()) {
+                        $senderAlias = $object->getPassenger()->getAlias();
+                        $senderOperator = $object->getPassenger()->getOperator();
+                    }
+                    $titleContext = [];
+                    $bodyContext = [
+                        'booking' => $object,
+                        'user' => $recipient,
+                        'senderAlias' => $senderAlias,
+                        'senderOperator' => $senderOperator,
+                    ];
+
+                    break;
+
+                case TooLongInactivityLastWarningEvent::class:
+                case TooLongInactivityFirstWarningEvent::class:
+                    $titleContext = [];
+                    $bodyContext = ['user' => $recipient, 'details' => $object, 'signature' => $signature];
 
                     break;
 
@@ -864,6 +896,23 @@ class NotificationManager
                     $bodyContext = [
                         'givenName' => $object->getReviewer()->getGivenName(),
                         'shortFamilyName' => $object->getReviewer()->getShortFamilyName(),
+                    ];
+
+                    break;
+
+                case Booking::class:
+                    if ($recipient->getId() == $object->getPassenger()->getId()) {
+                        $senderAlias = $object->getDriver()->getAlias();
+                        $senderOperator = $object->getDriver()->getOperator();
+                    } elseif ($recipient->getId() == $object->getDriver()->getId()) {
+                        $senderAlias = $object->getPassenger()->getAlias();
+                        $senderOperator = $object->getPassenger()->getOperator();
+                    }
+                    $bodyContext = [
+                        'booking' => $object,
+                        'user' => $recipient,
+                        'senderAlias' => $senderAlias,
+                        'senderOperator' => $senderOperator,
                     ];
 
                     break;
@@ -1089,6 +1138,24 @@ class NotificationManager
                     $bodyContext = [
                         'givenName' => $object->getReviewer()->getGivenName(),
                         'shortFamilyName' => $object->getReviewer()->getShortFamilyName(),
+                    ];
+
+                    break;
+
+                case Booking::class:
+                    if ($recipient->getId() == $object->getPassenger()->getId()) {
+                        $senderAlias = $object->getDriver()->getAlias();
+                        $senderOperator = $object->getDriver()->getOperator();
+                    } elseif ($recipient->getId() == $object->getDriver()->getId()) {
+                        $senderAlias = $object->getPassenger()->getAlias();
+                        $senderOperator = $object->getPassenger()->getOperator();
+                    }
+                    $titleContext = [];
+                    $bodyContext = [
+                        'booking' => $object,
+                        'user' => $recipient,
+                        'senderAlias' => $senderAlias,
+                        'senderOperator' => $senderOperator,
                     ];
 
                     break;

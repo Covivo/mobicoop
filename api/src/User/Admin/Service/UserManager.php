@@ -177,6 +177,8 @@ class UserManager
             $user->addOwnership(['communities' => $communities]);
         }
 
+        $user = $this->setUserPostalAddress($user);
+
         foreach ($user->getIdentityProofs() as $proof) {
             $proof->setFileSize($this->formatDataManager->convertFilesize($proof->getSize()));
             $proof->setFileName($this->identityProofManager->getFileUrl($proof));
@@ -586,5 +588,20 @@ class UserManager
         }
 
         return null;
+    }
+
+    private function setUserPostalAddress(User $user)
+    {
+        if (is_null($user->getPostalAddress()) && !is_null($user->getHomeAddress())) {
+            $user->setPostalAddress(
+                $user->getGivenName()
+                .' '.$user->getFamilyName()
+                .(!is_null($user->getHomeAddress()->getStreetAddress()) ? ' '.$user->getHomeAddress()->getStreetAddress() : '')
+                .(!is_null($user->getHomeAddress()->getPostalCode()) ? ' '.$user->getHomeAddress()->getPostalCode() : '')
+                .(!is_null($user->getHomeAddress()->getAddressLocality()) ? ' '.$user->getHomeAddress()->getAddressLocality() : '')
+            );
+        }
+
+        return $user;
     }
 }

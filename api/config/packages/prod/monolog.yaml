@@ -14,6 +14,7 @@ monolog:
           "!communication",
           "!community",
           "!consumptionFeedback",
+          "!csvMaker",
           "!faker",
           "!gamification",
           "!geography",
@@ -24,6 +25,7 @@ monolog:
           "!mass",
           "!notification",
           "!solidary",
+          "!user_auto_delete",
         ]
     grouped:
       type: group
@@ -81,6 +83,12 @@ monolog:
       max_files: 30
       path: "%kernel.logs_dir%/consumptionFeedback.log"
       channels: [consumptionFeedback]
+    csvMaker:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/csvMaker.log"
+      channels: [csvMaker]
     faker:
       type: rotating_file
       level: debug
@@ -141,6 +149,12 @@ monolog:
       max_files: 30
       path: "%kernel.logs_dir%/solidary.log"
       channels: [solidary]
+    user_auto_delete:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/user_auto_delete.log"
+      channels: [user_auto_delete]
     console:
       type: console
       process_psr_3_messages: false

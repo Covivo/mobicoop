@@ -1,26 +1,25 @@
 <template>
-  <div>
-    <div v-if="!loading">
-      <EECIncentiveInitiateSubscription
-        v-if="!subscriptionInitiated"
-        :confirmed-phone-number="confirmedPhoneNumber"
-        :driving-licence-number-filled="drivingLicenceNumberFilled"
-      />
-      <EECIncentiveAdditionalInformations
-        v-else
-        :long-distance-subscriptions="subscriptions.longDistanceSubscriptions"
-        :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
-        :pending-proofs="subscriptions.nbPendingProofs"
-        :refused-proofs="subscriptions.nbRejectedProofs"
-      />
-    </div>
-    <div v-else>
-      <v-skeleton-loader
-        class="mx-auto"
-        max-width="100%"
-        type="paragraph@2"
-      />
-    </div>
+  <div v-if="!loading">
+    <EECIncentiveInitiateSubscription
+      v-if="!subscriptionInitiated"
+      :confirmed-phone-number="confirmedPhoneNumber"
+      :driving-licence-number-filled="drivingLicenceNumberFilled"
+    />
+    <EECIncentiveAdditionalInformations
+      v-else
+      :long-distance-subscriptions="subscriptions.longDistanceSubscriptions"
+      :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
+      :pending-proofs="subscriptions.nbPendingProofs"
+      :refused-proofs="subscriptions.nbRejectedProofs"
+      @changeTab="changeTab"
+    />
+  </div>
+  <div v-else>
+    <v-skeleton-loader
+      class="mx-auto"
+      max-width="100%"
+      type="paragraph@2"
+    />
   </div>
 </template>
 
@@ -89,6 +88,9 @@ export default {
         .catch(function (error) {
 
         });
+    },
+    changeTab(tab){
+      this.$emit('changeTab', tab);
     }
   },
 };

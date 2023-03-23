@@ -145,6 +145,12 @@ security:
             stateless: true
             anonymous: true
 
+        # firewall for CarpoolStandard from external bookings
+        carpoolStandardFromExternalBooking:
+            pattern:  ^/carpool_standard/from_external/bookings
+            stateless: true
+            anonymous: true    
+
         # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|js)/
@@ -173,4 +179,5 @@ security:
         - { path: ^/mango-payins, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mango-kyc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/campaigns/unsubscribe, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/carpool_standard/from_external/bookings, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST, PUT] }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

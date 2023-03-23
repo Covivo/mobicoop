@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-card color="grey lighten-4">
+    <v-card
+      flat
+      color="grey lighten-4"
+    >
       <v-card-title
         class="text-center"
       >

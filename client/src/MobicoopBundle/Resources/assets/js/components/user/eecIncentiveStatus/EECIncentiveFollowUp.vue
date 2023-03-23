@@ -42,6 +42,7 @@
                     <ul>
                       <li>{{ $t('followup.longDistance.hints.hint1') }}</li>
                       <li>{{ $t('followup.longDistance.hints.hint2') }}</li>
+                      <li>{{ $t('followup.longDistance.hints.hint3') }}</li>
                     </ul>
                   </v-col>
                 </v-row>
@@ -70,6 +71,7 @@
                   <v-col class="text-left">
                     <ul>
                       <li>{{ $t('followup.shortDistance.hints.hint1') }}</li>
+                      <li>{{ $t('followup.shortDistance.hints.hint2') }}</li>
                     </ul>
                   </v-col>
                 </v-row>

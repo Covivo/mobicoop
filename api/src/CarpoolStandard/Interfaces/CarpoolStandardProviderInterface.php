@@ -23,7 +23,7 @@
 
 namespace App\CarpoolStandard\Interfaces;
 
-use App\CarpoolStandard\Ressource\Message;
+use App\CarpoolStandard\Entity\Message;
 
 /**
  * CarpoolStandard Provider interface.

@@ -18,22 +18,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 use App\Communication\Service\NotificationManager;
-use App\Community\Event\CommunityNewMembershipRequestEvent;
-use App\Community\Event\CommunityNewMemberEvent;
+use App\Community\Entity\CommunityUser;
 use App\Community\Event\CommunityCreatedEvent;
 use App\Community\Event\CommunityMembershipAcceptedEvent;
 use App\Community\Event\CommunityMembershipPendingEvent;
 use App\Community\Event\CommunityMembershipRefusedEvent;
-use App\Action\Event\ActionEvent;
+use App\Community\Event\CommunityNewMemberEvent;
+use App\Community\Event\CommunityNewMembershipRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Action\Repository\ActionRepository;
-use App\Community\Entity\CommunityUser;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CommunitySubscriber implements EventSubscriberInterface
 {
@@ -56,29 +56,26 @@ class CommunitySubscriber implements EventSubscriberInterface
             CommunityMembershipAcceptedEvent::NAME => 'onCommunityMembershipAccepted',
             CommunityMembershipPendingEvent::NAME => 'onCommunityMembershipPending',
             CommunityMembershipRefusedEvent::NAME => 'onCommunityMembershipRefused',
-            CommunityNewMemberEvent::NAME => 'onCommunityMember'
-
+            CommunityNewMemberEvent::NAME => 'onCommunityMember',
         ];
     }
 
     /**
-     * Executed when an user joined a community with validation
-     *
-     * @param CommunityNewMembershipRequestEvent $event
-     * @return void
+     * Executed when an user joined a community with validation.
      */
     public function onCommunityNewMembershipRequest(CommunityNewMembershipRequestEvent $event)
     {
         // the recipient is the creator of community
-        $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
+        $communityCreator = $event->getCommunityUser()->getCommunity()->getUser();
 
         // we must notify the creator of the community
-        $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
-        
-        // we also need to notify community's moderators
+        $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityCreator, $event->getCommunityUser());
+
+        // we also need to notify community's moderators (exclude the creator)
         $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
         foreach ($communityUsers as $communityUser) {
-            if ($communityUser->getStatus() === CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
+            if (CommunityUser::STATUS_ACCEPTED_AS_MODERATOR === $communityUser->getStatus()
+                    && $communityCreator->getId() !== $communityUser->getUser()->getId()) {
                 $communityRecipient = $communityUser->getUser();
                 $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
             }
@@ -86,23 +83,21 @@ class CommunitySubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when an user joined a communitywithout validation
-     *
-     * @param CommunityNewMemberEvent $event
-     * @return void
+     * Executed when an user joined a communitywithout validation.
      */
     public function onCommunityMember(CommunityNewMemberEvent $event)
     {
         // the recipient is the new community member
-        $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
-        
+        $communityCreator = $event->getCommunityUser()->getCommunity()->getUser();
+
         // we must notify the creator of the community
-        $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
-        
+        $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityCreator, $event->getCommunityUser());
+
         // we also need to notify community's moderators
         $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
         foreach ($communityUsers as $communityUser) {
-            if ($communityUser->getStatus() === CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
+            if (CommunityUser::STATUS_ACCEPTED_AS_MODERATOR === $communityUser->getStatus()
+                    && $communityCreator->getId() !== $communityUser->getUser()->getId()) {
                 $communityRecipient = $communityUser->getUser();
                 $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
             }
@@ -110,65 +105,53 @@ class CommunitySubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when a community is created
-     *
-     * @param CommunityCreatedEvent $event
-     * @return void
+     * Executed when a community is created.
      */
     public function onCommunityCreated(CommunityCreatedEvent $event)
     {
         // the recipient is the new community member
-        $communityRecipient = ($event->getCommunity()->getUser());
-        
+        $communityRecipient = $event->getCommunity()->getUser();
+
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityCreatedEvent::NAME, $communityRecipient, $event->getCommunity());
 
-        $action = $this->actionRepository->findOneBy(['name'=>'community_created']);
+        $action = $this->actionRepository->findOneBy(['name' => 'community_created']);
         $actionEvent = new ActionEvent($action, $event->getCommunity()->getUser());
         $actionEvent->setCommunity($event->getCommunity());
         $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
     }
 
     /**
-     * Executed when a communityModerator validates a membership
-     *
-     * @param CommunityMembershipAcceptedEvent $event
-     * @return void
+     * Executed when a communityModerator validates a membership.
      */
     public function onCommunityMembershipAccepted(CommunityMembershipAcceptedEvent $event)
     {
         // the recipient is the creator of community
-        $communityRecipient = ($event->getUser());
+        $communityRecipient = $event->getUser();
 
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityMembershipAcceptedEvent::NAME, $communityRecipient, $event->getCommunity());
     }
 
     /**
-     * Executed when an user joined a community with validation
-     *
-     * @param CommunityMembershipPendingEvent $event
-     * @return void
+     * Executed when an user joined a community with validation.
      */
     public function onCommunityMembershipPending(CommunityMembershipPendingEvent $event)
     {
         // the recipient is the creator of community
-        $communityRecipient = ($event->getUser());
+        $communityRecipient = $event->getUser();
 
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityMembershipPendingEvent::NAME, $communityRecipient, $event->getCommunity());
     }
 
     /**
-     * Executed when a communityModerator refuses a membership
-     *
-     * @param CommunityMembershipRefusedEvent $event
-     * @return void
+     * Executed when a communityModerator refuses a membership.
      */
     public function onCommunityMembershipRefused(CommunityMembershipRefusedEvent $event)
     {
         // the recipient is the creator of community
-        $communityRecipient = ($event->getUser());
+        $communityRecipient = $event->getUser();
 
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityMembershipRefusedEvent::NAME, $communityRecipient, $event->getCommunity());

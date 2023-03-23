@@ -25,11 +25,18 @@ namespace App\Carpool\Repository;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
+use App\Incentive\Resource\CeeSubscriptions;
+use App\Incentive\Service\Validation\Validation;
+use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 class CarpoolProofRepository
 {
+    /**
+     * @var EntityRepository
+     */
     private $repository;
 
     public function __construct(EntityManagerInterface $entityManager)
@@ -135,5 +142,66 @@ class CarpoolProofRepository
         ;
 
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * EEC query.
+     */
+    public function findCarpoolProofForEccRelaunch(User $driver, ?int $excludeId, array $allreadyDeaclaredJourneys, bool $isLongDistanceProcess = true): ?array
+    {
+        // TODO Vérifier que le trajet ne soit pas déjà une longue ou courte souscription
+        $qb = $this->repository->createQueryBuilder('cp');
+
+        $parameters = [
+            'class' => CarpoolProof::TYPE_HIGH,
+            'country' => Validation::REFERENCE_COUNTRY,
+            'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
+            'driver' => $driver,
+            'referenceDate' => \DateTime::createFromFormat('Y-m-d', Validation::REFERENCE_DATE),
+            'status' => CarpoolProof::STATUS_VALIDATED,
+        ];
+
+        $qb
+            ->innerJoin('cp.ask', 'a')
+            ->innerJoin('a.matching', 'm')
+            ->innerJoin('m.waypoints', 'wo', 'WITH', 'wo.position = 0')
+            ->leftJoin('wo.address', 'ao')
+            ->innerJoin('m.waypoints', 'wd', 'WITH', 'wd.position != 0 AND wd.destination = 1')
+            ->leftJoin('wd.address', 'ad')
+            ->where('cp.driver = :driver')
+            ->andWhere('cp.type = :class')
+            ->andWhere('cp.status = :status')
+            ->andWhere('cp.createdDate >= :referenceDate')
+            ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
+        ;
+
+        if (!empty($allreadyDeaclaredJourneys)) {
+            $qb->andWhere($qb->expr()->notIn('cp.id', $allreadyDeaclaredJourneys));
+        }
+
+        if (!is_null($excludeId)) {
+            $qb
+                ->andWhere('cp.id != :excludeId')
+            ;
+            $parameters['excludeId'] = $excludeId;
+        }
+
+        if ($isLongDistanceProcess) {
+            $qb
+                ->innerJoin('a.carpoolItems', 'c', 'WITH', 'c.creditorUser = :driver')
+                ->andWhere('m.commonDistance >= :distance')
+                ->andWhere('c.creditorStatus = :creditorStatusOnline OR c.creditorStatus = :creditorStatusDirect')
+            ;
+            $parameters['creditorStatusOnline'] = CarpoolItem::DEBTOR_STATUS_ONLINE;
+            $parameters['creditorStatusDirect'] = CarpoolItem::DEBTOR_STATUS_DIRECT;
+        } else {
+            $qb->andWhere('m.commonDistance < :distance');
+        }
+
+        $qb
+            ->setParameters($parameters)
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }

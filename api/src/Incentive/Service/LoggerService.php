@@ -41,6 +41,6 @@ class LoggerService
     {
         $param = !is_null($this->_request) ? $this->_request->get('log') : null;
 
-        return is_null($param) || 'false' === $param ? false : true;
+        return !isset($param) || is_null($param) || 'false' === $param ? false : true;
     }
 }

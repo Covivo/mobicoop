@@ -35,6 +35,11 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/consumptionFeedback.log"
       channels: [consumptionFeedback]
+    csvMaker:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/csvMaker.log"
+      channels: [csvMaker]
     faker:
       type: stream
       level: debug
@@ -85,6 +90,11 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/solidary.log"
       channels: [solidary]
+    user_auto_delete:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/user_auto_delete.log"
+      channels: [user_auto_delete]
     main:
       type: stream
       path: "%kernel.logs_dir%/%kernel.environment%.log"
@@ -99,6 +109,7 @@ monolog:
           "!communication",
           "!community",
           "!consumptionFeedback",
+          "!csvMaker",
           "!faker",
           "!gamification",
           "!geography",
@@ -109,6 +120,7 @@ monolog:
           "!mass",
           "!notification",
           "!solidary",
+          "!user_auto_delete",
         ]
 
     console:
@@ -125,6 +137,7 @@ monolog:
           "!communication",
           "!community",
           "!consumptionFeedback",
+          "!csvMaker",
           "!faker",
           "!gamification",
           "!geography",

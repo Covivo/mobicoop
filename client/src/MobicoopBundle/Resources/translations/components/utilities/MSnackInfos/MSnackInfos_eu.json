@@ -1,4 +1,4 @@
 {
-    "close":"Fermer",
-    "text":"<p>Bénéficiez jusqu'à 200€ de prime covoiturage sur notre plateforme pour tous vos nouveaux trajets. Activez votre demande de prime tout de suite et préparez vos prochains covoiturages <a href='/utilisateur/profil/modifier/mon-profil'>ici</a>.</p>"
+  "close": "Fermer",
+  "text": "<p>Bénéficiez jusqu'à 200€ de prime covoiturage sur notre plateforme pour tous vos nouveaux trajets. Activez votre demande de prime tout de suite et préparez vos prochains covoiturages <a href='/utilisateur/profil/modifier/mon-profil#prime-covoiturage'>ici</a>.</p>"
 }

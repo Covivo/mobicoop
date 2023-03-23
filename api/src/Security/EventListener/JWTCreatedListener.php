@@ -80,7 +80,7 @@ class JWTCreatedListener
             }
 
             if (!is_null($this->security->getUser())) {
-                if (!is_null($this->security->getUser()) && $user->getId() === $this->security->getUser()->getId()) {
+                if ($user->getId() === $this->security->getUser()->getId()) {
                     $this->userManager->updateActivity($user);
                 } else {
                     $this->userManager->createAuthenticationDelegation($this->security->getUser(), $user);

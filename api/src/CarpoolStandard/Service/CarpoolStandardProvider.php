@@ -23,8 +23,9 @@
 
 namespace App\CarpoolStandard\Service;
 
+use App\CarpoolStandard\Entity\Booking;
+use App\CarpoolStandard\Entity\Message;
 use App\CarpoolStandard\Exception\CarpoolStandardException;
-use App\CarpoolStandard\Ressource\Message;
 use App\DataProvider\Entity\InteropProvider;
 
 /**
@@ -78,5 +79,26 @@ class CarpoolStandardProvider
         $this->checkCarpoolStandardConfiguration();
 
         return $this->providerInstance->postMessage($message);
+    }
+
+    public function postBooking(Booking $booking)
+    {
+        $this->checkCarpoolStandardConfiguration();
+
+        return $this->providerInstance->postBooking($booking);
+    }
+
+    public function patchBooking(Booking $booking)
+    {
+        $this->checkCarpoolStandardConfiguration();
+
+        return $this->providerInstance->patchBooking($booking);
+    }
+
+    public function getBooking(int $bookingId)
+    {
+        $this->checkCarpoolStandardConfiguration();
+
+        return $this->providerInstance->getBooking($bookingId);
     }
 }

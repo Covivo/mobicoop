@@ -4,7 +4,11 @@ namespace App\Incentive\EventListener;
 
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\DataProvider\Entity\OpenIdSsoProvider;
-use App\Incentive\Service\MobConnectSubscriptionManager;
+use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
+use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
+use App\Incentive\Service\Manager\AuthManager;
+use App\Incentive\Service\Manager\JourneyManager;
+use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Payment\Event\ConfirmDirectPaymentEvent;
 use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
@@ -33,13 +37,25 @@ class MobConnectListener implements EventSubscriberInterface
     private $_request;
 
     /**
-     * @var MobConnectSubscriptionManager
+     * @var AuthManager
+     */
+    private $_authManager;
+
+    /**
+     * @var JourneyManager
+     */
+    private $_journeyManager;
+
+    /**
+     * @var SubscriptionManager
      */
     private $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, MobConnectSubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, JourneyManager $journeyManager, SubscriptionManager $subscriptionManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
+        $this->_authManager = $authManager;
+        $this->_journeyManager = $journeyManager;
         $this->_subscriptionManager = $subscriptionManager;
     }
 
@@ -50,8 +66,20 @@ class MobConnectListener implements EventSubscriberInterface
             ConfirmDirectPaymentEvent::NAME => 'onDirectPaymentConfirmed',
             ConfirmDirectPaymentRegularEvent::NAME => 'onDirectPaymentRegularConfirmed',
             ElectronicPaymentValidatedEvent::NAME => 'onElectronicPaymentValidated',
+            FirstLongDistanceJourneyPublishedEvent::NAME => 'onFirstLongDistanceJourneyPublished',
+            FirstShortDistanceJourneyPublishedEvent::NAME => 'onFirstShortDistanceJourneyPublished',
             SsoAssociationEvent::NAME => 'onUserAssociated',
         ];
+    }
+
+    public function onFirstLongDistanceJourneyPublished(FirstLongDistanceJourneyPublishedEvent $event)
+    {
+        $this->_journeyManager->declareFirstLongDistanceJourney($event->getProposal());
+    }
+
+    public function onFirstShortDistanceJourneyPublished(FirstShortDistanceJourneyPublishedEvent $event)
+    {
+        $this->_journeyManager->declareFirstShortDistanceJourney($event->getCarpoolProof());
     }
 
     /**
@@ -61,7 +89,7 @@ class MobConnectListener implements EventSubscriberInterface
     {
         $decodeRequest = json_decode($this->_request->getContent());
 
-        $this->_subscriptionManager->updateAuth($event->getUser(), $event->getSsoUser());
+        $this->_authManager->updateAuth($event->getUser(), $event->getSsoUser());
 
         if (
             property_exists($decodeRequest, 'ssoProvider')
@@ -78,7 +106,7 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onDirectPaymentConfirmed(ConfirmDirectPaymentEvent $event)
     {
-        $this->_subscriptionManager->updateLongDistanceSubscriptionForCarpoolItem($event->getCarpoolItem());
+        $this->_journeyManager->directPaymentConfirmed($event->getCarpoolItem());
     }
 
     /**
@@ -86,7 +114,7 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onDirectPaymentRegularConfirmed(ConfirmDirectPaymentRegularEvent $event)
     {
-        $this->_subscriptionManager->updateLongDistanceSubscriptionForCarpoolItem($event->getCarpoolItem());
+        $this->_journeyManager->directPaymentConfirmed($event->getCarpoolItem());
     }
 
     /**
@@ -94,7 +122,7 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onElectronicPaymentValidated(ElectronicPaymentValidatedEvent $event): void
     {
-        $this->_subscriptionManager->updateLongDistanceSubscriptionAfterElectronicPayment($event->getCarpoolPayment());
+        $this->_journeyManager->receivingElectronicPayment($event->getCarpoolPayment());
     }
 
     /**
@@ -102,6 +130,6 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onProofValidated(CarpoolProofValidatedEvent $event): void
     {
-        $this->_subscriptionManager->updateSubscription($event->getCarpoolProof());
+        $this->_journeyManager->validationOfProof($event->getCarpoolProof());
     }
 }

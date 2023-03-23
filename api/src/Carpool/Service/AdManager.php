@@ -52,6 +52,8 @@ use App\Geography\Service\AddressManager;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
+use App\Incentive\Service\Validation\JourneyValidation;
 use App\Rdex\Entity\RdexError;
 use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
@@ -99,6 +101,11 @@ class AdManager
     private $currentMargin;
 
     /**
+     * @var JourneyValidation
+     */
+    private $_journeyValidation;
+
+    /**
      * Constructor.
      */
     public function __construct(
@@ -124,7 +131,8 @@ class AdManager
         AppManager $appManager,
         AntiFraudManager $antiFraudManager,
         UserRepository $userRepository,
-        MobicoopGeocoder $mobicoopGeocoder
+        MobicoopGeocoder $mobicoopGeocoder,
+        JourneyValidation $journeyValidation
     ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -153,6 +161,7 @@ class AdManager
             $this->params['paymentActiveDate']->setTime(0, 0);
             $this->params['paymentActive'] = true;
         }
+        $this->_journeyValidation = $journeyValidation;
     }
 
     /**
@@ -650,6 +659,11 @@ class AdManager
         // we set the ad id to the outward proposal id
         $ad->setId($outwardProposal->getId());
         $ad->setExternalId($outwardProposal->getExternalId());
+
+        if (!$outwardProposal->isPrivate() && $this->_journeyValidation->isPublishedJourneyValidLongECCJourney($outwardProposal)) {
+            $event = new FirstLongDistanceJourneyPublishedEvent($outwardProposal);
+            $this->eventDispatcher->dispatch(FirstLongDistanceJourneyPublishedEvent::NAME, $event);
+        }
 
         return $ad;
     }
@@ -1911,6 +1925,7 @@ class AdManager
         } catch (ProofException $proofException) {
             throw new AdException($proofException->getMessage());
         }
+        $classicProofData->setId($id);
 
         $classicProofData->setId($id);
 
