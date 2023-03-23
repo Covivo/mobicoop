@@ -58,15 +58,17 @@ class AnalyticManager
         return [];
     }
 
-    public function getAnalytic(int $id): Analytic
+    public function getAnalytic(int $id, int $communityId): Analytic
     {
         $analytic = new Analytic();
         $analytic->setId($id);
+        $analytic->setCommunityId($communityId);
         $dashboard = $this->getDashboard();
         $payload = [
             'resource' => ['dashboard' => $dashboard['dashboardId']],
             'params' => [
                 'idterritoryoperational' => $this->getTerritories($dashboard['auth_item']),
+                'community' => $this->getCommunity($communityId),
                 'organization' => $this->organization,
             ],
         ];
@@ -90,6 +92,15 @@ class AnalyticManager
         }
 
         throw new ResourceNotFoundException('Unknown dashboard');
+    }
+
+    private function getCommunity(string $auth_item): array
+    {
+        if ($communityId == 0) {
+            return [strtolower($this->organization)];
+        } else {
+            return [strtolower($this->organization).'_'.strval($communityId)];
+        }
     }
 
     private function getTerritories(string $auth_item): array
