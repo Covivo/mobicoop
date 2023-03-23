@@ -1927,6 +1927,8 @@ class AdManager
         }
         $classicProofData->setId($id);
 
+        $classicProofData->setId($id);
+
         return $classicProofData;
     }
 
