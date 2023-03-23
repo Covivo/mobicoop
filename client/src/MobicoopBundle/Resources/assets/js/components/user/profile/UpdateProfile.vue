@@ -501,7 +501,7 @@
     <!-- EEC form -->
     <EECIncentiveStatus
       v-if="ceeDisplay"
-      id="cee-incentive"
+      :id="$t('eec-incentive')"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
       :is-after-eec-subscription="isAfterEecSubscription"
