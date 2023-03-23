@@ -22,7 +22,9 @@
           <v-list class="text-left">
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>{{ $t('mandatory1') }}</v-list-item-title>
+                <v-list-item-title>
+                  <a @click="$vuetify.goTo('#phone-number', scrollOptions)">{{ $t('mandatory1') }}</a>
+                </v-list-item-title>
               </v-list-item-content>
 
               <v-list-item-icon>
@@ -33,7 +35,29 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>{{ $t('mandatory2') }}</v-list-item-title>
+                <v-list-item-title>
+                  <v-badge
+                    color="secondary"
+                    offset-x="-2.5"
+                    offset-y="5"
+                  >
+                    <template
+                      #badge
+                    >
+                      <div
+                        style="cursor: pointer"
+                        @click="tutorialDialog = true"
+                      >
+                        <v-icon>mdi-information-variant</v-icon>
+                      </div>
+                    </template>
+                    <a
+                      @click="$vuetify.goTo('#driving-licence-number', scrollOptions)"
+                    >
+                      {{ $t('mandatory2') }}
+                    </a>
+                  </v-badge>
+                </v-list-item-title>
               </v-list-item-content>
 
               <v-list-item-icon>
@@ -108,6 +132,37 @@
         </p>
       </v-card-text>
     </v-card>
+    <!-- Dialog Tutorial -->
+    <v-dialog
+      v-model="tutorialDialog"
+      width="50%"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          {{ $t('dialogs.tutorial.title') }}
+        </v-card-title>
+        <v-card-text>
+          <ul class="mt-5">
+            <li v-html="$t('dialogs.tutorial.item-1', {apiUri: apiUri})" />
+            <li v-html="$t('dialogs.tutorial.item-2', {apiUri: apiUri})" />
+          </ul>
+        </v-card-text>
+
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            text
+            @click="tutorialDialog = false"
+          >
+            {{ $t('dialogs.tutorial.close-btn.text') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- / Dialog Tutorial -->
   </div>
 </template>
 
@@ -143,6 +198,10 @@ export default {
     drivingLicenceNumberFilled:{
       type: Boolean,
       default: false
+    },
+    apiUri: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -161,13 +220,21 @@ export default {
       loading: false,
       alert: {
         text: null
-      }
+      },
+      tutorialDialog: false,
     }
   },
   computed:{
     canSubscribe(){
       return this.confirmedPhoneNumber && this.drivingLicenceNumberFilled && this.checkboxesAllChecked && (this.eligibility.longDistanceEligibility || this.shortDistanceEligibility);
-    }
+    },
+    scrollOptions () {
+      return {
+        duration: 500,
+        offset: 100,
+        easing: 'easeInOutCubic',
+      }
+    },
   },
   watch:{
     checkboxes(){
@@ -222,4 +289,3 @@ export default {
   },
 };
 </script>
-

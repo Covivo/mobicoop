@@ -25,6 +25,7 @@
         v-if="!subscriptionInitiated"
         :confirmed-phone-number="confirmedPhoneNumber"
         :driving-licence-number-filled="drivingLicenceNumberFilled"
+        :api-uri="apiUri"
       />
       <EECIncentiveAdditionalInformations
         v-else
@@ -84,6 +85,10 @@ export default {
     isAfterEecSubscription: {
       type: Boolean,
       default: false
+    },
+    apiUri: {
+      type: String,
+      default: null
     }
   },
   data() {
