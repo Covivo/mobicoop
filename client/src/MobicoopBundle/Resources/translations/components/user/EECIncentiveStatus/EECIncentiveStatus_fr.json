@@ -40,17 +40,19 @@
       "header": "Prime longue distance (plus de 80km)",
       "progress": "{nb}/3 trajets longs",
       "hints": {
-        "hint1": "Preuve géolocalisée du conducteur et du passager",
-        "hint2": "Trajet payé en ligne",
-        "hint3": "Passager et Conducteur ont donné leur identité bancaire complète et validé leur numéro de téléphone puis ensuite, activé la géolocalisation et certifié TOUS LES DEUX le Départ et Arrivée pour chaque trajet via l'onglet \"covoiturages acceptés\" depuis le mobile"
+        "hint1": "Trajet payé en ligne",
+        "hint2": "Points de départ et d'arrivée certifiés par le passager et le conducteur avec la géolocalisation activée",
+        "hint3": "Numéros de téléphone validés pour passager et conducteur",
+        "hint4": "Identités bancaires (RIB et pièce d’identité) distinctes données par passager et conducteur"
       }
     },
     "shortDistance": {
       "header": "Prime courte distance (jusqu'à 80km)",
       "progress": "{nb}/10 trajets courts",
       "hints": {
-        "hint1": "Preuve géolocalisée du conducteur et du passager",
-        "hint2": "Passager et Conducteur ont donné leur identité bancaire complète et validé leur numéro de téléphone puis ensuite, activé la géolocalisation et certifié TOUS LES DEUX le Départ et Arrivée pour chaque trajet via l'onglet \"covoiturages acceptés\" depuis le mobile"
+        "hint1": "Points de départ et d'arrivée certifiés par le passager et le conducteur avec la géolocalisation activée",
+        "hint2": "Numéros de téléphone validés pour passager et conducteur",
+        "hint3": "Identités bancaires (RIB et pièce d’identité) distinctes données par passager et conducteur"
       }
     },
     "proofs": {

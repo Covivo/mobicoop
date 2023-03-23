@@ -1,18 +1,23 @@
 {
   "title": "Prime covoiturage CEE",
   "subtitle": "Inscription",
-  "intro": "Pour bénéficier de la prime de 100€ en partenariat avec {0}* vous devez :",
+  "intro": "Pour bénéficier de la prime de 100€ en partenariat avec {eecProvider}* vous devez :",
   "mandatory1": "Confirmer votre numéro de téléphone",
   "mandatory2": "Renseigner votre numéro de permis de conduire",
-  "intro2": "Par ailleurs, une authentification sur moB via FranceConnect est nécessaire. Celle-ci liera votre compte {0} à un compte sur moB pour commencer votre demande.<br><a href=\"/article/32\">En savoir plus</a>",
-  "title_list": "Cette prime est une aide financière d’incitation à une opération d’économies d’énergie faite en partenariat entre la plateforme {0} et {1}. En tant que bénéficiaire de l’opération d’économies d’énergie, j’atteste sur l’honneur :",
+  "intro2": "Par ailleurs, une authentification sur moB via FranceConnect est nécessaire. Celle-ci liera votre compte {eecPlatform} à un compte sur moB pour commencer votre demande.<br><a href=\"/article/32\">En savoir plus</a>",
+  "title_list": "Cette prime est une aide financière d’incitation à une opération d’économies d’énergie faite en partenariat entre la plateforme {eecPlatform} et {eecProvider}. En tant que bénéficiaire de l’opération d’économies d’énergie, j’atteste sur l’honneur :",
   "items": [
-    "que {0} m’a apporté une contribution individualisée (action personnalisée de sensibilisation ou d’accompagnement, aide financière ou équivalent). Cette contribution m’a incité à réaliser cette opération d’économies d’énergie ;",
-    "que je fournirai exclusivement à {0} l’ensemble des documents permettant de valoriser cette opération au titre du dispositif des certificats d’économies d’énergie ;",
+    "que {eecProvider} m’a apporté une contribution individualisée (action personnalisée de sensibilisation ou d’accompagnement, aide financière ou équivalent). Cette contribution m’a incité à réaliser cette opération d’économies d’énergie ;",
+    "que je fournirai exclusivement à {eecProvider} l’ensemble des documents permettant de valoriser cette opération au titre du dispositif des certificats d’économies d’énergie ;",
     "que je mettrai en œuvre les préconisations demandées par l’opérateur de covoiturage, permettant notamment de certifier mon identité et mes trajets de covoiturage ;",
     "que je ne signerai pas, pour cette opération, d’attestation sur l’honneur semblable avec une autre personne morale ;",
-    "l’exactitude des informations que je communiquerai sur les caractéristiques de mes trajets de covoiturage et que l’opération d’économies d’énergie décrites ici ont été intégralement réalisées. Je suis informé que je suis susceptible d’être contacté par les services du ministère chargé de l’énergie (ou tout organisme désigné par le ministère chargé de l’énergie) ou par Mobicoop ou son partenaire (ou tout organisme désigné par ceux-ci), dans le cadre d’un contrôle concernant la nature de l’opération et la réalisation effective de celle-ci. La réalisation effective d’un contrôle à la demande du demandeur ou de son partenaire (ou tout organisme désigné par ceux-ci) peut être une des conditions imposées par ces derniers pour le versement de leur contribution au financement de l’opération. Je m’engage à répondre aux demandes qui me seront faites dans le cadre des contrôles et, le cas échéant, à permettre l’accès au lieu de l’opération pour la réalisation de ces contrôles."
+    "l’exactitude des informations que je communiquerai sur les caractéristiques de mes trajets de covoiturage et que l’opération d’économies d’énergie décrites ici ont été intégralement réalisées. Je suis informé que je suis susceptible d’être contacté par les services du ministère chargé de l’énergie (ou tout organisme désigné par le ministère chargé de l’énergie) ou par {eecProvider} ou son partenaire (ou tout organisme désigné par ceux-ci), dans le cadre d’un contrôle concernant la nature de l’opération et la réalisation effective de celle-ci. La réalisation effective d’un contrôle à la demande du demandeur ou de son partenaire (ou tout organisme désigné par ceux-ci) peut être une des conditions imposées par ces derniers pour le versement de leur contribution au financement de l’opération. Je m’engage à répondre aux demandes qui me seront faites dans le cadre des contrôles et, le cas échéant, à permettre l’accès au lieu de l’opération pour la réalisation de ces contrôles."
   ],
+  "item1": "que {eecProvider} m’a apporté une contribution individualisée (action personnalisée de sensibilisation ou d’accompagnement, aide financière ou équivalent). Cette contribution m’a incité à réaliser cette opération d’économies d’énergie ;",
+  "item2": "que je fournirai exclusivement à {eecProvider} l’ensemble des documents permettant de valoriser cette opération au titre du dispositif des certificats d’économies d’énergie ;",
+  "item3": "que je mettrai en œuvre les préconisations demandées par l’opérateur de covoiturage, permettant notamment de certifier mon identité et mes trajets de covoiturage ;",
+  "item4": "que je ne signerai pas, pour cette opération, d’attestation sur l’honneur semblable avec une autre personne morale ;",
+  "item5": "l’exactitude des informations que je communiquerai sur les caractéristiques de mes trajets de covoiturage et que l’opération d’économies d’énergie décrites ici ont été intégralement réalisées. Je suis informé que je suis susceptible d’être contacté par les services du ministère chargé de l’énergie (ou tout organisme désigné par le ministère chargé de l’énergie) ou par {eecProvider} ou son partenaire (ou tout organisme désigné par ceux-ci), dans le cadre d’un contrôle concernant la nature de l’opération et la réalisation effective de celle-ci. La réalisation effective d’un contrôle à la demande du demandeur ou de son partenaire (ou tout organisme désigné par ceux-ci) peut être une des conditions imposées par ces derniers pour le versement de leur contribution au financement de l’opération. Je m’engage à répondre aux demandes qui me seront faites dans le cadre des contrôles et, le cas échéant, à permettre l’accès au lieu de l’opération pour la réalisation de ces contrôles.",
   "logo-france-connect": "/images/logo-france-connect.png",
   "service": "mobConnect",
   "specificPath": "user/sso",
@@ -35,17 +40,19 @@
       "header": "Prime longue distance (plus de 80km)",
       "progress": "{nb}/3 trajets longs",
       "hints": {
-        "hint1": "Preuve géolocalisée du conducteur et du passager",
-        "hint2": "Trajet payé en ligne",
-        "hint3": "Passager et Conducteur ont donné leur identité bancaire complète et validé leur numéro de téléphone puis ensuite, activé la géolocalisation et certifié TOUS LES DEUX le Départ et Arrivée pour chaque trajet via l'onglet \"covoiturages acceptés\" depuis le mobile"
+        "hint1": "Trajet payé en ligne",
+        "hint2": "Points de départ et d'arrivée certifiés par le passager et le conducteur avec la géolocalisation activée",
+        "hint3": "Numéros de téléphone validés pour passager et conducteur",
+        "hint4": "Identités bancaires (RIB et pièce d’identité) distinctes données par passager et conducteur"
       }
     },
     "shortDistance": {
       "header": "Prime courte distance (jusqu'à 80km)",
       "progress": "{nb}/10 trajets courts",
       "hints": {
-        "hint1": "Preuve géolocalisée du conducteur et du passager",
-        "hint2": "Passager et Conducteur ont donné leur identité bancaire complète et validé leur numéro de téléphone puis ensuite, activé la géolocalisation et certifié TOUS LES DEUX le Départ et Arrivée pour chaque trajet via l'onglet \"covoiturages acceptés\" depuis le mobile"
+        "hint1": "Points de départ et d'arrivée certifiés par le passager et le conducteur avec la géolocalisation activée",
+        "hint2": "Numéros de téléphone validés pour passager et conducteur",
+        "hint3": "Identités bancaires (RIB et pièce d’identité) distinctes données par passager et conducteur"
       }
     },
     "proofs": {
@@ -54,5 +61,6 @@
     }
   },
   "EEC-provider": "Esso SAF",
-  "EEC-provider-siren": "Esso SAF (SIREN: 542 010 053)"
+  "EEC-provider-siren": "Esso SAF (SIREN: 542 010 053)",
+  "EEC-platform": "Rezo Mobicoop"
 }
