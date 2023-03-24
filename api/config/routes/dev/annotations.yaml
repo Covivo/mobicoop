@@ -1,0 +1,3 @@
+eec:
+    resource: 'Incentive/Controller/'
+    type: annotation
