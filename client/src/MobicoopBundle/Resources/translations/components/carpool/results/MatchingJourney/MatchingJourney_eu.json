@@ -26,7 +26,7 @@
     "return": "Itzultzeko bidaiak hautatu",
     "outward": "Joateko bidaiak hautatu",
     "contactTips": {
-        "initiatedAsk": "Autokide honi igorria izan den eskaera baten erantzuna igurikatua da",
+        "initiatedAsk": "Harremanetan jadanik jarri zira iragarki honentzat",
         "pendingAsk": "Autokide honi igorria izan den eskaera baten erantzuna igurikatua da",
         "acceptedAsk": "Autokidetza bat jadanik planifikatu duzu autokide honekin"
     },

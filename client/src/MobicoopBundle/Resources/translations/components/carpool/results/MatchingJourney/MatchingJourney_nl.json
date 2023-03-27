@@ -25,7 +25,7 @@
     "return": "De terugtrajecten kiezen",
     "outward": "De heentrajecten kiezen",
     "contactTips": {
-        "initiatedAsk": "Een aanvraag naar deze medecarpooler toe werd nog niet beantwoord",
+        "initiatedAsk": "U hebt al contact opgenomen met betrekking tot deze advertentie",
         "pendingAsk": "Een aanvraag naar deze medecarpooler toe werd nog niet beantwoord",
         "acceptedAsk": "U hebt al een carpooling gepland met deze medecarpooler"
     },
