@@ -586,17 +586,20 @@ class UserController extends AbstractController
             $tab = 'receivedReviews';
         }
 
+        $isAfterEECSubscription = !is_null($request->get('afterEECSubscription')) && '1' === $request->get('afterEECSubscription');
+
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
-            'error' => $error,
-            'alerts' => $userManager->getAlerts($user)['alerts'],
-            'tabDefault' => $tabDefault,
-            'paymentElectronicActive' => $this->paymentElectronicActive,
-            'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
-            'showReviews' => $user->isUserReviewsActive(),
             'ageDisplay' => $this->ageDisplay,
+            'alerts' => $userManager->getAlerts($user)['alerts'],
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
-            'selectedTab' => $tab,
             'ceeDisplay' => $this->ceeDisplay,
+            'error' => $error,
+            'isAfterEECSubscription' => $isAfterEECSubscription,
+            'paymentElectronicActive' => $this->paymentElectronicActive,
+            'selectedTab' => $tab,
+            'showReviews' => $user->isUserReviewsActive(),
+            'tabDefault' => $tabDefault,
+            'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
         ]);
     }
 
@@ -1498,17 +1501,14 @@ class UserController extends AbstractController
             'eec' => 1,
         ];
 
-        $isMobConnectSubscriptionSuccessFull = false;
-
         if ($this->getUser()) {
-            $user = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
-
-            if ($user instanceof User) {
-                $isMobConnectSubscriptionSuccessFull = !is_null($user->getShortDistanceSubscription()) && !is_null($user->getLongDistanceSubscription());
-            }
+            $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
         }
 
-        return $this->redirectToRoute('home', ['isMobConnectSubscriptionSuccessFull' => $isMobConnectSubscriptionSuccessFull]);
+        return $this->redirectToRoute('user_profile_update', [
+            'tabDefault' => 'mon-profil',
+            'afterEECSubscription' => true,
+        ]);
     }
 
     public function userReturnConnectSsoMobile(Request $request)
@@ -1735,6 +1735,11 @@ class UserController extends AbstractController
     public function myCeeSubscriptions()
     {
         return new JsonResponse($this->ceeSubscriptionManager->myCeeSubscriptions());
+    }
+
+    public function myEecSubscriptionsEligibility()
+    {
+        return new JsonResponse($this->ceeSubscriptionManager->myEecSubscriptionsEligibility());
     }
 
     private function mobileRedirect(string $host, string $path, array $params)

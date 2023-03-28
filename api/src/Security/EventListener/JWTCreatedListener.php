@@ -79,10 +79,12 @@ class JWTCreatedListener
                 $user->setMobile(true);
             }
 
-            if ($user->getId() === $this->security->getUser()->getId()) {
-                $this->userManager->updateActivity($user);
-            } else {
-                $this->userManager->createAuthenticationDelegation($this->security->getUser(), $user);
+            if (!is_null($this->security->getUser())) {
+                if ($user->getId() === $this->security->getUser()->getId()) {
+                    $this->userManager->updateActivity($user);
+                } else {
+                    $this->userManager->createAuthenticationDelegation($this->security->getUser(), $user);
+                }
             }
         }
         $event->setData($payload);

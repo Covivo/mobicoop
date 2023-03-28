@@ -3,7 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
-use App\Incentive\Service\CeeJourneyService;
+use App\Carpool\Entity\Proposal;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -91,15 +91,6 @@ class LongDistanceJourney
     private $updatedAt;
 
     /**
-     * Bonus Status of the journey.
-     *
-     * @var int
-     *
-     * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
-     */
-    private $bonusStatus = CeeJourneyService::BONUS_STATUS_NO;
-
-    /**
      * Status of http request to mobConnect.
      *
      * @var int
@@ -131,35 +122,15 @@ class LongDistanceJourney
     private $carpoolProof;
 
     /**
-     * Status of verification.
+     * The proposal associate with the journey.
      *
-     * @var int
+     * @var null|CarpoolProof
      *
-     * @ORM\Column(type="integer", nullable=true, options={"default":0, "comment":"Status of verification"})
+     * @ORM\OneToOne(targetEntity=Proposal::class)
+     *
+     * @ORM\JoinColumn(nullable=true)
      */
-    private $verificationStatus = CeeJourneyService::VERIFICATION_STATUS_PENDING;
-
-    /**
-     * Rank of the journey for the user. Crossed with the verification status, this property makes it possible to target the 1st pending trip.
-     *
-     * @var int
-     *
-     * @ORM\Column(type="integer", nullable=true, options={"comment":"Rank of the journey for the user"})
-     */
-    private $rank;
-
-    public function __construct(CarpoolPayment $carpoolPayment, CarpoolProof $carpoolProof, int $carpoolersNumber)
-    {
-        $this->setCarpoolProof($carpoolProof);
-        $this->setCarpoolPayment($carpoolPayment);
-        $this->setStartAddressLocality($this->carpoolProof->getOriginDriverAddress()->getAddressLocality());
-        $this->setEndAddressLocality($this->carpoolProof->getDestinationDriverAddress()->getAddressLocality());
-        $this->setDistance($this->carpoolProof->getAsk()->getMatching()->getCommonDistance());
-        $this->setCarpoolersNumber($carpoolersNumber);
-        $this->setStartDate($this->carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
-        $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
-        $this->setBonusStatus(CeeJourneyService::BONUS_STATUS_PENDING);
-    }
+    private $initialProposal;
 
     /**
      * @ORM\PrePersist
@@ -341,26 +312,6 @@ class LongDistanceJourney
     }
 
     /**
-     * Get bonus Status of the EEC form.
-     */
-    public function getBonusStatus(): int
-    {
-        return $this->bonusStatus;
-    }
-
-    /**
-     * Set bonus Status of the EEC form.
-     *
-     * @param int $bonusStatus bonus Status of the EEC form
-     */
-    public function setBonusStatus(int $bonusStatus): self
-    {
-        $this->bonusStatus = $bonusStatus;
-
-        return $this;
-    }
-
-    /**
      * Get the carpool proof associate with the journey.
      */
     public function getCarpoolPayment(): CarpoolPayment
@@ -401,46 +352,6 @@ class LongDistanceJourney
     }
 
     /**
-     * Get status of verification.
-     */
-    public function getVerificationStatus(): int
-    {
-        return $this->verificationStatus;
-    }
-
-    /**
-     * Set status of verification.
-     *
-     * @param int $verificationStatus status of verification
-     */
-    public function setVerificationStatus(int $verificationStatus): self
-    {
-        $this->verificationStatus = $verificationStatus;
-
-        return $this;
-    }
-
-    /**
-     * Get rank of the journey for the user.
-     */
-    public function getRank(): int
-    {
-        return $this->rank;
-    }
-
-    /**
-     * Set rank of the journey for the user.
-     *
-     * @param int $rank rank of the journey for the user
-     */
-    public function setRank(int $rank): self
-    {
-        $this->rank = $rank;
-
-        return $this;
-    }
-
-    /**
      * Get the carpool proof associate with the journey.
      */
     public function getCarpoolProof(): ?CarpoolProof
@@ -456,6 +367,42 @@ class LongDistanceJourney
     public function setCarpoolProof($carpoolProof): self
     {
         $this->carpoolProof = $carpoolProof;
+
+        return $this;
+    }
+
+    /**
+     * Get the proposal associate with the journey.
+     *
+     * @return null|CarpoolProof
+     */
+    public function getInitialProposal(): ?Proposal
+    {
+        return $this->initialProposal;
+    }
+
+    /**
+     * Set the proposal associate with the journey.
+     *
+     * @param null|CarpoolProof $initialProposal the proposal associate with the journey
+     */
+    public function setInitialProposal(?Proposal $initialProposal): self
+    {
+        $this->initialProposal = $initialProposal;
+
+        return $this;
+    }
+
+    public function updateJourney(CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment, int $carpoolersNumber): self
+    {
+        $this->setCarpoolProof($carpoolProof);
+        $this->setCarpoolPayment($carpoolPayment);
+        $this->setStartAddressLocality($this->carpoolProof->getOriginDriverAddress()->getAddressLocality());
+        $this->setEndAddressLocality($this->carpoolProof->getDestinationDriverAddress()->getAddressLocality());
+        $this->setDistance($this->carpoolProof->getAsk()->getMatching()->getCommonDistance());
+        $this->setCarpoolersNumber($carpoolersNumber);
+        $this->setStartDate($this->carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
 
         return $this;
     }

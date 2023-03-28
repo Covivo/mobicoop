@@ -13,27 +13,23 @@
     "que je ne signerai pas, pour cette opération, d’attestation sur l’honneur semblable avec une autre personne morale ;",
     "l’exactitude des informations que je communiquerai sur les caractéristiques de mes trajets de covoiturage et que l’opération d’économies d’énergie décrites ici ont été intégralement réalisées. Je suis informé que je suis susceptible d’être contacté par les services du ministère chargé de l’énergie (ou tout organisme désigné par le ministère chargé de l’énergie) ou par {eecProvider} ou son partenaire (ou tout organisme désigné par ceux-ci), dans le cadre d’un contrôle concernant la nature de l’opération et la réalisation effective de celle-ci. La réalisation effective d’un contrôle à la demande du demandeur ou de son partenaire (ou tout organisme désigné par ceux-ci) peut être une des conditions imposées par ces derniers pour le versement de leur contribution au financement de l’opération. Je m’engage à répondre aux demandes qui me seront faites dans le cadre des contrôles et, le cas échéant, à permettre l’accès au lieu de l’opération pour la réalisation de ces contrôles."
   ],
-  "item1":
-    "que {eecProvider} m’a apporté une contribution individualisée (action personnalisée de sensibilisation ou d’accompagnement, aide financière ou équivalent). Cette contribution m’a incité à réaliser cette opération d’économies d’énergie ;",
-  "item2":
-    "que je fournirai exclusivement à {eecProvider} l’ensemble des documents permettant de valoriser cette opération au titre du dispositif des certificats d’économies d’énergie ;",
-  "item3":
-    "que je mettrai en œuvre les préconisations demandées par l’opérateur de covoiturage, permettant notamment de certifier mon identité et mes trajets de covoiturage ;",
-  "item4":
-    "que je ne signerai pas, pour cette opération, d’attestation sur l’honneur semblable avec une autre personne morale ;",
-  "item5":
-    "l’exactitude des informations que je communiquerai sur les caractéristiques de mes trajets de covoiturage et que l’opération d’économies d’énergie décrites ici ont été intégralement réalisées. Je suis informé que je suis susceptible d’être contacté par les services du ministère chargé de l’énergie (ou tout organisme désigné par le ministère chargé de l’énergie) ou par {eecProvider} ou son partenaire (ou tout organisme désigné par ceux-ci), dans le cadre d’un contrôle concernant la nature de l’opération et la réalisation effective de celle-ci. La réalisation effective d’un contrôle à la demande du demandeur ou de son partenaire (ou tout organisme désigné par ceux-ci) peut être une des conditions imposées par ces derniers pour le versement de leur contribution au financement de l’opération. Je m’engage à répondre aux demandes qui me seront faites dans le cadre des contrôles et, le cas échéant, à permettre l’accès au lieu de l’opération pour la réalisation de ces contrôles."
-  ,
+  "item1": "que {eecProvider} m’a apporté une contribution individualisée (action personnalisée de sensibilisation ou d’accompagnement, aide financière ou équivalent). Cette contribution m’a incité à réaliser cette opération d’économies d’énergie ;",
+  "item2": "que je fournirai exclusivement à {eecProvider} l’ensemble des documents permettant de valoriser cette opération au titre du dispositif des certificats d’économies d’énergie ;",
+  "item3": "que je mettrai en œuvre les préconisations demandées par l’opérateur de covoiturage, permettant notamment de certifier mon identité et mes trajets de covoiturage ;",
+  "item4": "que je ne signerai pas, pour cette opération, d’attestation sur l’honneur semblable avec une autre personne morale ;",
+  "item5": "l’exactitude des informations que je communiquerai sur les caractéristiques de mes trajets de covoiturage et que l’opération d’économies d’énergie décrites ici ont été intégralement réalisées. Je suis informé que je suis susceptible d’être contacté par les services du ministère chargé de l’énergie (ou tout organisme désigné par le ministère chargé de l’énergie) ou par {eecProvider} ou son partenaire (ou tout organisme désigné par ceux-ci), dans le cadre d’un contrôle concernant la nature de l’opération et la réalisation effective de celle-ci. La réalisation effective d’un contrôle à la demande du demandeur ou de son partenaire (ou tout organisme désigné par ceux-ci) peut être une des conditions imposées par ces derniers pour le versement de leur contribution au financement de l’opération. Je m’engage à répondre aux demandes qui me seront faites dans le cadre des contrôles et, le cas échéant, à permettre l’accès au lieu de l’opération pour la réalisation de ces contrôles.",
   "logo-france-connect": "/images/logo-france-connect.png",
   "service": "mobConnect",
   "specificPath": "user/sso",
   "routes": {
-    "getMyCeeSubscriptions": "/getMyCeeSubscriptions"
+    "getMyCeeSubscriptions": "/getMyCeeSubscriptions",
+    "getMyEecEligibility": "/getMyEecEligibility"
   },
   "additional": {
     "subtitle": "Informations complémentaires",
     "intro": "Pour recevoir votre prime et le paiement de vos passagers, vous devez :",
     "mandatory1": "Renseigner vos coordonnées bancaires",
+    "goToBankCoordinates": "Pour réaliser ces opérations, rendez-vous dans l'onglet \"identité bancaire\"",
     "mandatory2": "Envoyer une photo d'une pièce d'identité valide",
     "uri": {
       "getCoordinates": "/utilisateur/coordonnees-bancaires"
@@ -46,14 +42,16 @@
       "progress": "{nb}/3 trajets longs",
       "hints": {
         "hint1": "Preuve géolocalisée du conducteur et du passager",
-        "hint2": "Trajet payé en ligne"
+        "hint2": "Trajet payé en ligne",
+        "hint3": "Passager et Conducteur ont donné leur identité bancaire complète et validé leur numéro de téléphone puis ensuite, activé la géolocalisation et certifié TOUS LES DEUX le Départ et Arrivée pour chaque trajet via l'onglet \"covoiturages acceptés\" depuis le mobile"
       }
     },
     "shortDistance": {
       "header": "Prime courte distance (jusqu'à 80km)",
       "progress": "{nb}/10 trajets courts",
       "hints": {
-        "hint1": "Preuve géolocalisée du conducteur et du passager"
+        "hint1": "Preuve géolocalisée du conducteur et du passager",
+        "hint2": "Passager et Conducteur ont donné leur identité bancaire complète et validé leur numéro de téléphone puis ensuite, activé la géolocalisation et certifié TOUS LES DEUX le Départ et Arrivée pour chaque trajet via l'onglet \"covoiturages acceptés\" depuis le mobile"
       }
     },
     "proofs": {
@@ -63,5 +61,29 @@
   },
   "EEC-provider": "Esso SAF",
   "EEC-provider-siren": "Esso SAF (SIREN: 542 010 053)",
-  "EEC-platform": "Rezo Mobicoop"
+  "EEC-platform": "Rezo Mobicoop",
+  "EEC-form": "prime-covoiturage",
+  "EEC-subscription-snackbar": {
+    "success": "La souscription aux aides a été effectuée.",
+    "failed": "La souscription aux aides a échouée.",
+    "longDistanceFailed": "La souscription à l'aide pour les trajets longue distance n'a pas pu être réalisée.",
+    "shortDistanceFailed": "La souscription à l'aide pour les trajets courte distance n'a pas pu être réalisée."
+  },
+  "EEC-eligibility": {
+    "alert": {
+      "ineligibility-text": "Vous avez déjà réalisé des trajets courte et longue distance.<br><span class='warning--text font-weight-bold'>Vous ne pouvez pas souscrire aux offres de mobilité.</span>",
+      "longDistance-ineligibility-text": "Vous avez déjà réalisé des trajets longue distance depuis le 1<sup>er</sup> janvier 2023.<br><span class='warning--text font-weight-bold'>Vous ne pourrez souscrire à l'offre correspondante.</span>",
+      "shortDistance-ineligibility-text": "Vous avez déjà réalisé des trajets courte distance depuis le 1<sup>er</sup> janvier 2023.<br><span class='warning--text font-weight-bold'>Vous ne pourrez souscrire à l'offre correspondante.</span>"
+    }
+  },
+  "dialogs": {
+    "tutorial": {
+      "title": "Où trouver votre numéro de permis ou code NPEH ?",
+      "item-1": "<p>Sur le <span class='font-weight-bold'>nouveau permis</span> au format carte bancaire européen, le numéro de dossier se trouve au verso (au dos de la carte) en haut à gauche au dessus de la puce sur 2 lignes horizontales.</p><p><img src='{apiUri}upload/eec-incentives/images/driving-licence-number-tutorial/new-permis.png'/></p>",
+      "item-2": "<p>Sur le <span class='font-weight-bold'>permis ancien format</span>, le numéro de permis se trouve à l'intérieur sur le premier volet, en dessous de la date d'obtention de votre permis de conduire.</p><p><img src='{apiUri}upload/eec-incentives/images/driving-licence-number-tutorial/old-permis.png'/></p>",
+      "close-btn": {
+        "text": "Fermer"
+      }
+    }
+  }
 }

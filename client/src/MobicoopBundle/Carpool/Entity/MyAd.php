@@ -181,6 +181,11 @@ class MyAd extends GamificationEntity implements ResourceInterface, \JsonSeriali
 
     private $solidaryExclusive;
 
+    /**
+     * @var null|MyAdCommunity[] If the Ad has a Communities
+     */
+    private $communities;
+
     public function __construct($id = null)
     {
         if (!is_null($id)) {
@@ -501,6 +506,47 @@ class MyAd extends GamificationEntity implements ResourceInterface, \JsonSeriali
         return $this;
     }
 
+    /**
+     * Get the value of solidaryExclusive.
+     */
+    public function isSolidaryExclusive()
+    {
+        return $this->solidaryExclusive;
+    }
+
+    /**
+     * Set the value of solidaryExclusive.
+     *
+     * @param mixed $solidaryExclusive
+     *
+     * @return self
+     */
+    public function setSolidaryExclusive($solidaryExclusive)
+    {
+        $this->solidaryExclusive = $solidaryExclusive;
+
+        return $this;
+    }
+
+    public function getcommunities(): ?array
+    {
+        return $this->communities;
+    }
+
+    public function setcommunities(?array $communities): self
+    {
+        $this->communities = $communities;
+
+        return $this;
+    }
+
+    public function addCommunity(MyAdCommunity $community): self
+    {
+        $this->communities[] = $community;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -533,28 +579,7 @@ class MyAd extends GamificationEntity implements ResourceInterface, \JsonSeriali
                 'gamificationNotifications' => $this->getGamificationNotifications(),
                 'isSolidaryExclusive' => $this->isSolidaryExclusive(),
                 'type' => $this->getType(),
+                'communities' => $this->getcommunities(),
             ];
-    }
-
-    /**
-     * Get the value of solidaryExclusive.
-     */
-    public function isSolidaryExclusive()
-    {
-        return $this->solidaryExclusive;
-    }
-
-    /**
-     * Set the value of solidaryExclusive.
-     *
-     * @param mixed $solidaryExclusive
-     *
-     * @return self
-     */
-    public function setSolidaryExclusive($solidaryExclusive)
-    {
-        $this->solidaryExclusive = $solidaryExclusive;
-
-        return $this;
     }
 }

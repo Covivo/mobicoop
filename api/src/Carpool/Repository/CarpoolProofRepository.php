@@ -26,7 +26,7 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Resource\CeeSubscriptions;
-use App\Incentive\Service\CeeJourneyService;
+use App\Incentive\Service\Validation\Validation;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -154,10 +154,10 @@ class CarpoolProofRepository
 
         $parameters = [
             'class' => CarpoolProof::TYPE_HIGH,
-            'country' => CeeJourneyService::REFERENCE_COUNTRY,
+            'country' => Validation::REFERENCE_COUNTRY,
             'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
             'driver' => $driver,
-            'referenceDate' => \DateTime::createFromFormat('Y-m-d', CeeJourneyService::REFERENCE_DATE),
+            'referenceDate' => \DateTime::createFromFormat('Y-m-d', Validation::REFERENCE_DATE),
             'status' => CarpoolProof::STATUS_VALIDATED,
         ];
 
@@ -190,9 +190,10 @@ class CarpoolProofRepository
             $qb
                 ->innerJoin('a.carpoolItems', 'c', 'WITH', 'c.creditorUser = :driver')
                 ->andWhere('m.commonDistance >= :distance')
-                ->andWhere('c.creditorStatus = :creditorStatus')
+                ->andWhere('c.creditorStatus = :creditorStatusOnline OR c.creditorStatus = :creditorStatusDirect')
             ;
-            $parameters['creditorStatus'] = CarpoolItem::DEBTOR_STATUS_ONLINE;
+            $parameters['creditorStatusOnline'] = CarpoolItem::DEBTOR_STATUS_ONLINE;
+            $parameters['creditorStatusDirect'] = CarpoolItem::DEBTOR_STATUS_DIRECT;
         } else {
             $qb->andWhere('m.commonDistance < :distance');
         }
@@ -202,5 +203,43 @@ class CarpoolProofRepository
         ;
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getJourneysNumberMadeSinceThresholdDate(User $user, bool $isLongDistance = true)
+    {
+        $qb = $this->repository->createQueryBuilder('cp');
+
+        $parameters = [
+            'distance' => Validation::LONG_DISTANCE_THRESHOLD,
+            'thresholdDate' => \DateTime::createFromFormat('Y-m-d', Validation::REFERENCE_DATE),
+            'driver' => $user,
+        ];
+
+        $qb
+            ->select('COUNT(cp.id)')
+            ->innerJoin('cp.ask', 'a')
+            ->innerJoin('a.matching', 'm')
+            ->where('cp.driver = :driver')
+            ->andWhere('cp.startDriverDate >= :thresholdDate')
+        ;
+
+        if (true === $isLongDistance) {
+            $qb
+                ->innerJoin('a.carpoolItems', 'ci', 'WITH', 'ci.creditorUser = :driver AND ci.creditorStatus IN (:creditorStatus)')
+                ->innerJoin('ci.carpoolPayments', 'p', 'WITH', 'p.user = cp.passenger')
+                ->andWhere('m.commonDistance >= :distance')
+            ;
+            $parameters['creditorStatus'] = [CarpoolItem::CREDITOR_STATUS_ONLINE, CarpoolItem::CREDITOR_STATUS_DIRECT];
+        } else {
+            $qb
+                ->andWhere('m.commonDistance < :distance')
+                ->andWhere('cp.type = :class')
+            ;
+            $parameters['class'] = CarpoolProof::TYPE_HIGH;
+        }
+
+        $qb->setParameters($parameters);
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 }

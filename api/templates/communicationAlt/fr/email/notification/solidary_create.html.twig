@@ -6,11 +6,11 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:70%">
-                        {% if context.structure.logo is not null %}
+                        {% if context.structure.logo != null %}
                             <img src="{{ api_env('STRUCTURE_LOGO_URI') }}{{ context.structure.logo.filename }}" alt="Logo {{ context.structure.name }}" />
                         {% endif %}
                         <p>Bonjour,</p>
-                        <p>{% if context.applicant is not null %}<span style="font-weight: bold">{{ context.applicant.givenName }} {{ context.applicant.familyName }}</span>{% endif %} vient de déposer une demande solidaire. Cette personne a besoin de se déplacer dès le <span style="font-weight: bold">{{ context.journey.criteria.fromDate|date('d/m/Y') }}</span>.</p>
+                        <p>{% if context.applicant != null %}<span style="font-weight: bold">{{ context.applicant.givenName }} {{ context.applicant.familyName }}</span>{% endif %} vient de déposer une demande solidaire. Cette personne a besoin de se déplacer dès le <span style="font-weight: bold">{{ context.journey.criteria.fromDate|date('d/m/Y') }}</span>.</p>
                         <p>Cliquez ici pour consulter sa demande <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('URL_ADMIN')}}{{ context.adminUrl }}">{{api_env('URL_ADMIN')}}{{ context.adminUrl }}</a>.</p>
                         <p>Cordialement,</p>
                         <p style="font-weight: bold">{{ context.structure.name }}</p>

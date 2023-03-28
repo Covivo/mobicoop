@@ -26,6 +26,7 @@ namespace App\Carpool\Service;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\MyAdCommunity;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\MatchingRepository;
@@ -116,6 +117,19 @@ class MyAdManager
         $myAd->setRolePassenger((true === $proposal->getCriteria()->isPassenger()) ? true : false);
         $myAd->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive() ? true : false);
 
+        if (is_array($proposal->getCommunities()) && count($proposal->getCommunities()) > 0) {
+            foreach ($proposal->getCommunities() as $community) {
+                $myAdCommunity = new MyAdCommunity();
+                $myAdCommunity->setId($community->getId());
+                $myAdCommunity->setName($community->getName());
+                if (count($community->getImages()) > 0) {
+                    $versions = $community->getImages()[0]->getVersions();
+                    $myAdCommunity->setImage(isset($versions['square_100']) ? $versions['square_100'] : $versions['original']);
+                }
+                $myAd->addCommunity($myAdCommunity);
+            }
+        }
+
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
                 /**
@@ -202,12 +216,10 @@ class MyAdManager
         $today = new \DateTime('now');
         foreach ($this->matchingRepository->getProposalMatchingAsOffersWithBothUsers($proposal) as $matchingOffer) {
             // the user is passenger
-            /**
-             * @var Matching $matchingOffer
-             */
+            // @var Matching $matchingOffer
             // we exclude private proposals and expired matchings for the carpooler count
             // We need them though to treat former ask without sending another request
-            if (!$matchingOffer->getProposalOffer()->isPrivate() && $matchingOffer->getCriteria()->getFromDate()->format('Y-m-d') >= $today->format('Y-m-d')) {
+            if (!$matchingOffer->getProposalOffer()->isPrivate() && !$this->_hasJourneyReachedDeadline($matchingOffer->getCriteria())) {
                 $carpoolers[] = $matchingOffer->getProposalOffer()->getUser()->getId();
             }
             // check for asks (driver)
@@ -261,16 +273,14 @@ class MyAdManager
 
         foreach ($this->matchingRepository->getProposalMatchingAsRequestsWithBothUsers($proposal) as $matchingRequest) {
             // the user is driver
-            /**
-             * @var Matching $matchingRequest
-             */
+            // @var Matching $matchingRequest
             // we exclude private proposals for the carpooler count, as well as solidaries and expired matching
             // We need them though to treat former ask without sending another request
             if (
                 !$matchingRequest->getProposalRequest()->isPrivate()
                 && !$matchingRequest->getProposalRequest()->getSolidary()
                 && !in_array($matchingRequest->getProposalRequest()->getUser()->getId(), $carpoolers)
-                && $matchingRequest->getCriteria()->getFromDate()->format('Y-m-d') >= $today->format('Y-m-d')
+                && !$this->_hasJourneyReachedDeadline($matchingRequest->getCriteria())
             ) {
                 $carpoolers[] = $matchingRequest->getProposalRequest()->getUser()->getId();
             }
@@ -328,6 +338,15 @@ class MyAdManager
         $myAd->setPassengers($passengers);
 
         return $myAd;
+    }
+
+    private function _hasJourneyReachedDeadline(Criteria $criteria): bool
+    {
+        $today = new \DateTime('now');
+
+        $date = !is_null($criteria->getToDate()) ? $criteria->getToDate() : $criteria->getFromDate();
+
+        return is_null($date) ? false : $date->format('Y-m-d') < $today->format('Y-m-d');
     }
 
     /**

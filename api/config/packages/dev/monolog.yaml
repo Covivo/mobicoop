@@ -35,6 +35,11 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/consumptionFeedback.log"
       channels: [consumptionFeedback]
+    csvMaker:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/csvMaker.log"
+      channels: [csvMaker]
     faker:
       type: stream
       level: debug
@@ -104,6 +109,7 @@ monolog:
           "!communication",
           "!community",
           "!consumptionFeedback",
+          "!csvMaker",
           "!faker",
           "!gamification",
           "!geography",
@@ -131,6 +137,7 @@ monolog:
           "!communication",
           "!community",
           "!consumptionFeedback",
+          "!csvMaker",
           "!faker",
           "!gamification",
           "!geography",

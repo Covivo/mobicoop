@@ -52,6 +52,8 @@ use App\Geography\Service\AddressManager;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
+use App\Incentive\Service\Validation\JourneyValidation;
 use App\Rdex\Entity\RdexError;
 use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
@@ -99,6 +101,11 @@ class AdManager
     private $currentMargin;
 
     /**
+     * @var JourneyValidation
+     */
+    private $_journeyValidation;
+
+    /**
      * Constructor.
      */
     public function __construct(
@@ -124,7 +131,8 @@ class AdManager
         AppManager $appManager,
         AntiFraudManager $antiFraudManager,
         UserRepository $userRepository,
-        MobicoopGeocoder $mobicoopGeocoder
+        MobicoopGeocoder $mobicoopGeocoder,
+        JourneyValidation $journeyValidation
     ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -149,10 +157,11 @@ class AdManager
         $this->antiFraudManager = $antiFraudManager;
         $this->userRepository = $userRepository;
         $this->reversePointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
-        if ($this->params['paymentActiveDate'] = DateTime::createFromFormat('Y-m-d', $this->params['paymentActive'])) {
+        if ($this->params['paymentActiveDate'] = \DateTime::createFromFormat('Y-m-d', $this->params['paymentActive'])) {
             $this->params['paymentActiveDate']->setTime(0, 0);
             $this->params['paymentActive'] = true;
         }
+        $this->_journeyValidation = $journeyValidation;
     }
 
     /**
@@ -165,9 +174,9 @@ class AdManager
      * @param bool $withSolidaries  Return also the matching solidary asks
      * @param bool $forceNotUseTime For to set useTime at false
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
     {
@@ -651,6 +660,11 @@ class AdManager
         $ad->setId($outwardProposal->getId());
         $ad->setExternalId($outwardProposal->getExternalId());
 
+        if (!$outwardProposal->isPrivate() && $this->_journeyValidation->isPublishedJourneyValidLongECCJourney($outwardProposal)) {
+            $event = new FirstLongDistanceJourneyPublishedEvent($outwardProposal);
+            $this->eventDispatcher->dispatch(FirstLongDistanceJourneyPublishedEvent::NAME, $event);
+        }
+
         return $ad;
     }
 
@@ -1033,7 +1047,7 @@ class AdManager
         $ad->setLuggage($proposal->getCriteria()->hasLuggage());
         $ad->setBackSeats($proposal->getCriteria()->hasBackSeats());
         $ad->setComment($proposal->getComment());
-        $ad->setPriceKm($proposal->getCriteria()->getPriceKm());
+        $ad->setPriceKm(strval(floatval($proposal->getCriteria()->getPriceKm())));
 
         if ($matching && $matching->getProposalOffer()->getCriteria()->getFromTime()) {
             $date = $matching->getProposalOffer()->getCriteria()->getFromDate();
@@ -1186,9 +1200,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws \Exception
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1265,9 +1279,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1360,15 +1374,15 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
         // checks for regular and punctual
         if (
-            $oldAd->getPriceKm() !== $newAd->getPriceKm()
+            strval(floatval($oldAd->getPriceKm())) !== $newAd->getPriceKm()
             || $oldAd->getFrequency() !== $newAd->getFrequency()
             || $oldAd->getRole() !== $newAd->getRole()
             || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $newAd->getOutwardWaypoints())
@@ -1402,9 +1416,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareSchedules($old, $new)
     {
@@ -1532,9 +1546,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {
@@ -1876,7 +1890,7 @@ class AdManager
         }
 
         // check if a proof already exists for this day
-        if ($carpoolProof = $this->proofManager->getProofForDate($ask, new DateTime())) {
+        if ($carpoolProof = $this->proofManager->getProofForDate($ask, new \DateTime())) {
             // the proof already exists, it's an update
             return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
         }
@@ -1894,7 +1908,7 @@ class AdManager
      *
      * @return ClassicProof The classic proof updated
      */
-    public function updateCarpoolProof(int $id, ClassicProof $classicProofData)
+    public function updateCarpoolProof(int $id, ClassicProof $classicProofData): ClassicProof
     {
         // search the proof
         if (!$carpoolProof = $this->proofManager->getProof($id)) {
@@ -1911,6 +1925,9 @@ class AdManager
         } catch (ProofException $proofException) {
             throw new AdException($proofException->getMessage());
         }
+        $classicProofData->setId($id);
+
+        $classicProofData->setId($id);
 
         return $classicProofData;
     }

@@ -27,6 +27,7 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\ResultRole;
 use App\Geography\Entity\Address;
+use App\Service\FormatDataManager;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -45,8 +46,19 @@ class ExternalJourneyManager
     private $params;
     private $journeySearcher;
 
-    public function __construct(?array $operator = [], ?array $clients = [], ?array $providers = [], JourneySearcher $journeySearcher)
-    {
+    /**
+     * @var FormatDataManager
+     */
+    private $_formatDataManager;
+
+    public function __construct(
+        FormatDataManager $formatDataManager,
+        ?array $operator = [],
+        ?array $clients = [],
+        ?array $providers = [],
+        JourneySearcher $journeySearcher
+    ) {
+        $this->_formatDataManager = $formatDataManager;
         $this->operator = $operator;
         $this->clients = $clients;
         $this->providers = $providers;
@@ -86,7 +98,7 @@ class ExternalJourneyManager
                                 $aggregatedResults = json_decode($result['journeys'], true);
                             } else {
                                 // No rawJson flag set or set to 0. We return array of Carpool -> Result.
-                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName'], Result::RDEX_PROVIDER) as $currentResult) {
+                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
                                     $aggregatedResults[] = $currentResult;
                                 }
                             }
@@ -101,7 +113,7 @@ class ExternalJourneyManager
                                 $aggregatedResults = json_decode($result['journeys'], true);
                             } else {
                                 // No rawJson flag set or set to 0. We return array of Carpool -> Result.
-                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName'], Result::STANDARD_RDEX_PROVIDER) as $currentResult) {
+                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
                                     $aggregatedResults[] = $currentResult;
                                 }
                             }
@@ -120,7 +132,7 @@ class ExternalJourneyManager
         return $aggregatedResults;
     }
 
-    private function createResultFromRDEX($data, $providerName, $providerType): array
+    private function createResultFromRDEX($data, $providerName): array
     {
         $results = [];
         $journeys = json_decode($data, true);
@@ -228,6 +240,10 @@ class ExternalJourneyManager
 
             // price - seats - distance - duration
             $result->setTime(('' !== $time) ? $time : null);
+            $result->setRoundedPrice($this->_formatDataManager->roundPrice(
+                ($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'],
+                $result->getFrequency()
+            ));
             $result->setRoundedPrice(round(($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'], 2));
             $result->setSeats(isset($currentJourney['driver']['seats']) ? $currentJourney['driver']['seats'] : 0);
 
@@ -239,15 +255,19 @@ class ExternalJourneyManager
 
             // We only set resultPassenger and resultDriver for the roles.
             // We don't need the data.
-            if (isset($currentJourney['passenger']) && !is_null($currentJourney['passenger']) && 1 == $currentJourney['passenger']['state']) {
-                $resultDriver = new ResultRole();
-                $result->setResultDriver($resultDriver);
-                $result->setResultPassenger(null);
-            }
-            if (isset($currentJourney['driver']) && !is_null($currentJourney['driver']) && 1 == $currentJourney['driver']['state']) {
+            if (
+                isset($currentJourney['driver']) && !is_null($currentJourney['driver'])
+                && isset($currentJourney['driver']['state']) && 1 === $currentJourney['driver']['state']
+            ) {
                 $resultPassenger = new ResultRole();
                 $result->setResultPassenger($resultPassenger);
-                $result->setResultDriver(null);
+            }
+            if (
+                isset($currentJourney['passenger']) && !is_null($currentJourney['passenger'])
+                && isset($currentJourney['passenger']['state']) && 1 === $currentJourney['passenger']['state']
+            ) {
+                $resultDriver = new ResultRole();
+                $result->setResultDriver($resultDriver);
             }
 
             if (!isset($currentJourney['url']) || '' === trim($currentJourney['url'])) {
@@ -263,7 +283,6 @@ class ExternalJourneyManager
             $result->setExternalOrigin($currentJourney['origin']);
             $result->setExternalOperator($currentJourney['operator']);
             $result->setExternalProvider($providerName);
-            $result->setExternalProviderType($providerType);
             $result->setExternalJourneyId($currentJourney['uuid']);
             $results[] = $result;
         }

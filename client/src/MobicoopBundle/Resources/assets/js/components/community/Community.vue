@@ -213,7 +213,7 @@
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
                 :markers-draggable="false"
-                :can-select-point="isMember && user"
+                :can-select-point="canSelectPoint"
                 class="pa-4 mt-5"
                 :relay-points="true"
                 @SelectedAsDestination="selectedAsDestination"
@@ -382,6 +382,7 @@
   </div>
 </template>
 <script>
+import { merge } from "lodash";
 import maxios from "@utils/maxios";
 import {
   messages_en,
@@ -389,6 +390,12 @@ import {
   messages_eu,
   messages_nl
 } from "@translations/components/community/Community/";
+import {
+  messages_client_en,
+  messages_client_fr,
+  messages_client_eu,
+  messages_client_nl
+} from "@clientTranslations/components/community/Community/";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
@@ -396,6 +403,11 @@ import LoginOrRegisterFirst from "@components/utilities/LoginOrRegisterFirst";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap/MMap";
 import L, { LatLng } from "leaflet";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   components: {
@@ -408,10 +420,10 @@ export default {
   },
   i18n: {
     messages: {
-      en: messages_en,
-      nl: messages_nl,
-      fr: messages_fr,
-      eu: messages_eu
+      'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   props: {
@@ -532,7 +544,8 @@ export default {
       params: { communityId: this.community.id },
       isCreator: false,
       selectedDestination: null,
-      selectedOrigin: null
+      selectedOrigin: null,
+      canSelectPoint: (this.isMember && this.user) ? true : false
     };
   },
   computed: {
@@ -812,7 +825,7 @@ export default {
             this.buildPoint(
               proposal.origin.latitude,
               proposal.origin.longitude,
-              "",
+              proposal.origin,
               proposal.origin.displayLabel[0],
               "",
               [],
@@ -825,7 +838,7 @@ export default {
             this.buildPoint(
               proposal.destination.latitude,
               proposal.destination.longitude,
-              "",
+              proposal.destination,
               proposal.destination.displayLabel[0],
               "",
               [],

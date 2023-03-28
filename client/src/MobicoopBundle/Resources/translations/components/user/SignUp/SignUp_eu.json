@@ -1,125 +1,125 @@
 {
-    "rgpd": {
-        "link": {
-            "route": "/cgu",
-            "label": "Zure datuen kudeaketaz eta eskubideetaz buruz gehiago jakiteko."
-        },
-        "infos": "Formulario honetatik biltzen diren argibideak beharrezkoak dira Mobicoop aplikazioak proposatzen dituen zerbitzuen erabiltzeko.",
-        "socialServicesUnavailableWithoutConsent": "Erabilia izateko, sare sozialetik konektatzeko funtzionalitatea, orri-oinean eskura dezakezu \"cookies kudeaketa\" tresnari esker onartu behar duzuna.",
-        "consent": "Konektatua izateko, \"Zure konexioa aktibo atxiki\" onartua izan behar duzu \"Cookies-en kudeaketa\" orri-oineko loturan eskuragarri den tresnari esker, eta orria erreberri ezazu."
+  "rgpd": {
+    "link": {
+      "route": "/cgu",
+      "label": "Zure datuen kudeaketaz eta eskubideetaz buruz gehiago jakiteko."
     },
-    "button": {
-        "register": "Izena ematen dut",
-        "next": "Ondokoa",
-        "previous": "Aitzinekoa"
+    "infos": "Formulario honetatik biltzen diren argibideak beharrezkoak dira Mobicoop aplikazioak proposatzen dituen zerbitzuen erabiltzeko.",
+    "socialServicesUnavailableWithoutConsent": "Erabilia izateko, sare sozialetik konektatzeko funtzionalitatea, orri-oinean eskura dezakezu \"cookies kudeaketa\" tresnari esker onartu behar duzuna.",
+    "consent": "Konektatua izateko, \"Zure konexioa aktibo atxiki\" onartua izan behar duzu \"Cookies-en kudeaketa\" orri-oineko loturan eskuragarri den tresnari esker, eta orria erreberri ezazu."
+  },
+  "button": {
+    "register": "Izena ematen dut",
+    "next": "Ondokoa",
+    "previous": "Aitzinekoa"
+  },
+  "urlLogin": "/utilisateur/connexion/",
+  "login": "Kontu bat baduzu Jadanik ? Identifika zaitez!",
+  "snackbar": {
+    "joinCommunity": {
+      "textError": "Huts bat gertatu da, berriz entsea zaitez.",
+      "textOkAutoValidation": "Zure kide izateko eskaera onartua da.",
+      "textOkManualValidation": "Zure kide izateko eskaera igorria izan zaio erreferenteari. E-mezuz jakinean ezarria izanen zira."
+    }
+  },
+  "steps": {
+    "5": "Bizilekuaren hiria",
+    "4": "Sorteguna",
+    "3": "Generoa",
+    "2": "Nortasuna",
+    "1": "Erabiltzailearen izena eta pasahitza"
+  },
+  "step": "Etapa",
+  "communities": {
+    "route": "/utilisateur/inscription/liste-des-communautes",
+    "label": "Komunitate batean sartu"
+  },
+  "legalAge": {
+    "required": "Beharrezkoa",
+    "text": "Baieztatzen dut gutienez 18 urte ditudala"
+  },
+  "newsSubscription": {
+    "text": "Onartzen dut zerbitzuaren aktualitateak ukaitea (autokidetzan ibiltzeko informazio baliagarriak, zerbitzu berriak edo funtzionalitate berriak)"
+  },
+  "chart": {
+    "required": "Itunaren baieztapena beharrezkoa da",
+    "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>"
+  },
+  "checkEmail": {
+    "error": "Helbide elektroniko hau jadanik erabilia da",
+    "url": "/utilisateur/verif/email"
+  },
+  "checkPhoneValidity": {
+    "url": "/utilisateur/verif/telephone",
+    "error": "Ce numéro de téléphone n'est pas valide"
+  },
+  "password": {
+    "errors": {
+      "number": "Pasahitzak zenbaki bat izan behar du.",
+      "lower": "Pasahitzak minuskula bat izan behar du.",
+      "upper": "Pasahitzak maiuskula bat izan behar du.",
+      "min": "Pasahitzak gutienez 8 karaktere izan behar ditu.",
+      "required": "Pasahitza beharrezkoa da"
     },
-    "urlLogin": "/utilisateur/connexion/",
-    "login": "Kontu bat baduzu Jadanik ? Identifika zaitez!",
-    "snackbar": {
-        "joinCommunity": {
-            "textError": "Huts bat gertatu da, berriz entsea zaitez.",
-            "textOkAutoValidation": "Zure kide izateko eskaera onartua da.",
-            "textOkManualValidation": "Zure kide izateko eskaera igorria izan zaio erreferenteari. E-mezuz jakinean ezarria izanen zira."
-        }
+    "placeholder": "Pasahitza"
+  },
+  "phone": {
+    "errors": {
+      "valid": "Telefono zenbakia bali izan behar da",
+      "required": "Telefono zenbakia beharrezkoa da"
     },
-    "steps": {
-        "5": "Bizilekuaren hiria",
-        "4": "Sorteguna",
-        "3": "Generoa",
-        "2": "Nortasuna",
-        "1": "Erabiltzailearen izena eta pasahitza"
+    "placeholder": "Telefono mugikorra"
+  },
+  "email": {
+    "errors": {
+      "valid": "Helbide elektronikoa bali izan behar da",
+      "required": "Helbide elektronikoa beharrezkoa da"
     },
-    "step": "Etapa",
-    "communities": {
-        "route": "/utilisateur/inscription/liste-des-communautes",
-        "label": "Komunitate batean sartu"
+    "placeholder": "Helbide elektronikoa"
+  },
+  "homeTown": {
+    "placeholder": "Bizileku herria"
+  },
+  "birthDay": {
+    "errors": {
+      "notadult": "{age} urte beteak behar dituzu plataforman izena emateko",
+      "required": "Sorteguna beharrezkoa da"
+    }
+  },
+  "birthDate": {
+    "placeholder": "Sorteguna"
+  },
+  "familyName": {
+    "errors": {
+      "required": "Deitura beharrezkoa da"
     },
-    "legalAge": {
-        "required": "Beharrezkoa",
-        "text": "Baieztatzen dut gutienez 18 urte ditudala"
+    "placeholder": "Deitura"
+  },
+  "givenName": {
+    "errors": {
+      "required": "Izena beharrezkoa da"
     },
-    "newsSubscription": {
-        "text": "Onartzen dut zerbitzuaren aktualitateak ukaitea (autokidetzan ibiltzeko informazio baliagarriak, zerbitzu berriak edo funtzionalitate berriak)"
+    "placeholder": "Izena"
+  },
+  "gender": {
+    "errors": {
+      "required": "Zibilitatea beharrezkoa da"
     },
-    "chart": {
-        "required": "Itunaren baieztapena beharrezkoa da",
-        "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>"
+    "values": {
+      "other": "Beste",
+      "female": "Anderea",
+      "male": "Jauna"
     },
-    "checkEmail": {
-        "error": "Helbide elektroniko hau jadanik erabilia da",
-        "url": "/utilisateur/verif/email"
-    },
-    "checkPhoneValidity": {
-        "url": "/utilisateur/verif/telephone",
-        "error": "Ce numéro de téléphone n'est pas valide"
-    },
-    "password": {
-        "errors": {
-            "number": "Pasahitzak zenbaki bat izan behar du.",
-            "lower": "Pasahitzak minuskula bat izan behar du.",
-            "upper": "Pasahitzak maiuskula bat izan behar du.",
-            "min": "Pasahitzak gutienez 8 karaktere izan behar ditu.",
-            "required": "Pasahitza beharrezkoa da"
-        },
-        "placeholder": "Pasahitza"
-    },
-    "phone": {
-        "errors": {
-            "valid": "Telefono zenbakia bali izan behar da",
-            "required": "Telefono zenbakia beharrezkoa da"
-        },
-        "placeholder": "Telefono mugikorra"
-    },
-    "email": {
-        "errors": {
-            "valid": "Helbide elektronikoa bali izan behar da",
-            "required": "Helbide elektronikoa beharrezkoa da"
-        },
-        "placeholder": "Helbide elektronikoa"
-    },
-    "homeTown": {
-        "placeholder": "Bizileku herria"
-    },
-    "birthDay": {
-        "errors": {
-            "notadult": "16 urte beteak behar dituzu plataforman izena emateko",
-            "required": "Sorteguna beharrezkoa da"
-        }
-    },
-    "birthDate": {
-        "placeholder": "Sorteguna"
-    },
-    "familyName": {
-        "errors": {
-            "required": "Deitura beharrezkoa da"
-        },
-        "placeholder": "Deitura"
-    },
-    "givenName": {
-        "errors": {
-            "required": "Izena beharrezkoa da"
-        },
-        "placeholder": "Izena"
-    },
-    "gender": {
-        "errors": {
-            "required": "Zibilitatea beharrezkoa da"
-        },
-        "values": {
-            "other": "Beste",
-            "female": "Anderea",
-            "male": "Jauna"
-        },
-        "placeholder": "Zibilitatea",
-        "label": "Zibilitatea"
-    },
-    "urlRedirectAfterSignUpPublish": "/utilisateur/connexion/redirect/publier",
-    "urlRedirectAfterSignUpCommunity": "/utilisateur/connexion/communaute/{id}",
-    "urlRedirectAfterSignUpEvent": "/utilisateur/connexion/evenement/{id}",
-    "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
-    "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
-    "urlSignUpEvent": "/utilisateur/inscription/evenement/{id}",
-    "urlSignUpResult": "/utilisateur/inscription/{id}",
-    "urlSignUp": "/utilisateur/inscription",
-    "title": "Izen ematea"
+    "placeholder": "Zibilitatea",
+    "label": "Zibilitatea"
+  },
+  "urlRedirectAfterSignUpPublish": "/utilisateur/connexion/redirect/publier",
+  "urlRedirectAfterSignUpCommunity": "/utilisateur/connexion/communaute/{id}",
+  "urlRedirectAfterSignUpEvent": "/utilisateur/connexion/evenement/{id}",
+  "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
+  "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
+  "urlSignUpEvent": "/utilisateur/inscription/evenement/{id}",
+  "urlSignUpResult": "/utilisateur/inscription/{id}",
+  "urlSignUp": "/utilisateur/inscription",
+  "title": "Izen ematea"
 }

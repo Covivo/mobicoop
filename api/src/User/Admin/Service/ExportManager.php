@@ -7,11 +7,15 @@ use App\Community\Repository\CommunityUserRepository;
 use App\User\Entity\User;
 use App\User\Entity\UserExport;
 use App\User\Repository\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
 
 class ExportManager
 {
+    public const ALLOWED_FILTERS = ['community', 'isHitchHiker'];
+
     /**
      * @var User
      */
@@ -23,9 +27,19 @@ class ExportManager
     private $_communityUserRepository;
 
     /**
+     * @var array
+     */
+    private $_filters = [];
+
+    /**
      * @var ProposalRepository
      */
     private $_proposalRepository;
+
+    /**
+     * @var Request
+     */
+    private $_request;
 
     /**
      * @var UserRepository
@@ -37,25 +51,26 @@ class ExportManager
      */
     private $_authenticatedUserRestrictionTerritories;
 
-    public function __construct(Security $security, CommunityUserRepository $communityUserRepository, ProposalRepository $proposalRepository, UserRepository $userRepository)
+    public function __construct(Security $security, RequestStack $requestStack, CommunityUserRepository $communityUserRepository, ProposalRepository $proposalRepository, UserRepository $userRepository)
     {
         if (is_null($security->getUser())) {
             throw new BadRequestHttpException('There is no authenticated User');
         }
 
         $this->_authenticatedUser = $security->getUser();
+        $this->_request = $requestStack->getCurrentRequest();
         $this->_communityUserRepository = $communityUserRepository;
         $this->_proposalRepository = $proposalRepository;
         $this->_userRepository = $userRepository;
+
+        $this->_setFilters();
 
         $this->_setAuthenticatedUserRestrictionTerritories();
     }
 
     public function exportAll()
     {
-        $users = !empty($this->_authenticatedUserRestrictionTerritories)
-            ? $this->_userRepository->findTerritoriesUsers($this->_authenticatedUserRestrictionTerritories)
-            : $this->_userRepository->findAll();
+        $users = $this->_userRepository->findForExport($this->_filters, $this->_authenticatedUserRestrictionTerritories);
 
         $usersToExport = [];
 
@@ -95,6 +110,21 @@ class ExportManager
         $this->_authenticatedUserRestrictionTerritories = array_map(function ($assignment) {
             return $assignment->getTerritory()->getId();
         }, $userTerritoryAuthAssignments);
+
+        return $this;
+    }
+
+    private function _setFilters(): self
+    {
+        $parameters = $this->_request->query->all();
+
+        foreach ($parameters as $key => $parameter) {
+            if (!in_array($key, self::ALLOWED_FILTERS)) {
+                throw new BadRequestHttpException("The filter {$key} is not allowed");
+            }
+
+            $this->_filters[$key] = $parameter;
+        }
 
         return $this;
     }

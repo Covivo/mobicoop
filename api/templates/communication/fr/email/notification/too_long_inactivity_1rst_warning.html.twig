@@ -23,7 +23,13 @@
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
                                 {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>
                         </p>
-                        <p>Votre compte est inactif depuis {{context.details.nbMonthsOfInactvity}} mois. Sans action de votre part, il sera automatiquement supprimé le {{context.details.autoDeleteDate|date("d/m/Y")}}.Pour relancer votre compte, il vous suffit de vous connecter.</p>
+                        <p>Votre compte est inactif depuis {{context.details.nbMonthsOfInactvity}} mois. Sans action de
+                            votre part, il sera automatiquement supprimé le
+                            {{context.details.autoDeleteDate|date("d/m/Y")}}.
+                            <br />Pour relancer votre compte, il vous suffit de vous connecter sur <a
+                                style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"
+                                href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_URL')}}</a>.
+                        </p>
                     </td>
                 </tr>
             </table>

@@ -88,6 +88,9 @@
                   :gamification-active="gamificationActive"
                   :carpool-settings-display="carpoolSettingsDisplay"
                   :cee-display="ceeDisplay"
+                  :is-after-eec-subscription="isAfterEecSubscription"
+                  :api-uri="apiUri"
+                  @changeTab="changeTab"
                 />
               </v-tab-item>
 
@@ -296,6 +299,14 @@ export default {
     ceeDisplay: {
       type: Boolean,
       default: true
+    },
+    isAfterEecSubscription: {
+      type: Boolean,
+      default: false
+    },
+    apiUri: {
+      type: String,
+      default: null
     }
   },
   data(){
@@ -309,7 +320,7 @@ export default {
   computed:{
     gamificationActive(){
       return this.$store.getters['g/isActive'];
-    },
+    }
   },
   mounted(){
     this.getAds();
@@ -327,6 +338,9 @@ export default {
     },
     deleteAd() {
       this.getAds()
+    },
+    changeTab(tab){
+      this.modelTabsH = tab;
     }
   }
 }

@@ -5,11 +5,11 @@ services:
     image: mobicoop/php-node-chromium:2.0.0
     # build: ./
     ports:
-      - '9000:9000'
-      - '8079:8079'
-      - '8080:8080'
-      - '8081:8081'
-      - '8082:8082'
+      - "9000:9000"
+      - "8079:8079"
+      - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
     working_dir: /var/www
     command: npm start
     # entrypoint: ["bash", "/var/www/docker/api_bdd_import.sh"]
@@ -30,13 +30,15 @@ services:
     #command: --max_allowed_packet=512000000
     container_name: mobicoop_db
     restart: always
-    ports: ['3309:3306']
+    ports: ["3309:3306"]
     environment:
       MYSQL_ROOT_PASSWORD: mobicoop
     volumes:
       - ./.mariadb-data:/var/lib/mysql
     networks:
-      - mobicoop_platform
+      mobicoop_platform:
+        aliases:
+          - db_platform
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -44,12 +46,12 @@ services:
     depends_on:
       - db
     environment:
-        PMA_PORT: 3309
-        MYSQL_USERNAME: root
-        MYSQL_ROOT_PASSWORD: mobicoop
+      PMA_PORT: 3309
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: mobicoop
     restart: always
     ports:
-        - "8083:80"
+      - "8083:80"
     networks:
       - mobicoop_platform
 

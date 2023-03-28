@@ -104,6 +104,7 @@
             </v-col>
           </v-row>
           <v-row
+            id="phone-number"
             no-gutters
           >
             <!-- Telephone -->
@@ -308,6 +309,7 @@
                   @change="save"
                 />
               </v-menu>
+              <span id="driving-licence-number" />
               <v-text-field
                 v-model="drivingLicenceNumber"
                 :label="$t('drivingLicenceNumber.label')"
@@ -496,6 +498,17 @@
       </v-card-text>
     </v-card>
 
+    <!-- EEC form -->
+    <EECIncentiveStatus
+      v-if="ceeDisplay"
+      :id="$t('eec-incentive')"
+      :confirmed-phone-number="user.phoneValidatedDate ? true : false"
+      :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+      :is-after-eec-subscription="isAfterEecSubscription"
+      :api-uri="apiUri"
+      @changeTab="changeTab"
+    />
+
     <!-- Delete form -->
     <v-card
       flat
@@ -603,11 +616,6 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <EECIncentiveStatus
-      v-if="ceeDisplay"
-      :confirmed-phone-number="user.phoneValidatedDate ? true : false"
-      :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
-    />
 
     <!-- PUBLIC PROFILE DIALOG -->
     <v-dialog
@@ -728,6 +736,14 @@ export default {
     ceeDisplay: {
       type: Boolean,
       default: true
+    },
+    isAfterEecSubscription: {
+      type: Boolean,
+      default: false
+    },
+    apiUri: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -1142,6 +1158,9 @@ export default {
             this.ssoConnection = response.data[0];
           }
         });
+    },
+    changeTab(tab){
+      this.$emit('changeTab', tab);
     }
   }
 }

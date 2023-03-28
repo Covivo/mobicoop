@@ -25,6 +25,7 @@ namespace App\Carpool\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Carpool\Entity\MyAdCommunity;
 
 /**
  * Carpooling : an ad for the current api user.
@@ -201,6 +202,11 @@ class MyAd
      */
     private $type;
 
+    /**
+     * @var null|MyAdCommunity[] If the Ad has communities
+     */
+    private $communities;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -209,6 +215,7 @@ class MyAd
         $this->driver = [];
         $this->passengers = [];
         $this->carpoolers = 0;
+        $this->communities = [];
     }
 
     public function getId(): ?int
@@ -527,6 +534,25 @@ class MyAd
     public function setType(?int $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getCommunities(): ?array
+    {
+        return $this->communities;
+    }
+
+    public function setCommunities(?array $communities): self
+    {
+        $this->communities = $communities;
+
+        return $this;
+    }
+
+    public function addCommunity(MyAdCommunity $community): self
+    {
+        $this->communities[] = $community;
 
         return $this;
     }

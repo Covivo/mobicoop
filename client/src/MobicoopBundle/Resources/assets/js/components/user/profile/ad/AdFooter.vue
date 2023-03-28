@@ -1,5 +1,10 @@
 <template>
   <v-container fluid>
+    <v-row v-if="communities.length > 0">
+      <v-col cols="12">
+        <AdCommunities :communities="communities" />
+      </v-col>
+    </v-row>
     <v-row>
       <v-col
         cols="3"
@@ -32,6 +37,7 @@
 
 <script>
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ad/AdFooter/";
+import AdCommunities from "@components/utilities/carpool/AdCommunities";
 
 export default {
   i18n: {
@@ -41,6 +47,9 @@ export default {
       'fr': messages_fr,
       'eu':messages_eu
     }
+  },
+  components:{
+    AdCommunities
   },
   props: {
     id: {
@@ -66,6 +75,10 @@ export default {
     isArchived:{
       type: Boolean,
       default: false
+    },
+    communities:{
+      type: Array,
+      default: () => []
     }
   },
   computed:{

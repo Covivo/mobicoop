@@ -29,4 +29,5 @@ class CarpoolStandardException extends \LogicException
 {
     public const NO_PROVIDER = 'No provider given';
     public const UNSUPPORTED_PROVIDER = 'This provider is not yet supported';
+    public const CARPOOLERS_PLATFORM_ERROR = 'One of the carpoolers must be from the platform';
 }
