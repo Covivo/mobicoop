@@ -27,17 +27,13 @@
     "outward": "Joateko bidaiak hautatu",
     "contactTips": {
         "initiatedAsk": "Harremanetan jadanik jarri zira iragarki honentzat",
-        "pendingAsk": "Autokide honi igorria izan den eskaera baten erantzuna igurikatua da",
-        "acceptedAsk": "Autokidetza bat jadanik planifikatu duzu autokide honekin"
+        "pendingAsk": "Autokide honi igorria izan den eskaera baten erantzuna igurikatua da"
     },
     "contact": "Harremanetan jarri",
     "birthYears": "urte",
     "seeMessages": {
-        "route": "/utilisateur/messages",
-        "label": "Ikus mezuak"
+        "route": "/utilisateur/messages"
     },
-    "alreadyInitiatedCarpool": "Harremanetan jadanik jarri zira iragarki honentzat.",
-    "alreadyAskCarpool": "Eskaera bat jadanik egin duzu iragarki honetan.",
     "carpoolAsPassenger": "Autokidetza egin bidaiari gisa",
     "carpoolAsDriver": "Autokidetza egin gidari gisa",
     "carpool": "Autokidetza egin",

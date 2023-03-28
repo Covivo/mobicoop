@@ -9,19 +9,13 @@
     "confirmCarpool": "Vous allez faire une demande formelle de covoiturage à {carpooler} qui pourra accepter ou refuser le covoiturage",
     "confirm": "Confirmer",
     "cancel": "Annuler",
-    "alreadyAskCarpool": "Vous avez déjà fait une demande sur cette annonce.",
-    "alreadyAcceptedAskCarpool": "Vous avez déjà un covoiturage accépté sur cette annonce.",
-    "alreadyInitiatedCarpool": "Vous avez déjà pris contact sur cette annonce.",
     "seeMessages": {
-        "label": "Voir messages",
         "route": "/utilisateur/messages"
     },
-    "seeAsk": "Voir demande",
     "birthYears": "ans",
     "contact": "Contacter",
     "contactTips": {
-        "acceptedAsk": "Vous avez déjà planifié un covoiturage avec ce covoitureur",
-        "pendingAsk": "Une demande vers ce covoitureur est en attente de réponse",
+        "pendingAsk": "Reprenez connaissance de vos messages avant pour faire une demande",
         "initiatedAsk": "Vous avez déjà pris contact sur cette annonce"
     },
     "outward": "Choisir les allers",
