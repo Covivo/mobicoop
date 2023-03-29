@@ -4,7 +4,6 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
 use App\Incentive\Entity\LongDistanceSubscription;
@@ -161,8 +160,6 @@ class SubscriptionManager extends MobConnectManager
     public function verifySubscriptions()
     {
         $shortDistanceSubscriptions = $this->_shortDistanceSubscriptionRepository->getReadyForVerify();
-
-        $this->_loggerService->log('Obtaining eligible long-distance journeys');
         $longDistanceSubscriptions = $this->_longDistanceSubscriptionRepository->getReadyForVerify();
 
         $subscriptions = array_merge($shortDistanceSubscriptions, $longDistanceSubscriptions);
@@ -186,19 +183,17 @@ class SubscriptionManager extends MobConnectManager
 
             $response = $this->verifySubscription($subscription->getSubscriptionId());
 
-            if (!in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
-                $subscription->setStatus($response->getStatus());
+            $subscription->setStatus($response->getStatus());
 
-                if (self::STATUS_VALIDATED === $subscription->getStatus()) {
-                    $subscription->setBonusStatus(self::BONUS_STATUS_OK);
-                    $subscription->setStatus(self::STATUS_VALIDATED);
-                } else {
-                    $subscription->setBonusStatus(self::BONUS_STATUS_NO);
-                    $subscription->setStatus(self::STATUS_REJECTED);
-                }
-
-                $subscription->setVerificationDate();
+            if (self::STATUS_VALIDATED === $subscription->getStatus()) {
+                $subscription->setBonusStatus(self::BONUS_STATUS_OK);
+                $subscription->setStatus(self::STATUS_VALIDATED);
+            } else {
+                $subscription->setBonusStatus(self::BONUS_STATUS_NO);
+                $subscription->setStatus(self::STATUS_REJECTED);
             }
+
+            $subscription->setVerificationDate();
         }
 
         $this->_em->flush();
