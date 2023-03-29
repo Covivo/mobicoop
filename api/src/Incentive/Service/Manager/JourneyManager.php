@@ -90,62 +90,6 @@ class JourneyManager extends MobConnectManager
     }
 
     /**
-     * Step 17 - Direct payment is confirmed for a long distance journey.
-     */
-    public function directPaymentConfirmed(CarpoolItem $carpoolItem)
-    {
-        $this->setDriver($carpoolItem->getCreditorUser());
-
-        $subscription = $this->_driver->getLongDistanceSubscription();
-
-        if (is_null($subscription)) {
-            return;
-        }
-
-        $longDistanceJourneysNumber = count($subscription->getLongDistanceJourneys()->toArray());
-
-        if (self::LONG_DISTANCE_TRIP_THRESHOLD <= $longDistanceJourneysNumber) {
-            return;
-        }
-
-        // Array of carpoolProof where driver is the carpoolItem driver
-        $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) {
-            return $carpoolProof->getDriver() === $this->_driver;
-        });
-
-        foreach ($filteredCarpoolProofs as $carpoolProof) {
-            if (!$this->_journeyValidation->isCarpoolProofValidLongDistanceJourney($carpoolProof)) {
-                continue;
-            }
-
-            $journey = new LongDistanceJourney();
-
-            if (!isset($carpoolPayment) || is_null($carpoolPayment)) {
-                $carpoolPayment = $this->_getCarpoolPaymentFromCarpoolItem($carpoolItem, $carpoolProof);
-            }
-
-            if (0 === $longDistanceJourneysNumber) {
-                $params = [
-                    'Date de partage des frais' => $carpoolPayment->getUpdatedDate()->format('Y-m-d'),
-                    "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(),
-                ];
-
-                $response = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
-                $journey->setHttpRequestStatus($response->getCode());
-            }
-
-            $journey->updateJourney($carpoolProof, $carpoolPayment, $this->getCarpoolersNumber($carpoolProof->getAsk()));
-            $subscription->addLongDistanceJourney($journey);
-        }
-
-        if (self::LONG_DISTANCE_TRIP_THRESHOLD === $longDistanceJourneysNumber) {
-            $subscription->setBonusStatus(self::BONUS_STATUS_PENDING);
-        }
-
-        $this->_em->flush();
-    }
-
-    /**
      * Step 17 - Electronic payment is validated for a long distance journey.
      */
     public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
