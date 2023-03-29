@@ -1047,7 +1047,7 @@ class AdManager
         $ad->setLuggage($proposal->getCriteria()->hasLuggage());
         $ad->setBackSeats($proposal->getCriteria()->hasBackSeats());
         $ad->setComment($proposal->getComment());
-        $ad->setPriceKm($proposal->getCriteria()->getPriceKm());
+        $ad->setPriceKm(strval(floatval($proposal->getCriteria()->getPriceKm())));
 
         if ($matching && $matching->getProposalOffer()->getCriteria()->getFromTime()) {
             $date = $matching->getProposalOffer()->getCriteria()->getFromDate();
@@ -1382,7 +1382,7 @@ class AdManager
     {
         // checks for regular and punctual
         if (
-            $oldAd->getPriceKm() !== $newAd->getPriceKm()
+            strval(floatval($oldAd->getPriceKm())) !== $newAd->getPriceKm()
             || $oldAd->getFrequency() !== $newAd->getFrequency()
             || $oldAd->getRole() !== $newAd->getRole()
             || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $newAd->getOutwardWaypoints())
@@ -1908,7 +1908,7 @@ class AdManager
      *
      * @return ClassicProof The classic proof updated
      */
-    public function updateCarpoolProof(int $id, ClassicProof $classicProofData)
+    public function updateCarpoolProof(int $id, ClassicProof $classicProofData): ClassicProof
     {
         // search the proof
         if (!$carpoolProof = $this->proofManager->getProof($id)) {
@@ -1925,6 +1925,9 @@ class AdManager
         } catch (ProofException $proofException) {
             throw new AdException($proofException->getMessage());
         }
+        $classicProofData->setId($id);
+
+        $classicProofData->setId($id);
 
         return $classicProofData;
     }
