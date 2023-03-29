@@ -1382,7 +1382,7 @@ class AdManager
     {
         // checks for regular and punctual
         if (
-            strval(floatval($oldAd->getPriceKm())) !== $newAd->getPriceKm()
+            $oldAd->getPriceKm() !== number_format($newAd->getPriceKm(), 6)
             || $oldAd->getFrequency() !== $newAd->getFrequency()
             || $oldAd->getRole() !== $newAd->getRole()
             || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $newAd->getOutwardWaypoints())
@@ -1393,7 +1393,7 @@ class AdManager
         // checks for regular only
         if (
             Criteria::FREQUENCY_REGULAR === $newAd->getFrequency()
-            && !$this->compareSchedules($oldAd->getSchedule(), $newAd->getSchedule())
+            && !$this->compareSchedules(!empty($oldAd->getSchedule()) ? $oldAd->getSchedule()[0] : $oldAd->getSchedule(), $newAd->getSchedule())
         ) {
             return true;
         }
