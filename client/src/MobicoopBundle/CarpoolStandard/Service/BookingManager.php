@@ -35,19 +35,21 @@ class BookingManager
     private $dataProvider;
     private $userManager;
     private $security;
+    private $operatorIdentifier;
 
     /**
      * Constructor.
      *
      * @throws \ReflectionException
      */
-    public function __construct(DataProvider $dataProvider, UserManager $userManager, Security $security)
+    public function __construct(DataProvider $dataProvider, UserManager $userManager, Security $security, string $operatorIdentifier)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Booking::class, Booking::RESOURCE_NAME);
         $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         $this->security = $security;
         $this->userManager = $userManager;
+        $this->operatorIdentifier = $operatorIdentifier;
     }
 
     public function postBooking(array $data)
@@ -77,7 +79,7 @@ class BookingManager
         $passenger->setAlias($this->userManager->getLoggedUser()->getGivenName().' '.$this->userManager->getLoggedUser()->getShortFamilyName());
         $passenger->setFirstName($this->userManager->getLoggedUser()->getGivenName());
         $passenger->setLastName($this->userManager->getLoggedUser()->getFamilyName());
-        $passenger->setOperator('mobicoop.fr');
+        $passenger->setOperator($this->operatorIdentifier);
 
         $price->setAmount($data['roundedPrice']);
         $price->setType(Price::TYPE_UNKNOWN);

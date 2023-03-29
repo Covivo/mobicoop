@@ -322,7 +322,10 @@ services:
   App\CarpoolStandard\Service\CarpoolStandardManager:    
     arguments:
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
-
+  App\CarpoolStandard\Service\BookingManager:    
+    arguments:
+      $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"
+      
   # Commands
   App\Command\CarpoolAskPostedRelaunch1Command:
     tags:
