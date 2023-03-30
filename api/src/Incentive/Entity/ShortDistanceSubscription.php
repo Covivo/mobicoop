@@ -380,7 +380,7 @@ class ShortDistanceSubscription
     /**
      * Get the full street address of the user.
      */
-    public function getStreetAddress(): string
+    public function getStreetAddress(): ?string
     {
         return $this->streetAddress;
     }
@@ -398,7 +398,7 @@ class ShortDistanceSubscription
     /**
      * Get the address postal code of the user.
      */
-    public function getPostalCode(): string
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }
@@ -418,7 +418,7 @@ class ShortDistanceSubscription
     /**
      * Get the address locality of the user.
      */
-    public function getAddressLocality(): string
+    public function getAddressLocality(): ?string
     {
         return $this->addressLocality;
     }
