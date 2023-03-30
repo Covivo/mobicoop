@@ -34,8 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Booking implements ResourceInterface, \JsonSerializable
 {
-    public const DEFAULT_ID = 999999999999;
-    public const RESOURCE_NAME = 'carpool_Standard/booking';
+    public const RESOURCE_NAME = 'carpool_standard/bookings';
     public const WAITING_CONFIRMATION = 'WAITING_CONFIRMATION';
     public const CONFIRMED = 'CONFIRMED';
     public const CANCELLED = 'CANCELLED';
@@ -170,20 +169,12 @@ class Booking implements ResourceInterface, \JsonSerializable
      */
     private $message;
 
-    public function __construct($id = null)
-    {
-        $this->id = self::DEFAULT_ID;
-        if ($id) {
-            $this->id = $id;
-        }
-    }
-
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(?int $id): self
     {
         $this->id = $id;
 

@@ -301,3 +301,5 @@ services:
     resource: "@MobicoopBundle/CarpoolStandard/Controller/*"
   Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Service\:
     resource: "@MobicoopBundle/CarpoolStandard/Service/*"
+    arguments:
+      $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"
