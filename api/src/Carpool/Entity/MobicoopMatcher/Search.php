@@ -49,6 +49,11 @@ class Search implements \JsonSerializable
     private $schedule;
 
     /**
+     * @var null|MarginSchedule
+     */
+    private $marginSchedule;
+
+    /**
      * @var null|bool
      */
     private $driver;
@@ -131,6 +136,18 @@ class Search implements \JsonSerializable
         return $this->schedule;
     }
 
+    public function setMarginSchedule(?MarginSchedule $marginSchedule)
+    {
+        $this->marginSchedule = $marginSchedule;
+
+        return $this;
+    }
+
+    public function getMarginSchedule(): ?MarginSchedule
+    {
+        return $this->marginSchedule;
+    }
+
     public function setDriver(?bool $driver)
     {
         $this->driver = $driver;
@@ -204,6 +221,7 @@ class Search implements \JsonSerializable
                 'seats_driver' => $this->getSeatsDriver(),
                 'seats_passenger' => $this->getSeatsPassenger(),
                 'margin_duration' => $this->getMarginDuration(),
+                'margin_durations' => $this->getMarginSchedule(),
             ];
     }
 }
