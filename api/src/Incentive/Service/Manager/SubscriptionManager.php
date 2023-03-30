@@ -155,6 +155,17 @@ class SubscriptionManager extends MobConnectManager
         return [$this->_subscriptions];
     }
 
+    public function getUserSubscriptionsTimestamps(User $driver)
+    {
+        $this->setDriver($driver);
+
+        $shortDistanceSubscription = $this->_getDriverSubscriptionTimestamps($this->getDriver()->getLongDistanceSubscription());
+
+        $longDistanceSubscription = $this->_getDriverSubscriptionTimestamps($this->getDriver()->getShortDistanceSubscription());
+
+        $this->_em->flush();
+    }
+
     /**
      * Verify subscriptions.
      */
@@ -203,6 +214,29 @@ class SubscriptionManager extends MobConnectManager
 
         $this->_em->flush();
         $this->_loggerService->log('Process processing is complete');
+    }
+
+    /**
+     * @param MobConnectLongDistanceSubscription|MobConnectShortDistanceSubscription
+     * @param mixed $subscription
+     */
+    private function _getDriverSubscriptionTimestamps($subscription)
+    {
+        $response = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+
+        if (!is_null($response->getCommitmentProofTimestamp())) {
+            $subscription->setCommitmentProofTimestamp($response->getCommitmentProofTimestamp());
+        }
+
+        if (!is_null($response->getHonorCertificateProofTimestamp())) {
+            $subscription->setHonorCertificateProofTimestamp($response->getHonorCertificateProofTimestamp());
+        }
+
+        if (!is_null($response->getIncentiveProofTimestamp())) {
+            $subscription->setIncentiveProofTimestamp($response->getIncentiveProofTimestamp());
+        }
+
+        return $subscription;
     }
 
     private function _computeShortDistance()

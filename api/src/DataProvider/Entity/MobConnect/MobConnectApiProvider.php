@@ -3,6 +3,7 @@
 namespace App\DataProvider\Entity\MobConnect;
 
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Service\LoggerService;
@@ -22,6 +23,7 @@ class MobConnectApiProvider extends MobConnectProvider
     private const ROUTE_SUBSCRIPTIONS = '/v1/maas/subscriptions';
     private const ROUTE_PATCH_SUBSCRIPTIONS = '/v1/subscriptions/{SUBSCRIPTION_ID}';
     private const ROUTE_SUBSCRIPTIONS_VERIFY = '/v1/subscriptions/{SUBSCRIPTION_ID}/verify';
+    private const ROUTE_SUBSCRIPTIONS_TIMESTAMPS = '/v1/subscriptions/timestamps';
 
     private const SHORT_DISTANCE_LABEL = 'Court';
     private const LONG_DISTANCE_LABEL = 'Long';
@@ -175,6 +177,16 @@ class MobConnectApiProvider extends MobConnectProvider
 
         return new MobConnectSubscriptionResponse(
             $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken())))
+        );
+    }
+
+    public function getUserSubscriptionTimestamps(string $subscriptionId)
+    {
+        $this->_loggerService->log('We get the subscription timestamps on mobConnect', 'info', true);
+        $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS_TIMESTAMPS);
+
+        return new MobConnectSubscriptionTimestampsResponse(
+            $this->_getResponse($this->_dataProvider->getItem(['subscriptionId' => $subscriptionId], $this->_buildHeaders($this->__getToken())))
         );
     }
 
