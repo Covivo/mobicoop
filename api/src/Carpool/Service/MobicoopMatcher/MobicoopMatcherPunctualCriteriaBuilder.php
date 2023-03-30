@@ -24,10 +24,7 @@
 namespace App\Carpool\Service\MobicoopMatcher;
 
 use App\Carpool\Entity\Criteria;
-use App\Carpool\Entity\Matching;
-use App\Carpool\Entity\MobicoopMatcher\Waypoint;
 use App\Carpool\Entity\Proposal;
-use App\Service\FormatDataManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -37,37 +34,25 @@ class MobicoopMatcherPunctualCriteriaBuilder
     public const DATE_FORMAT = 'Y-m-d';
     public const TIME_FORMAT = 'H:i:s';
 
-    public const DEFAULT_SEATS_DRIVER = 3;
-    public const DEFAULT_SEATS_PASSENGER = 1;
-
     /**
      * @var Criteria
      */
     private $_criteria;
 
     private $_searchProposal;
-    private $_role;
-    private $_seats;
     private $_journey;
-    private $_currentMatching;
 
-    public function __construct(Criteria $criteria, array $result, Proposal $searchProposal, Matching $currentMatching)
+    public function __construct(Criteria $criteria, array $result, Proposal $searchProposal)
     {
         $this->_criteria = $criteria;
-        $this->_role = $result['role'];
-        $this->_seats = $result['seats'];
         $this->_journey = $result['journeys'][0];
         $this->_searchProposal = $searchProposal;
-        $this->_currentMatching = $currentMatching;
     }
 
     public function build(): Criteria
     {
         $this->_setDateAndTime();
         $this->_setMarginMinAndMaxTime();
-        $this->_setSeats();
-        $this->_setModes();
-        $this->_setPrices();
 
         return $this->_criteria;
     }
@@ -85,36 +70,20 @@ class MobicoopMatcherPunctualCriteriaBuilder
 
     private function _setMarginMinAndMaxTime()
     {
-        $this->_criteria->setMarginDuration($this->_searchProposal->getCriteria()->getMarginDuration());
+        $this->_criteria->setMarginDuration($this->_getMarginDurationOfSearch());
         $minTime = clone $this->_criteria->getFromTime();
         $this->_criteria->setMinTime($minTime->modify('-'.$this->_criteria->getMarginDuration().' seconds'));
         $maxTime = clone $this->_criteria->getFromTime();
         $this->_criteria->setMaxTime($maxTime->modify('+'.$this->_criteria->getMarginDuration().' seconds'));
     }
 
-    private function _setSeats()
+    private function _getMarginDurationOfSearch(): ?int
     {
-        $this->_criteria->setSeatsDriver(self::DEFAULT_SEATS_DRIVER);
-        $this->_criteria->setSeatsPassenger(self::DEFAULT_SEATS_PASSENGER);
-        if (Waypoint::ROLE_DRIVER == $this->_role) {
-            $this->_criteria->setSeatsDriver($this->_seats);
-        } elseif (Waypoint::ROLE_PASSENGER == $this->_role) {
-            $this->_criteria->setSeatsPassenger($this->_seats);
+        if (Criteria::FREQUENCY_PUNCTUAL == $this->_searchProposal->getCriteria()->getFrequency()) {
+            return $this->_searchProposal->getCriteria()->getMarginDuration();
         }
-    }
+        $marginGetter = 'get'.Criteria::DAYS[$this->_criteria->getFromDate()->format('N') - 1].'MarginDuration';
 
-    private function _setModes()
-    {
-        $this->_criteria->setAnyRouteAsPassenger($this->_searchProposal->getCriteria()->getAnyRouteAsPassenger());
-        $this->_criteria->setMultiTransportMode($this->_searchProposal->getCriteria()->getMultiTransportMode());
-    }
-
-    private function _setPrices()
-    {
-        $formatDataManager = new FormatDataManager();
-        $this->_criteria->setDriverComputedPrice(($this->_currentMatching->getCommonDistance() + $this->_currentMatching->getDetourDistance()) * $this->_currentMatching->getProposalOffer()->getCriteria()->getPriceKm() / 1000);
-        $this->_criteria->setDriverComputedRoundedPrice($formatDataManager->roundPrice((float) $this->_criteria->getDriverComputedPrice(), $this->_criteria->getFrequency()));
-        $this->_criteria->setPassengerComputedPrice($this->_criteria->getDriverComputedPrice());
-        $this->_criteria->setPassengerComputedRoundedPrice($this->_criteria->getDriverComputedRoundedPrice());
+        return $this->_searchProposal->getCriteria()->{$marginGetter}();
     }
 }

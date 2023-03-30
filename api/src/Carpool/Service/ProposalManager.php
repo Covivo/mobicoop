@@ -643,7 +643,7 @@ class ProposalManager
     {
         foreach (Criteria::DAYS as $day) {
             $checker = 'is'.ucfirst($day).'Check';
-            $setterTime = 'set'.ucfirst($day);
+            $setterTime = 'set'.ucfirst($day).'Time';
             $setterDuration = 'set'.ucfirst($day).'MarginDuration';
 
             if ($criteria->{$checker}()) {

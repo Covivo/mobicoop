@@ -109,7 +109,7 @@ class MobicoopMatcherProvider
         // foreach ($matchings as $matching) {
         //     $matching->setProposalOffer(null);
         //     $matching->setProposalRequest(null);
-        //     var_dump($matching);
+        //     var_dump(json_encode($matching));
         // }
 
         // exit;

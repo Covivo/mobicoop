@@ -27,16 +27,27 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\MobicoopMatcher\Waypoint;
 use App\Carpool\Entity\Proposal;
+use App\Service\FormatDataManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class MobicoopMatcherCriteriaBuilder
 {
+    public const DEFAULT_SEATS_DRIVER = 3;
+    public const DEFAULT_SEATS_PASSENGER = 1;
+
     /**
      * @var Criteria
      */
     private $_criteria;
+
+    /**
+     * @var Matching
+     */
+    private $_currentMatching;
+    private $_role;
+    private $_seats;
 
     private $_searchProposal;
     private $_result;
@@ -44,20 +55,28 @@ class MobicoopMatcherCriteriaBuilder
     public function build(Proposal $searchProposal, array $result, Matching $currentMatching): Criteria
     {
         $this->_searchProposal = $searchProposal;
+        $this->_currentMatching = $currentMatching;
+        $this->_role = $result['role'];
+        $this->_seats = $result['seats'];
+
         $this->_result = $result;
 
         $this->_criteria = new Criteria();
 
         $this->_setRoles();
         $this->_setFrequency();
+        $this->_setSeats();
+        $this->_setModes();
+        $this->_setPrices();
 
         if (Criteria::FREQUENCY_PUNCTUAL == $this->_criteria->getFrequency()) {
             // punctual
-            $punctualCriteriaBuilder = new MobicoopMatcherPunctualCriteriaBuilder($this->_criteria, $result, $this->_searchProposal, $currentMatching);
+            $punctualCriteriaBuilder = new MobicoopMatcherPunctualCriteriaBuilder($this->_criteria, $result, $this->_searchProposal);
             $this->_criteria = $punctualCriteriaBuilder->build();
+        } else {
+            $regularCriteriaBuilder = new MobicoopMatcherRegularCriteriaBuilder($this->_criteria, $result, $this->_searchProposal);
+            $this->_criteria = $regularCriteriaBuilder->build();
         }
-
-        // TO DO : regular
 
         return $this->_criteria;
     }
@@ -81,5 +100,31 @@ class MobicoopMatcherCriteriaBuilder
         } else {
             $this->_criteria->setFrequency(Criteria::FREQUENCY_REGULAR);
         }
+    }
+
+    private function _setSeats()
+    {
+        $this->_criteria->setSeatsDriver(self::DEFAULT_SEATS_DRIVER);
+        $this->_criteria->setSeatsPassenger(self::DEFAULT_SEATS_PASSENGER);
+        if (Waypoint::ROLE_DRIVER == $this->_role) {
+            $this->_criteria->setSeatsDriver($this->_seats);
+        } elseif (Waypoint::ROLE_PASSENGER == $this->_role) {
+            $this->_criteria->setSeatsPassenger($this->_seats);
+        }
+    }
+
+    private function _setModes()
+    {
+        $this->_criteria->setAnyRouteAsPassenger($this->_searchProposal->getCriteria()->getAnyRouteAsPassenger());
+        $this->_criteria->setMultiTransportMode($this->_searchProposal->getCriteria()->getMultiTransportMode());
+    }
+
+    private function _setPrices()
+    {
+        $formatDataManager = new FormatDataManager();
+        $this->_criteria->setDriverComputedPrice(($this->_currentMatching->getCommonDistance() + $this->_currentMatching->getDetourDistance()) * $this->_currentMatching->getProposalOffer()->getCriteria()->getPriceKm() / 1000);
+        $this->_criteria->setDriverComputedRoundedPrice($formatDataManager->roundPrice((float) $this->_criteria->getDriverComputedPrice(), $this->_criteria->getFrequency()));
+        $this->_criteria->setPassengerComputedPrice($this->_criteria->getDriverComputedPrice());
+        $this->_criteria->setPassengerComputedRoundedPrice($this->_criteria->getDriverComputedRoundedPrice());
     }
 }
