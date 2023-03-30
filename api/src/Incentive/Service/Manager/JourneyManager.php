@@ -58,6 +58,12 @@ class JourneyManager extends MobConnectManager
 
         $subscription->setCommitmentProofDate(new \DateTime());
 
+        $response = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+        if (!is_null($response->getCommitmentProofTimestampToken())) {
+            $subscription->setCommitmentProofTimestampToken($response->getCommitmentProofTimestampToken());
+            $subscription->setCommitmentProofTimestampSigningTime($response->getCommitmentProofTimestampSigningTime());
+        }
+
         $this->_em->flush();
     }
 
@@ -85,6 +91,12 @@ class JourneyManager extends MobConnectManager
         $this->_loggerService->log($log);
 
         $subscription->setCommitmentProofDate(new \DateTime());
+
+        $response = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+        if (!is_null($response->getCommitmentProofTimestampToken())) {
+            $subscription->setCommitmentProofTimestampToken($response->getCommitmentProofTimestampToken());
+            $subscription->setCommitmentProofTimestampSigningTime($response->getCommitmentProofTimestampSigningTime());
+        }
 
         $this->_em->flush();
     }
@@ -184,6 +196,12 @@ class JourneyManager extends MobConnectManager
 
                 $response = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
                 $journey->setHttpRequestStatus($response->getCode());
+
+                $response = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+                if (!is_null($response->getHonorCertificateProofTimestampToken())) {
+                    $subscription->setHonorCertificateProofTimestampToken($response->getHonorCertificateProofTimestampToken());
+                    $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
+                }
             }
 
             $journey->updateJourney($carpoolProof, $carpoolPayment, $this->getCarpoolersNumber($carpoolProof->getAsk()));
@@ -237,6 +255,12 @@ class JourneyManager extends MobConnectManager
 
             $response = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
             $journey->setHttpRequestStatus($response->getCode());
+
+            $response = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+            if (!is_null($response->getHonorCertificateProofTimestampToken())) {
+                $subscription->setHonorCertificateProofTimestampToken($response->getHonorCertificateProofTimestampToken());
+                $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
+            }
         }
 
         $journey->updateJourney($carpoolProof, $this->getRPCOperatorId($carpoolProof->getId()), $this->getCarpoolersNumber($carpoolProof->getAsk()));
