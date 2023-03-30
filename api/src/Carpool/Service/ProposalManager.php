@@ -620,13 +620,39 @@ class ProposalManager
     private function _handleNoTimeInRequest(Proposal $proposal): Proposal
     {
         if (!$proposal->getUseTime()) {
-            $criteria = $proposal->getCriteria();
-            $criteria->setFromTime(\DateTime::createFromFormat('H:i', self::NOON));
-            $criteria->setMarginDuration(self::TWELVE_HOURS_MARGIN_IN_SECONDS);
+            if (Criteria::FREQUENCY_PUNCTUAL == $proposal->getCriteria()->getFrequency()) {
+                $criteria = $this->_fillDefaultTimeAtNoonForPunctualCriteria($proposal->getCriteria());
+            } else {
+                $criteria = $this->_fillDefaultTimeAtNoonForRegularCriteria($proposal->getCriteria());
+            }
             $proposal->setCriteria($criteria);
         }
 
         return $proposal;
+    }
+
+    private function _fillDefaultTimeAtNoonForPunctualCriteria(Criteria $criteria): Criteria
+    {
+        $criteria->setFromTime(\DateTime::createFromFormat('H:i', self::NOON));
+        $criteria->setMarginDuration(self::TWELVE_HOURS_MARGIN_IN_SECONDS);
+
+        return $criteria;
+    }
+
+    private function _fillDefaultTimeAtNoonForRegularCriteria(Criteria $criteria): Criteria
+    {
+        foreach (Criteria::DAYS as $day) {
+            $checker = 'is'.ucfirst($day).'Check';
+            $setterTime = 'set'.ucfirst($day);
+            $setterDuration = 'set'.ucfirst($day).'MarginDuration';
+
+            if ($criteria->{$checker}()) {
+                $criteria->{$setterTime}(\DateTime::createFromFormat('H:i', self::NOON));
+                $criteria->{$setterDuration}(self::TWELVE_HOURS_MARGIN_IN_SECONDS);
+            }
+        }
+
+        return $criteria;
     }
 
     private function getActiveRegularProposalsWithLocalityOnly(): array

@@ -38,7 +38,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Carpooling : criteria (restriction for an offer / selection for a request).
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -79,12 +81,17 @@ class Criteria
     public const FREQUENCY_REGULAR = 2;
     public const FREQUENCY_FLEXIBLE = 3; // only for solidary records, not stored
 
+    public const DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
     /**
      * @var int the id of this criteria
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups("read")
      */
     private $id;
@@ -93,6 +100,7 @@ class Criteria
      * @var bool the user can be a driver
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $driver;
@@ -101,6 +109,7 @@ class Criteria
      * @var bool the user can be a passenger
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $passenger;
@@ -109,7 +118,9 @@ class Criteria
      * @var int the proposal frequency (1 = punctual; 2 = regular)
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $frequency;
@@ -118,7 +129,9 @@ class Criteria
      * @var int the number of available seats for a driver
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $seatsDriver;
@@ -127,7 +140,9 @@ class Criteria
      * @var int the number of requested seats for a passenger
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $seatsPassenger;
@@ -136,7 +151,9 @@ class Criteria
      * @var \DateTimeInterface the starting date (= proposal date if punctual)
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="date")
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $fromDate;
@@ -152,7 +169,9 @@ class Criteria
      * @var null|\DateTimeInterface the starting time
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $fromTime;
@@ -161,7 +180,9 @@ class Criteria
      * @var null|\DateTimeInterface the min starting time if punctual
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread","threads"})
      */
     private $minTime;
@@ -170,7 +191,9 @@ class Criteria
      * @var null|\DateTimeInterface the max starting time if punctual
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread","threads"})
      */
     private $maxTime;
@@ -179,6 +202,7 @@ class Criteria
      * @var int accepted margin duration for punctual proposal in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $marginDuration;
@@ -187,6 +211,7 @@ class Criteria
      * @var bool for punctual proposals, the user accepts only matchings for the defined date (no ranges)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $strictDate;
@@ -195,6 +220,7 @@ class Criteria
      * @var bool for punctual proposals, the user accepts only matchings with punctual trips (no regular trips)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $strictPunctual;
@@ -203,6 +229,7 @@ class Criteria
      * @var bool for regular proposals, the user accepts only matchings with regular trips (no punctual trips)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $strictRegular;
@@ -211,6 +238,7 @@ class Criteria
      * @var null|\DateTimeInterface the end date if regular proposal, the last accepted date if punctual
      *
      * @ORM\Column(type="date", nullable=true)
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $toDate;
@@ -219,6 +247,7 @@ class Criteria
      * @var null|bool the proposal is available on mondays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $monCheck;
@@ -227,6 +256,7 @@ class Criteria
      * @var null|bool the proposal is available on tuesdays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $tueCheck;
@@ -235,6 +265,7 @@ class Criteria
      * @var null|bool the proposal is available on wednesdays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $wedCheck;
@@ -243,6 +274,7 @@ class Criteria
      * @var null|bool the proposal is available on thursdays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $thuCheck;
@@ -251,6 +283,7 @@ class Criteria
      * @var null|bool the proposal is available on fridays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $friCheck;
@@ -259,6 +292,7 @@ class Criteria
      * @var null|bool the proposal is available on saturdays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $satCheck;
@@ -267,6 +301,7 @@ class Criteria
      * @var null|bool the proposal is available on sundays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $sunCheck;
@@ -275,7 +310,9 @@ class Criteria
      * @var null|\DateTimeInterface mondays starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $monTime;
@@ -291,7 +328,9 @@ class Criteria
      * @var null|\DateTimeInterface mondays min starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $monMinTime;
@@ -300,7 +339,9 @@ class Criteria
      * @var null|\DateTimeInterface mondays max starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $monMaxTime;
@@ -309,7 +350,9 @@ class Criteria
      * @var null|\DateTimeInterface tuesdays starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $tueTime;
@@ -325,7 +368,9 @@ class Criteria
      * @var null|\DateTimeInterface tuesdays min starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $tueMinTime;
@@ -334,7 +379,9 @@ class Criteria
      * @var null|\DateTimeInterface tuesdays max starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $tueMaxTime;
@@ -343,7 +390,9 @@ class Criteria
      * @var null|\DateTimeInterface wednesdays starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $wedTime;
@@ -359,7 +408,9 @@ class Criteria
      * @var null|\DateTimeInterface wednesdays min starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $wedMinTime;
@@ -368,7 +419,9 @@ class Criteria
      * @var null|\DateTimeInterface wednesdays max starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $wedMaxTime;
@@ -377,7 +430,9 @@ class Criteria
      * @var null|\DateTimeInterface thursdays starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $thuTime;
@@ -393,7 +448,9 @@ class Criteria
      * @var null|\DateTimeInterface thursdays min starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $thuMinTime;
@@ -402,7 +459,9 @@ class Criteria
      * @var null|\DateTimeInterface thursdays max starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $thuMaxTime;
@@ -411,7 +470,9 @@ class Criteria
      * @var null|\DateTimeInterface fridays starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $friTime;
@@ -427,7 +488,9 @@ class Criteria
      * @var null|\DateTimeInterface fridays min starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $friMinTime;
@@ -436,7 +499,9 @@ class Criteria
      * @var null|\DateTimeInterface fridays max starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $friMaxTime;
@@ -445,7 +510,9 @@ class Criteria
      * @var null|\DateTimeInterface saturdays starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $satTime;
@@ -461,7 +528,9 @@ class Criteria
      * @var null|\DateTimeInterface saturdays min starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $satMinTime;
@@ -470,7 +539,9 @@ class Criteria
      * @var null|\DateTimeInterface saturdays max starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $satMaxTime;
@@ -479,7 +550,9 @@ class Criteria
      * @var null|\DateTimeInterface sundays starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $sunTime;
@@ -495,7 +568,9 @@ class Criteria
      * @var null|\DateTimeInterface sundays min starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $sunMinTime;
@@ -504,7 +579,9 @@ class Criteria
      * @var null|\DateTimeInterface sundays max starting time (if regular)
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $sunMaxTime;
@@ -513,6 +590,7 @@ class Criteria
      * @var int accepted margin for monday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $monMarginDuration;
@@ -521,6 +599,7 @@ class Criteria
      * @var int accepted margin for tuesday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $tueMarginDuration;
@@ -529,6 +608,7 @@ class Criteria
      * @var int accepted margin for wednesday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $wedMarginDuration;
@@ -537,6 +617,7 @@ class Criteria
      * @var int accepted margin for thursday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $thuMarginDuration;
@@ -545,6 +626,7 @@ class Criteria
      * @var int accepted margin for friday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $friMarginDuration;
@@ -553,6 +635,7 @@ class Criteria
      * @var int accepted margin for saturday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $satMarginDuration;
@@ -561,6 +644,7 @@ class Criteria
      * @var int accepted margin for sunday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $sunMarginDuration;
@@ -569,6 +653,7 @@ class Criteria
      * @var null|int the maximum detour duration (in milliseconds) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $maxDetourDuration;
@@ -577,6 +662,7 @@ class Criteria
      * @var null|int the maximum detour distance (in metres) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $maxDetourDistance;
@@ -585,6 +671,7 @@ class Criteria
      * @var bool the user accepts any route as a passenger from its origin to the destination
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $anyRouteAsPassenger;
@@ -593,6 +680,7 @@ class Criteria
      * @var null|bool the user accepts any transportation mode
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $multiTransportMode;
@@ -601,6 +689,7 @@ class Criteria
      * @var null|float the price per km
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $priceKm;
@@ -609,6 +698,7 @@ class Criteria
      * @var null|float the total price selected by the user as a driver
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $driverPrice;
@@ -617,6 +707,7 @@ class Criteria
      * @var null|float the total price computed by the system, using the user price per km, not rounded, as a driver
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $driverComputedPrice;
@@ -625,6 +716,7 @@ class Criteria
      * @var null|float the driver computed price rounded using the rounding rules
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $driverComputedRoundedPrice;
@@ -640,6 +732,7 @@ class Criteria
      * @var null|float the total price selected by the user as a passenger
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $passengerPrice;
@@ -648,6 +741,7 @@ class Criteria
      * @var null|float the total price computed by the system, using the user price per km, not rounded, as a passenger
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $passengerComputedPrice;
@@ -656,6 +750,7 @@ class Criteria
      * @var null|float the passenger computed price rounded using the rounding rules
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $passengerComputedRoundedPrice;
@@ -671,6 +766,7 @@ class Criteria
      * @var bool big luggage accepted / asked
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $luggage;
@@ -679,6 +775,7 @@ class Criteria
      * @var bool bike accepted / asked
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $bike;
@@ -687,6 +784,7 @@ class Criteria
      * @var bool 2 passengers max on the back seats
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $backSeats;
@@ -695,6 +793,7 @@ class Criteria
      * @var bool solidary request
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $solidary;
@@ -703,6 +802,7 @@ class Criteria
      * @var bool solidary exclusive
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $solidaryExclusive;
@@ -711,6 +811,7 @@ class Criteria
      * @var SolidaryAsk the SolidaryAsk that uses this criteria
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="criteria")
+     *
      * @Groups({"read","write"})
      */
     private $solidaryAsk;
@@ -719,6 +820,7 @@ class Criteria
      * @var SolidaryMatching the SolidaryMatching that uses this criteria
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="criteria")
+     *
      * @Groups({"read","write"})
      */
     private $solidaryMatching;
@@ -727,6 +829,7 @@ class Criteria
      * @var bool avoid motorway
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $avoidMotorway;
@@ -735,6 +838,7 @@ class Criteria
      * @var bool avoid toll
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $avoidToll;
@@ -743,8 +847,11 @@ class Criteria
      * @var null|Car the car used in the journey
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"read","write","thread"})
+     *
      * @MaxDepth(1)
      */
     private $car;
@@ -753,7 +860,9 @@ class Criteria
      * @var null|Direction the direction used in the journey as a driver
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaDrivers", cascade={"persist"})
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"read","results"})
      */
     private $directionDriver;
@@ -762,7 +871,9 @@ class Criteria
      * @var null|Direction the direction used in the journey as a passenger
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaPassengers", cascade={"persist"})
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"read","results","thread"})
      */
     private $directionPassenger;
@@ -778,7 +889,9 @@ class Criteria
      * @var null|PTJourney the public transport journey used
      *
      * @ORM\ManyToOne(targetEntity="\App\PublicTransport\Entity\PTJourney")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"read","write"})
      */
     private $ptjourney;
@@ -787,6 +900,7 @@ class Criteria
      * @var Proposal the proposal that uses this criteria
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="criteria")
+     *
      * @Groups({"read","write"})
      */
     private $proposal;
@@ -795,6 +909,7 @@ class Criteria
      * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $createdDate;
@@ -803,6 +918,7 @@ class Criteria
      * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $updatedDate;

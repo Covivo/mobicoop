@@ -41,7 +41,12 @@ class Search implements \JsonSerializable
     /**
      * @var null|string
      */
-    private $from_date;
+    private $fromDate;
+
+    /**
+     * @var null|Schedule
+     */
+    private $schedule;
 
     /**
      * @var null|bool
@@ -104,14 +109,26 @@ class Search implements \JsonSerializable
 
     public function setFromDate(?string $fromDate)
     {
-        $this->from_date = $fromDate;
+        $this->fromDate = $fromDate;
 
         return $this;
     }
 
     public function getFromDate(): ?string
     {
-        return $this->from_date;
+        return $this->fromDate;
+    }
+
+    public function setSchedule(?Schedule $schedule)
+    {
+        $this->schedule = $schedule;
+
+        return $this;
+    }
+
+    public function getSchedule(): ?Schedule
+    {
+        return $this->schedule;
     }
 
     public function setDriver(?bool $driver)
@@ -181,6 +198,7 @@ class Search implements \JsonSerializable
                 'waypoints' => $this->getWaypoints(),
                 'departure' => $this->getDeparture(),
                 'from_date' => $this->getFromDate(),
+                'schedule' => $this->getSchedule(),
                 'driver' => $this->isDriver(),
                 'passenger' => $this->isPassenger(),
                 'seats_driver' => $this->getSeatsDriver(),

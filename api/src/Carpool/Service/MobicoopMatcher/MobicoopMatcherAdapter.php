@@ -26,6 +26,7 @@ namespace App\Carpool\Service\MobicoopMatcher;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\MobicoopMatcher\Ad;
+use App\Carpool\Entity\MobicoopMatcher\Schedule;
 use App\Carpool\Entity\MobicoopMatcher\Search;
 use App\Carpool\Entity\MobicoopMatcher\Waypoint;
 use App\Carpool\Entity\Proposal;
@@ -62,6 +63,9 @@ class MobicoopMatcherAdapter
         $this->_search = new Search();
 
         $this->_build();
+        var_dump($this->_search);
+
+        exit;
 
         return $this->_search;
     }
@@ -96,6 +100,27 @@ class MobicoopMatcherAdapter
         $this->_treatWaypoints();
         $this->_treatRole();
         $this->_treatMargins();
+
+        if (Criteria::FREQUENCY_REGULAR == $this->_searchProposal->getCriteria()->getFrequency()) {
+            $this->_buildSchedule();
+        }
+    }
+
+    private function _buildSchedule()
+    {
+        $schedule = new Schedule();
+
+        foreach (Criteria::DAYS as $day) {
+            $checker = 'is'.ucfirst($day).'Check';
+            $getterTime = 'get'.ucfirst($day).'Time';
+            $setterTime = 'set'.ucfirst($day);
+
+            if ($this->_searchProposal->getCriteria()->{$checker}()) {
+                $schedule->{$setterTime}($this->_searchProposal->getCriteria()->{$getterTime}()->format(self::TIME_FORMAT));
+            }
+        }
+
+        $this->_search->setSchedule($schedule);
     }
 
     private function _treatStartDate()
