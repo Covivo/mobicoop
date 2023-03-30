@@ -109,7 +109,7 @@ class SubscriptionManager extends MobConnectManager
             $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $response);
 
             $response = $this->getDriverSubscriptionTimestamps($longDistanceSubscription->getSubscriptionId());
-            if (!is_null($response->getHonorCertificateProofTimestampToken())) {
+            if (!is_null($response->getIncentiveProofTimestampToken())) {
                 $longDistanceSubscription->setIncentiveProofTimestampToken($response->getIncentiveProofTimestampToken());
                 $longDistanceSubscription->setIncentiveProofTimestampSigningTime($response->getIncentiveProofTimestampSigningTime());
             }
