@@ -922,6 +922,13 @@ services:
       - { name: monolog.logger, channel: mass }
 
   # Payment
+  App\Payment\Command\UnpaidReminderCommand:
+    tags:
+      - {
+          name: "console.command",
+          command: "app:payment:unpaid-reminder"
+        }
+
   App\Payment\Controller\:
     resource: "../src/Payment/Controller"
     tags: ["controller.service_arguments"]
@@ -969,6 +976,10 @@ services:
       $emailRecipients: "%env(json:BANK_TRANSFER_REPORT_EMAIL)%"
     tags:
       - { name: monolog.logger, channel: bank_transfer }
+
+  App\Payment\Service\UnpaidReminderManager:
+    arguments:
+      $reminderDelays: "%env(json:PAYMENT_UNPAID_REMINDER_DELAYS)%"
 
   # Price
   App\Price\Controller\:
