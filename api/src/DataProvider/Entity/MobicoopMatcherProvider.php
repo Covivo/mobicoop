@@ -218,6 +218,18 @@ class MobicoopMatcherProvider
             return !is_null($val);
         });
 
+        if (isset($array['schedule'])) {
+            $array['schedule'] = array_filter($array['schedule'], function ($val) {
+                return !is_null($val);
+            });
+        }
+
+        if (isset($array['margin_durations'])) {
+            $array['margin_durations'] = array_filter($array['margin_durations'], function ($val) {
+                return !is_null($val);
+            });
+        }
+
         return json_encode($array);
     }
 }

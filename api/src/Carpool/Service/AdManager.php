@@ -379,6 +379,13 @@ class AdManager
         // if the date is not set we use the current date
         $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
         if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
+            if (is_null($ad->getSchedule())) {
+                $outwardProposal->setUseTime(false);
+            }
+            else{
+                ($forceNotUseTime) ? $outwardProposal->setUseTime(false) : $outwardProposal->setUseTime(true);
+            }
+
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? $ad->getOutwardLimitDate() : null);
             $outwardCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, 'outwardTime', $marginDuration);
@@ -500,6 +507,13 @@ class AdManager
             // if no return date is specified, we use the outward date to be sure the return date is not before the outward date
             $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : $outwardCriteria->getFromDate());
             if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
+                if (is_null($ad->getSchedule())) {
+                    $returnProposal->setUseTime(false);
+                }
+                else{
+                    ($forceNotUseTime) ? $returnProposal->setUseTime(false) : $returnProposal->setUseTime(true);
+                }
+
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? $ad->getReturnLimitDate() : null);
                 $returnCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $returnCriteria, 'returnTime', $marginDuration);

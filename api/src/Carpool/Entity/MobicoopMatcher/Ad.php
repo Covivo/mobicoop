@@ -58,11 +58,13 @@ class Ad extends Search implements \JsonSerializable
                 'waypoints' => $this->getWaypoints(),
                 'departure' => $this->getDeparture(),
                 'from_date' => $this->getFromDate(),
+                'schedule' => $this->getSchedule(),
                 'driver' => $this->isDriver(),
                 'passenger' => $this->isPassenger(),
                 'seats_driver' => $this->getSeatsDriver(),
                 'seats_passenger' => $this->getSeatsPassenger(),
                 'margin_duration' => $this->getMarginDuration(),
+                'margin_durations' => $this->getMarginSchedule(),
             ];
     }
 }
