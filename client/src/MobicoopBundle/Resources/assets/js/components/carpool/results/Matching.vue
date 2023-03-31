@@ -863,7 +863,7 @@ export default {
         })
         .then((response) => {
           if(response.status == 200){
-            // window.location = this.$t("carpoolMailBoxUrl");
+            window.location = this.$t("carpoolMailBoxUrl");
           }
           else{
             console.log(response);

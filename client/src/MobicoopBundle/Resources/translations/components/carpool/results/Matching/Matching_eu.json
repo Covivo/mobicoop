@@ -25,7 +25,7 @@
     "ptSearchUrl": "/transport-public/recherche",
     "externalJourneyUrl": "/covoiturage/rdexJourney",
     "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
-    "carpoolMailBoxUrl": "/utilisateur/messages/covoiturage",
+    "carpoolMailBoxUrl": "/utilisateur/messages",
     "contactUrl": "/utilisateur/messages/nouveau",
     "carpoolUrl": "/covoiturage/demande",
     "bookingUrl": "/booking/demande",

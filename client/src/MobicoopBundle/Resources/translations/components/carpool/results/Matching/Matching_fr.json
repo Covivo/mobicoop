@@ -7,7 +7,7 @@
     "bookingUrl": "/booking/demande",
     "contactUrl": "/utilisateur/messages/nouveau",
     "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
-    "carpoolMailBoxUrl": "/utilisateur/messages/covoiturage",
+    "carpoolMailBoxUrl": "/utilisateur/messages",
     "externalJourneyUrl": "/covoiturage/rdexJourney",
     "ptSearchUrl": "/transport-public/recherche",
     "search": "Recherche en cours...",
