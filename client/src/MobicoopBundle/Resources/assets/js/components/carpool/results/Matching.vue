@@ -198,7 +198,7 @@
                 :platform-name="platformName"
                 :carpool-standard-booking-enabled="carpoolStandardBookingEnabled"
                 :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
-                @carpool="carpool"
+                @loginOrRegister="loginOrRegister"
                 @booking="booking"
               />
             </v-tab-item>
@@ -294,7 +294,7 @@
     <!-- booking dialog -->
     <v-dialog
       v-model="bookingDialog"
-      max-width="400"
+      max-width="500"
     >
       <booking-journey
         :result="result"
@@ -855,8 +855,6 @@ export default {
         })
     },
     launchExternalBooking(params) {
-
-      console.log(params);
       maxios.post(this.$t("bookingUrl"), params,
         {
           headers:{

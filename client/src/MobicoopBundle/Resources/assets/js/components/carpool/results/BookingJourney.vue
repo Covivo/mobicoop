@@ -126,54 +126,32 @@
           </v-row>
         </v-col>
       </v-row>
+      <v-alert
+        dense
+        text
+        type="warning"
+        v-html="$t('bookingInfo', { carpooler: result.carpooler.givenName, operator: result.externalOperator })"
+      />
       <!-- end Journey details and carpooler -->
       <!-- Action buttons -->
       <v-card-actions>
-        <v-btn
-          color="secondary"
-          @click="booking(result)"
-        >
-          {{ $t("carpoolAsPassenger") }}
-        </v-btn>
+        <v-row>
+          <v-col class="text-center">
+            <v-btn
+              color="secondary"
+              @click="booking(result)"
+            >
+              {{ $t("carpoolAsPassenger") }}
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-card-actions>
     </v-card>
-
-    <!-- confirm carpool dialog -->
-    <!-- <v-dialog
-      v-model="carpoolDialog"
-      max-width="600"
-    >
-      <v-card>
-        <v-card-title>
-          {{ $t("confirmCarpoolTitle") }}
-        </v-card-title>
-        <v-card-text>
-          {{ $t("confirmCarpool", { carpooler: lResult.carpooler.givenName }) }}
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="green darken-1"
-            text
-            @click="closeConfirmationDialog"
-          >
-            {{ $t("cancel") }}
-          </v-btn>
-          <v-btn
-            color="primary"
-            @click="carpool(carpoolRole)"
-          >
-            {{ $t("confirm") }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
   </div>
 </template>
 
 <script>
 import moment from "moment";
-import maxios from "@utils/maxios";
 import {
   messages_en,
   messages_fr,

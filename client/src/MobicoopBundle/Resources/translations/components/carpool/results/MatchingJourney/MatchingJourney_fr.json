@@ -51,5 +51,6 @@
     "detour":{
         "default":"Ce trajet calculé contient un détour.",
         "onlyDriver":"Ce trajet calculé comporte un détour. Contacter le conducteur."
-    }
+    },
+    "bookingInfo": "Vous allez faire une demande de covoiturage à <b> {carpooler} </b>, dont l'annonce est sur <b>{operator}</b>.<p> "
 }

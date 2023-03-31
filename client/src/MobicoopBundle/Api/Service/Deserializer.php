@@ -1234,6 +1234,12 @@ class Deserializer
     private function deserializeCsMessage(array $data): ?CsMessage
     {
         $csMessage = new CsMessage();
+        if (isset($data['from'])) {
+            $csMessage->setFrom($this->deserializeCsUser($data['driver']));
+        }
+        if (isset($data['to'])) {
+            $csMessage->setTo($this->deserializeCsUser($data['passenger']));
+        }
 
         return $this->autoSet($csMessage, $data);
     }
@@ -1248,6 +1254,15 @@ class Deserializer
     private function deserializeBooking(array $data): ?booking
     {
         $booking = new Booking();
+        if (isset($data['driver'])) {
+            $booking->setDriver($this->deserializeCsUser($data['driver']));
+        }
+        if (isset($data['passenger'])) {
+            $booking->setPassenger($this->deserializeCsUser($data['passenger']));
+        }
+        if (isset($data['price'])) {
+            $booking->setPrice($this->deserializeCsPrice($data['price']));
+        }
 
         return $this->autoSet($booking, $data);
     }
