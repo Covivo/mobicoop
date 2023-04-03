@@ -63,8 +63,6 @@ class MobConnectListener implements EventSubscriberInterface
     {
         return [
             CarpoolProofValidatedEvent::NAME => 'onProofValidated',
-            ConfirmDirectPaymentEvent::NAME => 'onDirectPaymentConfirmed',
-            ConfirmDirectPaymentRegularEvent::NAME => 'onDirectPaymentRegularConfirmed',
             ElectronicPaymentValidatedEvent::NAME => 'onElectronicPaymentValidated',
             FirstLongDistanceJourneyPublishedEvent::NAME => 'onFirstLongDistanceJourneyPublished',
             FirstShortDistanceJourneyPublishedEvent::NAME => 'onFirstShortDistanceJourneyPublished',
