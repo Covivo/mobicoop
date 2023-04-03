@@ -90,11 +90,11 @@ export default {
   },
   props: {
     longDistanceSubscriptions:{
-      type: Object,
+      type: Array,
       default: null
     },
     shortDistanceSubscriptions:{
-      type: Object,
+      type: Array,
       default: null
     },
     pendingProofs:{
