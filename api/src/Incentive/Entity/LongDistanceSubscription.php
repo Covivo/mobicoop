@@ -377,7 +377,7 @@ class LongDistanceSubscription
     /**
      * Get the full street address of the user.
      */
-    public function getStreetAddress(): string
+    public function getStreetAddress(): ?string
     {
         return $this->streetAddress;
     }
@@ -395,7 +395,7 @@ class LongDistanceSubscription
     /**
      * Get the address postal code of the user.
      */
-    public function getPostalCode(): string
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }
@@ -415,7 +415,7 @@ class LongDistanceSubscription
     /**
      * Get the address locality of the user.
      */
-    public function getAddressLocality(): string
+    public function getAddressLocality(): ?string
     {
         return $this->addressLocality;
     }
