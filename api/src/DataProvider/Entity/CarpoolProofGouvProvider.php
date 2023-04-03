@@ -127,7 +127,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
                     'datetime' => (!is_null($carpoolProof->getDropOffPassengerDate())) ? $carpoolProof->getDropOffPassengerDate()->format(self::ISO6801) : null,
                 ],
                 'seats' => $carpoolProof->getAsk()->getCriteria()->getSeatsPassenger(),
-                'contribution' => $carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice() * 100,
+                'contribution' => (int) round($carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice() * 100, 0),
                 'incentives' => [],
             ],
             'driver' => [
@@ -145,7 +145,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
                     'lat' => (!is_null($carpoolProof->getDropOffDriverAddress())) ? (float) $carpoolProof->getDropOffDriverAddress()->getLatitude() : null,
                     'datetime' => (!is_null($carpoolProof->getDropOffDriverDate())) ? $carpoolProof->getDropOffDriverDate()->format(self::ISO6801) : null,
                 ],
-                'revenue' => $carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice() * 100,
+                'revenue' => (int) round($carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice() * 100, 0),
                 'incentives' => [],
             ],
         ];
