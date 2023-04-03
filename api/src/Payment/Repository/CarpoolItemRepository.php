@@ -28,9 +28,13 @@ use App\Payment\Entity\CarpoolItem;
 use App\Payment\Ressource\PaymentItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 class CarpoolItemRepository
 {
+    /**
+     * @var EntityRepository
+     */
     private $repository;
 
     public function __construct(EntityManagerInterface $entityManager)
@@ -205,5 +209,29 @@ class CarpoolItemRepository
         ;
 
         return $query->getQuery()->getResult();
+    }
+
+    public function findUnpaidForDelay(int $delay)
+    {
+        $date = new \DateTime('now');
+        $date = $date->sub(new \DateInterval("P{$delay}D"));
+
+        $startDate = $date->format('Y-m-d').' 00:00:00';
+        $endDate = $date->format('Y-m-d').' 23:59:59';
+
+        $qb = $this->repository->createQueryBuilder('c');
+
+        $qb
+            ->where('c.unpaidDate IS NOT NULL')
+            ->andWhere('c.unpaidDate BETWEEN :startDate AND :endDate')
+            ->andWhere('c.creditorStatus NOT IN (:creditorStatus)')
+            ->setParameters([
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'creditorStatus' => CarpoolItem::CREDITOR_STATUS_DIRECT.','.CarpoolItem::CREDITOR_STATUS_ONLINE,
+            ])
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }

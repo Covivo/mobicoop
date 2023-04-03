@@ -634,6 +634,13 @@ class NotificationManager
                         $day->setISODate((int) $day->format('o'), (int) $day->format('W'), 1);
                         $firstDayOfWeek = $day->format('l d F Y');
                     }
+
+                    $date = null;
+
+                    if (!is_null($object->getAsk()) && !is_null($object->getAsk()->getCriteria())) {
+                        $date = \DateTime::createFromFormat('Y-m-d H:m', $object->getAsk()->getCriteria()->getFromDate()->format('Y-m-d').' '.$object->getAsk()->getCriteria()->getFromTime()->format('H:m'));
+                    }
+
                     $bodyContext = [
                         'debtor' => $object->getDebtorUser(),
                         'creditor' => $object->getCreditorUser(),
@@ -641,6 +648,7 @@ class NotificationManager
                         'origin' => $passengerOrigin,
                         'destination' => $passengerDestination,
                         'week' => $firstDayOfWeek,
+                        'date' => $date,
                     ];
 
                     break;
