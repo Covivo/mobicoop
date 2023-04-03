@@ -1420,7 +1420,7 @@ class UserManager
 
         $this->deleteUserImages($user);
 
-        $user = $this->_pseudonymizationManager->pseudonymisedUser($user);
+        $user = $this->_pseudonymizationManager->pseudonymizedUser($user);
 
         $this->entityManager->flush();
     }

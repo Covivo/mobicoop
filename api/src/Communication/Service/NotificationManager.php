@@ -61,6 +61,7 @@ use App\User\Entity\User;
 use App\User\Event\TooLongInactivityFirstWarningEvent;
 use App\User\Event\TooLongInactivityLastWarningEvent;
 use App\User\Repository\UserNotificationRepository;
+use App\User\Service\PseudonymizationManager;
 use App\User\Service\UserManager;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
@@ -174,6 +175,11 @@ class NotificationManager
 
         // Check if the user is anonymised if yes we don't send notifications
         if (USER::STATUS_ANONYMIZED == $recipient->getStatus()) {
+            return;
+        }
+
+        // A pseudonymised user is not notified
+        if (PseudonymizationManager::isUserPseudonymized($recipient)) {
             return;
         }
 

@@ -18,24 +18,24 @@ class PseudonymizationManager
     {
     }
 
-    public static function isUserPseudonymised(User $user): bool
+    public static function isUserPseudonymized(User $user): bool
     {
         return User::STATUS_PSEUDONYMIZED === $user->getStatus();
     }
 
-    public function pseudonymisedUser(User $user): User
+    public function pseudonymizedUser(User $user): User
     {
         $this->_user = $user;
 
-        $this->_pseudonymisedBasics();
-        $this->_pseudonymisedHomeAddress();
+        $this->_pseudonymizedBasics();
+        $this->_pseudonymizedHomeAddress();
 
         $this->_removeFromCommunities();
 
         return $this->_user;
     }
 
-    private function _pseudonymisedBasics()
+    private function _pseudonymizedBasics()
     {
         $today = new \DateTime('now');
 
@@ -58,7 +58,7 @@ class PseudonymizationManager
         }
     }
 
-    private function _pseudonymisedHomeAddress()
+    private function _pseudonymizedHomeAddress()
     {
         if (!is_null($this->_user->getHomeAddress())) {
             $this->_user->getHomeAddress()->setUser(null);
