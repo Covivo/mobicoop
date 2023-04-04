@@ -761,6 +761,13 @@ services:
           name: "console.command",
           command: "app:incentive:journeys-verification",
         }
+  
+  App\Incentive\Command\SubscriptionTimestampsCommand:
+    tags:
+      - {
+        name: "console.command",
+        command: "app:incentive:subscription-timestamps"
+      }
 
   App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
@@ -783,6 +790,8 @@ services:
         credentials:
           client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
@@ -798,6 +807,8 @@ services:
         credentials:
           client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
@@ -813,6 +824,8 @@ services:
         credentials:
           client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
