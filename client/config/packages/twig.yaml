@@ -58,3 +58,4 @@ twig:
         referenceTerritory: '%env(string:REFERENCE_TERRITORY)%'
         assistiveSsoProvider: '%env(string:ASSISTIVE_SSO_PROVIDER)%'
         specificSsoServices: '%env(json:SPECIFIC_SSO_SERVICES)%'
+        dateTimePicker: '%env(bool:DATE_TIME_PICKER)%'

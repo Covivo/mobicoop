@@ -47,6 +47,7 @@
         }
     },
     "fullDate": "ddd Do MMMM YYYY",
+    "fullDateTime": "ddd Do MMMM YYYY à HH:mm",
     "ariaLabelOrgin":"Une adresse de départ est requise",
     "ariaLabelDestination":"Une adresse de destination est requise"
 }

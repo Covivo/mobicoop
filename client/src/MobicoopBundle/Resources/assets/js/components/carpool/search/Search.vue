@@ -25,10 +25,12 @@
           :show-destination="showDestination"
           :iswidget="isWidget"
           :init-outward-date="dateFormated"
+          :init-outward-time="time"
           :image-swap="imageSwap"
           :geo-complete-results-order="geoCompleteResultsOrder"
           :geo-complete-palette="geoCompletePalette"
           :geo-complete-chip="geoCompleteChip"
+          :date-time-picker="dateTimePicker"
           @change="searchChanged"
         />
       </v-col>
@@ -230,7 +232,15 @@ export default {
     textColorButton: {
       type:String,
       default: null
-    }
+    },
+    dateTimePicker: {
+      type: Boolean,
+      default: false
+    },
+    defaultOutwardTime: {
+      type: String,
+      default: null
+    },
   },
   data() {
     return {
@@ -239,7 +249,7 @@ export default {
       logged: this.user ? true : false,
       dataRegular: this.regular,
       date: this.defaultOutwardDate,
-      time: null,
+      time: this.defaultOutwardTime,
       origin: this.defaultOrigin,
       destination: this.defaultDestination,
       locale: localStorage.getItem("X-LOCALE")
@@ -252,6 +262,12 @@ export default {
     dateFormated() {
       return this.date
         ? moment(this.date).format(this.$t("urlDate"))
+        : null;
+    },
+    timeFormated() {
+      console.log(moment(this.time).format(this.$t("urlTime")));
+      return this.time
+        ? moment(this.time).format(this.$t("urlTime"))
         : null;
     },
   },
@@ -285,8 +301,10 @@ export default {
       this.destination = search.destination;
       this.dataRegular = search.regular;
       this.date = search.date;
+      this.time = search.time;
     },
     search: function () {
+      console.log(this.time);
       this.loadingSearch = true;
       let lParams = {
         origin: JSON.stringify(this.origin),

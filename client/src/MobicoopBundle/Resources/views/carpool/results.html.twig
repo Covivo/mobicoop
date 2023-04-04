@@ -35,6 +35,7 @@
         origin-literal = "{{ originLiteral is defined ? originLiteral : 'null' }}"
         platform-name="{{ platformName }}"
         time = "{{ time is defined ? time : '' }}"
+        :date-time-picker="{{ dateTimePicker ? 'true' : 'false'}}"
     />
 
 {% endblock %}

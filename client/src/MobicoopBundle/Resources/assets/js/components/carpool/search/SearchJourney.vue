@@ -208,15 +208,26 @@
               />
             </template>
             <v-date-picker
+              v-if="showDate"
               v-model="date"
+              no-title
               header-color="primary"
               color="secondary"
               :locale="locale"
-              no-title
-              first-day-of-week="1"
               :min="nowDate"
-              @input="menu=false"
+              first-day-of-week="1"
+              @input="switchTime"
               @change="dateChanged"
+            />
+            <v-time-picker
+              v-if="showTime && menu"
+              v-model="time"
+              format="24hr"
+              no-title
+              color="secondary"
+              :close-on-content-click="false"
+              @change="timeChanged"
+              @click:minute="setTime"
             />
           </v-menu>
         </v-col>
@@ -310,6 +321,14 @@ export default {
     geoCompleteChip: {
       type: Boolean,
       default: false
+    },
+    dateTimePicker: {
+      type: Boolean,
+      default: false
+    },
+    initOutwardTime: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -318,6 +337,10 @@ export default {
       date: this.initOutwardDate,
       outwardDateClicked: false,
       menu: false,
+      showDate:true,
+      showTime:false,
+      time: this.initOutwardTime,
+      dateTime: this.initOutwardDate+' '+this.initOutwardTime,
       regular: this.initRegular,
       role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : 3),
       passenger: this.initRole == 2 ? true : (this.initRole == 3 || (this.initRole == null && !this.solidaryExclusiveAd) ? true : false),
@@ -334,14 +357,21 @@ export default {
       valid: false,
       nowDate : new Date().toISOString().slice(0,10),
       ariaLabelDestination : this.$t('ariaLabelDestination'),
-      ariaLabelOrgin : this.$t('ariaLabelOrgin')
+      ariaLabelOrgin : this.$t('ariaLabelOrgin'),
+
     };
   },
   computed: {
     computedDateFormat() {
-      return this.date
-        ? moment(this.date).format(this.$t("fullDate"))
-        : null;
+      if (this.dateTimePicker) {
+        return this.dateTime ? moment(this.dateTime).format(this.$t("fullDateTime"))
+          : null;
+      } else {
+        return this.date
+          ? moment(this.date).format(this.$t("fullDate"))
+          : null;
+      }
+
     },
     checkOutwardDate() {
       if (this.outwardDateClicked && !this.regular && !this.date && !this.punctualDateOptional) {
@@ -354,6 +384,9 @@ export default {
     initOutwardDate() {
       this.date = this.initOutwardDate;
     },
+    initOutwardTime() {
+      this.time = this.initOutwardTime;
+    },
     initOrigin() {
       this.customInitOrigin = this.initOrigin;
       this.origin = this.initOrigin;
@@ -365,6 +398,16 @@ export default {
   },
   created() {
     this.setMomentLocale();
+    switch (this.type) {
+    case 'date':
+      this.showDate = true;
+      break;
+    case 'time':
+      this.showTime = true;
+      break;
+    default:
+      this.showDate = true;
+    }
   },
   beforeUpdate() {
     this.setMomentLocale();
@@ -396,6 +439,9 @@ export default {
     dateChanged: function() {
       this.emitEvent();
     },
+    timeChanged: function() {
+      this.emitEvent();
+    },
     roleChanged: function() {
       this.driver = true;
       this.passenger = true;
@@ -414,6 +460,7 @@ export default {
         destination: this.destination,
         regular: this.regular,
         date: this.date,
+        time: this.time,
         passenger: this.passenger,
         driver: this.driver,
         valid: this.valid
@@ -421,10 +468,31 @@ export default {
     },
     clearDate() {
       this.date = null;
+      this.time = null;
       this.emitEvent();
     },
     outwardDateBlur() {
       this.outwardDateClicked = true;
+    },
+    switchTime() {
+      if (!this.dateTimePicker) {
+        this.menu = false;
+        this.formatDate();
+      } else {
+        this.showDate = false;
+        this.showTime = true;
+      }
+    },
+    setTime() {
+      this.menu = false;
+      this.showDate = true;
+      this.showTime = false;
+      this.formatDate();
+    },
+    formatDate() {
+      if (this.dateTimePicker) {
+        this.dateTime = this.date+' '+this.time;
+      }
     }
   }
 };
