@@ -43,5 +43,6 @@
     "detour": {
         "onlyDriver": "Bidaia kalkulatu honek itzulinguru bat badu. Gidariarekin harremanetan jar zaitez.",
         "default": "Bidaia kalkulatu honek itzulinguru bat badu."
-    }
+    },
+    "bookingInfo": "<p> Vous allez faire une demande de covoiturage à <b> {carpooler} </b>, dont l'annonce est sur <b>{operator}</b><p> "
 }

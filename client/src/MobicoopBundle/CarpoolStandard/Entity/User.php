@@ -21,8 +21,9 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity;
 
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,21 +32,21 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class User
+class User implements ResourceInterface, \JsonSerializable
 {
     public const DEFAULT_ID = 999999999999;
 
     /**
      * @var null|int The id of this user
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $id;
 
     /**
      * @var null|string The id of this user
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $externalId;
 
@@ -54,7 +55,7 @@ class User
      *
      * @Assert\NotBlank
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $operator;
 
@@ -63,49 +64,49 @@ class User
      *
      * @Assert\NotBlank
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $alias;
 
     /**
      * @var null|string user's first name
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $firstName;
 
     /**
      * @var null|string user's last name
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $lastName;
 
     /**
      * @var null|int user's grade from 1 to 5
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $grade;
 
     /**
      * @var null|string user's profile picture absolute URL
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $picture;
 
     /**
      * @var null|string User's gender. [ F, M, O ] 'O' stands for 'Other'.
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $gender;
 
     /**
      * @var null|bool
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $verifiedIdentity;
 
@@ -235,5 +236,21 @@ class User
         $this->verifiedIdentity = $verifiedIdentity;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id' => $this->getId(),
+            'operator' => $this->getOperator(),
+            'alias' => $this->getAlias(),
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
+            'grade' => $this->getGrade(),
+            'picture' => $this->getPicture(),
+            'gender' => $this->getGender(),
+            'verifiedIdentity' => $this->getVerifiedIdentity(),
+        ];
     }
 }

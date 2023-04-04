@@ -47,5 +47,6 @@
     "detour": {
         "onlyDriver": "This calculated route includes a detour. Contact the driver.",
         "default": "This calculated route contains a detour."
-    }
+    },
+    "bookingInfo": "<p> Vous allez faire une demande de covoiturage à <b> {carpooler} </b>, dont l'annonce est sur <b>{operator}</b><p> "
 }

@@ -42,5 +42,6 @@
     "detour": {
         "onlyDriver": "Dit berekende traject bevat een omleiding. Contact opnemen met de bestuurder.",
         "default": "Dit berekende traject bevat een omleiding."
-    }
+    },
+    "bookingInfo": "<p> Vous allez faire une demande de covoiturage à <b> {carpooler} </b>, dont l'annonce est sur <b>{operator}</b><p> "
 }

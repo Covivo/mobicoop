@@ -73,6 +73,8 @@ class CarpoolController extends AbstractController
     private $defaultSeatNumber;
     private $contentPassenger;
     private $carpoolSettingsDisplay;
+    private $carpoolStandardBookingEnabled;
+    private $carpoolStandardMessagingEnabled;
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
@@ -92,7 +94,9 @@ class CarpoolController extends AbstractController
         bool $fraudWarningDisplay,
         bool $ageDisplay,
         bool $birthdateDisplay,
-        bool $carpoolSettingsDisplay
+        bool $carpoolSettingsDisplay,
+        bool $carpoolStandardBookingEnabled,
+        bool $carpoolStandardMessagingEnabled
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -112,6 +116,8 @@ class CarpoolController extends AbstractController
         $this->defaultSeatNumber = $defaultSeatNumber;
         $this->contentPassenger = $contentPassenger;
         $this->carpoolSettingsDisplay = $carpoolSettingsDisplay;
+        $this->carpoolStandardBookingEnabled = $carpoolStandardBookingEnabled;
+        $this->carpoolStandardMessagingEnabled = $carpoolStandardMessagingEnabled;
     }
 
     /**
@@ -317,6 +323,8 @@ class CarpoolController extends AbstractController
                 'defaultSeatNumber' => $this->defaultSeatNumber,
                 'contentPassenger' => $this->contentPassenger,
                 'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
+                'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
+                'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
             ]
         );
     }
@@ -366,6 +374,8 @@ class CarpoolController extends AbstractController
             'destinationTitle' => $destination,
             'ageDisplay' => $this->ageDisplay,
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
+            'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
+            'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
         ]);
     }
 
@@ -394,6 +404,8 @@ class CarpoolController extends AbstractController
                 'destinationTitle' => $destination,
                 'ageDisplay' => $this->ageDisplay,
                 'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
+                'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
+                'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
             ]);
         }
         // for now if the claim fails we redirect to home !
@@ -488,6 +500,8 @@ class CarpoolController extends AbstractController
             'ageDisplay' => $this->ageDisplay,
             'birthdateDisplay' => $this->birthdateDisplay,
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
+            'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
+            'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
         ]);
     }
 
@@ -529,6 +543,8 @@ class CarpoolController extends AbstractController
             'destinationTitle' => $destinationTitle,
             'ageDisplay' => $this->ageDisplay,
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
+            'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
+            'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
         ]);
     }
 
@@ -561,6 +577,8 @@ class CarpoolController extends AbstractController
             'destinationLiteral' => $destination,
             'ageDisplay' => $this->ageDisplay,
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
+            'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
+            'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
         ]);
     }
 
