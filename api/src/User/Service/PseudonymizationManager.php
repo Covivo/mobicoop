@@ -6,7 +6,8 @@ use App\User\Entity\User;
 
 class PseudonymizationManager
 {
-    private const DELETE_AVAILABLE_FIELDS = ['birthDate', 'chat', 'chatFavorites', 'drivingLicenceNumber', 'emailToken', 'familyName', 'gamification', 'givenName', 'mobile', 'music', 'musicFavorites', 'newsSubscription', 'oldEmail', 'oldTelephone', 'postalAddress', 'proEmail', 'proName', 'smoke', 'ssoId', 'ssoProvider', 'telephone', 'unsubscribeToken'];
+    private const DELETE_AVAILABLE_USER_FIELDS = ['birthDate', 'chat', 'chatFavorites', 'drivingLicenceNumber', 'emailToken', 'familyName', 'gamification', 'givenName', 'mobile', 'music', 'musicFavorites', 'newsSubscription', 'oldEmail', 'oldTelephone', 'postalAddress', 'proEmail', 'proName', 'smoke', 'ssoId', 'ssoProvider', 'telephone', 'unsubscribeToken'];
+    private const DELETE_AVAILABLE_MASS_PERSON_FIELDS = ['familyName', 'givenName'];
     private const PSEUDONYMISED_EMAIL_SUFFIX = '@mobicoop-anonymized.io';
 
     /**
@@ -29,17 +30,23 @@ class PseudonymizationManager
 
         $this->_pseudonymizedBasics();
         $this->_pseudonymizedHomeAddress();
+        $this->_pseudonomyzedMassPerson();
 
         $this->_removeFromCommunities();
 
         return $this->_user;
     }
 
+    private function _getSetter(string $field): string
+    {
+        return 'set'.ucfirst($field);
+    }
+
     private function _pseudonymizedBasics()
     {
         $today = new \DateTime('now');
 
-        foreach (self::DELETE_AVAILABLE_FIELDS as $key => $field) {
+        foreach (self::DELETE_AVAILABLE_USER_FIELDS as $key => $field) {
             $setter = $this->_getSetter($field);
 
             $this->_user->{$setter}(null);
@@ -51,13 +58,6 @@ class PseudonymizationManager
         $this->_user->setStatus(User::STATUS_PSEUDONYMIZED);
     }
 
-    private function _removeFromCommunities()
-    {
-        foreach ($this->_user->getCommunities() as $community) {
-            $this->_user->removeCommunity($community);
-        }
-    }
-
     private function _pseudonymizedHomeAddress()
     {
         if (!is_null($this->_user->getHomeAddress())) {
@@ -65,8 +65,23 @@ class PseudonymizationManager
         }
     }
 
-    private function _getSetter(string $field): string
+    private function _pseudonomyzedMassPerson()
     {
-        return 'set'.ucfirst($field);
+        if (!is_null($this->_user->getMassPerson())) {
+            foreach (self::DELETE_AVAILABLE_MASS_PERSON_FIELDS as $key => $field) {
+                $setter = $this->_getSetter($field);
+
+                $this->_user->getMassPerson()->{$setter}(null);
+            }
+
+            $this->_user->getMassPerson()->setEmail($this->_user->getEmail());
+        }
+    }
+
+    private function _removeFromCommunities()
+    {
+        foreach ($this->_user->getCommunities() as $community) {
+            $this->_user->removeCommunity($community);
+        }
     }
 }
