@@ -25,18 +25,14 @@
     "return": "De terugtrajecten kiezen",
     "outward": "De heentrajecten kiezen",
     "contactTips": {
-        "initiatedAsk": "Een aanvraag naar deze medecarpooler toe werd nog niet beantwoord",
-        "pendingAsk": "Een aanvraag naar deze medecarpooler toe werd nog niet beantwoord",
-        "acceptedAsk": "U hebt al een carpooling gepland met deze medecarpooler"
+        "initiatedAsk": "U hebt al contact opgenomen met betrekking tot deze advertentie",
+        "pendingAsk": "Een aanvraag naar deze medecarpooler toe werd nog niet beantwoord"
     },
     "contact": "Contact opnemen",
     "birthYears": "jaar",
     "seeMessages": {
-        "route": "/gebruiker/berichten",
-        "label": "Berichten weergeven"
+        "route": "/gebruiker/berichten"
     },
-    "alreadyInitiatedCarpool": "U hebt al contact opgenomen met betrekking tot deze advertentie.",
-    "alreadyAskCarpool": "U hebt al een aanvraag gedaan met betrekking tot deze advertentie.",
     "carpoolAsPassenger": "Carpoolen als passagier",
     "carpoolAsDriver": "Carpoolen als bestuurder",
     "carpool": "Carpoolen",

@@ -9,18 +9,14 @@
     "confirmCarpool": "You will make a formal request for carpooling to {carpooler} who will be able to accept or refuse the carpool",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "alreadyAskCarpool": "You have already made a request on this proposal.",
-    "alreadyInitiatedCarpool": "You have already made contact on this proposal.",
     "seeMessages": {
-        "label": "View messages",
         "route": "/user/messages"
     },
     "birthYears": "years",
     "contact": "Contact",
     "contactTips": {
-        "acceptedAsk": "You have already planned a carpooling with this carpooler",
         "pendingAsk": "A request to this carpooler is waiting for a response",
-        "initiatedAsk": "A request to this carpooler is waiting for a response"
+        "initiatedAsk": "You have already made contact on this proposal"
     },
     "outward": "Choose outward",
     "return": "Choose return",
