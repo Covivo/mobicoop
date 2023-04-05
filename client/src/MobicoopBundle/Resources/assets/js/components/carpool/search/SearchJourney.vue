@@ -340,7 +340,7 @@ export default {
       showDate:true,
       showTime:false,
       time: this.initOutwardTime,
-      dateTime: this.initOutwardDate+' '+this.initOutwardTime,
+      dateTime: this.initOutwardDate ? this.initOutwardDate+' '+this.initOutwardTime : null,
       regular: this.initRegular,
       role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : 3),
       passenger: this.initRole == 2 ? true : (this.initRole == 3 || (this.initRole == null && !this.solidaryExclusiveAd) ? true : false),
