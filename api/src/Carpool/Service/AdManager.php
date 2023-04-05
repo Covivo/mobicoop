@@ -174,9 +174,9 @@ class AdManager
      * @param bool $withSolidaries  Return also the matching solidary asks
      * @param bool $forceNotUseTime For to set useTime at false
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
     {
@@ -1200,9 +1200,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws \Exception
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1279,9 +1279,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1326,10 +1326,6 @@ class AdManager
             $proposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
             $proposal->setComment($ad->getComment());
 
-            if (Criteria::FREQUENCY_REGULAR == $proposal->getCriteria()->getFrequency()) {
-                $proposal->getCriteria()->setTodate((new \DateTime())->modify('+ 1 year'));
-            }
-
             // communities
             if ($ad->getCommunities()) {
                 // todo : check if the user can post/search in each community
@@ -1352,10 +1348,6 @@ class AdManager
                 $linkedProposal->getCriteria()->setLuggage($ad->hasLuggage());
                 $linkedProposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
                 $linkedProposal->setComment($ad->getComment());
-
-                if (Criteria::FREQUENCY_REGULAR == $linkedProposal->getCriteria()->getFrequency()) {
-                    $linkedProposal->getCriteria()->setTodate((new DateTime())->modify('+ 1 year'));
-                }
 
                 if ($ad->getCommunities() && count($ad->getCommunities()) > 0) {
                     foreach ($ad->getCommunities() as $communityId) {
@@ -1386,9 +1378,9 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
@@ -1428,9 +1420,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareSchedules($old, $new)
     {
@@ -1558,9 +1550,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {
