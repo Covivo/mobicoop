@@ -94,6 +94,14 @@ class MobicoopMatcherMatchingBuilder
         }
     }
 
+    private function _computeCommonDistance(): int
+    {
+        $pickUpPoint = $this->_waypointExtractor->findPickUpPoint();
+        $dropOffPoint = $this->_waypointExtractor->findDropOffPoint();
+
+        return $dropOffPoint['distance'] - $pickUpPoint['distance'];
+    }
+
     private function _treatDistances()
     {
         $this->_matching->setOriginalDistance($this->_result['initial_distance']);
@@ -101,10 +109,7 @@ class MobicoopMatcherMatchingBuilder
         $this->_matching->setDetourDistance($this->_result['final_distance'] - $this->_result['initial_distance']);
         $this->_matching->setDetourDistancePercent(100 * $this->_matching->getDetourDistance() / $this->_result['initial_distance']);
         $this->_matching->setAcceptedDetourDistance($this->_result['initial_distance'] * $this->_maxDetourDistancePercent / 100);
-
-        // TO DO : CommonDistance
-        // Ajouter dans le matcher la distance parcourue à chaque waypoint : si possible on calcul avec distance à DEPOSE – distance à PEC
-        $this->_matching->setCommonDistance($this->_result['final_distance']);
+        $this->_matching->setCommonDistance($this->_computeCommonDistance());
     }
 
     private function _treatDurations()

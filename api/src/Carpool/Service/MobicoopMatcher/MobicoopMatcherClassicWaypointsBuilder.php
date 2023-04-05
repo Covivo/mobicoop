@@ -71,6 +71,10 @@ class MobicoopMatcherClassicWaypointsBuilder
     private function _treatWaypoint(array $waypoint)
     {
         foreach ($waypoint['actors'] as $actor) {
+            if ($actor['step'] = Waypoint::STEP_NEUTRAL) {
+                continue;
+            }
+
             $classicWaypoint = new ClassicWaypoint();
 
             if (Waypoint::ROLE_DRIVER == $actor['role']) {

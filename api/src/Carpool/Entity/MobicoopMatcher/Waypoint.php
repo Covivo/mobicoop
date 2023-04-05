@@ -30,6 +30,7 @@ class Waypoint implements \JsonSerializable
 
     public const STEP_START = 'start';
     public const STEP_FINISH = 'finish';
+    public const STEP_NEUTRAL = 'neutral';
 
     /**
      * @var float
