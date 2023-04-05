@@ -46,9 +46,7 @@ class MobicoopMatcherProvider
     private const HTTP_CODE_NO_CONTENT = 204;
 
     private $_uri;
-    private $_username;
-    private $_password;
-    private $_token;
+    private $_headers;
     private $_logger;
     private $_mobicoopMatcherAdapter;
     private $_curlDataProvider;
@@ -58,12 +56,10 @@ class MobicoopMatcherProvider
         MobicoopMatcherAdapter $mobicoopMatcherAdapter,
         CurlDataProvider $curlDataProvider,
         string $uri,
-        string $username,
-        string $password
+        string $apiKey
     ) {
         $this->_uri = $uri;
-        $this->_username = $username;
-        $this->_password = $password;
+        $this->_headers = ['X-Api-Key: '.$apiKey];
         $this->_logger = $logger;
         $this->_mobicoopMatcherAdapter = $mobicoopMatcherAdapter;
         $this->_curlDataProvider = $curlDataProvider;
@@ -84,7 +80,6 @@ class MobicoopMatcherProvider
     public function post(Proposal $searchProposal): Proposal
     {
         $this->_logger->info('----- POST proposal '.$searchProposal->getId());
-        $this->_auth();
         $ad = $this->_buildSearchRequestBody($this->_mobicoopMatcherAdapter->buildAdFromProposal($searchProposal));
         $results = $this->_post(self::ROUTE_POST, $ad);
         $this->_logger->info(json_encode($results));
@@ -96,8 +91,7 @@ class MobicoopMatcherProvider
 
     public function delete(int $proposalId)
     {
-        $this->_auth();
-        $results = $this->_delete(self::ROUTE_DELETE, $proposalId);
+        $this->_delete(self::ROUTE_DELETE, $proposalId);
     }
 
     private function _feedSearchProposalWithMatchings(Proposal $searchProposal, array $results)
@@ -108,7 +102,7 @@ class MobicoopMatcherProvider
         // foreach ($matchings as $matching) {
         //     $matching->setProposalOffer(null);
         //     $matching->setProposalRequest(null);
-        //     var_dump(json_encode($matching));
+        //     var_dump($matching);
         // }
 
         // exit;
@@ -127,11 +121,9 @@ class MobicoopMatcherProvider
     {
         $this->_curlDataProvider->setUrl($this->_uri.''.$route);
 
-        $headers = ['Authorization: Bearer '.$this->_token];
-
         $this->_logger->info('Request :');
         $this->_logger->info($body);
-        $response = $this->_curlDataProvider->get(null, $headers, $body);
+        $response = $this->_curlDataProvider->get(null, $this->_headers, $body);
         if (self::HTTP_CODE_OK == $response->getCode()) {
             return json_decode($response->getValue(), true);
         }
@@ -148,11 +140,9 @@ class MobicoopMatcherProvider
     {
         $this->_curlDataProvider->setUrl($this->_uri.''.$route);
 
-        $headers = ['Authorization: Bearer '.$this->_token];
-
         $this->_logger->info('Request :');
         $this->_logger->info($body);
-        $response = $this->_curlDataProvider->post($headers, $body);
+        $response = $this->_curlDataProvider->post($this->_headers, $body);
         if (self::HTTP_CODE_OK == $response->getCode()) {
             return json_decode($response->getValue(), true);
         }
@@ -169,37 +159,13 @@ class MobicoopMatcherProvider
     {
         $this->_curlDataProvider->setUrl($this->_uri.''.$route.'/'.$id);
 
-        $headers = ['Authorization: Bearer '.$this->_token];
-
         $this->_logger->info('Request id :'.$id);
-        $response = $this->_curlDataProvider->delete($headers);
+        $response = $this->_curlDataProvider->delete($this->_headers);
         if (self::HTTP_CODE_OK != $response->getCode()) {
             $this->_logger->error(MobicoopMatcherDataProviderException::DELETE_ERROR.' '.$route);
             $this->_logger->error($response->getCode());
             $this->_logger->error(strip_tags($response->getValue()));
             $this->_logger->error('Request Id : '.$id);
-        }
-    }
-
-    private function _auth()
-    {
-        $this->_curlDataProvider->setUrl($this->_uri.''.self::ROUTE_AUTH);
-
-        $body = [
-            'username' => $this->_username,
-            'password' => $this->_password,
-        ];
-        $response = $this->_curlDataProvider->post(null, json_encode($body));
-
-        if (200 == $response->getCode()) {
-            $data = json_decode($response->getValue(), true);
-            $this->_token = $data['access_token'];
-        } else {
-            $this->_logger->error(MobicoopMatcherDataProviderException::AUTH_ERROR);
-            $this->_logger->error($response->getCode());
-            $this->_logger->error($response->getValue());
-
-            throw new MobicoopMatcherDataProviderException(MobicoopMatcherDataProviderException::AUTH_ERROR);
         }
     }
 

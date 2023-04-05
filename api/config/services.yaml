@@ -926,8 +926,7 @@ services:
   App\DataProvider\Entity\MobicoopMatcherProvider:
     arguments:
       $uri: "%env(string:MATCHER_URI)%"
-      $username: "%env(string:MATCHER_USERNAME)%"
-      $password: "%env(string:MATCHER_PASSWORD)%"
+      $apiKey: "%env(string:MATCHER_API_KEY)%"
     tags:
       - { name: monolog.logger, channel: matcherV3 }
 

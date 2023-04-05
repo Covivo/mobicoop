@@ -71,7 +71,7 @@ class MobicoopMatcherClassicWaypointsBuilder
     private function _treatWaypoint(array $waypoint)
     {
         foreach ($waypoint['actors'] as $actor) {
-            if ($actor['step'] = Waypoint::STEP_NEUTRAL) {
+            if (Waypoint::STEP_NEUTRAL == $actor['step']) {
                 continue;
             }
 
