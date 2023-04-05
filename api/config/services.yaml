@@ -1204,3 +1204,15 @@ services:
   App\Validator\Phone\PhoneValidator:
     arguments:
       $phoneValidationRegions: "%env(json:USER_PHONE_VALIDATION_REGIONS)%"
+
+  # Reminder
+  App\UserRelaunch\Command\RelaunchCommand:
+    tags:
+      - {
+          name: "console.command",
+          command: "app:relaunch:users",
+        }
+
+  App\UserRelaunch\Service\RelaunchManager:
+    arguments:
+      $notifications: "%env(json:file:resolve:SCHEDULES_REMINDERS)%"

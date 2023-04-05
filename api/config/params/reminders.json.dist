@@ -1,0 +1,7 @@
+{
+    "action_name": {
+      "email": ["mon","wed"],
+      "push": [],
+      "sms": []
+    }
+}
