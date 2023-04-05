@@ -31,11 +31,11 @@ use App\MassCommunication\Entity\Delivery;
 use App\MassCommunication\Entity\Recipient;
 use App\MassCommunication\Entity\Sender;
 use App\MassCommunication\Exception\CampaignException;
+use App\MassCommunication\Ressource\MassCommunicationHook;
 use App\User\Entity\User;
 use App\User\Exception\UserNotFoundException;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -288,20 +288,23 @@ class CampaignManager
      *
      * @return array An empty array
      */
-    public function handleUnsubscribeHook(Request $request)
+    public function handleUnsubscribeHook(MassCommunicationHook $hook, Request $request)
     {
         switch ($this->mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
                 // Sendinblue uses ip range
-                if (ip2long($request->getClientIp()) > ip2long($this->massEmailProviderIpRange['maxIp']) || ip2long($request->getClientIp()) < ip2long($this->massEmailProviderIpRange['minIp'])) {
-                    throw new Exception('Unauthorized');
-                }
-                if (!$email = $request->get('email')) {
-                    throw new Exception('Missing email');
+                // if (ip2long($request->getClientIp()) > ip2long($this->massEmailProviderIpRange['maxIp']) || ip2long($request->getClientIp()) < ip2long($this->massEmailProviderIpRange['minIp'])) {
+                //     throw new \Exception('Unauthorized');
+                // }
+                if (!$email = $hook->getEmail()) {
+                    throw new \Exception('Missing email');
                 }
                 if (!$user = $this->userRepository->findOneBy(['email' => $email])) {
                     throw new UserNotFoundException('User not found');
                 }
+                var_dump($user->getId());
+
+                exit;
                 // @var User $user
                 $user->setNewsSubscription(false);
                 $this->entityManager->persist($user);
@@ -361,7 +364,7 @@ class CampaignManager
                     // we create the campaign on provider side
                     try {
                         $providerCampaign = $this->massEmailProvider->createCampaign($campaign->getName(), $sender, $campaign->getSubject(), $this->getFormedEmailBody($campaign->getBody()), $recipients);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         throw new CampaignException($e->getMessage());
                     }
                     // we set the campaign provider id
