@@ -293,18 +293,16 @@ class CampaignManager
         switch ($this->mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
                 // Sendinblue uses ip range
-                // if (ip2long($request->getClientIp()) > ip2long($this->massEmailProviderIpRange['maxIp']) || ip2long($request->getClientIp()) < ip2long($this->massEmailProviderIpRange['minIp'])) {
-                //     throw new \Exception('Unauthorized');
-                // }
+                if (ip2long($request->getClientIp()) > ip2long($this->massEmailProviderIpRange['maxIp']) || ip2long($request->getClientIp()) < ip2long($this->massEmailProviderIpRange['minIp'])) {
+                    throw new \Exception('Unauthorized');
+                }
                 if (!$email = $hook->getEmail()) {
                     throw new \Exception('Missing email');
                 }
                 if (!$user = $this->userRepository->findOneBy(['email' => $email])) {
                     throw new UserNotFoundException('User not found');
                 }
-                var_dump($user->getId());
 
-                exit;
                 // @var User $user
                 $user->setNewsSubscription(false);
                 $this->entityManager->persist($user);
