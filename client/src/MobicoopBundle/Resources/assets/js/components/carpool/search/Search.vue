@@ -265,7 +265,6 @@ export default {
         : null;
     },
     timeFormated() {
-      console.log(moment(this.time).format(this.$t("urlTime")));
       return this.time
         ? moment(this.time).format(this.$t("urlTime"))
         : null;
