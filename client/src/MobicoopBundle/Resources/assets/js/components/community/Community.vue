@@ -294,6 +294,7 @@
           :user="user"
           :params="params"
           :punctual-date-optional="punctualDateOptional"
+          :date-time-picker="dateTimePicker"
         />
       </v-row>
 
@@ -502,7 +503,11 @@ export default {
     geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
+    dateTimePicker: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {

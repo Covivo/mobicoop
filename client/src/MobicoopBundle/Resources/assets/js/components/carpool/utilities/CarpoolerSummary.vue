@@ -128,8 +128,9 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <div
+              v-if="carpoolStandardMessagingEnabled"
               class="ma-0 pa-0"
-              v-on="on"
+              v-on="(user == null) && on"
             >
               <v-btn
                 :disabled="user == null"
@@ -148,6 +149,17 @@
           </template>
           <span>{{ $t("externalResult.contact.button.tooltip") }}</span>
         </v-tooltip>
+        <v-btn
+          v-if="carpoolStandardBookingEnabled"
+          rounded
+          color="secondary"
+          class="mt-1"
+          @click="emitBookingEvent"
+        >
+          <span>
+            {{ $t("seeDetails") }}
+          </span>
+        </v-btn>
         <v-card-text class="py-0">
           <em>{{ externalOrigin }}</em>
         </v-card-text>
@@ -293,7 +305,15 @@ export default {
     platformName: {
       type: String,
       default: ""
-    }
+    },
+    carpoolStandardBookingEnabled: {
+      type: Boolean,
+      default: false
+    },
+    carpoolStandardMessagingEnabled: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -363,6 +383,13 @@ export default {
     emitCarpoolEvent: function() {
       if (this.connected) {
         this.$emit("carpool");
+      } else {
+        this.$emit("loginOrRegister");
+      }
+    },
+    emitBookingEvent: function() {
+      if (this.connected) {
+        this.$emit("booking");
       } else {
         this.$emit("loginOrRegister");
       }

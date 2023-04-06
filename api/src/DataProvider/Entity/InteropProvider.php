@@ -55,7 +55,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
         // Build the body
         $body = [
             'from' => [
-                'id' => $message->getFrom()->getId(),
+                'id' => $message->getFrom()->getExternalId(),
                 'operator' => $message->getFrom()->getOperator(),
                 'alias' => preg_replace('/\s+/', '-', $message->getFrom()->getAlias()),
                 'firstName' => $message->getFrom()->getFirstName(),
@@ -66,7 +66,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
                 'verifiedIdentity' => $message->getFrom()->getVerifiedIdentity(),
             ],
             'to' => [
-                'id' => $message->getTo()->getId(),
+                'id' => $message->getTo()->getExternalId(),
                 'operator' => $message->getTo()->getOperator(),
                 'alias' => preg_replace('/\s+/', '-', $message->getTo()->getAlias()),
                 'firstName' => $message->getTo()->getFirstName(),
@@ -98,7 +98,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
         $body = [
             'id' => (string) $this->_generateUuid(),
             'driver' => [
-                'id' => (string) $booking->getDriver()->getId(),
+                'id' => (string) $booking->getDriver()->getExternalId(),
                 'operator' => $booking->getDriver()->getOperator(),
                 'alias' => preg_replace('/\s+/', '-', $booking->getDriver()->getAlias()),
                 'firstName' => $booking->getDriver()->getFirstName(),
@@ -109,7 +109,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
                 'verifiedIdentity' => $booking->getDriver()->getVerifiedIdentity(),
             ],
             'passenger' => [
-                'id' => (string) $booking->getPassenger()->getId(),
+                'id' => (string) $booking->getPassenger()->getExternalId(),
                 'operator' => $booking->getPassenger()->getOperator(),
                 'alias' => preg_replace('/\s+/', '-', $booking->getPassenger()->getAlias()),
                 'firstName' => $booking->getPassenger()->getFirstName(),

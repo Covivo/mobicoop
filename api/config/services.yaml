@@ -324,7 +324,7 @@ services:
   App\CarpoolStandard\Service\CarpoolStandardManager:
     arguments:
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
-
+      
   # Commands
   App\Command\CarpoolAskPostedRelaunch1Command:
     tags:
@@ -763,6 +763,13 @@ services:
           name: "console.command",
           command: "app:incentive:journeys-verification",
         }
+  
+  App\Incentive\Command\SubscriptionTimestampsCommand:
+    tags:
+      - {
+        name: "console.command",
+        command: "app:incentive:subscription-timestamps"
+      }
 
   App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
@@ -785,6 +792,8 @@ services:
         credentials:
           client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
@@ -800,6 +809,8 @@ services:
         credentials:
           client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
@@ -815,6 +826,8 @@ services:
         credentials:
           client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
@@ -938,6 +951,13 @@ services:
       - { name: monolog.logger, channel: matcherV3 }
 
   # Payment
+  App\Payment\Command\UnpaidReminderCommand:
+    tags:
+      - {
+          name: "console.command",
+          command: "app:payment:unpaid-reminder"
+        }
+
   App\Payment\Controller\:
     resource: "../src/Payment/Controller"
     tags: ["controller.service_arguments"]
@@ -985,6 +1005,10 @@ services:
       $emailRecipients: "%env(json:BANK_TRANSFER_REPORT_EMAIL)%"
     tags:
       - { name: monolog.logger, channel: bank_transfer }
+
+  App\Payment\Service\UnpaidReminderManager:
+    arguments:
+      $reminderDelays: "%env(json:PAYMENT_UNPAID_REMINDER_DELAYS)%"
 
   # Price
   App\Price\Controller\:

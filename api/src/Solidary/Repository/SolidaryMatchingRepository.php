@@ -18,14 +18,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Repository;
 
-use App\Carpool\Entity\Proposal;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryMatching;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -38,15 +38,14 @@ class SolidaryMatchingRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(SolidaryMatching::class);
     }
-
 
     public function find(int $id): ?SolidaryMatching
     {
@@ -57,7 +56,6 @@ class SolidaryMatchingRepository
     {
         return $this->repository->findAll();
     }
-
 
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
@@ -71,79 +69,87 @@ class SolidaryMatchingRepository
 
     /**
      * Link related carpool solidary matchings for a Solidary
-     * (link outward and return matchings)
+     * (link outward and return matchings).
      *
-     * @param integer $solidaryId   The solidary id
-     * @return void
+     * @param int $solidaryId The solidary id
      */
     public function linkRelatedSolidaryMatchings(int $solidaryId)
     {
         $conn = $this->entityManager->getConnection();
-        $sql = "
+        $sql = '
             UPDATE solidary_matching AS SM1
             INNER JOIN matching as M1 ON M1.id = SM1.matching_id
             SET solidary_matching_linked_id = (
                 SELECT SM2.id FROM solidary_matching AS SM2
                 INNER JOIN matching as M2 ON M2.id = SM2.matching_id
                 WHERE SM2.matching_id = M1.matching_linked_id
-            ) 
-            WHERE SM1.solidary_matching_linked_id IS NULL AND SM1.solidary_id = " . $solidaryId;
+            )
+            WHERE SM1.solidary_matching_linked_id IS NULL AND SM1.solidary_id = '.$solidaryId;
         $stmt = $conn->prepare($sql);
         $stmt->execute();
     }
 
     /**
-     * Find the previous solidary Matching for a solidary in Transport context
+     * Find the previous solidary Matching for a solidary in Transport context.
      *
      * @param Solidary $proposal
-     * @return array|null
      */
     public function findSolidaryMatchingTransportOfSolidary(Solidary $solidary): ?array
     {
         $query = $this->repository->createQueryBuilder('sm')
-        ->join('sm.solidary', 's')
-        ->where('sm.solidary = :solidary')
-        ->andWhere('sm.solidaryUser is not null')
-        ->setParameter('solidary', $solidary);
+            ->join('sm.solidary', 's')
+            ->where('sm.solidary = :solidary')
+            ->andWhere('sm.solidaryUser is not null')
+            ->setParameter('solidary', $solidary)
+        ;
 
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find the previous solidary Matching for a solidary in Carpool context
+     * Find the previous solidary Matching for a solidary in Carpool context.
      *
      * @param Solidary $proposal
-     * @return array|null
      */
     public function findSolidaryMatchingCarpoolOfSolidary(Solidary $solidary): ?array
     {
         $query = $this->repository->createQueryBuilder('sm')
-        ->join('sm.solidary', 's')
-        ->where('sm.solidary = :solidary')
-        ->andWhere('sm.matching is not null')
-        ->setParameter('solidary', $solidary);
+            ->join('sm.solidary', 's')
+            ->join('sm.solidaryUser', 'su')
+            ->innerJoin('su.user', 'u', 'WITH', 'u.status != :pseudonymisationStatus')
+            ->where('sm.solidary = :solidary')
+            ->andWhere('sm.matching is not null')
+            ->setParameters([
+                'pseudonymisationStatus' => User::STATUS_PSEUDONYMIZED,
+                'solidary' => $solidary,
+            ])
+        ;
 
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find the Ask related to a SolidaryMatching
-     *
-     * @param SolidaryMatching $solidaryMatching
-     * @return SolidaryAsk|null
+     * Find the Ask related to a SolidaryMatching.
      */
     public function findAskOfSolidaryMatching(SolidaryMatching $solidaryMatching): ?SolidaryAsk
     {
         $query = $this->repository->createQueryBuilder('sm')
-        ->join('sm.solidarySolution', 'ss')
-        ->join('ss.solidaryAsk', 'sa')
-        ->where('sm = :solidaryMatching')
-        ->setParameter('solidaryMatching', $solidaryMatching);
+            ->join('sm.solidarySolution', 'ss')
+            ->join('ss.solidaryAsk', 'sa')
+            ->join('sm.solidaryUser', 'su')
+            ->innerJoin('su.user', 'u', 'WITH', 'u.status != :pseudonymisationStatus')
+            ->where('sm = :solidaryMatching')
+            ->setParameters([
+                'pseudonymisationStatus' => User::STATUS_PSEUDONYMIZED,
+                'solidaryMatching' => $solidaryMatching,
+            ])
+        ;
 
         $results = $query->getQuery()->getResult();
-        if (count($results)>0) {
+        if (count($results) > 0) {
             return $results[0]->getSolidarySolution()->getSolidaryAsk();
         }
+
         return null;
     }
 }

@@ -766,7 +766,7 @@ class AdManager
             }
         }
         if (isset($point['home'])) {
-            $address->setHome($point['home']);
+            $address->setHome(is_null($point['home']) ? false : true);
         }
 
         return $address;
@@ -1333,6 +1333,10 @@ class AdManager
             $this->entityManager->persist($proposal);
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
+            if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
+                $ad->setOutwardLimitDate((new \DateTime())->modify('+ 1 year'));
+                $ad->setReturnLimitDate((new \DateTime())->modify('+ 1 year'));
+            }
             $ad = $this->createAd($ad, true, $withSolidaries, true, false, Ad::MATCHING_ALGORITHM_V3);
             $this->proposalManager->deleteProposal($proposal);
         // minor update

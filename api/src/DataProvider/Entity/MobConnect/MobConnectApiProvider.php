@@ -3,12 +3,15 @@
 namespace App\DataProvider\Entity\MobConnect;
 
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * MobConnect API provider.
@@ -22,9 +25,20 @@ class MobConnectApiProvider extends MobConnectProvider
     private const ROUTE_SUBSCRIPTIONS = '/v1/maas/subscriptions';
     private const ROUTE_PATCH_SUBSCRIPTIONS = '/v1/subscriptions/{SUBSCRIPTION_ID}';
     private const ROUTE_SUBSCRIPTIONS_VERIFY = '/v1/subscriptions/{SUBSCRIPTION_ID}/verify';
+    private const ROUTE_SUBSCRIPTIONS_TIMESTAMPS = '/v1/subscriptions/timestamps';
 
     private const SHORT_DISTANCE_LABEL = 'Court';
     private const LONG_DISTANCE_LABEL = 'Long';
+
+    /**
+     * @var null|string
+     */
+    protected $_appClientID;
+
+    /**
+     * @var null|string
+     */
+    protected $_appClientSecret;
 
     /**
      * @var EntityManagerInterface
@@ -55,6 +69,35 @@ class MobConnectApiProvider extends MobConnectProvider
     private function __getSubscriptionId(bool $shortDistance = false): string
     {
         return $shortDistance ? $this->_apiParams->getShortDistanceSubscriptionId() : $this->_apiParams->getLongDistanceSubscriptionId();
+    }
+
+    private function __getAppToken(): string
+    {
+        if (!array_key_exists(self::SERVICE_NAME, $this->_ssoServices)) {
+            throw new \LogicException(str_replace('{SERVICE_NAME}', self::SERVICE_NAME, MobConnectMessages::MOB_CONFIG_UNAVAILABLE));
+        }
+
+        if (is_null($this->_apiParams->getAppClientId()) || is_null($this->_apiParams->getAppClientSecret())) {
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'There is a misconfiguration');
+        }
+
+        $service = $this->_ssoServices[self::SERVICE_NAME];
+
+        $provider = new OpenIdSsoProvider(
+            self::SERVICE_NAME,
+            '',
+            $service['baseUri'],
+            $service['clientId'],
+            $service['clientSecret'],
+            '',
+            $service['autoCreateAccount'],
+            $service['logOutRedirectUri'] = '',
+            $service['codeVerifier'] = null,
+            $this->_apiParams->getAppClientId(),
+            $this->_apiParams->getAppClientSecret()
+        );
+
+        return $provider->getAppToken()['access_token'];
     }
 
     private function __getToken(): string
@@ -175,6 +218,16 @@ class MobConnectApiProvider extends MobConnectProvider
 
         return new MobConnectSubscriptionResponse(
             $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken())))
+        );
+    }
+
+    public function getUserSubscriptionTimestamps(string $subscriptionId)
+    {
+        $this->_loggerService->log('We get the subscription timestamps on mobConnect', 'info', true);
+        $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS_TIMESTAMPS);
+
+        return new MobConnectSubscriptionTimestampsResponse(
+            $this->_getResponse($this->_dataProvider->getItem(['subscriptionId' => $subscriptionId], $this->_buildHeaders($this->__getAppToken())))
         );
     }
 
