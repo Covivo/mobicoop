@@ -14,27 +14,24 @@ class Notification
     /**
      * @var null|Schedule
      */
-    private $_emailSchedule;
-
-    /**
-     * @var null|Schedule
-     */
-    private $_pushSchedule;
-
-    /**
-     * @var null|Schedule
-     */
-    private $_smsSchedule;
+    private $_schedule;
 
     /**
      * @var array
      */
     private $_notificationParameters;
 
+    /**
+     * @var \DateTime
+     */
+    private $_today;
+
     public function __construct(array $notification)
     {
         $this->_notificationParameters = $notification;
         $this->_setNotification();
+
+        $this->_today = new \DateTime('now');
     }
 
     /**
@@ -46,11 +43,37 @@ class Notification
     }
 
     /**
-     * Returns, based on the given date whether the notification should be sent.
+     * Get the value of _emailSchedule.
      */
-    public function getNotify(): bool
+    public function getSchedule(): ?Schedule
     {
-        return false;
+        return $this->_schedule;
+    }
+
+    public function canNotify(): bool
+    {
+        return
+            !is_null($this->_schedule)
+            && !empty($this->_schedule->getScheduleDays())
+            && in_array(strtolower($this->_today->format('D')), $this->_schedule->getScheduleDaysAsDaysArray())
+        ;
+    }
+
+    public function getReminderDate()
+    {
+        $activeDay = $this->_schedule->getActiveScheduleDay();
+
+        if ($this->canNotify() && !is_null($activeDay)) {
+            switch (true) {
+                case $this->_schedule->getOnceOnly():
+                    return $activeDay->getDate();
+
+                default:
+                    return $this->_today->format('D');
+            }
+        }
+
+        return null;
     }
 
     private function _setNotification(): void
@@ -69,9 +92,7 @@ class Notification
             throw new \LogicException(sprintf(self::ERROR_MANDATORY_MISCONFIGURED, 'schedules'));
         }
 
-        $this->_setSchedule('email');
-        $this->_setSchedule('push');
-        $this->_setSchedule('sms');
+        $this->_setSchedule();
     }
 
     // * INTERNAL SETTERS ------------------------------------------------------------------------------------
@@ -93,17 +114,15 @@ class Notification
     /**
      * Set the value of _emailSchedule.
      */
-    private function _setSchedule(string $type): self
+    private function _setSchedule(): self
     {
-        if (!isset($this->_notificationParameters['schedules'][$type]) || !isset($this->_notificationParameters['schedules'][$type]['scheduleDays'])) {
+        if (!isset($this->_notificationParameters['schedules']) || !isset($this->_notificationParameters['schedules']['scheduleDays'])) {
             throw new \LogicException(sprintf(self::ERROR_MANDATORY_MISCONFIGURED, 'email/scheduleDays'));
         }
 
-        $property = '_'.$type.'Schedule';
-
-        $this->{$property} = empty($this->_notificationParameters['schedules'][$type]['scheduleDays'])
+        $this->_schedule = empty($this->_notificationParameters['schedules']['scheduleDays'])
             ? null
-            : new Schedule($this->_notificationParameters['schedules'][$type]);
+            : new Schedule($this->_notificationParameters['schedules']);
 
         return $this;
     }

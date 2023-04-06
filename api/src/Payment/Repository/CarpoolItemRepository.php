@@ -234,4 +234,43 @@ class CarpoolItemRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findUnpaydForRelaunch(int $frequency, $date)
+    {
+        $qb = $this->repository->createQueryBuilder('ci');
+
+        $parameters = [
+            'creditorStatus' => CarpoolItem::CREDITOR_STATUS_DIRECT.','.CarpoolItem::CREDITOR_STATUS_ONLINE,
+            'frequency' => $frequency,
+            'pseudonymizedStatus' => User::STATUS_PSEUDONYMIZED,
+        ];
+
+        $qb
+            ->innerJoin('ci.debtorUser', 'debU', 'WITH', 'debU.status != :pseudonymizedStatus')
+            ->innerJoin('ci.creditorUser', 'creU', 'WITH', 'creU.status != :pseudonymizedStatus')
+            ->innerJoin('ci.ask', 'a')
+            ->innerJoin('a.criteria', 'c')
+            ->where('ci.unpaidDate IS NULL')
+            ->andWhere('ci.creditorStatus NOT IN (:creditorStatus)')
+            ->andWhere('c.frequency = :frequency')
+        ;
+
+        switch (true) {
+            case $date instanceof string:
+                $qb->andWhere("DATE_FORMAT(c.fromDate, '%a') = :day");
+                $parameters['day'] = $date;
+
+                break;
+
+            case $date instanceof \DateTime:
+                $qb->andWhere('ci.createdDate LIKE :date');
+                $parameters['date'] = $date->format('Y-m-d').'%';
+
+                break;
+        }
+
+        $qb->setParameters($parameters);
+
+        return $qb->getQuery()->getResult();
+    }
 }

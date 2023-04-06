@@ -1,7 +1,10 @@
-{
-    "action_name": {
-      "email": ["mon","wed"],
-      "push": [],
-      "sms": []
+[
+    {
+        "name": "action_name",
+        "schedules": {
+            "order": 1,
+            "onceOnly": false,
+            "scheduleDays": []
+        }
     }
-}
+]
