@@ -738,7 +738,7 @@ class AdManager
             }
         }
         if (isset($point['home'])) {
-            $address->setHome($point['home']);
+            $address->setHome(is_null($point['home']) ? false : true);
         }
 
         return $address;
