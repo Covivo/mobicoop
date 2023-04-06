@@ -2,38 +2,97 @@
 
 namespace App\Normalizer;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Core\Api\ResourceClassResolverInterface;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\Exception\InvalidArgumentException;
+use ApiPlatform\Core\Metadata\Property\Factory\PropertyMetadataFactoryInterface;
+use ApiPlatform\Core\Metadata\Property\Factory\PropertyNameCollectionFactoryInterface;
+use ApiPlatform\Core\Metadata\Resource\Factory\ResourceMetadataFactoryInterface;
 use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
+use App\MassCommunication\Ressource\MassCommunicationHook;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
+use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
 /**
- * Custom ItemNormalizer to be able to post an object with an id.
+ * Custom item normalizer.
+ *
+ * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
  */
 class ItemNormalizer extends AbstractItemNormalizer
 {
     private const IDENTIFIER = 'id';
+    private $logger;
+
+    public function __construct(PropertyNameCollectionFactoryInterface $propertyNameCollectionFactory, PropertyMetadataFactoryInterface $propertyMetadataFactory, IriConverterInterface $iriConverter, ResourceClassResolverInterface $resourceClassResolver, PropertyAccessorInterface $propertyAccessor = null, NameConverterInterface $nameConverter = null, ClassMetadataFactoryInterface $classMetadataFactory = null, ItemDataProviderInterface $itemDataProvider = null, bool $allowPlainIdentifiers = false, LoggerInterface $logger = null, iterable $dataTransformers = [], ResourceMetadataFactoryInterface $resourceMetadataFactory = null)
+    {
+        parent::__construct($propertyNameCollectionFactory, $propertyMetadataFactory, $iriConverter, $resourceClassResolver, $propertyAccessor, $nameConverter, $classMetadataFactory, $itemDataProvider, $allowPlainIdentifiers, [], $dataTransformers, $resourceMetadataFactory);
+
+        $this->logger = $logger ?: new NullLogger();
+    }
 
     /**
-     * @param mixed  $data
-     * @param string $class
-     * @param string $format
+     * {@inheritdoc}
      *
-     * @return object
+     * @throws NotNormalizableValueException
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        if (is_array($data)) {
-            foreach ($data as $key => &$value) {
-                if (self::IDENTIFIER === $key) {
-                    unset($data[$key]);
+        // unset id of the MassCommunicationHook posted by massMailingProvider
+        if (get_class(new MassCommunicationHook()) === $class) {
+            if (is_array($data)) {
+                foreach ($data as $key => &$value) {
+                    if (self::IDENTIFIER === $key) {
+                        unset($data[$key]);
+                    }
                 }
             }
         }
 
-        $context['api_denormalize'] = true;
+        // Avoid issues with proxies if we populated the object
+        if (isset($data['id']) && !isset($context[self::OBJECT_TO_POPULATE])) {
+            if (isset($context['api_allow_update']) && true !== $context['api_allow_update']) {
+                throw new NotNormalizableValueException('Update is not allowed for this operation.');
+            }
 
-        if (!isset($context['resource_class'])) {
-            $context['resource_class'] = $class;
+            if (isset($context['resource_class'])) {
+                $this->updateObjectToPopulate($data, $context);
+            } else {
+                // See https://github.com/api-platform/core/pull/2326 to understand this message.
+                $this->logger->warning('The "resource_class" key is missing from the context.', [
+                    'context' => $context,
+                ]);
+            }
         }
 
         return parent::denormalize($data, $class, $format, $context);
+    }
+
+    private function updateObjectToPopulate(array $data, array &$context): void
+    {
+        try {
+            $context[self::OBJECT_TO_POPULATE] = $this->iriConverter->getItemFromIri((string) $data['id'], $context + ['fetch_data' => true]);
+        } catch (InvalidArgumentException $e) {
+            $identifier = null;
+            $options = $this->getFactoryOptions($context);
+
+            foreach ($this->propertyNameCollectionFactory->create($context['resource_class'], $options) as $propertyName) {
+                if (true === $this->propertyMetadataFactory->create($context['resource_class'], $propertyName)->isIdentifier()) {
+                    $identifier = $propertyName;
+
+                    break;
+                }
+            }
+
+            if (null === $identifier) {
+                throw $e;
+            }
+
+            $context[self::OBJECT_TO_POPULATE] = $this->iriConverter->getItemFromIri(sprintf('%s/%s', $this->iriConverter->getIriFromResourceClass($context['resource_class']), $data[$identifier]), $context + ['fetch_data' => true]);
+        }
     }
 }
