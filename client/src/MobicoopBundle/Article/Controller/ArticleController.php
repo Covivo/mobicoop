@@ -81,6 +81,7 @@ class ArticleController extends AbstractController
     public const DEFI = 42;
     public const MOREABOUT_ALT = 43;
     public const MOREABOUT_ALT_2 = 44;
+    public const MOREABOUT_ALT_3 = 45;
 
     /**
      * Display of the project page.
@@ -405,20 +406,19 @@ class ArticleController extends AbstractController
         return $this->showArticle($articleManager->getArticle(self::DATA_PROTECTION_ALT));
     }
 
-    /**
-     * Display of the MOREABOUT page.
-     */
     public function showMoreAboutAlt(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::MOREABOUT_ALT));
     }
 
-    /**
-     * Display of the MOREABOUT page.
-     */
     public function showMoreAboutAlt2(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::MOREABOUT_ALT_2));
+    }
+
+    public function showMoreAboutAlt3(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::MOREABOUT_ALT_3));
     }
 
     public function showDefi(ArticleManager $articleManager)

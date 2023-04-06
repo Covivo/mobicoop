@@ -51,8 +51,7 @@ class JourneyManager extends MobConnectManager
 
         $log = 204 === $response->getCode()
             ? 'The subscription '.$subscription->getId().' has been patch successfully with the proposal '.$proposal->getId()
-            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$proposal->getId()
-        ;
+            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$proposal->getId();
 
         $this->_loggerService->log($log);
 
@@ -79,8 +78,7 @@ class JourneyManager extends MobConnectManager
 
         $log = 204 === $response->getCode()
             ? 'The subscription '.$subscription->getId().' has been patch successfully with the carpoolProof '.$carpoolProof->getId()
-            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$carpoolProof->getId()
-        ;
+            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$carpoolProof->getId();
 
         $this->_loggerService->log($log);
 
@@ -219,8 +217,7 @@ class JourneyManager extends MobConnectManager
             return
                 $item->getCreditorUser()->getId() === $carpoolProof->getDriver()->getId()
                 && $item->getDebtorUser()->getId() === $carpoolProof->getPassenger()->getId()
-                && $item->getItemDate()->format('Y-m-d') === $carpoolProof->getStartDriverDate()->format('Y-m-d')
-            ;
+                && $item->getItemDate()->format('Y-m-d') === $carpoolProof->getStartDriverDate()->format('Y-m-d');
         });
 
         if (
@@ -253,8 +250,7 @@ class JourneyManager extends MobConnectManager
 
             return
                 !is_null($driver)
-                && !is_null($driver->getMobConnectAuth())
-            ;
+                && !is_null($driver->getMobConnectAuth());
         });
 
         $carpoolProofs = [];
