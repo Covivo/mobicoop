@@ -120,6 +120,8 @@
                 :default-destination="destination"
                 :default-origin="origin"
                 :default-outward-date="date"
+                :default-outward-time="time"
+                :date-time-picker="dateTimePicker"
               />
             </v-col>
           </v-row>
@@ -471,6 +473,10 @@ export default {
       default: false
     },
     carpoolStandardMessagingEnabled: {
+      type: Boolean,
+      default: false
+    },
+    dateTimePicker: {
       type: Boolean,
       default: false
     },

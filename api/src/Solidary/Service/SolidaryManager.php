@@ -57,6 +57,7 @@ use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\User;
 use App\User\Event\UserRegisteredEvent;
 use App\User\Repository\UserRepository;
+use App\User\Service\PseudonymizationManager;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -110,7 +111,13 @@ class SolidaryManager
     public function getSolidary($id): ?Solidary
     {
         $solidary = $this->solidaryRepository->find($id);
-        if (empty($solidary)) {
+        if (
+            empty($solidary)
+            || is_null($solidary->getSolidaryUserStructure())
+            || is_null($solidary->getSolidaryUserStructure()->getSolidaryUser())
+            || is_null($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser())
+            || PseudonymizationManager::isUserPseudonymized($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser())
+        ) {
             throw new SolidaryException(SolidaryException::UNKNOWN_SOLIDARY);
         }
 
@@ -361,14 +368,14 @@ class SolidaryManager
                                 if ($this->getSolidary($solidary->getId())->getProgression() == $progression) {
                                     $fullSolidaries[] = $this->getSolidary($solidary->getId());
                                 }
-                                // case without progression
+                            // case without progression
                             } else {
                                 $fullSolidaries[] = $this->getSolidary($solidary->getId());
                             }
                         }
                     }
                 }
-                // case without solidaryUser
+            // case without solidaryUser
             } else {
                 $solidaries = $solidaryUserStructure->getSolidaries();
                 if (!empty($solidaries)) {
@@ -378,7 +385,7 @@ class SolidaryManager
                             if ($this->getSolidary($solidary->getId())->getProgression() == $progression) {
                                 $fullSolidaries[] = $this->getSolidary($solidary->getId());
                             }
-                            // case without progression
+                        // case without progression
                         } else {
                             $fullSolidaries[] = $this->getSolidary($solidary->getId());
                         }
@@ -679,8 +686,8 @@ class SolidaryManager
                  * @var SolidaryAsk $solidaryAsk
                  */
                 if (
-                   (Criteria::FREQUENCY_PUNCTUAL == $solidaryAsk->getCriteria()->getFrequency() && $solidaryAsk->getCriteria()->getFromDate()->format('d/m/Y') == $currentDate->format('d/m/Y'))
-                   || (Criteria::FREQUENCY_REGULAR == $solidaryAsk->getCriteria()->getFrequency() && $solidaryAsk->getCriteria()->getFromDate()->format('d/m/Y') <= $currentDate->format('d/m/Y') && $solidaryAsk->getCriteria()->getToDate()->format('d/m/Y') >= $currentDate->format('d/m/Y'))
+                    (Criteria::FREQUENCY_PUNCTUAL == $solidaryAsk->getCriteria()->getFrequency() && $solidaryAsk->getCriteria()->getFromDate()->format('d/m/Y') == $currentDate->format('d/m/Y'))
+                    || (Criteria::FREQUENCY_REGULAR == $solidaryAsk->getCriteria()->getFrequency() && $solidaryAsk->getCriteria()->getFromDate()->format('d/m/Y') <= $currentDate->format('d/m/Y') && $solidaryAsk->getCriteria()->getToDate()->format('d/m/Y') >= $currentDate->format('d/m/Y'))
                 ) {
                     // Determine the hour slot
                     $structure = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getStructure();
@@ -702,15 +709,15 @@ class SolidaryManager
                     switch ($slot) {
                         case 'm': $solidaryVolunteerPlanning->setMorningSlot($solidaryVolunteerPlanningItem);
 
-break;
+                            break;
 
                         case 'a': $solidaryVolunteerPlanning->setAfternoonSlot($solidaryVolunteerPlanningItem);
 
-break;
+                            break;
 
                         case 'e': $solidaryVolunteerPlanning->setEveningSlot($solidaryVolunteerPlanningItem);
 
-break;
+                            break;
                     }
                 }
             }

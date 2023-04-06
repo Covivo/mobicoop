@@ -29,6 +29,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Solidary\Admin\Service\SolidaryBeneficiaryManager;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryUser;
+use App\User\Entity\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
@@ -138,8 +139,14 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
 
         // we add the beneficiary flag to keep only beneficiaries (and not volunteers)
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->join("{$rootAlias}.user", 'u');
-        $queryBuilder->andWhere("{$rootAlias}.beneficiary = 1");
+        $queryBuilder
+            ->join("{$rootAlias}.user", 'u')
+            ->andWhere('u.status != :pseudonymisedStatus')
+            ->andWhere("{$rootAlias}.beneficiary = 1")
+            ->setParameters([
+                'pseudonymisedStatus' => User::STATUS_PSEUDONYMIZED,
+            ])
+        ;
 
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, SolidaryUser::class, $operationName, $newContext);
