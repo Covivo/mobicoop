@@ -1305,6 +1305,10 @@ class AdManager
             $this->entityManager->persist($proposal);
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
+            if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
+                $ad->setOutwardLimitDate((new \DateTime())->modify('+ 1 year'));
+                $ad->setReturnLimitDate((new \DateTime())->modify('+ 1 year'));
+            }
             $ad = $this->createAd($ad, true, $withSolidaries);
             $this->proposalManager->deleteProposal($proposal);
         // minor update
