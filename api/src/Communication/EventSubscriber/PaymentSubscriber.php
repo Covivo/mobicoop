@@ -82,7 +82,8 @@ class PaymentSubscriber implements EventSubscriberInterface
     public function onPayAfterCarpoolRegular(PayAfterCarpoolRegularEvent $event)
     {
         $recipient = $event->getCarpoolItem()->getDebtorUser();
-        $this->notificationManager->notifies(PayAfterCarpoolRegularEvent::NAME, $recipient, $event->getCarpoolItem());
+        // Notification disabled in response to ticket #4548
+        // $this->notificationManager->notifies(PayAfterCarpoolRegularEvent::NAME, $recipient, $event->getCarpoolItem());
     }
 
     public function onSignalDept(SignalDeptEvent $event)
