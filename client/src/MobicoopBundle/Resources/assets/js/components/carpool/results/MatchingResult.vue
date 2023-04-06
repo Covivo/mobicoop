@@ -86,10 +86,18 @@
             :age-display="ageDisplay"
             :birthdate-display="birthdateDisplay"
             :platform-name="platformName"
+            :carpool-standard-booking-enabled="carpoolStandardBookingEnabled"
+            :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
+            <<<<<<<
+            h-e-a-d="======"
             @carpool="carpool"
             @standardContact="standardContact"
+            @booking="booking"
+          >
+            >>>>>> dev
             @loginOrRegister="loginOrRegister"
-          />
+            />
+          </carpooler-summary>
         </v-col>
       </v-row>
     </v-container>
@@ -150,7 +158,15 @@ export default {
     birthdateDisplay: {
       type: Boolean,
       default: false
-    }
+    },
+    carpoolStandardBookingEnabled: {
+      type: Boolean,
+      default: false
+    },
+    carpoolStandardMessagingEnabled: {
+      type: Boolean,
+      default: false
+    },
   },
   data : function() {
     return {
@@ -206,7 +222,12 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
-    }
+    },
+    booking() {
+      this.$emit("booking", {
+        //matching: this.matching
+      });
+    },
   }
 };
 </script>

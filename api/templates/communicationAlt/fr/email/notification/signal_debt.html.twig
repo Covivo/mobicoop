@@ -22,7 +22,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour, </p>
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{ context.debtor.givenName }},</p>
                     </td>
                 </tr>
             </table>
@@ -36,7 +36,12 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Je me permets de vous relancer concernant le paiement des covoiturages que nous avons réalisés ensemble pour un montant de {{context.amount}} € (par trajet).</p>
+                        <p style="font-size:11px; text-align: justify;">
+                            Le conducteur {{ context.creditor.givenName }} vous relance concernant le trajet {{ context.origin }}/{{ context.destination }} réalisé ensemble le {{ context.date|date("d-m-Y") }} pour un montant {{context.amount}} €.</p>
+                        <p style="font-size:11px; text-align: justify;">
+                            Pour valider/payer vos covoitureurs, rendez-vous sur votre profil, depuis l'onglet "Covoiturages acceptés" ou directement depuis le lien suivant <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-covoiturages-acceptes">{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-covoiturages-acceptes</a>.</p>
+                        <p style="font-size:11px; text-align: justify;">
+                            A bientôt sur {{api_env('EMAILS_PLATFORM_NAME')}} !</p>
                     </td>
                 </tr>
             </table>

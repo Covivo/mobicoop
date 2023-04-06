@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity;
 
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,23 +32,30 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class User
+class User implements ResourceInterface, \JsonSerializable
 {
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var null|string The id of this user
+     * @var null|int The id of this user
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $id;
 
     /**
-     * @var null|string the operator identifier
+     * @var null|string The id of this user
+     *
+     * @Groups({"get","post","put"})
+     */
+    private $externalId;
+
+    /**
+     * @var string the operator identifier
      *
      * @Assert\NotBlank
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $operator;
 
@@ -56,49 +64,49 @@ class User
      *
      * @Assert\NotBlank
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $alias;
 
     /**
-     * @var string user's first name
+     * @var null|string user's first name
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $firstName;
 
     /**
-     * @var string user's last name
+     * @var null|string user's last name
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $lastName;
 
     /**
-     * @var int user's grade from 1 to 5
+     * @var null|int user's grade from 1 to 5
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $grade;
 
     /**
-     * @var string user's profile picture absolute URL
+     * @var null|string user's profile picture absolute URL
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $picture;
 
     /**
-     * @var string User's gender. [ F, M, O ] 'O' stands for 'Other'.
+     * @var null|string User's gender. [ F, M, O ] 'O' stands for 'Other'.
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $gender;
 
     /**
-     * @var bool
+     * @var null|bool
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $verifiedIdentity;
 
@@ -110,24 +118,36 @@ class User
         }
     }
 
-    public function getId(): ?string
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(?string $id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
 
         return $this;
     }
 
-    public function getOperator(): ?string
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
+
+        return $this;
+    }
+
+    public function getOperator(): string
     {
         return $this->operator;
     }
 
-    public function setOperator(?string $operator): self
+    public function setOperator(string $operator): self
     {
         $this->operator = $operator;
 
@@ -151,7 +171,7 @@ class User
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -163,7 +183,7 @@ class User
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): self
+    public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
 
@@ -175,7 +195,7 @@ class User
         return $this->grade;
     }
 
-    public function setGrade(int $grade): self
+    public function setGrade(?int $grade): self
     {
         $this->grade = $grade;
 
@@ -187,7 +207,7 @@ class User
         return $this->picture;
     }
 
-    public function setPicture(string $picture): self
+    public function setPicture(?string $picture): self
     {
         $this->picture = $picture;
 
@@ -199,7 +219,7 @@ class User
         return $this->gender;
     }
 
-    public function setGender(string $gender): self
+    public function setGender(?string $gender): self
     {
         $this->gender = $gender;
 
@@ -211,10 +231,26 @@ class User
         return $this->verifiedIdentity;
     }
 
-    public function setVerifiedIdentity(bool $verifiedIdentity): self
+    public function setVerifiedIdentity(?bool $verifiedIdentity): self
     {
         $this->verifiedIdentity = $verifiedIdentity;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id' => $this->getId(),
+            'operator' => $this->getOperator(),
+            'alias' => $this->getAlias(),
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
+            'grade' => $this->getGrade(),
+            'picture' => $this->getPicture(),
+            'gender' => $this->getGender(),
+            'verifiedIdentity' => $this->getVerifiedIdentity(),
+        ];
     }
 }

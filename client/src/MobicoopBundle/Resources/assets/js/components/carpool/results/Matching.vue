@@ -120,6 +120,8 @@
                 :default-destination="destination"
                 :default-origin="origin"
                 :default-outward-date="date"
+                :default-outward-time="time"
+                :date-time-picker="dateTimePicker"
               />
             </v-col>
           </v-row>
@@ -196,7 +198,10 @@
                 :loading-prop="loadingExternal"
                 :external-rdex-journeys="externalRdexJourneys"
                 :platform-name="platformName"
-                @carpool="carpool"
+                :carpool-standard-booking-enabled="carpoolStandardBookingEnabled"
+                :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
+                @loginOrRegister="loginOrRegister"
+                @booking="booking"
               />
             </v-tab-item>
             <!-- Public transport results tab item -->
@@ -288,6 +293,19 @@
       />
     </v-dialog>
 
+    <!-- booking dialog -->
+    <v-dialog
+      v-model="bookingDialog"
+      max-width="500"
+    >
+      <booking-journey
+        :result="result"
+        :user="user"
+        @close="bookingDialog = false"
+        @booking="launchExternalBooking"
+      />
+    </v-dialog>
+
     <!-- login or register dialog -->
     <LoginOrRegisterFirst
       :id="lProposalId"
@@ -306,6 +324,7 @@ import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
+import BookingJourney from "@components/carpool/results/BookingJourney";
 import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
 import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 import Search from "@components/carpool/search/Search";
@@ -325,7 +344,8 @@ export default {
     MatchingJourney,
     Search,
     MatchingPTResults,
-    LoginOrRegisterFirst
+    LoginOrRegisterFirst,
+    BookingJourney
   },
   i18n: {
     messages: {
@@ -448,11 +468,24 @@ export default {
       type: Boolean,
       default: false
     },
+    carpoolStandardBookingEnabled: {
+      type: Boolean,
+      default: false
+    },
+    carpoolStandardMessagingEnabled: {
+      type: Boolean,
+      default: false
+    },
+    dateTimePicker: {
+      type: Boolean,
+      default: false
+    },
   },
   data : function() {
     return {
       locale: localStorage.getItem("X-LOCALE"),
       carpoolDialog: false,
+      bookingDialog: false,
       loginOrRegisterDialog: false,
       results: null,
       searchId: null,
@@ -553,6 +586,11 @@ export default {
       this.carpoolDialog = true;
       this.resetStepMatchingJourney = true;
       this.profileSummaryRefresh = true;
+    },
+    booking(booking) {
+      this.result = booking;
+      // open the dialog
+      this.bookingDialog = true;
     },
     loginOrRegister(carpool) {
       this.result = carpool;
@@ -821,6 +859,29 @@ export default {
         .finally(() => {
           this.carpoolDialog = false;
         })
+    },
+    launchExternalBooking(params) {
+      maxios.post(this.$t("bookingUrl"), params,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          if(response.status == 200){
+            window.location = this.$t("carpoolMailBoxUrl");
+          }
+          else{
+            console.log(response);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.carpoolDialog = false;
+        })
+      this.bookingDialog = false;
     },
     updateFilters(data){
       this.page=1;

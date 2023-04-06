@@ -37,9 +37,9 @@ class Message implements ResourceInterface, \JsonSerializable
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int the id of this payment week
+     * @var int the id of the message
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $id;
 
@@ -48,7 +48,7 @@ class Message implements ResourceInterface, \JsonSerializable
      *
      * @Assert\NotBlank
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $from;
 
@@ -57,7 +57,7 @@ class Message implements ResourceInterface, \JsonSerializable
      *
      * @Assert\NotBlank
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $to;
 
@@ -66,7 +66,7 @@ class Message implements ResourceInterface, \JsonSerializable
      *
      * @Assert\NotBlank
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $message;
 
@@ -75,28 +75,28 @@ class Message implements ResourceInterface, \JsonSerializable
      *
      * @Assert\NotBlank
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $recipientCarpoolerType;
 
     /**
      * @var null|string ID of the Driver's journey to which the message is related (if any)
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $driverJourneyId;
 
     /**
      * @var null|string ID of the Passenger's journey to which the message is related (if any)
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $passengerJourneyId;
 
     /**
      * @var null|string ID ($uuid) of the booking to which the message is related (if any)
      *
-     * @Groups({"post"})
+     * @Groups({"get","post","put"})
      */
     private $bookingId;
 
@@ -207,15 +207,15 @@ class Message implements ResourceInterface, \JsonSerializable
     public function jsonSerialize()
     {
         return
-            [
-                'id' => $this->getId(),
-                'from' => $this->getFrom(),
-                'to' => $this->getTo(),
-                'message' => $this->getMessage(),
-                'recipientCarpoolerType' => $this->getRecipientCarpoolerType(),
-                'driverJourneyId' => $this->getDriverJourneyId(),
-                'passengerJourneyId' => $this->getPassengerJourneyId(),
-                'bookingId' => $this->getBookingId(),
-            ];
+        [
+            'id' => $this->getId(),
+            'from' => $this->getFrom(),
+            'to' => $this->getTo(),
+            'message' => $this->getMessage(),
+            'recipientCarpoolerType' => $this->getRecipientCarpoolerType(),
+            'driverJourneyId' => $this->getDriverJourneyId(),
+            'passengerJourneyId' => $this->getPassengerJourneyId(),
+            'bookingId' => $this->getBookingId(),
+        ];
     }
 }

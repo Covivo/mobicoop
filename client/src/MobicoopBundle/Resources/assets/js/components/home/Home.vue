@@ -158,6 +158,7 @@
           :geo-complete-results-order="geoCompleteResultsOrder"
           :geo-complete-palette="geoCompletePalette"
           :geo-complete-chip="geoCompleteChip"
+          :date-time-picker="dateTimePicker"
         />
       </v-col>
     </v-row>
@@ -308,6 +309,10 @@ export default {
     territoryId: {
       type: String,
       default: null
+    },
+    dateTimePicker: {
+      type: Boolean,
+      default: false
     },
   },
   data () {

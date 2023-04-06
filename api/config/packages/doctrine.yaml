@@ -50,6 +50,7 @@ doctrine:
                 sin:                DoctrineExtensions\Query\Mysql\Sin   
             string_functions:
                 match: DoctrineExtensions\Query\Mysql\MatchAgainst
+                DATE_FORMAT: DoctrineExtensions\Query\Mysql\DateFormat
         mappings:
             Action:
                 is_bundle: false

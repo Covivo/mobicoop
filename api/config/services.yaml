@@ -217,6 +217,7 @@ services:
         defaultSeatsPassenger: "%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%"
         carpoolProofDistance: "%env(int:CARPOOL_PROOF_DISTANCE)%"
         paymentActive: "%env(string:PAYMENT_ACTIVE)%"
+        matcherCustomization: "%env(bool:MATCHER_CUSTOMIZATION)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 
@@ -266,6 +267,7 @@ services:
         defaultAnyRouteAsPassenger: "%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%"
         defaultPriceKm: "%env(float:CARPOOL_PRICE)%"
         batchTemp: "%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%"
+        matcherCustomization: "%env(resolve:MATCHER_CUSTOMIZATION)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 
@@ -316,13 +318,13 @@ services:
       $provider: "%env(string:CARPOOL_STANDARD_PROVIDER)%"
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
       $baseUri: "%env(string:CARPOOL_STANDARD_BASE_URI)%"
-  App\Communication\EventSubscriber\BookingSubscriber:    
+  App\Communication\EventSubscriber\BookingSubscriber:
     arguments:
       $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"
-  App\CarpoolStandard\Service\CarpoolStandardManager:    
+  App\CarpoolStandard\Service\CarpoolStandardManager:
     arguments:
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
-
+      
   # Commands
   App\Command\CarpoolAskPostedRelaunch1Command:
     tags:
@@ -761,6 +763,13 @@ services:
           name: "console.command",
           command: "app:incentive:journeys-verification",
         }
+  
+  App\Incentive\Command\SubscriptionTimestampsCommand:
+    tags:
+      - {
+        name: "console.command",
+        command: "app:incentive:subscription-timestamps"
+      }
 
   App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
@@ -774,7 +783,7 @@ services:
       $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
-  
+
   App\Incentive\Service\Manager\AuthManager:
     arguments:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
@@ -783,6 +792,8 @@ services:
         credentials:
           client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
@@ -798,6 +809,8 @@ services:
         credentials:
           client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
@@ -813,6 +826,8 @@ services:
         credentials:
           client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
@@ -921,7 +936,28 @@ services:
     tags:
       - { name: monolog.logger, channel: mass }
 
+  App\DataProvider\Entity\MobicoopMatcherProvider:
+    arguments:
+      $uri: "%env(string:MATCHER_URI)%"
+      $apiKey: "%env(string:MATCHER_API_KEY)%"
+    tags:
+      - { name: monolog.logger, channel: matcherV3 }
+
+  App\Carpool\Service\MobicoopMatcher\MobicoopMatcherMatchingBuilder:
+    arguments:
+      $maxDetourDistancePercent: "%env(int:ALGORITHM_MAX_DETOUR_DISTANCE_PERCENT)%"
+      $maxDetourDurationPercent: "%env(int:ALGORITHM_MAX_DETOUR_DURATION_PERCENT)%"
+    tags:
+      - { name: monolog.logger, channel: matcherV3 }
+
   # Payment
+  App\Payment\Command\UnpaidReminderCommand:
+    tags:
+      - {
+          name: "console.command",
+          command: "app:payment:unpaid-reminder"
+        }
+
   App\Payment\Controller\:
     resource: "../src/Payment/Controller"
     tags: ["controller.service_arguments"]
@@ -969,6 +1005,10 @@ services:
       $emailRecipients: "%env(json:BANK_TRANSFER_REPORT_EMAIL)%"
     tags:
       - { name: monolog.logger, channel: bank_transfer }
+
+  App\Payment\Service\UnpaidReminderManager:
+    arguments:
+      $reminderDelays: "%env(json:PAYMENT_UNPAID_REMINDER_DELAYS)%"
 
   # Price
   App\Price\Controller\:
@@ -1193,3 +1233,15 @@ services:
   App\Validator\Phone\PhoneValidator:
     arguments:
       $phoneValidationRegions: "%env(json:USER_PHONE_VALIDATION_REGIONS)%"
+
+  # Reminder
+  App\UserRelaunch\Command\RelaunchCommand:
+    tags:
+      - {
+          name: "console.command",
+          command: "app:relaunch:users",
+        }
+
+  App\UserRelaunch\Service\RelaunchManager:
+    arguments:
+      $notifications: "%env(json:file:resolve:SCHEDULES_REMINDERS)%"

@@ -244,7 +244,6 @@ class ExternalJourneyManager
                 ($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'],
                 $result->getFrequency()
             ));
-            $result->setRoundedPrice(round(($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'], 2));
             $result->setSeats(isset($currentJourney['driver']['seats']) ? $currentJourney['driver']['seats'] : 0);
 
             // return trip ?

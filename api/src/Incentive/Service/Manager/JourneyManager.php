@@ -51,12 +51,17 @@ class JourneyManager extends MobConnectManager
 
         $log = 204 === $response->getCode()
             ? 'The subscription '.$subscription->getId().' has been patch successfully with the proposal '.$proposal->getId()
-            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$proposal->getId()
-        ;
+            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$proposal->getId();
 
         $this->_loggerService->log($log);
 
         $subscription->setCommitmentProofDate(new \DateTime());
+
+        $response = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+        if (!is_null($response->getCommitmentProofTimestampToken())) {
+            $subscription->setCommitmentProofTimestampToken($response->getCommitmentProofTimestampToken());
+            $subscription->setCommitmentProofTimestampSigningTime($response->getCommitmentProofTimestampSigningTime());
+        }
 
         $this->_em->flush();
     }
@@ -79,67 +84,16 @@ class JourneyManager extends MobConnectManager
 
         $log = 204 === $response->getCode()
             ? 'The subscription '.$subscription->getId().' has been patch successfully with the carpoolProof '.$carpoolProof->getId()
-            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$carpoolProof->getId()
-        ;
+            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$carpoolProof->getId();
 
         $this->_loggerService->log($log);
 
         $subscription->setCommitmentProofDate(new \DateTime());
 
-        $this->_em->flush();
-    }
-
-    /**
-     * Step 17 - Direct payment is confirmed for a long distance journey.
-     */
-    public function directPaymentConfirmed(CarpoolItem $carpoolItem)
-    {
-        $this->setDriver($carpoolItem->getCreditorUser());
-
-        $subscription = $this->_driver->getLongDistanceSubscription();
-
-        if (is_null($subscription)) {
-            return;
-        }
-
-        $longDistanceJourneysNumber = count($subscription->getLongDistanceJourneys()->toArray());
-
-        if (self::LONG_DISTANCE_TRIP_THRESHOLD <= $longDistanceJourneysNumber) {
-            return;
-        }
-
-        // Array of carpoolProof where driver is the carpoolItem driver
-        $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) {
-            return $carpoolProof->getDriver() === $this->_driver;
-        });
-
-        foreach ($filteredCarpoolProofs as $carpoolProof) {
-            if (!$this->_journeyValidation->isCarpoolProofValidLongDistanceJourney($carpoolProof)) {
-                continue;
-            }
-
-            $journey = new LongDistanceJourney();
-
-            if (!isset($carpoolPayment) || is_null($carpoolPayment)) {
-                $carpoolPayment = $this->_getCarpoolPaymentFromCarpoolItem($carpoolItem, $carpoolProof);
-            }
-
-            if (0 === $longDistanceJourneysNumber) {
-                $params = [
-                    'Date de partage des frais' => $carpoolPayment->getUpdatedDate(),
-                    "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(),
-                ];
-
-                $response = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
-                $journey->setHttpRequestStatus($response->getCode());
-            }
-
-            $journey->updateJourney($carpoolProof, $carpoolPayment, $this->getCarpoolersNumber($carpoolProof->getAsk()));
-            $subscription->addLongDistanceJourney($journey);
-        }
-
-        if (self::LONG_DISTANCE_TRIP_THRESHOLD === $longDistanceJourneysNumber) {
-            $subscription->setBonusStatus(self::BONUS_STATUS_PENDING);
+        $response = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+        if (!is_null($response->getCommitmentProofTimestampToken())) {
+            $subscription->setCommitmentProofTimestampToken($response->getCommitmentProofTimestampToken());
+            $subscription->setCommitmentProofTimestampSigningTime($response->getCommitmentProofTimestampSigningTime());
         }
 
         $this->_em->flush();
@@ -184,6 +138,12 @@ class JourneyManager extends MobConnectManager
 
                 $response = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
                 $journey->setHttpRequestStatus($response->getCode());
+
+                $response = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+                if (!is_null($response->getHonorCertificateProofTimestampToken())) {
+                    $subscription->setHonorCertificateProofTimestampToken($response->getHonorCertificateProofTimestampToken());
+                    $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
+                }
             }
 
             $journey->updateJourney($carpoolProof, $carpoolPayment, $this->getCarpoolersNumber($carpoolProof->getAsk()));
@@ -237,6 +197,12 @@ class JourneyManager extends MobConnectManager
 
             $response = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
             $journey->setHttpRequestStatus($response->getCode());
+
+            $response = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+            if (!is_null($response->getHonorCertificateProofTimestampToken())) {
+                $subscription->setHonorCertificateProofTimestampToken($response->getHonorCertificateProofTimestampToken());
+                $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
+            }
         }
 
         $journey->updateJourney($carpoolProof, $this->getRPCOperatorId($carpoolProof->getId()), $this->getCarpoolersNumber($carpoolProof->getAsk()));
@@ -275,8 +241,7 @@ class JourneyManager extends MobConnectManager
             return
                 $item->getCreditorUser()->getId() === $carpoolProof->getDriver()->getId()
                 && $item->getDebtorUser()->getId() === $carpoolProof->getPassenger()->getId()
-                && $item->getItemDate()->format('Y-m-d') === $carpoolProof->getStartDriverDate()->format('Y-m-d')
-            ;
+                && $item->getItemDate()->format('Y-m-d') === $carpoolProof->getStartDriverDate()->format('Y-m-d');
         });
 
         if (
@@ -309,8 +274,7 @@ class JourneyManager extends MobConnectManager
 
             return
                 !is_null($driver)
-                && !is_null($driver->getMobConnectAuth())
-            ;
+                && !is_null($driver->getMobConnectAuth());
         });
 
         $carpoolProofs = [];

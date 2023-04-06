@@ -80,6 +80,11 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/mass.log"
       channels: [mass]
+    matcherV3:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/matcherV3.log"
+      channels: [matcherV3]
     notification:
       type: stream
       level: debug
@@ -118,6 +123,7 @@ monolog:
           "!incentive_subscription",
           "!maintenance",
           "!mass",
+          "!matcherV3",
           "!notification",
           "!solidary",
           "!user_auto_delete",
@@ -145,6 +151,7 @@ monolog:
           "!georouter",
           "!maintenance",
           "!mass",
+          "!matcherV3",
           "!notification",
           "!solidary",
         ]

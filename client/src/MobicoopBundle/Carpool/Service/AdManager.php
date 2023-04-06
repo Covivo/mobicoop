@@ -455,7 +455,7 @@ class AdManager
             }
         } elseif (isset($data['outwardDate'])) {
             $ad->setOutwardDate($data['outwardDate']);
-            $ad->setOutwardTime(isset($data['outwardTime']) ? $data['outwardTime'] : null);
+            $ad->setOutwardTime(isset($data['outwardTime']) ? $data['outwardTime']->format('H:i') : null);
             if (isset($data['returnDate'], $data['returnTime'])) {
                 $ad->setOneWay(false);
                 $ad->setReturnDate($data['returnDate']);

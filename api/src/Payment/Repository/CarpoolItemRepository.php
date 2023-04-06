@@ -25,12 +25,18 @@ namespace App\Payment\Repository;
 
 use App\Carpool\Entity\Ask;
 use App\Payment\Entity\CarpoolItem;
+use App\Payment\Event\PayAfterCarpoolRegularEvent;
 use App\Payment\Ressource\PaymentItem;
 use App\User\Entity\User;
+use App\UserRelaunch\Entity\ScheduleDay;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 class CarpoolItemRepository
 {
+    /**
+     * @var EntityRepository
+     */
     private $repository;
 
     public function __construct(EntityManagerInterface $entityManager)
@@ -205,5 +211,93 @@ class CarpoolItemRepository
         ;
 
         return $query->getQuery()->getResult();
+    }
+
+    public function findUnpaidForDelay(int $delay)
+    {
+        $date = new \DateTime('now');
+        $date = $date->sub(new \DateInterval("P{$delay}D"));
+
+        $startDate = $date->format('Y-m-d').' 00:00:00';
+        $endDate = $date->format('Y-m-d').' 23:59:59';
+
+        $qb = $this->repository->createQueryBuilder('c');
+
+        $qb
+            ->where('c.unpaidDate IS NOT NULL')
+            ->andWhere('c.unpaidDate BETWEEN :startDate AND :endDate')
+            ->andWhere('c.creditorStatus NOT IN (:creditorStatus)')
+            ->setParameters([
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'creditorStatus' => CarpoolItem::CREDITOR_STATUS_DIRECT.','.CarpoolItem::CREDITOR_STATUS_ONLINE,
+            ])
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findUnpaydForRelaunch(int $frequency, $date)
+    {
+        $qb = $this->repository->createQueryBuilder('ci');
+
+        $parameters = [
+            'creditorStatus' => CarpoolItem::CREDITOR_STATUS_DIRECT.','.CarpoolItem::CREDITOR_STATUS_ONLINE,
+            'frequency' => $frequency,
+            'pseudonymizedStatus' => User::STATUS_PSEUDONYMIZED,
+        ];
+
+        $qb
+            ->innerJoin('ci.debtorUser', 'debU', 'WITH', 'debU.status != :pseudonymizedStatus')
+            ->innerJoin('ci.creditorUser', 'creU', 'WITH', 'creU.status != :pseudonymizedStatus')
+            ->innerJoin('ci.ask', 'a')
+            ->innerJoin('a.criteria', 'c')
+            ->where('ci.unpaidDate IS NULL')
+            ->andWhere('ci.creditorStatus NOT IN (:creditorStatus)')
+            ->andWhere('c.frequency = :frequency')
+        ;
+
+        switch (true) {
+            case $date instanceof string:
+                $qb->andWhere("DATE_FORMAT(ci.createdDate, '%a') = :day");
+                $parameters['day'] = ucfirst($date);
+
+                if ($date === substr(ucfirst(ScheduleDay::WEDNESDAY), 0, 3)) {
+                    $qb
+                        ->innerJoin('debU.notifieds', 'n', 'WITH', "DATE_FORMAT(n.sendDate, '%a' != :tueDay")
+                        ->innerJoin('n.notification', 'n2')
+                        ->innerJoin('n2.action', 'a2', 'WITH', 'a2.name != :actionName')
+                    ;
+                    $parameters['tueDay'] = substr(ucfirst(ScheduleDay::TUESDAY), 0, 3);
+                    $parameters['actionName'] = PayAfterCarpoolRegularEvent::NAME;
+                }
+
+                break;
+
+            case $date instanceof \DateTime:
+                $qb->andWhere('ci.createdDate LIKE :date');
+                $parameters['date'] = $date->format('Y-m-d').'%';
+
+                if ($date->format('D') === substr(ucfirst(ScheduleDay::WEDNESDAY), 0, 3)) {
+                    $tueDate = clone $date;
+
+                    $qb
+                        ->innerJoin('debU.notifieds', 'n', 'WITH', 'n.sendDate != :tueDate')
+                        ->innerJoin('n.notification', 'n2')
+                        ->innerJoin('n2.action', 'a2', 'WITH', 'a2.name != :actionName')
+                    ;
+                    $parameters['tueDate'] = $tueDate->sub(new \DateInterval('P1D'));
+                    $parameters['actionName'] = PayAfterCarpoolRegularEvent::NAME;
+                }
+
+                break;
+        }
+
+        $qb
+            ->distinct()
+            ->setParameters($parameters)
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }
