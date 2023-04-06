@@ -217,6 +217,7 @@ services:
         defaultSeatsPassenger: "%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%"
         carpoolProofDistance: "%env(int:CARPOOL_PROOF_DISTANCE)%"
         paymentActive: "%env(string:PAYMENT_ACTIVE)%"
+        matcherCustomization: "%env(bool:MATCHER_CUSTOMIZATION)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 
@@ -266,6 +267,7 @@ services:
         defaultAnyRouteAsPassenger: "%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%"
         defaultPriceKm: "%env(float:CARPOOL_PRICE)%"
         batchTemp: "%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%"
+        matcherCustomization: "%env(resolve:MATCHER_CUSTOMIZATION)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 
@@ -316,10 +318,10 @@ services:
       $provider: "%env(string:CARPOOL_STANDARD_PROVIDER)%"
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
       $baseUri: "%env(string:CARPOOL_STANDARD_BASE_URI)%"
-  App\Communication\EventSubscriber\BookingSubscriber:    
+  App\Communication\EventSubscriber\BookingSubscriber:
     arguments:
       $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"
-  App\CarpoolStandard\Service\CarpoolStandardManager:    
+  App\CarpoolStandard\Service\CarpoolStandardManager:
     arguments:
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
       
@@ -781,7 +783,7 @@ services:
       $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
-  
+
   App\Incentive\Service\Manager\AuthManager:
     arguments:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
@@ -933,6 +935,20 @@ services:
         roundTripCompute: "%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%"
     tags:
       - { name: monolog.logger, channel: mass }
+
+  App\DataProvider\Entity\MobicoopMatcherProvider:
+    arguments:
+      $uri: "%env(string:MATCHER_URI)%"
+      $apiKey: "%env(string:MATCHER_API_KEY)%"
+    tags:
+      - { name: monolog.logger, channel: matcherV3 }
+
+  App\Carpool\Service\MobicoopMatcher\MobicoopMatcherMatchingBuilder:
+    arguments:
+      $maxDetourDistancePercent: "%env(int:ALGORITHM_MAX_DETOUR_DISTANCE_PERCENT)%"
+      $maxDetourDurationPercent: "%env(int:ALGORITHM_MAX_DETOUR_DURATION_PERCENT)%"
+    tags:
+      - { name: monolog.logger, channel: matcherV3 }
 
   # Payment
   App\Payment\Command\UnpaidReminderCommand:

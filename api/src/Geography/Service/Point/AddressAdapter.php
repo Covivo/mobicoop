@@ -63,6 +63,7 @@ class AddressAdapter
         $address->setPostalCode($point->getPostalCode());
         $address->setRegion($point->getRegion());
         $address->setStreet($point->getStreetName());
+        $address->setProvidedBy($point->getProvider());
 
         return $address;
     }
