@@ -1,3 +1,6 @@
+relaunches:
+  resource: "UserRelaunch/Controller/"
+  type: annotation
 eec:
-    resource: 'Incentive/Controller/'
-    type: annotation
+  resource: "Incentive/Controller/"
+  type: annotation

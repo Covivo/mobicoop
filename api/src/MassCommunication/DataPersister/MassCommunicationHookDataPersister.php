@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2021, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -18,24 +18,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
-
-namespace App\MassCommunication\DataProvider;
-
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use App\MassCommunication\Admin\Service\CampaignManager;
-use App\MassCommunication\Entity\Campaign;
-
-/**
- * Data provider for Campaign unsubscribe hook
- * Used to manage unsubscribe webhook sent by campaign providers
- *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 
-final class UnsubscribeHookCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+namespace App\MassCommunication\DataPersister;
+
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\MassCommunication\Admin\Service\CampaignManager;
+use App\MassCommunication\Ressource\MassCommunicationHook;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+final class MassCommunicationHookDataPersister implements ContextAwareDataPersisterInterface
 {
     private $request;
     private $campaignManager;
@@ -46,13 +38,17 @@ final class UnsubscribeHookCollectionDataProvider implements CollectionDataProvi
         $this->campaignManager = $campaignManager;
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports($data, array $context = []): bool
     {
-        return Campaign::class === $resourceClass && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'unsubscribeHook';
+        return ($data instanceof MassCommunicationHook) && isset($context['collection_operation_name']) && 'unsubscribeHook' == $context['collection_operation_name'];
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function persist($data, array $context = [])
     {
-        return $this->campaignManager->handleUnsubscribeHook($this->request);
+        return $this->campaignManager->handleUnsubscribeHook($data, $this->request);
+    }
+
+    public function remove($data, array $context = [])
+    {
     }
 }

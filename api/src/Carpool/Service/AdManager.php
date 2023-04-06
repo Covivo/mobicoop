@@ -75,6 +75,8 @@ use Symfony\Component\Security\Core\Security;
  */
 class AdManager
 {
+    public const AUTHORIZED_MATCHING_ALGORITHMS = [Ad::MATCHING_ALGORITHM_V2, Ad::MATCHING_ALGORITHM_V3];
+
     private $entityManager;
     private $proposalManager;
     private $userManager;
@@ -104,6 +106,8 @@ class AdManager
      * @var JourneyValidation
      */
     private $_journeyValidation;
+
+    private $_matcherCustomization;
 
     /**
      * Constructor.
@@ -162,6 +166,7 @@ class AdManager
             $this->params['paymentActive'] = true;
         }
         $this->_journeyValidation = $journeyValidation;
+        $this->_matcherCustomization = $params['matcherCustomization'];
     }
 
     /**
@@ -169,21 +174,26 @@ class AdManager
      * This method creates a proposal, and its linked proposal for a return trip.
      * It returns the ad created, with its outward and return results.
      *
-     * @param Ad   $ad              The ad to create
-     * @param bool $doPrepare       When we prepare the Proposal
-     * @param bool $withSolidaries  Return also the matching solidary asks
-     * @param bool $forceNotUseTime For to set useTime at false
+     * @param Ad     $ad                The ad to create
+     * @param bool   $doPrepare         When we prepare the Proposal
+     * @param bool   $withSolidaries    Return also the matching solidary asks
+     * @param bool   $forceNotUseTime   For to set useTime at false
+     * @param string $matchingAlgorithm Version of the matching algorithm
      *
      * @return Ad
      *
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
+    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
         /** Anti-Fraud check */
         $antiFraudResponse = $this->antiFraudManager->validAd($ad);
         if (!$antiFraudResponse->isValid()) {
             throw new AntiFraudException($antiFraudResponse->getMessage());
+        }
+
+        if (!$this->_matcherCustomization || !in_array($matchingAlgorithm, self::AUTHORIZED_MATCHING_ALGORITHMS)) {
+            $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT;
         }
 
         // $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
@@ -369,6 +379,15 @@ class AdManager
         // if the date is not set we use the current date
         $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
         if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
+            if (
+                is_null($ad->getSchedule())
+                || (is_array($ad->getSchedule()) && 0 == count($ad->getSchedule()))
+            ) {
+                $outwardProposal->setUseTime(false);
+            } else {
+                ($forceNotUseTime) ? $outwardProposal->setUseTime(false) : $outwardProposal->setUseTime(true);
+            }
+
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? $ad->getOutwardLimitDate() : null);
             $outwardCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, 'outwardTime', $marginDuration);
@@ -436,7 +455,7 @@ class AdManager
 
         $outwardProposal->setCriteria($outwardCriteria);
         if ($doPrepare) {
-            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
+            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, $matchingAlgorithm);
         }
 
         // $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -490,6 +509,15 @@ class AdManager
             // if no return date is specified, we use the outward date to be sure the return date is not before the outward date
             $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : $outwardCriteria->getFromDate());
             if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
+                if (
+                    is_null($ad->getSchedule())
+                    || (is_array($ad->getSchedule()) && 0 == count($ad->getSchedule()))
+                ) {
+                    $returnProposal->setUseTime(false);
+                } else {
+                    ($forceNotUseTime) ? $returnProposal->setUseTime(false) : $returnProposal->setUseTime(true);
+                }
+
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? $ad->getReturnLimitDate() : null);
                 $returnCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $returnCriteria, 'returnTime', $marginDuration);
@@ -562,7 +590,7 @@ class AdManager
 
             $returnProposal->setCriteria($returnCriteria);
             if ($doPrepare) {
-                $returnProposal = $this->proposalManager->prepareProposal($returnProposal);
+                $returnProposal = $this->proposalManager->prepareProposal($returnProposal, $matchingAlgorithm);
             }
             $this->entityManager->persist($returnProposal);
         }
@@ -738,7 +766,7 @@ class AdManager
             }
         }
         if (isset($point['home'])) {
-            $address->setHome($point['home']);
+            $address->setHome(is_null($point['home']) ? false : true);
         }
 
         return $address;
@@ -1305,7 +1333,11 @@ class AdManager
             $this->entityManager->persist($proposal);
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
-            $ad = $this->createAd($ad, true, $withSolidaries);
+            if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
+                $ad->setOutwardLimitDate((new \DateTime())->modify('+ 1 year'));
+                $ad->setReturnLimitDate((new \DateTime())->modify('+ 1 year'));
+            }
+            $ad = $this->createAd($ad, true, $withSolidaries, true, false, Ad::MATCHING_ALGORITHM_V3);
             $this->proposalManager->deleteProposal($proposal);
         // minor update
         } elseif (
@@ -1763,7 +1795,7 @@ class AdManager
             $ad->setMarginDuration($this->params['defaultMarginDuration']);
         }
 
-        return $this->createAd($ad, true, true, true, true);
+        return $this->createAd($ad, true, true, true, true, Ad::MATCHING_ALGORITHM_V3);
     }
 
     /**

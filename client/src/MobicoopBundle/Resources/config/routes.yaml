@@ -1972,3 +1972,17 @@ assistives.sso-activation:
     en: /aides-a-la-mobilite/sso-activation
     nl: /aides-a-la-mobilite/sso-activation
   controller: Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\AssistiveController::ssoActivation
+
+###############
+# carpool standard routes #
+###############
+
+
+# external booking from results (POST) (AJAX json)
+post_external_booking:
+  methods: [POST]
+  path:
+    fr: /booking/demande
+    en: /booking/request
+    nl: /booking/request
+  controller: Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\BookingController::postBooking

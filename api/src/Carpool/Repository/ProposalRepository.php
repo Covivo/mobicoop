@@ -898,6 +898,12 @@ class ProposalRepository
         // exit;
         // var_dump(count($query->getQuery()->getParameters()));exit;
 
+        // We filter pseudonymized users
+        $query
+            ->andWhere('u.status != :pseudonymizedStatus')
+            ->setParameter('pseudonymizedStatus', User::STATUS_PSEUDONYMIZED)
+        ;
+
         // we launch the request and return the result
         return $query->getQuery()->getResult();
     }

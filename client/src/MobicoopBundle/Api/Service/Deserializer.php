@@ -31,6 +31,10 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\MyAd;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity\Booking;
+use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity\Message as CsMessage;
+use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity\Price as CsPrice;
+use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity\User as CsUser;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\ContactType;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
@@ -361,6 +365,18 @@ class Deserializer
 
             case CeeSubscription::class:
                 return $this->deserializeCeeSubscripton($data);
+
+            case CsUser::class:
+                return $this->deserializeCsUser($data);
+
+            case CsMessage::class:
+                return $this->deserializeCsMessage($data);
+
+            case CsPrice::class:
+                return $this->deserializeCsPrice($data);
+
+            case Booking::class:
+                return $this->deserializeBooking($data);
 
             case EecEligibility::class:
                 return $this->deserializeEecEligibility($data);
@@ -1206,6 +1222,49 @@ class Deserializer
         $ceeSubscription = new CeeSubscription();
 
         return $this->autoset($ceeSubscription, $data);
+    }
+
+    private function deserializeCsUser(array $data): ?CsUser
+    {
+        $csUser = new CsUser();
+
+        return $this->autoSet($csUser, $data);
+    }
+
+    private function deserializeCsMessage(array $data): ?CsMessage
+    {
+        $csMessage = new CsMessage();
+        if (isset($data['from'])) {
+            $csMessage->setFrom($this->deserializeCsUser($data['driver']));
+        }
+        if (isset($data['to'])) {
+            $csMessage->setTo($this->deserializeCsUser($data['passenger']));
+        }
+
+        return $this->autoSet($csMessage, $data);
+    }
+
+    private function deserializeCsPrice(array $data): ?CsPrice
+    {
+        $csPrice = new CsPrice();
+
+        return $this->autoSet($csPrice, $data);
+    }
+
+    private function deserializeBooking(array $data): ?booking
+    {
+        $booking = new Booking();
+        if (isset($data['driver'])) {
+            $booking->setDriver($this->deserializeCsUser($data['driver']));
+        }
+        if (isset($data['passenger'])) {
+            $booking->setPassenger($this->deserializeCsUser($data['passenger']));
+        }
+        if (isset($data['price'])) {
+            $booking->setPrice($this->deserializeCsPrice($data['price']));
+        }
+
+        return $this->autoSet($booking, $data);
     }
 
     private function deserializeEecEligibility($data)

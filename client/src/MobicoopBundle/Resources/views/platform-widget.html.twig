@@ -11,5 +11,6 @@
         token="{{token.getToken}}"
         {{ searchRegular ? 'regular' : '' }}
         {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
+        :date-time-picker="{{ dateTimePicker ? 'true' : 'false'}}"
     ></platform-widget>
 {% endblock %}

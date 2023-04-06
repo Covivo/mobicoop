@@ -117,7 +117,7 @@
 								<td style="border: 1px solid black;padding: 10px;">{{ "passenger"|trans }}</td>
 							{% endif %}
 							{# carpooler name #}
-							{% if (carpoolExport.carpooler) %}
+							{% if (carpoolExport.carpooler.status != 4) %}
 								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.carpooler.givenName }} {{ carpoolExport.carpooler.shortFamilyName }}</td>
 							{% else %}
 								<td style="border: 1px solid black;padding: 10px;">{{ "deleted"|trans }}</td>

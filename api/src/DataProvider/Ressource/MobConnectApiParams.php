@@ -27,13 +27,25 @@ class MobConnectApiParams
     /**
      * @var string
      */
+    private $appClientId;
+
+    /**
+     * @var string
+     */
+    private $appClientSecret;
+
+    /**
+     * @var string
+     */
     private $longDistanceSubscriptionId;
 
     public function __construct(array $params)
     {
         $this->apiUri = $params['api_uri'];
         $this->clientId = $params['credentials']['client_id'];
-        $this->apiKey = $params['credentials']['api_key'];
+        $this->apikey = $params['credentials']['api_key'];
+        $this->appClientId = $params['credentials']['app_client_id'];
+        $this->appClientSecret = $params['credentials']['app_client_secret'];
 
         $this->shortDistanceSubscriptionId = $params['subscription_ids']['short_distance'];
         $this->longDistanceSubscriptionId = $params['subscription_ids']['long_distance'];
@@ -77,5 +89,21 @@ class MobConnectApiParams
     public function getLongDistanceSubscriptionId(): string
     {
         return $this->longDistanceSubscriptionId;
+    }
+
+    /**
+     * Get the value of appClientId.
+     */
+    public function getAppClientId(): ?string
+    {
+        return $this->appClientId;
+    }
+
+    /**
+     * Get the value of appClientSecret.
+     */
+    public function getAppClientSecret(): ?string
+    {
+        return $this->appClientSecret;
     }
 }
