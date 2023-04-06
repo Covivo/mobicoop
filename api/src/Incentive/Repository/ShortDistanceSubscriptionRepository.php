@@ -44,8 +44,9 @@ class ShortDistanceSubscriptionRepository
         $qb = $this->_repository->createQueryBuilder('s');
 
         $qb
-            ->innerJoin('s.shortDistanceJourneys', 'j', 'WITH', 'j.createdAt <= :deadline')
-            ->where('s.commitmentProofDate IS NOT NULL')
+            ->where('s.status IS NULL')
+            ->andWhere('s.commitmentProofDate IS NOT NULL')
+            ->andWhere('s.commitmentProofDate <= :deadline')
             ->andWhere('s.verificationDate IS NULL')
             ->setParameters([
                 'deadline' => $deadline,

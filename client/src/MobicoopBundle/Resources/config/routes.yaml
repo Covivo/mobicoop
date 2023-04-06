@@ -1575,6 +1575,14 @@ MoreAboutAlt2:
     nl: /more_about_2
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAboutAlt2
 
+# display alternative moreAbout page
+MoreAboutAlt3:
+  path:
+    fr: /en_savoir_plus_3
+    en: /more_about_3
+    nl: /more_about_3
+  controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAboutAlt3
+
 # display defi
 defi:
   path:
