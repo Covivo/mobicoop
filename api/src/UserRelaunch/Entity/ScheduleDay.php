@@ -4,14 +4,22 @@ namespace App\UserRelaunch\Entity;
 
 class ScheduleDay
 {
+    public const MONDAY = 'monday';
+    public const TUESDAY = 'tuesday';
+    public const WEDNESDAY = 'wednesday';
+    public const THURSDAY = 'thursday';
+    public const FRIDAY = 'friday';
+    public const SATURDAY = 'saturday';
+    public const SUNDAY = 'sunday';
+
     private const DAY_CORRESPONDENCES = [
-        'mon' => 'monday',
-        'tue' => 'tuesday',
-        'wed' => 'wednesday',
-        'thu' => 'thursday',
-        'fri' => 'friday',
-        'sat' => 'saturday',
-        'sun' => 'sunday',
+        'mon' => self::MONDAY,
+        'tue' => self::TUESDAY,
+        'wed' => self::WEDNESDAY,
+        'thu' => self::THURSDAY,
+        'fri' => self::FRIDAY,
+        'sat' => self::SATURDAY,
+        'sun' => self::SUNDAY,
     ];
 
     /**

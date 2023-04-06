@@ -5,6 +5,7 @@ namespace App\UserRelaunch\Service;
 use App\Carpool\Entity\Criteria;
 use App\Communication\Service\NotificationManager;
 use App\Payment\Entity\CarpoolItem;
+use App\Payment\Event\PayAfterCarpoolRegularEvent;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use App\UserRelaunch\Entity\Notification;
@@ -52,7 +53,7 @@ class RelaunchManager
     private function _whatIsToDo(): void
     {
         switch ($this->_currentNotification->getName()) {
-            case 'pay_after_carpool_regular':
+            case PayAfterCarpoolRegularEvent::NAME:
                 if ($this->_currentNotification->canNotify()) {
                     $objects = $this->_carpoolItemRepository->findUnpaydForRelaunch(Criteria::FREQUENCY_REGULAR, $this->_currentNotification->getReminderDate());
                 }
