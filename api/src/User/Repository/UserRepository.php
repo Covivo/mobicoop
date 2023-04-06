@@ -118,22 +118,33 @@ class UserRepository
     public function findUsersBySolidaryUserType(string $type = null, array $filters = null, Structure $structureAdmin = null): ?array
     {
         $this->logger->info('Start findUsersBySolidaryUserType');
+
+        $parameters = [
+            'pseudonymizedStatus' => User::STATUS_PSEUDONYMIZED,
+        ];
+
         $query = $this->repository->createQueryBuilder('u')
             ->join('u.solidaryUser', 'su')
+            ->where('u.status != pseudonymizedStatus')
         ;
-
-        // filter by structure
-        if (!is_null($structureAdmin)) {
-            $query->join('su.solidaryUserStructures', 'sus');
-        }
 
         // Type
         if (SolidaryBeneficiary::TYPE == $type) {
-            $query->where('su.beneficiary = true');
+            $query->andWhere('su.beneficiary = true');
         } elseif (SolidaryVolunteer::TYPE == $type) {
-            $query->where('su.volunteer = true');
+            $query->andWhere('su.volunteer = true');
         } else {
             throw new SolidaryException(SolidaryException::TYPE_SOLIDARY_USER_UNKNOWN);
+        }
+
+        // filter by structure
+        if (!is_null($structureAdmin)) {
+            $query
+                ->join('su.solidaryUserStructures', 'sus')
+                ->andWhere('sus.structure = :structure')
+            ;
+
+            $parameters['structure'] = $structureAdmin;
         }
 
         // Filters
@@ -143,11 +154,7 @@ class UserRepository
             }
         }
 
-        // Structure filter
-        if (!is_null($structureAdmin)) {
-            $query->andWhere('sus.structure = :structure');
-            $query->setParameter('structure', $structureAdmin);
-        }
+        $query->setParameters($parameters);
 
         // var_dump($structureAdmin->getId());die;
         return $query->getQuery()->getResult();
