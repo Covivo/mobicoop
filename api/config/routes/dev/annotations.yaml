@@ -1,0 +1,3 @@
+relaunches:
+    resource: 'UserRelaunch/Controller/'
+    type: annotation
