@@ -20,7 +20,7 @@
             <v-avatar v-if="community.image">
               <v-img
                 :src="community.image"
-                alt="avatar"
+                :alt="community.name"
                 contain
               />
             </v-avatar>
@@ -28,7 +28,7 @@
               <v-img
                 class="grey lighten-2"
                 src="/images/avatarsDefault/avatar.svg"
-                alt="avatar"
+                :alt="$t('community')"
                 contain
               />
             </v-avatar>
