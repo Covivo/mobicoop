@@ -17,17 +17,21 @@
             :href="$t('uri',{communityId:community.id})"
             alt=""
           >
-            <v-img
-              v-if="community.image"
-              :src="community.image"
-              alt="avatar"
-            />
-            <v-img
-              v-else
-              class="grey lighten-2"
-              src="/images/avatarsDefault/avatar.svg"
-              alt="avatar"
-            />
+            <v-avatar v-if="community.image">
+              <v-img
+                :src="community.image"
+                alt="avatar"
+                contain
+              />
+            </v-avatar>
+            <v-avatar v-else>
+              <v-img
+                class="grey lighten-2"
+                src="/images/avatarsDefault/avatar.svg"
+                alt="avatar"
+                contain
+              />
+            </v-avatar>
           </a>
         </v-list-item-avatar>
       </template>
