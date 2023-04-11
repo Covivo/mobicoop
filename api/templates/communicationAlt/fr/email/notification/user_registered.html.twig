@@ -1,84 +1,105 @@
 {# CAREFUL : Some client might need to replicate this template #}
 {% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
 {% block body %}
-<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
-    <tr style="margin-bottom:21px; margin-top:19px;">
-        <td align="center">
-            <table cellpadding="6" cellspacing="6" summary="" border="0">
-                <tr>
-                    <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Votre inscription est validée !</b></p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td align="center">
-            <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
-                <tr>
-                    <td style="width:22px">
-                        <p> </p>
-                    </td>
-                    <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p style="font-size:11px;">Votre inscription au service <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" > {{api_env('EMAILS_PLATFORM_NAME')}}</b>  est bien prise en compte.</p>
-                        {% if context.user.backLink and context.user.backLink is not null %}
-                            <p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ context.user.backLink }}{{ context.user.emailToken }}" title="">{{ context.user.backLink }}{{ context.user.emailToken }}</a></p>
-                            <p style="font-size:11px;">Ou utilisez le code de validation directement sur le site : <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" >{{ context.user.emailToken }}</b></p>
-                        {% elseif context.user.mobileRegistration is not null %}
-                            <p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}/#/confirm-registration/{{ context.user.email }}?token={{ context.user.emailToken }}" title="">{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}/#/confirm-registration/{{ context.user.email }}?token={{ context.user.emailToken }}</a></p>
-                            <p style="font-size:11px;">Ou utilisez le code de validation directement sur le site : <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" >{{ context.user.emailToken }}</b></p>
-                        {% else %}
-                            <p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
-                            <p style="font-size:11px;">Ou utilisez le code de validation directement sur le site : <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" >{{ context.user.emailToken }}</b></p>
-                        {% endif %}
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-     <tr>
-        <td style="height:15px">
-            <p> </p>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <table cellpadding="2" cellspacing="2" summary="" border="0">
-                <tr>
-                    <td style="width:23px">
-                        <p> </p>
-                    </td>
-                    <td align="center" style="width:100%;">
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Rezo Mobicoop</b></p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <table cellpadding="2" cellspacing="2" summary="" border="0">
-        <tr style="text-align:left">
-            <td>
-                {% if context.signature != null %}
-                    {% if context.signature.text != null %}
-                        <p style="font-size:11px;">{{ context.signature.text }}</p>
-                    {% endif %}
-                    {% if context.signature.logo != null %}
-                        <img src="{{ context.signature.logo }}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
-                    {% endif %}
-                {% endif %}
-            </td>
-        </tr>
-     </table>
-        </td>
-    </tr>
-    <tr>
-        <td style="height:15px">
-            <p> </p>
-        </td>
-    </tr>
-</table>
+	<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+		<tr style="margin-bottom:21px; margin-top:19px;">
+			<td align="center">
+				<table cellpadding="6" cellspacing="6" summary="" border="0">
+					<tr>
+						<td align="center">
+							<p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center">
+								<b>Votre inscription est validée !</b>
+							</p>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0">
+					<tr>
+						<td style="width:22px">
+							<p></p>
+						</td>
+						<td align="left">
+							<p style="font-size:11px; margin-bottom:16px;">Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
+									{{context.user.givenName|capitalize}}
+									{{context.user.shortFamilyName|capitalize}}</b>
+							</p>
+							<p style="font-size:11px;">Votre inscription au service
+								<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
+									{{api_env('EMAILS_PLATFORM_NAME')}}</b>
+								est bien prise en compte.</p>
+							{% if context.user.backLink and context.user.backLink is not null %}
+								<p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email :
+									<a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}; font-weight: bold;" href="{{ context.user.backLink }}{{ context.user.emailToken }}" title="">{{ context.user.backLink }}{{ context.user.emailToken }}</a>
+								</p>
+								<p style="font-size:11px;">Ou utilisez le code de validation directement sur le site :
+									<b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">{{ context.user.emailToken }}</b>
+								</p>
+							{% elseif context.user.mobileRegistration is not null %}
+								<p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email :
+									<a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}/#/confirm-registration/{{ context.user.email }}?token={{ context.user.emailToken }}" title="">{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}/#/confirm-registration/{{ context.user.email }}?token={{ context.user.emailToken }}</a>
+								</p>
+								<p style="font-size:11px;">Ou utilisez le code de validation directement sur le site :
+									<b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">{{ context.user.emailToken }}</b>
+								</p>
+							{% else %}
+								<p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email :
+									<a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
+								<p style="font-size:11px;">Ou utilisez le code de validation directement sur le site :
+									<b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">{{ context.user.emailToken }}</b>
+								</p>
+							{% endif %}
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td style="height:15px">
+				<p></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table cellpadding="2" cellspacing="2" summary="" border="0">
+					<tr>
+						<td style="width:23px">
+							<p></p>
+						</td>
+						<td align="center" style="width:100%;">
+							<p style="font-size:11px;">
+								<b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Rezo Mobicoop</b>
+							</p>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table cellpadding="2" cellspacing="2" summary="" border="0">
+					<tr style="text-align:left">
+						<td>
+							{% if context.signature != null %}
+								{% if context.signature.text != null %}
+									<p style="font-size:11px;">{{ context.signature.text }}</p>
+								{% endif %}
+								{% if context.signature.logo != null %}
+									<img src="{{ context.signature.logo }}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;"/>
+								{% endif %}
+							{% endif %}
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td style="height:15px">
+				<p></p>
+			</td>
+		</tr>
+	</table>
 {% endblock %}

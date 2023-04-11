@@ -28,11 +28,9 @@
                 <table style="width:100%;">
                     <tr>
                         <td style="width:70%">
-                            <p>Bonjour<b
-                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ recipient.givenName|capitalize }} {{ recipient.shortFamilyName|capitalize }}</b>
+                            <p>Bonjour<b style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ recipient.givenName|capitalize }} {{ recipient.shortFamilyName|capitalize }}</b>
                             </p>
-                            <p>Votre covoiturage avec<b
-                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> a été annulé car
+                            <p>Votre covoiturage avec<b style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> a été annulé car
                                 <b>{{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> a modifié son annonce.
                             </p>
                         </td>
@@ -84,7 +82,7 @@
         {% if context.object.searchLink %}
             <tr>
                 <td>
-                    <a href="{{ context.object.searchLink}}">
+                    <a href="{{ context.object.searchLink}}" style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;">
                         Vous pouvez cliquer sur ce lien afin de relancer votre recherche {{ outwardOrigin.address.displayLabel[0] }} => {{ outwardDestination.address.displayLabel[0] }}
                     </a>
                 </td>

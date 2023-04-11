@@ -22,7 +22,7 @@
                     </td>
                     <td align="left">
                         <p style="font-size:11px; margin-bottom:16px;">Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
+                        <p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
                     </td>
                 </tr>
             </table>

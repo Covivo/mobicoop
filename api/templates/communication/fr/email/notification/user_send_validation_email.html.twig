@@ -20,7 +20,7 @@
                 <tr>
                     <td style="width:70%">
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p>Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
+                        <p>Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
                     </td>
                 </tr>
             </table>
@@ -31,7 +31,7 @@
             <table  style="width:100%;">
                 <tr style="text-align:left">
                     <td>
-                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
                     </td>
                 </tr>
                 <hr>
