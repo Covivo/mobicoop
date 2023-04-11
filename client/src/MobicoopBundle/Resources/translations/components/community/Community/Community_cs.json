@@ -1,1 +1,6 @@
-{}
+{
+    "leaveCommunity": {
+        "button": "Opuštění komunity",
+        "route": "/communaute/{id}/quitter"
+    }
+}

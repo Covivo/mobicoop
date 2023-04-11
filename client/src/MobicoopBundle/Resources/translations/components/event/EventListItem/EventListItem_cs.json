@@ -1,1 +1,15 @@
-{}
+{
+    "routes": {
+        "event": "/covoiturages-evenements/{id}/{urlKey}"
+    },
+    "eventDetails": "Podrobnosti o události",
+    "join": "Připojte se k události",
+    "date": {
+        "from": "Z",
+        "to": "Na",
+        "at": "à",
+        "the": " "
+    },
+    "hourMinute": "HH[h]mm",
+    "shortCompleteDate": "DD/MM/RRRR"
+}
