@@ -238,6 +238,7 @@
 
 <script>
 import moment from "moment";
+import {merge} from "lodash";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/search/SearchJourney/";
