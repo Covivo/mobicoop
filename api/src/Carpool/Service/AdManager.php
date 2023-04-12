@@ -1331,6 +1331,7 @@ class AdManager
                 $proposal->getProposalLinked()->setPaused($ad->isPaused());
             }
             $this->entityManager->persist($proposal);
+            $this->entityManager->flush();
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
             if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
@@ -1388,6 +1389,7 @@ class AdManager
                 }
 
                 $this->entityManager->persist($linkedProposal);
+                $this->entityManager->flush();
             }
 
             if (count($proposalAsks) > 0) {
@@ -1395,10 +1397,9 @@ class AdManager
                 $this->eventDispatcher->dispatch(AdMinorUpdatedEvent::NAME, $event);
             }
             $this->entityManager->persist($proposal);
+            $this->entityManager->flush();
             $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
         }
-
-        $this->entityManager->flush();
 
         return $ad;
     }
@@ -1522,11 +1523,11 @@ class AdManager
             }
         }
 
-        if (!is_array($old) || !is_array($adSchedule) || count($old) !== count($adSchedule)) {
+        if (!is_array($old[0]) || !is_array($adSchedule) || count($old[0]) !== count($adSchedule)) {
             return false;
         }
 
-        $old = array_values($old);
+        $old = array_values($old[0]);
         $new = array_values($adSchedule);
 
         for ($i = 0; $i < count($old); ++$i) {
