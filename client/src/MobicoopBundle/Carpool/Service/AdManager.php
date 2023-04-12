@@ -154,8 +154,8 @@ class AdManager
     public function getResultsForSearch(
         array $origin,
         array $destination,
-        ?\Datetime $date,
-        ?\Datetime $time,
+        ?\DateTime $date,
+        ?\DateTime $time,
         bool $regular,
         ?bool $strictDate = null,
         ?bool $strictPunctual = null,
@@ -315,9 +315,9 @@ class AdManager
      *
      * @param null|Ad $ad - the current ad before update
      *
-     * @throws \Exception
-     *
      * @return array|object
+     *
+     * @throws \Exception
      */
     public function updateAd(array $data, Ad $ad = null)
     {
@@ -371,7 +371,7 @@ class AdManager
             $data['userId'] = $poster->getId();
         }
         if (!isset($data['outwardDate']) || '' == $data['outwardDate']) {
-            //$data['outwardDate'] = new \DateTime();
+            // $data['outwardDate'] = new \DateTime();
         } elseif (is_string($data['outwardDate'])) {
             $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
         }
@@ -445,7 +445,7 @@ class AdManager
             if (isset($data['fromDate'])) {
                 $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $data['fromDate']));
             } else {
-                $ad->setOutwardDate(new \Datetime());
+                $ad->setOutwardDate(new \DateTime());
             }
             if (isset($data['toDate'])) {
                 $ad->setOutwardLimitdate(\DateTime::createFromFormat('Y-m-d', $data['toDate']));
@@ -455,7 +455,17 @@ class AdManager
             }
         } elseif (isset($data['outwardDate'])) {
             $ad->setOutwardDate($data['outwardDate']);
-            $ad->setOutwardTime(isset($data['outwardTime']) ? $data['outwardTime']->format('H:i') : null);
+
+            if (isset($data['outwardTime'])) {
+                if ($data['outwardTime'] instanceof \DateTime) {
+                    $ad->setOutwardTime($data['outwardTime']->format('H:i'));
+                } elseif (is_string($data['outwardTime']) && preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/', $data['outwardTime'])) {
+                    $ad->setOutwardTime($data['outwardTime']);
+                } else {
+                    throw new \LogicException('The timetable transmitted is not in the expected format');
+                }
+            }
+
             if (isset($data['returnDate'], $data['returnTime'])) {
                 $ad->setOneWay(false);
                 $ad->setReturnDate($data['returnDate']);
@@ -555,7 +565,7 @@ class AdManager
         if (
             (isset($data['origin']['event']['id']) && null != $data['origin']['event']['id'])
             || (isset($data['destination']['event']['id']) && null != $data['destination']['event']['id'])
-            ) {
+        ) {
             if (isset($data['origin']['event']['id']) && null != $data['origin']['event']['id']) {
                 $eventId = $data['origin']['event']['id'];
             } elseif (isset($data['destination']['event']['id']) && null != $data['destination']['event']['id']) {
