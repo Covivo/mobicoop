@@ -1356,6 +1356,7 @@ class AdManager
                 }
 
                 $this->entityManager->persist($linkedProposal);
+                $this->entityManager->flush();
             }
 
             if (count($proposalAsks) > 0) {
