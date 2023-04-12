@@ -4,6 +4,8 @@ namespace App\DataProvider\Entity\MobConnect\Response;
 
 class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
 {
+    public const SUCCESS_STATUS = 200;
+
     /**
      * @var string
      */
