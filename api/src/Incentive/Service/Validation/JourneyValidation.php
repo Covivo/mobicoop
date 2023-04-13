@@ -26,7 +26,7 @@ class JourneyValidation extends Validation
     public function isFirstValidLongECCJourney(): bool
     {
         return
-            $this->hasValidMobConnectAuth()
+            $this->_hasValidMobConnectAuth()
             && !is_null($this->_driver)
             && !is_null($this->_driver->getLongDistanceSubscription())
             && is_null($this->_driver->getLongDistanceSubscription()->getCommitmentProofDate())
@@ -42,7 +42,7 @@ class JourneyValidation extends Validation
     public function isFirstValidShortECCJourney(): bool
     {
         return
-            $this->hasValidMobConnectAuth()
+            $this->_hasValidMobConnectAuth()
             && !is_null($this->_driver)
             && !is_null($this->_driver->getShortDistanceSubscription())
             && is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate())
@@ -61,8 +61,7 @@ class JourneyValidation extends Validation
         $this->setDriver($proposal->getUser());
 
         return
-            $this->hasValidMobConnectAuth()
-            && $this->hasValidMobConnectAuth()
+            $this->_hasValidMobConnectAuth()
             && !is_null($proposal->getCriteria())
             && $proposal->getCriteria()->isDriver()
             && !is_null($proposal->getCriteria()->getDirectionDriver())
@@ -84,7 +83,7 @@ class JourneyValidation extends Validation
         $this->setDriver($carpoolProof->getDriver());
 
         return
-            $this->hasValidMobConnectAuth()
+            $this->_hasValidMobConnectAuth()
             && !is_null($this->_driver)
             && !is_null($carpoolProof->getAsk())
             && !is_null($carpoolProof->getAsk()->getMatching())
@@ -117,7 +116,7 @@ class JourneyValidation extends Validation
             && !$this->_hasLongDistanceJourneyAlreadyDeclared($carpoolProof);
     }
 
-    private function hasValidMobConnectAuth(): bool
+    private function _hasValidMobConnectAuth(): bool
     {
         /**
          * @var User $requester
