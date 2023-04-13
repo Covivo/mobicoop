@@ -36,6 +36,7 @@ use App\User\Entity\User;
 use App\User\Exception\UserNotFoundException;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -67,8 +68,10 @@ class CampaignManager
     private $mailerSenderEmail;
     private $mailerSenderName;
     private $massEmailProvider;
-    private $massEmailProviderIpRange;
+    private $massEmailProviderIpRange1;
+    private $massEmailProviderIpRange2;
     private $massSmsProvider;
+    private $logger;
 
     /**
      * Constructor.
@@ -79,9 +82,11 @@ class CampaignManager
         EntityManagerInterface $entityManager,
         MediumRepository $mediumRepository,
         UserRepository $userRepository,
+        LoggerInterface $logger,
         string $mailTemplate,
         string $mailerProvider,
-        array $mailerProviderIpRange,
+        array $mailerProviderIpRange1,
+        array $mailerProviderIpRange2,
         string $mailerApiKey,
         string $mailerClientName,
         int $mailerClientId,
@@ -106,6 +111,7 @@ class CampaignManager
         $this->mailerSenderEmail = $mailerSenderEmail;
         $this->mailerSenderName = $mailerSenderName;
         $this->mailerIp = $mailerIp;
+        $this->logger = $logger;
 
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
@@ -113,7 +119,8 @@ class CampaignManager
 
                 break;
         }
-        $this->massEmailProviderIpRange = $mailerProviderIpRange;
+        $this->massEmailProviderIpRange1 = $mailerProviderIpRange1;
+        $this->massEmailProviderIpRange2 = $mailerProviderIpRange2;
 
         switch ($smsProvider) {
             // none yet !
@@ -293,7 +300,7 @@ class CampaignManager
         switch ($this->mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
                 // Sendinblue uses ip range
-                if (ip2long($request->getClientIp()) > ip2long($this->massEmailProviderIpRange['maxIp']) || ip2long($request->getClientIp()) < ip2long($this->massEmailProviderIpRange['minIp'])) {
+                if (!in_array(ip2long($request->getClientIp()), range(ip2long($this->massEmailProviderIpRange1['minIp']), ip2long($this->massEmailProviderIpRange1['maxIp']))) || !in_array(ip2long($request->getClientIp()), range(ip2long($this->massEmailProviderIpRange2['minIp']), ip2long($this->massEmailProviderIpRange2['maxIp'])))) {
                     throw new \Exception('Unauthorized');
                 }
                 if (!$email = $hook->getEmail()) {
