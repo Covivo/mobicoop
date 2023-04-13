@@ -67,9 +67,7 @@ class Price
 
     /**
      * @var int the id of this contact
-     *
      * @ApiProperty(identifier=true)
-     *
      * @Groups({"read", "write"})
      */
     private $id;
@@ -78,19 +76,17 @@ class Price
      * The value of the price.
      *
      * @var float
-     *
      * @Groups({"read", "write"})
      */
     private $value;
 
     /**
-     * The type of the price.
+     * The frequency of the ad.
      *
-     * @var string
-     *
+     * @var int
      * @Groups({"read", "write"})
      */
-    private $type;
+    private $frequency;
 
     public function __construct($id = null)
     {
@@ -124,14 +120,14 @@ class Price
         return $this;
     }
 
-    public function getType(): string
+    public function getFrequency(): int
     {
-        return $this->type;
+        return $this->frequency;
     }
 
-    public function setType(string $type): Price
+    public function setFrequency(int $frequency): Price
     {
-        $this->type = $type;
+        $this->frequency = $frequency;
 
         return $this;
     }
