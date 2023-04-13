@@ -99,8 +99,7 @@ abstract class Validation
         return
             !is_null($this->_driver->getDrivingLicenceNumber())
             && !is_null($this->_driver->getTelephone())
-            && !is_null($this->_driver->getPhoneValidatedDate())
-        ;
+            && !is_null($this->_driver->getPhoneValidatedDate());
     }
 
     protected function setDriver(User $driver): self
