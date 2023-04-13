@@ -33,6 +33,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 class AnalyticManager
 {
     private $paramId;
+    private $communityId;
     private $darkTheme;
     private $uri;
     private $organization;
@@ -50,6 +51,8 @@ class AnalyticManager
 
         $request = $requestStack->getCurrentRequest();
         $this->paramId = $request->get('id');
+        $communityIdParam = $request->query->get('communityId', null);
+        $this->communityId = is_null($communityIdParam) ? null: intval($communityIdParam);
         $this->darkTheme = $request->query->get('darkTheme', false);
     }
 
@@ -67,6 +70,7 @@ class AnalyticManager
             'resource' => ['dashboard' => $dashboard['dashboardId']],
             'params' => [
                 'idterritoryoperational' => $this->getTerritories($dashboard['auth_item']),
+                'idcommunityoperational' => $this->getCommunity($dashboard['auth_item'], $this->communityId),
                 'organization' => $this->organization,
             ],
         ];
@@ -90,6 +94,14 @@ class AnalyticManager
         }
 
         throw new ResourceNotFoundException('Unknown dashboard');
+    }
+
+    private function getCommunity(string $auth_item, ?int $communityId): string
+    {
+        if (null === $communityId) {
+            return strtolower($this->organization);
+        }
+        return strtolower($this->organization).'_'.strval($communityId);
     }
 
     private function getTerritories(string $auth_item): array
