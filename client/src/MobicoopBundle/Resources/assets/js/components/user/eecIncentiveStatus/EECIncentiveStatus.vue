@@ -31,6 +31,8 @@
         v-else
         :long-distance-subscriptions="subscriptions.longDistanceSubscriptions"
         :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
+        :long-distance-subscription-expiration-date="subscriptions.longDistanceExpirationDate"
+        :short-distance-subscription-expiration-date="subscriptions.shortDistanceExpirationDate"
         :pending-proofs="subscriptions.nbPendingProofs"
         :refused-proofs="subscriptions.nbRejectedProofs"
         @changeTab="changeTab"
