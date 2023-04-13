@@ -161,6 +161,7 @@ class SubscriptionManager extends MobConnectManager
         if (!is_null($shortDistanceSubscription)) {
             $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getShortDistanceJourneys());
             $this->_subscriptions->setShortDistanceSubscriptions($shortDistanceSubscriptions);
+            $this->_subscriptions->setShortDistanceExpirationDate($shortDistanceSubscription->getExpirationDate());
         }
 
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
@@ -169,6 +170,7 @@ class SubscriptionManager extends MobConnectManager
             $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getLongDistanceJourneys());
 
             $this->_subscriptions->setLongDistanceSubscriptions($longDistanceSubscriptions);
+            $this->_subscriptions->setLongDistanceExpirationDate($longDistanceSubscription->getExpirationDate());
         }
 
         $this->_computeShortDistance();
@@ -185,8 +187,7 @@ class SubscriptionManager extends MobConnectManager
     {
         $subscription = self::LONG_SUBSCRIPTION_TYPE === $subscriptionType
             ? $this->_em->getRepository(LongDistanceSubscription::class)->find($subscriptionId)
-            : $this->_em->getRepository(ShortDistanceSubscription::class)->find($subscriptionId)
-        ;
+            : $this->_em->getRepository(ShortDistanceSubscription::class)->find($subscriptionId);
 
         if (is_null($subscription)) {
             throw new \LogicException('The subscription was not found');

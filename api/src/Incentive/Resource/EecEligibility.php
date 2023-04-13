@@ -58,13 +58,6 @@ class EecEligibility
     private $longDistanceEligibility = false;
 
     /**
-     * @var \DateTime
-     *
-     * @Groups({"eecEligibility"})
-     */
-    private $longDistanceExpirationDate;
-
-    /**
      * @var int
      *
      * @Groups({"eecEligibility"})
@@ -77,13 +70,6 @@ class EecEligibility
      * @Groups({"eecEligibility"})
      */
     private $shortDistanceEligibility = false;
-
-    /**
-     * @var \DateTime
-     *
-     * @Groups({"eecEligibility"})
-     */
-    private $shortDistanceExpirationDate;
 
     /**
      * @var User
@@ -151,24 +137,6 @@ class EecEligibility
     }
 
     /**
-     * Get the value of longDistanceExpirationDate.
-     */
-    public function getLongDistanceExpirationDate(): \DateTime
-    {
-        return $this->longDistanceExpirationDate;
-    }
-
-    /**
-     * Set the value of longDistanceExpirationDate.
-     */
-    public function setLongDistanceExpirationDate(\DateTime $longDistanceExpirationDate): self
-    {
-        $this->longDistanceExpirationDate = $longDistanceExpirationDate;
-
-        return $this;
-    }
-
-    /**
      * Get the value of shortDistance.
      */
     public function getShortDistanceJourneysNumber(): int
@@ -202,24 +170,6 @@ class EecEligibility
     public function setShortDistanceEligibility(): self
     {
         $this->shortDistanceEligibility = $this->getShortDistanceJourneysNumber() <= self::SHORT_DISTANCE_ELIGIBILITY_THRESHOLD;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of shortDistanceExpirationDate.
-     */
-    public function getShortDistanceExpirationDate(): \DateTime
-    {
-        return $this->shortDistanceExpirationDate;
-    }
-
-    /**
-     * Set the value of shortDistanceExpirationDate.
-     */
-    public function setShortDistanceExpirationDate(\DateTime $shortDistanceExpirationDate): self
-    {
-        $this->shortDistanceExpirationDate = $shortDistanceExpirationDate;
 
         return $this;
     }

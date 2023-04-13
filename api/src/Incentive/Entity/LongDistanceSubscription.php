@@ -647,7 +647,7 @@ class LongDistanceSubscription
      *
      * @return \DateTimeInterface
      */
-    public function getExpirationDate(): \DateTime
+    public function getExpirationDate(): ?\DateTime
     {
         return $this->expirationDate;
     }
