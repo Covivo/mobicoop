@@ -5,7 +5,8 @@
         "tooltips": {
             "driver": "Budu řidičem",
             "passenger": "Budu cestující",
-            "diverOrPassenger": "Nezáleží na tom, jestli budu řidič nebo spolujezdec"
+            "diverOrPassenger": "Nezáleží na tom, jestli budu řidič nebo spolujezdec",
+            "notUpdatable": "Update the linked outward ad"
         }
     },
     "pause": {
