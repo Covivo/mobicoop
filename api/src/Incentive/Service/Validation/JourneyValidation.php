@@ -91,8 +91,7 @@ class JourneyValidation extends Validation
             && !$this->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
             && !is_null($carpoolProof->getPickUpDriverAddress())
             && !is_null($carpoolProof->getPickUpPassengerAddress())
-            && $this->isFirstValidShortECCJourney()
-            && ${$this}->_driver;
+            && $this->isFirstValidShortECCJourney();
     }
 
     /**
