@@ -36,6 +36,7 @@
     },
     "outwardDate": {
         "label": "Date de départ",
+        "altLabel": "Date et heure de départ",
         "error": "Obligatoire"
     },
     "buttons": {
