@@ -144,6 +144,8 @@ class JourneyManager extends MobConnectManager
                     $subscription->setHonorCertificateProofTimestampToken($response->getHonorCertificateProofTimestampToken());
                     $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
                 }
+
+                $subscription = $this->setExpirationDate($subscription);
             }
 
             $journey->updateJourney($carpoolProof, $carpoolPayment, $this->getCarpoolersNumber($carpoolProof->getAsk()));
@@ -203,6 +205,8 @@ class JourneyManager extends MobConnectManager
                 $subscription->setHonorCertificateProofTimestampToken($response->getHonorCertificateProofTimestampToken());
                 $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
             }
+
+            $subscription = $this->setExpirationDate($subscription);
         }
 
         $journey->updateJourney($carpoolProof, $this->getRPCOperatorId($carpoolProof->getId()), $this->getCarpoolersNumber($carpoolProof->getAsk()));
