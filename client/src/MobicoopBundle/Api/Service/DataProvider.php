@@ -822,14 +822,11 @@ class DataProvider
 
         // exit;
 
-        $options = json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups' => $groups]), true);
-        unset($options['addresses']);       // The addresses property is not accepted by the API
-
         try {
             $headers = $this->getHeaders();
             $clientResponse = $this->client->put($this->resource.'/'.$object->getId(), [
                 'headers' => $headers,
-                RequestOptions::JSON => $options,
+                RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups' => $groups]), true),
                 'query' => $params,
             ]);
             if (200 == $clientResponse->getStatusCode()) {
