@@ -147,7 +147,7 @@
                 </span>
               </v-btn>
               <v-btn
-                v-if="externalProviderType == 2"
+                v-if="externalProviderType == 2 && carpoolStandardMessagingEnabled"
                 :disabled="user == null"
                 rounded
                 color="primary"
