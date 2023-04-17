@@ -33,6 +33,7 @@ use Symfony\Component\Security\Core\Security;
 class MessageManager
 {
     private $dataProvider;
+    private $operatorIdentifier;
 
     private $security;
 
@@ -41,12 +42,13 @@ class MessageManager
      *
      * @throws \ReflectionException
      */
-    public function __construct(DataProvider $dataProvider, Security $security)
+    public function __construct(DataProvider $dataProvider, Security $security, string $operatorIdentifier)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Message::class, 'carpool_standard');
         $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         $this->security = $security;
+        $this->operatorIdentifier = $operatorIdentifier;
     }
 
     public function postCarpoolStandardMessage(Message $message)

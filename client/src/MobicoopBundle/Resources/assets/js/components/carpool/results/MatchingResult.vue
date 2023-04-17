@@ -88,16 +88,11 @@
             :platform-name="platformName"
             :carpool-standard-booking-enabled="carpoolStandardBookingEnabled"
             :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
-            <<<<<<<
-            h-e-a-d="======"
             @carpool="carpool"
-            @standardContact="standardContact"
             @booking="booking"
-          >
-            >>>>>> dev
+            @standardContact="standardContact"
             @loginOrRegister="loginOrRegister"
-            />
-          </carpooler-summary>
+          />
         </v-col>
       </v-row>
     </v-container>
