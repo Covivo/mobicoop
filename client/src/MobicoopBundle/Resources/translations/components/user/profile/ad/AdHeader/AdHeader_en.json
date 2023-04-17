@@ -9,7 +9,8 @@
       "pause": "Temporarily hide ad in results",
       "play": "Tedisplay this ad in results",
       "delete": "Delete this ad",
-      "update": "Update this ad"
+      "update": "Update this ad",
+      "notUpdatable": "Update the linked outward ad"
     }
   },
   "delete": {

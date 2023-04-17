@@ -20,64 +20,98 @@
           flat
         >
           <v-expansion-panel>
-            <v-expansion-panel-header>
+            <v-expansion-panel-header class="font-weight-bold pb-0">
               {{ $t('followup.longDistance.header') }}
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <v-progress-linear
-                v-model="longDistanceProgress"
-                height="25"
+              <div
+                v-if="displayLongDistanceExpirationDate"
+                class="text-left mb-4"
               >
-                <strong>{{ $t('followup.longDistance.progress', {'nb':longDistanceProgress}) }}</strong>
-              </v-progress-linear>
-              <p>
-                <v-row>
-                  <v-col
-                    cols="1"
-                    class="text-right"
-                  >
-                    <v-icon>mdi-information</v-icon>
-                  </v-col>
-                  <v-col class="text-left">
-                    <ul>
-                      <li>{{ $t('followup.longDistance.hints.hint1') }}</li>
-                      <li>{{ $t('followup.longDistance.hints.hint2') }}</li>
-                      <li>{{ $t('followup.longDistance.hints.hint3') }}</li>
-                      <li>{{ $t('followup.longDistance.hints.hint4') }}</li>
-                    </ul>
-                  </v-col>
-                </v-row>
-              </p>
+                <v-icon color="secondary">
+                  mdi-clock-time-five
+                </v-icon>
+                {{ $t('expirationText', { date: getDateAsString(longDistanceSubscriptionExpirationDate) }) }}
+              </div>
+              <div v-if="!hasDateExpired(longDistanceSubscriptionExpirationDate)">
+                <v-progress-linear
+                  v-model="longDistanceProgress"
+                  height="25"
+                >
+                  <strong>{{ $t('followup.longDistance.progress', {'nb':longDistanceProgress}) }}</strong>
+                </v-progress-linear>
+                <p>
+                  <v-row>
+                    <v-col
+                      cols="1"
+                      class="text-right"
+                    >
+                      <v-icon>mdi-information</v-icon>
+                    </v-col>
+                    <v-col class="text-left">
+                      <ul>
+                        <li>{{ $t('followup.longDistance.hints.hint1') }}</li>
+                        <li>{{ $t('followup.longDistance.hints.hint2') }}</li>
+                        <li>{{ $t('followup.longDistance.hints.hint3') }}</li>
+                        <li>{{ $t('followup.longDistance.hints.hint4') }}</li>
+                      </ul>
+                    </v-col>
+                  </v-row>
+                </p>
+              </div>
+              <div
+                v-else
+                class="text-left"
+              >
+                {{ $t('longExpiredText') }}
+              </div>
             </v-expansion-panel-content>
           </v-expansion-panel>
           <v-expansion-panel>
-            <v-expansion-panel-header>
+            <v-expansion-panel-header class="font-weight-bold pb-0">
               {{ $t('followup.shortDistance.header') }}
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <v-progress-linear
-                v-model="shortDistanceProgress"
-                height="25"
+              <div
+                v-if="displayShortDistanceExpirationDate"
+                class="text-left mb-4"
               >
-                <strong>{{ $t('followup.shortDistance.progress', {'nb':shortDistanceProgress}) }}</strong>
-              </v-progress-linear>
-              <p>
-                <v-row>
-                  <v-col
-                    cols="1"
-                    class="text-right"
-                  >
-                    <v-icon>mdi-information</v-icon>
-                  </v-col>
-                  <v-col class="text-left">
-                    <ul>
-                      <li>{{ $t('followup.shortDistance.hints.hint1') }}</li>
-                      <li>{{ $t('followup.shortDistance.hints.hint2') }}</li>
-                      <li>{{ $t('followup.shortDistance.hints.hint3') }}</li>
-                    </ul>
-                  </v-col>
-                </v-row>
-              </p>
+                <v-icon color="secondary">
+                  mdi-clock-time-five
+                </v-icon>
+                {{ $t('expirationText', { date: getDateAsString(shortDistanceSubscriptionExpirationDate) }) }}
+              </div>
+              <div v-if="!hasDateExpired(shortDistanceSubscriptionExpirationDate)">
+                <v-progress-linear
+                  v-model="shortDistanceProgress"
+                  height="25"
+                >
+                  <strong>{{ $t('followup.shortDistance.progress', {'nb':shortDistanceProgress}) }}</strong>
+                </v-progress-linear>
+                <p>
+                  <v-row>
+                    <v-col
+                      cols="1"
+                      class="text-right"
+                    >
+                      <v-icon>mdi-information</v-icon>
+                    </v-col>
+                    <v-col class="text-left">
+                      <ul>
+                        <li>{{ $t('followup.shortDistance.hints.hint1') }}</li>
+                        <li>{{ $t('followup.shortDistance.hints.hint2') }}</li>
+                        <li>{{ $t('followup.shortDistance.hints.hint3') }}</li>
+                      </ul>
+                    </v-col>
+                  </v-row>
+                </p>
+              </div>
+              <div
+                v-else
+                class="text-left"
+              >
+                {{ $t('shortExpiredText') }}
+              </div>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -113,6 +147,7 @@ import { merge } from "lodash";
 import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
+import moment from 'moment';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -130,11 +165,19 @@ export default {
   },
   props: {
     longDistanceSubscriptions:{
-      type: Object,
+      type: Array,
       default: null
     },
     shortDistanceSubscriptions:{
-      type: Object,
+      type: Array,
+      default: null
+    },
+    longDistanceSubscriptionExpirationDate: {
+      type: String,
+      default: null
+    },
+    shortDistanceSubscriptionExpirationDate: {
+      type: String,
       default: null
     },
     pendingProofs:{
@@ -163,6 +206,12 @@ export default {
         return this.longDistanceSubscriptions.length;
       }
       return 0;
+    },
+    displayLongDistanceExpirationDate() {
+      return this.longDistanceSubscriptionExpirationDate && !this.hasDateExpired(this.longDistanceSubscriptionExpirationDate)
+    },
+    displayShortDistanceExpirationDate() {
+      return this.shortDistanceSubscriptionExpirationDate && !this.hasDateExpired(this.shortDistanceSubscriptionExpirationDate)
     }
   },
   mounted(){
@@ -184,6 +233,18 @@ export default {
           console.error(error);
         });
     },
+    hasDateExpired(stringDate) {
+      if (!stringDate) {
+        return false
+      }
+
+      const expirationDate = new Date(stringDate)
+
+      return expirationDate < new Date()
+    },
+    getDateAsString(date) {
+      return moment(date).format('LL')
+    }
   }
 
 };

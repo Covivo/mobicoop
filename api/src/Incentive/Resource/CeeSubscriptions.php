@@ -43,6 +43,7 @@ class CeeSubscriptions
      * @var int The id of this CEE subscription
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"readSubscription"})
      */
     private $id;
@@ -60,6 +61,20 @@ class CeeSubscriptions
      * @Groups({"readSubscription"})
      */
     private $longDistanceSubscriptions;
+
+    /**
+     * @var \DateTime
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $longDistanceExpirationDate;
+
+    /**
+     * @var \DateTime
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $shortDistanceExpirationDate;
 
     /**
      * @var int Nb pending class C proofs
@@ -177,6 +192,44 @@ class CeeSubscriptions
     public function setNbRejectedProofs(int $nbRejectedProofs): self
     {
         $this->nbRejectedProofs = $nbRejectedProofs;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of longDistanceExpirationDate.
+     */
+    public function getLongDistanceExpirationDate(): ?\DateTime
+    {
+        return $this->longDistanceExpirationDate;
+    }
+
+    /**
+     * Set the value of longDistanceExpirationDate.
+     */
+    public function setLongDistanceExpirationDate(?\DateTime $longDistanceExpirationDate): self
+    {
+        $this->longDistanceExpirationDate = $longDistanceExpirationDate;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of shortDistanceExpirationDate.
+     *
+     * @return \DateTime
+     */
+    public function getShortDistanceExpirationDate(): ?\DateTime
+    {
+        return $this->shortDistanceExpirationDate;
+    }
+
+    /**
+     * Set the value of shortDistanceExpirationDate.
+     */
+    public function setShortDistanceExpirationDate(?\DateTime $shortDistanceExpirationDate): self
+    {
+        $this->shortDistanceExpirationDate = $shortDistanceExpirationDate;
 
         return $this;
     }

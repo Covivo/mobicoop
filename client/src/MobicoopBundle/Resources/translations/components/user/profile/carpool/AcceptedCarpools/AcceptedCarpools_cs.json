@@ -1,1 +1,11 @@
-{}
+{
+    "carpools": {
+        "archived": "Minulé spolujízdy",
+        "active": "Probíhající spolujízdy"
+    },
+    "clickAndGetFile": "Kliknutím na tlačítko \"Exportovat\" si můžete stáhnout všechny své spolujízdy ve formátu pdf.",
+    "export": "Export",
+    "tooltip": "Aktivní, jakmile jsou potvrzeny spolujízdy.",
+    "needCarpoolProofs": "Potřebujete doklad o spolujízdě?",
+    "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export"
+}

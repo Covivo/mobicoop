@@ -1,17 +1,32 @@
 {# CAREFUL : Some client might need to replicate this template #}
 {% extends 'communication/fr/email/notification/base.html.twig' %}
 {% block body %}
-    <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-    <p>Votre inscription au service <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" > {{api_env('EMAILS_PLATFORM_NAME')}}</b>  est bien prise en compte.</p>
-    <p>Veuillez cliquer sur ce lien pour confirmer votre email  : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">lien</a>.</p>
-    <p>{{"orUseTheValidationCode" |trans }} : {{ context.user.emailToken }}</p>
-    {% if context.user.passwordSendType == 2 %}
-    <p>Votre mot de passe est : {{ context.user.clearPassword }}</p>
-    {% elseif context.user.passwordSendType == 1 %}
-    <p>Votre mot de passe vous a été envoyé par SMS.</p>
-    {% endif %}
-    <p>Lors de votre première connexion, après avoir cliqué sur le lien de vérification ci-dessus, vous aurez la possibilité de modifier votre mot de passe en allant sur votre profil. Dans la mesure où vous auriez oublié ce mot de passe, vous pourrez toujours le récupérer depuis l'écran "Connexion", en cliquant sur le lien "Mot de passe oublié".</p>
-    <p>Pour consulter les Conditions Générales d'Utilisation de <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" > {{api_env('EMAILS_PLATFORM_NAME')}}</b>, cliquez <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/cgu" >ici</a>.
-Si vous refusez ces conditions, vous pouvez supprimer votre compte depuis votre profil.</p>
-    <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
-{% endblock %}
+	<p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
+			{{context.user.givenName|capitalize}}
+			{{context.user.shortFamilyName|capitalize}}</b>
+	</p>
+	<p>Votre inscription au service
+		<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
+			{{api_env('EMAILS_PLATFORM_NAME')}}</b>
+		est bien prise en compte.</p>
+	<p>Veuillez cliquer sur ce lien pour confirmer votre email  :
+		<a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}" style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" title="">lien</a>.</p>
+	<p>{{"orUseTheValidationCode" |trans }}
+		:
+		{{ context.user.emailToken }}</p>
+	{% if context.user.passwordSendType == 2 %}
+		<p>Votre mot de passe est :
+			{{ context.user.clearPassword }}</p>
+	{% elseif context.user.passwordSendType == 1 %}
+		<p>Votre mot de passe vous a été envoyé par SMS.</p>
+	{% endif %}
+	<p>Lors de votre première connexion, après avoir cliqué sur le lien de vérification ci-dessus, vous aurez la possibilité de modifier votre mot de passe en allant sur votre profil. Dans la mesure où vous auriez oublié ce mot de passe, vous pourrez toujours le récupérer depuis l'écran "Connexion", en cliquant sur le lien "Mot de passe oublié".</p>
+	<p>Pour consulter les Conditions Générales d'Utilisation de
+		<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
+			{{api_env('EMAILS_PLATFORM_NAME')}}</b>, cliquez
+		<a href="{{ api_env('EMAILS_PLATFORM_URL') }}/cgu">ici</a>.
+			Si vous refusez ces conditions, vous pouvez supprimer votre compte depuis votre profil.</p>
+	<p>A bientôt sur
+		<a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+	{% endblock %}
+</p>

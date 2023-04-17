@@ -1,1 +1,28 @@
-{}
+{
+    "outwardDate": {
+        "label": "Datum odjezdu"
+    },
+    "returnDate": {
+        "label": "Datum návratu"
+    },
+    "outwardTime": {
+        "label": "Čas odjezdu"
+    },
+    "returnTime": {
+        "label": "Čas návratu"
+    },
+    "regularOutwardTime": {
+        "label": "Odjezd v"
+    },
+    "regularReturnTime": {
+        "label": "Návrat v"
+    },
+    "returnTrip": {
+        "label": "Návrat"
+    },
+    "addSchedule": "Přidání slotu",
+    "marginTooltip": "Vaše reklama se bude zobrazovat ve vyhledávání s minutovou flexibilitou {margin} přibližně v tomto čase",
+    "errorReturnTime": "Čas návratu je příliš blízko času odletu.",
+    "optional": "volitelné",
+    "fullDate": "ddd Do MMMM RRRR"
+}

@@ -1,1 +1,4 @@
-{}
+{
+    "urlGet": "/user/messages/solidarity",
+    "noSolidary": "Ještě jste nepožádali jiného přihlášeného o spolujízdu."
+}
