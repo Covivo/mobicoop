@@ -905,6 +905,10 @@ class UserController extends AbstractController
                     'externalJourneyId' => $request->request->get('externalJourneyId'),
                     'externalJourneyOperator' => $request->request->get('externalJourneyOperator'),
                     'externalProviderType' => $request->request->get('externalProviderType'),
+                    'originLat' => $request->request->get('originLat'),
+                    'originLng' => $request->request->get('originLng'),
+                    'destinationLat' => $request->request->get('destinationLat'),
+                    'destinationLng' => $request->request->get('destinationLng'),
                 ];
                 $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
             } else {

@@ -299,6 +299,8 @@ services:
 # Carpool Standard
   Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\:
     resource: "@MobicoopBundle/CarpoolStandard/Controller/*"
+    arguments:
+      $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"
   Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Service\:
     resource: "@MobicoopBundle/CarpoolStandard/Service/*"
     arguments:

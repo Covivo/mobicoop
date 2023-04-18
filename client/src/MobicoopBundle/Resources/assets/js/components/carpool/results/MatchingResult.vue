@@ -204,7 +204,11 @@ export default {
         date: this.result.date,
         driver: this.result.resultDriver ? 1 :null,
         passenger: this.result.resultPassenger ? 1 :null,
-        externalProviderType: this.result.externalProviderType
+        externalProviderType: this.result.externalProviderType,
+        originLat: this.result.origin.latitude,
+        originLng: this.result.origin.longitude,
+        destinationLat: this.result.destination.latitude,
+        destinationLng: this.result.destination.longitude,
       };
       for (const key in paramsForm) {
         if (paramsForm.hasOwnProperty(key)) {

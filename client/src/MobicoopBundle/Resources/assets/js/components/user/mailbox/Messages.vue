@@ -427,18 +427,23 @@ export default {
       this.loadingTypeText = true;
       let messageToSend = {
         text: data.textToSend,
-        senderId: this.idUser,
-        senderAlias: this.user.givenName +' '+this.user.shortFamilyName,
         senderIsDriver: this.newThreadCarpool.driver,
         senderIsPassenger: this.newThreadCarpool.passenger,
         externalJourneyId: this.newThreadCarpool.externalJourneyId,
         externalJourneyOperator: this.newThreadCarpool.externalJourneyOperator,
         externalJourneyUserId: this.newThreadCarpool.externalJourneyUserId,
-        recipientName: this.newThreadCarpool.givenName
+        recipientName: this.newThreadCarpool.givenName,
+        origin: this.newThreadCarpool.origin,
+        destination: this.newThreadCarpool.destination,
+        originLat: this.newThreadCarpool.origin,
+        originLng: this.newThreadCarpool.origin,
+        destinationLat: this.newThreadCarpool.destination,
+        destinationLng: this.newThreadCarpool.destination,
+        date: this.newThreadCarpool.date
       };
       this.loadingTypeText = false;
 
-      
+
       maxios.post(this.$t("urlSendExternalMessage"), messageToSend).then(res => {
         this.loadingTypeText = false;
         // Update the threads list

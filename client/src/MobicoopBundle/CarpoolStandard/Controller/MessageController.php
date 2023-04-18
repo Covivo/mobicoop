@@ -27,6 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Service\MessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,10 +37,14 @@ class MessageController extends AbstractController
     use HydraControllerTrait;
 
     private $messageManager;
+    private $userManager;
+    private $operatorIdentifier;
 
-    public function __construct(MessageManager $messageManager)
+    public function __construct(MessageManager $messageManager, UserManager $userManager, string $operatorIdentifier)
     {
         $this->messageManager = $messageManager;
+        $this->userManager = $userManager;
+        $this->operatorIdentifier = $operatorIdentifier;
     }
 
     public function sendExternalMessage(Request $request)
@@ -50,8 +55,11 @@ class MessageController extends AbstractController
             $to = new User();
             $from = new User();
 
-            $from->setAlias($data['senderAlias']);
-            $from->setId($data['senderId']);
+            $from->setExternalId($this->userManager->getLoggedUser()->getId());
+            $from->setAlias($this->userManager->getLoggedUser()->getGivenName().' '.$this->userManager->getLoggedUser()->getShortFamilyName());
+            $from->setFirstName($this->userManager->getLoggedUser()->getGivenName());
+            $from->setLastName($this->userManager->getLoggedUser()->getFamilyName());
+            $from->setOperator($this->operatorIdentifier);
 
             $message->setFrom($from);
 
