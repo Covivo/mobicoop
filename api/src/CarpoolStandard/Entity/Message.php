@@ -133,7 +133,7 @@ class Message
     private $passengerJourneyId;
 
     /**
-     * @var null|string ID ($uuid) of the booking to which the message is related (if any)
+     * @var string ID ($uuid) of the booking to which the message is related (if any)
      *
      * @Groups({"read", "write"})
      */
@@ -231,12 +231,12 @@ class Message
         return $this;
     }
 
-    public function getBookingId(): ?string
+    public function getBookingId(): string
     {
         return $this->bookingId;
     }
 
-    public function setBookingId(?string $bookingId): self
+    public function setBookingId(string $bookingId): self
     {
         $this->bookingId = $bookingId;
 
