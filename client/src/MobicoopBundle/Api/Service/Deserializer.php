@@ -366,20 +366,32 @@ class Deserializer
             case CeeSubscription::class:
                 return $this->deserializeCeeSubscripton($data);
 
+                break;
+
             case CsUser::class:
                 return $this->deserializeCsUser($data);
+
+                break;
 
             case CsMessage::class:
                 return $this->deserializeCsMessage($data);
 
+                break;
+
             case CsPrice::class:
                 return $this->deserializeCsPrice($data);
+
+                break;
 
             case Booking::class:
                 return $this->deserializeBooking($data);
 
+                break;
+
             case EecEligibility::class:
                 return $this->deserializeEecEligibility($data);
+
+                break;
 
             default:
                 break;
