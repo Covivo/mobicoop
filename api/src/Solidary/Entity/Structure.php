@@ -666,7 +666,7 @@ class Structure
      *  }
      * )
      *
-     * @Groups({"aRead", "aWrite"})
+     * @Groups({"aRead", "aWrite", "aReadCol"})
      */
     private $solidaryTransport = false;
 
