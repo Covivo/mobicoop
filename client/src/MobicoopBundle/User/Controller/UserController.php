@@ -535,8 +535,6 @@ class UserController extends AbstractController
             $user->setNewsSubscription('true' === $data->get('newsSubscription') ? true : false);
             $user->setDrivingLicenceNumber('' !== trim($data->get('drivingLicenceNumber')) ? $data->get('drivingLicenceNumber') : null);
 
-            $user->resetAddresses();
-
             if ($user = $userManager->updateUser($user)) {
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
