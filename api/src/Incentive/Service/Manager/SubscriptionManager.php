@@ -4,6 +4,7 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
 use App\Incentive\Entity\LongDistanceSubscription;
@@ -26,6 +27,7 @@ class SubscriptionManager extends MobConnectManager
     public const BONUS_STATUS_NO = 1;
     public const BONUS_STATUS_OK = 2;
 
+    public const STATUS_ERROR = 'ERROR';
     public const STATUS_REJECTED = 'REJETEE';
     public const STATUS_VALIDATED = 'VALIDEE';
 
@@ -236,7 +238,10 @@ class SubscriptionManager extends MobConnectManager
 
             $response = $this->verifySubscription($subscription->getSubscriptionId());
 
-            $subscription->setStatus($response->getStatus());
+            $subscription->setStatus(
+                MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $response->getCode()
+                ? $response->getStatus() : self::STATUS_ERROR
+            );
 
             if (self::STATUS_VALIDATED === $subscription->getStatus()) {
                 $subscription->setBonusStatus(self::BONUS_STATUS_OK);

@@ -39,7 +39,8 @@
     "ariaLabelDestination":"Une adresse de destination est requise",
     "outwardDate": {
         "error": "Required",
-        "label": "Departure date"
+        "label": "Departure date",
+        "altLabel": "Date et heure de départ"
     },
     "radio": {
         "both": {

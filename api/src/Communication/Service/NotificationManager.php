@@ -819,7 +819,7 @@ class NotificationManager
                     $outwardDestination = null;
                     $returnOrigin = null;
                     $returnDestination = null;
-                    $sender = $this->userManager->getUser($object->getUserId());
+                    $sender = $this->userManager->getUser($object->getUserId()) == $recipient ? $object->getResults()[0]->getCarpooler() : $this->userManager->getUser($object->getUserId());
                     if (null !== $object->getResults()[0]->getResultPassenger()) {
                         $result = $object->getResults()[0]->getResultPassenger();
                     } else {

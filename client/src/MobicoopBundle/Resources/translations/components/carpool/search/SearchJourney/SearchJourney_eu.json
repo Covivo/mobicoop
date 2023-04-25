@@ -18,6 +18,7 @@
     "ariaLabelDestination":"Une adresse de destination est requise",
     "outwardDate": {
         "error": "Baitezpadakoa",
+        "altLabel": "Date et heure de départ",
         "label": "Abiatze eguna"
     },
     "switch": {
