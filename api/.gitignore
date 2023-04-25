@@ -379,6 +379,7 @@ $RECYCLE.BIN/
 /config/params/contacts.json
 /config/params/analytics.json
 /config/params/commands.json
+/config/params/reminders.json
 
 # SSO Services
 /config/user/sso.json

@@ -1,0 +1,10 @@
+[
+    {
+        "name": "action_name",
+        "schedules": {
+            "order": 1,
+            "onceOnly": false,
+            "scheduleDays": []
+        }
+    }
+]

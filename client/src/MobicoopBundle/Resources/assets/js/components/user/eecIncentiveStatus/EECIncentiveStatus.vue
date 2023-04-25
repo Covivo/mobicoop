@@ -1,25 +1,48 @@
 <template>
-  <div v-if="!loading">
-    <EECIncentiveInitiateSubscription
-      v-if="!subscriptionInitiated"
-      :confirmed-phone-number="confirmedPhoneNumber"
-      :driving-licence-number-filled="drivingLicenceNumberFilled"
-    />
-    <EECIncentiveAdditionalInformations
-      v-else
-      :long-distance-subscriptions="subscriptions.longDistanceSubscriptions"
-      :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
-      :pending-proofs="subscriptions.nbPendingProofs"
-      :refused-proofs="subscriptions.nbRejectedProofs"
-      @changeTab="changeTab"
-    />
-  </div>
-  <div v-else>
-    <v-skeleton-loader
-      class="mx-auto"
-      max-width="100%"
-      type="paragraph@2"
-    />
+  <div
+    :id="$t('EEC-form')"
+    class="mb-8"
+  >
+    <v-snackbar
+      v-model="snackbar.displayed"
+      :color="snackbar.color"
+      top
+    >
+      {{ snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="black"
+          text
+          v-bind="attrs"
+          @click="snackbar.displayed = false"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <div v-if="!loading">
+      <EECIncentiveInitiateSubscription
+        v-if="!subscriptionInitiated"
+        :confirmed-phone-number="confirmedPhoneNumber"
+        :driving-licence-number-filled="drivingLicenceNumberFilled"
+        :api-uri="apiUri"
+      />
+      <EECIncentiveAdditionalInformations
+        v-else
+        :long-distance-subscriptions="subscriptions.longDistanceSubscriptions"
+        :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
+        :pending-proofs="subscriptions.nbPendingProofs"
+        :refused-proofs="subscriptions.nbRejectedProofs"
+        @changeTab="changeTab"
+      />
+    </div>
+    <div v-else>
+      <v-skeleton-loader
+        class="mx-auto"
+        max-width="100%"
+        type="paragraph@2"
+      />
+    </div>
   </div>
 </template>
 
@@ -58,12 +81,25 @@ export default {
     drivingLicenceNumberFilled:{
       type: Boolean,
       default: false
+    },
+    isAfterEecSubscription: {
+      type: Boolean,
+      default: false
+    },
+    apiUri: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
       subscriptions:null,
-      loading: false
+      loading: false,
+      snackbar: {
+        color: 'error',
+        displayed: false,
+        text: null,
+      },
     }
   },
   computed:{
@@ -84,6 +120,7 @@ export default {
         .then(res => {
           this.subscriptions = res.data;
           this.loading = false;
+          this.afterEECSubscriptionValidation();
         })
         .catch(function (error) {
 
@@ -91,6 +128,27 @@ export default {
     },
     changeTab(tab){
       this.$emit('changeTab', tab);
+    },
+    afterEECSubscriptionValidation() {
+      if (this.isAfterEecSubscription) {
+        switch (true) {
+        case null !== this.subscriptions.longDistanceSubscriptions && null !== this.subscriptions.shortDistanceSubscriptions:
+          this.snackbar.color = 'success';
+          this.snackbar.text = this.$t('EEC-subscription-snackbar.success');
+          break;
+        case null === this.subscriptions.longDistanceSubscriptions && null !== this.subscriptions.shortDistanceSubscriptions:
+          this.snackbar.text = this.$t('EEC-subscription-snackbar.longDistanceFailed');
+          break;
+        case null !== this.subscriptions.longDistanceSubscriptions && null === this.subscriptions.shortDistanceSubscriptions:
+          this.snackbar.text = this.$t('EEC-subscription-snackbar.shortDistanceFailed');
+          break;
+        default:
+          this.snackbar.text = this.$t('EEC-subscription-snackbar.failed');
+          break;
+        }
+
+        this.snackbar.displayed = true;
+      }
     }
   },
 };

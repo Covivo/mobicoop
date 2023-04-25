@@ -178,6 +178,6 @@ security:
         - { path: ^/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mango-payins, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mango-kyc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/campaigns/unsubscribe, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/campaigns/unsubscribe, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST] }
         - { path: ^/carpool_standard/from_external/bookings, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST, PUT] }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

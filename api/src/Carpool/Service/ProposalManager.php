@@ -39,7 +39,9 @@ use App\Carpool\Exception\AdException;
 use App\Carpool\Repository\CriteriaRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
+use App\Carpool\Ressource\Ad;
 use App\Communication\Service\InternalMessageManager;
+use App\DataProvider\Entity\MobicoopMatcherProvider;
 use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
@@ -76,6 +78,10 @@ class ProposalManager
     public const CHECK_REMOVE_ORPHANS_RUNNING_FILE = 'removeOrphans.txt';
     public const HOMOGENIZE_REGULAR_PROPOSAL_ADDRESS_DISTANCE = 5000;
 
+    public const TWELVE_HOURS_MARGIN_IN_SECONDS = 43199;
+
+    public const NOON = '12:00';
+
     private $entityManager;
     private $proposalMatcher;
     private $proposalRepository;
@@ -92,6 +98,7 @@ class ProposalManager
     private $actionRepository;
     private $mobicoopGeocoderPointProvider;
     private $geoTools;
+    private $mobicoopMatcherProvider;
 
     /**
      * Constructor.
@@ -112,6 +119,7 @@ class ProposalManager
         ActionRepository $actionRepository,
         MobicoopGeocoder $mobicoopGeocoder,
         GeoTools $geoTools,
+        MobicoopMatcherProvider $mobicoopMatcherProvider,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -131,6 +139,7 @@ class ProposalManager
         $this->actionRepository = $actionRepository;
         $this->mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
         $this->geoTools = $geoTools;
+        $this->mobicoopMatcherProvider = $mobicoopMatcherProvider;
     }
 
     /**
@@ -177,9 +186,9 @@ class ProposalManager
      * Prepare a proposal for persist.
      * Used when posting a proposal to populate default values like proposal validity.
      */
-    public function prepareProposal(Proposal $proposal): Proposal
+    public function prepareProposal(Proposal $proposal, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT): Proposal
     {
-        return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true);
+        return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true, $matchingAlgorithm);
     }
 
     /**
@@ -188,10 +197,11 @@ class ProposalManager
      * @param Proposal $proposal            The proposal to treat
      * @param bool     $persist             If we persist the proposal in the database (false for a simple search)
      * @param bool     $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @param string   $matchingAlgorithm   Version of the matching algorithm
      *
      * @return Proposal The treated proposal
      */
-    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
+    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
         $this->logger->info('ProposalManager : treatProposal '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
@@ -204,8 +214,25 @@ class ProposalManager
         // we have the directions, we can compute the lacking prices
         $proposal = $this->setPrices($proposal);
 
+        if ($persist) {
+            $this->logger->info('ProposalManager : start persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            $this->entityManager->persist($proposal);
+            $this->entityManager->flush();
+
+            $this->logger->info('ProposalManager : end persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        }
+
         // matching analyze
-        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+        if (Ad::MATCHING_ALGORITHM_V2 == $matchingAlgorithm) {
+            $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+        } elseif (Ad::MATCHING_ALGORITHM_V3 == $matchingAlgorithm) {
+            $this->_handleNoTimeInRequest($proposal);
+            if ($proposal->isPrivate()) {
+                $proposal = $this->mobicoopMatcherProvider->match($proposal);
+            } else {
+                $proposal = $this->mobicoopMatcherProvider->post($proposal);
+            }
+        }
 
         if ($persist) {
             $this->logger->info('ProposalManager : start persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
@@ -242,9 +269,9 @@ class ProposalManager
     }
 
     /**
-     * @throws \Exception
-     *
      * @return Response
+     *
+     * @throws \Exception
      */
     public function deleteProposal(Proposal $proposal, ?array $body = null)
     {
@@ -287,7 +314,7 @@ class ProposalManager
                         $event = new AskAdDeletedEvent($ask, $deleter->getId());
                         $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
-                    // Ask user is passenger
+                // Ask user is passenger
                 } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
                     // TO DO check if the deletion is just before 24h and in that case send an other email
                     // /** @var Criteria $criteria */
@@ -314,8 +341,13 @@ class ProposalManager
             }
         }
 
+        $proposalId = $proposal->getId();
         $this->entityManager->remove($proposal);
         $this->entityManager->flush();
+
+        if ($this->params['matcherCustomization']) {
+            $this->mobicoopMatcherProvider->delete($proposalId);
+        }
 
         return new Response(204, 'Deleted with success');
     }
@@ -583,6 +615,44 @@ class ProposalManager
         $addressesToRecode = $this->getActiveRegularProposalAddressesToRecode($addresses);
 
         return $this->recodeActiveRegularProposalAddresses($addressesToRecode);
+    }
+
+    private function _handleNoTimeInRequest(Proposal $proposal): Proposal
+    {
+        if (!$proposal->getUseTime()) {
+            if (Criteria::FREQUENCY_PUNCTUAL == $proposal->getCriteria()->getFrequency()) {
+                $criteria = $this->_fillDefaultTimeAtNoonForPunctualCriteria($proposal->getCriteria());
+            } else {
+                $criteria = $this->_fillDefaultTimeAtNoonForRegularCriteria($proposal->getCriteria());
+            }
+            $proposal->setCriteria($criteria);
+        }
+
+        return $proposal;
+    }
+
+    private function _fillDefaultTimeAtNoonForPunctualCriteria(Criteria $criteria): Criteria
+    {
+        $criteria->setFromTime(\DateTime::createFromFormat('H:i', self::NOON));
+        $criteria->setMarginDuration(self::TWELVE_HOURS_MARGIN_IN_SECONDS);
+
+        return $criteria;
+    }
+
+    private function _fillDefaultTimeAtNoonForRegularCriteria(Criteria $criteria): Criteria
+    {
+        foreach (Criteria::DAYS as $day) {
+            $checker = 'is'.ucfirst($day).'Check';
+            $setterTime = 'set'.ucfirst($day).'Time';
+            $setterDuration = 'set'.ucfirst($day).'MarginDuration';
+
+            if ($criteria->{$checker}()) {
+                $criteria->{$setterTime}(\DateTime::createFromFormat('H:i', self::NOON));
+                $criteria->{$setterDuration}(self::TWELVE_HOURS_MARGIN_IN_SECONDS);
+            }
+        }
+
+        return $criteria;
     }
 
     private function getActiveRegularProposalsWithLocalityOnly(): array

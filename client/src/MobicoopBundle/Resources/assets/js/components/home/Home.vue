@@ -158,6 +158,7 @@
           :geo-complete-results-order="geoCompleteResultsOrder"
           :geo-complete-palette="geoCompletePalette"
           :geo-complete-chip="geoCompleteChip"
+          :date-time-picker="dateTimePicker"
         />
       </v-col>
     </v-row>
@@ -309,10 +310,10 @@ export default {
       type: String,
       default: null
     },
-    mobConnectSubscriptions: {
-      type: String,
-      default: null
-    }
+    dateTimePicker: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
@@ -329,15 +330,6 @@ export default {
       this.checkVerifiedPhone();
     } else {
       this.checkVerifiedEmail();
-    }
-
-    // Displays the mobConnect snackbar
-    if ((this.mobConnectSubscriptions && 'null' !== this.mobConnectSubscriptions) || '' === this.mobConnectSubscriptions) {
-      const baseText = this.$t('mobConnect-snackbar.text.base');
-      const additionnalText = '1' === this.mobConnectSubscriptions ? this.$t('mobConnect-snackbar.text.success') : this.$t('mobConnect-snackbar.text.error');
-
-      this.mobConnect_snackbar_text = `${baseText} ${additionnalText}`;
-      this.mobConnectSnackbar = true;
     }
   },
   methods:{

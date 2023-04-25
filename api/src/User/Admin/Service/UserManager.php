@@ -590,9 +590,16 @@ class UserManager
         return null;
     }
 
-    private function setUserPostalAddress(User $user)
+    /**
+     * Force postal address of Rezo Pouce users.
+     */
+    private function setUserPostalAddress(User $user): User
     {
-        if (is_null($user->getPostalAddress()) && !is_null($user->getHomeAddress())) {
+        if (
+            ($user->isHitchHikeDriver() || $user->isHitchHikePassenger())
+            && is_null($user->getPostalAddress())
+            && !is_null($user->getHomeAddress())
+        ) {
             $user->setPostalAddress(
                 $user->getGivenName()
                 .' '.$user->getFamilyName()

@@ -69,6 +69,8 @@ services:
       $defaultSeatNumber: "%env(int:DEFAULT_SEAT_NUMBER)%"
       $contentPassenger: "%env(bool:CONTENT_PASSENGER)%"
       $carpoolSettingsDisplay: "%env(bool:CARPOOL_SETTINGS_DISPLAY)%"
+      $carpoolStandardBookingEnabled: "%env(bool:CARPOOL_STANDARD_BOOKING_ENABLED)%"
+      $carpoolStandardMessagingEnabled: "%env(bool:CARPOOL_STANDARD_MESSAGING_ENABLED)%"
   Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
     resource: "@MobicoopBundle/Carpool/Service/*"
   Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
@@ -293,3 +295,11 @@ services:
     tags: ["controller.service_arguments"]
     arguments:
       $assistiveSsoProvider: "%env(string:ASSISTIVE_SSO_PROVIDER)%"
+
+# Carpool Standard
+  Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\:
+    resource: "@MobicoopBundle/CarpoolStandard/Controller/*"
+  Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Service\:
+    resource: "@MobicoopBundle/CarpoolStandard/Service/*"
+    arguments:
+      $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"

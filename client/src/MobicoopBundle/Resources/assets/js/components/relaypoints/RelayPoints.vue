@@ -71,6 +71,7 @@
         :geo-complete-chip="geoCompleteChip"
         :punctual-date-optional="punctualDateOptional"
         :user="user"
+        :date-time-picker="dateTimePicker"
       />
     </v-row>
 
@@ -148,6 +149,10 @@ export default {
     territoryId: {
       type: String,
       default: null
+    },
+    dateTimePicker: {
+      type: Boolean,
+      default: false
     },
   },
   data () {

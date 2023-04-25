@@ -12,5 +12,6 @@
         {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
         {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
         token="{{token.getToken}}"
+        :date-time-picker="{{ dateTimePicker ? 'true' : 'false'}}"
     ></event-widget>
 {% endblock %}

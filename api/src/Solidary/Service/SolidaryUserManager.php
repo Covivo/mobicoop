@@ -46,6 +46,7 @@ use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\User;
 use App\User\Event\UserRegisteredEvent;
 use App\User\Repository\UserRepository;
+use App\User\Service\PseudonymizationManager;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -138,6 +139,10 @@ class SolidaryUserManager
         // If user is null, we try to get the user via the repository. It appends after a post of SolidaryBeneficiary during the return. Why ? I don't know, feel free to check ;)
         if (is_null($user)) {
             $user = $this->userRepository->findOneBy(['solidaryUser' => $solidaryUser]);
+        }
+
+        if (PseudonymizationManager::isUserPseudonymized($user)) {
+            throw new SolidaryException(SolidaryException::USER_PSEUDONYMISED);
         }
 
         // Get the SolidaryUser
@@ -258,6 +263,10 @@ class SolidaryUserManager
         // If user is null, we try to get the user via the repository. It appends after a post of SolidaryBeneficiary during the return. Why ? I don't know, feel free to check ;)
         if (is_null($user)) {
             $user = $this->userRepository->findOneBy(['solidaryUser' => $solidaryUser]);
+        }
+
+        if (PseudonymizationManager::isUserPseudonymized($user)) {
+            throw new SolidaryException(SolidaryException::USER_PSEUDONYMISED);
         }
 
         // Get the SolidaryUser
@@ -773,7 +782,7 @@ class SolidaryUserManager
         // we create the needs associated to the solidary user
         if ($solidaryVolunteer->getNeeds()) {
             foreach ($solidaryVolunteer->getNeeds() as $need) {
-                $needId = (substr($need, strrpos($need, '/') + 1));
+                $needId = substr($need, strrpos($need, '/') + 1);
                 $solidaryUser->addNeed($this->needRepository->find($needId));
             }
         }

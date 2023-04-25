@@ -104,6 +104,7 @@
             </v-col>
           </v-row>
           <v-row
+            id="phone-number"
             no-gutters
           >
             <!-- Telephone -->
@@ -308,6 +309,7 @@
                   @change="save"
                 />
               </v-menu>
+              <span id="driving-licence-number" />
               <v-text-field
                 v-model="drivingLicenceNumber"
                 :label="$t('drivingLicenceNumber.label')"
@@ -502,6 +504,8 @@
       :id="$t('eec-incentive')"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+      :is-after-eec-subscription="isAfterEecSubscription"
+      :api-uri="apiUri"
       @changeTab="changeTab"
     />
 
@@ -732,6 +736,14 @@ export default {
     ceeDisplay: {
       type: Boolean,
       default: true
+    },
+    isAfterEecSubscription: {
+      type: Boolean,
+      default: false
+    },
+    apiUri: {
+      type: String,
+      default: null
     }
   },
   data() {

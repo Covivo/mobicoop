@@ -66,11 +66,18 @@ class MessageRepository
         $this->repository = $this->entityManager->getRepository(Message::class);
         $query = $this->repository->createQueryBuilder('m')
             ->join('m.recipients', 'r')
+            ->innerJoin('r.user', 'u', 'WITH', 'u.status != :pseudonymizedStatus')
             ->leftJoin('m.askHistory', 'ah')
             ->leftJoin('m.solidaryAskHistory', 'sah')
             ->leftJoin('m.messages', 'ms')
-            ->where('m.message is null and ah.id is null and sah is null and (m.user = :user or r.user = :user)')
-            ->setParameter('user', $user)
+            ->where('m.message IS NULL')
+            ->andWhere('ah.id IS NULL')
+            ->andWhere('sah IS NULL')
+            ->andWhere('m.user = :user OR r.user = :user')
+            ->setParameters([
+                'pseudonymizedStatus' => User::STATUS_PSEUDONYMIZED,
+                'user' => $user,
+            ])
         ;
 
         return $query->getQuery()->getResult();
@@ -83,8 +90,14 @@ class MessageRepository
             ->leftJoin('m.askHistory', 'ah')
             ->leftJoin('m.messages', 'ms')
             ->leftJoin('m.recipients', 'r')
-            ->where('m.message is null and ah.id is not null and (m.user = :user or r.user = :user)')
-            ->setParameter('user', $user)
+            ->innerJoin('r.user', 'u', 'WITH', 'u.status != :pseudonymizedStatus')
+            ->where('m.message IS NULL')
+            ->andWhere('ah.id IS NOT NULL')
+            ->andWhere('m.user = :user OR r.user = :user')
+            ->setParameters([
+                'pseudonymizedStatus' => User::STATUS_PSEUDONYMIZED,
+                'user' => $user,
+            ])
         ;
 
         return $query->getQuery()->getResult();
@@ -100,9 +113,13 @@ class MessageRepository
         $this->repository = $this->entityManager->getRepository(Recipient::class);
         $query = $this->repository->createQueryBuilder('r')
             ->join('r.message', 'm')
+            ->innerJoin('r.user', 'u', 'WITH', 'u.status != :pseudonymizedStatus')
             ->where('r.user = :user')
             ->andWhere('r.readDate is null')
-            ->setParameter('user', $user)
+            ->setParameters([
+                'pseudonymizedStatus' => User::STATUS_PSEUDONYMIZED,
+                'user' => $user,
+            ])
         ;
 
         return $query->getQuery()->getResult();

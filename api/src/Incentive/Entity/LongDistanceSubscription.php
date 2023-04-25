@@ -189,13 +189,58 @@ class LongDistanceSubscription
     private $commitmentProofDate;
 
     /**
-     * The long distance ECC commitment proof timestamp.
+     * The long distance EEC commitment proof timestamp token.
      *
      * @var string
      *
-     * @ORM\Column(type="string", length=255, nullable=true, options={"comment": "The long distance ECC commitment proof timestamp"})
+     * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance ECC commitment proof timestamp"})
      */
-    private $commitmentProofTimestamp;
+    private $commitmentProofTimestampToken;
+
+    /**
+     * The long distance EEC commitment proof timestamp signing time.
+     *
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC commitment proof timestamp signing time"})
+     */
+    private $commitmentProofTimestampSigningTime;
+
+    /**
+     * The long distance EEC honor certificate proof timestamp token.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp"})
+     */
+    private $honorCertificateProofTimestampToken;
+
+    /**
+     * The long distance EEC honor certificate proof timestamp signing time.
+     *
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp signing time"})
+     */
+    private $honorCertificateProofTimestampSigningTime;
+
+    /**
+     * The long distance EEC incentive proof timestamp token.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp"})
+     */
+    private $incentiveProofTimestampToken;
+
+    /**
+     * The long distance EEC incentive proof timestamp signing time.
+     *
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp signing time"})
+     */
+    private $incentiveProofTimestampSigningTime;
 
     public function __construct(User $user, MobConnectSubscriptionResponse $mobConnectSubscriptionResponse)
     {
@@ -631,23 +676,133 @@ class LongDistanceSubscription
     }
 
     /**
-     * Get the long distance ECC commitment proof timestamp.
+     * Get the long distance EEC commitment proof timestamp token.
      *
      * @return string
      */
-    public function getCommitmentProofTimestamp(): ?string
+    public function getCommitmentProofTimestampToken(): ?string
     {
-        return $this->commitmentProofTimestamp;
+        return $this->commitmentProofTimestampToken;
     }
 
     /**
-     * Set the long distance ECC commitment proof timestamp.
+     * Set the long distance EEC commitment proof timestamp token.
      *
-     * @param string $commitmentProofTimestamp the long distance ECC commitment proof timestamp
+     * @param string $commitmentProofTimestampToken the long distance EEC commitment proof timestamp token
      */
-    public function setCommitmentProofTimestamp(string $commitmentProofTimestamp): self
+    public function setCommitmentProofTimestampToken(string $commitmentProofTimestampToken): self
     {
-        $this->commitmentProofTimestamp = $commitmentProofTimestamp;
+        $this->commitmentProofTimestampToken = $commitmentProofTimestampToken;
+
+        return $this;
+    }
+
+    /**
+     * Get the long distance EEC commitment proof timestamp signing time.
+     *
+     * @return \DateTimeInterface
+     */
+    public function getCommitmentProofTimestampSigningTime(): ?\DateTime
+    {
+        return $this->commitmentProofTimestampSigningTime;
+    }
+
+    /**
+     * Set the long distance EEC commitment proof timestamp signing time.
+     *
+     * @param \DateTimeInterface $commitmentProofTimestampSigningTime the long distance EEC commitment proof timestamp signing time
+     */
+    public function setCommitmentProofTimestampSigningTime(\DateTimeInterface $commitmentProofTimestampSigningTime): self
+    {
+        $this->commitmentProofTimestampSigningTime = $commitmentProofTimestampSigningTime;
+
+        return $this;
+    }
+
+    /**
+     * Get the long distance EEC honor certificate proof timestamp token.
+     *
+     * @return string
+     */
+    public function getHonorCertificateProofTimestampToken(): ?string
+    {
+        return $this->honorCertificateProofTimestampToken;
+    }
+
+    /**
+     * Set the long distance EEC honor certificate proof timestamp token.
+     *
+     * @param string $honorCertificateProofTimestampToken the long distance EEC honor certificate proof timestamp token
+     */
+    public function setHonorCertificateProofTimestampToken(string $honorCertificateProofTimestampToken): self
+    {
+        $this->honorCertificateProofTimestampToken = $honorCertificateProofTimestampToken;
+
+        return $this;
+    }
+
+    /**
+     * Get the long distance EEC honor certificate proof timestamp signing time.
+     *
+     * @return \DateTimeInterface
+     */
+    public function getHonorCertificateProofTimestampSigningTime(): ?\DateTime
+    {
+        return $this->honorCertificateProofTimestampSigningTime;
+    }
+
+    /**
+     * Set the long distance EEC honor certificate proof timestamp signing time.
+     *
+     * @param \DateTimeInterface $honorCertificateProofTimestampSigningTime the long distance EEC honor certificate proof timestamp signing time
+     */
+    public function setHonorCertificateProofTimestampSigningTime(\DateTimeInterface $honorCertificateProofTimestampSigningTime): self
+    {
+        $this->honorCertificateProofTimestampSigningTime = $honorCertificateProofTimestampSigningTime;
+
+        return $this;
+    }
+
+    /**
+     * Get the long distance EEC incentive proof timestamp token.
+     *
+     * @return string
+     */
+    public function getIncentiveProofTimestampToken(): ?string
+    {
+        return $this->incentiveProofTimestampToken;
+    }
+
+    /**
+     * Set the long distance EEC incentive proof timestamp token.
+     *
+     * @param string $incentiveProofTimestampToken the long distance EEC incentive proof timestamp token
+     */
+    public function setIncentiveProofTimestampToken(string $incentiveProofTimestampToken): self
+    {
+        $this->incentiveProofTimestampToken = $incentiveProofTimestampToken;
+
+        return $this;
+    }
+
+    /**
+     * Get the long distance EEC incentive proof timestamp signing time.
+     *
+     * @return \DateTimeInterface
+     */
+    public function getIncentiveProofTimestampSigningTime(): ?\DateTime
+    {
+        return $this->incentiveProofTimestampSigningTime;
+    }
+
+    /**
+     * Set the long distance EEC incentive proof timestamp signing time.
+     *
+     * @param \DateTimeInterface $incentiveProofTimestampSigningTime the long distance EEC incentive proof timestamp signing time
+     */
+    public function setIncentiveProofTimestampSigningTime(\DateTimeInterface $incentiveProofTimestampSigningTime): self
+    {
+        $this->incentiveProofTimestampSigningTime = $incentiveProofTimestampSigningTime;
 
         return $this;
     }

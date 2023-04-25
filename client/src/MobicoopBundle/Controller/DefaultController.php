@@ -25,7 +25,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\CeeSubscription;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -52,20 +51,6 @@ class DefaultController extends AbstractController
             'baseUri' => $_ENV['API_URI'],
             'searchComponentHorizontal' => $this->searchComponentHorizontal,
         ];
-
-        if (!is_null($request->get('isMobConnectSubscriptionSuccessFull'))) {
-            $params['mobConnectSubscriptions'] = false;
-
-            if (true === boolval($request->get('isMobConnectSubscriptionSuccessFull'))) {
-                $this->dataProvider->setClass(CeeSubscription::class, CeeSubscription::RESOURCE_NAME);
-                $response = $this->dataProvider->getCollection();
-
-                if (200 === $response->getCode()) {
-                    $subscriptions = $response->getValue()->getMember()[0];
-                    $params['mobConnectSubscriptions'] = !is_null($subscriptions->getShortDistanceSubscriptions()) && !is_null($subscriptions->getLongDistanceSubscriptions());
-                }
-            }
-        }
 
         return $this->render(
             '@Mobicoop/default/index.html.twig',

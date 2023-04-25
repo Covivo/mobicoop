@@ -12,6 +12,16 @@ use App\User\Entity\User;
  */
 class OpenIdSsoProvider extends EntityOpenIdSsoProvider
 {
+    /**
+     * @var null|string
+     */
+    protected $_appClientID;
+
+    /**
+     * @var null|string
+     */
+    protected $_appClientSecret;
+
     public function __construct(
         string $serviceName,
         string $baseSiteUri,
@@ -21,9 +31,14 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         string $redirectUrl,
         bool $autoCreateAccount,
         string $logOutRedirectUri = '',
-        ?string $codeVerifier = null
+        ?string $codeVerifier = null,
+        ?string $appClientID = null,
+        ?string $appClientSecret = null
     ) {
         parent::__construct($serviceName, $baseSiteUri, $baseUri, $clientId, $clientSecret, $redirectUrl, $autoCreateAccount, $logOutRedirectUri, $codeVerifier);
+
+        $this->_appClientID = $appClientID;
+        $this->_appClientSecret = $appClientSecret;
     }
 
     /**
@@ -64,6 +79,15 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         }
 
         throw new \LogicException('Error getUserProfile');
+    }
+
+    public function getAppToken()
+    {
+        return $this->execute([
+            'client_id' => $this->_appClientID,
+            'client_secret' => $this->_appClientSecret,
+            'grant_type' => 'client_credentials',
+        ]);
     }
 
     public function getRefreshToken(string $refreshToken)

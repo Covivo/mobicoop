@@ -5,6 +5,7 @@ namespace App\Incentive\Service\Manager;
 use App\Carpool\Entity\Ask;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
@@ -124,6 +125,13 @@ abstract class MobConnectManager
     protected function getDriverShortSubscriptionId(): string
     {
         return $this->getDriver()->getShortDistanceSubscription()->getSubscriptionId();
+    }
+
+    protected function getDriverSubscriptionTimestamps(string $subscriptionId): MobConnectSubscriptionTimestampsResponse
+    {
+        $this->setApiProvider();
+
+        return $this->_apiProvider->getUserSubscriptionTimestamps($subscriptionId);
     }
 
     protected function postSubscription(bool $isLongDistance = true): MobConnectSubscriptionResponse

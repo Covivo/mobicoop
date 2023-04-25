@@ -49,4 +49,16 @@ class CeeSubscriptionManager
 
         return [];
     }
+
+    public function myEecSubscriptionsEligibility()
+    {
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->simpleGet('my_eec_eligibility');
+
+        if (!is_null($response->getValue()) && is_array($response->getValue())) {
+            return $response->getValue();
+        }
+
+        return [];
+    }
 }

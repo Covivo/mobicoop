@@ -48,6 +48,7 @@
             :disable-search="disableSearch"
             :show-destination="true"
             :is-widget="true"
+            :date-time-picker="dateTimePicker"
           />
         </v-col>
       </v-row>
@@ -109,6 +110,10 @@ export default {
       default: () => ({})
     },
     geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
+    dateTimePicker: {
       type: Boolean,
       default: false
     },

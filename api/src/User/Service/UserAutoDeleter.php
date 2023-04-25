@@ -33,6 +33,15 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * Enable/Disable : API .env USER_AUTO_DELETE_AFTER_INACTIVITY
+ * First, it will compute the limit date before which it will delete the accounts. This date is Today - USER_AUTO_DELETE_PERIOD months (API .env)
+ * Will auto delete account when :
+ *      - user.last_activity_date IS NOT NULL AND user.last_activity_date <= AUTO_DELETE_DATE
+ *      OR
+ *      - user.last_activity_date IS NULL AND user.created_date <= AUTO_DELETE_DATE
+ *
+ * It will send a first warning at AUTO_DELETE_DATE - (AUTO_DELETE_DATE * 0.25) (i.e, if the LIMIT is 24 month, the first warning is send 6 months before)
+ * It will send a first warning at AUTO_DELETE_DATE - (AUTO_DELETE_DATE * 0.042) (i.e, if the LIMIT is 24 month, the first warning is send 1 months before)
  */
 class UserAutoDeleter
 {

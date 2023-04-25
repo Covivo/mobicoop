@@ -216,12 +216,10 @@ class MyAdManager
         $today = new \DateTime('now');
         foreach ($this->matchingRepository->getProposalMatchingAsOffersWithBothUsers($proposal) as $matchingOffer) {
             // the user is passenger
-            /**
-             * @var Matching $matchingOffer
-             */
+            // @var Matching $matchingOffer
             // we exclude private proposals and expired matchings for the carpooler count
             // We need them though to treat former ask without sending another request
-            if (!$matchingOffer->getProposalOffer()->isPrivate() && $matchingOffer->getCriteria()->getFromDate()->format('Y-m-d') >= $today->format('Y-m-d')) {
+            if (!$matchingOffer->getProposalOffer()->isPrivate() && !$this->_hasJourneyReachedDeadline($matchingOffer->getCriteria())) {
                 $carpoolers[] = $matchingOffer->getProposalOffer()->getUser()->getId();
             }
             // check for asks (driver)
@@ -275,16 +273,14 @@ class MyAdManager
 
         foreach ($this->matchingRepository->getProposalMatchingAsRequestsWithBothUsers($proposal) as $matchingRequest) {
             // the user is driver
-            /**
-             * @var Matching $matchingRequest
-             */
+            // @var Matching $matchingRequest
             // we exclude private proposals for the carpooler count, as well as solidaries and expired matching
             // We need them though to treat former ask without sending another request
             if (
                 !$matchingRequest->getProposalRequest()->isPrivate()
                 && !$matchingRequest->getProposalRequest()->getSolidary()
                 && !in_array($matchingRequest->getProposalRequest()->getUser()->getId(), $carpoolers)
-                && $matchingRequest->getCriteria()->getFromDate()->format('Y-m-d') >= $today->format('Y-m-d')
+                && !$this->_hasJourneyReachedDeadline($matchingRequest->getCriteria())
             ) {
                 $carpoolers[] = $matchingRequest->getProposalRequest()->getUser()->getId();
             }
@@ -342,6 +338,15 @@ class MyAdManager
         $myAd->setPassengers($passengers);
 
         return $myAd;
+    }
+
+    private function _hasJourneyReachedDeadline(Criteria $criteria): bool
+    {
+        $today = new \DateTime('now');
+
+        $date = !is_null($criteria->getToDate()) ? $criteria->getToDate() : $criteria->getFromDate();
+
+        return is_null($date) ? false : $date->format('Y-m-d') < $today->format('Y-m-d');
     }
 
     /**

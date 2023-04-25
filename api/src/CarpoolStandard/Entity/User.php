@@ -36,11 +36,18 @@ class User
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var null|string The id of this user
+     * @var null|int The id of this user
      *
      * @Groups({"read", "write"})
      */
     private $id;
+
+    /**
+     * @var null|string The id of this user
+     *
+     * @Groups({"read", "write"})
+     */
+    private $externalId;
 
     /**
      * @var string the operator identifier
@@ -110,14 +117,26 @@ class User
         }
     }
 
-    public function getId(): ?string
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(?string $id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
 
         return $this;
     }

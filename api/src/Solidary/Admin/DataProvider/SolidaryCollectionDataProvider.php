@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\DataProvider;
 
@@ -28,6 +28,7 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Solidary\Admin\Service\SolidaryManager;
 use App\Solidary\Entity\Solidary;
+use App\User\Entity\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
@@ -40,16 +41,21 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
     private $collectionExtensions;
     private $managerRegistry;
 
+    /**
+     * @var SolidaryManager
+     */
+    private $_solidaryManager;
+
     public function __construct(ManagerRegistry $managerRegistry, iterable $collectionExtensions, SolidaryManager $solidaryManager)
     {
         $this->collectionExtensions = $collectionExtensions;
         $this->managerRegistry = $managerRegistry;
-        $this->solidaryManager = $solidaryManager;
+        $this->_solidaryManager = $solidaryManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Solidary::class === $resourceClass && $operationName === 'ADMIN_get';
+        return Solidary::class === $resourceClass && 'ADMIN_get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -57,45 +63,60 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         // overload filters to avoid using complicated linked relations !
         $newContext = $context;
         if (isset($context['filters'])) {
-            foreach ($context['filters'] as $fkey=>$filter) {
+            foreach ($context['filters'] as $fkey => $filter) {
                 switch ($fkey) {
                     case 'order':
-                        foreach ($filter as $key=>$value) {
+                        foreach ($filter as $key => $value) {
                             switch ($key) {
                                 case 'givenName':
                                     $newContext['filters']['order']['solidaryUserStructure.solidaryUser.user.givenName'] = $value;
                                     unset($newContext['filters']['order']['givenName']);
+
                                     break;
+
                                 case 'familyName':
                                     $newContext['filters']['order']['solidaryUserStructure.solidaryUser.user.familyName'] = $value;
                                     unset($newContext['filters']['order']['familyName']);
+
                                     break;
+
                                 case 'telephone':
                                     $newContext['filters']['order']['solidaryUserStructure.solidaryUser.user.telephone'] = $value;
                                     unset($newContext['filters']['order']['telephone']);
+
                                     break;
+
                                 case 'subject':
-                                    $newContext['filters']['order']['subject.label']= $value;
+                                    $newContext['filters']['order']['subject.label'] = $value;
                                     unset($newContext['filters']['order']['subject']);
+
                                     break;
+
                                 case 'fromDate':
-                                    $newContext['filters']['order']['proposal.criteria.fromDate']= $value;
+                                    $newContext['filters']['order']['proposal.criteria.fromDate'] = $value;
                                     unset($newContext['filters']['order']['fromDate']);
+
                                     break;
                             }
                         }
+
                         break;
+
                     case 'givenName':
                         $newContext['filters']['solidaryUserStructure.solidaryUser.user.givenName'] = $filter;
                         unset($newContext['filters']['givenName']);
+
                         break;
+
                     case 'familyName':
                         $newContext['filters']['solidaryUserStructure.solidaryUser.user.familyName'] = $filter;
                         unset($newContext['filters']['familyName']);
+
                         break;
+
                     case 'progression':
                         // progression filter is rewritten from "progression equals xx" to "progression lower than xx"
-                        $newContext['filters']['progression'] = ['lt'=>$filter];
+                        $newContext['filters']['progression'] = ['lt' => $filter];
                         // no break
                     default:
                         break;
@@ -105,6 +126,7 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
 
         $solidaries = [];
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);
+
         /**
          * @var EntityRepository $repository
          */
@@ -115,9 +137,16 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         // we limit to the solidary records that have not been closed for edition
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->andWhere("$rootAlias.status != :status")
-            ->setParameter('status', Solidary::STATUS_CLOSED_FOR_EDITION);
-        
+            ->join("{$rootAlias}.solidaryUserStructure", 'sus')
+            ->join('sus.solidaryUser', 'su')
+            ->innerjoin('su.user', 'u', 'WITH', 'u.status != :pseudonymizedStatus')
+            ->andWhere("{$rootAlias}.status != :status")
+            ->setParameters([
+                'pseudonymizedStatus' => User::STATUS_PSEUDONYMIZED,
+                'status' => Solidary::STATUS_CLOSED_FOR_EDITION,
+            ])
+        ;
+
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $newContext);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
@@ -125,6 +154,6 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
             }
         }
 
-        return $this->solidaryManager->getSolidaries($solidaries);
+        return $this->_solidaryManager->getSolidaries($solidaries);
     }
 }

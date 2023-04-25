@@ -134,6 +134,7 @@ api_platform:
         - '%kernel.project_dir%/src/Import/Ressource'
         - '%kernel.project_dir%/src/Journey/Entity'
         - '%kernel.project_dir%/src/MassCommunication/Entity'
+        - '%kernel.project_dir%/src/MassCommunication/Ressource'
         - '%kernel.project_dir%/src/Match/Entity'
         - '%kernel.project_dir%/src/Payment/Entity'
         - '%kernel.project_dir%/src/Payment/Ressource'

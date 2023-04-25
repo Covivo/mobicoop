@@ -2,7 +2,7 @@
   <div>
     <v-list-item
       class="pa-0"
-      @click="showProfileDialog = true"
+      v-on="carpooler.id != defaultId ? { click: displayProfileDialog } : {}"
     >
       <!--Carpooler avatar-->
       <ProfileAvatar
@@ -41,7 +41,7 @@
     </v-list-item>
     <PopupPublicProfile
       :carpooler-id="carpooler.id"
-      :carpooler-name="carpooler.givenName+' '+carpooler.shortFamilyName"
+      :carpooler-name="getCarpoolerName"
       :show-profile-dialog="showProfileDialog"
       @dialogClosed="showProfileDialog = false"
     />
@@ -54,6 +54,8 @@ import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import PopupPublicProfile from "@components/user/profile/PopupPublicProfile";
 import VerifiedIdentity from "@components/user/profile/VerifiedIdentity";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/utilities/CarpoolerSummary/";
+
+const DEFAULT_USER_ID = 999999999999;
 
 export default {
   i18n: {
@@ -85,6 +87,7 @@ export default {
   },
   data () {
     return {
+      defaultId: DEFAULT_USER_ID,
       locale: localStorage.getItem("X-LOCALE"),
       hasBadges: this.carpooler.numberOfBadges>0 ? true : false,
       showProfileDialog: false
@@ -100,11 +103,19 @@ export default {
     },
     gamificationActive(){
       return this.$store.getters['g/isActive'];
+    },
+    getCarpoolerName() {
+      return `${this.carpooler.givenName}${this.carpooler.shortFamilyName ? ' '+this.carpooler.shortFamilyName : ''}`;
     }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
-  }
+  },
+  methods: {
+    displayProfileDialog() {
+      this.showProfileDialog = true;
+    }
+  },
 }
 </script>
 

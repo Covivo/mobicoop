@@ -139,6 +139,7 @@
           :default-destination="defaultDestination"
           :publish-button-always-active="publishButtonAlwaysActive"
           :default-outward-date="dateFormated"
+          :date-time-picker="dateTimePicker"
         />
       </v-row>
     </v-container>
@@ -249,7 +250,11 @@ export default {
     geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
+    dateTimePicker: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {

@@ -34,8 +34,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
 use App\Carpool\Entity\Proposal;
 use App\Community\Filter\CommunityAddressTerritoryFilter;
-use App\Community\Filter\TerritoryFilter;
 use App\Community\Filter\ReferrerFilter;
+use App\Community\Filter\TerritoryFilter;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
 use App\Match\Entity\Mass;
@@ -53,8 +53,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * A community : a group of users sharing common interests.
  *
  * @ORM\Entity()
+ *
  * @UniqueEntity("name")
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -256,7 +259,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *              "path"="/admin/communities/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_community_read',object)",
+ *              "security"="is_granted('community_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
@@ -283,7 +286,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *          },
  *      }
  * )
+ *
  * @Vich\Uploadable
+ *
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id"})
@@ -304,9 +309,13 @@ class Community
      * @var int the id of this community
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"aRead","readCommunity","readCommunityUser","results","existsCommunity","listCommunities","readUserAdmin"})
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -315,7 +324,9 @@ class Community
      * @var string the name of the community
      *
      * @Assert\NotBlank(groups={"write"})
+     *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities", "readEvent"})
      */
     private $name;
@@ -331,6 +342,7 @@ class Community
      * @var int community status
      *
      * @ORM\Column(type="smallint", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readCommunity","write","readUserAdmin"})
      */
     private $status;
@@ -339,6 +351,7 @@ class Community
      * @var null|bool members are only visible by the members of the community
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $membersHidden;
@@ -347,6 +360,7 @@ class Community
      * @var null|bool proposals are only visible by the members of the community
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $proposalsHidden;
@@ -355,6 +369,7 @@ class Community
      * @var null|int the type of validation (automatic/manual/domain)
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"aRead","aWrite","readCommunity","write", "communities"})
      */
     private $validationType;
@@ -363,6 +378,7 @@ class Community
      * @var null|string the domain of the community
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $domain;
@@ -371,7 +387,9 @@ class Community
      * @var string the short description of the community
      *
      * @Assert\NotBlank(groups={"write"})
+     *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"aRead","aWrite","readCommunity","write","listCommunities"})
      */
     private $description;
@@ -380,7 +398,9 @@ class Community
      * @var string the full description of the community
      *
      * @Assert\NotBlank(groups={"write"})
+     *
      * @ORM\Column(type="text")
+     *
      * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $fullDescription;
@@ -389,6 +409,7 @@ class Community
      * @var \DateTimeInterface creation date of the community
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"aRead","readCommunity"})
      */
     private $createdDate;
@@ -397,6 +418,7 @@ class Community
      * @var \DateTimeInterface updated date of the community
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"aRead", "readCommunity"})
      */
     private $updatedDate;
@@ -405,8 +427,11 @@ class Community
      * @var User the creator of the community
      *
      * @ApiProperty(push=true)
+     *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity"})
      */
     private $user;
@@ -415,10 +440,15 @@ class Community
      * @var Address the address of the community
      *
      * @ApiProperty(push=true)
+     *
      * @Assert\NotBlank(groups={"write"})
+     *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"aRead","aWrite","readCommunity","write"})
+     *
      * @MaxDepth(1)
      */
     private $address;
@@ -427,16 +457,22 @@ class Community
      * @var null|ArrayCollection the images of the community
      *
      * @ApiProperty(push=true)
+     *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist"})
+     *
      * @ORM\OrderBy({"position" = "ASC"})
+     *
      * @Groups({"readCommunity","readCommunityUser","write","listCommunities"})
+     *
      * @MaxDepth(1)
+     *
      * @ApiSubresource(maxDepth=1)
      */
     private $images;
 
     /**
      * @var string Url of the default Avatar for a community
+     *
      * @Groups({"readCommunity","readCommunityUser","write","listCommunities"})
      */
     private $defaultAvatar;
@@ -445,7 +481,9 @@ class Community
      * @var null|ArrayCollection the proposals in this community
      *
      * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="communities")
+     *
      * @MaxDepth(1)
+     *
      * @ApiSubresource(maxDepth=1)
      */
     private $proposals;
@@ -454,9 +492,13 @@ class Community
      * @var null|ArrayCollection the members of the community
      *
      * @ApiProperty(push=true)
+     *
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist"})
+     *
      * @Groups({"readCommunityUser","write","results","existsCommunity"})
+     *
      * @MaxDepth(1)
+     *
      * @ApiSubresource(maxDepth=1)
      */
     private $communityUsers;
@@ -464,9 +506,12 @@ class Community
     /**
      * @var null|ArrayCollection the security files of the community
      *
-     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist"}, orphanRemoval=true)
+     *
      * @Groups({"aRead","readCommunity","write","listCommunities"})
+     *
      * @MaxDepth(1)
+     *
      * @ApiSubresource(maxDepth=1)
      */
     private $communitySecurities;
@@ -475,31 +520,37 @@ class Community
      * @var null|ArrayCollection the relay points related to the community
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="community", cascade={"persist"})
+     *
      * @Groups({"write"})
+     *
      * @MaxDepth(1)
      */
     private $relayPoints;
 
     /**
      * @var null|bool If the current user asking is member of the community
+     *
      * @Groups({"readCommunity","listCommunities"})
      */
     private $member;
 
     /**
      * @var null|int If the current user asking is member of the community this is his membership status (cf. CommunityUser status)
+     *
      * @Groups({"readCommunity","listCommunities"})
      */
     private $memberStatus;
 
     /**
      * @var null|int Number of members of this community
+     *
      * @Groups({"aRead","readCommunity","listCommunities"})
      */
     private $nbMembers;
 
     /**
      * @var null|array Store the MapAds of the community
+     *
      * @Groups({"readCommunityUser","write","results","existsCommunity"})
      */
     private $mapsAds;
@@ -513,30 +564,35 @@ class Community
 
     /**
      * @var string The referrer
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $referrer;
 
     /**
      * @var int The referrer id
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $referrerId;
 
     /**
      * @var null|string The referrer avatar
+     *
      * @Groups({"aRead"})
      */
     private $referrerAvatar;
 
     /**
      * @var null|string The community main image
+     *
      * @Groups({"aRead","aWrite","readEvent"})
      */
     private $image;
 
     /**
      * @var null|string The community avatar
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $avatar;
@@ -550,12 +606,14 @@ class Community
 
     /**
      * @var string the login to join the community if the community is secured
+     *
      * @Groups("writeJoinCommunity")
      */
     private $login;
 
     /**
      * @var string the password to join the community if the community is secured
+     *
      * @Groups("writeJoinCommunity")
      */
     private $password;
@@ -564,8 +622,11 @@ class Community
      * @var null|User admin that create the community
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"readUser","write"})
+     *
      * @MaxDepth(1)
      */
     private $userDelegate;

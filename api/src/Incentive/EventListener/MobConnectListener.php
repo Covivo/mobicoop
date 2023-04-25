@@ -9,8 +9,6 @@ use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
 use App\Incentive\Service\Manager\AuthManager;
 use App\Incentive\Service\Manager\JourneyManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
-use App\Payment\Event\ConfirmDirectPaymentEvent;
-use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
@@ -97,22 +95,6 @@ class MobConnectListener implements EventSubscriberInterface
         ) {
             $this->_subscriptionManager->createSubscriptions($event->getUser());
         }
-    }
-
-    /**
-     * Listener called when an direct payment is confirmed.
-     */
-    public function onDirectPaymentConfirmed(ConfirmDirectPaymentEvent $event)
-    {
-        $this->_journeyManager->directPaymentConfirmed($event->getCarpoolItem());
-    }
-
-    /**
-     * Listener called when an direct payment for regular is confirmed.
-     */
-    public function onDirectPaymentRegularConfirmed(ConfirmDirectPaymentRegularEvent $event)
-    {
-        $this->_journeyManager->directPaymentConfirmed($event->getCarpoolItem());
     }
 
     /**

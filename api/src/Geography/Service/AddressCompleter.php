@@ -108,7 +108,7 @@ class AddressCompleter
             $address->setName($addressAsArray['name']);
         }
         if (isset($addressAsArray['home'])) {
-            $address->setHome($addressAsArray['home']);
+            $address->setHome(is_null($addressAsArray['home']) ? false : true);
         }
 
         return $address;

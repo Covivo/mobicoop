@@ -14,5 +14,6 @@
         {{ searchRegular ? 'regular' : '' }}
         token="{{token.getToken}}"
         url-alt-avatar="{{ community.defaultAvatar }}"
+        :date-time-picker="{{ dateTimePicker ? 'true' : 'false'}}"
     ></community-widget>
 {% endblock %}

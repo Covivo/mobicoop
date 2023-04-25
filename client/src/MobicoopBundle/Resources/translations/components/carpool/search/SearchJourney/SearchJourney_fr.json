@@ -36,6 +36,7 @@
     },
     "outwardDate": {
         "label": "Date de départ",
+        "altLabel": "Date et heure de départ",
         "error": "Obligatoire"
     },
     "buttons": {
@@ -47,6 +48,7 @@
         }
     },
     "fullDate": "ddd Do MMMM YYYY",
+    "fullDateTime": "ddd Do MMMM YYYY à HH:mm",
     "ariaLabelOrgin":"Une adresse de départ est requise",
     "ariaLabelDestination":"Une adresse de destination est requise"
 }

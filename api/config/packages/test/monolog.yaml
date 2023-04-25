@@ -95,6 +95,12 @@ monolog:
       max_files: 30
       path: "%kernel.logs_dir%/mass.log"
       channels: [mass]
+    matcherV3:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/matcherV3.log"
+      channels: [matcherV3]
     notification:
       type: rotating_file
       level: debug
@@ -137,6 +143,7 @@ monolog:
           "!incentive_subscription",
           "!maintenance",
           "!mass",
+          "!matcherV3",
           "!notification",
           "!solidary",
           "!user_auto_delete",

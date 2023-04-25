@@ -31,11 +31,12 @@ use App\MassCommunication\Entity\Delivery;
 use App\MassCommunication\Entity\Recipient;
 use App\MassCommunication\Entity\Sender;
 use App\MassCommunication\Exception\CampaignException;
+use App\MassCommunication\Ressource\MassCommunicationHook;
 use App\User\Entity\User;
 use App\User\Exception\UserNotFoundException;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -67,8 +68,10 @@ class CampaignManager
     private $mailerSenderEmail;
     private $mailerSenderName;
     private $massEmailProvider;
-    private $massEmailProviderIpRange;
+    private $massEmailProviderIpRange1;
+    private $massEmailProviderIpRange2;
     private $massSmsProvider;
+    private $logger;
 
     /**
      * Constructor.
@@ -79,9 +82,11 @@ class CampaignManager
         EntityManagerInterface $entityManager,
         MediumRepository $mediumRepository,
         UserRepository $userRepository,
+        LoggerInterface $logger,
         string $mailTemplate,
         string $mailerProvider,
-        array $mailerProviderIpRange,
+        array $mailerProviderIpRange1,
+        array $mailerProviderIpRange2,
         string $mailerApiKey,
         string $mailerClientName,
         int $mailerClientId,
@@ -106,6 +111,7 @@ class CampaignManager
         $this->mailerSenderEmail = $mailerSenderEmail;
         $this->mailerSenderName = $mailerSenderName;
         $this->mailerIp = $mailerIp;
+        $this->logger = $logger;
 
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
@@ -113,7 +119,8 @@ class CampaignManager
 
                 break;
         }
-        $this->massEmailProviderIpRange = $mailerProviderIpRange;
+        $this->massEmailProviderIpRange1 = $mailerProviderIpRange1;
+        $this->massEmailProviderIpRange2 = $mailerProviderIpRange2;
 
         switch ($smsProvider) {
             // none yet !
@@ -288,20 +295,21 @@ class CampaignManager
      *
      * @return array An empty array
      */
-    public function handleUnsubscribeHook(Request $request)
+    public function handleUnsubscribeHook(MassCommunicationHook $hook, Request $request)
     {
         switch ($this->mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
                 // Sendinblue uses ip range
-                if (ip2long($request->getClientIp()) > ip2long($this->massEmailProviderIpRange['maxIp']) || ip2long($request->getClientIp()) < ip2long($this->massEmailProviderIpRange['minIp'])) {
-                    throw new Exception('Unauthorized');
+                if (!in_array(ip2long($request->getClientIp()), range(ip2long($this->massEmailProviderIpRange1['minIp']), ip2long($this->massEmailProviderIpRange1['maxIp']))) || !in_array(ip2long($request->getClientIp()), range(ip2long($this->massEmailProviderIpRange2['minIp']), ip2long($this->massEmailProviderIpRange2['maxIp'])))) {
+                    throw new \Exception('Unauthorized');
                 }
-                if (!$email = $request->get('email')) {
-                    throw new Exception('Missing email');
+                if (!$email = $hook->getEmail()) {
+                    throw new \Exception('Missing email');
                 }
                 if (!$user = $this->userRepository->findOneBy(['email' => $email])) {
                     throw new UserNotFoundException('User not found');
                 }
+
                 // @var User $user
                 $user->setNewsSubscription(false);
                 $this->entityManager->persist($user);
@@ -361,7 +369,7 @@ class CampaignManager
                     // we create the campaign on provider side
                     try {
                         $providerCampaign = $this->massEmailProvider->createCampaign($campaign->getName(), $sender, $campaign->getSubject(), $this->getFormedEmailBody($campaign->getBody()), $recipients);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         throw new CampaignException($e->getMessage());
                     }
                     // we set the campaign provider id

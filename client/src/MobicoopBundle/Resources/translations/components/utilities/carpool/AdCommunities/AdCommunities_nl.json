@@ -1,3 +1,4 @@
 {
-  "uri": "/covoiturage-communaute/{communityId}"
+  "uri": "/covoiturage-communaute/{communityId}",
+  "community": "Community"
 }

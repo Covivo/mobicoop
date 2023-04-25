@@ -3,6 +3,7 @@
 namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Repository\CarpoolProofRepository;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
@@ -12,8 +13,10 @@ use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\CeeSubscriptions;
+use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,7 +34,14 @@ class SubscriptionManager extends MobConnectManager
     public const VERIFICATION_STATUS_PENDING = 0;
     public const VERIFICATION_STATUS_ENDED = 1;
 
+    private const LONG_SUBSCRIPTION_TYPE = 'long';
+
     private $_ceeEligibleProofs = [];
+
+    /**
+     * @var CarpoolProofRepository
+     */
+    private $_carpoolProofRepository;
 
     /**
      * @var LongDistanceSubscriptionRepository
@@ -49,15 +59,22 @@ class SubscriptionManager extends MobConnectManager
     private $_subscriptions;
 
     /**
+     * @var SubscriptionValidation
+     */
+    private $_subscriptionValidation;
+
+    /**
      * @var UserValidation
      */
     private $_userValidation;
 
     public function __construct(
         EntityManagerInterface $em,
+        SubscriptionValidation $subscriptionValidation,
         UserValidation $userValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
+        CarpoolProofRepository $carpoolProofRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
         string $carpoolProofPrefix,
@@ -66,8 +83,10 @@ class SubscriptionManager extends MobConnectManager
     ) {
         parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
+        $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
         $this->_shortDistanceSubscriptionRepository = $shortDistanceSubscriptionRepository;
+        $this->_subscriptionValidation = $subscriptionValidation;
         $this->_userValidation = $userValidation;
     }
 
@@ -90,6 +109,12 @@ class SubscriptionManager extends MobConnectManager
 
             $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $response);
 
+            $response = $this->getDriverSubscriptionTimestamps($longDistanceSubscription->getSubscriptionId());
+            if (!is_null($response->getIncentiveProofTimestampToken())) {
+                $longDistanceSubscription->setIncentiveProofTimestampToken($response->getIncentiveProofTimestampToken());
+                $longDistanceSubscription->setIncentiveProofTimestampSigningTime($response->getIncentiveProofTimestampSigningTime());
+            }
+
             $this->_em->persist($longDistanceSubscription);
         }
 
@@ -101,10 +126,26 @@ class SubscriptionManager extends MobConnectManager
 
             $shortDistanceSubscription = new ShortDistanceSubscription($this->_driver, $response);
 
+            $response = $this->getDriverSubscriptionTimestamps($shortDistanceSubscription->getSubscriptionId());
+            if (!is_null($response->getIncentiveProofTimestampToken())) {
+                $shortDistanceSubscription->setIncentiveProofTimestampToken($response->getIncentiveProofTimestampToken());
+                $shortDistanceSubscription->setIncentiveProofTimestampSigningTime($response->getIncentiveProofTimestampSigningTime());
+            }
+
             $this->_em->persist($shortDistanceSubscription);
         }
 
         $this->_em->flush();
+    }
+
+    public function getUserEECEligibility(User $user): EecEligibility
+    {
+        $userEligibility = new EecEligibility($user);
+
+        $userEligibility->setLongDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user));
+        $userEligibility->setShortDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, false));
+
+        return $userEligibility;
     }
 
     /**
@@ -135,6 +176,35 @@ class SubscriptionManager extends MobConnectManager
         $this->_computeShortDistance();
 
         return [$this->_subscriptions];
+    }
+
+    /**
+     * Set EEC subscription timestamps.
+     *
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function setUserSubscriptionTimestamps(string $subscriptionType, int $subscriptionId)
+    {
+        $subscription = self::LONG_SUBSCRIPTION_TYPE === $subscriptionType
+            ? $this->_em->getRepository(LongDistanceSubscription::class)->find($subscriptionId)
+            : $this->_em->getRepository(ShortDistanceSubscription::class)->find($subscriptionId);
+
+        if (is_null($subscription)) {
+            throw new \LogicException('The subscription was not found');
+        }
+
+        if (!$this->_subscriptionValidation->isSubscriptionValidForTimestampsProcess($subscription)) {
+            throw new \LogicException('Subscription cannot be processed at this time');
+        }
+
+        $this->_loggerService->log('Performing the timestamping process');
+        $this->setDriver($subscription->getUser());
+
+        $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+
+        $this->_em->flush();
+
+        $this->_loggerService->log('The timestamping process is complete');
     }
 
     /**

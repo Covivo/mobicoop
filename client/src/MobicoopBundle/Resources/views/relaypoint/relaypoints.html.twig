@@ -21,6 +21,7 @@
             {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
             {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
             geo-search-url="{{ geoCompleteUri }}"
+            :date-time-picker="{{ dateTimePicker ? 'true' : 'false'}}"
         ><relay-points/>
     </div>
 {% endblock %}

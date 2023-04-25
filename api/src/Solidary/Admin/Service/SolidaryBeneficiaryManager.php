@@ -39,6 +39,7 @@ use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
+use App\User\Service\PseudonymizationManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -159,7 +160,10 @@ class SolidaryBeneficiaryManager
         if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
             throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
         }
-        if (!$solidaryUser->isBeneficiary()) {
+        if (
+            PseudonymizationManager::isUserPseudonymized($solidaryUser->getUser())
+            || !$solidaryUser->isBeneficiary()
+        ) {
             throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
         }
 

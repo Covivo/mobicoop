@@ -98,9 +98,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class UserManager
 {
-    private const DELETE_AVAILABLE_FIELDS = ['birthDate', 'chat', 'chatFavorites', 'drivingLicenceNumber', 'emailToken', 'familyName', 'gamification', 'givenName', 'mobile', 'music', 'musicFavorites', 'newsSubscription', 'oldEmail', 'oldTelephone', 'postalAddress', 'proEmail', 'proName', 'smoke', 'solidaryUser', 'ssoId', 'ssoProvider', 'telephone', 'unsubscribeToken'];
-    private const PSEUDONYMISED_EMAIL_SUFFIX = '@mobicoop-anonymized.io';
-
     private $entityManager;
     private $imageManager;
     private $authItemRepository;
@@ -146,6 +143,11 @@ class UserManager
     private $passwordTokenValidity;
 
     private $geoTools;
+
+    /**
+     * @var PseudonymizationManager
+     */
+    private $_pseudonymizationManager;
 
     /**
      * Constructor.
@@ -197,6 +199,7 @@ class UserManager
         ActionRepository $actionRepository,
         GamificationManager $gamificationManager,
         ScammerRepository $scammerRepository,
+        PseudonymizationManager $pseudonymizationManager,
         $userMinAge
     ) {
         $this->entityManager = $entityManager;
@@ -239,6 +242,7 @@ class UserManager
         $this->actionRepository = $actionRepository;
         $this->gamificationManager = $gamificationManager;
         $this->scammerRepository = $scammerRepository;
+        $this->_pseudonymizationManager = $pseudonymizationManager;
         $this->userMinAge = $userMinAge;
     }
 
@@ -1416,7 +1420,7 @@ class UserManager
 
         $this->deleteUserImages($user);
 
-        $user = $this->pseudonymisedUser($user);
+        $user = $this->_pseudonymizationManager->pseudonymizedUser($user);
 
         $this->entityManager->flush();
     }
@@ -2013,23 +2017,6 @@ class UserManager
     public function getUnreadMessageNumberForResponseInsertion(User $user): User
     {
         return $this->getUnreadMessageNumber($user);
-    }
-
-    private function pseudonymisedUser(User $user): User
-    {
-        foreach (self::DELETE_AVAILABLE_FIELDS as $key => $field) {
-            $setter = 'set'.ucfirst($field);
-
-            $user->{$setter}(null);
-        }
-
-        $user->setEmail($user->getId().self::PSEUDONYMISED_EMAIL_SUFFIX);
-        $today = new \DateTime('now');
-        $user->setPassword(password_hash($today->format('Y-m-d H:m:s'), PASSWORD_DEFAULT));
-        $user->setGender(User::GENDER_OTHER);
-        $user->setStatus(User::STATUS_PSEUDONYMIZED);
-
-        return $user;
     }
 
     /**

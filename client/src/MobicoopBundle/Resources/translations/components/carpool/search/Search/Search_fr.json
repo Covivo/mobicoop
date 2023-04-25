@@ -32,5 +32,6 @@
     "tooltips": {
         "needConnection": "Veuillez vous connecter ou vous inscrire pour publier une annonce"
     },
-    "urlDate": "YYYY-MM-DD"
+    "urlDate": "YYYY-MM-DD",
+    "urlTime": "HH:mm"
 }

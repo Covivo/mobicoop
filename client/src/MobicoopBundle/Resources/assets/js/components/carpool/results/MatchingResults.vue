@@ -47,7 +47,10 @@
             :external-rdex-journeys="externalRdexJourneys"
             :age-display="ageDisplay"
             :birthdate-display="birthdateDisplay"
+            :carpool-standard-booking-enabled="carpoolStandardBookingEnabled"
+            :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
             @carpool="carpool(result)"
+            @booking="booking(result)"
             @loginOrRegister="loginOrRegister(result)"
           />
         </v-col>
@@ -126,7 +129,15 @@ export default {
     birthdateDisplay: {
       type: Boolean,
       default: false
-    }
+    },
+    carpoolStandardBookingEnabled: {
+      type: Boolean,
+      default: false
+    },
+    carpoolStandardMessagingEnabled: {
+      type: Boolean,
+      default: false
+    },
   },
   data(){
     return {
@@ -151,7 +162,10 @@ export default {
     },
     paginate(page){
       this.$emit("paginate", page)
-    }
+    },
+    booking(booking){
+      this.$emit("booking", booking);
+    },
   }
 }
 </script>
