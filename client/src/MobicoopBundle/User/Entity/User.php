@@ -867,13 +867,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
-    public function resetAddresses(): self
-    {
-        $this->addresses = new ArrayCollection();
-
-        return $this;
-    }
-
     public function getCars(): Collection
     {
         return $this->cars;
