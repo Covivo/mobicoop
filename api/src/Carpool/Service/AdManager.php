@@ -1316,7 +1316,6 @@ class AdManager
         $proposal = $this->proposalRepository->find($ad->getProposalId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
-
         // Pause is apart and do not needs notifications by now
         if ($ad->isPaused() !== $oldAd->isPaused()) {
             if (false == $ad->isPaused()) {
