@@ -226,7 +226,7 @@ class CarpoolExportManager
         $infoForPdf['tax'] = $sumReceived > 300 ? true : false;
         $infoForPdf['carpoolExports'] = $carpoolExports;
         $infoForPdf['paymentActive'] = $this->paymentActive;
-        $infoForPdf['totalDistance'] = $totalDistance;
+        $infoForPdf['totalDistance'] = round($totalDistance, 0);
         $infoForPdf['savedCo2'] = ($totalSavedCo2 / 1000);
 
         return $this->pdfManager->generatePDF($infoForPdf);

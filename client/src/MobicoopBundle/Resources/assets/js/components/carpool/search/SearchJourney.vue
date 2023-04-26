@@ -197,7 +197,7 @@
                 id="date"
                 :value="computedDateFormat"
                 clearable
-                :label="$t('outwardDate.label') + (showRequired ? ' *' : '')"
+                :label="dateTimePicker ? ($t('outwardDate.altLabel') + (showRequired ? ' *' : '')) : ($t('outwardDate.label') + (showRequired ? ' *' : ''))"
                 readonly
                 :disabled="regular"
                 :error="!date && regular && outwardDateClicked"
@@ -241,14 +241,15 @@ import moment from "moment";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 
+
 export default {
   i18n: {
     messages: {
       'en': messages_en,
       'nl': messages_nl,
       'fr': messages_fr,
-      'eu':messages_eu
-    },
+      'eu': messages_eu
+    }
   },
   components: {
     Geocomplete

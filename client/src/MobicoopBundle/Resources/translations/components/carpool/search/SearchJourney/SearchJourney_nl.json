@@ -12,7 +12,8 @@
     },
     "outwardDate": {
         "error": "Verplicht",
-        "label": "Vertrekdatum"
+        "label": "Vertrekdatum",
+        "altLabel": "Date et heure de départ"
     },
     "switch": {
         "punctual": {
