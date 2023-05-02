@@ -87,6 +87,34 @@ class EecEligibility
      */
     private $id;
 
+    /**
+     * @var int
+     *
+     * @Groups({"eecEligibility"})
+     */
+    private $longDistanceDrivingLicenceNumberDoublon = 0;
+
+    /**
+     * @var int
+     *
+     * @Groups({"eecEligibility"})
+     */
+    private $shortDistanceDrivingLicenceNumberDoublon = 0;
+
+    /**
+     * @var int
+     *
+     * @Groups({"eecEligibility"})
+     */
+    private $longDistancePhoneDoublon = 0;
+
+    /**
+     * @var int
+     *
+     * @Groups({"eecEligibility"})
+     */
+    private $shortDistancePhoneDoublon = 0;
+
     public function __construct(User $user, $id = null)
     {
         $this->setUser($user);
@@ -131,7 +159,10 @@ class EecEligibility
      */
     public function setLongDistanceEligibility(): self
     {
-        $this->longDistanceEligibility = $this->getLongDistanceJourneysNumber() <= self::LONG_DISTANCE_ELIGIBILITY_THRESHOLD;
+        $this->longDistanceEligibility =
+            $this->getLongDistanceJourneysNumber() <= self::LONG_DISTANCE_ELIGIBILITY_THRESHOLD
+            && 0 === $this->getLongDistanceDrivingLicenceNumberDoublon()
+            && 0 === $this->getLongDistancePhoneDoublon();
 
         return $this;
     }
@@ -169,7 +200,10 @@ class EecEligibility
      */
     public function setShortDistanceEligibility(): self
     {
-        $this->shortDistanceEligibility = $this->getShortDistanceJourneysNumber() <= self::SHORT_DISTANCE_ELIGIBILITY_THRESHOLD;
+        $this->shortDistanceEligibility =
+            $this->getShortDistanceJourneysNumber() <= self::SHORT_DISTANCE_ELIGIBILITY_THRESHOLD
+            && 0 === $this->getShortDistanceDrivingLicenceNumberDoublon()
+            && 0 === $this->getShortDistancePhoneDoublon();
 
         return $this;
     }
@@ -188,6 +222,78 @@ class EecEligibility
     public function setUser(User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of longDistanceDrivingLicenceNumberDoublon.
+     */
+    public function getLongDistanceDrivingLicenceNumberDoublon(): int
+    {
+        return $this->longDistanceDrivingLicenceNumberDoublon;
+    }
+
+    /**
+     * Set the value of longDistanceDrivingLicenceNumberDoublon.
+     */
+    public function setLongDistanceDrivingLicenceNumberDoublon(int $longDistanceDrivingLicenceNumberDoublon): self
+    {
+        $this->longDistanceDrivingLicenceNumberDoublon = $longDistanceDrivingLicenceNumberDoublon;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of shortDistanceDrivingLicenceNumberDoublon.
+     */
+    public function getShortDistanceDrivingLicenceNumberDoublon(): int
+    {
+        return $this->shortDistanceDrivingLicenceNumberDoublon;
+    }
+
+    /**
+     * Set the value of shortDistanceDrivingLicenceNumberDoublon.
+     */
+    public function setShortDistanceDrivingLicenceNumberDoublon(int $shortDistanceDrivingLicenceNumberDoublon): self
+    {
+        $this->shortDistanceDrivingLicenceNumberDoublon = $shortDistanceDrivingLicenceNumberDoublon;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of longDistancePhoneDoublon.
+     */
+    public function getLongDistancePhoneDoublon(): int
+    {
+        return $this->longDistancePhoneDoublon;
+    }
+
+    /**
+     * Set the value of longDistancePhoneDoublon.
+     */
+    public function setLongDistancePhoneDoublon(int $longDistancePhoneDoublon): self
+    {
+        $this->longDistancePhoneDoublon = $longDistancePhoneDoublon;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of shortDistancePhoneDoublon.
+     */
+    public function getShortDistancePhoneDoublon(): int
+    {
+        return $this->shortDistancePhoneDoublon;
+    }
+
+    /**
+     * Set the value of shortDistancePhoneDoublon.
+     */
+    public function setShortDistancePhoneDoublon(int $shortDistancePhoneDoublon): self
+    {
+        $this->shortDistancePhoneDoublon = $shortDistancePhoneDoublon;
 
         return $this;
     }
