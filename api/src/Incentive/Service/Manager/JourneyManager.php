@@ -75,7 +75,7 @@ class JourneyManager extends MobConnectManager
 
         $params = [
             'Identifiant du trajet' => $this->getRPCOperatorId($carpoolProof->getId()),
-            'Date de départ du trajet' => $carpoolProof->getPickUpPassengerDate()->format('Y-m-d'),
+            'Date de départ du trajet' => $carpoolProof->getPickUpDriverDate()->format('Y-m-d'),
         ];
 
         $response = $this->patchSubscription($this->getDriver()->getShortDistanceSubscription()->getSubscriptionId(), $params);
