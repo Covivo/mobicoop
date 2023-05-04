@@ -144,6 +144,10 @@ class SubscriptionManager extends MobConnectManager
 
         $userEligibility->setLongDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user));
         $userEligibility->setShortDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, false));
+        $userEligibility->setLongDistanceDrivingLicenceNumberDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
+        $userEligibility->setLongDistancePhoneDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
+        $userEligibility->setShortDistanceDrivingLicenceNumberDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
+        $userEligibility->setShortDistancePhoneDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
 
         return $userEligibility;
     }

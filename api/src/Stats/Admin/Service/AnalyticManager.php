@@ -34,6 +34,7 @@ class AnalyticManager
 {
     private $paramId;
     private $communityId;
+    private $territoryId;
     private $darkTheme;
     private $uri;
     private $organization;
@@ -41,7 +42,9 @@ class AnalyticManager
     private $dashboards;
     private $authManager;
 
-    public function __construct(RequestStack $requestStack, AuthManager $authManager, array $params)
+    public function __construct(
+        RequestStack $requestStack,
+        AuthManager $authManager, array $params)
     {
         $this->uri = $params['url'];
         $this->organization = $params['organization'];
@@ -53,6 +56,8 @@ class AnalyticManager
         $this->paramId = $request->get('id');
         $communityIdParam = $request->query->get('communityId', null);
         $this->communityId = is_null($communityIdParam) ? null: intval($communityIdParam);
+        $territoryIdParam = $request->query->get('territoryId', null);
+        $this->territoryId = is_null($territoryIdParam) ? null: intval($territoryIdParam);
         $this->darkTheme = $request->query->get('darkTheme', false);
     }
 
@@ -66,10 +71,17 @@ class AnalyticManager
         $analytic = new Analytic();
         $analytic->setId($id);
         $dashboard = $this->getDashboard();
+
+        if (null == $this->territoryId) {
+            $territories = $this->getTerritories($dashboard['auth_item']);
+        } else {
+            $territories = $this->getTerritory($this->territoryId);
+        }
+
         $payload = [
             'resource' => ['dashboard' => $dashboard['dashboardId']],
             'params' => [
-                'idterritoryoperational' => $this->getTerritories($dashboard['auth_item']),
+                'idterritoryoperational' => $territories,
                 'idcommunityoperational' => $this->getCommunity($this->communityId),
                 'organization' => $this->organization,
             ],
@@ -102,6 +114,14 @@ class AnalyticManager
             return strtolower($this->organization);
         }
         return strtolower($this->organization).'_'.strval($communityId);
+    }
+
+    private function getTerritory(?int $territoryId): array
+    {
+        if (null === $territoryId) {
+            return [strtolower($this->organization)];
+        }
+        return [strtolower($this->organization) . '_' . strval($territoryId)];
     }
 
     private function getTerritories(string $auth_item): array
