@@ -132,7 +132,7 @@ class JourneyManager extends MobConnectManager
 
             if (0 === $longDistanceJourneysNumber) {
                 $params = [
-                    'Date de partage des frais' => $carpoolPayment->getUpdatedDate(),
+                    'Date de partage des frais' => $carpoolPayment->getUpdatedDate()->format('Y-m-d'),
                     "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(),
                 ];
 
