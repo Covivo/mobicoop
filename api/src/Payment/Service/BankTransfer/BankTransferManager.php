@@ -75,7 +75,7 @@ class BankTransferManager
             $this->_entityManager->flush();
         }
 
-        // $this->_BankTransferEmitter->emit($this->_BankTransferCollectionBuilder->getBatchId());
+        $this->_BankTransferEmitter->emit($this->_BankTransferCollectionBuilder->getBatchId());
         $this->_BankTransfersSummarizer->summarize($this->_BankTransferCollectionBuilder->getBatchId());
     }
 
