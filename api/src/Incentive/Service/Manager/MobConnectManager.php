@@ -22,6 +22,7 @@ abstract class MobConnectManager
     public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
 
     public const SUBSCRIPTION_EXPIRATION_DELAY = 3;     // Expressed in months
+    protected const DATE_FORMAT = 'Y-m-d';
 
     /**
      * @var User
