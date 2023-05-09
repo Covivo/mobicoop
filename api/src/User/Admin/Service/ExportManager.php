@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\Security;
 class ExportManager
 {
     public const ALLOWED_FILTERS = ['community', 'isHitchHiker'];
+    public const MAXIMUM_NUMBER_OF_ROLES = 5;
 
     /**
      * @var User
@@ -51,8 +52,18 @@ class ExportManager
      */
     private $_authenticatedUserRestrictionTerritories;
 
-    public function __construct(Security $security, RequestStack $requestStack, CommunityUserRepository $communityUserRepository, ProposalRepository $proposalRepository, UserRepository $userRepository)
-    {
+    /**
+     * @var UserExport
+     */
+    private $_currentUserExport;
+
+    public function __construct(
+        Security $security,
+        RequestStack $requestStack,
+        CommunityUserRepository $communityUserRepository,
+        ProposalRepository $proposalRepository,
+        UserRepository $userRepository
+    ) {
         if (is_null($security->getUser())) {
             throw new BadRequestHttpException('There is no authenticated User');
         }
@@ -131,45 +142,70 @@ class ExportManager
 
     private function _transformUser(User $user): UserExport
     {
-        $userExport = new UserExport();
+        $this->_currentUserExport = new UserExport();
 
-        $userExport->setFamilyName($user->getFamilyName());
-        $userExport->setGivenName($user->getGivenName());
-        $userExport->setGender($user->getGender());
-        $userExport->setEmail($user->getEmail());
-        $userExport->setTelephone($user->getTelephone());
-        $userExport->setBirthDate($user->getBirthDate());
-        $userExport->setRegistrationDate($user->getCreatedDate());
-        $userExport->setLastActivityDate($user->getLastActivityDate());
-        $userExport->setNewsletterSubscription($user->hasNewsSubscription());
+        $this->_currentUserExport->setFamilyName($user->getFamilyName());
+        $this->_currentUserExport->setGivenName($user->getGivenName());
+        $this->_currentUserExport->setGender($user->getGender());
+        $this->_currentUserExport->setEmail($user->getEmail());
+        $this->_currentUserExport->setTelephone($user->getTelephone());
+        $this->_currentUserExport->setBirthDate($user->getBirthDate());
+        $this->_currentUserExport->setRegistrationDate($user->getCreatedDate());
+        $this->_currentUserExport->setLastActivityDate($user->getLastActivityDate());
+        $this->_currentUserExport->setNewsletterSubscription($user->hasNewsSubscription());
 
         $maxValidityDate = $this->_proposalRepository->getUserMaxValidityAnnonceDate($user);
-        $userExport->setMaxValidityAnnonceDate(isset($maxValidityDate['MaxValiditeAnnonce']) ? new \DateTime($maxValidityDate['MaxValiditeAnnonce']) : null);
+        $this->_currentUserExport->setMaxValidityAnnonceDate(isset($maxValidityDate['MaxValiditeAnnonce']) ? new \DateTime($maxValidityDate['MaxValiditeAnnonce']) : null);
 
         $adresses = array_values(array_filter($user->getAddresses(), function ($address) {
             return $address->isHome();
         }));
-        $userExport->setAddressLocality(!empty($adresses) ? $adresses[0]->getAddressLocality() : null);
+        $this->_currentUserExport->setAddressLocality(!empty($adresses) ? $adresses[0]->getAddressLocality() : null);
 
-        $userExport->setSolidaryUser($this->_isUserSolidary($user));
+        $this->_currentUserExport->setSolidaryUser($this->_isUserSolidary($user));
 
         $communities = $this->_communityUserRepository->findUserCommunities($user);
-        $userExport->setCommunity1(isset($communities['Communauté1']) ? $communities['Communauté1'] : null);
-        $userExport->setCommunity1(isset($communities['Communauté2']) ? $communities['Communauté2'] : null);
-        $userExport->setCommunity1(isset($communities['Communauté3']) ? $communities['Communauté3'] : null);
+        $this->_currentUserExport->setCommunity1(isset($communities['Communauté1']) ? $communities['Communauté1'] : null);
+        $this->_currentUserExport->setCommunity1(isset($communities['Communauté2']) ? $communities['Communauté2'] : null);
+        $this->_currentUserExport->setCommunity1(isset($communities['Communauté3']) ? $communities['Communauté3'] : null);
 
         $proposals = $this->_proposalRepository->userExportActiveProposal($user);
 
-        $userExport->setCarpool1OriginLocality(isset($proposals['Annonce1_Origine']) ? $proposals['Annonce1_Origine'] : null);
-        $userExport->setCarpool1DestinationLocality(isset($proposals['Annonce1_Destination']) ? $proposals['Annonce1_Destination'] : null);
-        $userExport->setCarpool1Frequency(isset($proposals['Annonce1_Frequence']) ? $proposals['Annonce1_Frequence'] : null);
-        $userExport->setCarpool2OriginLocality(isset($proposals['Annonce2_Origine']) ? $proposals['Annonce2_Origine'] : null);
-        $userExport->setCarpool2DestinationLocality(isset($proposals['Annonce2_Destination']) ? $proposals['Annonce2_Destination'] : null);
-        $userExport->setCarpool2Frequency(isset($proposals['Annonce2_Frequence']) ? $proposals['Annonce2_Frequence'] : null);
-        $userExport->setCarpool3OriginLocality(isset($proposals['Annonce3_Origine']) ? $proposals['Annonce3_Origine'] : null);
-        $userExport->setCarpool3DestinationLocality(isset($proposals['Annonce3_Destination']) ? $proposals['Annonce3_Destination'] : null);
-        $userExport->setCarpool3Frequency(isset($proposals['Annonce3_Frequence']) ? $proposals['Annonce3_Frequence'] : null);
+        $this->_currentUserExport->setCarpool1OriginLocality(isset($proposals['Annonce1_Origine']) ? $proposals['Annonce1_Origine'] : null);
+        $this->_currentUserExport->setCarpool1DestinationLocality(isset($proposals['Annonce1_Destination']) ? $proposals['Annonce1_Destination'] : null);
+        $this->_currentUserExport->setCarpool1Frequency(isset($proposals['Annonce1_Frequence']) ? $proposals['Annonce1_Frequence'] : null);
+        $this->_currentUserExport->setCarpool2OriginLocality(isset($proposals['Annonce2_Origine']) ? $proposals['Annonce2_Origine'] : null);
+        $this->_currentUserExport->setCarpool2DestinationLocality(isset($proposals['Annonce2_Destination']) ? $proposals['Annonce2_Destination'] : null);
+        $this->_currentUserExport->setCarpool2Frequency(isset($proposals['Annonce2_Frequence']) ? $proposals['Annonce2_Frequence'] : null);
+        $this->_currentUserExport->setCarpool3OriginLocality(isset($proposals['Annonce3_Origine']) ? $proposals['Annonce3_Origine'] : null);
+        $this->_currentUserExport->setCarpool3DestinationLocality(isset($proposals['Annonce3_Destination']) ? $proposals['Annonce3_Destination'] : null);
+        $this->_currentUserExport->setCarpool3Frequency(isset($proposals['Annonce3_Frequence']) ? $proposals['Annonce3_Frequence'] : null);
 
-        return $userExport;
+        $this->_setCurrentUserExportRoles($user->getUserAuthAssignments());
+
+        return $this->_currentUserExport;
+    }
+
+    private function _setCurrentUserExportRoles(array $roles): void
+    {
+        $roles = array_map(function ($role) {
+            return [
+                'role_name' => $role->getAuthItem()->getName(),
+                'role_territory' => !is_null($role->getTerritory()) ? $role->getTerritory()->getName() : null,
+            ];
+        }, $roles);
+
+        foreach ($roles as $key => $role) {
+            if (self::MAXIMUM_NUMBER_OF_ROLES === $key) {
+                break;
+            }
+
+            $index = $key + 1;
+            $nameSetter = "setRole{$index}Name";
+            $territorySetter = "setRole{$index}Territory";
+
+            $this->_currentUserExport->{$nameSetter}($role['role_name']);
+            $this->_currentUserExport->{$territorySetter}($role['role_territory']);
+        }
     }
 }
