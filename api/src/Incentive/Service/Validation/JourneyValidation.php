@@ -121,7 +121,7 @@ class JourneyValidation extends Validation
         /**
          * @var User $requester
          */
-        $requester = $this->_tokenStorage->getToken()->getUser();
+        $requester = is_null($this->_driver) ? $this->_tokenStorage->getToken()->getUser() : $this->_driver;
 
         if (is_null($requester->getMobConnectAuth())) {
             return false;
