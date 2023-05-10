@@ -9,9 +9,16 @@ use App\Incentive\Service\Manager\SubscriptionManager;
 
 class SubscriptionValidation extends Validation
 {
-    public function __construct(LoggerService $loggerService)
+    /**
+     * @var int
+     */
+    private $_verificationDeadline;
+
+    public function __construct(LoggerService $loggerService, int $deadline)
     {
         parent::__construct($loggerService);
+
+        $this->_setVerificationDeadline($deadline);
     }
 
     /**
@@ -25,7 +32,24 @@ class SubscriptionValidation extends Validation
                 is_null($subscription->getIncentiveProofTimestampToken())
                 || is_null($subscription->getCommitmentProofTimestampToken())
                 || is_null($subscription->getHonorCertificateProofTimestampToken())
-            )
-        ;
+            );
+    }
+
+    public function isSubscriptionReadyForVerify($subscription): bool
+    {
+        // TODO: mettre en place un test permettant que le trajet utilisé pour la vérification est valide
+        return
+            is_null($subscription->getStatus())
+            && !is_null($subscription->getCommitmentProofDate())
+            && $subscription->getCommitmentProofDate() <= $this->_verificationDeadline
+            && is_null($subscription->getVerificationDate());
+    }
+
+    private function _setVerificationDeadline(int $deadline): self
+    {
+        $this->_verificationDeadline = new \DateTime('now');
+        $this->_verificationDeadline->sub(new \DateInterval('P'.$deadline.'D'));
+
+        return $this;
     }
 }

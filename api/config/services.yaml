@@ -761,7 +761,14 @@ services:
     tags:
       - {
           name: "console.command",
-          command: "app:incentive:journeys-verification",
+          command: "app:incentive:subscriptions-verification",
+        }
+  
+  App\Incentive\Command\SubscriptionVerificationCommand:
+    tags:
+      - {
+          name: "console.command",
+          command: "app:incentive:subscription-verification",
         }
   
   App\Incentive\Command\SubscriptionTimestampsCommand:
@@ -834,6 +841,10 @@ services:
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
+
+  App\Incentive\Service\Validation\SubscriptionValidation:
+    arguments:
+      $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
 
   # Journey
   App\Journey\Service\JourneyManager:

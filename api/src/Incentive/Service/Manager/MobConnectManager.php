@@ -164,7 +164,7 @@ abstract class MobConnectManager
         return $subscription->setExpirationDate($now->add(new \DateInterval('P'.self::SUBSCRIPTION_EXPIRATION_DELAY.'M')));
     }
 
-    protected function verifySubscription(string $subscriptionId)
+    protected function executeRequestVerifySubscription(string $subscriptionId)
     {
         $this->setApiProvider();
 
