@@ -20,6 +20,8 @@ use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
 {
@@ -35,6 +37,8 @@ class SubscriptionManager extends MobConnectManager
     public const VERIFICATION_STATUS_ENDED = 1;
 
     private const LONG_SUBSCRIPTION_TYPE = 'long';
+
+    private const ALLOWED_SUBSCRIPTION_TYPES = ['long', 'short'];
 
     private $_ceeEligibleProofs = [];
 
@@ -213,6 +217,43 @@ class SubscriptionManager extends MobConnectManager
         $this->_loggerService->log('The timestamping process is complete');
     }
 
+    public function verifySubscriptionFromControllerCommand(string $subscriptionType, string $subscriptionId)
+    {
+        if (!in_array($subscriptionType, self::ALLOWED_SUBSCRIPTION_TYPES)) {
+            throw new BadRequestHttpException('The subscriptionType parameter is incorrect. Please choose from: '.join(', ', self::ALLOWED_SUBSCRIPTION_TYPES));
+        }
+
+        if (!preg_match('/^\d+$/', $subscriptionId)) {
+            throw new BadRequestHttpException('The subscriptionId parameter should be an integer');
+        }
+
+        $subscriptionId = intval($subscriptionId);
+
+        switch ($subscriptionType) {
+            case 'long':
+                $repository = $this->_em->getRepository(LongDistanceSubscription::class);
+
+                break;
+
+            case 'short':
+                $repository = $this->_em->getRepository(ShortDistanceSubscription::class);
+
+                break;
+        }
+
+        $subscription = $repository->find($subscriptionId);
+
+        if (is_null($subscription)) {
+            throw new NotFoundHttpException("The {$subscriptionType} subscription was not found");
+        }
+
+        if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {
+            throw new BadRequestHttpException("The {$subscriptionType} subscription is not ready for verification");
+        }
+
+        return $this->verifySubscription($subscription);
+    }
+
     /**
      * Verify subscriptions.
      */
@@ -237,7 +278,7 @@ class SubscriptionManager extends MobConnectManager
      *
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public function verifySubscription($subscription): void
+    public function verifySubscription($subscription)
     {
         switch (true) {
             case $subscription instanceof LongDistanceSubscription:
@@ -271,6 +312,8 @@ class SubscriptionManager extends MobConnectManager
         $subscription->setVerificationDate();
 
         $this->_em->flush();
+
+        return $subscription;
     }
 
     private function _computeShortDistance()
