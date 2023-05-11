@@ -858,7 +858,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"aRead","aWrite","readUser","write","checkPhoneToken", "readSolidary"})
+     * @Groups({"aRead","aWrite","readUser", "results", "write","checkPhoneToken", "readSolidary"})
      */
     private $telephone;
 
