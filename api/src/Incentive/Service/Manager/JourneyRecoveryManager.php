@@ -1,33 +1,22 @@
 <?php
 
-namespace App\Incentive\Controller;
+namespace App\Incentive\Service\Manager;
 
+use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\EecResponse;
-use App\Incentive\Service\Manager\JourneyManager;
+use App\Incentive\Service\HonourCertificateService;
+use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Validation\JourneyValidation;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
 
-class JourneyController extends AbstractController
+class JourneyRecoveryManager extends JourneyManager
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $_em;
-
-    /**
-     * @var JourneyManager
-     */
-    private $_journeyManager;
-
     /**
      * @var array
      */
@@ -59,30 +48,29 @@ class JourneyController extends AbstractController
     private $_userValidation;
 
     public function __construct(
-        SubscriptionValidation $subscriptionValidation,
-        UserValidation $userValidation,
-        JourneyManager $journeyManager,
+        CarpoolProofRepository $carpoolProofRepository,
         EntityManagerInterface $em,
-        UserRepository $userRepository
+        EventDispatcherInterface $eventDispatcher,
+        JourneyValidation $journeyValidation,
+        LoggerService $loggerService,
+        HonourCertificateService $honourCertificateService,
+        SubscriptionValidation $subscriptionValidation,
+        UserRepository $userRepository,
+        UserValidation $userValidation,
+        string $carpoolProofPrefix,
+        array $mobConnectParams,
+        array $ssoServices
     ) {
+        parent::__construct($carpoolProofRepository, $em, $eventDispatcher, $journeyValidation, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+
         $this->_subscriptionValidation = $subscriptionValidation;
-        $this->_userValidation = $userValidation;
-
-        $this->_journeyManager = $journeyManager;
-
-        $this->_em = $em;
         $this->_userRepository = $userRepository;
+        $this->_userValidation = $userValidation;
     }
 
-    /**
-     * @Route("/eec/journeys/process")
-     *
-     * @Security("is_granted('ROLE_ADMIN')")
-     */
-    public function proofsRecovery(Request $request)
+    public function executeProofsRecovery(string $type, ?int $userId)
     {
-        $this->_subscriptionType = $request->get('type');
-        $userId = $request->get('user');
+        $this->_subscriptionType = $type;
 
         if (is_null($this->_subscriptionType)) {
             throw new BadRequestHttpException('The type parameter is required');
@@ -104,7 +92,7 @@ class JourneyController extends AbstractController
             }
         }
 
-        return new JsonResponse($this->_responseData);
+        return $this->_responseData;
     }
 
     private function _executeForUser()
@@ -116,7 +104,7 @@ class JourneyController extends AbstractController
         }
 
         if (empty($currentResponseData->getErrors())) {
-            $result = $this->_journeyManager->userProofsRecovery($this->_currentUser, $this->_subscriptionType);
+            $result = $this->userProofsRecovery($this->_currentUser, $this->_subscriptionType);
         }
 
         if (!empty($currentResponseData->getErrors()) || $result) {
