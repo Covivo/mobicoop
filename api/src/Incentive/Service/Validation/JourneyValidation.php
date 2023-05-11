@@ -5,16 +5,19 @@ namespace App\Incentive\Service\Validation;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Service\LoggerService;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class JourneyValidation extends Validation
 {
-    protected $_tokenStorage;
+    /**
+     * @var UserValidation
+     */
+    private $_userValidation;
 
-    public function __construct(LoggerService $loggerService, TokenStorageInterface $tokenStorageInterface)
+    public function __construct(LoggerService $loggerService, UserValidation $userValidation)
     {
         parent::__construct($loggerService);
-        $this->_tokenStorage = $tokenStorageInterface;
+
+        $this->_userValidation = $userValidation;
     }
 
     /**
@@ -26,7 +29,7 @@ class JourneyValidation extends Validation
     public function isFirstValidLongECCJourney(): bool
     {
         return
-            $this->_hasValidMobConnectAuth()
+            $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver)
             && !is_null($this->_driver->getLongDistanceSubscription())
             && is_null($this->_driver->getLongDistanceSubscription()->getCommitmentProofDate())
@@ -42,7 +45,7 @@ class JourneyValidation extends Validation
     public function isFirstValidShortECCJourney(): bool
     {
         return
-            $this->_hasValidMobConnectAuth()
+            $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver)
             && !is_null($this->_driver->getShortDistanceSubscription())
             && is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate())
@@ -61,7 +64,7 @@ class JourneyValidation extends Validation
         $this->setDriver($proposal->getUser());
 
         return
-            $this->_hasValidMobConnectAuth()
+            $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($proposal->getCriteria())
             && $proposal->getCriteria()->isDriver()
             && !is_null($proposal->getCriteria()->getDirectionDriver())
@@ -83,7 +86,7 @@ class JourneyValidation extends Validation
         $this->setDriver($carpoolProof->getDriver());
 
         return
-            $this->_hasValidMobConnectAuth()
+            $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver)
             && !is_null($carpoolProof->getAsk())
             && !is_null($carpoolProof->getAsk()->getMatching())
@@ -106,7 +109,7 @@ class JourneyValidation extends Validation
         $this->setDriver($carpoolProof->getDriver());
 
         return
-            $this->_hasValidMobConnectAuth()
+            $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver)
             && !is_null($this->_driver->getLongDistanceSubscription())
             && !is_null($carpoolProof->getAsk())
@@ -114,27 +117,5 @@ class JourneyValidation extends Validation
             && $this->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
             && $this->isOriginOrDestinationFromFrance($carpoolProof)
             && !$this->_hasLongDistanceJourneyAlreadyDeclared($carpoolProof);
-    }
-
-    private function _hasValidMobConnectAuth(): bool
-    {
-        /**
-         * @var User $requester
-         */
-        $requester = $this->_tokenStorage->getToken()->getUser();
-
-        if (is_null($requester->getMobConnectAuth())) {
-            return false;
-        }
-
-        $now = new \DateTime('now');
-        if (
-            is_null($requester->getMobConnectAuth()->getRefreshTokenExpiresDate())
-            || ($requester->getMobConnectAuth()->getRefreshTokenExpiresDate() < $now)
-        ) {
-            return false;
-        }
-
-        return true;
     }
 }

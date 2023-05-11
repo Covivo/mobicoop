@@ -22,6 +22,12 @@ abstract class MobConnectManager
     public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
 
     public const SUBSCRIPTION_EXPIRATION_DELAY = 3;     // Expressed in months
+
+    public const LONG_SUBSCRIPTION_TYPE = 'long';
+    public const SHORT_SUBSCRIPTION_TYPE = 'short';
+
+    public const ALLOWED_SUBSCRIPTION_TYPES = [self::LONG_SUBSCRIPTION_TYPE, self::SHORT_SUBSCRIPTION_TYPE];
+
     protected const DATE_FORMAT = 'Y-m-d';
 
     /**

@@ -26,6 +26,7 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Resource\CeeSubscriptions;
+use App\Incentive\Service\Manager\MobConnectManager;
 use App\Incentive\Service\Validation\Validation;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
@@ -241,5 +242,62 @@ class CarpoolProofRepository
         $qb->setParameters($parameters);
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findUserCEEEligibleProof(User $user, string $subscriptionType)
+    {
+        $parameters = [
+            'country' => Validation::REFERENCE_COUNTRY,
+            'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
+            'driver' => $user,
+        ];
+
+        // Parameters determination
+        if (MobConnectManager::LONG_SUBSCRIPTION_TYPE === $subscriptionType) {
+            $parameters['subscriptionDate'] = $user->getLongDistanceSubscription()->getCreatedAt();
+            $parameters['allreadyAdded'] = array_map(function ($journey) {
+                return $journey->getCarpoolProof();
+            }, $user->getLongDistanceSubscription()->getLongDistanceJourneys()->toArray());
+            $parameters['creditorStatus'] = CarpoolItem::CREDITOR_STATUS_ONLINE;
+        } else {
+            $parameters['subscriptionDate'] = $user->getShortDistanceSubscription()->getCreatedAt();
+            $parameters['allreadyAdded'] = array_map(function ($journey) {
+                return $journey->getCarpoolProof();
+            }, $user->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray());
+            $parameters['class'] = CarpoolProof::TYPE_HIGH;
+            $parameters['status'] = CarpoolProof::STATUS_VALIDATED;
+        }
+
+        $qb = $this->repository->createQueryBuilder('cp');
+
+        $qb
+            ->innerJoin('cp.ask', 'a')
+            ->innerJoin('a.matching', 'm')
+            ->innerJoin('m.waypoints', 'wo', 'WITH', 'wo.destination = 0 AND wo.position = 0')
+            ->innerJoin('m.waypoints', 'wd', 'WITH', 'wd.destination = 0 AND wd.position != 0')
+            ->innerJoin('wo.address', 'ao')
+            ->innerJoin('wd.address', 'ad')
+            ->where('cp.driver = :driver')
+            ->andWhere('cp.createdDate > :subscriptionDate')
+            ->andWhere('cp.id NOT IN (:allreadyAdded)')
+            ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
+        ;
+
+        if (MobConnectManager::LONG_SUBSCRIPTION_TYPE === $subscriptionType) {
+            $qb
+                ->innerJoin('a.carpoolItems', 'ci', 'WITH', 'ci.creditorStatus = :creditorStatus')
+                ->andWhere('m.commonDistance >= :distance')
+            ;
+        } else {
+            $qb
+                ->andWhere('m.commonDistance < :distance')
+                ->andWhere('cp.type = :class')
+                ->andWhere('cp.status = :status')
+            ;
+        }
+
+        $qb->setParameters($parameters);
+
+        return $qb->getQuery()->getResult();
     }
 }

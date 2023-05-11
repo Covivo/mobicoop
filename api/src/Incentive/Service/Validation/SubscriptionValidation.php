@@ -5,7 +5,9 @@ namespace App\Incentive\Service\Validation;
 use App\Incentive\Entity\Flat\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Manager\MobConnectManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SubscriptionValidation extends Validation
 {
@@ -43,6 +45,20 @@ class SubscriptionValidation extends Validation
             && !is_null($subscription->getCommitmentProofDate())
             && $subscription->getCommitmentProofDate() <= $this->_verificationDeadline
             && is_null($subscription->getVerificationDate());
+    }
+
+    public function checkSubscriptionIdValidity(string $id)
+    {
+        if (!preg_match('/^\d+$/', $id)) {
+            throw new BadRequestHttpException('The subscriptionId parameter should be an integer');
+        }
+    }
+
+    public function checkSubscriptionTypeValidity(string $type)
+    {
+        if (!in_array($type, MobConnectManager::ALLOWED_SUBSCRIPTION_TYPES)) {
+            throw new BadRequestHttpException('The subscriptionType parameter is incorrect. Please choose from: '.join(', ', MobConnectManager::ALLOWED_SUBSCRIPTION_TYPES));
+        }
     }
 
     private function _setVerificationDeadline(int $deadline): self

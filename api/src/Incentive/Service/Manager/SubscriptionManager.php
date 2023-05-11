@@ -36,10 +36,6 @@ class SubscriptionManager extends MobConnectManager
     public const VERIFICATION_STATUS_PENDING = 0;
     public const VERIFICATION_STATUS_ENDED = 1;
 
-    private const LONG_SUBSCRIPTION_TYPE = 'long';
-
-    private const ALLOWED_SUBSCRIPTION_TYPES = ['long', 'short'];
-
     private $_ceeEligibleProofs = [];
 
     /**
@@ -219,13 +215,9 @@ class SubscriptionManager extends MobConnectManager
 
     public function verifySubscriptionFromControllerCommand(string $subscriptionType, string $subscriptionId)
     {
-        if (!in_array($subscriptionType, self::ALLOWED_SUBSCRIPTION_TYPES)) {
-            throw new BadRequestHttpException('The subscriptionType parameter is incorrect. Please choose from: '.join(', ', self::ALLOWED_SUBSCRIPTION_TYPES));
-        }
+        $this->_subscriptionValidation->checkSubscriptionTypeValidity($subscriptionType);
 
-        if (!preg_match('/^\d+$/', $subscriptionId)) {
-            throw new BadRequestHttpException('The subscriptionId parameter should be an integer');
-        }
+        $this->_subscriptionValidation->checkSubscriptionIdValidity($subscriptionId);
 
         $subscriptionId = intval($subscriptionId);
 
