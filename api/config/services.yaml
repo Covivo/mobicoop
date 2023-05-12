@@ -944,6 +944,11 @@ services:
     tags:
       - { name: monolog.logger, channel: matcherV3 }
 
+  App\DataProvider\Service\RPCv3\Tools:
+    arguments:
+      $phoneNumberTruncLength: "%env(int:CARPOOL_PROOF_PHONE_TRUNC_LENGTH)%"
+      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+
   App\Carpool\Service\MobicoopMatcher\MobicoopMatcherMatchingBuilder:
     arguments:
       $maxDetourDistancePercent: "%env(int:ALGORITHM_MAX_DETOUR_DISTANCE_PERCENT)%"

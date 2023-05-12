@@ -35,6 +35,7 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\WaypointRepository;
 use App\Carpool\Ressource\ClassicProof;
 use App\DataProvider\Entity\CarpoolProofGouvProvider;
+use App\DataProvider\Service\RPCv3\Tools;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\AddressCompleter;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
@@ -101,6 +102,7 @@ class ProofManager
         EventDispatcherInterface $eventDispatcher,
         PaymentProfileRepository $paymentProfileRepository,
         JourneyValidation $journeyValidation,
+        Tools $tools,
         string $prefix,
         string $provider,
         string $uri,
@@ -125,7 +127,7 @@ class ProofManager
         switch ($provider) {
             case 'BetaGouv':
             default:
-                $this->provider = new CarpoolProofGouvProvider($uri, $token, $prefix, $logger);
+                $this->provider = new CarpoolProofGouvProvider($tools, $uri, $token, $prefix, $logger);
 
                 break;
         }
