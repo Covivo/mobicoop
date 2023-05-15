@@ -20,6 +20,8 @@ use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
 {
@@ -33,8 +35,6 @@ class SubscriptionManager extends MobConnectManager
 
     public const VERIFICATION_STATUS_PENDING = 0;
     public const VERIFICATION_STATUS_ENDED = 1;
-
-    private const LONG_SUBSCRIPTION_TYPE = 'long';
 
     private $_ceeEligibleProofs = [];
 
@@ -213,6 +213,39 @@ class SubscriptionManager extends MobConnectManager
         $this->_loggerService->log('The timestamping process is complete');
     }
 
+    public function verifySubscriptionFromControllerCommand(string $subscriptionType, string $subscriptionId)
+    {
+        $this->_subscriptionValidation->checkSubscriptionTypeValidity($subscriptionType);
+
+        $this->_subscriptionValidation->checkSubscriptionIdValidity($subscriptionId);
+
+        $subscriptionId = intval($subscriptionId);
+
+        switch ($subscriptionType) {
+            case 'long':
+                $repository = $this->_em->getRepository(LongDistanceSubscription::class);
+
+                break;
+
+            case 'short':
+                $repository = $this->_em->getRepository(ShortDistanceSubscription::class);
+
+                break;
+        }
+
+        $subscription = $repository->find($subscriptionId);
+
+        if (is_null($subscription)) {
+            throw new NotFoundHttpException("The {$subscriptionType} subscription was not found");
+        }
+
+        if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {
+            throw new BadRequestHttpException("The {$subscriptionType} subscription is not ready for verification");
+        }
+
+        return $this->verifySubscription($subscription);
+    }
+
     /**
      * Verify subscriptions.
      */
@@ -226,40 +259,53 @@ class SubscriptionManager extends MobConnectManager
         $this->_loggerService->log('There is '.count($subscriptions).' journeys to process');
 
         foreach ($subscriptions as $key => $subscription) {
-            switch (true) {
-                case $subscription instanceof LongDistanceSubscription:
-                    $this->_loggerService->log('Verification for the long-distance subscription with the ID '.$subscription->getId());
-
-                    break;
-
-                case $subscription instanceof ShortDistanceSubscription:
-                    $this->_loggerService->log('Verification for the short-distance subscription with the ID '.$subscription->getId());
-
-                    break;
-            }
-
-            $this->_driver = $subscription->getUser();
-
-            $response = $this->verifySubscription($subscription->getSubscriptionId());
-
-            $subscription->setStatus(
-                MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $response->getCode()
-                ? $response->getStatus() : self::STATUS_ERROR
-            );
-
-            if (self::STATUS_VALIDATED === $subscription->getStatus()) {
-                $subscription->setBonusStatus(self::BONUS_STATUS_OK);
-                $subscription->setStatus(self::STATUS_VALIDATED);
-            } else {
-                $subscription->setBonusStatus(self::BONUS_STATUS_NO);
-                $subscription->setStatus(self::STATUS_REJECTED);
-            }
-
-            $subscription->setVerificationDate();
+            $this->verifySubscription($subscription);
         }
 
-        $this->_em->flush();
         $this->_loggerService->log('Process processing is complete');
+    }
+
+    /**
+     * Vérify a subscription.
+     *
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function verifySubscription($subscription)
+    {
+        switch (true) {
+            case $subscription instanceof LongDistanceSubscription:
+                $this->_loggerService->log('Verification for the long-distance subscription with the ID '.$subscription->getId());
+
+                break;
+
+            case $subscription instanceof ShortDistanceSubscription:
+                $this->_loggerService->log('Verification for the short-distance subscription with the ID '.$subscription->getId());
+
+                break;
+        }
+
+        $this->_driver = $subscription->getUser();
+
+        $response = $this->executeRequestVerifySubscription($subscription->getSubscriptionId());
+
+        $subscription->setStatus(
+            MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $response->getCode()
+            ? $response->getStatus() : self::STATUS_ERROR
+        );
+
+        if (self::STATUS_VALIDATED === $subscription->getStatus()) {
+            $subscription->setBonusStatus(self::BONUS_STATUS_OK);
+            $subscription->setStatus(self::STATUS_VALIDATED);
+        } else {
+            $subscription->setBonusStatus(self::BONUS_STATUS_NO);
+            $subscription->setStatus(self::STATUS_REJECTED);
+        }
+
+        $subscription->setVerificationDate();
+
+        $this->_em->flush();
+
+        return $subscription;
     }
 
     private function _computeShortDistance()
