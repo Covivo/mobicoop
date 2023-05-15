@@ -34,7 +34,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\WaypointRepository;
 use App\Carpool\Ressource\ClassicProof;
-use App\DataProvider\Entity\CarpoolProofGouvProvider;
+use App\DataProvider\Entity\CarpoolProofGouvProviderV3;
 use App\DataProvider\Service\RPCv3\Tools;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\AddressCompleter;
@@ -127,7 +127,7 @@ class ProofManager
         switch ($provider) {
             case 'BetaGouv':
             default:
-                $this->provider = new CarpoolProofGouvProvider($tools, $uri, $token, $prefix, $logger);
+                $this->provider = new CarpoolProofGouvProviderV3($tools, $uri, $token, $prefix, $logger);
 
                 break;
         }
