@@ -211,7 +211,7 @@ class CarpoolProofRepository
 
         $parameters = [
             'distance' => Validation::LONG_DISTANCE_THRESHOLD,
-            'thresholdDate' => \DateTime::createFromFormat('Y-m-d', Validation::REFERENCE_DATE),
+            'thresholdDate' => new \DateTime('now'),
             'driver' => $user,
         ];
 
