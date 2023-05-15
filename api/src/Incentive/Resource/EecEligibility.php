@@ -240,6 +240,7 @@ class EecEligibility
     public function setLongDistanceDrivingLicenceNumberDoublon(int $longDistanceDrivingLicenceNumberDoublon): self
     {
         $this->longDistanceDrivingLicenceNumberDoublon = $longDistanceDrivingLicenceNumberDoublon;
+        $this->setLongDistanceEligibility();
 
         return $this;
     }
@@ -258,6 +259,7 @@ class EecEligibility
     public function setShortDistanceDrivingLicenceNumberDoublon(int $shortDistanceDrivingLicenceNumberDoublon): self
     {
         $this->shortDistanceDrivingLicenceNumberDoublon = $shortDistanceDrivingLicenceNumberDoublon;
+        $this->setShortDistanceEligibility();
 
         return $this;
     }
@@ -276,6 +278,7 @@ class EecEligibility
     public function setLongDistancePhoneDoublon(int $longDistancePhoneDoublon): self
     {
         $this->longDistancePhoneDoublon = $longDistancePhoneDoublon;
+        $this->setLongDistanceEligibility();
 
         return $this;
     }
@@ -294,6 +297,7 @@ class EecEligibility
     public function setShortDistancePhoneDoublon(int $shortDistancePhoneDoublon): self
     {
         $this->shortDistancePhoneDoublon = $shortDistancePhoneDoublon;
+        $this->setShortDistanceEligibility();
 
         return $this;
     }
