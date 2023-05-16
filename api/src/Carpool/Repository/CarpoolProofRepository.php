@@ -29,18 +29,26 @@ use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\Validation\Validation;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
+use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 class CarpoolProofRepository
 {
     /**
+     * @var UserRepository
+     */
+    private $_userRepository;
+
+    /**
      * @var EntityRepository
      */
     private $repository;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository)
     {
+        $this->_userRepository = $userRepository;
+
         $this->repository = $entityManager->getRepository(CarpoolProof::class);
     }
 
@@ -207,7 +215,7 @@ class CarpoolProofRepository
 
     public function getJourneysNumberMadeSinceThresholdDate(User $user, bool $isLongDistance = true)
     {
-        $qb = $this->repository->createQueryBuilder('cp');
+        $qb = $this->_userRepository->createQueryBuilder('cp');
 
         $parameters = [
             'distance' => Validation::LONG_DISTANCE_THRESHOLD,
@@ -241,5 +249,62 @@ class CarpoolProofRepository
         $qb->setParameters($parameters);
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findProofsToSendAsHistory(bool $longDistance = true)
+    {
+        $users = $this->_userRepository->findSubscribedToEec($longDistance);
+
+        $qb = $this->repository->createQueryBuilder('cp');
+
+        // if (true === $longDistance) {
+        //     $qb->innerJoin('cp.mobConnectLongDistanceJourney', 'mldj', 'WITH', 'mldj IS NOT NULL');
+        // } else {
+        //     $qb->innerJoin('cp.mobConnectShortDistanceJourney', 'msdj', 'WITH', 'msdj IS NOT NULL');
+        // }
+
+        $parameters = [
+            'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
+            'status' => CarpoolProof::STATUS_VALIDATED,
+            'users' => $users,
+        ];
+
+        $qb
+            ->innerJoin('cp.driver', 'd', 'WITH', 'd.id IN (:users)')
+            ->innerJoin('cp.ask', 'a')
+            ->innerJoin('a.matching', 'm')
+            ->where('cp.status = :status')
+            ->andWhere('cp.createdDate > s.createdAt')
+        ;
+
+        switch ($longDistance) {
+            case true:
+                $parameters['creditor_status'] = CarpoolItem::CREDITOR_STATUS_ONLINE;
+
+                $qb
+                    ->innerJoin('cp.mobConnectLongDistanceJourney', 'mldj')
+                    ->innerJoin('mldj.subscription', 's')
+                    ->innerJoin('a.carpoolItems', 'ci', 'WITH', 'ci.creditorStatus = :creditor_status')
+                    ->andWhere('m.commonDistance >= :distance')
+                ;
+
+                break;
+
+            case false:
+                $parameters['type_c'] = CarpoolProof::TYPE_HIGH;
+
+                $qb
+                    ->innerJoin('cp.mobConnectShortDistanceJourney', 'msdj')
+                    ->innerJoin('msdj.subscription', 's')
+                    ->andWhere('cp.type = :type_c')
+                    ->andWhere('m.commonDistance < :distance')
+                ;
+
+                break;
+        }
+
+        $qb->setParameters($parameters);
+
+        return $qb->getQuery()->getResult();
     }
 }

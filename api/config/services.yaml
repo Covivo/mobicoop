@@ -771,6 +771,17 @@ services:
         command: "app:incentive:subscription-timestamps"
       }
 
+  App\Carpool\Command\CarpoolProofSendHistory:
+    arguments:
+      $uri: "%env(string:CARPOOL_PROOF_URI)%"
+      $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
+      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+    tags:
+      - {
+          name: "console.command",
+          command: "app:carpool:proof-send-history"
+        }
+
   App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
       $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
