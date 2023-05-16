@@ -25,6 +25,7 @@ namespace App\DataProvider\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Interfaces\ProviderInterface;
+use App\DataProvider\Service\DataProvider;
 use App\DataProvider\Service\RPCv3\Tools;
 use Psr\Log\LoggerInterface;
 
@@ -35,6 +36,9 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
 {
     public const RESSOURCE_POST = 'v3/journeys';
     public const RESSOURCE_GET_ITEM = 'v3/journeys/';
+    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3/policies/cee/import';
+
+    public const POLICIES_CEE_IMPORT_LIMIT = 1000;
 
     public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
     {
@@ -76,6 +80,50 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
                 ],
                 'revenue' => (int) round($carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice() * 100, 0),
             ],
+        ];
+    }
+
+    public function importProofs(array $carpoolProofs)
+    {
+        $serializedProof = array_map(function ($proof) {
+            return $this->_serializeForCeePolicy($proof);
+        }, $carpoolProofs);
+
+        $chunkedProofs = array_chunk($serializedProof, self::POLICIES_CEE_IMPORT_LIMIT);
+
+        $this->logger->info('Processing sending '.count($chunkedProofs).' request(s)');
+
+        foreach ($chunkedProofs as $key => $proofs) {
+            // creation of the dataProvider
+            $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
+
+            // creation of the headers
+            $headers = [
+                'Authorization' => 'Bearer '.$this->token,
+                'Content-Type' => 'application/json',
+            ];
+
+            $result = $dataProvider->postCollection($proofs, $headers);
+
+            if (201 === $result->getCode()) {
+                $this->logger->info('The processing of the request '.($key + 1).' was successful');
+            } else {
+                $this->logger->info('There was a problem processing the request '.($key + 1));
+            }
+        }
+
+        $this->logger->info('Request processing is complete');
+    }
+
+    private function _serializeForCeePolicy(CarpoolProof $carpoolProof): array
+    {
+        $this->_tools->setCurrentCarpoolProof($carpoolProof);
+
+        return [
+            'journey_type' => $this->_tools->getProofType(),
+            'phone_trunc' => $this->_tools->getPhoneTruncNumber(Tools::DRIVER),
+            'last_name_trunc' => $this->_tools->getFamilyNameTrunc(Tools::DRIVER),
+            'datetime' => $this->_tools->getCommitmentDate(),
         ];
     }
 }

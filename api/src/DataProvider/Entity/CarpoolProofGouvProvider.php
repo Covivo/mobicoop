@@ -46,11 +46,11 @@ class CarpoolProofGouvProvider implements ProviderInterface
      */
     protected $_tools;
 
-    private $uri;
-    private $token;
-    private $prefix;
-    private $logger;
-    private $testMode;
+    protected $uri;
+    protected $token;
+    protected $prefix;
+    protected $logger;
+    protected $testMode;
 
     public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
     {
