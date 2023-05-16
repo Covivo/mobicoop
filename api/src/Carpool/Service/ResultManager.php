@@ -893,10 +893,10 @@ class ResultManager
                 }
 
                 // time
-                // the carpooler is passenger, the proposal owner is driver : we use his time if it's set
+                // the carpooler is passenger, the proposal owner is driver
                 // if the proposal is dynamic, we take the updated time of the position linked with the proposal
-                if ($matching['request']->getProposalOffer()->isDynamic()) {
-                    $item->setTime($matching['request']->getProposalOffer()->getPosition()->getUpdatedDate());
+                if ($matching['request']->getProposalRequest()->isDynamic()) {
+                    $item->setTime($matching['request']->getProposalRequest()->getPosition()->getUpdatedDate());
                 } else {
                     // the time is not set, it must be the matching results of a search (and not an ad)
                     // we have to calculate the starting time so that the driver will get the carpooler on the carpooler time
