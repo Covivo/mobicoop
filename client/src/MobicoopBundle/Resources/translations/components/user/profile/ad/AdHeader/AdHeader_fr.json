@@ -9,7 +9,8 @@
       "pause": "Masquer temporairement l'annonce dans les résultats",
       "play": "Afficher de nouveau l'annonce dans les résultats",
       "delete": "Supprimer l'annonce",
-      "update": "Mettre à jour l'annonce"
+      "update": "Mettre à jour l'annonce",
+      "notUpdatable": "Mettez à jour l'aller associé à ce retour"
     }
   },
   "pause": {

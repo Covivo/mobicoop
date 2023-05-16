@@ -21,6 +21,9 @@ abstract class MobConnectManager
     public const LONG_DISTANCE_TRIP_THRESHOLD = 3;
     public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
 
+    public const SUBSCRIPTION_EXPIRATION_DELAY = 3;     // Expressed in months
+    protected const DATE_FORMAT = 'Y-m-d';
+
     /**
      * @var User
      */
@@ -108,8 +111,7 @@ abstract class MobConnectManager
                     && array_key_exists('long_distance', $this->_mobConnectParams['subscription_ids'])
                     && !empty($this->_mobConnectParams['subscription_ids']['long_distance'])
                 )
-            )
-        ;
+            );
     }
 
     protected function getRPCOperatorId(int $id): string
@@ -146,6 +148,20 @@ abstract class MobConnectManager
         $this->setApiProvider();
 
         return $this->_apiProvider->patchUserSubscription($subscriptionId, $params);
+    }
+
+    /**
+     * Sets subscription expiration date.
+     *
+     * @param LongSubscription|ShortSubscription $subscription
+     *
+     * @return LongSubscription|ShortSubscription
+     */
+    protected function setExpirationDate($subscription)
+    {
+        $now = new \DateTime('now');
+
+        return $subscription->setExpirationDate($now->add(new \DateInterval('P'.self::SUBSCRIPTION_EXPIRATION_DELAY.'M')));
     }
 
     protected function verifySubscription(string $subscriptionId)

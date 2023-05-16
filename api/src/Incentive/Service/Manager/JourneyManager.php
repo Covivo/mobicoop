@@ -42,7 +42,7 @@ class JourneyManager extends MobConnectManager
         $this->setDriver($proposal->getUser());
 
         $params = [
-            'Date de publication du trajet' => $proposal->getCreatedDate()->format('Y-m-d'),
+            'Date de publication du trajet' => $proposal->getCreatedDate()->format(self::DATE_FORMAT),
         ];
 
         $response = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
@@ -75,7 +75,7 @@ class JourneyManager extends MobConnectManager
 
         $params = [
             'Identifiant du trajet' => $this->getRPCOperatorId($carpoolProof->getId()),
-            'Date de départ du trajet' => $carpoolProof->getPickUpDriverDate()->format('Y-m-d'),
+            'Date de départ du trajet' => $carpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
         ];
 
         $response = $this->patchSubscription($this->getDriver()->getShortDistanceSubscription()->getSubscriptionId(), $params);
@@ -132,7 +132,7 @@ class JourneyManager extends MobConnectManager
 
             if (0 === $longDistanceJourneysNumber) {
                 $params = [
-                    'Date de partage des frais' => $carpoolPayment->getUpdatedDate()->format('Y-m-d'),
+                    'Date de partage des frais' => $carpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
                     "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(),
                 ];
 
@@ -144,6 +144,8 @@ class JourneyManager extends MobConnectManager
                     $subscription->setHonorCertificateProofTimestampToken($response->getHonorCertificateProofTimestampToken());
                     $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
                 }
+
+                $subscription = $this->setExpirationDate($subscription);
             }
 
             $journey->updateJourney($carpoolProof, $carpoolPayment, $this->getCarpoolersNumber($carpoolProof->getAsk()));
@@ -203,6 +205,8 @@ class JourneyManager extends MobConnectManager
                 $subscription->setHonorCertificateProofTimestampToken($response->getHonorCertificateProofTimestampToken());
                 $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
             }
+
+            $subscription = $this->setExpirationDate($subscription);
         }
 
         $journey->updateJourney($carpoolProof, $this->getRPCOperatorId($carpoolProof->getId()), $this->getCarpoolersNumber($carpoolProof->getAsk()));
@@ -241,7 +245,7 @@ class JourneyManager extends MobConnectManager
             return
                 $item->getCreditorUser()->getId() === $carpoolProof->getDriver()->getId()
                 && $item->getDebtorUser()->getId() === $carpoolProof->getPassenger()->getId()
-                && $item->getItemDate()->format('Y-m-d') === $carpoolProof->getStartDriverDate()->format('Y-m-d');
+                && $item->getItemDate()->format(self::DATE_FORMAT) === $carpoolProof->getStartDriverDate()->format(self::DATE_FORMAT);
         });
 
         if (

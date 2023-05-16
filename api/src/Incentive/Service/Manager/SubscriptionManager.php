@@ -144,6 +144,10 @@ class SubscriptionManager extends MobConnectManager
 
         $userEligibility->setLongDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user));
         $userEligibility->setShortDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, false));
+        $userEligibility->setLongDistanceDrivingLicenceNumberDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
+        $userEligibility->setLongDistancePhoneDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
+        $userEligibility->setShortDistanceDrivingLicenceNumberDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
+        $userEligibility->setShortDistancePhoneDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
 
         return $userEligibility;
     }
@@ -163,6 +167,7 @@ class SubscriptionManager extends MobConnectManager
         if (!is_null($shortDistanceSubscription)) {
             $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getShortDistanceJourneys());
             $this->_subscriptions->setShortDistanceSubscriptions($shortDistanceSubscriptions);
+            $this->_subscriptions->setShortDistanceExpirationDate($shortDistanceSubscription->getExpirationDate());
         }
 
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
@@ -171,6 +176,7 @@ class SubscriptionManager extends MobConnectManager
             $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getLongDistanceJourneys());
 
             $this->_subscriptions->setLongDistanceSubscriptions($longDistanceSubscriptions);
+            $this->_subscriptions->setLongDistanceExpirationDate($longDistanceSubscription->getExpirationDate());
         }
 
         $this->_computeShortDistance();

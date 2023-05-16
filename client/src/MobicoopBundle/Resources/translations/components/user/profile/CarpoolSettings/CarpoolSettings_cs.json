@@ -1,1 +1,59 @@
-{}
+{
+    "items": [
+        {
+            "key": "kouření",
+            "title": "Pokud jde o kouření v autě...",
+            "radios": [
+                {
+                    "label": "Nekouřím"
+                },
+                {
+                    "label": "V autě nekouřím",
+                    "value": 1
+                },
+                {
+                    "value": 2,
+                    "label": "Kouřím"
+                }
+            ]
+        },
+        {
+            "title": "Pokud jde o hudbu v autě...",
+            "radios": [
+                {
+                    "label": "Raději řídím bez hudby na pozadí"
+                },
+                {
+                    "label": "Poslouchám rádio nebo hudbu",
+                    "value": 1
+                }
+            ],
+            "favorite": {
+                "label": "Oblíbené rozhlasové stanice a/nebo hudba"
+            },
+            "key": "hudba"
+        },
+        {
+            "key": "hovor",
+            "title": "Co se týče povídání v autě...",
+            "radios": [
+                {
+                    "label": "Nejsem mluvka"
+                },
+                {
+                    "label": "Povídám si",
+                    "value": 1
+                }
+            ],
+            "favorite": {
+                "label": "Oblíbená témata"
+            }
+        }
+    ],
+    "button": {
+        "label": "Registrace",
+        "route": "/utilisateur/preferences-covoiturage/modifier"
+    },
+    "error": "Došlo k chybě.",
+    "success": "Předvolby spolujízdy úspěšně aktualizovány!"
+}

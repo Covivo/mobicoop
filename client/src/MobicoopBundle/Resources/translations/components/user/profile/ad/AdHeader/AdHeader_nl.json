@@ -39,7 +39,8 @@
         "tooltips": {
             "driverOrPassenger": "Maakt niet uit: ik zal bestuurder of passagier zijn",
             "passenger": "Ik zal passagier zijn",
-            "driver": "Ik zal bestuurder zijn"
+            "driver": "Ik zal bestuurder zijn",
+            "notUpdatable": "Update the linked outward ad"
         },
         "archived": "Gearchiveerde advertenties",
         "ongoing": "Lopende advertenties"

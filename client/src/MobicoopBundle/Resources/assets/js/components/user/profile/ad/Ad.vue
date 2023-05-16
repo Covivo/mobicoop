@@ -13,6 +13,7 @@
       :has-accepted-ask="!Array.isArray(ad.driver) || ad.passengers.length > 0"
       :has-ask="ad.asks"
       :ad-id="ad.id"
+      :ad-type="ad.type"
       @ad-deleted="adDeleted"
       @pause-ad="adPaused"
     />

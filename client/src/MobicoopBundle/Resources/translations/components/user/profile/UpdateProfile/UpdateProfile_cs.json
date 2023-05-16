@@ -1,1 +1,144 @@
-{}
+{
+    "titles": {
+        "personnalInfos": "Osobní údaje",
+        "password": "Heslo",
+        "deleteAccount": "Smazat můj účet"
+    },
+    "snackBar": {
+        "profileUpdated": "Váš profil byl aktualizován!",
+        "errorProfileUpdate": "Chyba, váš profil nebyl aktualizován.",
+        "phoneAlreadyVerified": "Telefon je již zkontrolován.",
+        "phoneUpdate": "Chyba telefonu nebyla zkontrolována.",
+        "phoneValidated": "Váš telefon byl zkontrolován.",
+        "unknown": "Ověřovací kód je chybný.",
+        "tokenOk": "Ověřovací kód byl odeslán.",
+        "tokenError": "Chyba, kód nebyl odeslán",
+        "emailOk": "Ověřovací e-mail byl odeslán.",
+        "emailError": "Chybný e-mail nebyl odeslán"
+    },
+    "avatar": {
+        "label": "Nový obrázek",
+        "size": "Překročili jste maximální velikost avatara",
+        "delete": {
+            "label": "Odstranit obrázek",
+            "route": "/utilisateur/profil/avatar/supprimer"
+        },
+        "mbSize": "Překročili jste maximální velikost avatara (Max {size} Mb)."
+    },
+    "route": {
+        "update": "/utilisateur/profil/modifier",
+        "supprimer": "/utilisateur/profil/supprimer"
+    },
+    "news": {
+        "confirmation": {
+            "title": "Potvrzení o zrušení registrace",
+            "content": "Upozorňujeme, že odhlášením z odběru těchto novinek již nebudete dostávat žádné informace o všech následujících tématech:<br><ul><li>nové funkce a služby platformy</li><li>sdílení zpráv ve vaší oblasti </li><li>novinky z vašich komunit</li><li>personalizovaná podpora</li></ul><br>Opravdu se chcete odhlásit?"
+        },
+        "label": "Novinky ze služby {platform} (užitečné informace pro spolujízdu a nové služby nebo nové funkce)",
+        "tooltip": "Novinkami služby jsou e-maily, jejichž jediným účelem je informovat vás o vývoji služby a povzbudit vás ke spolujízdě. Například aktualizace platformy nebo e-maily od referenta komunity, do které patříte. Tyto informace se mohou týkat aktualizací platformy. Prostřednictvím těchto e-mailů nedochází ke komerčnímu oslovování."
+    },
+    "phoneDisplay": {
+        "label": {
+            "general": "Viditelnost mého telefonního čísla :",
+            "restricted": "Viditelné pouze po přijetí spolujízdy, a to pouze účastníky",
+            "all": "Viditelné od okamžiku zveřejnění inzerátu všemi registrovanými uživateli"
+        }
+    },
+    "phone": {
+        "label": "Mobilní telefon",
+        "errors": {
+            "valid": "Telefonní číslo musí být platné"
+        },
+        "tooltips": {
+            "verified": "Vaše mobilní číslo je ověřeno",
+            "notVerified": "Vaše mobilní číslo není ověřeno"
+        },
+        "buttons": {
+            "label": {
+                "generateToken": "Odeslání ověřovacího kódu",
+                "generateNewToken": "Odeslání nového kódu",
+                "validate": "Ověřit"
+            }
+        },
+        "validation": {
+            "label": "Váš ověřovací kód",
+            "route": "/utilisateur/telephone/validation"
+        },
+        "token": {
+            "route": "/utilisateur/telephone/token",
+            "inputError": "Validační kód se skládá ze 4 číslic."
+        },
+        "i18n": {
+            "date": {
+                "format": {
+                    "fullDate": "ddd Do MMMM YYYY",
+                    "shortDate": "DD/MM/YYYY",
+                    "computeDate": "YYYY-MM-DD"
+                }
+            },
+            "time": {
+                "format": {
+                    "hourMinute": "HH[h]mm"
+                }
+            }
+        }
+    },
+    "dialog": {
+        "titles": {
+            "deleteAccount": "Odstranění účtu",
+            "deletionImpossible": "Odstranění účtu není možné"
+        },
+        "content": {
+            "errorEvents": "Jako autor události, která se teprve blíží,<br/> nemůžete smazat svůj účet, pokud jste jejím autorem nebo se událost teprve chystá.<br/> <a href=/contact>Kontaktujte technickou podporu</ a> změnit autora události nebo požádat o její smazání nebo počkat, až událost projde.",
+            "errorCommunities": "Jako referrer komunity nemůžete smazat svůj účet, pokud jste refererem.<br/> <a href=/contact>Kontaktujte technickou podporu</a> a změňte referrera nebo tuto komunitu smažte. <br/>",
+            "deleteAccount": "Opravdu chcete smazat svůj účet?<br/> Tato akce je nevratná.<br/> Bude to mít následující důsledky:<br/> - smažte všechna svá osobní data<br/>- smažte všechny své zprávy vyměněné s jinými uživateli<br/>- anonymizujte se v archivech spolujízdy ostatních spolujízdy<br/>- smažte všechna dosud aktivní oznámení o spolujízdě, která máte<br/>- odmítněte všechny probíhající žádosti o spolujízdu<br/> - zrušit všechny plánované spolujízdy<br/><br/>Potvrzujete?"
+        },
+        "buttons": {
+            "confirmDelete": "Potvrzuji smazání",
+            "close": "Zavřít"
+        }
+    },
+    "dialogEmail": {
+        "title": "Změnili jste e-mailovou adresu",
+        "content": "<p>Změnili jste svou e-mailovou adresu.</p><p>Pokud budete pokračovat, bude vám zaslán e-mail s ověřením vaší e-mailové adresy a budete odhlášeni.</p><p>Chcete pokračovat?</p>",
+        "buttons": {
+            "confirmUpdate": "Měním svou e-mailovou adresu",
+            "cancelUpdate": "Zrušit"
+        }
+    },
+    "buttons": {
+        "supprimerAccount": "Smazat můj účet"
+    },
+    "address": {
+        "update": {
+            "label": "Registrační adresa",
+            "route": "/utilisateur/profil/modifier/adresse"
+        }
+    },
+    "communities": {
+        "route": "/user/communities/owned"
+    },
+    "events": {
+        "route": "/user/events/created"
+    },
+    "email": {
+        "label": "E-mail",
+        "errors": {
+            "valid": "E-mailová adresa musí být ve správném formátu"
+        },
+        "tooltips": {
+            "verified": "Vaše e-mailová adresa je ověřena",
+            "notVerified": "Vaše e-mailová adresa není ověřena"
+        },
+        "buttons": {
+            "label": {
+                "generateEmail": "Odeslání ověřovacího e-mailu",
+                "generateEmailAgain": "Opětovné odeslání ověřovacího e-mailu"
+            }
+        },
+        "verificationRoute": "/utilisateur/email/validation"
+    },
+    "givenName": {
+        "label": "Jméno"
+    }
+}

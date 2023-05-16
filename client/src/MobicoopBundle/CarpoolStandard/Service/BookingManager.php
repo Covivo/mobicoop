@@ -84,10 +84,13 @@ class BookingManager
         $price->setAmount($data['roundedPrice']);
         $price->setType(Price::TYPE_UNKNOWN);
 
+        $date = (new \DateTime($data['date']))->format('Y/m/d').' '.(new \DateTime($data['time'], new \DateTimeZone('Europe/Paris')))->format('H:i:s');
+        $dateTime = (new \DateTime($date, new \DateTimeZone('Europe/Paris')))->format('U');
+
         $booking->setDriver($driver);
         $booking->setPassenger($passenger);
         $booking->setPrice($price);
-        $booking->setPassengerPickupDate(1679499383);
+        $booking->setPassengerPickupDate($dateTime);
         $booking->setPassengerPickupLat($data['origin']['latitude']);
         $booking->setPassengerPickupLng($data['origin']['longitude']);
         $booking->setPassengerDropLat($data['destination']['latitude']);

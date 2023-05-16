@@ -840,6 +840,13 @@ class Solidary
      */
     private $distance;
 
+    /**
+     * @var bool Given name of the operator
+     *
+     * @Groups("aReadItem")
+     */
+    private $adminstructureSolidaryTransport;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -2040,5 +2047,18 @@ class Solidary
         $this->distance = $distance;
 
         return $this;
+    }
+
+    /**
+     * Get given name of the operator.
+     */
+    public function getAdminstructureSolidaryTransport(): bool
+    {
+        $this->adminstructureSolidaryTransport =
+            !is_null($this->getSolidaryUserStructure())
+            && !is_null($this->getSolidaryUserStructure()->getStructure())
+            && $this->getSolidaryUserStructure()->getStructure()->getSolidaryTransport();
+
+        return $this->adminstructureSolidaryTransport;
     }
 }

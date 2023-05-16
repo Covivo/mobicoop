@@ -1,1 +1,17 @@
-{}
+{
+    "tooltip": {
+        "paymentElectronicActive": "Zaplatit online nebo potvrdit platbu ručně a dokončit spolujízdu",
+        "paymentElectronicNotActive": "Potvrzení platby a dokončení spolujízdy"
+    },
+    "driver": {
+        "paid": "Již zaplaceno",
+        "pending": "Ověření platby"
+    },
+    "passenger": {
+        "paid": "Již zaplaceno",
+        "pending": "Zaplatit nebo potvrdit",
+        "pendingElectronicNotActive": "Potvrdit"
+    },
+    "route": "/paiements/{id}/{frequency}/{type}/{week}",
+    "unpaid": "Nezaplacené"
+}

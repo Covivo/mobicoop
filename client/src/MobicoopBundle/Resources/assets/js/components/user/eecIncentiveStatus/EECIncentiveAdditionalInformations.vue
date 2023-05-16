@@ -57,6 +57,8 @@
       <EECIncentiveFollowUp
         :long-distance-subscriptions="longDistanceSubscriptions"
         :short-distance-subscriptions="shortDistanceSubscriptions"
+        :long-distance-subscription-expiration-date="longDistanceSubscriptionExpirationDate"
+        :short-distance-subscription-expiration-date="shortDistanceSubscriptionExpirationDate"
         :pending-proofs="pendingProofs"
         :refused-proofs="refusedProofs"
       />
@@ -95,6 +97,14 @@ export default {
     },
     shortDistanceSubscriptions:{
       type: Array,
+      default: null
+    },
+    longDistanceSubscriptionExpirationDate: {
+      type: String,
+      default: null
+    },
+    shortDistanceSubscriptionExpirationDate: {
+      type: String,
       default: null
     },
     pendingProofs:{

@@ -70,6 +70,13 @@ class ShortDistanceSubscription
     private $verificationDate;
 
     /**
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $expirationDate;
+
+    /**
      * @var string the mobConnect rejection reason
      *
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -634,6 +641,37 @@ class ShortDistanceSubscription
         $this->verificationDate = new \DateTime('now');
 
         return $this;
+    }
+
+    /**
+     * Get the value of expirationDate.
+     *
+     * @return \DateTimeInterface
+     */
+    public function getExpirationDate(): ?\DateTime
+    {
+        return $this->expirationDate;
+    }
+
+    /**
+     * Set the value of expirationDate.
+     */
+    public function setExpirationDate(\DateTimeInterface $expirationDate): self
+    {
+        $this->expirationDate = $expirationDate;
+
+        return $this;
+    }
+
+    /**
+     * Returns if the subscription has expired.
+     */
+    public function hasExpired(): bool
+    {
+        return
+            !empty($this->getShortDistanceJourneys())
+            && !is_null($this->getExpirationDate())
+            && $this->getExpirationDate() < new \DateTime('now');
     }
 
     /**

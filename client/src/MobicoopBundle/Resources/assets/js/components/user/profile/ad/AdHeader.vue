@@ -121,20 +121,22 @@
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn
-              v-if="!isArchived"
-              class="secondary my-1"
-              icon
-              :loading="loading"
-              @click="updateAd"
-              v-on="on"
-            >
-              <v-icon class="white--text">
-                mdi-pencil
-              </v-icon>
-            </v-btn>
+            <v-div v-on="on">
+              <v-btn
+                v-if="!isArchived"
+                class="secondary my-1"
+                icon
+                :disabled="!isUpdatable"
+                :loading="loading"
+                @click="updateAd"
+              >
+                <v-icon class="white--text">
+                  mdi-pencil
+                </v-icon>
+              </v-btn>
+            </v-div>
           </template>
-          <span> {{ $t("ads.tooltips.update") }} </span>
+          <span> {{ isUpdatable ? $t("ads.tooltips.update") : $t("ads.tooltips.notUpdatable") }} </span>
         </v-tooltip>
 
         <v-tooltip
@@ -325,7 +327,11 @@ export default {
     paymentElectronicActive: {
       type: Boolean,
       default: false
-    }
+    },
+    adType: {
+      type: Number,
+      default: 0
+    },
   },
   data() {
     return {
@@ -342,7 +348,8 @@ export default {
         textarea: true
       },
       deleteMessage: "",
-      paused: this.isPaused
+      paused: this.isPaused,
+      isUpdatable: this.adType !== 2 ? true : false
     };
   },
   methods: {
