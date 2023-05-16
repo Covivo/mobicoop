@@ -350,7 +350,7 @@ class UserRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findUsersCeeSubscribed(string $subscriptionType)
+    public function findUsersCeeSubscribed()
     {
         $qb = $this->repository->createQueryBuilder('u');
 

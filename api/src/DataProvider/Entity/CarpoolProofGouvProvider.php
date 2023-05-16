@@ -27,6 +27,7 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
+use App\DataProvider\Service\RPCv3\Tools;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -40,14 +41,21 @@ class CarpoolProofGouvProvider implements ProviderInterface
     public const ISO8601 = 'Y-m-d\TH:i:s\Z';
     public const RESSOURCE_GET_ITEM = 'v2/journeys/';
 
+    /**
+     * @var Tools
+     */
+    protected $_tools;
+
     private $uri;
     private $token;
     private $prefix;
     private $logger;
     private $testMode;
 
-    public function __construct(string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
+    public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
     {
+        $this->_tools = $tools;
+
         $this->uri = $uri;
         $this->token = $token;
         $this->prefix = $prefix;
@@ -114,7 +122,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 'identity' => [
                     'email' => $carpoolProof->getPassenger()->getEmail(),
                     'phone' => $carpoolProof->getPassenger()->getTelephone(),
-                    'phone_trunc' => $this->_getPhoneTrunc($carpoolProof->getPassenger()->getTelephone()),
+                    'phone_trunc' => $this->_tools->getPhoneTruncNumber(Tools::PASSENGER),
                     'over_18' => $over18,
                 ],
                 'start' => [
@@ -135,7 +143,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 'identity' => [
                     'email' => $carpoolProof->getDriver()->getEmail(),
                     'phone' => $carpoolProof->getDriver()->getTelephone(),
-                    'phone_trunc' => $this->_getPhoneTrunc($carpoolProof->getDriver()->getTelephone()),
+                    'phone_trunc' => $this->_tools->getPhoneTruncNumber(Tools::DRIVER),
                 ],
                 'start' => [
                     'lon' => (!is_null($carpoolProof->getPickUpDriverAddress())) ? (float) $carpoolProof->getPickUpDriverAddress()->getLongitude() : null,
@@ -295,10 +303,5 @@ class CarpoolProofGouvProvider implements ProviderInterface
     public function deserialize(string $class, array $data)
     {
         $this->logger->info('BetaGouv API return');
-    }
-
-    private function _getPhoneTrunc(?string $phoneNumber): ?string
-    {
-        return !is_null($phoneNumber) ? substr($phoneNumber, 0, 10) : null;
     }
 }

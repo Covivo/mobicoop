@@ -83,7 +83,7 @@ class JourneyRecoveryManager extends JourneyManager
                 $this->_executeForUser();
             }
         } else {
-            $users = $this->_userRepository->findUsersCeeSubscribed($this->_subscriptionType);
+            $users = $this->_userRepository->findUsersCeeSubscribed();
 
             foreach ($users as $user) {
                 $this->_currentUser = $user;

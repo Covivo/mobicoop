@@ -25,7 +25,8 @@ namespace App\Carpool\Command;
 
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Service\ProofManager;
-use App\DataProvider\Entity\CarpoolProofGouvProvider;
+use App\DataProvider\Entity\CarpoolProofGouvProviderV3;
+use App\DataProvider\Service\RPCv3\Tools;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -40,15 +41,22 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CarpoolProofTestGenerateCommand extends Command
 {
+    /**
+     * @var Tools
+     */
+    protected $_tools;
+
     private $proofManager;
     private $carpoolProofRepository;
     private $logger;
 
-    public function __construct(CarpoolProofRepository $carpoolProofRepository, ProofManager $proofManager, LoggerInterface $logger)
+    public function __construct(CarpoolProofRepository $carpoolProofRepository, ProofManager $proofManager, LoggerInterface $logger, Tools $tools)
     {
         $this->proofManager = $proofManager;
         $this->carpoolProofRepository = $carpoolProofRepository;
         $this->logger = $logger;
+
+        $this->_tools = $tools;
 
         parent::__construct();
     }
@@ -66,7 +74,7 @@ class CarpoolProofTestGenerateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $proof = $this->carpoolProofRepository->find($input->getArgument('proofId'));
-        $provider = new CarpoolProofGouvProvider('', '', 'test', $this->logger, true);
+        $provider = new CarpoolProofGouvProviderV3($this->_tools, '', '', 'test', $this->logger, true);
         var_dump(json_encode($provider->serializeProof($proof)));
     }
 }
