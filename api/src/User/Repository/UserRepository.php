@@ -350,11 +350,15 @@ class UserRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findSubscribedToEec(bool $longDistance = false)
+    public function findUsersCeeSubscribed()
     {
         $qb = $this->repository->createQueryBuilder('u');
 
-        $qb->innerJoin('u.shortDistanceSubscription', 's');
+        $qb
+            ->leftJoin('u.longDistanceSubscription', 'lds')
+            ->leftJoin('u.shortDistanceSubscription', 'sds')
+            ->where('lds.id IS NOT NULL OR sds.id IS NOT NULL')
+        ;
 
         return $qb->getQuery()->getResult();
     }

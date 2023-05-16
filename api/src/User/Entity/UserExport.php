@@ -231,6 +231,96 @@ class UserExport
     private $carpool3Frequency;
 
     /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Role 1 - Nom")
+     */
+    private $role1Name;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle 1 - Territoire")
+     */
+    private $role1Territory;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Role 2 - Nom")
+     */
+    private $role2Name;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle 2 - Territoire")
+     */
+    private $role2Territory;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Role 3 - Nom")
+     */
+    private $role3Name;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle 3 - Territoire")
+     */
+    private $role3Territory;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Role 4 - Nom")
+     */
+    private $role4Name;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle 4 - Territoire")
+     */
+    private $role4Territory;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Role 5 - Nom")
+     */
+    private $role5Name;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle 5 - Territoire")
+     */
+    private $role5Territory;
+
+    /**
      * Get the value of familyName.
      *
      * @return string
@@ -737,6 +827,226 @@ class UserExport
     public function setCarpool3Frequency(?string $carpool3Frequency): self
     {
         $this->carpool3Frequency = $carpool3Frequency;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role1Name.
+     *
+     * @return string
+     */
+    public function getRole1Name(): ?string
+    {
+        return $this->role1Name;
+    }
+
+    /**
+     * Set the value of role1Name.
+     *
+     * @param string $role1Name
+     */
+    public function setRole1Name(?string $role1Name): self
+    {
+        $this->role1Name = $role1Name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role1Territory.
+     *
+     * @return string
+     */
+    public function getRole1Territory(): ?string
+    {
+        return $this->role1Territory;
+    }
+
+    /**
+     * Set the value of role1Territory.
+     *
+     * @param string $role1Territory
+     */
+    public function setRole1Territory(?string $role1Territory): self
+    {
+        $this->role1Territory = $role1Territory;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role2Name.
+     *
+     * @return string
+     */
+    public function getRole2Name(): ?string
+    {
+        return $this->role2Name;
+    }
+
+    /**
+     * Set the value of role2Name.
+     *
+     * @param string $role2Name
+     */
+    public function setRole2Name(?string $role2Name): self
+    {
+        $this->role2Name = $role2Name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role2Territory.
+     *
+     * @return string
+     */
+    public function getRole2Territory(): ?string
+    {
+        return $this->role2Territory;
+    }
+
+    /**
+     * Set the value of role2Territory.
+     *
+     * @param string $role2Territory
+     */
+    public function setRole2Territory(?string $role2Territory): self
+    {
+        $this->role2Territory = $role2Territory;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role3Name.
+     *
+     * @return string
+     */
+    public function getRole3Name(): ?string
+    {
+        return $this->role3Name;
+    }
+
+    /**
+     * Set the value of role3Name.
+     *
+     * @param string $role3Name
+     */
+    public function setRole3Name(?string $role3Name): self
+    {
+        $this->role3Name = $role3Name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role3Territory.
+     *
+     * @return string
+     */
+    public function getRole3Territory(): ?string
+    {
+        return $this->role3Territory;
+    }
+
+    /**
+     * Set the value of role3Territory.
+     *
+     * @param string $role3Territory
+     */
+    public function setRole3Territory(?string $role3Territory): self
+    {
+        $this->role3Territory = $role3Territory;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role4Name.
+     *
+     * @return string
+     */
+    public function getRole4Name(): ?string
+    {
+        return $this->role4Name;
+    }
+
+    /**
+     * Set the value of role4Name.
+     *
+     * @param string $role4Name
+     */
+    public function setRole4Name(?string $role4Name): self
+    {
+        $this->role4Name = $role4Name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role4Territory.
+     *
+     * @return string
+     */
+    public function getRole4Territory(): ?string
+    {
+        return $this->role4Territory;
+    }
+
+    /**
+     * Set the value of role4Territory.
+     *
+     * @param string $role4Territory
+     */
+    public function setRole4Territory(?string $role4Territory): self
+    {
+        $this->role4Territory = $role4Territory;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role5Name.
+     *
+     * @return string
+     */
+    public function getRole5Name(): ?string
+    {
+        return $this->role5Name;
+    }
+
+    /**
+     * Set the value of role5Name.
+     *
+     * @param string $role5Name
+     */
+    public function setRole5Name(?string $role5Name): self
+    {
+        $this->role5Name = $role5Name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role5Territory.
+     *
+     * @return string
+     */
+    public function getRole5Territory(): ?string
+    {
+        return $this->role5Territory;
+    }
+
+    /**
+     * Set the value of role5Territory.
+     *
+     * @param string $role5Territory
+     */
+    public function setRole5Territory(?string $role5Territory): self
+    {
+        $this->role5Territory = $role5Territory;
 
         return $this;
     }
