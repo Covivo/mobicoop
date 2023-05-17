@@ -114,7 +114,6 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 'identity' => [
                     'email' => $carpoolProof->getPassenger()->getEmail(),
                     'phone' => $carpoolProof->getPassenger()->getTelephone(),
-                    'phone_trunc' => $this->_getPhoneTrunc($carpoolProof->getPassenger()->getTelephone()),
                     'over_18' => $over18,
                 ],
                 'start' => [
@@ -135,7 +134,6 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 'identity' => [
                     'email' => $carpoolProof->getDriver()->getEmail(),
                     'phone' => $carpoolProof->getDriver()->getTelephone(),
-                    'phone_trunc' => $this->_getPhoneTrunc($carpoolProof->getDriver()->getTelephone()),
                 ],
                 'start' => [
                     'lon' => (!is_null($carpoolProof->getPickUpDriverAddress())) ? (float) $carpoolProof->getPickUpDriverAddress()->getLongitude() : null,
