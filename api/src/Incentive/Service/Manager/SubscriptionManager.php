@@ -226,6 +226,10 @@ class SubscriptionManager extends MobConnectManager
         $this->_loggerService->log('There is '.count($subscriptions).' journeys to process');
 
         foreach ($subscriptions as $key => $subscription) {
+            if (!$this->_subscriptionValidation->isSubscriptionReadyForVerification($subscription)) {
+                continue;
+            }
+
             switch (true) {
                 case $subscription instanceof LongDistanceSubscription:
                     $this->_loggerService->log('Verification for the long-distance subscription with the ID '.$subscription->getId());

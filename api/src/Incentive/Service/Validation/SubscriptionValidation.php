@@ -25,7 +25,16 @@ class SubscriptionValidation extends Validation
                 is_null($subscription->getIncentiveProofTimestampToken())
                 || is_null($subscription->getCommitmentProofTimestampToken())
                 || is_null($subscription->getHonorCertificateProofTimestampToken())
-            )
-        ;
+            );
+    }
+
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function isSubscriptionReadyForVerification($subscription): bool
+    {
+        return
+            !is_null($subscription->getHonorCertificateProofTimestampToken())
+            && !is_null($subscription->getHonorCertificateProofTimestampSigningTime());
     }
 }
