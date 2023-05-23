@@ -506,6 +506,7 @@
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
       :is-after-eec-subscription="isAfterEecSubscription"
       :api-uri="apiUri"
+      :platform="platform"
       @changeTab="changeTab"
     />
 
