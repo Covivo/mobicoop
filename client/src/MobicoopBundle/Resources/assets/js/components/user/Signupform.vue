@@ -259,9 +259,9 @@
                 />
                 <v-select
                   v-model="form.gender"
-                  :items="form.genderItems"
-                  item-text="genderItem"
-                  item-value="genderValue"
+                  :items="genderItems"
+                  item-text="label"
+                  item-value="value"
                   :rules="form.genderRules"
                   :label="$t('gender.label') + ` *`"
                   required
@@ -683,20 +683,6 @@ export default {
         genderRules: [
           (v) => !!v || this.$t("gender.errors.required"),
         ],
-        genderItems: [
-          {
-            genderItem: this.$t("gender.values.female"),
-            genderValue: "1",
-          },
-          {
-            genderItem: this.$t("gender.values.male"),
-            genderValue: "2",
-          },
-          {
-            genderItem: this.$t("gender.values.other"),
-            genderValue: "3",
-          },
-        ],
         date: null,
         telephone: null,
         telephoneRules: [
@@ -829,7 +815,10 @@ export default {
       }
 
       return social;
-    }
+    },
+    genderItems(){
+      return this.$t("gender.values");
+    },
   },
   watch: {
     menu(val) {

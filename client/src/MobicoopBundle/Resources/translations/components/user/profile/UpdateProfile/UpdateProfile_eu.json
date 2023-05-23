@@ -55,12 +55,21 @@
     "label": "Sorteguna"
   },
   "gender": {
-    "values": {
-      "other": "Beste",
-      "female": "Anderea",
-      "male": "Jauna"
-    },
-    "label": "Zibilitatea"
+    "label": "Zibilitatea",
+    "values": [
+      {
+        "label": "Anderea",
+        "value": 1
+      },
+      {
+        "label": "Jauna",
+        "value": 2
+      },
+      {
+        "label": "Beste",
+        "value": 3
+      }
+    ]
   },
   "familyName": {
     "label": "Deitura"

@@ -11,11 +11,20 @@
   "gender": {
     "label": "Gender",
     "placeholder": "Gender",
-    "values": {
-      "male": "Mr",
-      "female": "Mrs/Ms",
-      "other": "Other"
-    },
+    "values": [
+      {
+        "label": "Mrs/Ms",
+        "value": "1"
+      },
+      {
+        "label": "Mr",
+        "value": "2"
+      },
+      {
+        "label": "Other",
+        "value": "3"
+      }
+    ],
     "errors": {
       "required": "Gender is required"
     }
