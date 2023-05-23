@@ -1161,6 +1161,10 @@ services:
       $fileFolder: "%env(string:SOLIDARY_FILE_FOLDER)%"
 
   # User
+  App\User\Admin\Controller\DeleteUsers:
+    tags:
+      - controller.service_arguments
+
   App\User\Admin\Service\UserManager:
     arguments:
       $chat: "%env(int:CARPOOL_DEFAULT_CHAT)%"

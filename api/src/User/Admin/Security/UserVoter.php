@@ -37,6 +37,7 @@ class UserVoter extends Voter
     public const ADMIN_USER_READ = 'admin_user_read';
     public const ADMIN_USER_UPDATE = 'admin_user_update';
     public const ADMIN_USER_PROOF = 'admin_user_proof';
+    public const ADMIN_USERS_DELETE = 'admin_users_delete';
     public const ADMIN_USER_DELETE = 'admin_user_delete';
     public const ADMIN_USER_LIST = 'admin_user_list';
     public const ADMIN_USER_EXPORT_ALL = 'admin_user_export_all';
@@ -63,6 +64,7 @@ class UserVoter extends Voter
             self::ADMIN_USER_READ,
             self::ADMIN_USER_UPDATE,
             self::ADMIN_USER_PROOF,
+            self::ADMIN_USERS_DELETE,
             self::ADMIN_USER_DELETE,
             self::ADMIN_USER_LIST,
             self::ADMIN_USER_EXPORT_ALL,
@@ -76,6 +78,7 @@ class UserVoter extends Voter
             self::ADMIN_USER_READ,
             self::ADMIN_USER_UPDATE,
             self::ADMIN_USER_PROOF,
+            self::ADMIN_USERS_DELETE,
             self::ADMIN_USER_DELETE,
             self::ADMIN_USER_LIST,
             self::ADMIN_USER_EXPORT_ALL,
@@ -103,6 +106,9 @@ class UserVoter extends Voter
 
                 return $this->canUpdateUser($identityProof->getUser());
 
+            case self::ADMIN_USERS_DELETE:
+                return $this->canDeleteUsers();
+
             case self::ADMIN_USER_DELETE:
                 return $this->canDeleteUser($subject);
 
@@ -129,6 +135,11 @@ class UserVoter extends Voter
     private function canUpdateUser(User $user)
     {
         return $this->authManager->isAuthorized(self::USER_UPDATE, ['user' => $user]);
+    }
+
+    private function canDeleteUsers()
+    {
+        return $this->authManager->isAuthorized(self::USER_DELETE);
     }
 
     private function canDeleteUser(User $user)
