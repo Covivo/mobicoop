@@ -259,9 +259,9 @@
                 />
                 <v-select
                   v-model="form.gender"
-                  :items="form.genderItems"
-                  item-text="genderItem"
-                  item-value="genderValue"
+                  :items="genderItems"
+                  item-text="label"
+                  item-value="value"
                   :rules="form.genderRules"
                   :label="$t('gender.label') + ` *`"
                   required
@@ -381,7 +381,7 @@
                     </v-chip>
                   </template>
                   <template v-slot:item="data">
-                    <template v-if="typeof data.item !== 'object'">
+                    <template v-if="(typeof data.item) !== 'object'">
                       <v-list-item-content v-text="data.item" />
                     </template>
                     <template v-else>
@@ -632,6 +632,10 @@ export default {
     specificSsoServices: {
       type: Array,
       default: () => []
+    },
+    gendersList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -682,20 +686,6 @@ export default {
         gender: null,
         genderRules: [
           (v) => !!v || this.$t("gender.errors.required"),
-        ],
-        genderItems: [
-          {
-            genderItem: this.$t("gender.values.female"),
-            genderValue: "1",
-          },
-          {
-            genderItem: this.$t("gender.values.male"),
-            genderValue: "2",
-          },
-          {
-            genderItem: this.$t("gender.values.other"),
-            genderValue: "3",
-          },
         ],
         date: null,
         telephone: null,
@@ -829,7 +819,12 @@ export default {
       }
 
       return social;
-    }
+    },
+    genderItems(){
+      return this.$t("gender.values").filter((genderItem) => {
+        return this.gendersList.includes(parseInt(genderItem.value));
+      });
+    },
   },
   watch: {
     menu(val) {

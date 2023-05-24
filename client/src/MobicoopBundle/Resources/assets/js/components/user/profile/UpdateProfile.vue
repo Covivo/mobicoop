@@ -279,7 +279,7 @@
                 v-model="gender"
                 :label="$t('gender.label')"
                 :items="genders"
-                item-text="gender"
+                item-text="label"
                 item-value="value"
               />
               <!-- Birthdate -->
@@ -744,7 +744,12 @@ export default {
     apiUri: {
       type: String,
       default: null
+    },
+    gendersList: {
+      type: Array,
+      default: () => []
     }
+
   },
   data() {
     return {
@@ -773,11 +778,6 @@ export default {
       emailValidatedDate: this.user.validatedDate,
       token: null,
       menu : false,
-      genders:[
-        { value: 1, gender: this.$t('gender.values.female')},
-        { value: 2, gender: this.$t('gender.values.male')},
-        { value: 3, gender: this.$t('gender.values.other')},
-      ],
       phoneDisplay: {
         value: this.user.phoneDisplay
       },
@@ -862,7 +862,12 @@ export default {
         }
       }
       return false;
-    }
+    },
+    genders(){
+      return this.$t("gender.values").filter((genderItem) => {
+        return this.gendersList.includes(parseInt(genderItem.value));
+      });
+    },
   },
   watch: {
     menu (val) {

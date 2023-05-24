@@ -105,11 +105,20 @@
     "errors": {
       "required": "Zibilitatea beharrezkoa da"
     },
-    "values": {
-      "other": "Beste",
-      "female": "Anderea",
-      "male": "Jauna"
-    },
+    "values": [
+      {
+        "label": "Anderea",
+        "value": "1"
+      },
+      {
+        "label": "Jauna",
+        "value": "2"
+      },
+      {
+        "label": "Beste",
+        "value": "3"
+      }
+    ],
     "placeholder": "Zibilitatea",
     "label": "Zibilitatea"
   },

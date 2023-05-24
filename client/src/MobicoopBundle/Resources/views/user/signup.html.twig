@@ -1,39 +1,29 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}
-  {% trans from 'ui' %}user.signup.title{% endtrans %} - {{ app_name }}
+{% trans from 'ui' %}user.signup.title{% endtrans %} - {{ app_name }}
 {% endblock %}
 {% block stylesheets %}
-  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
+{#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
 {% endblock %}
 {% block main %}
 
-  {% if error %}
-      <span class="tag is-danger">An error occured.</span>
-  {% endif %}
+{% if error %}
+<span class="tag is-danger">An error occured.</span>
+{% endif %}
 
-  <Signupform
-    age-min="{{ ageMin }}"
-    age-max="{{ ageMax }}"
-    geo-search-url="{{ geoCompleteUri }}"
+<Signupform age-min="{{ ageMin }}" age-max="{{ ageMax }}" geo-search-url="{{ geoCompleteUri }}"
     :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
-    :geo-complete-palette="{{geoCompletePalette|json_encode}}"
-    {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
-    facebook-login-app-id = "{{ facebook_appid }}"
-    sent-token="{{ csrf_token('user-signup') }}"
-    type="{{ type }}"
-    :show-facebook-sign-up = "{{ facebook_show ? "true" : "false" }}"
-    :required-home-address = "{{ required_home_address ? "true" : "false" }}"
-    :required-community = "{{ required_community  ? "true" : "false" }}"
-    :community-show = "{{ community_show ? "true" : "false"  }}"
-    :community-id = "{{ communityId is not null ? communityId : 'null' }}"
-    :id = "{{ id is defined ? (id ? id : 'null') : 'null' }}"
-    :login-link-in-connection = "{{ loginLinkInConnection ? "true" : "false" }}"
-    :signup-rgpd-infos = "{{ signup_rgpd_infos|json_encode }}"
-    :news-subscription-default = "{{ newsSubscription ? "true" : "false" }}"
-    :birth-date-display = "{{ birthDateDisplay ? "true" : "false" }}"
-    :specific-sso-services="{{ specificSsoServices|json_encode }}"
-    :sso-button-display = "{{ ssoButtonDisplay ? "true" : "false" }}"
-  />
+    :geo-complete-palette="{{geoCompletePalette|json_encode}}" {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+    facebook-login-app-id="{{ facebook_appid }}" sent-token="{{ csrf_token('user-signup') }}" type="{{ type }}"
+    :show-facebook-sign-up="{{ facebook_show ? " true" : "false" }}"
+    :required-home-address="{{ required_home_address ? " true" : "false" }}"
+    :required-community="{{ required_community  ? " true" : "false" }}" :community-show="{{ community_show ? " true"
+    : "false" }}" :community-id="{{ communityId is not null ? communityId : 'null' }}"
+    :id="{{ id is defined ? (id ? id : 'null') : 'null' }}" :login-link-in-connection="{{ loginLinkInConnection ? "
+    true" : "false" }}" :signup-rgpd-infos="{{ signup_rgpd_infos|json_encode }}"
+    :news-subscription-default="{{ newsSubscription ? " true" : "false" }}" :birth-date-display="{{ birthDateDisplay ? "
+    true" : "false" }}" :specific-sso-services="{{ specificSsoServices|json_encode }}"
+    :sso-button-display="{{ ssoButtonDisplay ? " true" : "false" }}" :genders-list="{{ gendersList|json_encode }}" />
 
 {% endblock %}

@@ -152,11 +152,20 @@
   },
   "gender": {
     "label": "Civilité",
-    "values": {
-      "male": "Monsieur",
-      "female": "Madame",
-      "other": "Autre"
-    }
+    "values": [
+      {
+        "label": "Madame",
+        "value": 1
+      },
+      {
+        "label": "Monsieur",
+        "value": 2
+      },
+      {
+        "label": "Autre",
+        "value": 3
+      }
+    ]
   },
   "birthDay": {
     "label": "Date de naissance",
