@@ -165,7 +165,7 @@ class DynamicManager
         }
         // set Date
         if (is_null($dynamic->getDate())) {
-            $dynamic->setDate(new \DateTime('UTC'));
+            $dynamic->setDate(new \DateTime($this->params['dynamicTimezone']));
         }
 
         // creation of the proposal
@@ -318,7 +318,7 @@ class DynamicManager
         if ($this->params['dynamicEnableMaxSpeed']) {
             // we compute the direction between the 2 last points to get the average speed
             // => we exclude the point if the speed is too high (can happen with bad GPS coordinates, eg. bad lane guessing on motorways)
-            $now = new \DateTime('UTC');
+            $now = new \DateTime($this->params['dynamicTimezone']);
             $newAddress = new Address();
             $newAddress->setLongitude($dynamicData->getLongitude());
             $newAddress->setLatitude($dynamicData->getLatitude());
@@ -844,7 +844,7 @@ class DynamicManager
                     if (
                         $curWaypoint->getAddress()->getLongitude() == $point->getAddress()->getLongitude()
                         && $curWaypoint->getAddress()->getLatitude() == $point->getAddress()->getLatitude()
-                        ) {
+                    ) {
                         if ($curWaypoint->isReached()) {
                             $waypoint->setReached(true);
                         }
