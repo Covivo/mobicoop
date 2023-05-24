@@ -128,7 +128,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <div
-              v-if="carpoolStandardMessagingEnabled"
+              v-if="carpoolStandardMessagingEnabled || protocol ==='RDEX'"
               class="ma-0 pa-0"
               v-on="(user == null) && on"
             >
@@ -150,7 +150,7 @@
           <span>{{ $t("externalResult.contact.button.tooltip") }}</span>
         </v-tooltip>
         <v-btn
-          v-if="carpoolStandardBookingEnabled"
+          v-if="carpoolStandardBookingEnabled && protocol ==='STANDARD'"
           rounded
           color="secondary"
           class="mt-1"
@@ -314,6 +314,10 @@ export default {
       type: Boolean,
       default: false
     },
+    protocol: {
+      type: String,
+      default: "RDEX"
+    }
   },
   data() {
     return {
