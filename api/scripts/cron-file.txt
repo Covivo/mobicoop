@@ -48,3 +48,6 @@
 
 # each day at 5 am : check and update if needed paymentProfiles
 0 5 * * * $php $console app:payment-profile:check-batch --env=$env
+
+# each day at 8 am : check if the address territories linker is still running and if the lock file is too old
+0 8 * * * $php $console app:geography:check-running-territory-link-new-addresses 1 --env=$env

@@ -324,7 +324,7 @@ services:
   App\CarpoolStandard\Service\CarpoolStandardManager:
     arguments:
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
-      
+
   # Commands
   App\Command\CarpoolAskPostedRelaunch1Command:
     tags:
@@ -697,6 +697,12 @@ services:
       $exclusionTypes: "%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%"
       $relayPointParams: "%env(json:POINT_SEARCHER_RELAY_POINT_PARAMETERS)%"
 
+  App\Geography\Service\AddressTerritoryLinkChecker:
+    arguments:
+      $batchTemp: "%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%"
+    tags:
+      - { name: monolog.logger, channel: geography }
+
   App\Geography\Service\TerritoryManager:
     arguments:
       $batchTemp: "%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%"
@@ -766,24 +772,21 @@ services:
 
   App\Incentive\Command\JourneyRecoveryCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:journeys-recovery",
-        }
-  
+      - { name: "console.command", command: "app:incentive:journeys-recovery" }
+
   App\Incentive\Command\SubscriptionVerificationCommand:
     tags:
       - {
           name: "console.command",
           command: "app:incentive:subscription-verification",
         }
-  
+
   App\Incentive\Command\SubscriptionTimestampsCommand:
     tags:
       - {
-        name: "console.command",
-        command: "app:incentive:subscription-timestamps"
-      }
+          name: "console.command",
+          command: "app:incentive:subscription-timestamps",
+        }
 
   App\Carpool\Command\CarpoolProofSendHistory:
     arguments:
@@ -791,10 +794,7 @@ services:
       $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
       $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
     tags:
-      - {
-          name: "console.command",
-          command: "app:carpool:proof-send-history"
-        }
+      - { name: "console.command", command: "app:carpool:proof-send-history" }
 
   App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
@@ -1005,10 +1005,7 @@ services:
   # Payment
   App\Payment\Command\UnpaidReminderCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:payment:unpaid-reminder"
-        }
+      - { name: "console.command", command: "app:payment:unpaid-reminder" }
 
   App\Payment\Controller\:
     resource: "../src/Payment/Controller"
@@ -1293,10 +1290,7 @@ services:
   # Reminder
   App\UserRelaunch\Command\RelaunchCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:relaunch:users",
-        }
+      - { name: "console.command", command: "app:relaunch:users" }
 
   App\UserRelaunch\Service\RelaunchManager:
     arguments:
