@@ -72,15 +72,12 @@ class CarpoolProofSendHistory extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // $proofs = array_merge(
-        //     $this->_carpoolProofRepository->findProofsToSendAsHistory(),
-        //     $this->_carpoolProofRepository->findProofsToSendAsHistory(false)
-        // );
+        $proofs = array_merge(
+            $this->_carpoolProofRepository->findProofsToSendAsHistory(),
+            $this->_carpoolProofRepository->findProofsToSendAsHistory(false)
+        );
 
-        // $provider = new CarpoolProofGouvProviderV3($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger);
-
-        // foreach ($proofs as $proof) {
-        //     $provider->postCollection($proof);
-        // }
+        $provider = new CarpoolProofGouvProviderV3($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger);
+        $provider->importProofs($proofs);
     }
 }

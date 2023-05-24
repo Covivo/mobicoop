@@ -5,6 +5,7 @@ namespace App\DataProvider\Service\RPCv3;
 use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Entity\CarpoolProofGouvProvider;
 use App\Geography\Entity\Address;
+use App\Incentive\Resource\CeeSubscriptions;
 use App\Service\DrivingLicenceService;
 use App\Service\PhoneService;
 use App\User\Entity\User;
@@ -17,7 +18,13 @@ class Tools
     public const DRIVER = 'driver';
     public const PASSENGER = 'passenger';
 
+    public const SHORT_TYPE = 'short';
+    public const LONG_TYPE = 'long';
+
+    public const FAMILY_NAME_TRUNC_LEN = 3;
+
     private const ALLOWED_CARPOOLER_TYPES = [self::DRIVER, self::PASSENGER];
+    private const DEFAULT_SUBSTITUTION_CHARACTER = ' ';
 
     /**
      * @var CarpoolProof
@@ -75,6 +82,14 @@ class Tools
         );
     }
 
+    public function getCommitmentDate(): string
+    {
+        $getter = 'getMobConnect'.ucfirst($this->getProofType()).'DistanceJourney';
+
+        return !is_null($this->_currentCarpoolProof->{$getter}()->getSubscription()->getCommitmentProofDate())
+            ? $this->_currentCarpoolProof->{$getter}()->getSubscription()->getCommitmentProofDate()->format(CarpoolProofGouvProvider::ISO8601) : null;
+    }
+
     public function getDrivingLicenceNumber(string $carpoolerType): ?string
     {
         $carpooler = $this->_getCarpooler($carpoolerType);
@@ -85,6 +100,23 @@ class Tools
             ? $carpooler->getDrivingLicenceNumber() : null;
     }
 
+    public function getFamilyNameTrunc(string $carpoolerType): string
+    {
+        $carpooler = $this->_getCarpooler($carpoolerType);
+
+        $familynameTrunc = substr($carpooler->getFamilyName(), 0, self::FAMILY_NAME_TRUNC_LEN);
+
+        $diff = self::FAMILY_NAME_TRUNC_LEN - strlen($familynameTrunc);
+
+        if ($diff) {
+            for ($i = 0; $i < $diff; ++$i) {
+                $familynameTrunc .= self::DEFAULT_SUBSTITUTION_CHARACTER;
+            }
+        }
+
+        return $familynameTrunc;
+    }
+
     public function getPhoneNumber(string $carpoolerType): ?string
     {
         return $this->_getInternationalPhone($carpoolerType);
@@ -93,6 +125,19 @@ class Tools
     public function getPhoneTruncNumber(string $carpoolerType): ?string
     {
         return $this->_getInternationalPhone($carpoolerType, true, $this->_phoneNumberTruncLength);
+    }
+
+    public function getProofType(): string
+    {
+        return
+            !is_null($this->_currentCarpoolProof->getAsk())
+            && !is_null($this->_currentCarpoolProof->getAsk()->getMatching())
+            && !is_null($this->_currentCarpoolProof->getAsk()->getMatching()->getCommonDistance())
+            ? (
+                $this->_currentCarpoolProof->getAsk()->getMatching()->getCommonDistance() >= CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS
+                ? self::LONG_TYPE : self::SHORT_TYPE
+            )
+            : null;
     }
 
     public function getStartTimeGeopoint(): array
