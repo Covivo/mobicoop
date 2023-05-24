@@ -822,8 +822,7 @@ export default {
     },
     genderItems(){
       return this.$t("gender.values").filter((genderItem) => {
-      // Spécifiez ici les critères de filtrage
-        return this.gendersList.includes(parseInt(genderItem.value)); // Exemple : Filtrer les valeurs supérieures à 3
+        return this.gendersList.includes(parseInt(genderItem.value));
       });
     },
   },

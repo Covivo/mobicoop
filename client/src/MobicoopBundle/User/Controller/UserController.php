@@ -602,6 +602,7 @@ class UserController extends AbstractController
             'showReviews' => $user->isUserReviewsActive(),
             'tabDefault' => $tabDefault,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
+            'gendersList' => $this->gendersList,
         ]);
     }
 

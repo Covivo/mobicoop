@@ -744,7 +744,12 @@ export default {
     apiUri: {
       type: String,
       default: null
+    },
+    gendersList: {
+      type: Array,
+      default: () => []
     }
+
   },
   data() {
     return {
@@ -859,7 +864,9 @@ export default {
       return false;
     },
     genders(){
-      return this.$t("gender.values");
+      return this.$t("gender.values").filter((genderItem) => {
+        return this.gendersList.includes(parseInt(genderItem.value));
+      });
     },
   },
   watch: {
