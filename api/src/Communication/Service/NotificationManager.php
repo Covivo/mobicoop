@@ -706,7 +706,7 @@ class NotificationManager
 
                 case ExternalConnection::class:
                     $titleContext = [];
-                    $bodyContext = ['user' => $recipient, 'mailContent' => $object->getContent()];
+                    $bodyContext = ['user' => $recipient, 'externalConnection' => $object];
 
                     break;
 
