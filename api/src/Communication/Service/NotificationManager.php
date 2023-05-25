@@ -47,6 +47,7 @@ use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\DataProvider\Entity\Response;
 use App\Event\Entity\Event;
+use App\ExternalJourney\Ressource\ExternalConnection;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
@@ -294,8 +295,6 @@ class NotificationManager
     /**
      * Notify a user by email.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
-     *
-     * @param mixed $lang
      */
     private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
     {
@@ -705,6 +704,12 @@ class NotificationManager
 
                     break;
 
+                case ExternalConnection::class:
+                    $titleContext = [];
+                    $bodyContext = ['user' => $recipient, 'mailContent' => $object->getContent()];
+
+                    break;
+
                 default:
                     if (isset($object->new, $object->old, $object->ask, $object->sender)) {
                         $outwardOrigin = null;
@@ -771,8 +776,6 @@ class NotificationManager
     /**
      * Notify a user by sms.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
-     *
-     * @param mixed $lang
      */
     private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
     {
@@ -1005,7 +1008,6 @@ class NotificationManager
      * @param Notification $notification The notification
      * @param User         $recipient    The recipient user
      * @param null|object  $object       The object to use
-     * @param mixed        $lang
      */
     private function notifyByPush(Notification $notification, User $recipient, ?object $object = null)
     {

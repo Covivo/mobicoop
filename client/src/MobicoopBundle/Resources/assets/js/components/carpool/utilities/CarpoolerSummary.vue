@@ -408,7 +408,7 @@ export default {
       let params = {
         provider: this.externalProvider,
         role: 2,
-        carpoolerUuid: this.carpooler.id,
+        carpoolerUuid: this.carpooler.externalJourneyUserId,
         journeysUuid: this.externalJourneyId,
         content: this.content
       };
