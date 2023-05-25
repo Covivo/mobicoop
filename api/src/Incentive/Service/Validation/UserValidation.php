@@ -3,7 +3,9 @@
 namespace App\Incentive\Service\Validation;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Incentive\Entity\EecResponse;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Manager\MobConnectManager;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -54,9 +56,19 @@ class UserValidation extends Validation
             && $this->_driver->getMobConnectAuth()->getRefreshTokenExpiresDate() > new \DateTime('now');
     }
 
-    public function isUserValidForEEC(User $user): bool
+    public function isUserValidForEEC(User $user, string $subscriptionType = MobConnectManager::LONG_SUBSCRIPTION_TYPE): array
     {
-        return $this->hasValidMobConnectAuth($user);
+        $errors = [];
+
+        if (!$this->hasValidMobConnectAuth($user)) {
+            array_push($errors, EecResponse::ERROR_INVALID_AUTH);
+        }
+
+        if (!$this->_hasSubscribedTo($user, $subscriptionType)) {
+            array_push($errors, str_replace('[TYPE]', $subscriptionType, EecResponse::ERROR_SUBSCRIPTION_MISSING));
+        }
+
+        return $errors;
     }
 
     public function hasValidMobConnectAuth(?User $user): bool
@@ -79,6 +91,16 @@ class UserValidation extends Validation
         }
 
         return true;
+    }
+
+    /**
+     * Returns if a user has subscribed to a subscription.
+     */
+    private function _hasSubscribedTo(User $user, string $subscriptionType = MobConnectManager::LONG_SUBSCRIPTION_TYPE): bool
+    {
+        $getter = 'get'.ucfirst($subscriptionType).'DistanceSubscription';
+
+        return !is_null($user->{$getter}());
     }
 
     private function _getCarpoolProofsForLongDistance(array $carpoolProofs): array
