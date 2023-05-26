@@ -13,7 +13,6 @@ use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class JourneyRecoveryManager extends JourneyManager
 {
@@ -72,9 +71,6 @@ class JourneyRecoveryManager extends JourneyManager
     {
         $this->_subscriptionType = $type;
 
-        if (is_null($this->_subscriptionType)) {
-            throw new BadRequestHttpException('The type parameter is required');
-        }
         $this->_subscriptionValidation->checkSubscriptionTypeValidity($this->_subscriptionType);
 
         if (!is_null($userId)) {
@@ -99,8 +95,12 @@ class JourneyRecoveryManager extends JourneyManager
     {
         $currentResponseData = new EecResponse($this->_currentUser);
 
-        if (!$this->_userValidation->isUserValidForEEC($this->_currentUser)) {
-            $currentResponseData->addError('The user mobConnect auth is not valid');
+        $errors = $this->_userValidation->isUserValidForEEC($this->_currentUser, $this->_subscriptionType);
+
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                $currentResponseData->addError($error);
+            }
         }
 
         if (empty($currentResponseData->getErrors())) {
