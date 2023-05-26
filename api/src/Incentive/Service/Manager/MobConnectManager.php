@@ -3,10 +3,15 @@
 namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
+use App\Incentive\Entity\LongDistanceJourney;
+use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceJourney;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\User\Entity\User;
@@ -208,5 +213,55 @@ abstract class MobConnectManager
         }
 
         return $this;
+    }
+
+    protected function getShortDistanceCommitmentJourney(CarpoolProof $carpoolProof, ShortDistanceSubscription $subscription): ?ShortDistanceJourney
+    {
+        /**
+         * @var ShortDistanceJourney
+         */
+        $commitmentJourney = $this->_em->getRepository(ShortDistanceJourney::class)->findOneBy([
+            'subscription' => $subscription,
+            'commitmentJourney' => true,
+        ]);
+
+        return
+            !is_null($commitmentJourney)
+            && !is_null($commitmentJourney->getCarpoolProof())
+            && $commitmentJourney->getCarpoolProof() === $carpoolProof
+            ? $commitmentJourney : null;
+    }
+
+    protected function getLongDistanceCommitmentJourney(CarpoolProof $carpoolProof, LongDistanceSubscription $subscription): ?LongDistanceJourney
+    {
+        switch ($carpoolProof->getDriver()) {
+            case $carpoolProof->getAsk()->getMatching()->getProposalOffer()->getUser():
+                $initialProposal = $carpoolProof->getAsk()->getMatching()->getProposalOffer();
+
+                break;
+
+            case $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser():
+                $initialProposal = $carpoolProof->getAsk()->getMatching()->getProposalRequest();
+
+                break;
+
+            default:
+                $initialProposal = null;
+        }
+
+        /**
+         * @var LongDistanceJourney
+         */
+        $commitmentJourney = $this->_em->getRepository(LongDistanceJourney::class)->findOneBy([
+            'subscription' => $subscription,
+            'commitmentJourney' => true,
+        ]);
+
+        return
+            !is_null($initialProposal)
+            && !is_null($commitmentJourney)
+            && !is_null($commitmentJourney->getInitialProposal())
+            && $commitmentJourney->getInitialProposal() === $initialProposal
+            ? $commitmentJourney : null;
     }
 }

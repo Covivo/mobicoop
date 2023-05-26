@@ -4,7 +4,7 @@ namespace App\DataProvider\Entity\MobConnect\Response;
 
 abstract class MobConnectResponse
 {
-    public const ERROR_CODES = [400, 401, 403, 404, 412, 415, 422];
+    public const ERROR_CODES = [400, 401, 403, 404, 409, 412, 415, 422, 500];
 
     /**
      * @var int
@@ -14,16 +14,22 @@ abstract class MobConnectResponse
     protected $_content;
 
     /**
+     * @var null|array
+     */
+    protected $_payload;
+
+    /**
      * The Mob connect timestamp.
      *
      * @var string
      */
     protected $_timestamp;
 
-    public function __construct(array $mobConnectResponse)
+    public function __construct(array $mobConnectResponse, array $payload = null)
     {
         $this->_code = $mobConnectResponse['code'];
-        $this->_content = json_decode($mobConnectResponse['content']);
+        $this->_content = is_null(json_decode($mobConnectResponse['content'])) ? $mobConnectResponse['content'] : json_decode($mobConnectResponse['content']);
+        $this->_payload = $payload;
     }
 
     /**
@@ -40,6 +46,11 @@ abstract class MobConnectResponse
     public function getContent()
     {
         return $this->_content;
+    }
+
+    public function getPayload(): ?array
+    {
+        return $this->_payload;
     }
 
     /**

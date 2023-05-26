@@ -206,10 +206,7 @@ class MobConnectApiProvider extends MobConnectProvider
     /**
      * Updates a user subscription with a carpool proof.
      *
-     * @param string            $subscriptionId  The ID of the subscription that needs to be updated
-     * @param string            $rpcJourneyId    The RPC ID of the journey
-     * @param bool              $isShortDistance Specifies whether the trip is a short distance trip
-     * @param DateTimeInterface $costSharingDate The date of payment for the trip
+     * @param string $subscriptionId The ID of the subscription that needs to be updated
      */
     public function patchUserSubscription(string $subscriptionId, array $data): MobConnectSubscriptionResponse
     {
@@ -217,7 +214,8 @@ class MobConnectApiProvider extends MobConnectProvider
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken())))
+            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken()))),
+            $data
         );
     }
 

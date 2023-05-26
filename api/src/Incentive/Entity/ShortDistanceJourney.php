@@ -3,7 +3,10 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -122,6 +125,15 @@ class ShortDistanceJourney
     private $httpRequestStatus;
 
     /**
+     * The moBconnet HTTP request log.
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity=ShortDistanceLog::class, mappedBy="journey", cascade={"persist"})
+     */
+    private $logs;
+
+    /**
      * The carpool proof associate with the journey.
      *
      * @var CarpoolProof
@@ -131,6 +143,23 @@ class ShortDistanceJourney
      * @ORM\JoinColumn(nullable=true)
      */
     private $carpoolProof;
+
+    /**
+     * Specifies whether the journey is the one chosen for the commitment.
+     *
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", nullable=true, options={"comment":"Status of http request to mobConnect"})
+     */
+    private $commitmentJourney = false;
+
+    public function __construct(CarpoolProof $carpoolProof, bool $commitmentJourney = false)
+    {
+        $this->logs = new ArrayCollection();
+
+        $this->setCarpoolProof($carpoolProof);
+        $this->setCommitmentJourney($commitmentJourney);
+    }
 
     /**
      * @ORM\PrePersist
@@ -265,8 +294,6 @@ class ShortDistanceJourney
 
     /**
      * Set the status of the user.
-     *
-     * @param string $rpcNumberStatus the status of the user
      */
     public function setRpcNumberStatus(): self
     {
@@ -401,6 +428,44 @@ class ShortDistanceJourney
     public function setHttpRequestStatus(int $httpRequestStatus): self
     {
         $this->httpRequestStatus = $httpRequestStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get the moBconnet HTTP request log.
+     */
+    public function getLogs(): ArrayCollection
+    {
+        return $this->logs;
+    }
+
+    public function addLog(MobConnectSubscriptionResponse $response): self
+    {
+        if (in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
+            $log = new ShortDistanceLog($this, $response->getCode(), $response->getContent(), $response->getPayload());
+            $this->logs[] = $log;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get specifies whether the journey is the one chosen for the commitment.
+     */
+    public function isCommitmentJourney(): bool
+    {
+        return $this->commitmentJourney;
+    }
+
+    /**
+     * Set specifies whether the journey is the one chosen for the commitment.
+     *
+     * @param bool $commitmentJourney specifies whether the journey is the one chosen for the commitment
+     */
+    public function setCommitmentJourney(bool $commitmentJourney): self
+    {
+        $this->commitmentJourney = $commitmentJourney;
 
         return $this;
     }

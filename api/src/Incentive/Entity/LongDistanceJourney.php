@@ -4,7 +4,10 @@ namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\Payment\Entity\CarpoolPayment;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -100,6 +103,15 @@ class LongDistanceJourney
     private $httpRequestStatus;
 
     /**
+     * The moBconnet HTTP request log.
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity=LongDistanceLog::class, mappedBy="journey", cascade={"persist"})
+     */
+    private $logs;
+
+    /**
      * The carpool payment associate with the journey.
      *
      * @var CarpoolPayment
@@ -131,6 +143,26 @@ class LongDistanceJourney
      * @ORM\JoinColumn(nullable=true)
      */
     private $initialProposal;
+
+    /**
+     * Specifies whether the journey is the one chosen for the commitment.
+     *
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", nullable=true, options={"comment":"Status of http request to mobConnect"})
+     */
+    private $commitmentJourney = false;
+
+    public function __construct(Proposal $proposal = null, bool $commitmentJourney = false)
+    {
+        $this->logs = new ArrayCollection();
+
+        if (!is_null($proposal)) {
+            $this->setInitialProposal($proposal);
+        }
+
+        $this->setCommitmentJourney($commitmentJourney);
+    }
 
     /**
      * @ORM\PrePersist
@@ -352,6 +384,24 @@ class LongDistanceJourney
     }
 
     /**
+     * Get the moBconnet HTTP request log.
+     */
+    public function getLogs(): ArrayCollection
+    {
+        return $this->logs;
+    }
+
+    public function addLog(MobConnectSubscriptionResponse $response): self
+    {
+        if (in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
+            $log = new LongDistanceLog($this, $response->getCode(), $response->getContent(), $response->getPayload());
+            $this->logs[] = $log;
+        }
+
+        return $this;
+    }
+
+    /**
      * Get the carpool proof associate with the journey.
      */
     public function getCarpoolProof(): ?CarpoolProof
@@ -389,6 +439,18 @@ class LongDistanceJourney
     public function setInitialProposal(?Proposal $initialProposal): self
     {
         $this->initialProposal = $initialProposal;
+
+        return $this;
+    }
+
+    public function isCommitmentJourney(): ?bool
+    {
+        return $this->commitmentJourney;
+    }
+
+    public function setCommitmentJourney(bool $commitmentJourney): self
+    {
+        $this->commitmentJourney = $commitmentJourney;
 
         return $this;
     }
