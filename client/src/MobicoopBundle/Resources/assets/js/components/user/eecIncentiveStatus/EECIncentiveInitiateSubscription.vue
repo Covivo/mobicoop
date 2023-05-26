@@ -236,7 +236,7 @@ export default {
         && this.drivingLicenceNumberFilled
         && this.checkboxesAllChecked
         && this.eligibility.longDistanceEligibility
-        && this.shortDistanceEligibility
+        && this.eligibility.shortDistanceEligibility
       ;
     },
     scrollOptions () {
