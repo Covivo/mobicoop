@@ -25,6 +25,8 @@ namespace App\Carpool\Entity;
 
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
+use App\Incentive\Entity\LongDistanceJourney;
+use App\Incentive\Entity\ShortDistanceJourney;
 use App\User\Entity\User;
 use CrEOF\Spatial\PHP\Types\Geometry\LineString;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
@@ -35,6 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Carpooling : carpool proof.
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class CarpoolProof
@@ -68,7 +71,9 @@ class CarpoolProof
      * @var int the id of this proof
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
      */
     private $id;
@@ -77,6 +82,7 @@ class CarpoolProof
      * @var int proof status (0 = pending, 1 = sent to the register; 2 = error while sending to the register)
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="smallint")
      */
     private $status;
@@ -92,6 +98,7 @@ class CarpoolProof
      * @var Ask the ask related to the proof
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolProofs")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $ask;
@@ -114,6 +121,7 @@ class CarpoolProof
      * @var Address origin of the driver
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $originDriverAddress;
@@ -122,6 +130,7 @@ class CarpoolProof
      * @var Address destination of the driver
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $destinationDriverAddress;
@@ -158,6 +167,7 @@ class CarpoolProof
      * @var Address position of the passenger when pickup certification is asked
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $pickUpPassengerAddress;
@@ -166,6 +176,7 @@ class CarpoolProof
      * @var Address position of the driver when pickup certification is asked
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $pickUpDriverAddress;
@@ -174,6 +185,7 @@ class CarpoolProof
      * @var Address position of the passenger when dropoff certification is asked
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $dropOffPassengerAddress;
@@ -182,6 +194,7 @@ class CarpoolProof
      * @var Address position of the driver when dropoff certification is asked
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $dropOffDriverAddress;
@@ -190,6 +203,7 @@ class CarpoolProof
      * @var null|Direction the direction related with the proof
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $direction;
@@ -205,6 +219,7 @@ class CarpoolProof
      * @var null|User the driver, used to keep a link to the driver if the passenger deletes its ad (the ask may be deleted aswell)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="carpoolProofsAsDriver")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $driver;
@@ -213,6 +228,7 @@ class CarpoolProof
      * @var null|User the passenger, used to keep a link to the passenger if the driver deletes its ad (the ask may be deleted aswell)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="carpoolProofsAsPassenger")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $passenger;
@@ -235,6 +251,16 @@ class CarpoolProof
      * @var null|array The array of points as Address objects. Used to create the geoJsonPoints.
      */
     private $points;
+
+    /**
+     * @ORM\OneToOne(targetEntity=LongDistanceJourney::class, mappedBy="carpoolProof")
+     */
+    private $mobConnectLongDistanceJourney;
+
+    /**
+     * @ORM\OneToOne(targetEntity=ShortDistanceJourney::class, mappedBy="carpoolProof")
+     */
+    private $mobConnectShortDistanceJourney;
 
     public function getId(): ?int
     {
@@ -547,6 +573,7 @@ class CarpoolProof
      * GeoJson representation of the points.
      *
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
      */
     public function setAutoGeoJsonPoints()
@@ -558,5 +585,43 @@ class CarpoolProof
             }
             $this->setGeoJsonPoints(new LineString($arrayPoints));
         }
+    }
+
+    /**
+     * Get the value of mobConnectLongDistanceJourney.
+     */
+    public function getMobConnectLongDistanceJourney(): ?LongDistanceJourney
+    {
+        return $this->mobConnectLongDistanceJourney;
+    }
+
+    /**
+     * Set the value of mobConnectLongDistanceJourney.
+     *
+     * @param mixed $mobConnectLongDistanceJourney
+     */
+    public function setMobConnectLongDistanceJourney(LongDistanceJourney $mobConnectLongDistanceJourney): self
+    {
+        $this->mobConnectLongDistanceJourney = $mobConnectLongDistanceJourney;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of mobConnectShortDistanceJourney.
+     */
+    public function getMobConnectShortDistanceJourney(): ?ShortDistanceJourney
+    {
+        return $this->mobConnectShortDistanceJourney;
+    }
+
+    /**
+     * Set the value of mobConnectShortDistanceJourney.
+     */
+    public function setMobConnectShortDistanceJourney(ShortDistanceJourney $mobConnectShortDistanceJourney): self
+    {
+        $this->mobConnectShortDistanceJourney = $mobConnectShortDistanceJourney;
+
+        return $this;
     }
 }

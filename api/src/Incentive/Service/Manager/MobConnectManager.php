@@ -23,6 +23,13 @@ abstract class MobConnectManager
 
     public const SUBSCRIPTION_EXPIRATION_DELAY = 3;     // Expressed in months
 
+    public const LONG_SUBSCRIPTION_TYPE = 'long';
+    public const SHORT_SUBSCRIPTION_TYPE = 'short';
+
+    public const ALLOWED_SUBSCRIPTION_TYPES = [self::LONG_SUBSCRIPTION_TYPE, self::SHORT_SUBSCRIPTION_TYPE];
+
+    protected const DATE_FORMAT = 'Y-m-d';
+
     /**
      * @var User
      */
@@ -163,7 +170,7 @@ abstract class MobConnectManager
         return $subscription->setExpirationDate($now->add(new \DateInterval('P'.self::SUBSCRIPTION_EXPIRATION_DELAY.'M')));
     }
 
-    protected function verifySubscription(string $subscriptionId)
+    protected function executeRequestVerifySubscription(string $subscriptionId)
     {
         $this->setApiProvider();
 

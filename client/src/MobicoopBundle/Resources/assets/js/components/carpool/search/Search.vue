@@ -70,7 +70,7 @@
             <v-btn
               :disabled="searchUnavailable || disableSearch"
               :loading="loadingSearch"
-              color="secondary"
+              :class="searchButtonClass"
               rounded
               min-width="150px"
               tabindex="0"
@@ -240,6 +240,10 @@ export default {
     defaultOutwardTime: {
       type: String,
       default: null
+    },
+    searchButtonClass: {
+      type:String,
+      default: 'secondary'
     },
   },
   data() {

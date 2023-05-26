@@ -70,10 +70,10 @@
         </p>
         <p
           class="text-justify"
-          v-html="$t('intro2', {eecPlatform: eecPlatform})"
+          v-html="$t('intro2', {eecPlatform: platform})"
         />
         <p class="font-weight-bold">
-          {{ $t('title_list', {eecPlatform: eecPlatform, eecProvider: eecProvider}) }}
+          {{ $t('title_list', {eecPlatform: platform, eecProvider: eecProvider}) }}
         </p>
         <p
           v-for="(item, i) in items"
@@ -87,12 +87,18 @@
         </p>
         <v-alert
           v-if="alert.text"
-          border="right"
+          border="left"
           colored-border
           type="warning"
           elevation="1"
+          class="text-left mx-8"
         >
-          <span v-html="alert.text" />
+          <span
+            class="text-left"
+            v-html="alert.text"
+          />
+          <br>
+          <span>{{ $t('EEC-eligibility.alert.cannotReApply') }}</span>
         </v-alert>
         <SsoLogins
           class="mt-5"
@@ -202,7 +208,11 @@ export default {
     apiUri: {
       type: String,
       default: null
-    }
+    },
+    platform: {
+      type: String,
+      default: ""
+    },
   },
   data() {
     return {
@@ -226,7 +236,12 @@ export default {
   },
   computed:{
     canSubscribe(){
-      return this.confirmedPhoneNumber && this.drivingLicenceNumberFilled && this.checkboxesAllChecked && (this.eligibility.longDistanceEligibility || this.shortDistanceEligibility);
+      return this.confirmedPhoneNumber
+        && this.drivingLicenceNumberFilled
+        && this.checkboxesAllChecked
+        && this.eligibility.longDistanceEligibility
+        && this.eligibility.shortDistanceEligibility
+      ;
     },
     scrollOptions () {
       return {
@@ -265,20 +280,32 @@ export default {
           this.eligibility = res.data;
           this.loading = false;
 
+          // TODO distinguer le type d'erreur
+
           switch (true) {
-          case !this.eligibility.longDistanceEligibility && !this.eligibility.shortDistanceEligibility:
-            this.alert.text = this.$t('EEC-eligibility.alert.ineligibility');
-
+          // Ineligibility for long distance journeys
+          case !this.eligibility.longDistanceEligibility && this.eligibility.longDistanceJourneysNumber > 0 :
+            this.alert.text = this.$t('EEC-eligibility.alert.LD-journeys');
             break;
-
-          case !this.eligibility.longDistanceEligibility:
-            this.alert.text = this.$t('EEC-eligibility.alert.longDistance-ineligibility-text');
-
+          // Ineligibility for long distance phone doublon
+          case !this.eligibility.longDistanceEligibility && this.eligibility.longDistancePhoneDoublon > 0 :
+            this.alert.text = this.$t('EEC-eligibility.alert.LD-phone');
             break;
-
-          case !this.eligibility.shortDistanceEligibility:
-            this.alert.text = this.$t('EEC-eligibility.alert.shortDistance-ineligibility-text');
-
+          // Ineligibility for long distance driving licence doublon
+          case !this.eligibility.longDistanceEligibility && this.eligibility.longDistanceDrivingLicenceNumberDoublon > 0:
+            this.alert.text = this.$t('EEC-eligibility.alert.LD-driving-licence-number');
+            break;
+          // Ineligibility for short distance journeys
+          case !this.eligibility.shortDistanceEligibility && this.eligibility.shortDistanceJourneysNumber > 0 :
+            this.alert.text = this.$t('EEC-eligibility.alert.CD-journeys');
+            break;
+          // Ineligibility for short distance phone doublon
+          case !this.eligibility.shortDistanceEligibility && this.eligibility.shortDistancePhoneDoublon > 0 :
+            this.alert.text = this.$t('EEC-eligibility.alert.CD-phone');
+            break;
+          // Ineligibility for short distance driving licence doublon
+          case !this.eligibility.shortDistanceEligibility && this.eligibility.shortDistanceDrivingLicenceNumberDoublon > 0:
+            this.alert.text = this.$t('EEC-eligibility.alert.CD-driving-licence-number');
             break;
           }
         })

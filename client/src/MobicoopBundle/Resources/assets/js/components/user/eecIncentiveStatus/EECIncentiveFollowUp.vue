@@ -35,7 +35,7 @@
               </div>
               <div v-if="!hasDateExpired(longDistanceSubscriptionExpirationDate)">
                 <v-progress-linear
-                  v-model="longDistanceProgress"
+                  v-model="longDistanceProgressPercentage"
                   height="25"
                 >
                   <strong>{{ $t('followup.longDistance.progress', {'nb':longDistanceProgress}) }}</strong>
@@ -83,7 +83,7 @@
               </div>
               <div v-if="!hasDateExpired(shortDistanceSubscriptionExpirationDate)">
                 <v-progress-linear
-                  v-model="shortDistanceProgress"
+                  v-model="shortDistanceProgressPercentage"
                   height="25"
                 >
                   <strong>{{ $t('followup.shortDistance.progress', {'nb':shortDistanceProgress}) }}</strong>
@@ -154,6 +154,9 @@ let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
+const LONG_DISTANCE_NUMBER = 3;
+const SHORT_DISTANCE_NUMBER = 10;
+
 export default {
   i18n: {
     messages: {
@@ -201,11 +204,17 @@ export default {
       }
       return 0;
     },
+    shortDistanceProgressPercentage() {
+      return 100 / SHORT_DISTANCE_NUMBER * this.shortDistanceProgress;
+    },
     longDistanceProgress(){
       if(this.longDistanceSubscriptions){
         return this.longDistanceSubscriptions.length;
       }
       return 0;
+    },
+    longDistanceProgressPercentage() {
+      return 100 / LONG_DISTANCE_NUMBER * this.longDistanceProgress;
     },
     displayLongDistanceExpirationDate() {
       return this.longDistanceSubscriptionExpirationDate && !this.hasDateExpired(this.longDistanceSubscriptionExpirationDate)

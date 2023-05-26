@@ -31,6 +31,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\AskRepository;
 use App\DataProvider\Ressource\Hook;
 use App\Geography\Entity\Address;
+use App\Incentive\Service\Validation\JourneyValidation;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
@@ -98,6 +99,11 @@ class PaymentManager
     private $logger;
 
     /**
+     * @var JourneyValidation
+     */
+    private $_journeyValidation;
+
+    /**
      * Constructor.
      *
      * @param EntityManagerInterface   $entityManager                      The entity manager
@@ -131,7 +137,8 @@ class PaymentManager
         string $exportPath,
         EventDispatcherInterface $eventDispatcher,
         ActionRepository $actionRepository,
-        ConsumptionFeedbackDataProvider $consumptionFeedbackProvider
+        ConsumptionFeedbackDataProvider $consumptionFeedbackProvider,
+        JourneyValidation $journeyValidation
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -156,6 +163,7 @@ class PaymentManager
         $this->actionRepository = $actionRepository;
         $this->logger = $logger;
         $this->consumptionFeedbackProvider = $consumptionFeedbackProvider;
+        $this->_journeyValidation = $journeyValidation;
     }
 
     /**
@@ -639,7 +647,7 @@ class PaymentManager
             if (Criteria::FREQUENCY_PUNCTUAL == $carpoolItem->getAsk()->getCriteria()->getFrequency() && CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT == $carpoolItem->getDebtorStatus()) {
                 $event = new ConfirmDirectPaymentEvent($carpoolItem, $user);
                 $this->eventDispatcher->dispatch(ConfirmDirectPaymentEvent::NAME, $event);
-            // case regular
+                // case regular
             } elseif (Criteria::FREQUENCY_REGULAR == $carpoolItem->getAsk()->getCriteria()->getFrequency() && CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT == $carpoolItem->getDebtorStatus()) {
                 // We send only one email for the all week
                 if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
@@ -691,8 +699,8 @@ class PaymentManager
                     // Unpaid has been declared
                     $carpoolItem->setUnpaidDate(new \DateTime('now'));
 
-                // Unpaid doesn't change the status
-                // $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
+                    // Unpaid doesn't change the status
+                    // $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
                 } elseif (PaymentItem::DAY_CARPOOLED == $item['status']) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
                     $carpoolItem->setUnpaidDate(null);
@@ -763,7 +771,7 @@ class PaymentManager
                 if (Criteria::FREQUENCY_PUNCTUAL == $carpoolItem->getAsk()->getCriteria()->getFrequency() && $carpoolItem->getUnpaidDate()) {
                     $event = new SignalDeptEvent($carpoolItem, $user);
                     $this->eventDispatcher->dispatch(SignalDeptEvent::NAME, $event);
-                // case regular
+                    // case regular
                 } elseif (Criteria::FREQUENCY_REGULAR == $carpoolItem->getAsk()->getCriteria()->getFrequency() && $carpoolItem->getUnpaidDate()) {
                     // We send only one email for the all week
                     if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
@@ -1277,8 +1285,10 @@ class PaymentManager
         $this->entityManager->flush();
 
         if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) {
-            $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
-            $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
+            if ($this->_journeyValidation->isPaymentValidForEEC($carpoolPayment)) {
+                $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
+                $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
+            }
 
             //  we dispatch the gamification event associated
             $action = $this->actionRepository->findOneBy(['name' => 'electronic_payment_made']);

@@ -172,7 +172,8 @@ class UserRepository
         return $this->repository->createQueryBuilder('u')
             ->where('u.id IN(:ids) and u.newsSubscription=1')
             ->setParameter('ids', $ids)
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
     }
 
     /**
@@ -345,6 +346,19 @@ class UserRepository
         }
 
         $qb->setParameters($parameters);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findUsersCeeSubscribed()
+    {
+        $qb = $this->repository->createQueryBuilder('u');
+
+        $qb
+            ->leftJoin('u.longDistanceSubscription', 'lds')
+            ->leftJoin('u.shortDistanceSubscription', 'sds')
+            ->where('lds.id IS NOT NULL OR sds.id IS NOT NULL')
+        ;
 
         return $qb->getQuery()->getResult();
     }

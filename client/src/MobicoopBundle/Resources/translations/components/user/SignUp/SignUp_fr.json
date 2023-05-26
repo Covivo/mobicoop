@@ -11,11 +11,20 @@
   "gender": {
     "label": "Civilité",
     "placeholder": "Civilité",
-    "values": {
-      "male": "Monsieur",
-      "female": "Madame",
-      "other": "Autre"
-    },
+    "values": [
+      {
+        "label": "Madame",
+        "value": "1"
+      },
+      {
+        "label": "Monsieur",
+        "value": "2"
+      },
+      {
+        "label": "Autre",
+        "value": "3"
+      }
+    ],
     "errors": {
       "required": "La civilité est requise"
     }

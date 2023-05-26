@@ -45,7 +45,7 @@ class JourneysVerificationCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:incentive:journeys-verification')
+            ->setName('app:incentive:subscriptions-verification')
             ->setDescription('Request verification of journeys registered with mobConnect.')
             ->setHelp('Asks mobConnect, 7 days after their declaration, if each journey is verified.')
         ;

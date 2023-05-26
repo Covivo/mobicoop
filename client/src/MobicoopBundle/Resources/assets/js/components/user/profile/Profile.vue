@@ -90,6 +90,7 @@
                   :cee-display="ceeDisplay"
                   :is-after-eec-subscription="isAfterEecSubscription"
                   :api-uri="apiUri"
+                  :genders-list="gendersList"
                   @changeTab="changeTab"
                 />
               </v-tab-item>
@@ -307,6 +308,10 @@ export default {
     apiUri: {
       type: String,
       default: null
+    },
+    gendersList: {
+      type: Array,
+      default: () => []
     }
   },
   data(){

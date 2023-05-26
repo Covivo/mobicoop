@@ -62,6 +62,7 @@ use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
+use App\User\Admin\Controller\DeleteUsers;
 use App\User\Controller\EECSubscription;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
@@ -354,6 +355,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_user_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_delete_filtered"={
+ *              "path"="/admin/users",
+ *              "controller"=DeleteUsers::class,
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_users_delete',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
@@ -858,7 +870,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"aRead","aWrite","readUser","write","checkPhoneToken","results", "readSolidary"})
+     * @Groups({"aRead","aWrite","readUser", "results", "write","checkPhoneToken", "readSolidary"})
      */
     private $telephone;
 

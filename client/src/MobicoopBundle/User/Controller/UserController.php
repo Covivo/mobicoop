@@ -73,7 +73,7 @@ class UserController extends AbstractController
     private $facebook_appid;
     private $required_home_address;
     private $news_subscription;
-    private $communityShow;
+    private $community_show;
     private $userProvider;
     private $signUpLinkInConnection;
     private $signupRgpdInfos;
@@ -95,6 +95,7 @@ class UserController extends AbstractController
     private $carpoolSettingsDisplay;
     private $signInSsoOriented;
     private $ceeDisplay;
+    private $gendersList;
 
     /**
      * Constructor.
@@ -136,7 +137,8 @@ class UserController extends AbstractController
         bool $birthDateDisplay,
         bool $carpoolSettingsDisplay,
         bool $signInSsoOriented,
-        bool $ceeDisplay
+        bool $ceeDisplay,
+        array $gendersList
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -165,6 +167,7 @@ class UserController extends AbstractController
         $this->ssoManager = $ssoManager;
         $this->signInSsoOriented = $signInSsoOriented;
         $this->ceeDisplay = $ceeDisplay;
+        $this->gendersList = $gendersList;
     }
 
     private function __parsePostParams(string $response): array
@@ -346,6 +349,7 @@ class UserController extends AbstractController
             'newsSubscription' => $newsSubscription,
             'birthDateDisplay' => $this->birthDateDisplay,
             'communityId' => $communityId,
+            'gendersList' => $this->gendersList,
         ]);
     }
 
@@ -427,8 +431,6 @@ class UserController extends AbstractController
 
     /**
      * Phone validation.
-     *
-     * @param $token
      */
     public function userPhoneValidation(UserManager $userManager, Request $request)
     {
@@ -600,6 +602,7 @@ class UserController extends AbstractController
             'showReviews' => $user->isUserReviewsActive(),
             'tabDefault' => $tabDefault,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
+            'gendersList' => $this->gendersList,
         ]);
     }
 
