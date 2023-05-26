@@ -363,6 +363,7 @@ class JourneyManager extends MobConnectManager
                 && $this->_journeyValidation->isDistanceLongDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance())
                 && !empty($carpoolItem->getAsk()->getMatching()->getWaypoints())
                 && $this->_journeyValidation->isOriginOrDestinationFromFrance($carpoolItem->getAsk()->getMatching())
+                && CarpoolItem::CREDITOR_STATUS_ONLINE === $carpoolItem->getCreditorStatus()
             ) {
                 $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) use ($driver) {
                     return $carpoolProof->getDriver() === $driver;
@@ -370,9 +371,9 @@ class JourneyManager extends MobConnectManager
 
                 $carpoolProofs = array_merge($carpoolProofs, $filteredCarpoolProofs);
             }
-
-            return $carpoolProofs;
         }
+
+        return $carpoolProofs;
     }
 
     private function _isPaymentValidated(CarpoolProof $carpoolProof): bool
