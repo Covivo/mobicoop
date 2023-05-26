@@ -226,7 +226,7 @@ export default {
   },
   computed:{
     canSubscribe(){
-      return this.confirmedPhoneNumber && this.drivingLicenceNumberFilled && this.checkboxesAllChecked && (this.eligibility.longDistanceEligibility || this.shortDistanceEligibility);
+      return this.confirmedPhoneNumber && this.drivingLicenceNumberFilled && this.checkboxesAllChecked && (this.eligibility.longDistanceEligibility || this.eligibility.shortDistanceEligibility);
     },
     scrollOptions () {
       return {
