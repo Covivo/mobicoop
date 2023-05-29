@@ -355,7 +355,7 @@ class PhoneService
         return $this;
     }
 
-    private function _setOriginalPhoneNumber(string $phoneNumber): self
+    private function _setOriginalPhoneNumber(?string $phoneNumber): self
     {
         $this->_originalPhoneNumber = $phoneNumber;
 

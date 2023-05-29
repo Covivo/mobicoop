@@ -61,6 +61,16 @@ class SubscriptionValidation extends Validation
         }
     }
 
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function isSubscriptionReadyForVerification($subscription): bool
+    {
+        return
+            !is_null($subscription->getHonorCertificateProofTimestampToken())
+            && !is_null($subscription->getHonorCertificateProofTimestampSigningTime());
+    }
+
     private function _setVerificationDeadline(int $deadline): self
     {
         $this->_verificationDeadline = new \DateTime('now');
