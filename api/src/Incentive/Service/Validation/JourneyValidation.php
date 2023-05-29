@@ -5,6 +5,7 @@ namespace App\Incentive\Service\Validation;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Service\LoggerService;
+use App\Payment\Entity\CarpoolPayment;
 
 class JourneyValidation extends Validation
 {
@@ -50,6 +51,18 @@ class JourneyValidation extends Validation
             && !is_null($this->_driver->getShortDistanceSubscription())
             && is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate())
             && empty($this->_driver->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray());
+    }
+
+    /**
+     * Checks if the payment is valid :
+     *      - The payment status is 1
+     *      - The payment transaction id has been set.
+     */
+    public function isPaymentValidForEEC(CarpoolPayment $carpoolPayment): bool
+    {
+        return
+            CarpoolPayment::STATUS_SUCCESS === $carpoolPayment->getStatus()
+            && !is_null($carpoolPayment->getTransactionId());
     }
 
     /**
