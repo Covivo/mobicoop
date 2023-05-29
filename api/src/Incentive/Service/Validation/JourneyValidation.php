@@ -4,10 +4,8 @@ namespace App\Incentive\Service\Validation;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
-use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Service\LoggerService;
 use App\Payment\Entity\CarpoolPayment;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class JourneyValidation extends Validation
 {
@@ -161,7 +159,12 @@ class JourneyValidation extends Validation
             && CarpoolProof::STATUS_VALIDATED === $commitmentJourney->getCarpoolProof()->getStatus();
     }
 
-    private function _getCommitmentJourney(ArrayCollection $journeys): ?LongDistanceJourney
+    /**
+     * @param mixed $journeys
+     *
+     * @return null|LongDistanceJourney|ShortDistanceJourney
+     */
+    private function _getCommitmentJourney($journeys)
     {
         $commitmentJourney = null;
 

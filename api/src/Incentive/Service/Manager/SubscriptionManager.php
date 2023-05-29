@@ -20,7 +20,6 @@ use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
@@ -237,10 +236,6 @@ class SubscriptionManager extends MobConnectManager
             throw new NotFoundHttpException("The {$subscriptionType} subscription was not found");
         }
 
-        if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {
-            throw new BadRequestHttpException("The {$subscriptionType} subscription is not ready for verification");
-        }
-
         return $this->verifySubscription($subscription);
     }
 
@@ -270,6 +265,12 @@ class SubscriptionManager extends MobConnectManager
      */
     public function verifySubscription($subscription)
     {
+        if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {
+            $this->_loggerService->log('The subscription '.$subscription->getId().' is not ready for verification');
+
+            return;
+        }
+
         switch (true) {
             case $subscription instanceof LongDistanceSubscription:
                 $this->_loggerService->log('Verification for the long-distance subscription with the ID '.$subscription->getId());
@@ -284,11 +285,13 @@ class SubscriptionManager extends MobConnectManager
 
         $this->_driver = $subscription->getUser();
 
-        $response = $this->executeRequestVerifySubscription($subscription->getSubscriptionId());
+        $verifyResponse = $this->executeRequestVerifySubscription($subscription->getSubscriptionId());
+        // Todo - Save a log
+        $subscription->addLog($verifyResponse);
 
         $subscription->setStatus(
-            MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $response->getCode()
-            ? $response->getStatus() : self::STATUS_ERROR
+            MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $verifyResponse->getCode()
+            ? $verifyResponse->getStatus() : self::STATUS_ERROR
         );
 
         if (self::STATUS_VALIDATED === $subscription->getStatus()) {

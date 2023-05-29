@@ -54,8 +54,8 @@ class SubscriptionValidation extends Validation
             is_null($subscription->getStatus())
             && (
                 $subscription instanceof LongDistanceSubscription
-                ? $this->_journeyValidation->isLDJourneysReadyForVerify($subscription->getJourneys()) // Todo, le paiement a bien été effectué
-                : $this->_journeyValidation->isSDJourneysReadyForVerify($subscription->getJourneys()) // Todo, la preuve est bien de classe C
+                ? $this->_journeyValidation->isLDJourneysReadyForVerify($subscription->getJourneys())
+                : $this->_journeyValidation->isSDJourneysReadyForVerify($subscription->getJourneys())
             )
             && !is_null($subscription->getCommitmentProofDate())
             && $subscription->getCommitmentProofDate() <= $this->_verificationDeadline

@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  *
- * @ORM\DiscriminatorMap({"long_distance" = "LongDistanceLog", "short_distance" = "ShortDistanceLog"})
+ * @ORM\DiscriminatorMap({"long_distance_journey" = "LongDistanceLog", "short_distance_journey" = "ShortDistanceLog", "long_distance_subscription" = "LongDistanceSubscriptionLog", "short_distance_subscription" = "ShortDistanceSubscriptionLog"})
  */
 abstract class CommitmentRequestLog
 {

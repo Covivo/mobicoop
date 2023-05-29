@@ -129,7 +129,7 @@ class EecEligibility
     /**
      * Get the value of longDistance.
      */
-    public function getJourneysNumber(): int
+    public function getLongDistanceJourneyNumber(): int
     {
         return $this->longDistanceJourneysNumber;
     }

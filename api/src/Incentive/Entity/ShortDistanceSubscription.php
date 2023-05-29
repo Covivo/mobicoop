@@ -2,7 +2,9 @@
 
 namespace App\Incentive\Entity;
 
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -252,9 +254,19 @@ class ShortDistanceSubscription
      */
     private $incentiveProofTimestampSigningTime;
 
+    /**
+     * The moBconnet HTTP request log.
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity=ShortDistanceSubscriptionLog::class, mappedBy="subscription", cascade={"persist"})
+     */
+    private $logs;
+
     public function __construct(User $user, MobConnectSubscriptionResponse $mobConnectSubscriptionResponse)
     {
         $this->shortDistanceJourneys = new ArrayCollection();
+        $this->logs = new ArrayCollection();
 
         $this->setUser($user);
         $this->setSubscriptionId($mobConnectSubscriptionResponse->getId());
@@ -330,7 +342,7 @@ class ShortDistanceSubscription
         return $this->shortDistanceJourneys->removeElement($shortDistanceJourney);
     }
 
-    public function getJourneys(): ArrayCollection
+    public function getJourneys()
     {
         return $this->shortDistanceJourneys;
     }
@@ -842,6 +854,24 @@ class ShortDistanceSubscription
     public function setIncentiveProofTimestampSigningTime(\DateTimeInterface $incentiveProofTimestampSigningTime): self
     {
         $this->incentiveProofTimestampSigningTime = $incentiveProofTimestampSigningTime;
+
+        return $this;
+    }
+
+    /**
+     * Get the moBconnet HTTP request log.
+     */
+    public function getLogs(): ArrayCollection
+    {
+        return $this->logs;
+    }
+
+    public function addLog(MobConnectSubscriptionVerifyResponse $response): self
+    {
+        if (in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
+            $log = new ShortDistanceSubscriptionLog($this, $response->getCode(), $response->getContent(), $response->getPayload());
+            $this->logs[] = $log;
+        }
 
         return $this;
     }
