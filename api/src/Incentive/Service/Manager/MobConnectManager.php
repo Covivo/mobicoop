@@ -163,16 +163,12 @@ abstract class MobConnectManager
 
     /**
      * Sets subscription expiration date.
-     *
-     * @param LongSubscription|ShortSubscription $subscription
-     *
-     * @return LongSubscription|ShortSubscription
      */
-    protected function setExpirationDate($subscription)
+    protected function getExpirationDate(): \DateTime
     {
         $now = new \DateTime('now');
 
-        return $subscription->setExpirationDate($now->add(new \DateInterval('P'.self::SUBSCRIPTION_EXPIRATION_DELAY.'M')));
+        return $now->add(new \DateInterval('P'.self::SUBSCRIPTION_EXPIRATION_DELAY.'M'));
     }
 
     protected function executeRequestVerifySubscription(string $subscriptionId)

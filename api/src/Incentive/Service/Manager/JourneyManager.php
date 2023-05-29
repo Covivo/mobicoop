@@ -219,7 +219,7 @@ class JourneyManager extends MobConnectManager
                     $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
                 }
 
-                $subscription = $this->setExpirationDate($subscription);
+                $subscription->setExpirationDate($this->getExpirationDate());
             } else {
                 $journey = new LongDistanceJourney();
             }
@@ -282,7 +282,7 @@ class JourneyManager extends MobConnectManager
                 $subscription->setHonorCertificateProofTimestampSigningTime($response->getHonorCertificateProofTimestampSigningTime());
             }
 
-            $subscription = $this->setExpirationDate($subscription);
+            $subscription->setExpirationDate($this->getExpirationDate());
         } else {
             $journey = new ShortDistanceJourney($carpoolProof);
         }
