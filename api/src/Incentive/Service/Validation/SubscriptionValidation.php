@@ -12,15 +12,21 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class SubscriptionValidation extends Validation
 {
     /**
+     * @var JourneyValidation
+     */
+    private $_journeyValidation;
+
+    /**
      * @var int
      */
     private $_verificationDeadline;
 
-    public function __construct(LoggerService $loggerService, int $deadline)
+    public function __construct(LoggerService $loggerService, JourneyValidation $journeyValidation, int $deadline)
     {
         parent::__construct($loggerService);
 
         $this->_setVerificationDeadline($deadline);
+        $this->_journeyValidation = $journeyValidation;
     }
 
     /**
@@ -37,11 +43,20 @@ class SubscriptionValidation extends Validation
             );
     }
 
+    /**
+     * Undocumented function.
+     *
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
     public function isSubscriptionReadyForVerify($subscription): bool
     {
-        // TODO: mettre en place un test permettant que le trajet utilisé pour la vérification est valide
         return
             is_null($subscription->getStatus())
+            && (
+                $subscription instanceof LongDistanceSubscription
+                ? $this->_journeyValidation->isLDJourneysReadyForVerify($subscription->getJourneys()) // Todo, le paiement a bien été effectué
+                : $this->_journeyValidation->isSDJourneysReadyForVerify($subscription->getJourneys()) // Todo, la preuve est bien de classe C
+            )
             && !is_null($subscription->getCommitmentProofDate())
             && $subscription->getCommitmentProofDate() <= $this->_verificationDeadline
             && is_null($subscription->getVerificationDate());

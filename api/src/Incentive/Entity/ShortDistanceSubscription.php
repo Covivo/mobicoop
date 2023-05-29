@@ -330,7 +330,7 @@ class ShortDistanceSubscription
         return $this->shortDistanceJourneys->removeElement($shortDistanceJourney);
     }
 
-    public function getShortDistanceJourneys()
+    public function getJourneys(): ArrayCollection
     {
         return $this->shortDistanceJourneys;
     }
@@ -669,7 +669,7 @@ class ShortDistanceSubscription
     public function hasExpired(): bool
     {
         return
-            !empty($this->getShortDistanceJourneys())
+            !empty($this->getJourneys())
             && !is_null($this->getExpirationDate())
             && $this->getExpirationDate() < new \DateTime('now');
     }

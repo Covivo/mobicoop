@@ -129,7 +129,7 @@ class EecEligibility
     /**
      * Get the value of longDistance.
      */
-    public function getLongDistanceJourneysNumber(): int
+    public function getJourneysNumber(): int
     {
         return $this->longDistanceJourneysNumber;
     }
@@ -160,7 +160,7 @@ class EecEligibility
     public function setLongDistanceEligibility(): self
     {
         $this->longDistanceEligibility =
-            $this->getLongDistanceJourneysNumber() <= self::LONG_DISTANCE_ELIGIBILITY_THRESHOLD
+            $this->getJourneysNumber() <= self::LONG_DISTANCE_ELIGIBILITY_THRESHOLD
             && 0 === $this->getLongDistanceDrivingLicenceNumberDoublon()
             && 0 === $this->getLongDistancePhoneDoublon();
 
@@ -170,7 +170,7 @@ class EecEligibility
     /**
      * Get the value of shortDistance.
      */
-    public function getShortDistanceJourneysNumber(): int
+    public function getJourneysNumber(): int
     {
         return $this->shortDistanceJourneysNumber;
     }
@@ -201,7 +201,7 @@ class EecEligibility
     public function setShortDistanceEligibility(): self
     {
         $this->shortDistanceEligibility =
-            $this->getShortDistanceJourneysNumber() <= self::SHORT_DISTANCE_ELIGIBILITY_THRESHOLD
+            $this->getJourneysNumber() <= self::SHORT_DISTANCE_ELIGIBILITY_THRESHOLD
             && 0 === $this->getShortDistanceDrivingLicenceNumberDoublon()
             && 0 === $this->getShortDistancePhoneDoublon();
 

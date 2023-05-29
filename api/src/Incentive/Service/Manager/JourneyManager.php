@@ -65,7 +65,7 @@ class JourneyManager extends MobConnectManager
         foreach ($carpoolProofs as $proof) {
             switch ($subscriptionType) {
                 case MobConnectManager::LONG_SUBSCRIPTION_TYPE:
-                    if (is_null($driver->getLongDistanceSubscription()->getCommitmentProofDate()) && empty($driver->getLongDistanceSubscription()->getLongDistanceJourneys())) {
+                    if (is_null($driver->getLongDistanceSubscription()->getCommitmentProofDate()) && empty($driver->getLongDistanceSubscription()->getJourneys())) {
                         $proposal = $driver === $proof->getAsk()->getMatching()->getProposalOffer()->getUser()
                             ? $proof->getAsk()->getMatching()->getProposalOffer()->getUser() : $proof->getAsk()->getMatching()->getProposalRequest()->getUser();
 
@@ -81,7 +81,7 @@ class JourneyManager extends MobConnectManager
                     break;
 
                 case MobConnectManager::SHORT_SUBSCRIPTION_TYPE:
-                    if (is_null($driver->getShortDistanceSubscription()->getCommitmentProofDate()) && empty($driver->getShortDistanceSubscription()->getShortDistanceJourneys())) {
+                    if (is_null($driver->getShortDistanceSubscription()->getCommitmentProofDate()) && empty($driver->getShortDistanceSubscription()->getJourneys())) {
                         $event = new FirstShortDistanceJourneyPublishedEvent($proof);
                         $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyPublishedEvent::NAME, $event);
                     }
@@ -192,7 +192,7 @@ class JourneyManager extends MobConnectManager
                 return;
             }
 
-            $longDistanceJourneysNumber = count($subscription->getLongDistanceJourneys()->toArray());
+            $longDistanceJourneysNumber = count($subscription->getJourneys()->toArray());
 
             if (self::LONG_DISTANCE_TRIP_THRESHOLD <= $longDistanceJourneysNumber) {
                 return;
@@ -248,7 +248,7 @@ class JourneyManager extends MobConnectManager
             return;
         }
 
-        $shortDistanceJourneysNumber = count($subscription->getShortDistanceJourneys()->toArray());
+        $shortDistanceJourneysNumber = count($subscription->getJourneys()->toArray());
 
         // Checks :
         //    - The maximum journey threshold has not been reached

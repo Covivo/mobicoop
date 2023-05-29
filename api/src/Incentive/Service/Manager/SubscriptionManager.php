@@ -165,7 +165,7 @@ class SubscriptionManager extends MobConnectManager
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
 
         if (!is_null($shortDistanceSubscription)) {
-            $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getShortDistanceJourneys());
+            $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getJourneys());
             $this->_subscriptions->setShortDistanceSubscriptions($shortDistanceSubscriptions);
             $this->_subscriptions->setShortDistanceExpirationDate($shortDistanceSubscription->getExpirationDate());
         }
@@ -173,7 +173,7 @@ class SubscriptionManager extends MobConnectManager
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
 
         if (!is_null($longDistanceSubscription)) {
-            $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getLongDistanceJourneys());
+            $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getJourneys());
 
             $this->_subscriptions->setLongDistanceSubscriptions($longDistanceSubscriptions);
             $this->_subscriptions->setLongDistanceExpirationDate($longDistanceSubscription->getExpirationDate());
@@ -186,8 +186,6 @@ class SubscriptionManager extends MobConnectManager
 
     /**
      * Set EEC subscription timestamps.
-     *
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
     public function setUserSubscriptionTimestamps(string $subscriptionType, int $subscriptionId)
     {

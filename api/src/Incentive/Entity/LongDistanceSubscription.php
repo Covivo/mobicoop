@@ -327,7 +327,7 @@ class LongDistanceSubscription
         return $this->longDistanceJourneys->removeElement($longDistanceJourney);
     }
 
-    public function getLongDistanceJourneys()
+    public function getJourneys(): ArrayCollection
     {
         return $this->longDistanceJourneys;
     }
@@ -668,7 +668,7 @@ class LongDistanceSubscription
     public function hasExpired(): bool
     {
         return
-            !empty($this->getLongDistanceJourneys())
+            !empty($this->getJourneys())
             && !is_null($this->getExpirationDate())
             && $this->getExpirationDate() < new \DateTime('now');
     }
