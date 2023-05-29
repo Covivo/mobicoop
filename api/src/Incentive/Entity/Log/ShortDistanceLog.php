@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Incentive\Entity;
+namespace App\Incentive\Entity\Log;
 
+use App\Incentive\Entity\ShortDistanceJourney;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\HasLifecycleCallbacks
  */
-class ShortDistanceLog extends CommitmentRequestLog
+class ShortDistanceLog extends Log
 {
     /**
      * @var int The cee ID

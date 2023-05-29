@@ -5,6 +5,7 @@ namespace App\Incentive\Entity;
 use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\Incentive\Entity\Log\ShortDistanceLog;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;

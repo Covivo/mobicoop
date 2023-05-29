@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Incentive\Entity;
+namespace App\Incentive\Entity\Log;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\DiscriminatorMap({"long_distance_journey" = "LongDistanceLog", "short_distance_journey" = "ShortDistanceLog", "long_distance_subscription" = "LongDistanceSubscriptionLog", "short_distance_subscription" = "ShortDistanceSubscriptionLog"})
  */
-abstract class CommitmentRequestLog
+abstract class Log
 {
     /**
      * @var int The cee ID

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Incentive\Entity;
+namespace App\Incentive\Entity\Log;
 
+use App\Incentive\Entity\LongDistanceJourney;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\HasLifecycleCallbacks
  */
-class LongDistanceLog extends CommitmentRequestLog
+class LongDistanceLog extends Log
 {
     /**
      * @var int The cee ID
