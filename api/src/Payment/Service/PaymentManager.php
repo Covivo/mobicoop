@@ -1254,6 +1254,10 @@ class PaymentManager
             /**
              * @var CarpoolItem $carpoolItem
              */
+            if (CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE !== $carpoolItem->getDebtorStatus()) {
+                continue;
+            }
+
             if (!isset($creditors[$carpoolItem->getCreditorUser()->getId()])) {
                 // New creditor. We set the amount and the payment profile
                 $creditors[$carpoolItem->getCreditorUser()->getId()] = [
