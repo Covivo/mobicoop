@@ -813,24 +813,7 @@ class PaymentManager
                 case CarpoolItem::DEBTOR_STATUS_ONLINE:
                     $updated = false;
                     if (count($onlineReturns) > 0) {
-                        foreach ($onlineReturns as $onlineReturn) {
-                            /**
-                             *  @var PaymentResult $onlineReturn
-                             */
-                            if ($onlineReturn->getCarpoolItemId() == $item->getId()) {
-                                if (PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_TRANSFER == $onlineReturn->getType()) {
-                                    $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
-                                    $item->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
-                                }
-                                if (PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_PAYOUT == $onlineReturn->getType()) {
-                                    $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
-                                    $item->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
-                                }
-                                $updated = true;
-
-                                break;
-                            }
-                        }
+                        $updated = $this->_treatOnlineCarpoolPayment($carpoolPayment->getStatus(), $item, $onlineReturns);
                     }
                     if (!$updated) {
                         $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
@@ -1485,6 +1468,29 @@ class PaymentManager
         $paymentProfile->setRefusalReason($validationDocument->getStatus());
 
         return $paymentProfile;
+    }
+
+    private function _treatOnlineCarpoolPayment(int $carpoolPaymentStatus, CarpoolItem $item, array $onlineReturns): bool
+    {
+        foreach ($onlineReturns as $onlineReturn) {
+            /**
+             *  @var PaymentResult $onlineReturn
+             */
+            if ($onlineReturn->getCarpoolItemId() == $item->getId()) {
+                if (PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_TRANSFER == $onlineReturn->getType()) {
+                    $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPaymentStatus) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
+                    $item->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
+                }
+                if (PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_PAYOUT == $onlineReturn->getType()) {
+                    $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPaymentStatus) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
+                    $item->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function _fullfillCarpoolPayment(CarpoolPayment $carpoolPayment)

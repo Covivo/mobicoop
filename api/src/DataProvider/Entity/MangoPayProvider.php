@@ -131,11 +131,15 @@ class MangoPayProvider implements PaymentProviderInterface
 
         if (isset($arrayResult['Type']) && self::RESULT_TYPE_TRANSFER == $arrayResult['Type']) {
             $return->setType(PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_TRANSFER);
-            if (self::RESULT_FAILED == $arrayResult['Status']) {
-                $return->setStatus(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_FAILED);
-            } else {
-                $return->setStatus(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS);
-            }
+        }
+        if (isset($arrayResult['Type']) && self::RESULT_TYPE_PAYOUT == $arrayResult['Type']) {
+            $return->setType(PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_PAYOUT);
+        }
+
+        if (isset($arrayResult['Status']) && self::RESULT_FAILED == $arrayResult['Status']) {
+            $return->setStatus(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_FAILED);
+        } else {
+            $return->setStatus(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS);
         }
 
         return $return;
