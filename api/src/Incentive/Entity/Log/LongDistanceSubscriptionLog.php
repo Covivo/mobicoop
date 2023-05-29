@@ -36,11 +36,11 @@ class LongDistanceSubscriptionLog extends Log
      */
     private $subscription;
 
-    public function __construct(LongDistanceSubscription $subscription, $code, $content, $payload)
+    public function __construct(LongDistanceSubscription $subscription, $code, $content, $payload, $type)
     {
         $this->setSubscription($subscription);
 
-        parent::__construct($code, $content, $payload);
+        parent::__construct($type, $code, $content, $payload);
     }
 
     /**

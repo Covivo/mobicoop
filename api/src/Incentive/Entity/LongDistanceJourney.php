@@ -4,9 +4,6 @@ namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
-use App\Incentive\Entity\Log\LongDistanceLog;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -102,15 +99,6 @@ class LongDistanceJourney
      * @ORM\Column(type="integer", nullable=true, options={"comment":"Status of http request to mobConnect"})
      */
     private $httpRequestStatus;
-
-    /**
-     * The moBconnet HTTP request log.
-     *
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity=LongDistanceLog::class, mappedBy="journey", cascade={"persist"})
-     */
-    private $logs;
 
     /**
      * The carpool payment associate with the journey.
@@ -380,24 +368,6 @@ class LongDistanceJourney
     public function setHttpRequestStatus(int $httpRequestStatus): self
     {
         $this->httpRequestStatus = $httpRequestStatus;
-
-        return $this;
-    }
-
-    /**
-     * Get the moBconnet HTTP request log.
-     */
-    public function getLogs(): ArrayCollection
-    {
-        return $this->logs;
-    }
-
-    public function addLog(MobConnectSubscriptionResponse $response): self
-    {
-        if (in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
-            $log = new LongDistanceLog($this, $response->getCode(), $response->getContent(), $response->getPayload());
-            $this->logs[] = $log;
-        }
 
         return $this;
     }

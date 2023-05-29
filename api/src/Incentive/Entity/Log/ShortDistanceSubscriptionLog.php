@@ -30,17 +30,17 @@ class ShortDistanceSubscriptionLog extends Log
      *
      * @var ShortDistanceSubscription
      *
-     * @ORM\ManyToOne(targetEntity=LongDistanceSubscription::class, inversedBy="logs")
+     * @ORM\ManyToOne(targetEntity=ShortDistanceSubscription::class, inversedBy="logs")
      *
      * @ORM\JoinColumn(nullable=true)
      */
     private $subscription;
 
-    public function __construct(ShortDistanceSubscription $subscription, $code, $content, $payload)
+    public function __construct(ShortDistanceSubscription $subscription, $code, $content, $payload, $type)
     {
         $this->setSubscription($subscription);
 
-        parent::__construct($code, $content, $payload);
+        parent::__construct($type, $code, $content, $payload);
     }
 
     /**

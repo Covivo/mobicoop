@@ -2,12 +2,12 @@
 
 namespace App\DataProvider\Entity\MobConnect\Response;
 
-abstract class MobConnectResponse
+abstract class MobConnectResponse implements MobConnectResponseInterface
 {
     public const ERROR_CODES = [400, 401, 403, 404, 409, 412, 415, 422, 500];
 
     /**
-     * @var int
+     * @var null|int
      */
     protected $_code;
 
@@ -21,7 +21,7 @@ abstract class MobConnectResponse
     /**
      * The Mob connect timestamp.
      *
-     * @var string
+     * @var null|string
      */
     protected $_timestamp;
 

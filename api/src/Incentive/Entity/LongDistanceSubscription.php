@@ -3,8 +3,9 @@
 namespace App\Incentive\Entity;
 
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
+use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\Log\LongDistanceSubscriptionLog;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\User\Entity\User;
@@ -866,10 +867,10 @@ class LongDistanceSubscription
         return $this->logs;
     }
 
-    public function addLog(MobConnectSubscriptionVerifyResponse $response): self
+    public function addLog(MobConnectResponseInterface $response, int $logType): self
     {
-        if (in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
-            $log = new LongDistanceSubscriptionLog($this, $response->getCode(), $response->getContent(), $response->getPayload());
+        if (in_array($logType, Log::ALLOWED_TYPES) && in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
+            $log = new LongDistanceSubscriptionLog($this, $response->getCode(), $response->getContent(), $response->getPayload(), $logType);
             $this->logs[] = $log;
         }
 

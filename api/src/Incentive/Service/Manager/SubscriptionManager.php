@@ -7,6 +7,7 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
+use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
@@ -90,6 +91,8 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * Step 5 - Creating incentives requests.
+     *
      * For the authenticated user, if needed, creates the CEE sheets.
      */
     public function createSubscriptions(User $driver)
@@ -104,14 +107,17 @@ class SubscriptionManager extends MobConnectManager
             is_null($this->_driver->getLongDistanceSubscription())
             && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver)
         ) {
-            $response = $this->postSubscription();
+            $postResponse = $this->postSubscription();
 
-            $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $response);
+            $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $postResponse);
+            $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
-            $response = $this->getDriverSubscriptionTimestamps($longDistanceSubscription->getSubscriptionId());
-            if (!is_null($response->getIncentiveProofTimestampToken())) {
-                $longDistanceSubscription->setIncentiveProofTimestampToken($response->getIncentiveProofTimestampToken());
-                $longDistanceSubscription->setIncentiveProofTimestampSigningTime($response->getIncentiveProofTimestampSigningTime());
+            $timestampResponse = $this->getDriverSubscriptionTimestamps($longDistanceSubscription->getSubscriptionId());
+            $longDistanceSubscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_SUBSCRIPTION);
+
+            if (!is_null($timestampResponse->getIncentiveProofTimestampToken())) {
+                $longDistanceSubscription->setIncentiveProofTimestampToken($timestampResponse->getIncentiveProofTimestampToken());
+                $longDistanceSubscription->setIncentiveProofTimestampSigningTime($timestampResponse->getIncentiveProofTimestampSigningTime());
             }
 
             $this->_em->persist($longDistanceSubscription);
@@ -121,14 +127,17 @@ class SubscriptionManager extends MobConnectManager
             is_null($this->_driver->getShortDistanceSubscription())
             && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver, false)
         ) {
-            $response = $this->postSubscription(false);
+            $postResponse = $this->postSubscription(false);
 
-            $shortDistanceSubscription = new ShortDistanceSubscription($this->_driver, $response);
+            $shortDistanceSubscription = new ShortDistanceSubscription($this->_driver, $postResponse);
+            $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
-            $response = $this->getDriverSubscriptionTimestamps($shortDistanceSubscription->getSubscriptionId());
-            if (!is_null($response->getIncentiveProofTimestampToken())) {
-                $shortDistanceSubscription->setIncentiveProofTimestampToken($response->getIncentiveProofTimestampToken());
-                $shortDistanceSubscription->setIncentiveProofTimestampSigningTime($response->getIncentiveProofTimestampSigningTime());
+            $timestampResponse = $this->getDriverSubscriptionTimestamps($shortDistanceSubscription->getSubscriptionId());
+            $shortDistanceSubscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_SUBSCRIPTION);
+
+            if (!is_null($timestampResponse->getIncentiveProofTimestampToken())) {
+                $shortDistanceSubscription->setIncentiveProofTimestampToken($timestampResponse->getIncentiveProofTimestampToken());
+                $shortDistanceSubscription->setIncentiveProofTimestampSigningTime($timestampResponse->getIncentiveProofTimestampSigningTime());
             }
 
             $this->_em->persist($shortDistanceSubscription);
@@ -286,8 +295,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_driver = $subscription->getUser();
 
         $verifyResponse = $this->executeRequestVerifySubscription($subscription->getSubscriptionId());
-        // Todo - Save a log
-        $subscription->addLog($verifyResponse);
+        $subscription->addLog($verifyResponse, Log::TYPE_VERIFY);
 
         $subscription->setStatus(
             MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $verifyResponse->getCode()
