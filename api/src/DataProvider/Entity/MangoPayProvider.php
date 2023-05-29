@@ -29,6 +29,7 @@ use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Entity\PaymentResult;
 use App\Payment\Entity\Wallet;
 use App\Payment\Entity\WalletBalance;
 use App\Payment\Exception\PaymentException;
@@ -82,6 +83,11 @@ class MangoPayProvider implements PaymentProviderInterface
     public const DOCUMENT_INCOMPLETE = 'DOCUMENT_INCOMPLETE';
     public const SPECIFIC_CASE = 'SPECIFIC_CASE';
 
+    public const RESULT_SUCCESS = 'SUCCESS';
+    public const RESULT_FAILED = 'FAILED';
+    public const RESULT_TYPE_TRANSFER = 'TRANSFER';
+    public const RESULT_TYPE_PAYOUT = 'PAYOUT';
+
     private $user;
     private $serverUrl;
     private $authChain;
@@ -111,6 +117,28 @@ class MangoPayProvider implements PaymentProviderInterface
         $this->validationDocsPath = $validationDocsPath;
         $this->baseUri = $baseUri;
         $this->baseMobileUri = $baseMobileUri;
+    }
+
+    private function __treatReturn(User $debtor, array $creditor, string $result): PaymentResult
+    {
+        $return = new PaymentResult();
+        $arrayResult = json_decode($result, true);
+        $return->setDebtorId($debtor->getId());
+        $return->setCreditorId($creditor['user']->getId());
+        if (isset($creditor['carpoolItemId'])) {
+            $return->setCarpoolItemId($creditor['carpoolItemId']);
+        }
+
+        if (isset($arrayResult['Type']) && self::RESULT_TYPE_TRANSFER == $arrayResult['Type']) {
+            $return->setType(PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_TRANSFER);
+            if (self::RESULT_FAILED == $arrayResult['Status']) {
+                $return->setStatus(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_FAILED);
+            } else {
+                $return->setStatus(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS);
+            }
+        }
+
+        return $return;
     }
 
     /**
@@ -275,8 +303,6 @@ class MangoPayProvider implements PaymentProviderInterface
 
     /**
      * Add a Wallet.
-     *
-     * @param Wallet $user The Wallet to create
      *
      * @return null|Wallet
      */
@@ -523,6 +549,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *  "userId" => [
      *      "user" => User object
      *      "amount" => float
+     *      "carpoolItemId => int (optional)
      *  ]
      * ]
      */
@@ -536,12 +563,16 @@ class MangoPayProvider implements PaymentProviderInterface
         // Transfer to the creditors wallets and payout
         foreach ($creditors as $creditor) {
             $creditorWallet = $creditor['user']->getWallets()[0];
-            $return[] = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
+            $result = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
+            $treatedResult = $this->__treatReturn($debtor, $creditor, $result);
+            $return[] = $treatedResult;
 
-            // Do the payout to the default bank account
-            $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
-            $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
-            $return[] = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
+            if (PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS == $treatedResult->getStatus()) {
+                // Do the payout to the default bank account
+                $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
+                $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
+                $return[] = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
+            }
         }
 
         return $return;
