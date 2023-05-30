@@ -5,7 +5,6 @@ namespace App\Incentive\Entity;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Payment\Entity\CarpoolPayment;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -133,24 +132,11 @@ class LongDistanceJourney
      */
     private $initialProposal;
 
-    /**
-     * Specifies whether the journey is the one chosen for the commitment.
-     *
-     * @var bool
-     *
-     * @ORM\Column(type="boolean", nullable=true, options={"comment":"Status of http request to mobConnect"})
-     */
-    private $commitmentJourney = false;
-
-    public function __construct(Proposal $proposal = null, bool $commitmentJourney = false)
+    public function __construct(Proposal $proposal = null)
     {
-        $this->logs = new ArrayCollection();
-
         if (!is_null($proposal)) {
             $this->setInitialProposal($proposal);
         }
-
-        $this->setCommitmentJourney($commitmentJourney);
     }
 
     /**
@@ -416,14 +402,9 @@ class LongDistanceJourney
 
     public function isCommitmentJourney(): ?bool
     {
-        return $this->commitmentJourney;
-    }
-
-    public function setCommitmentJourney(bool $commitmentJourney): self
-    {
-        $this->commitmentJourney = $commitmentJourney;
-
-        return $this;
+        return
+            !is_null($this->getSubscription())
+            && $this->getId() === $this->getSubscription()->getCommitmentProofJourney()->getId();
     }
 
     public function updateJourney(CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment, int $carpoolersNumber): self

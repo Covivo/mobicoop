@@ -112,8 +112,6 @@ class JourneyManager extends MobConnectManager
 
         $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
 
-        $journey = new LongDistanceJourney();
-
         $subscription = $this->getDriver()->getLongDistanceSubscription();
         $subscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
 
@@ -123,9 +121,9 @@ class JourneyManager extends MobConnectManager
 
         $this->_loggerService->log($log);
 
-        $journey = new LongDistanceJourney($proposal, true);
+        $journey = new LongDistanceJourney($proposal);
 
-        $subscription->addLongDistanceJourney($journey);
+        $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
 
         $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
@@ -162,9 +160,9 @@ class JourneyManager extends MobConnectManager
 
         $this->_loggerService->log($log);
 
-        $journey = new ShortDistanceJourney($carpoolProof, true);
+        $journey = new ShortDistanceJourney($carpoolProof);
 
-        $subscription->addShortDistanceJourney($journey);
+        $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
 
         $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());

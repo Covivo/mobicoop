@@ -4,7 +4,6 @@ namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\User\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -133,21 +132,9 @@ class ShortDistanceJourney
      */
     private $carpoolProof;
 
-    /**
-     * Specifies whether the journey is the one chosen for the commitment.
-     *
-     * @var bool
-     *
-     * @ORM\Column(type="boolean", nullable=true, options={"comment":"Status of http request to mobConnect"})
-     */
-    private $commitmentJourney = false;
-
-    public function __construct(CarpoolProof $carpoolProof, bool $commitmentJourney = false)
+    public function __construct(CarpoolProof $carpoolProof)
     {
-        $this->logs = new ArrayCollection();
-
         $this->setCarpoolProof($carpoolProof);
-        $this->setCommitmentJourney($commitmentJourney);
     }
 
     /**
@@ -421,24 +408,11 @@ class ShortDistanceJourney
         return $this;
     }
 
-    /**
-     * Get specifies whether the journey is the one chosen for the commitment.
-     */
-    public function isCommitmentJourney(): bool
+    public function isCommitmentJourney(): ?bool
     {
-        return $this->commitmentJourney;
-    }
-
-    /**
-     * Set specifies whether the journey is the one chosen for the commitment.
-     *
-     * @param bool $commitmentJourney specifies whether the journey is the one chosen for the commitment
-     */
-    public function setCommitmentJourney(bool $commitmentJourney): self
-    {
-        $this->commitmentJourney = $commitmentJourney;
-
-        return $this;
+        return
+            !is_null($this->getSubscription())
+            && $this->getId() === $this->getSubscription()->getCommitmentProofJourney()->getId();
     }
 
     public function updateJourney(CarpoolProof $carpoolProof, string $rpcJourneyId, int $carpoolersNumber)
