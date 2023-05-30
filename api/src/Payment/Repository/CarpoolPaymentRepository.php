@@ -96,16 +96,21 @@ class CarpoolPaymentRepository
 
     public function findPendingCarpoolPayments(): array
     {
+        $past24h = new \DateTime('now');
+        $past24h->modify('-24 hour');
+
         $query = $this->repository->createQueryBuilder('cp')
             ->join('cp.carpoolItems', 'ci')
-            ->where('cp.status = :initiated')
+            ->where('cp.status = :success')
             ->andWhere('cp.transactionId IS NOT NULL')
             ->andWhere('ci.debtorStatus  = :pendingDebtorStatus OR ci.debtorStatus  = :successDebtorStatus')
             ->andWhere('ci.creditorStatus = :creditorStatus')
-            ->setParameter('initiated', CarpoolPayment::STATUS_SUCCESS)
+            ->andWhere('cp.createdDate >= :past24h')
+            ->setParameter('success', CarpoolPayment::STATUS_SUCCESS)
             ->setParameter('pendingDebtorStatus', CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE)
             ->setParameter('successDebtorStatus', CarpoolItem::DEBTOR_STATUS_ONLINE)
             ->setParameter('creditorStatus', CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE)
+            ->setParameter('past24h', $past24h)
         ;
 
         return $query->getQuery()->getResult();
