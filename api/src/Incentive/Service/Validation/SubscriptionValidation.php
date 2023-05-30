@@ -52,11 +52,13 @@ class SubscriptionValidation extends Validation
     {
         return
             is_null($subscription->getStatus())
-            && (
-                $subscription instanceof LongDistanceSubscription
-                ? $this->_journeyValidation->isLDJourneysReadyForVerify($subscription->getJourneys())
-                : $this->_journeyValidation->isSDJourneysReadyForVerify($subscription->getJourneys())
-            )
+            && $subscription->getJourneys()->isEmpty()
+                ? (
+                    $subscription instanceof LongDistanceSubscription
+                    ? $this->_journeyValidation->isLDJourneysReadyForVerify($subscription->getJourneys())
+                    : $this->_journeyValidation->isSDJourneysReadyForVerify($subscription->getJourneys())
+                )
+                : true
             && !is_null($subscription->getCommitmentProofDate())
             && $subscription->getCommitmentProofDate() <= $this->_verificationDeadline
             && is_null($subscription->getVerificationDate());
