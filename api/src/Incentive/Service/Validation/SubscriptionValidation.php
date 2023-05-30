@@ -2,7 +2,7 @@
 
 namespace App\Incentive\Service\Validation;
 
-use App\Incentive\Entity\Flat\LongDistanceSubscription;
+use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Manager\MobConnectManager;

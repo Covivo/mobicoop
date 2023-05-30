@@ -404,6 +404,7 @@ class LongDistanceJourney
     {
         return
             !is_null($this->getSubscription())
+            && !is_null($this->getSubscription()->getCommitmentProofJourney())
             && $this->getId() === $this->getSubscription()->getCommitmentProofJourney()->getId();
     }
 
