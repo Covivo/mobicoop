@@ -14,6 +14,16 @@ class UserExport
     public const SOLIDARY_DRIVER = 'Transporteur bénévole';
     public const SOLIDARY_TWICE = 'Passager solidaire ET Transporteur bénévole';
 
+    public const HITCHHIKING_DRIVER = 'Conducteur';
+    public const HITCHHIKING_PASSENGER = 'Passager';
+    public const HITCHHIKING_BOTH = 'Passager et Conducteur';
+
+    public const IDENTITY_REJECTED = 'Rejetée';
+    public const IDENTITY_VERIFIED = 'Vérifiée';
+    public const IDENTITY_UNDER_REVIEW = 'En attente de vérification';
+    public const IDENTITY_NONE = 'Non-communiquée';
+    public const IDENTITY_CANCELED = 'Annulée';
+
     /**
      * @var string
      *
@@ -391,6 +401,24 @@ class UserExport
      * @SerializedName("Rôle - ROLE_TERRITORY_CONSULTANT")
      */
     private $roleTerritoryConsultant = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Statut identité")
+     */
+    private $identityStatus;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Utilisation de Rezo Pouce")
+     */
+    private $rezoPouceUse;
 
     /**
      * Get the value of familyName.
@@ -1223,6 +1251,30 @@ class UserExport
     public function setRoleTerritoryConsultant(string $roleTerritoryConsultant): self
     {
         $this->roleTerritoryConsultant = $roleTerritoryConsultant;
+
+        return $this;
+    }
+
+    public function getIdentityStatus(): ?string
+    {
+        return $this->identityStatus;
+    }
+
+    public function setIdentityStatus(?string $identityStatus): self
+    {
+        $this->identityStatus = $identityStatus;
+
+        return $this;
+    }
+
+    public function getRezoPouceUse(): ?string
+    {
+        return $this->rezoPouceUse;
+    }
+
+    public function setRezoPouceUse(?string $rezoPouceUse): self
+    {
+        $this->rezoPouceUse = $rezoPouceUse;
 
         return $this;
     }

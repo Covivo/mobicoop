@@ -7,6 +7,7 @@ use App\Carpool\Repository\ProposalRepository;
 use App\Community\Repository\CommunityUserRepository;
 use App\User\Entity\User;
 use App\User\Entity\UserExport;
+use App\User\Repository\IdentityProofRepository;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,7 @@ class ExportManager
 {
     public const ALLOWED_FILTERS = ['community', 'isHitchHiker'];
     public const MAXIMUM_NUMBER_OF_ROLES = 5;
+    public const IS_HITCHHIKING = 'isHitchHiker';
 
     /**
      * @var User
@@ -69,13 +71,24 @@ class ExportManager
      */
     private $_currentUserExport;
 
+    /**
+     * @var IdentityProofRepository
+     */
+    private $_identityProofRepository;
+
+    /**
+     * @var bool
+     */
+    private $_isHitchhiking;
+
     public function __construct(
         Security $security,
         RequestStack $requestStack,
         EntityManagerInterface $em,
         CommunityUserRepository $communityUserRepository,
         ProposalRepository $proposalRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        IdentityProofRepository $identityProofRepository
     ) {
         if (is_null($security->getUser())) {
             throw new BadRequestHttpException('There is no authenticated User');
@@ -87,7 +100,8 @@ class ExportManager
         $this->_communityUserRepository = $communityUserRepository;
         $this->_proposalRepository = $proposalRepository;
         $this->_userRepository = $userRepository;
-
+        $this->_identityProofRepository = $identityProofRepository;
+        $this->_isHitchhiking = false;
         $this->_setFilters();
 
         $this->_setAuthenticatedUserRestrictionTerritories();
@@ -144,10 +158,13 @@ class ExportManager
     private function _setFilters(): self
     {
         $parameters = $this->_request->query->all();
-
         foreach ($parameters as $key => $parameter) {
             if (!in_array($key, self::ALLOWED_FILTERS)) {
                 throw new BadRequestHttpException("The filter {$key} is not allowed");
+            }
+
+            if (self::IS_HITCHHIKING == $key) {
+                $this->_isHitchhiking = true;
             }
 
             $this->_filters[$key] = $parameter;
@@ -199,6 +216,10 @@ class ExportManager
 
         $this->_setCurrentUserExportRoles();
 
+        if ($this->_isHitchhiking && ($this->_currentUser->isHitchHikeDriver() || $this->_currentUser->isHitchHikePassenger())) {
+            $this->_setHitchhikingInfos();
+        }
+
         return $this->_currentUserExport;
     }
 
@@ -228,5 +249,47 @@ class ExportManager
         }
 
         return $setter;
+    }
+
+    private function _setHitchhikingInfos()
+    {
+        if ($this->_currentUser->isHitchHikeDriver() && $this->_currentUser->isHitchHikePassenger()) {
+            $this->_currentUserExport->setRezoPouceUse(UserExport::HITCHHIKING_BOTH);
+        } elseif ($this->_currentUser->isHitchHikeDriver()) {
+            $this->_currentUserExport->setRezoPouceUse(UserExport::HITCHHIKING_DRIVER);
+        } elseif ($this->_currentUser->isHitchHikePassenger()) {
+            $this->_currentUserExport->setRezoPouceUse(UserExport::HITCHHIKING_PASSENGER);
+        }
+
+        if (count($this->_identityProofRepository->findMostRecentForAUser($this->_currentUser)) > 0) {
+            switch ($this->_identityProofRepository->findMostRecentForAUser($this->_currentUser)[0]->getStatus()) {
+                case '1':
+                    $this->_currentUserExport->setIdentityStatus(UserExport::IDENTITY_UNDER_REVIEW);
+
+                    break;
+
+                case '2':
+                    $this->_currentUserExport->setIdentityStatus(UserExport::IDENTITY_VERIFIED);
+
+                    break;
+
+                case '3':
+                    $this->_currentUserExport->setIdentityStatus(UserExport::IDENTITY_REJECTED);
+
+                    break;
+
+                case '4':
+                    $this->_currentUserExport->setIdentityStatus(UserExport::IDENTITY_CANCELED);
+
+                    break;
+
+                default:
+                    $this->_currentUserExport->setIdentityStatus(UserExport::IDENTITY_NONE);
+
+                    break;
+               }
+        } else {
+            $this->_currentUserExport->setIdentityStatus(UserExport::IDENTITY_NONE);
+        }
     }
 }
