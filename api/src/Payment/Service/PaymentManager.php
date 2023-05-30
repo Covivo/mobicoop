@@ -1265,6 +1265,10 @@ class PaymentManager
 
     public function tryToFullfillPendingCarpoolPayments()
     {
+        if (!$this->paymentActive || '' == $this->provider) {
+            return;
+        }
+
         $initiatedCarpoolPayments = $this->carpoolPaymentRepository->findPendingCarpoolPayments();
         foreach ($initiatedCarpoolPayments as $carpoolPayment) {
             $this->_fullfillCarpoolPayment($carpoolPayment);
