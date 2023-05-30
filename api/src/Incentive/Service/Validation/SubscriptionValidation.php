@@ -59,8 +59,6 @@ class SubscriptionValidation extends Validation
                     : $this->_journeyValidation->isSDJourneysReadyForVerify($subscription->getJourneys())
                 )
                 : true
-            && !is_null($subscription->getCommitmentProofDate())
-            && $subscription->getCommitmentProofDate() <= $this->_verificationDeadline
             && is_null($subscription->getVerificationDate());
     }
 
