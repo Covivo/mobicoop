@@ -560,7 +560,6 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function processElectronicPayment(User $debtor, array $creditors): array
     {
-        var_dump('processElectronicPayment');
         $return = [];
 
         // Get the wallet of the debtor and his identifier
@@ -569,7 +568,6 @@ class MangoPayProvider implements PaymentProviderInterface
         // Transfer to the creditors wallets and payout
         foreach ($creditors as $creditor) {
             if (CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE == $creditor['debtorStatus']) {
-                var_dump('try transferWalletToWallet');
                 $creditorWallet = $creditor['user']->getWallets()[0];
                 $result = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
                 $treatedResult = $this->__treatReturn($debtor, $creditor, $result);
@@ -577,7 +575,6 @@ class MangoPayProvider implements PaymentProviderInterface
             }
 
             if (CarpoolItem::DEBTOR_STATUS_ONLINE == $creditor['debtorStatus']) {
-                var_dump('try payout');
                 // Do the payout to the default bank account
                 $creditorWallet = $creditor['user']->getWallets()[0];
                 $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
@@ -587,7 +584,6 @@ class MangoPayProvider implements PaymentProviderInterface
                 $return[] = $treatedResult;
             }
         }
-        var_dump($return);
 
         return $return;
     }

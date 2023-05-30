@@ -799,7 +799,6 @@ class PaymentManager
      */
     public function treatCarpoolPayment(CarpoolPayment $carpoolPayment, array $onlineReturns = []): CarpoolPayment
     {
-        var_dump('treatCarpoolPayment');
         foreach ($carpoolPayment->getCarpoolItems() as $item) {
             /**
              * @var CarpoolItem $item
@@ -1477,7 +1476,6 @@ class PaymentManager
 
     private function _treatOnlineCarpoolPayment(int $carpoolPaymentStatus, CarpoolItem $item, array $onlineReturns): bool
     {
-        var_dump('_treatOnlineCarpoolPayment');
         foreach ($onlineReturns as $onlineReturn) {
             /**
              *  @var PaymentResult $onlineReturn

@@ -115,4 +115,18 @@ class CarpoolPaymentRepository
 
         return $query->getQuery()->getResult();
     }
+
+    public function findLastSuccessfullCarpoolPayment(CarpoolItem $carpoolItem)
+    {
+        $query = $this->repository->createQueryBuilder('cp')
+            ->join('cp.carpoolItems', 'ci')
+            ->where('ci.id = :carpoolItemId')
+            ->andWhere('cp.status = :success')
+            ->orderBy('cp.createdDate', 'DESC')
+            ->setParameter('carpoolItemId', $carpoolItem->getId())
+            ->setParameter('success', CarpoolPayment::STATUS_SUCCESS)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }
