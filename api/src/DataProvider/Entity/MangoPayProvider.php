@@ -27,6 +27,7 @@ use App\DataProvider\Ressource\Hook;
 use App\DataProvider\Ressource\MangoPayHook;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
+use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Entity\PaymentResult;
@@ -559,6 +560,7 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function processElectronicPayment(User $debtor, array $creditors): array
     {
+        var_dump('processElectronicPayment');
         $return = [];
 
         // Get the wallet of the debtor and his identifier
@@ -566,18 +568,26 @@ class MangoPayProvider implements PaymentProviderInterface
 
         // Transfer to the creditors wallets and payout
         foreach ($creditors as $creditor) {
-            $creditorWallet = $creditor['user']->getWallets()[0];
-            $result = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
-            $treatedResult = $this->__treatReturn($debtor, $creditor, $result);
-            $return[] = $treatedResult;
+            if (CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE == $creditor['debtorStatus']) {
+                var_dump('try transferWalletToWallet');
+                $creditorWallet = $creditor['user']->getWallets()[0];
+                $result = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
+                $treatedResult = $this->__treatReturn($debtor, $creditor, $result);
+                $return[] = $treatedResult;
+            }
 
-            if (PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS == $treatedResult->getStatus()) {
+            if (CarpoolItem::DEBTOR_STATUS_ONLINE == $creditor['debtorStatus']) {
+                var_dump('try payout');
                 // Do the payout to the default bank account
+                $creditorWallet = $creditor['user']->getWallets()[0];
                 $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
                 $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
-                $return[] = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
+                $result = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
+                $treatedResult = $this->__treatReturn($debtor, $creditor, $result);
+                $return[] = $treatedResult;
             }
         }
+        var_dump($return);
 
         return $return;
     }

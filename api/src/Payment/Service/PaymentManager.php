@@ -799,6 +799,7 @@ class PaymentManager
      */
     public function treatCarpoolPayment(CarpoolPayment $carpoolPayment, array $onlineReturns = []): CarpoolPayment
     {
+        var_dump('treatCarpoolPayment');
         foreach ($carpoolPayment->getCarpoolItems() as $item) {
             /**
              * @var CarpoolItem $item
@@ -1476,19 +1477,23 @@ class PaymentManager
 
     private function _treatOnlineCarpoolPayment(int $carpoolPaymentStatus, CarpoolItem $item, array $onlineReturns): bool
     {
+        var_dump('_treatOnlineCarpoolPayment');
         foreach ($onlineReturns as $onlineReturn) {
             /**
              *  @var PaymentResult $onlineReturn
              */
-            if ($onlineReturn->getCarpoolItemId() == $item->getId()) {
+            if (PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS == $onlineReturn->getStatus() && $onlineReturn->getCarpoolItemId() == $item->getId()) {
                 if (PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_TRANSFER == $onlineReturn->getType()) {
                     $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPaymentStatus) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
                     $item->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
+                    $this->entityManager->persist($item);
                 }
                 if (PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_PAYOUT == $onlineReturn->getType()) {
                     $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPaymentStatus) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
-                    $item->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
+                    $item->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
+                    $this->entityManager->persist($item);
                 }
+                $this->entityManager->flush();
 
                 return true;
             }
@@ -1518,6 +1523,8 @@ class PaymentManager
                     'user' => $this->userManager->getPaymentProfile($carpoolItem->getCreditorUser()),
                     'amount' => $carpoolItem->getAmount(),
                     'carpoolItemId' => $carpoolItem->getId(),
+                    'creditorStatus' => $carpoolItem->getCreditorStatus(),
+                    'debtorStatus' => $carpoolItem->getDebtorStatus(),
                 ];
             } else {
                 // We already know this creditor, we add the current amount to the global amount
