@@ -32,6 +32,11 @@ abstract class MobConnectResponse implements MobConnectResponseInterface
         $this->_payload = $payload;
     }
 
+    public static function isResponseErrorResponse(MobConnectResponseInterface $response)
+    {
+        return in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
+    }
+
     /**
      * Get the value of code.
      */

@@ -869,7 +869,10 @@ class LongDistanceSubscription
 
     public function addLog(MobConnectResponseInterface $response, int $logType): self
     {
-        if (in_array($logType, Log::ALLOWED_TYPES) && in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
+        if (
+            in_array($logType, Log::ALLOWED_TYPES)
+            && MobConnectResponse::isResponseErrorResponse($response)
+        ) {
             $log = new LongDistanceSubscriptionLog($this, $response->getCode(), $response->getContent(), $response->getPayload(), $logType);
             $this->logs[] = $log;
         }

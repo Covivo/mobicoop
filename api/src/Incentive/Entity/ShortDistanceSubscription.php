@@ -5,6 +5,7 @@ namespace App\Incentive\Entity;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\Log\ShortDistanceSubscriptionLog;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\User\Entity\User;
@@ -869,7 +870,10 @@ class ShortDistanceSubscription
 
     public function addLog(MobConnectResponseInterface $response, int $logType): self
     {
-        if (in_array($response->getCode(), MobConnectResponse::ERROR_CODES)) {
+        if (
+            in_array($logType, Log::ALLOWED_TYPES)
+            && MobConnectResponse::isResponseErrorResponse($response)
+        ) {
             $log = new ShortDistanceSubscriptionLog($this, $response->getCode(), $response->getContent(), $response->getPayload(), $logType);
             $this->logs[] = $log;
         }
