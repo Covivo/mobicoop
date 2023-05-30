@@ -41,9 +41,6 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         $this->_appClientSecret = $appClientSecret;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUserProfile(string $code): SsoUser
     {
         $tokens = $this->getToken($code);
@@ -121,6 +118,9 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
             return json_decode($response->getValue(), true);
         }
 
-        throw new \LogicException('Error get Token');
+        return [
+            'code' => $response->getCode(),
+            'content' => !is_null(json_decode($response->getValue())) ? json_decode($response->getValue()) : $response->getValue(),
+        ];
     }
 }
