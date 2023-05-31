@@ -214,7 +214,8 @@ class MobConnectApiProvider extends MobConnectProvider
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken())))
+            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken()))),
+            $data
         );
     }
 
