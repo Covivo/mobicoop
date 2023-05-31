@@ -132,6 +132,13 @@ class LongDistanceJourney
      */
     private $initialProposal;
 
+    public function __construct(Proposal $proposal = null)
+    {
+        if (!is_null($proposal)) {
+            $this->setInitialProposal($proposal);
+        }
+    }
+
     /**
      * @ORM\PrePersist
      */
@@ -391,6 +398,14 @@ class LongDistanceJourney
         $this->initialProposal = $initialProposal;
 
         return $this;
+    }
+
+    public function isCommitmentJourney(): ?bool
+    {
+        return
+            !is_null($this->getSubscription())
+            && !is_null($this->getSubscription()->getCommitmentProofJourney())
+            && $this->getId() === $this->getSubscription()->getCommitmentProofJourney()->getId();
     }
 
     public function updateJourney(CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment, int $carpoolersNumber): self

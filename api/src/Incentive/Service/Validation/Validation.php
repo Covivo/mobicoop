@@ -59,7 +59,7 @@ abstract class Validation
     protected function _hasLongDistanceJourneyAlreadyDeclared(CarpoolProof $carpoolProof): bool
     {
         $filteredLongDistanceJourney = array_filter(
-            $this->_driver->getLongDistanceSubscription()->getLongDistanceJourneys()->toArray(),
+            $this->_driver->getLongDistanceSubscription()->getJourneys()->toArray(),
             function (LongDistanceJourney $journey) use ($carpoolProof) {
                 return $journey->getCarpoolProof()->getId() === $carpoolProof->getId();
             }
@@ -71,7 +71,7 @@ abstract class Validation
     protected function _hasShortDistanceJourneyAlreadyDeclared(CarpoolProof $carpoolProof): bool
     {
         $filteredShortDistanceJourney = array_filter(
-            $this->_driver->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray(),
+            $this->_driver->getShortDistanceSubscription()->getJourneys()->toArray(),
             function (ShortDistanceJourney $journey) use ($carpoolProof) {
                 return $journey->getCarpoolProof()->getId() === $carpoolProof->getId();
             }

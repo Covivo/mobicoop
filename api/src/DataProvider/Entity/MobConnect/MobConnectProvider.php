@@ -2,7 +2,7 @@
 
 namespace App\DataProvider\Entity\MobConnect;
 
-use App\DataProvider\Entity\Response as ProviderResponse;
+use App\DataProvider\Entity\Response;
 use App\DataProvider\Service\DataProvider;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\MobConnectMessages;
@@ -71,7 +71,7 @@ abstract class MobConnectProvider
         $this->_dataProvider = new DataProvider($this->_apiUri, $this->__buildResource($resource, $subscriptionId));
     }
 
-    protected function _getResponse(ProviderResponse $response)
+    protected function _getResponse(Response $response)
     {
         $responseValue = $response->getValue();
 

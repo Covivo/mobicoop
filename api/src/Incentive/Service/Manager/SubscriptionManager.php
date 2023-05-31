@@ -7,6 +7,7 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
+use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
@@ -20,7 +21,6 @@ use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
@@ -91,6 +91,8 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * Step 5 - Creating incentives requests.
+     *
      * For the authenticated user, if needed, creates the CEE sheets.
      */
     public function createSubscriptions(User $driver)
@@ -105,14 +107,17 @@ class SubscriptionManager extends MobConnectManager
             is_null($this->_driver->getLongDistanceSubscription())
             && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver)
         ) {
-            $response = $this->postSubscription();
+            $postResponse = $this->postSubscription();
 
-            $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $response);
+            $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $postResponse);
+            $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
-            $response = $this->getDriverSubscriptionTimestamps($longDistanceSubscription->getSubscriptionId());
-            if (!is_null($response->getIncentiveProofTimestampToken())) {
-                $longDistanceSubscription->setIncentiveProofTimestampToken($response->getIncentiveProofTimestampToken());
-                $longDistanceSubscription->setIncentiveProofTimestampSigningTime($response->getIncentiveProofTimestampSigningTime());
+            $timestampResponse = $this->getDriverSubscriptionTimestamps($longDistanceSubscription->getSubscriptionId());
+            $longDistanceSubscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_SUBSCRIPTION);
+
+            if (!is_null($timestampResponse->getIncentiveProofTimestampToken())) {
+                $longDistanceSubscription->setIncentiveProofTimestampToken($timestampResponse->getIncentiveProofTimestampToken());
+                $longDistanceSubscription->setIncentiveProofTimestampSigningTime($timestampResponse->getIncentiveProofTimestampSigningTime());
             }
 
             $this->_em->persist($longDistanceSubscription);
@@ -122,14 +127,17 @@ class SubscriptionManager extends MobConnectManager
             is_null($this->_driver->getShortDistanceSubscription())
             && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver, false)
         ) {
-            $response = $this->postSubscription(false);
+            $postResponse = $this->postSubscription(false);
 
-            $shortDistanceSubscription = new ShortDistanceSubscription($this->_driver, $response);
+            $shortDistanceSubscription = new ShortDistanceSubscription($this->_driver, $postResponse);
+            $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
-            $response = $this->getDriverSubscriptionTimestamps($shortDistanceSubscription->getSubscriptionId());
-            if (!is_null($response->getIncentiveProofTimestampToken())) {
-                $shortDistanceSubscription->setIncentiveProofTimestampToken($response->getIncentiveProofTimestampToken());
-                $shortDistanceSubscription->setIncentiveProofTimestampSigningTime($response->getIncentiveProofTimestampSigningTime());
+            $timestampResponse = $this->getDriverSubscriptionTimestamps($shortDistanceSubscription->getSubscriptionId());
+            $shortDistanceSubscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_SUBSCRIPTION);
+
+            if (!is_null($timestampResponse->getIncentiveProofTimestampToken())) {
+                $shortDistanceSubscription->setIncentiveProofTimestampToken($timestampResponse->getIncentiveProofTimestampToken());
+                $shortDistanceSubscription->setIncentiveProofTimestampSigningTime($timestampResponse->getIncentiveProofTimestampSigningTime());
             }
 
             $this->_em->persist($shortDistanceSubscription);
@@ -165,7 +173,7 @@ class SubscriptionManager extends MobConnectManager
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
 
         if (!is_null($shortDistanceSubscription)) {
-            $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getShortDistanceJourneys());
+            $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getJourneys());
             $this->_subscriptions->setShortDistanceSubscriptions($shortDistanceSubscriptions);
             $this->_subscriptions->setShortDistanceExpirationDate($shortDistanceSubscription->getExpirationDate());
         }
@@ -173,7 +181,7 @@ class SubscriptionManager extends MobConnectManager
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
 
         if (!is_null($longDistanceSubscription)) {
-            $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getLongDistanceJourneys());
+            $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getJourneys());
 
             $this->_subscriptions->setLongDistanceSubscriptions($longDistanceSubscriptions);
             $this->_subscriptions->setLongDistanceExpirationDate($longDistanceSubscription->getExpirationDate());
@@ -186,8 +194,6 @@ class SubscriptionManager extends MobConnectManager
 
     /**
      * Set EEC subscription timestamps.
-     *
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
     public function setUserSubscriptionTimestamps(string $subscriptionType, int $subscriptionId)
     {
@@ -239,10 +245,6 @@ class SubscriptionManager extends MobConnectManager
             throw new NotFoundHttpException("The {$subscriptionType} subscription was not found");
         }
 
-        if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {
-            throw new BadRequestHttpException("The {$subscriptionType} subscription is not ready for verification");
-        }
-
         return $this->verifySubscription($subscription);
     }
 
@@ -276,6 +278,12 @@ class SubscriptionManager extends MobConnectManager
      */
     public function verifySubscription($subscription)
     {
+        if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {
+            $this->_loggerService->log('The subscription '.$subscription->getId().' is not ready for verification');
+
+            return;
+        }
+
         switch (true) {
             case $subscription instanceof LongDistanceSubscription:
                 $this->_loggerService->log('Verification for the long-distance subscription with the ID '.$subscription->getId());
@@ -290,11 +298,12 @@ class SubscriptionManager extends MobConnectManager
 
         $this->_driver = $subscription->getUser();
 
-        $response = $this->executeRequestVerifySubscription($subscription->getSubscriptionId());
+        $verifyResponse = $this->executeRequestVerifySubscription($subscription->getSubscriptionId());
+        $subscription->addLog($verifyResponse, Log::TYPE_VERIFY);
 
         $subscription->setStatus(
-            MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $response->getCode()
-            ? $response->getStatus() : self::STATUS_ERROR
+            MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $verifyResponse->getCode()
+            ? $verifyResponse->getStatus() : self::STATUS_ERROR
         );
 
         if (self::STATUS_VALIDATED === $subscription->getStatus()) {
