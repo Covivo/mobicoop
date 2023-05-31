@@ -32,7 +32,33 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Carpool payment : a carpool payment for carpool items.
  *
+ * Default values :
+ * CarpoolPayment status : 0
+ * Debtor status : 0
+ * Creditor status : 0
+ *
+ * Initiated (debtor hasn't paid yet he just got to the bank payment form)
+ * CarpoolPayment status : 0
+ * Debtor status : 1
+ * Creditor status : 1
+ *
+ * Bank payment form validated, Payin Hook ok (setting the cp status at 1),  waiting for the cron to initiate wallet to wallet transfer
+ * CarpoolPayment status : 1
+ * Debtor status : 1
+ * Creditor status : 1
+ *
+ * Wallet to wallet transfer ok, waiting for the payout
+ * CarpoolPayment status : 1
+ * Debtor status : 3
+ * Creditor status : 1
+ *
+ * All is ok
+ * CarpoolPayment status : 1
+ * Debtor status : 3
+ * Creditor status : 3
+ *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class CarpoolPayment
@@ -49,7 +75,9 @@ class CarpoolPayment
      * @var int the id of this payment
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
      */
     private $id;
@@ -58,6 +86,7 @@ class CarpoolPayment
      * @var float the amount to be paid
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="decimal", precision=6, scale=2)
      */
     private $amount;
@@ -69,6 +98,7 @@ class CarpoolPayment
      *          2 : failure
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="smallint")
      */
     private $status;
@@ -77,6 +107,7 @@ class CarpoolPayment
      * @var User The user that pays
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $user;
