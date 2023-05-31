@@ -27,8 +27,12 @@ abstract class MobConnectResponse implements MobConnectResponseInterface
 
     public function __construct(array $mobConnectResponse, array $payload = null)
     {
-        $this->_code = $mobConnectResponse['code'];
-        $this->_content = is_null(json_decode($mobConnectResponse['content'])) ? $mobConnectResponse['content'] : json_decode($mobConnectResponse['content']);
+        if (isset($mobConnectResponse['code'])) {
+            $this->_code = $mobConnectResponse['code'];
+        }
+        if (isset($mobConnectResponse['content'])) {
+            $this->_content = is_null(json_decode($mobConnectResponse['content'])) ? $mobConnectResponse['content'] : json_decode($mobConnectResponse['content']);
+        }
         $this->_payload = $payload;
     }
 
