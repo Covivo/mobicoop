@@ -250,6 +250,7 @@ services:
         dynamicDestinationDistance: "%env(int:DYNAMIC_CARPOOL_DESTINATION_DISTANCE)%"
         dynamicMaxSpeed: "%env(int:DYNAMIC_CARPOOL_MAX_SPEED)%"
         dynamicEnableMaxSpeed: "%env(bool:DYNAMIC_CARPOOL_ENABLE_MAX_SPEED)%"
+        dynamicTimezone: "%env(string:DYNAMIC_TIMEZONE)%"
     tags:
       - { name: monolog.logger, channel: carpool_dynamic }
 
