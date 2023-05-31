@@ -547,18 +547,20 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
-     * Process an electronic payment between the $debtor and the $creditors.
+     * Process an asynchronous electronic payment between the $debtor and the $creditors.
      *
      * array of creditors are like this :
      * $creditors = [
      *  "userId" => [
      *      "user" => User object
      *      "amount" => float
-     *      "carpoolItemId => int (optional)
+     *      "carpoolItemId => int
+     *      "creditorStatus" => int
+     *      "debtorStatus" => int
      *  ]
      * ]
      */
-    public function processElectronicPayment(User $debtor, array $creditors): array
+    public function processAsyncElectronicPayment(User $debtor, array $creditors): array
     {
         $return = [];
 
@@ -583,6 +585,38 @@ class MangoPayProvider implements PaymentProviderInterface
                 $treatedResult = $this->__treatReturn($debtor, $creditor, $result);
                 $return[] = $treatedResult;
             }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Process an electronic payment between the $debtor and the $creditors.
+     *
+     * array of creditors are like this :
+     * $creditors = [
+     *  "userId" => [
+     *      "user" => User object
+     *      "amount" => float
+     *  ]
+     * ]
+     */
+    public function processElectronicPayment(User $debtor, array $creditors): array
+    {
+        $return = [];
+
+        // Get the wallet of the debtor and his identifier
+        $debtorPaymentProfile = $this->paymentProfileRepository->find($debtor->getPaymentProfileId());
+
+        // Transfer to the creditors wallets and payout
+        foreach ($creditors as $creditor) {
+            $creditorWallet = $creditor['user']->getWallets()[0];
+            $return[] = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
+
+            // Do the payout to the default bank account
+            $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
+            $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
+            $return[] = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
         }
 
         return $return;

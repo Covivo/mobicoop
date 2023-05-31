@@ -1532,7 +1532,7 @@ class PaymentManager
 
         $debtor = $this->userManager->getPaymentProfile($carpoolPayment->getUser());
 
-        $return = $this->paymentProvider->processElectronicPayment($debtor, $creditors);
+        $return = $this->paymentProvider->processAsyncElectronicPayment($debtor, $creditors);
         $this->treatCarpoolPayment($carpoolPayment, $return);
 
         $this->entityManager->persist($carpoolPayment);
