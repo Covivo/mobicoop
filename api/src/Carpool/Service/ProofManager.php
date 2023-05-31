@@ -665,7 +665,7 @@ class ProofManager
             /**
              * @var CarpoolProof $proof
              */
-            $result = $this->provider->getCarpoolProof($proof);
+            $result = $this->provider->getCarpoolProof($proof, $this->provider::RESSOURCE_GET_ITEM);
 
             if (200 == $result->getCode()) {
                 $data = json_decode($result->getValue(), true);

@@ -266,10 +266,10 @@ class CarpoolProofGouvProvider implements ProviderInterface
         return $journey;
     }
 
-    public function getCarpoolProof(CarpoolProof $carpoolProof)
+    public function getCarpoolProof(CarpoolProof $carpoolProof, string $resource = self::RESSOURCE_GET_ITEM)
     {
         $journeyId = (!is_null($this->prefix) ? $this->prefix : '').(string) $carpoolProof->getId();
-        $dataProvider = new DataProvider($this->uri, self::RESSOURCE_GET_ITEM.$journeyId);
+        $dataProvider = new DataProvider($this->uri, $resource.$journeyId);
 
         // creation of the headers
         $headers = [
