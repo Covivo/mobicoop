@@ -51,3 +51,6 @@
 
 # each day at 8 am : check if the address territories linker is still running and if the lock file is too old
 0 8 * * * $php $console app:geography:check-running-territory-link-new-addresses 1 --env=$env
+
+# every minutes : check if there is carpoolPayment/carpoolItem to update
+*/1 * * * * $php $console app:payment:fullfill-carpool-payments --env=$env
