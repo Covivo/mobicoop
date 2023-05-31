@@ -22,8 +22,12 @@ abstract class MobConnectResponse
 
     public function __construct(array $mobConnectResponse)
     {
-        $this->_code = $mobConnectResponse['code'];
-        $this->_content = json_decode($mobConnectResponse['content']);
+        if (isset($mobConnectResponse['code'])) {
+            $this->_code = $mobConnectResponse['code'];
+        }
+        if (isset($mobConnectResponse['content'])) {
+            $this->_content = is_null(json_decode($mobConnectResponse['content'])) ? $mobConnectResponse['content'] : json_decode($mobConnectResponse['content']);
+        }
     }
 
     /**
