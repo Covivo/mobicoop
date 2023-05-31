@@ -428,7 +428,7 @@ class ProofManager
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                        // driver direction will be set when the dynamic ad of the driver will be finished
+                            // driver direction will be set when the dynamic ad of the driver will be finished
                         } else {
                             throw new ProofException('Driver dropoff certification failed : the passenger certified address is too far');
                         }
@@ -583,9 +583,9 @@ class ProofManager
              */
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
-            // uncomment the following to anonymize driver addresses used in the proof
-            // $carpoolProof->setOriginDriverAddress(null);
-            // $carpoolProof->setDestinationDriverAddress(null);
+                // uncomment the following to anonymize driver addresses used in the proof
+                // $carpoolProof->setOriginDriverAddress(null);
+                // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
                 $carpoolProof->setPassenger(null);
                 // uncomment the following to anonymize passenger addresses used in the proof
@@ -641,7 +641,7 @@ class ProofManager
                 continue;
             }
 
-            $result = $this->provider->postCollection($proof);
+            $result = $this->provider->postCollection($proof, $this->provider::RESSOURCE_POST);
             $this->logger->info('Result of the send for proof #'.$proof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
             if (200 == $result->getCode()) {
                 $proof->setStatus(CarpoolProof::STATUS_SENT);

@@ -64,23 +64,20 @@ class CarpoolProofGouvProvider implements ProviderInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    /**
      * Send a carpool proof.
      *
      * @param CarpoolProof $carpoolProof The carpool proof to send
      *
      * @return Response The result of the send
      */
-    public function postCollection(CarpoolProof $carpoolProof)
+    public function postCollection(CarpoolProof $carpoolProof, string $resource = self::RESSOURCE_POST)
     {
         if (is_null($carpoolProof->getAsk())) {
             return new Response(418);
         }
 
         // creation of the dataProvider
-        $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
+        $dataProvider = new DataProvider($this->uri, $resource);
 
         // creation of the headers
         $headers = [
@@ -283,23 +280,14 @@ class CarpoolProofGouvProvider implements ProviderInterface
         return $dataProvider->getItem([], $headers);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCollection(string $class, string $apikey, array $params)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getItem(string $class, string $apikey, array $params)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deserialize(string $class, array $data)
     {
         $this->logger->info('BetaGouv API return');
