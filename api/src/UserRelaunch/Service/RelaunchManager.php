@@ -12,6 +12,10 @@ use App\UserRelaunch\Entity\Notification;
 
 class RelaunchManager
 {
+    public const DEFAULT_START_DAY = 'monday';
+    public const DEFAULT_END_DAY = 'sunday';
+    public const DEFAULT_DATE_FORMAT = 'Y-m-d';
+
     /**
      * @var CarpoolItemRepository
      */
@@ -52,11 +56,11 @@ class RelaunchManager
 
     private function _whatIsToDo(): void
     {
+        $objects = [];
+
         switch ($this->_currentNotification->getName()) {
             case PayAfterCarpoolRegularEvent::NAME:
-                if ($this->_currentNotification->canNotify()) {
-                    $objects = $this->_carpoolItemRepository->findUnpaydForRelaunch(Criteria::FREQUENCY_REGULAR, $this->_currentNotification->getReminderDate());
-                }
+                $objects = $this->_carpoolItemRepository->findUnpaydForRelaunch(Criteria::FREQUENCY_REGULAR, $this->_getLastWeek());
 
                 break;
                 // Define other actions
@@ -83,5 +87,21 @@ class RelaunchManager
     private function _executeRelaunch(User $recipient, $object): void
     {
         $this->_notificationManager->notifies($this->_currentNotification->getName(), $recipient, $object);
+    }
+
+    private function _getLastWeek(): array
+    {
+        $previous_week = strtotime('-1 week +1 day');
+
+        $start_week = strtotime('last '.self::DEFAULT_START_DAY.' midnight', $previous_week);
+        $end_week = strtotime('next '.self::DEFAULT_END_DAY, $start_week);
+
+        $start_week = date(self::DEFAULT_DATE_FORMAT, $start_week);
+        $end_week = date(self::DEFAULT_DATE_FORMAT, $end_week);
+
+        return [
+            'Mon' => new \DateTime($start_week),
+            'Sun' => new \DateTime($end_week),
+        ];
     }
 }
