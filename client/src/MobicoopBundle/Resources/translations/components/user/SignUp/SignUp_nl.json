@@ -105,11 +105,20 @@
     "errors": {
       "required": "De aanspreektitel is vereist"
     },
-    "values": {
-      "other": "Andere",
-      "female": "Mevrouw",
-      "male": "Mijnheer"
-    },
+    "values": [
+      {
+        "label": "Mevrouw",
+        "value": "1"
+      },
+      {
+        "label": "Mijnheer",
+        "value": "2"
+      },
+      {
+        "label": "Andere",
+        "value": "3"
+      }
+    ],
     "placeholder": "Aanspreektitel",
     "label": "Aanspreektitel"
   },

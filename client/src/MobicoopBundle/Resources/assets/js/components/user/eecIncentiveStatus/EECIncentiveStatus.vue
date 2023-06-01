@@ -26,6 +26,7 @@
         :confirmed-phone-number="confirmedPhoneNumber"
         :driving-licence-number-filled="drivingLicenceNumberFilled"
         :api-uri="apiUri"
+        :platform="platform"
       />
       <EECIncentiveAdditionalInformations
         v-else
@@ -91,7 +92,11 @@ export default {
     apiUri: {
       type: String,
       default: null
-    }
+    },
+    platform: {
+      type: String,
+      default: ""
+    },
   },
   data() {
     return {

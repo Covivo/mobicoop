@@ -231,6 +231,168 @@ class UserExport
     private $carpool3Frequency;
 
     /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_SUPER_ADMIN")
+     */
+    private $roleSuperAdmin = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_ADMIN")
+     */
+    private $roleAdmin = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_USER_REGISTERED_FULL")
+     */
+    private $roleUserRegisteredFull = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_USER_REGISTERED_MINIMAL")
+     */
+    private $roleUserRegisteredMinimal = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_USER")
+     */
+    private $roleUser = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_MASS_MATCH")
+     */
+    private $roleMassMatch = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_COMMUNITY_MANAGER")
+     */
+    private $roleCommunityManager = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_COMMUNITY_MANAGER_PUBLIC")
+     */
+    private $roleCommunityManagerPublic = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_COMMUNITY_MANAGER_PRIVATE")
+     */
+    private $roleCommunityManagerPrivate = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_SOLIDARY_OPERATOR")
+     */
+    private $roleSolidaryOperator = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_SOLIDARY_VOLUNTEER")
+     */
+    private $roleSolidaryVolunteer = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_SOLIDARY_BENEFICIARY")
+     */
+    private $roleSolidaryBeneficiary = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_COMMUNICATION_MANAGER")
+     */
+    private $roleCommunicationManager = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_SOLIDARY_VOLUNTEER_CANDIDATE")
+     */
+    private $roleSolidaryVolunteerCandidate = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_SOLIDARY_BENEFICIARY_CANDIDATE")
+     */
+    private $roleSolidaryBeneficiaryCandidate = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_INTEROPERABILITY")
+     */
+    private $roleInteroperability = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_SOLIDARY_ADMIN")
+     */
+    private $roleSolidaryAdmin = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle - ROLE_TERRITORY_CONSULTANT")
+     */
+    private $roleTerritoryConsultant = self::FALSE;
+
+    /**
      * Get the value of familyName.
      *
      * @return string
@@ -737,6 +899,330 @@ class UserExport
     public function setCarpool3Frequency(?string $carpool3Frequency): self
     {
         $this->carpool3Frequency = $carpool3Frequency;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleSuperAdmin.
+     */
+    public function getRoleSuperAdmin(): string
+    {
+        return $this->roleSuperAdmin;
+    }
+
+    /**
+     * Set the value of roleSuperAdmin.
+     */
+    public function setRoleSuperAdmin(string $roleSuperAdmin): self
+    {
+        $this->roleSuperAdmin = $roleSuperAdmin;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleAdmin.
+     */
+    public function getRoleAdmin(): string
+    {
+        return $this->roleAdmin;
+    }
+
+    /**
+     * Set the value of roleAdmin.
+     */
+    public function setRoleAdmin(string $roleAdmin): self
+    {
+        $this->roleAdmin = $roleAdmin;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleUserRegisteredFull.
+     */
+    public function getRoleUserRegisteredFull(): string
+    {
+        return $this->roleUserRegisteredFull;
+    }
+
+    /**
+     * Set the value of roleUserRegisteredFull.
+     */
+    public function setRoleUserRegisteredFull(string $roleUserRegisteredFull): self
+    {
+        $this->roleUserRegisteredFull = $roleUserRegisteredFull;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleUserRegisteredMinimal.
+     */
+    public function getRoleUserRegisteredMinimal(): string
+    {
+        return $this->roleUserRegisteredMinimal;
+    }
+
+    /**
+     * Set the value of roleUserRegisteredMinimal.
+     */
+    public function setRoleUserRegisteredMinimal(string $roleUserRegisteredMinimal): self
+    {
+        $this->roleUserRegisteredMinimal = $roleUserRegisteredMinimal;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleUser.
+     */
+    public function getRoleUser(): string
+    {
+        return $this->roleUser;
+    }
+
+    /**
+     * Set the value of roleUser.
+     */
+    public function setRoleUser(string $roleUser): self
+    {
+        $this->roleUser = $roleUser;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleMassMatch.
+     */
+    public function getRoleMassMatch(): string
+    {
+        return $this->roleMassMatch;
+    }
+
+    /**
+     * Set the value of roleMassMatch.
+     */
+    public function setRoleMassMatch(string $roleMassMatch): self
+    {
+        $this->roleMassMatch = $roleMassMatch;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleCommunityManager.
+     */
+    public function getRoleCommunityManager(): string
+    {
+        return $this->roleCommunityManager;
+    }
+
+    /**
+     * Set the value of roleCommunityManager.
+     */
+    public function setRoleCommunityManager(string $roleCommunityManager): self
+    {
+        $this->roleCommunityManager = $roleCommunityManager;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleCommunityManagerPublic.
+     */
+    public function getRoleCommunityManagerPublic(): string
+    {
+        return $this->roleCommunityManagerPublic;
+    }
+
+    /**
+     * Set the value of roleCommunityManagerPublic.
+     */
+    public function setRoleCommunityManagerPublic(string $roleCommunityManagerPublic): self
+    {
+        $this->roleCommunityManagerPublic = $roleCommunityManagerPublic;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleCommunityManagerPrivate.
+     */
+    public function getRoleCommunityManagerPrivate(): string
+    {
+        return $this->roleCommunityManagerPrivate;
+    }
+
+    /**
+     * Set the value of roleCommunityManagerPrivate.
+     */
+    public function setRoleCommunityManagerPrivate(string $roleCommunityManagerPrivate): self
+    {
+        $this->roleCommunityManagerPrivate = $roleCommunityManagerPrivate;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleSolidaryOperator.
+     */
+    public function getRoleSolidaryOperator(): string
+    {
+        return $this->roleSolidaryOperator;
+    }
+
+    /**
+     * Set the value of roleSolidaryOperator.
+     */
+    public function setRoleSolidaryOperator(string $roleSolidaryOperator): self
+    {
+        $this->roleSolidaryOperator = $roleSolidaryOperator;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleSolidaryVolunteer.
+     */
+    public function getRoleSolidaryVolunteer(): string
+    {
+        return $this->roleSolidaryVolunteer;
+    }
+
+    /**
+     * Set the value of roleSolidaryVolunteer.
+     */
+    public function setRoleSolidaryVolunteer(string $roleSolidaryVolunteer): self
+    {
+        $this->roleSolidaryVolunteer = $roleSolidaryVolunteer;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleSolidaryBeneficiary.
+     */
+    public function getRoleSolidaryBeneficiary(): string
+    {
+        return $this->roleSolidaryBeneficiary;
+    }
+
+    /**
+     * Set the value of roleSolidaryBeneficiary.
+     */
+    public function setRoleSolidaryBeneficiary(string $roleSolidaryBeneficiary): self
+    {
+        $this->roleSolidaryBeneficiary = $roleSolidaryBeneficiary;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleCommunicationManager.
+     */
+    public function getRoleCommunicationManager(): string
+    {
+        return $this->roleCommunicationManager;
+    }
+
+    /**
+     * Set the value of roleCommunicationManager.
+     */
+    public function setRoleCommunicationManager(string $roleCommunicationManager): self
+    {
+        $this->roleCommunicationManager = $roleCommunicationManager;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleSolidaryVolunteerCandidate.
+     */
+    public function getRoleSolidaryVolunteerCandidate(): string
+    {
+        return $this->roleSolidaryVolunteerCandidate;
+    }
+
+    /**
+     * Set the value of roleSolidaryVolunteerCandidate.
+     */
+    public function setRoleSolidaryVolunteerCandidate(string $roleSolidaryVolunteerCandidate): self
+    {
+        $this->roleSolidaryVolunteerCandidate = $roleSolidaryVolunteerCandidate;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleSolidaryBeneficiaryCandidate.
+     */
+    public function getRoleSolidaryBeneficiaryCandidate(): string
+    {
+        return $this->roleSolidaryBeneficiaryCandidate;
+    }
+
+    /**
+     * Set the value of roleSolidaryBeneficiaryCandidate.
+     */
+    public function setRoleSolidaryBeneficiaryCandidate(string $roleSolidaryBeneficiaryCandidate): self
+    {
+        $this->roleSolidaryBeneficiaryCandidate = $roleSolidaryBeneficiaryCandidate;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleInteroperability.
+     */
+    public function getRoleInteroperability(): string
+    {
+        return $this->roleInteroperability;
+    }
+
+    /**
+     * Set the value of roleInteroperability.
+     */
+    public function setRoleInteroperability(string $roleInteroperability): self
+    {
+        $this->roleInteroperability = $roleInteroperability;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleSolidaryAdmin.
+     */
+    public function getRoleSolidaryAdmin(): string
+    {
+        return $this->roleSolidaryAdmin;
+    }
+
+    /**
+     * Set the value of roleSolidaryAdmin.
+     */
+    public function setRoleSolidaryAdmin(string $roleSolidaryAdmin): self
+    {
+        $this->roleSolidaryAdmin = $roleSolidaryAdmin;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleTerritoryConsultant.
+     */
+    public function getRoleTerritoryConsultant(): string
+    {
+        return $this->roleTerritoryConsultant;
+    }
+
+    /**
+     * Set the value of roleTerritoryConsultant.
+     */
+    public function setRoleTerritoryConsultant(string $roleTerritoryConsultant): self
+    {
+        $this->roleTerritoryConsultant = $roleTerritoryConsultant;
 
         return $this;
     }

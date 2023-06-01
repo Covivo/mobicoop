@@ -34,7 +34,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\WaypointRepository;
 use App\Carpool\Ressource\ClassicProof;
-use App\DataProvider\Entity\CarpoolProofGouvProvider;
+use App\DataProvider\Service\RpcApiManager;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\AddressCompleter;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
@@ -75,6 +75,11 @@ class ProofManager
     private $_journeyValidation;
 
     /**
+     * @var RpcApiManager
+     */
+    private $_rpcApiManager;
+
+    /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager          The entity manager
@@ -83,10 +88,7 @@ class ProofManager
      * @param AskRepository          $askRepository          The ask repository
      * @param WaypointRepository     $waypointRepository     The waypoint repository
      * @param GeoTools               $geoTools               The geotools
-     * @param string                 $prefix                 The prefix for proofs
      * @param string                 $provider               The provider for proofs
-     * @param string                 $uri                    The uri of the provider
-     * @param string                 $token                  The token for the provider
      * @param int                    $duration               Number of days to send by default to the carpool register
      * @param int                    $minIdentityDistance    Minimal distance in meters between origin and destination/dropoff to determine distinct identities (C Class proof)
      */
@@ -101,10 +103,8 @@ class ProofManager
         EventDispatcherInterface $eventDispatcher,
         PaymentProfileRepository $paymentProfileRepository,
         JourneyValidation $journeyValidation,
-        string $prefix,
+        RpcApiManager $rpcApiManager,
         string $provider,
-        string $uri,
-        string $token,
         int $duration,
         int $minIdentityDistance
     ) {
@@ -119,13 +119,14 @@ class ProofManager
         $this->eventDispatcher = $eventDispatcher;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->_journeyValidation = $journeyValidation;
+        $this->_rpcApiManager = $rpcApiManager;
 
         $this->addressCompleter = new AddressCompleter(new MobicoopGeocoderPointProvider($mobicoopGeocoder));
 
         switch ($provider) {
             case 'BetaGouv':
             default:
-                $this->provider = new CarpoolProofGouvProvider($uri, $token, $prefix, $logger);
+                $this->provider = $this->_rpcApiManager->getProvider();
 
                 break;
         }
@@ -426,7 +427,7 @@ class ProofManager
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                        // driver direction will be set when the dynamic ad of the driver will be finished
+                            // driver direction will be set when the dynamic ad of the driver will be finished
                         } else {
                             throw new ProofException('Driver dropoff certification failed : the passenger certified address is too far');
                         }
@@ -581,9 +582,9 @@ class ProofManager
              */
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
-            // uncomment the following to anonymize driver addresses used in the proof
-            // $carpoolProof->setOriginDriverAddress(null);
-            // $carpoolProof->setDestinationDriverAddress(null);
+                // uncomment the following to anonymize driver addresses used in the proof
+                // $carpoolProof->setOriginDriverAddress(null);
+                // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
                 $carpoolProof->setPassenger(null);
                 // uncomment the following to anonymize passenger addresses used in the proof
@@ -639,7 +640,7 @@ class ProofManager
                 continue;
             }
 
-            $result = $this->provider->postCollection($proof);
+            $result = $this->provider->postCollection($proof, $this->provider::RESSOURCE_POST);
             $this->logger->info('Result of the send for proof #'.$proof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
             if (200 == $result->getCode()) {
                 $proof->setStatus(CarpoolProof::STATUS_SENT);
@@ -663,7 +664,7 @@ class ProofManager
             /**
              * @var CarpoolProof $proof
              */
-            $result = $this->provider->getCarpoolProof($proof);
+            $result = $this->provider->getCarpoolProof($proof, $this->provider::RESSOURCE_GET_ITEM);
 
             if (200 == $result->getCode()) {
                 $data = json_decode($result->getValue(), true);

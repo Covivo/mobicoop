@@ -662,13 +662,13 @@ class Structure
      *  nullable=true,
      *  options={
      *      "comment":"Specifies whether the structure offers solidarity transport",
-     *      "default":false
+     *      "default":true
      *  }
      * )
      *
      * @Groups({"aRead", "aWrite", "aReadCol"})
      */
-    private $solidaryTransport = false;
+    private $solidaryTransport = true;
 
     public function __construct()
     {

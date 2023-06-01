@@ -115,7 +115,7 @@ class LongDistanceJourney
      *
      * @var null|CarpoolProof
      *
-     * @ORM\OneToOne(targetEntity=CarpoolProof::class)
+     * @ORM\OneToOne(targetEntity=CarpoolProof::class, inversedBy="mobConnectLongDistanceJourney")
      *
      * @ORM\JoinColumn(nullable=true)
      */
