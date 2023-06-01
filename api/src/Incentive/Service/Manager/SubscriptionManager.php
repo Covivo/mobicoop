@@ -186,8 +186,6 @@ class SubscriptionManager extends MobConnectManager
 
     /**
      * Set EEC subscription timestamps.
-     *
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
     public function setUserSubscriptionTimestamps(string $subscriptionType, int $subscriptionId)
     {
