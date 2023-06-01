@@ -41,7 +41,7 @@ final class AnalyticCollectionDataProvider implements ContextAwareCollectionData
         return Analytic::class === $resourceClass && 'ADMIN_get' == $operationName;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): Analytic
     {
         return $this->analyticManager->getAnalytics();
     }

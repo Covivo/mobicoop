@@ -72,9 +72,13 @@ class AnalyticManager
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function getAnalytics(): array
+    public function getAnalytics(): Analytic
     {
-        return [];
+        $analytic = new Analytic();
+        $analytic->setId(0);
+        $this->getDefaultCommunityId();
+        $analytic->setCommunityId($this->defaultCommunityId);
+        return $analytic;
     }
 
     public function getAnalytic(int $id): Analytic

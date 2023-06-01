@@ -36,7 +36,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={
  *          "ADMIN_get"={
  *              "method"="GET",
- *              "security"="is_granted('analytic_list',object)",
+ *              "security"="is_granted('analytic_read',object)",
  *              "path"="/admin/analytics",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
@@ -78,7 +78,7 @@ class Analytic
      *
      * @Groups({"aRead"})
      */
-    private $communityId;
+    private $defaultCommunityId;
 
     /**
      * Default Territory id.
@@ -111,14 +111,14 @@ class Analytic
         return $this;
     }
 
-    public function getCommunityId(): ?int
+    public function getDefaultCommunityId(): ?int
     {
-        return $this->communityId;
+        return $this->defaultCommunityId;
     }
 
     public function setCommunityId(?int $communityId): self
     {
-        $this->communityId = $communityId;
+        $this->defaultCommunityId = $communityId;
 
         return $this;
     }
