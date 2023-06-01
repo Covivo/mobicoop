@@ -59,7 +59,13 @@ class SubscriptionValidation extends Validation
                     : $this->_journeyValidation->isSDJourneysReadyForVerify($subscription->getJourneys())
                 )
                 : true
-            && is_null($subscription->getVerificationDate());
+            && is_null($subscription->getVerificationDate())
+            && !is_null($subscription->getIncentiveProofTimestampToken())
+            && !is_null($subscription->getIncentiveProofTimestampSigningTime())
+            && !is_null($subscription->getCommitmentProofTimestampToken())
+            && !is_null($subscription->getCommitmentProofTimestampSigningTime())
+            && !is_null($subscription->getHonorCertificateProofTimestampToken())
+            && !is_null($subscription->getHonorCertificateProofTimestampSigningTime());
     }
 
     public function checkSubscriptionIdValidity(string $id)
@@ -74,16 +80,6 @@ class SubscriptionValidation extends Validation
         if (!in_array($type, MobConnectManager::ALLOWED_SUBSCRIPTION_TYPES)) {
             throw new BadRequestHttpException('The subscriptionType parameter is incorrect. Please choose from: '.join(', ', MobConnectManager::ALLOWED_SUBSCRIPTION_TYPES));
         }
-    }
-
-    /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     */
-    public function isSubscriptionReadyForVerification($subscription): bool
-    {
-        return
-            !is_null($subscription->getHonorCertificateProofTimestampToken())
-            && !is_null($subscription->getHonorCertificateProofTimestampSigningTime());
     }
 
     private function _setVerificationDeadline(int $deadline): self

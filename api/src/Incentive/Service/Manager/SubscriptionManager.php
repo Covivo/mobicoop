@@ -4,6 +4,7 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
@@ -37,6 +38,11 @@ class SubscriptionManager extends MobConnectManager
     public const VERIFICATION_STATUS_ENDED = 1;
 
     private $_ceeEligibleProofs = [];
+
+    /**
+     * @var TimestampTokenManager
+     */
+    private $_timestampTokenManager;
 
     /**
      * @var CarpoolProofRepository
@@ -74,6 +80,7 @@ class SubscriptionManager extends MobConnectManager
         UserValidation $userValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
+        TimestampTokenManager $timestampTokenManager,
         CarpoolProofRepository $carpoolProofRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
@@ -83,6 +90,7 @@ class SubscriptionManager extends MobConnectManager
     ) {
         parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
+        $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
         $this->_shortDistanceSubscriptionRepository = $shortDistanceSubscriptionRepository;
@@ -112,13 +120,7 @@ class SubscriptionManager extends MobConnectManager
             $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $postResponse);
             $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
-            $timestampResponse = $this->getDriverSubscriptionTimestamps($longDistanceSubscription->getSubscriptionId());
-            $longDistanceSubscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_SUBSCRIPTION);
-
-            if (!is_null($timestampResponse->getIncentiveProofTimestampToken())) {
-                $longDistanceSubscription->setIncentiveProofTimestampToken($timestampResponse->getIncentiveProofTimestampToken());
-                $longDistanceSubscription->setIncentiveProofTimestampSigningTime($timestampResponse->getIncentiveProofTimestampSigningTime());
-            }
+            $longDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($longDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
 
             $this->_em->persist($longDistanceSubscription);
         }
@@ -132,13 +134,7 @@ class SubscriptionManager extends MobConnectManager
             $shortDistanceSubscription = new ShortDistanceSubscription($this->_driver, $postResponse);
             $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
-            $timestampResponse = $this->getDriverSubscriptionTimestamps($shortDistanceSubscription->getSubscriptionId());
-            $shortDistanceSubscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_SUBSCRIPTION);
-
-            if (!is_null($timestampResponse->getIncentiveProofTimestampToken())) {
-                $shortDistanceSubscription->setIncentiveProofTimestampToken($timestampResponse->getIncentiveProofTimestampToken());
-                $shortDistanceSubscription->setIncentiveProofTimestampSigningTime($timestampResponse->getIncentiveProofTimestampSigningTime());
-            }
+            $shortDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($shortDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
 
             $this->_em->persist($shortDistanceSubscription);
         }
@@ -274,8 +270,19 @@ class SubscriptionManager extends MobConnectManager
      */
     public function verifySubscription($subscription)
     {
+        $subscription = $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
+
         if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {
             $this->_loggerService->log('The subscription '.$subscription->getId().' is not ready for verification');
+
+            $response = new MobConnectSubscriptionTimestampsResponse([
+                'code' => Log::VERIFICATION_VALIDATION_ERROR,
+                'content' => Log::ERROR_MESSAGES[Log::VERIFICATION_VALIDATION_ERROR],
+            ]);
+
+            $subscription->addLog($response, Log::TYPE_VERIFY);
+
+            $this->_em->flush();
 
             return;
         }
