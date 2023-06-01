@@ -50,7 +50,7 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
         $this->_tools->setCurrentCarpoolProof($carpoolProof);
 
         // note : the casts are mandatory as the register checks for types
-        return [
+        $serializedProof = [
             'incentive_counterparts' => [],
             'operator_journey_id' => $this->_tools->getOperatorJourneyId(),
             'operator_class' => $carpoolProof->getType(),
@@ -74,13 +74,18 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
                     'identity_key' => $this->_tools->getIdentityKey(Tools::DRIVER),
                     // 'phone' => $this->_tools->getPhoneNumber(Tools::DRIVER),
                     'phone_trunc' => $this->_tools->getPhoneTruncNumber(Tools::DRIVER),
-                    'driving_licence' => $this->_tools->getDrivingLicenceNumber(Tools::DRIVER),
                     'operator_user_id' => $this->_tools->getOperatorUserId(Tools::DRIVER),
                     'over_18' => $this->_tools->getOver18(Tools::DRIVER),
                 ],
                 'revenue' => (int) round($carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice() * 100, 0),
             ],
         ];
+
+        if (!is_null($this->_tools->getDrivingLicenceNumber(Tools::DRIVER))) {
+            $serializedProof['driver']['identity']['driving_licence'] = $this->_tools->getDrivingLicenceNumber(Tools::DRIVER);
+        }
+
+        return $serializedProof;
     }
 
     public function importProofs(array $carpoolProofs)

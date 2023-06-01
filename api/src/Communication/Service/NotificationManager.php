@@ -641,9 +641,8 @@ class NotificationManager
                     }
 
                     $date = null;
-
                     if (!is_null($object->getAsk()) && !is_null($object->getAsk()->getCriteria())) {
-                        $date = \DateTime::createFromFormat('Y-m-d H:m', $object->getAsk()->getCriteria()->getFromDate()->format('Y-m-d').' '.$object->getAsk()->getCriteria()->getFromTime()->format('H:m'));
+                        $date = \DateTime::createFromFormat('Y-m-d H:m', $object->getAsk()->getCriteria()->getFromDate()->format('Y-m-d').' '.is_null($object->getAsk()->getCriteria()->getFromTime()) ? '' : $object->getAsk()->getCriteria()->getFromTime()->format('H:m'));
                     }
 
                     $bodyContext = [

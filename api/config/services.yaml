@@ -231,10 +231,7 @@ services:
 
   App\Carpool\Service\ProofManager:
     arguments:
-      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $provider: "%env(string:CARPOOL_PROOF_PROVIDER)%"
-      $uri: "%env(string:CARPOOL_PROOF_URI)%"
-      $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
       $duration: "%env(int:CARPOOL_PROOF_RANGE_DURATION)%"
       $minIdentityDistance: "%env(int:CARPOOL_PROOF_MIN_IDENTITY_DISTANCE)%"
     tags:
@@ -790,10 +787,6 @@ services:
         }
 
   App\Carpool\Command\CarpoolProofSendHistory:
-    arguments:
-      $uri: "%env(string:CARPOOL_PROOF_URI)%"
-      $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
-      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
     tags:
       - { name: "console.command", command: "app:carpool:proof-send-history" }
 
@@ -990,6 +983,13 @@ services:
       $apiKey: "%env(string:MATCHER_API_KEY)%"
     tags:
       - { name: monolog.logger, channel: matcherV3 }
+
+  App\DataProvider\Service\RpcApiManager:
+    arguments:
+      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $rpcApiVersion: "%env(string:RPC_API_VERSION)%"
+      $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
+      $uri: "%env(string:CARPOOL_PROOF_URI)%"
 
   App\DataProvider\Service\RPCv3\Tools:
     arguments:
