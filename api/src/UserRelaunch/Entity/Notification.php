@@ -55,8 +55,7 @@ class Notification
         return
             !is_null($this->_schedule)
             && !empty($this->_schedule->getScheduleDays())
-            && in_array(strtolower($this->_today->format('D')), $this->_schedule->getScheduleDaysAsDaysArray())
-        ;
+            && in_array(strtolower($this->_today->format('D')), $this->_schedule->getScheduleDaysAsDaysArray());
     }
 
     public function getReminderDate()
