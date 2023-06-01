@@ -34,8 +34,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\WaypointRepository;
 use App\Carpool\Ressource\ClassicProof;
-use App\DataProvider\Entity\CarpoolProofGouvProviderV3;
-use App\DataProvider\Service\RPCv3\Tools;
+use App\DataProvider\Service\RpcApiManager;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\AddressCompleter;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
@@ -76,6 +75,11 @@ class ProofManager
     private $_journeyValidation;
 
     /**
+     * @var RpcApiManager
+     */
+    private $_rpcApiManager;
+
+    /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager          The entity manager
@@ -84,10 +88,7 @@ class ProofManager
      * @param AskRepository          $askRepository          The ask repository
      * @param WaypointRepository     $waypointRepository     The waypoint repository
      * @param GeoTools               $geoTools               The geotools
-     * @param string                 $prefix                 The prefix for proofs
      * @param string                 $provider               The provider for proofs
-     * @param string                 $uri                    The uri of the provider
-     * @param string                 $token                  The token for the provider
      * @param int                    $duration               Number of days to send by default to the carpool register
      * @param int                    $minIdentityDistance    Minimal distance in meters between origin and destination/dropoff to determine distinct identities (C Class proof)
      */
@@ -102,11 +103,8 @@ class ProofManager
         EventDispatcherInterface $eventDispatcher,
         PaymentProfileRepository $paymentProfileRepository,
         JourneyValidation $journeyValidation,
-        Tools $tools,
-        string $prefix,
+        RpcApiManager $rpcApiManager,
         string $provider,
-        string $uri,
-        string $token,
         int $duration,
         int $minIdentityDistance
     ) {
@@ -121,13 +119,14 @@ class ProofManager
         $this->eventDispatcher = $eventDispatcher;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->_journeyValidation = $journeyValidation;
+        $this->_rpcApiManager = $rpcApiManager;
 
         $this->addressCompleter = new AddressCompleter(new MobicoopGeocoderPointProvider($mobicoopGeocoder));
 
         switch ($provider) {
             case 'BetaGouv':
             default:
-                $this->provider = new CarpoolProofGouvProviderV3($tools, $uri, $token, $prefix, $logger);
+                $this->provider = $this->_rpcApiManager->getProvider();
 
                 break;
         }
