@@ -35,6 +35,7 @@ use App\Incentive\Service\Validation\JourneyValidation;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Entity\PaymentResult;
 use App\Payment\Event\ConfirmDirectPaymentEvent;
 use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
@@ -796,7 +797,7 @@ class PaymentManager
      *
      * @param CarpoolPayment $carpoolPayment Involved CarpoolPayment
      */
-    public function treatCarpoolPayment(CarpoolPayment $carpoolPayment): CarpoolPayment
+    public function treatCarpoolPayment(CarpoolPayment $carpoolPayment, array $onlineReturns = []): CarpoolPayment
     {
         foreach ($carpoolPayment->getCarpoolItems() as $item) {
             /**
@@ -809,8 +810,15 @@ class PaymentManager
                     break;
 
                 case CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE:
-                    $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
-                    $item->setCreditorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::CREDITOR_STATUS_ONLINE : CarpoolItem::CREDITOR_STATUS_PENDING);
+                case CarpoolItem::DEBTOR_STATUS_ONLINE:
+                    $updated = false;
+                    if (count($onlineReturns) > 0) {
+                        $updated = $this->_treatOnlineCarpoolPayment($carpoolPayment->getStatus(), $item, $onlineReturns);
+                    }
+                    if (!$updated) {
+                        $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
+                        $item->setCreditorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::CREDITOR_STATUS_ONLINE : CarpoolItem::CREDITOR_STATUS_PENDING);
+                    }
 
                     break;
             }
@@ -1243,7 +1251,6 @@ class PaymentManager
         if ($this->securityTokenActive && $this->securityToken !== $hook->getSecurityToken()) {
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
         }
-
         $hook = $this->paymentProvider->handleHook($hook);
 
         $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId' => $hook->getRessourceId()]);
@@ -1251,54 +1258,20 @@ class PaymentManager
         if (is_null($carpoolPayment)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
         }
-        // Perform the payment
-
-        // Get the creditors
-        if (is_null($carpoolPayment->getCarpoolItems()) || 0 == count($carpoolPayment->getCarpoolItems())) {
-            throw new PaymentException(PaymentException::NO_CARPOOL_ITEMS);
-        }
-        $creditors = [];
-        foreach ($carpoolPayment->getCarpoolItems() as $carpoolItem) {
-            /**
-             * @var CarpoolItem $carpoolItem
-             */
-            if (CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE !== $carpoolItem->getDebtorStatus()) {
-                continue;
-            }
-
-            if (!isset($creditors[$carpoolItem->getCreditorUser()->getId()])) {
-                // New creditor. We set the amount and the payment profile
-                $creditors[$carpoolItem->getCreditorUser()->getId()] = [
-                    'user' => $this->userManager->getPaymentProfile($carpoolItem->getCreditorUser()),
-                    'amount' => $carpoolItem->getAmount(),
-                ];
-            } else {
-                // We already know this creditor, we add the current amount to the global amount
-                $creditors[$carpoolItem->getCreditorUser()->getId()]['amount'] += $carpoolItem->getAmount();
-            }
-        }
-
-        $debtor = $this->userManager->getPaymentProfile($carpoolPayment->getUser());
-
-        $this->paymentProvider->processElectronicPayment($debtor, $creditors);
-        $carpoolPayment->setStatus((Hook::STATUS_SUCCESS == $hook->getStatus()) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
-
-        $this->treatCarpoolPayment($carpoolPayment);
-
+        $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
         $this->entityManager->persist($carpoolPayment);
         $this->entityManager->flush();
+    }
 
-        if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) {
-            if ($this->_journeyValidation->isPaymentValidForEEC($carpoolPayment)) {
-                $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
-                $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
-            }
+    public function tryToFullfillPendingCarpoolPayments()
+    {
+        if (!$this->paymentActive || '' == $this->provider) {
+            return;
+        }
 
-            //  we dispatch the gamification event associated
-            $action = $this->actionRepository->findOneBy(['name' => 'electronic_payment_made']);
-            $actionEvent = new ActionEvent($action, $carpoolPayment->getUser());
-            $actionEvent->setCarpoolPayment($carpoolPayment);
-            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        $initiatedCarpoolPayments = $this->carpoolPaymentRepository->findPendingCarpoolPayments();
+        foreach ($initiatedCarpoolPayments as $carpoolPayment) {
+            $this->_fullfillCarpoolPayment($carpoolPayment);
         }
     }
 
@@ -1499,6 +1472,84 @@ class PaymentManager
         $paymentProfile->setRefusalReason($validationDocument->getStatus());
 
         return $paymentProfile;
+    }
+
+    private function _treatOnlineCarpoolPayment(int $carpoolPaymentStatus, CarpoolItem $item, array $onlineReturns): bool
+    {
+        foreach ($onlineReturns as $onlineReturn) {
+            /**
+             *  @var PaymentResult $onlineReturn
+             */
+            if (PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS == $onlineReturn->getStatus() && $onlineReturn->getCarpoolItemId() == $item->getId()) {
+                if (PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_TRANSFER == $onlineReturn->getType()) {
+                    $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPaymentStatus) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
+                    $item->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
+                    $this->entityManager->persist($item);
+                }
+                if (PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_PAYOUT == $onlineReturn->getType()) {
+                    $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPaymentStatus) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
+                    $item->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
+                    $this->entityManager->persist($item);
+                }
+                $this->entityManager->flush();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function _fullfillCarpoolPayment(CarpoolPayment $carpoolPayment)
+    {
+        // Get the creditors
+        if (is_null($carpoolPayment->getCarpoolItems()) || 0 == count($carpoolPayment->getCarpoolItems())) {
+            throw new PaymentException(PaymentException::NO_CARPOOL_ITEMS);
+        }
+        $creditors = [];
+        foreach ($carpoolPayment->getCarpoolItems() as $carpoolItem) {
+            /**
+             * @var CarpoolItem $carpoolItem
+             */
+            if (CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE !== $carpoolItem->getDebtorStatus() && CarpoolItem::DEBTOR_STATUS_ONLINE !== $carpoolItem->getDebtorStatus()) {
+                continue;
+            }
+
+            if (!isset($creditors[$carpoolItem->getCreditorUser()->getId()])) {
+                // New creditor. We set the amount and the payment profile
+                $creditors[$carpoolItem->getCreditorUser()->getId()] = [
+                    'user' => $this->userManager->getPaymentProfile($carpoolItem->getCreditorUser()),
+                    'amount' => $carpoolItem->getAmount(),
+                    'carpoolItemId' => $carpoolItem->getId(),
+                    'creditorStatus' => $carpoolItem->getCreditorStatus(),
+                    'debtorStatus' => $carpoolItem->getDebtorStatus(),
+                ];
+            } else {
+                // We already know this creditor, we add the current amount to the global amount
+                $creditors[$carpoolItem->getCreditorUser()->getId()]['amount'] += $carpoolItem->getAmount();
+            }
+        }
+
+        $debtor = $this->userManager->getPaymentProfile($carpoolPayment->getUser());
+
+        $return = $this->paymentProvider->processAsyncElectronicPayment($debtor, $creditors);
+        $this->treatCarpoolPayment($carpoolPayment, $return);
+
+        $this->entityManager->persist($carpoolPayment);
+        $this->entityManager->flush();
+
+        if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) {
+            if ($this->_journeyValidation->isPaymentValidForEEC($carpoolPayment)) {
+                $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
+                $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
+            }
+
+            //  we dispatch the gamification event associated
+            $action = $this->actionRepository->findOneBy(['name' => 'electronic_payment_made']);
+            $actionEvent = new ActionEvent($action, $carpoolPayment->getUser());
+            $actionEvent->setCarpoolPayment($carpoolPayment);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
     }
 
     /**

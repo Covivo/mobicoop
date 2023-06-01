@@ -151,8 +151,6 @@ class PaymentDataProvider
     /**
      * Add a BankAccount.
      *
-     * @param BankAccount $user The BankAccount to create
-     *
      * @return null|BankAccount
      */
     public function addBankAccount(BankAccount $bankAccount)
@@ -164,8 +162,6 @@ class PaymentDataProvider
 
     /**
      * Disable a BankAccount.
-     *
-     * @param BankAccount $user The BankAccount to create
      *
      * @return null|BankAccount
      */
@@ -309,6 +305,24 @@ class PaymentDataProvider
         $this->checkPaymentConfiguration();
 
         return $this->providerInstance->generateElectronicPaymentUrl($carpoolPayment);
+    }
+
+    /**
+     * Process an asynchronous electronic payment between the $debtor and the $creditors.
+     *
+     * array of creditors are like this :
+     * $creditors = [
+     *  "userId" => [
+     *      "user" => User object
+     *      "amount" => float
+     *  ]
+     * ]
+     */
+    public function processAsyncElectronicPayment(User $debtor, array $creditors): array
+    {
+        $this->checkPaymentConfiguration();
+
+        return $this->providerInstance->processAsyncElectronicPayment($debtor, $creditors);
     }
 
     /**
