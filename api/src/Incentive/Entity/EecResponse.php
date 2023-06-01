@@ -6,6 +6,9 @@ use App\User\Entity\User;
 
 class EecResponse implements \JsonSerializable
 {
+    public const ERROR_INVALID_AUTH = 'The user mobConnect auth is invalid';
+    public const ERROR_SUBSCRIPTION_MISSING = 'The user does not have subscribed to [TYPE] distance';
+
     /**
      * @var int
      */

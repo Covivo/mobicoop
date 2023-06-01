@@ -70,10 +70,10 @@
         </p>
         <p
           class="text-justify"
-          v-html="$t('intro2', {eecPlatform: eecPlatform})"
+          v-html="$t('intro2', {eecPlatform: platform})"
         />
         <p class="font-weight-bold">
-          {{ $t('title_list', {eecPlatform: eecPlatform, eecProvider: eecProvider}) }}
+          {{ $t('title_list', {eecPlatform: platform, eecProvider: eecProvider}) }}
         </p>
         <p
           v-for="(item, i) in items"
@@ -208,7 +208,11 @@ export default {
     apiUri: {
       type: String,
       default: null
-    }
+    },
+    platform: {
+      type: String,
+      default: ""
+    },
   },
   data() {
     return {

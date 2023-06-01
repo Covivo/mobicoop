@@ -14,12 +14,21 @@
     "label": "Geboortedatum"
   },
   "gender": {
-    "values": {
-      "other": "Andere",
-      "female": "Mevrouw",
-      "male": "Mijnheer"
-    },
-    "label": "Aanspreektitel"
+    "label": "Aanspreektitel",
+    "values": [
+      {
+        "label": "Mevrouw",
+        "value": 1
+      },
+      {
+        "label": "Andere",
+        "value": 2
+      },
+      {
+        "label": "Andere",
+        "value": 3
+      }
+    ]
   },
   "familyName": {
     "label": "Naam"
