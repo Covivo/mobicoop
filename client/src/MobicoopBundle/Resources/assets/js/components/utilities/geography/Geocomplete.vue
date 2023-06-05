@@ -348,8 +348,6 @@ export default {
         .flat();
     },
     selectionToAddress() {
-      console.log("selectionToAddress")
-      console.log(this.selection);
       if (this.selection) {
         const address = {
           "houseNumber":this.selection.value.houseNumber,
