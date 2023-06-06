@@ -25,9 +25,11 @@ declare(strict_types=1);
 
 namespace App\Geography\Service\Point;
 
+use App\User\Entity\User;
+
 interface PointProvider
 {
     public function setMaxResults(int $maxResults): void;
 
-    public function search(string $search): array;
+    public function search(string $search, ?User $user = null): array;
 }
