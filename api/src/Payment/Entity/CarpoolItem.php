@@ -285,6 +285,33 @@ class CarpoolItem
      */
     private $unpaidDate;
 
+    /**
+     * @var null|string origine of the carpool
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @MaxDepth(1)
+     */
+    private $origine;
+
+    /**
+     * @var null|string destination of the carpool
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @MaxDepth(1)
+     */
+    private $destination;
+
+    /**
+     * @var null|int distance of the carpool
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     *
+     * @MaxDepth(1)
+     */
+    private $distance;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -551,6 +578,42 @@ class CarpoolItem
     public function setCreditorConsumptionFeedbackDate(?\DateTimeInterface $creditorConsumptionFeedbackDate): self
     {
         $this->creditorConsumptionFeedbackDate = $creditorConsumptionFeedbackDate;
+
+        return $this;
+    }
+
+    public function getOrigine(): ?string
+    {
+        return $this->origine;
+    }
+
+    public function setOrigine(?string $origine): self
+    {
+        $this->origine = $origine;
+
+        return $this;
+    }
+
+    public function getDestination(): ?string
+    {
+        return $this->destination;
+    }
+
+    public function setDestination(?string $destination): self
+    {
+        $this->destination = $destination;
+
+        return $this;
+    }
+
+    public function getDistance(): ?int
+    {
+        return $this->distance;
+    }
+
+    public function setDistance(?int $distance): self
+    {
+        $this->distance = $distance;
 
         return $this;
     }
