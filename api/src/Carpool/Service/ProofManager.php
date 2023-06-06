@@ -669,7 +669,11 @@ class ProofManager
             if (200 == $result->getCode()) {
                 $data = json_decode($result->getValue(), true);
 
-                switch ($data['result']['data']['status']) {
+                $status = $this->_rpcApiManager->isVersion(RpcApiManager::RPC_API_V2)
+                    ? $data['result']['data']['status']
+                    : $data['status'];
+
+                switch ($status) {
                     case 'acquisition_error':
                         $proof->setStatus(CarpoolProof::STATUS_ACQUISITION_ERROR);
 
