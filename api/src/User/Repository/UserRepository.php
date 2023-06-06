@@ -362,4 +362,25 @@ class UserRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findFilteredUsers(array $filters)
+    {
+        $qb = $this->repository->createQueryBuilder('u');
+
+        $parameters = [];
+
+        foreach ($filters as $key => $value) {
+            if (property_exists(User::class, $key)) {
+                $qb
+                    ->andWhere('u.'.$key.' like :'.$key.'Value')
+                ;
+
+                $parameters[$key.'Value'] = '%'.$value.'%';
+            }
+        }
+
+        $qb->setParameters($parameters);
+
+        return $qb->getQuery()->getResult();
+    }
 }
