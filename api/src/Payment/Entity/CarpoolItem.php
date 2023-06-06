@@ -286,22 +286,22 @@ class CarpoolItem
     private $unpaidDate;
 
     /**
-     * @var null|string origine of the carpool
+     * @var null|string pickup of the carpool
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      *
      * @MaxDepth(1)
      */
-    private $origine;
+    private $pickUp;
 
     /**
-     * @var null|string destination of the carpool
+     * @var null|string dropOff of the carpool
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      *
      * @MaxDepth(1)
      */
-    private $destination;
+    private $dropOff;
 
     /**
      * @var null|int distance of the carpool
@@ -582,26 +582,26 @@ class CarpoolItem
         return $this;
     }
 
-    public function getOrigine(): ?string
+    public function getPickUp(): ?string
     {
-        return $this->origine;
+        return $this->pickUp;
     }
 
-    public function setOrigine(?string $origine): self
+    public function setPickUp(?string $pickUp): self
     {
-        $this->origine = $origine;
+        $this->pickUp = $pickUp;
 
         return $this;
     }
 
-    public function getDestination(): ?string
+    public function getDropOff(): ?string
     {
-        return $this->destination;
+        return $this->dropOff;
     }
 
-    public function setDestination(?string $destination): self
+    public function setDropOff(?string $dropOff): self
     {
-        $this->destination = $destination;
+        $this->dropOff = $dropOff;
 
         return $this;
     }

@@ -648,7 +648,7 @@ class PaymentManager
             if (Criteria::FREQUENCY_PUNCTUAL == $carpoolItem->getAsk()->getCriteria()->getFrequency() && CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT == $carpoolItem->getDebtorStatus()) {
                 $event = new ConfirmDirectPaymentEvent($carpoolItem, $user);
                 $this->eventDispatcher->dispatch(ConfirmDirectPaymentEvent::NAME, $event);
-                // case regular
+            // case regular
             } elseif (Criteria::FREQUENCY_REGULAR == $carpoolItem->getAsk()->getCriteria()->getFrequency() && CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT == $carpoolItem->getDebtorStatus()) {
                 // We send only one email for the all week
                 if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
@@ -700,7 +700,7 @@ class PaymentManager
                     // Unpaid has been declared
                     $carpoolItem->setUnpaidDate(new \DateTime('now'));
 
-                    // Unpaid doesn't change the status
+                // Unpaid doesn't change the status
                     // $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
                 } elseif (PaymentItem::DAY_CARPOOLED == $item['status']) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
@@ -772,7 +772,7 @@ class PaymentManager
                 if (Criteria::FREQUENCY_PUNCTUAL == $carpoolItem->getAsk()->getCriteria()->getFrequency() && $carpoolItem->getUnpaidDate()) {
                     $event = new SignalDeptEvent($carpoolItem, $user);
                     $this->eventDispatcher->dispatch(SignalDeptEvent::NAME, $event);
-                    // case regular
+                // case regular
                 } elseif (Criteria::FREQUENCY_REGULAR == $carpoolItem->getAsk()->getCriteria()->getFrequency() && $carpoolItem->getUnpaidDate()) {
                     // We send only one email for the all week
                     if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
@@ -1005,6 +1005,13 @@ class PaymentManager
                     } else {
                         $curDate->modify('+1 day');
                     }
+                }
+            }
+            $waypoints = $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
+            $carpoolItem->setPickUp($waypoints[0]->getAddress());
+            foreach ($waypoints as $waypoint) {
+                if ($waypoint->isDestination()) {
+                    $carpoolItem->setDropOff($waypoint->getAddress());
                 }
             }
         }
