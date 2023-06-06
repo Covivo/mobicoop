@@ -749,6 +749,7 @@ export default {
         "to_latitude": this.destination.latitude,
         "to_longitude": this.destination.longitude,
         "date": this.date,
+        "time": this.time,
         "frequency": (this.regular) ? 'regular' : 'punctual'
       };
       maxios.post(this.$t("externalJourneyUrl"), postParams,
