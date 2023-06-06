@@ -25,7 +25,6 @@ namespace App\Carpool\Entity;
 
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
-use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\User\Entity\User;
 use CrEOF\Spatial\PHP\Types\Geometry\LineString;
@@ -251,11 +250,6 @@ class CarpoolProof
      * @var null|array The array of points as Address objects. Used to create the geoJsonPoints.
      */
     private $points;
-
-    /**
-     * @ORM\OneToOne(targetEntity=LongDistanceJourney::class, mappedBy="carpoolProof")
-     */
-    private $mobConnectLongDistanceJourney;
 
     /**
      * @ORM\OneToOne(targetEntity=ShortDistanceJourney::class, mappedBy="carpoolProof")
@@ -585,26 +579,6 @@ class CarpoolProof
             }
             $this->setGeoJsonPoints(new LineString($arrayPoints));
         }
-    }
-
-    /**
-     * Get the value of mobConnectLongDistanceJourney.
-     */
-    public function getMobConnectLongDistanceJourney(): ?LongDistanceJourney
-    {
-        return $this->mobConnectLongDistanceJourney;
-    }
-
-    /**
-     * Set the value of mobConnectLongDistanceJourney.
-     *
-     * @param mixed $mobConnectLongDistanceJourney
-     */
-    public function setMobConnectLongDistanceJourney(LongDistanceJourney $mobConnectLongDistanceJourney): self
-    {
-        $this->mobConnectLongDistanceJourney = $mobConnectLongDistanceJourney;
-
-        return $this;
     }
 
     /**

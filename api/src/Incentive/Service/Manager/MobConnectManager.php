@@ -4,16 +4,17 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
-use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
+use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -30,6 +31,9 @@ abstract class MobConnectManager
 
     public const LONG_SUBSCRIPTION_TYPE = 'long';
     public const SHORT_SUBSCRIPTION_TYPE = 'short';
+
+    public const DRIVER = 1;
+    public const PASSENGER = 2;
 
     public const ALLOWED_SUBSCRIPTION_TYPES = [self::LONG_SUBSCRIPTION_TYPE, self::SHORT_SUBSCRIPTION_TYPE];
 
@@ -228,36 +232,50 @@ abstract class MobConnectManager
             ? $commitmentJourney : null;
     }
 
-    protected function getLongDistanceCommitmentJourney(CarpoolProof $carpoolProof, LongDistanceSubscription $subscription): ?LongDistanceJourney
+    protected function getDriverPassengerProposalForCarpoolItem(CarpoolItem $carpoolItem, int $carpoolerType): ?Proposal
     {
-        switch ($carpoolProof->getDriver()) {
-            case $carpoolProof->getAsk()->getMatching()->getProposalOffer()->getUser():
-                $initialProposal = $carpoolProof->getAsk()->getMatching()->getProposalOffer();
+        $proposal = null;
+
+        $user = self::DRIVER === $carpoolerType ? $carpoolItem->getCreditorUser() : $carpoolItem->getDebtorUser();
+
+        switch ($user) {
+            case $carpoolItem->getAsk()->getMatching()->getProposalOffer()->getUser():
+                $proposal = $carpoolItem->getAsk()->getMatching()->getProposalOffer();
 
                 break;
 
-            case $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser():
-                $initialProposal = $carpoolProof->getAsk()->getMatching()->getProposalRequest();
+            case $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getUser():
+                $proposal = $carpoolItem->getAsk()->getMatching()->getProposalRequest();
 
                 break;
-
-            default:
-                $initialProposal = null;
         }
 
-        /**
-         * @var LongDistanceJourney
-         */
-        $commitmentJourney = $this->_em->getRepository(LongDistanceJourney::class)->findOneBy([
-            'subscription' => $subscription,
-            'commitmentJourney' => true,
-        ]);
+        return $proposal;
+    }
 
-        return
-            !is_null($initialProposal)
-            && !is_null($commitmentJourney)
-            && !is_null($commitmentJourney->getInitialProposal())
-            && $commitmentJourney->getInitialProposal() === $initialProposal
-            ? $commitmentJourney : null;
+    protected function _isLDJourneyCommitmentJourney(LongDistanceSubscription $subscription, CarpoolItem $carpoolItem): bool
+    {
+        return $subscription->getCommitmentProofJourney()->getInitialProposal() === $this->getDriverPassengerProposalForCarpoolItem($carpoolItem, self::DRIVER);
+    }
+
+    protected function getAddressesLocality(CarpoolItem $carpoolItem): array
+    {
+        $addresses = [
+            'origin' => null,
+            'destination' => null,
+        ];
+
+        $waypoints = $carpoolItem->getAsk()->getMatching()->getWaypoints();
+
+        foreach ($carpoolItem->getAsk()->getMatching()->getWaypoints() as $waypoint) {
+            if (0 === $waypoint->getPosition() && !$waypoint->isDestination()) {
+                $addresses['origin'] = $waypoint->getAddress()->getAddressLocality();
+            }
+            if ($waypoint->isDestination()) {
+                $addresses['destination'] = $waypoint->getAddress()->getAddressLocality();
+            }
+        }
+
+        return $addresses;
     }
 }
