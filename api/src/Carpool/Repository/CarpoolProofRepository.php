@@ -317,18 +317,20 @@ class CarpoolProofRepository
         // Parameters determination
         if (MobConnectManager::LONG_SUBSCRIPTION_TYPE === $subscriptionType) {
             $parameters['subscriptionDate'] = $user->getLongDistanceSubscription()->getCreatedAt();
-            $parameters['allreadyAdded'] = array_map(function ($journey) {
+            $allreadyAdded = array_map(function ($journey) {
                 return $journey->getCarpoolProof();
             }, $user->getLongDistanceSubscription()->getJourneys()->toArray());
             $parameters['creditorStatus'] = CarpoolItem::CREDITOR_STATUS_ONLINE;
         } else {
             $parameters['subscriptionDate'] = $user->getShortDistanceSubscription()->getCreatedAt();
-            $parameters['allreadyAdded'] = array_map(function ($journey) {
+            $allreadyAdded = array_map(function ($journey) {
                 return $journey->getCarpoolProof();
             }, $user->getShortDistanceSubscription()->getJourneys()->toArray());
             $parameters['class'] = CarpoolProof::TYPE_HIGH;
             $parameters['status'] = CarpoolProof::STATUS_VALIDATED;
         }
+
+        $parameters['allreadyAdded'] = !empty($allreadyAdded) ? $allreadyAdded : '';
 
         $qb = $this->repository->createQueryBuilder('cp');
 
