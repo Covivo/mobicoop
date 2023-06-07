@@ -400,7 +400,7 @@ byJourney: "(par trajet)"
 
 #EXPORT CARPOOL
 listCrapoolPayments: "Liste Paiements et covoiturages"
-carpoolRealizedBy: "Covoiturages réalisés par"
+carpoolRealizedBy: "Trajets réalisés par"
 onTheSite: "sur le site"
 totalPaid: "Total payé"
 totalReceived: "Total reçu"
