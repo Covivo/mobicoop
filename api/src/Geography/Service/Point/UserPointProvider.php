@@ -53,7 +53,7 @@ class UserPointProvider implements PointProvider
         $this->user = $user;
     }
 
-    public function search(string $search): array
+    public function search(string $search, ?User $user = null): array
     {
         return $this->addressesToPoints(
             $this->addressRepository->findByName($this->translator->trans($search), $this->user->getId())

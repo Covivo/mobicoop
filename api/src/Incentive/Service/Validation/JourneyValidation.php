@@ -5,6 +5,7 @@ namespace App\Incentive\Service\Validation;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Service\LoggerService;
+use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 
 class JourneyValidation extends Validation
@@ -117,19 +118,18 @@ class JourneyValidation extends Validation
      *       - the origin or the destination is from the reference country
      *       - the journey has not yet been declared.
      */
-    public function isCarpoolProofValidLongDistanceJourney(CarpoolProof $carpoolProof): bool
+    public function isCarpoolItemValidLongDistanceJourney(CarpoolItem $carpoolItem): bool
     {
-        $this->setDriver($carpoolProof->getDriver());
+        $this->setDriver($carpoolItem->getCreditorUser());
 
         return
             $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver)
             && !is_null($this->_driver->getLongDistanceSubscription())
-            && !is_null($carpoolProof->getAsk())
-            && !is_null($carpoolProof->getAsk()->getMatching())
-            && $this->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
-            && $this->isOriginOrDestinationFromFrance($carpoolProof)
-            && !$this->_hasLongDistanceJourneyAlreadyDeclared($carpoolProof);
+            && !is_null($carpoolItem->getAsk())
+            && !is_null($carpoolItem->getAsk()->getMatching())
+            && $this->isDistanceLongDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance())
+            && $this->isOriginOrDestinationFromFrance($carpoolItem);
     }
 
     public function isLDJourneysReadyForVerify($journeys): bool

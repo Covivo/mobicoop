@@ -365,7 +365,8 @@ export default {
           "providedBy":this.selection.value.provider,
           "distance":this.selection.value.distance,
           "type":this.selection.type,
-          "id":this.selection.value.id
+          "id":this.selection.value.id,
+          "displayLabel":this.selection.value.displayLabel ? this.selection.value.displayLabel : ""
         };
         if (this.selection.type == "event") {
           // so nice...
@@ -393,7 +394,8 @@ export default {
           "distance":this.address.distance,
           "type":this.address.type ? this.address.type : "other",
           "id":this.address.id,
-          "regionCode":this.address.regionCode
+          "regionCode":this.address.regionCode,
+          "displayLabel":this.address.displayLabel ? this.address.displayLabel : ""
         };
       return null;
     }
@@ -478,7 +480,12 @@ export default {
       if (item.type == 'locality' && item.countryCode !== this.country)
         text += ', ' + item.country;
       if (item.type == 'relaypoint' && text == '') {
-        text = this.$t('gps') + ' [' + item.lat + ', ' + item.lon + ']';
+        if(item.displayLabel && item.displayLabel.length > 0 && item.displayLabel[0] !== ""){
+          text = item.displayLabel[0];
+        }
+        else{
+          text = this.$t('gps') + ' [' + item.lat + ', ' + item.lon + ']';
+        }
       }
       if (text.slice(text.length - 2) == ', ') {
         text = text.slice(0, -2);
@@ -515,7 +522,12 @@ export default {
       }
       if (item.locality) text += item.locality;
       if (item.type == 'relaypoint' && text == '') {
-        text = this.$t('gps') + ' [' + item.lat + ', ' + item.lon + ']';
+        if(item.displayLabel && item.displayLabel.length > 0 && item.displayLabel[0] !== ""){
+          text = item.displayLabel[0];
+        }
+        else{
+          text = this.$t('gps') + ' [' + item.lat + ', ' + item.lon + ']';
+        }
       }
       if (text.slice(text.length - 2) == ', ') {
         text = text.slice(0, -2);

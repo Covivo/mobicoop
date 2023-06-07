@@ -29,6 +29,7 @@ use App\Community\Entity\CommunityUser;
 use App\Geography\Ressource\Point;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
+use App\User\Entity\User;
 
 class RelayPointPointProvider implements PointProvider
 {
@@ -52,24 +53,25 @@ class RelayPointPointProvider implements PointProvider
         $this->params = $params;
     }
 
-    public function search(string $search): array
+    public function search(string $search, ?User $user = null): array
     {
         return $this->relayPointsToPoints(
-            $this->relayPointRepository->findByParams($search, $this->params)
+            $this->relayPointRepository->findByParams($search, $this->params),
+            ($user instanceof User) ? $user : null
         );
     }
 
-    private function relayPointsToPoints(array $relayPoints): array
+    private function relayPointsToPoints(array $relayPoints, ?User $user = null): array
     {
         $points = [];
         foreach ($relayPoints as $relayPoint) {
             $userExcluded = false;
             if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
                 $userExcluded = true;
-                if ($this->user) {
+                if ($user) {
                     foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
                         if (
-                            $communityUser->getUser()->getId() == $this->user->getId()
+                            $communityUser->getUser()->getId() == $user->getId()
                             && (
                                 CommunityUser::STATUS_ACCEPTED_AS_MEMBER == $communityUser->getStatus()
                                 || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR == $communityUser->getStatus()

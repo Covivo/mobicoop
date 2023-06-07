@@ -27,6 +27,7 @@ namespace App\Geography\Service\Point;
 
 use App\Geography\Ressource\Point;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\User\Entity\User;
 
 class MobicoopGeocoderPointProvider implements PointProvider, ReversePointProvider
 {
@@ -51,7 +52,7 @@ class MobicoopGeocoderPointProvider implements PointProvider, ReversePointProvid
         $this->exclusionTypes = $exclusionTypes;
     }
 
-    public function search(string $search): array
+    public function search(string $search, ?User $user = null): array
     {
         return $this->geocoderPointsToPoints(
             $this->mobicoopGeocoder->geocode($search)
