@@ -3,9 +3,7 @@
 namespace App\Carpool\Command;
 
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\DataProvider\Entity\CarpoolProofGouvProviderV3;
-use App\DataProvider\Service\RPCv3\Tools;
-use Psr\Log\LoggerInterface;
+use App\DataProvider\Service\RpcApiManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,45 +16,16 @@ class CarpoolProofSendHistory extends Command
     private $_carpoolProofRepository;
 
     /**
-     * @var LoggerInterface
+     * @var RpcApiManager
      */
-    private $_logger;
-
-    /**
-     * @var Tools
-     */
-    private $_tools;
-
-    /**
-     * @var string
-     */
-    private $_uri;
-
-    /**
-     * @var string
-     */
-    private $_token;
-
-    /**
-     * @var string
-     */
-    private $_prefix;
+    private $_rpcApiManager;
 
     public function __construct(
         CarpoolProofRepository $carpoolProofRepository,
-        LoggerInterface $logger,
-        Tools $tools,
-        string $uri,
-        string $token,
-        string $prefix
+        RpcApiManager $rpcApiManager
     ) {
         $this->_carpoolProofRepository = $carpoolProofRepository;
-        $this->_logger = $logger;
-        $this->_tools = $tools;
-
-        $this->_uri = $uri;
-        $this->_token = $token;
-        $this->_prefix = $prefix;
+        $this->_rpcApiManager = $rpcApiManager;
 
         parent::__construct();
     }
@@ -72,15 +41,12 @@ class CarpoolProofSendHistory extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // $proofs = array_merge(
-        //     $this->_carpoolProofRepository->findProofsToSendAsHistory(),
-        //     $this->_carpoolProofRepository->findProofsToSendAsHistory(false)
-        // );
+        $proofs = array_merge(
+            $this->_carpoolProofRepository->findProofsToSendAsHistory(),
+            $this->_carpoolProofRepository->findProofsToSendAsHistory(false)
+        );
 
-        // $provider = new CarpoolProofGouvProviderV3($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger);
-
-        // foreach ($proofs as $proof) {
-        //     $provider->postCollection($proof);
-        // }
+        $provider = $this->_rpcApiManager->getProvider();
+        $provider->importProofs($proofs);
     }
 }

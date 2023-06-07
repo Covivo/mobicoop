@@ -231,10 +231,7 @@ services:
 
   App\Carpool\Service\ProofManager:
     arguments:
-      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $provider: "%env(string:CARPOOL_PROOF_PROVIDER)%"
-      $uri: "%env(string:CARPOOL_PROOF_URI)%"
-      $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
       $duration: "%env(int:CARPOOL_PROOF_RANGE_DURATION)%"
       $minIdentityDistance: "%env(int:CARPOOL_PROOF_MIN_IDENTITY_DISTANCE)%"
     tags:
@@ -250,6 +247,7 @@ services:
         dynamicDestinationDistance: "%env(int:DYNAMIC_CARPOOL_DESTINATION_DISTANCE)%"
         dynamicMaxSpeed: "%env(int:DYNAMIC_CARPOOL_MAX_SPEED)%"
         dynamicEnableMaxSpeed: "%env(bool:DYNAMIC_CARPOOL_ENABLE_MAX_SPEED)%"
+        dynamicTimezone: "%env(string:DYNAMIC_TIMEZONE)%"
     tags:
       - { name: monolog.logger, channel: carpool_dynamic }
 
@@ -789,10 +787,6 @@ services:
         }
 
   App\Carpool\Command\CarpoolProofSendHistory:
-    arguments:
-      $uri: "%env(string:CARPOOL_PROOF_URI)%"
-      $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
-      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
     tags:
       - { name: "console.command", command: "app:carpool:proof-send-history" }
 
@@ -861,6 +855,23 @@ services:
       - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\SubscriptionManager:
+    arguments:
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $mobConnectParams:
+        api_uri: "%env(string:MOBCONNECT_API_URI)%"
+        credentials:
+          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
+          api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
+        subscription_ids:
+          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
+          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+    tags:
+      - { name: monolog.logger, channel: incentive_subscription }
+
+  App\Incentive\Service\Manager\TimestampTokenManager:
     arguments:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $mobConnectParams:
@@ -989,6 +1000,13 @@ services:
       $apiKey: "%env(string:MATCHER_API_KEY)%"
     tags:
       - { name: monolog.logger, channel: matcherV3 }
+
+  App\DataProvider\Service\RpcApiManager:
+    arguments:
+      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $rpcApiVersion: "%env(string:RPC_API_VERSION)%"
+      $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
+      $uri: "%env(string:CARPOOL_PROOF_URI)%"
 
   App\DataProvider\Service\RPCv3\Tools:
     arguments:

@@ -46,11 +46,11 @@ class CarpoolProofGouvProvider implements ProviderInterface
      */
     protected $_tools;
 
-    private $uri;
-    private $token;
-    private $prefix;
-    private $logger;
-    private $testMode;
+    protected $uri;
+    protected $token;
+    protected $prefix;
+    protected $logger;
+    protected $testMode;
 
     public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
     {
@@ -64,23 +64,20 @@ class CarpoolProofGouvProvider implements ProviderInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    /**
      * Send a carpool proof.
      *
      * @param CarpoolProof $carpoolProof The carpool proof to send
      *
      * @return Response The result of the send
      */
-    public function postCollection(CarpoolProof $carpoolProof)
+    public function postCollection(CarpoolProof $carpoolProof, string $resource = self::RESSOURCE_POST)
     {
         if (is_null($carpoolProof->getAsk())) {
             return new Response(418);
         }
 
         // creation of the dataProvider
-        $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
+        $dataProvider = new DataProvider($this->uri, $resource);
 
         // creation of the headers
         $headers = [
@@ -122,7 +119,6 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 'identity' => [
                     'email' => $carpoolProof->getPassenger()->getEmail(),
                     'phone' => $carpoolProof->getPassenger()->getTelephone(),
-                    'phone_trunc' => $this->_tools->getPhoneTruncNumber(Tools::PASSENGER),
                     'over_18' => $over18,
                 ],
                 'start' => [
@@ -143,7 +139,6 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 'identity' => [
                     'email' => $carpoolProof->getDriver()->getEmail(),
                     'phone' => $carpoolProof->getDriver()->getTelephone(),
-                    'phone_trunc' => $this->_tools->getPhoneTruncNumber(Tools::DRIVER),
                 ],
                 'start' => [
                     'lon' => (!is_null($carpoolProof->getPickUpDriverAddress())) ? (float) $carpoolProof->getPickUpDriverAddress()->getLongitude() : null,
@@ -269,10 +264,10 @@ class CarpoolProofGouvProvider implements ProviderInterface
         return $journey;
     }
 
-    public function getCarpoolProof(CarpoolProof $carpoolProof)
+    public function getCarpoolProof(CarpoolProof $carpoolProof, string $resource = self::RESSOURCE_GET_ITEM)
     {
         $journeyId = (!is_null($this->prefix) ? $this->prefix : '').(string) $carpoolProof->getId();
-        $dataProvider = new DataProvider($this->uri, self::RESSOURCE_GET_ITEM.$journeyId);
+        $dataProvider = new DataProvider($this->uri, $resource.$journeyId);
 
         // creation of the headers
         $headers = [
@@ -283,23 +278,14 @@ class CarpoolProofGouvProvider implements ProviderInterface
         return $dataProvider->getItem([], $headers);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCollection(string $class, string $apikey, array $params)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getItem(string $class, string $apikey, array $params)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deserialize(string $class, array $data)
     {
         $this->logger->info('BetaGouv API return');

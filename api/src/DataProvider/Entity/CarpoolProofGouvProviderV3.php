@@ -25,6 +25,7 @@ namespace App\DataProvider\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Interfaces\ProviderInterface;
+use App\DataProvider\Service\DataProvider;
 use App\DataProvider\Service\RPCv3\Tools;
 use Psr\Log\LoggerInterface;
 
@@ -35,6 +36,9 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
 {
     public const RESSOURCE_POST = 'v3/journeys';
     public const RESSOURCE_GET_ITEM = 'v3/journeys/';
+    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3/policies/cee/import';
+
+    public const POLICIES_CEE_IMPORT_LIMIT = 1000;
 
     public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
     {
@@ -46,7 +50,7 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
         $this->_tools->setCurrentCarpoolProof($carpoolProof);
 
         // note : the casts are mandatory as the register checks for types
-        return [
+        $serializedProof = [
             'incentive_counterparts' => [],
             'operator_journey_id' => $this->_tools->getOperatorJourneyId(),
             'operator_class' => $carpoolProof->getType(),
@@ -70,12 +74,61 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
                     'identity_key' => $this->_tools->getIdentityKey(Tools::DRIVER),
                     // 'phone' => $this->_tools->getPhoneNumber(Tools::DRIVER),
                     'phone_trunc' => $this->_tools->getPhoneTruncNumber(Tools::DRIVER),
-                    'driving_licence' => $this->_tools->getDrivingLicenceNumber(Tools::DRIVER),
                     'operator_user_id' => $this->_tools->getOperatorUserId(Tools::DRIVER),
                     'over_18' => $this->_tools->getOver18(Tools::DRIVER),
                 ],
                 'revenue' => (int) round($carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice() * 100, 0),
             ],
+        ];
+
+        if (!is_null($this->_tools->getDrivingLicenceNumber(Tools::DRIVER))) {
+            $serializedProof['driver']['identity']['driving_licence'] = $this->_tools->getDrivingLicenceNumber(Tools::DRIVER);
+        }
+
+        return $serializedProof;
+    }
+
+    public function importProofs(array $carpoolProofs)
+    {
+        $serializedProof = array_map(function ($proof) {
+            return $this->_serializeForCeePolicy($proof);
+        }, $carpoolProofs);
+
+        $chunkedProofs = array_chunk($serializedProof, self::POLICIES_CEE_IMPORT_LIMIT);
+
+        $this->logger->info('Processing sending '.count($chunkedProofs).' request(s)');
+
+        foreach ($chunkedProofs as $key => $proofs) {
+            // creation of the dataProvider
+            $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
+
+            // creation of the headers
+            $headers = [
+                'Authorization' => 'Bearer '.$this->token,
+                'Content-Type' => 'application/json',
+            ];
+
+            $result = $dataProvider->postCollection($proofs, $headers);
+
+            if (201 === $result->getCode()) {
+                $this->logger->info('The processing of the request '.($key + 1).' was successful');
+            } else {
+                $this->logger->info('There was a problem processing the request '.($key + 1));
+            }
+        }
+
+        $this->logger->info('Request processing is complete');
+    }
+
+    private function _serializeForCeePolicy(CarpoolProof $carpoolProof): array
+    {
+        $this->_tools->setCurrentCarpoolProof($carpoolProof);
+
+        return [
+            'journey_type' => $this->_tools->getProofType(),
+            'phone_trunc' => $this->_tools->getPhoneTruncNumber(Tools::DRIVER),
+            'last_name_trunc' => $this->_tools->getFamilyNameTrunc(Tools::DRIVER),
+            'datetime' => $this->_tools->getCommitmentDate(),
         ];
     }
 }

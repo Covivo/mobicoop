@@ -422,6 +422,13 @@ class Result
      */
     private $myOwn;
 
+    /**
+     * @var null|string protocol of the result if it's an external result (like RDEX STANDARD_RDEX,...)
+     *
+     * @Groups("externalJourney")
+     */
+    private $protocol;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -1093,5 +1100,15 @@ class Result
         $this->myOwn = $myOwn;
 
         return $this;
+    }
+
+    public function getProtocol(): ?string
+    {
+        return $this->protocol;
+    }
+
+    public function setProtocol(?string $protocol)
+    {
+        $this->protocol = $protocol;
     }
 }

@@ -11,12 +11,14 @@ class MobConnectSubscriptionResponse extends MobConnectResponse
      */
     protected $_id;
 
-    public function __construct(array $mobConnectResponse)
+    public function __construct(array $mobConnectResponse = [], array $data = null)
     {
-        parent::__construct($mobConnectResponse);
+        parent::__construct($mobConnectResponse, $data);
 
         if (!in_array($this->getCode(), self::ERROR_CODES) && !is_null($this->_content)) {
-            $this->setId($this->_content->id);
+            if (isset($this->_content->id)) {
+                $this->setId($this->_content->id);
+            }
 
             if (property_exists($this->_content, 'timestamp') && !is_null($this->_content->timestamp)) {
                 $this->setTimestamp($this->_content->timestamp);

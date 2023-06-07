@@ -23,9 +23,11 @@
 namespace App\Stats\Admin\Service;
 
 use App\Auth\Service\AuthManager;
+use App\Community\Repository\CommunityRepository;
 use App\Stats\Admin\Resource\Analytic;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -41,11 +43,18 @@ class AnalyticManager
     private $secret;
     private $dashboards;
     private $authManager;
+    private $communityRepository;
+    private $tokenStorage;
+
+    private $defaultCommunityId;
 
     public function __construct(
         RequestStack $requestStack,
-        AuthManager $authManager, array $params)
-    {
+        AuthManager $authManager,
+        CommunityRepository $communityRepository,
+        TokenStorageInterface $tokenStorage,
+        array $params
+    ) {
         $this->uri = $params['url'];
         $this->organization = $params['organization'];
         $this->secret = $params['secret'];
@@ -55,10 +64,12 @@ class AnalyticManager
         $request = $requestStack->getCurrentRequest();
         $this->paramId = $request->get('id');
         $communityIdParam = $request->query->get('communityId', null);
-        $this->communityId = is_null($communityIdParam) ? null: intval($communityIdParam);
+        $this->communityId = is_null($communityIdParam) ? null : intval($communityIdParam);
         $territoryIdParam = $request->query->get('territoryId', null);
-        $this->territoryId = is_null($territoryIdParam) ? null: intval($territoryIdParam);
+        $this->territoryId = is_null($territoryIdParam) ? null : intval($territoryIdParam);
         $this->darkTheme = $request->query->get('darkTheme', false);
+        $this->communityRepository = $communityRepository;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function getAnalytics(): array
@@ -93,6 +104,7 @@ class AnalyticManager
         }
 
         $analytic->setUrl($url);
+        $analytic->setCommunityId($this->defaultCommunityId);
 
         return $analytic;
     }
@@ -108,12 +120,27 @@ class AnalyticManager
         throw new ResourceNotFoundException('Unknown dashboard');
     }
 
+    private function getDefaultCommunityId(): void
+    {
+        $this->defaultCommunityId = null;
+        $communityIds = $this->communityRepository->findCommunitiesForRefererOrModerator($this->tokenStorage->getToken()->getUser());
+        if (is_array($communityIds) && count($communityIds) > 0) {
+            $this->defaultCommunityId = $communityIds[0]['id'];
+        }
+    }
+
     private function getCommunity(?int $communityId): string
     {
-        if (null === $communityId) {
-            return strtolower($this->organization);
+        if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
+            if (null === $communityId) {
+                return strtolower($this->organization);
+            }
+
+            return strtolower($this->organization).'_'.strval($communityId);
         }
-        return strtolower($this->organization).'_'.strval($communityId);
+        $this->getDefaultCommunityId();
+
+        return strtolower($this->organization).'_'.$this->defaultCommunityId;
     }
 
     private function getTerritory(?int $territoryId): array
@@ -121,7 +148,8 @@ class AnalyticManager
         if (null === $territoryId) {
             return [strtolower($this->organization)];
         }
-        return [strtolower($this->organization) . '_' . strval($territoryId)];
+
+        return [strtolower($this->organization).'_'.strval($territoryId)];
     }
 
     private function getTerritories(string $auth_item): array

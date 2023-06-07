@@ -34,6 +34,7 @@ use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\MyAd;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
+use App\Payment\Repository\CarpoolPaymentRepository;
 use App\User\Entity\User;
 use App\User\Service\ReviewManager;
 
@@ -51,6 +52,7 @@ class MyAdManager
     private $paymentActiveDate;
     private $proofManager;
     private $matchingRepository;
+    private $carpoolPaymentRepository;
 
     /**
      * Constructor.
@@ -65,7 +67,8 @@ class MyAdManager
         ReviewManager $reviewManager,
         string $paymentActive,
         ProofManager $proofManager,
-        MatchingRepository $matchingRepository
+        MatchingRepository $matchingRepository,
+        CarpoolPaymentRepository $carpoolPaymentRepository
     ) {
         $this->proposalRepository = $proposalRepository;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -73,6 +76,7 @@ class MyAdManager
         $this->paymentActive = false;
         $this->proofManager = $proofManager;
         $this->matchingRepository = $matchingRepository;
+        $this->carpoolPaymentRepository = $carpoolPaymentRepository;
         if ($this->paymentActiveDate = \DateTime::createFromFormat('Y-m-d', $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
@@ -999,7 +1003,12 @@ class MyAdManager
                                 break;
 
                             default:
-                                $driver['payment']['status'] = MyAd::PAYMENT_STATUS_TODO;
+                                $carpoolPayments = $this->carpoolPaymentRepository->findLastSuccessfullCarpoolPayment($carpoolItem);
+                                if (count($carpoolPayments) > 0) {
+                                    $driver['payment']['status'] = MyAd::PAYMENT_STATUS_PAID;
+                                } else {
+                                    $driver['payment']['status'] = MyAd::PAYMENT_STATUS_TODO;
+                                }
                                 $driver['payment']['itemId'] = $carpoolItem->getId();
 
                                 break;

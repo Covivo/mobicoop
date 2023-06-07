@@ -258,12 +258,6 @@ class CarpoolProofRepository
 
         $qb = $this->repository->createQueryBuilder('cp');
 
-        // if (true === $longDistance) {
-        //     $qb->innerJoin('cp.mobConnectLongDistanceJourney', 'mldj', 'WITH', 'mldj IS NOT NULL');
-        // } else {
-        //     $qb->innerJoin('cp.mobConnectShortDistanceJourney', 'msdj', 'WITH', 'msdj IS NOT NULL');
-        // }
-
         $parameters = [
             'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
             'status' => CarpoolProof::STATUS_VALIDATED,
@@ -304,7 +298,10 @@ class CarpoolProofRepository
                 break;
         }
 
-        $qb->setParameters($parameters);
+        $qb
+            ->andWhere('s.commitmentProofDate IS NOT NULL')
+            ->setParameters($parameters)
+        ;
 
         return $qb->getQuery()->getResult();
     }
@@ -322,13 +319,13 @@ class CarpoolProofRepository
             $parameters['subscriptionDate'] = $user->getLongDistanceSubscription()->getCreatedAt();
             $parameters['allreadyAdded'] = array_map(function ($journey) {
                 return $journey->getCarpoolProof();
-            }, $user->getLongDistanceSubscription()->getLongDistanceJourneys()->toArray());
+            }, $user->getLongDistanceSubscription()->getJourneys()->toArray());
             $parameters['creditorStatus'] = CarpoolItem::CREDITOR_STATUS_ONLINE;
         } else {
             $parameters['subscriptionDate'] = $user->getShortDistanceSubscription()->getCreatedAt();
             $parameters['allreadyAdded'] = array_map(function ($journey) {
                 return $journey->getCarpoolProof();
-            }, $user->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray());
+            }, $user->getShortDistanceSubscription()->getJourneys()->toArray());
             $parameters['class'] = CarpoolProof::TYPE_HIGH;
             $parameters['status'] = CarpoolProof::STATUS_VALIDATED;
         }

@@ -71,7 +71,7 @@ class MobConnectApiProvider extends MobConnectProvider
         return $shortDistance ? $this->_apiParams->getShortDistanceSubscriptionId() : $this->_apiParams->getLongDistanceSubscriptionId();
     }
 
-    private function __getAppToken(): string
+    private function __getAppToken(): array
     {
         if (!array_key_exists(self::SERVICE_NAME, $this->_ssoServices)) {
             throw new \LogicException(str_replace('{SERVICE_NAME}', self::SERVICE_NAME, MobConnectMessages::MOB_CONFIG_UNAVAILABLE));
@@ -97,7 +97,7 @@ class MobConnectApiProvider extends MobConnectProvider
             $this->_apiParams->getAppClientSecret()
         );
 
-        return $provider->getAppToken()['access_token'];
+        return $provider->getAppToken();
     }
 
     private function __getToken(): string
@@ -206,10 +206,7 @@ class MobConnectApiProvider extends MobConnectProvider
     /**
      * Updates a user subscription with a carpool proof.
      *
-     * @param string            $subscriptionId  The ID of the subscription that needs to be updated
-     * @param string            $rpcJourneyId    The RPC ID of the journey
-     * @param bool              $isShortDistance Specifies whether the trip is a short distance trip
-     * @param DateTimeInterface $costSharingDate The date of payment for the trip
+     * @param string $subscriptionId The ID of the subscription that needs to be updated
      */
     public function patchUserSubscription(string $subscriptionId, array $data): MobConnectSubscriptionResponse
     {
@@ -217,7 +214,8 @@ class MobConnectApiProvider extends MobConnectProvider
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken())))
+            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken()))),
+            $data
         );
     }
 
@@ -226,9 +224,14 @@ class MobConnectApiProvider extends MobConnectProvider
         $this->_loggerService->log('We get the subscription timestamps on mobConnect', 'info', true);
         $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS_TIMESTAMPS);
 
-        return new MobConnectSubscriptionTimestampsResponse(
-            $this->_getResponse($this->_dataProvider->getItem(['subscriptionId' => $subscriptionId], $this->_buildHeaders($this->__getAppToken())))
-        );
+        $appToken = $this->__getAppToken();
+
+        return
+            isset($appToken['access_token'])
+            ? new MobConnectSubscriptionTimestampsResponse(
+                $this->_getResponse($this->_dataProvider->getItem(['subscriptionId' => $subscriptionId], $this->_buildHeaders($appToken['access_token'])))
+            )
+            : new MobConnectSubscriptionTimeStampsResponse($appToken);
     }
 
     public function verifyUserSubscription(string $subscriptionId): MobConnectSubscriptionVerifyResponse

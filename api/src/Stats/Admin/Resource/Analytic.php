@@ -61,6 +61,7 @@ class Analytic
      * @var int The id of this Analytic
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"aRead"})
      */
     private $id;
@@ -71,6 +72,20 @@ class Analytic
      * @Groups({"aRead"})
      */
     private $url;
+
+    /**
+     * Default Community id.
+     *
+     * @Groups({"aRead"})
+     */
+    private $communityId;
+
+    /**
+     * Default Territory id.
+     *
+     * @Groups({"aRead"})
+     */
+    private $territoryId;
 
     public function getId(): ?int
     {
@@ -92,6 +107,30 @@ class Analytic
     public function setUrl($url): self
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+
+    public function setCommunityId(?int $communityId): self
+    {
+        $this->communityId = $communityId;
+
+        return $this;
+    }
+
+    public function getTerritoryId(): ?int
+    {
+        return $this->territoryId;
+    }
+
+    public function setTerritoryId(?int $territoryId): self
+    {
+        $this->territoryId = $territoryId;
 
         return $this;
     }

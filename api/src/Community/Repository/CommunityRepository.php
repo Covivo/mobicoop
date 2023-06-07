@@ -159,7 +159,8 @@ class CommunityRepository
         return $this->repository->createQueryBuilder('c')
             ->where('c.user = :userId')
             ->setParameter('userId', $userId)
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
     }
 
     /**
@@ -174,7 +175,8 @@ class CommunityRepository
             ->where('cu.user = :user and cu.community = :community')
             ->setParameter('user', $user)
             ->setParameter('community', $community)
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
         if ($result) {
             return true;
         }
@@ -192,7 +194,8 @@ class CommunityRepository
             ->where('cu.user = :user and cu.community = :community')
             ->setParameter('user', $userId)
             ->setParameter('community', $communityId)
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
         if ($result) {
             return true;
         }
@@ -236,7 +239,8 @@ class CommunityRepository
             ->where('cu.user = :user and cu.status IN (:statuses)')
             ->setParameter('user', $user)
             ->setParameter('statuses', $statuses)
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
     }
 
     /**
@@ -251,5 +255,24 @@ class CommunityRepository
         ;
 
         return $query->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Find communities where the given user referer or moderator.
+     */
+    public function findCommunitiesForRefererOrModerator(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('c')
+            ->select('c.id, count(distinct cu.user) as NbCu')
+            ->join('c.communityUsers', 'cu')
+            ->where('c.user = :user
+                or (cu.user = :user and cu.status = :status)')
+            ->addGroupBy('c.id')
+            ->orderBy('NbCu', 'DESC')
+            ->setParameter('user', $user)
+            ->setParameter('status', CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
+        ;
+
+        return $query->getQuery()->getResult();
     }
 }

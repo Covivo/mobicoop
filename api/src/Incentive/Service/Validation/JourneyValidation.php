@@ -34,7 +34,7 @@ class JourneyValidation extends Validation
             && !is_null($this->_driver)
             && !is_null($this->_driver->getLongDistanceSubscription())
             && is_null($this->_driver->getLongDistanceSubscription()->getCommitmentProofDate())
-            && empty($this->_driver->getLongDistanceSubscription()->getLongDistanceJourneys()->toArray());
+            && empty($this->_driver->getLongDistanceSubscription()->getJourneys()->toArray());
     }
 
     /**
@@ -50,7 +50,7 @@ class JourneyValidation extends Validation
             && !is_null($this->_driver)
             && !is_null($this->_driver->getShortDistanceSubscription())
             && is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate())
-            && empty($this->_driver->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray());
+            && empty($this->_driver->getShortDistanceSubscription()->getJourneys()->toArray());
     }
 
     /**
@@ -130,5 +130,58 @@ class JourneyValidation extends Validation
             && $this->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
             && $this->isOriginOrDestinationFromFrance($carpoolProof)
             && !$this->_hasLongDistanceJourneyAlreadyDeclared($carpoolProof);
+    }
+
+    public function isLDJourneysReadyForVerify($journeys): bool
+    {
+        if ($journeys->isEmpty()) {
+            return false;
+        }
+
+        $commitmentJourney = $this->_getCommitmentJourney($journeys);
+
+        return
+            !is_null($commitmentJourney)
+            && $this->isPaymentValidForEec($commitmentJourney->getCarpoolPayment());
+    }
+
+    public function isSDJourneysReadyForVerify($journeys): bool
+    {
+        if ($journeys->isEmpty()) {
+            return false;
+        }
+
+        $commitmentJourney = $this->_getCommitmentJourney($journeys);
+
+        return
+            !is_null($commitmentJourney)
+            && CarpoolProof::TYPE_HIGH === $commitmentJourney->getCarpoolProof()->getType()
+            && CarpoolProof::STATUS_VALIDATED === $commitmentJourney->getCarpoolProof()->getStatus();
+    }
+
+    /**
+     * @param mixed $journeys
+     *
+     * @return null|LongDistanceJourney|ShortDistanceJourney
+     */
+    private function _getCommitmentJourney($journeys)
+    {
+        $commitmentJourney = null;
+
+        foreach ($journeys->toArray() as $journey) {
+            if ($journey->isCommitmentJourney()) {
+                $commitmentJourney = $journey;
+
+                break;
+            }
+        }
+
+        return ($journeys->isEmpty())
+            ? null
+            : (
+                is_null($commitmentJourney)
+                ? $commitmentJourney = $journeys->toArray()[0]
+                : $commitmentJourney
+            );
     }
 }

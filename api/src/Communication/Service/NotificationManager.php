@@ -47,6 +47,7 @@ use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\DataProvider\Entity\Response;
 use App\Event\Entity\Event;
+use App\ExternalJourney\Ressource\ExternalConnection;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
@@ -294,8 +295,6 @@ class NotificationManager
     /**
      * Notify a user by email.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
-     *
-     * @param mixed $lang
      */
     private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
     {
@@ -642,9 +641,8 @@ class NotificationManager
                     }
 
                     $date = null;
-
                     if (!is_null($object->getAsk()) && !is_null($object->getAsk()->getCriteria())) {
-                        $date = \DateTime::createFromFormat('Y-m-d H:m', $object->getAsk()->getCriteria()->getFromDate()->format('Y-m-d').' '.$object->getAsk()->getCriteria()->getFromTime()->format('H:m'));
+                        $date = \DateTime::createFromFormat('Y-m-d H:m', $object->getAsk()->getCriteria()->getFromDate()->format('Y-m-d').' '.is_null($object->getAsk()->getCriteria()->getFromTime()) ? '' : $object->getAsk()->getCriteria()->getFromTime()->format('H:m'));
                     }
 
                     $bodyContext = [
@@ -702,6 +700,12 @@ class NotificationManager
                 case TooLongInactivityFirstWarningEvent::class:
                     $titleContext = [];
                     $bodyContext = ['user' => $recipient, 'details' => $object, 'signature' => $signature];
+
+                    break;
+
+                case ExternalConnection::class:
+                    $titleContext = [];
+                    $bodyContext = ['user' => $recipient, 'externalConnection' => $object];
 
                     break;
 
@@ -771,8 +775,6 @@ class NotificationManager
     /**
      * Notify a user by sms.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
-     *
-     * @param mixed $lang
      */
     private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
     {
@@ -1005,7 +1007,6 @@ class NotificationManager
      * @param Notification $notification The notification
      * @param User         $recipient    The recipient user
      * @param null|object  $object       The object to use
-     * @param mixed        $lang
      */
     private function notifyByPush(Notification $notification, User $recipient, ?object $object = null)
     {
