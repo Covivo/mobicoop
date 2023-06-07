@@ -882,6 +882,14 @@ class PaymentManager
                         $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_NULL);
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_NULL);
                     }
+                    $waypoints = $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
+                    $carpoolItem->setPickUp($waypoints[0]->getAddress()->getAddressLocality());
+                    foreach ($waypoints as $waypoint) {
+                        if ($waypoint->isDestination()) {
+                            $carpoolItem->setDropOff($waypoint->getAddress()->getAddressLocality());
+                        }
+                    }
+                    $carpoolItem->setDistance(!is_null($carpoolItem->getAsk()) ? round($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000) : null);
                     $this->entityManager->persist($carpoolItem);
 
                     if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
@@ -973,6 +981,14 @@ class PaymentManager
                             $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_NULL);
                             $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_NULL);
                         }
+                        $waypoints = $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
+                        $carpoolItem->setPickUp($waypoints[0]->getAddress()->getAddressLocality());
+                        foreach ($waypoints as $waypoint) {
+                            if ($waypoint->isDestination()) {
+                                $carpoolItem->setDropOff($waypoint->getAddress()->getAddressLocality());
+                            }
+                        }
+                        $carpoolItem->setDistance(!is_null($carpoolItem->getAsk()) ? round($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000) : null);
                         $this->entityManager->persist($carpoolItem);
 
                         if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
@@ -1005,13 +1021,6 @@ class PaymentManager
                     } else {
                         $curDate->modify('+1 day');
                     }
-                }
-            }
-            $waypoints = $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
-            $carpoolItem->setPickUp($waypoints[0]->getAddress());
-            foreach ($waypoints as $waypoint) {
-                if ($waypoint->isDestination()) {
-                    $carpoolItem->setDropOff($waypoint->getAddress());
                 }
             }
         }
