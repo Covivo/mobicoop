@@ -112,7 +112,7 @@ class CarpoolExportManager
             $carpoolExport->setId($carpoolItem->getId());
             $carpoolExport->setDate($carpoolItem->getItemDate());
             $carpoolExport->setAmount($carpoolItem->getAmount());
-            $carpoolExport->setDistance(!is_null($carpoolItem->getAsk()) ? $carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000 : null);
+            $carpoolExport->setDistance($carpoolItem->getDistance());
             $totalDistance += !is_null($carpoolItem->getAsk()) ? ($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000) : 0;
             $totalSavedCo2 += !is_null($carpoolItem->getAsk()) ? ($this->userManager->computeSavedCo2($carpoolItem->getAsk(), $user->getId(), true)) : 0;
             //    we set the payment mode
@@ -171,13 +171,8 @@ class CarpoolExportManager
                 continue;
             }
             //    we set the pickUp and dropOff
-            $waypoints = $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
-            $carpoolExport->setPickUp($waypoints[0]->getAddress());
-            foreach ($waypoints as $waypoint) {
-                if ($waypoint->isDestination()) {
-                    $carpoolExport->setDropOff($waypoint->getAddress());
-                }
-            }
+            $carpoolExport->setPickUp($carpoolItem->getPickUp());
+            $carpoolExport->setDropOff($carpoolItem->getDropOff());
             //    we set the certification type
             if ($carpoolItem->getAsk()->getCarpoolProofs()) {
                 foreach ($carpoolItem->getAsk()->getCarpoolProofs() as $carpoolProof) {
