@@ -40,6 +40,12 @@ abstract class Log
         self::TYPE_TIMESTAMP_ATTESTATION,
     ];
 
+    public const VERIFICATION_VALIDATION_ERROR = 403;
+
+    public const ERROR_MESSAGES = [
+        self::VERIFICATION_VALIDATION_ERROR => 'The subscription did not pass the test before the verify operation',
+    ];
+
     /**
      * @var int The cee ID
      *

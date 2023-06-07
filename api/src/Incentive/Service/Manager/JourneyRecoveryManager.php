@@ -53,6 +53,7 @@ class JourneyRecoveryManager extends JourneyManager
         JourneyValidation $journeyValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
+        TimestampTokenManager $timestampTokenManager,
         SubscriptionValidation $subscriptionValidation,
         UserRepository $userRepository,
         UserValidation $userValidation,
@@ -60,7 +61,7 @@ class JourneyRecoveryManager extends JourneyManager
         array $mobConnectParams,
         array $ssoServices
     ) {
-        parent::__construct($carpoolProofRepository, $em, $eventDispatcher, $journeyValidation, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($carpoolProofRepository, $em, $eventDispatcher, $journeyValidation, $loggerService, $honourCertificateService, $timestampTokenManager, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
         $this->_subscriptionValidation = $subscriptionValidation;
         $this->_userRepository = $userRepository;

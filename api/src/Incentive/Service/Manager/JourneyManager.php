@@ -24,6 +24,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class JourneyManager extends MobConnectManager
 {
     /**
+     * @var TimestampTokenManager
+     */
+    private $_timestampTokenManager;
+
+    /**
      * @var CarpoolProofRepository
      */
     private $_carpoolProofRepository;
@@ -45,12 +50,14 @@ class JourneyManager extends MobConnectManager
         JourneyValidation $journeyValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
+        TimestampTokenManager $timestampTokenManager,
         string $carpoolProofPrefix,
         array $mobConnectParams,
         array $ssoServices
     ) {
         parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
+        $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_eventDispatcher = $eventDispatcher;
 
@@ -126,13 +133,7 @@ class JourneyManager extends MobConnectManager
         $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
 
-        $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
-        $subscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_COMMITMENT);
-
-        if (!is_null($timestampResponse->getCommitmentProofTimestampToken())) {
-            $subscription->setCommitmentProofTimestampToken($timestampResponse->getCommitmentProofTimestampToken());
-            $subscription->setCommitmentProofTimestampSigningTime($timestampResponse->getCommitmentProofTimestampSigningTime());
-        }
+        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
         $this->_em->flush();
     }
@@ -165,13 +166,7 @@ class JourneyManager extends MobConnectManager
         $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
 
-        $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
-        $subscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_COMMITMENT);
-
-        if (!is_null($timestampResponse->getCommitmentProofTimestampToken())) {
-            $subscription->setCommitmentProofTimestampToken($timestampResponse->getCommitmentProofTimestampToken());
-            $subscription->setCommitmentProofTimestampSigningTime($timestampResponse->getCommitmentProofTimestampSigningTime());
-        }
+        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
         $this->_em->flush();
     }
@@ -216,13 +211,7 @@ class JourneyManager extends MobConnectManager
                 $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
                 $subscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
 
-                $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
-                $subscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_ATTESTATION);
-
-                if (!is_null($timestampResponse->getHonorCertificateProofTimestampToken())) {
-                    $subscription->setHonorCertificateProofTimestampToken($timestampResponse->getHonorCertificateProofTimestampToken());
-                    $subscription->setHonorCertificateProofTimestampSigningTime($timestampResponse->getHonorCertificateProofTimestampSigningTime());
-                }
+                $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
                 $subscription->setExpirationDate($this->getExpirationDate());
             } else {
@@ -281,13 +270,7 @@ class JourneyManager extends MobConnectManager
             $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
             $subscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
 
-            $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
-            $subscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_ATTESTATION);
-
-            if (!is_null($timestampResponse->getHonorCertificateProofTimestampToken())) {
-                $subscription->setHonorCertificateProofTimestampToken($timestampResponse->getHonorCertificateProofTimestampToken());
-                $subscription->setHonorCertificateProofTimestampSigningTime($timestampResponse->getHonorCertificateProofTimestampSigningTime());
-            }
+            $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
             $subscription->setExpirationDate($this->getExpirationDate());
         } else {
