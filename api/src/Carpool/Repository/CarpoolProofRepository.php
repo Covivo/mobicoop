@@ -317,18 +317,20 @@ class CarpoolProofRepository
         // Parameters determination
         if (MobConnectManager::LONG_SUBSCRIPTION_TYPE === $subscriptionType) {
             $parameters['subscriptionDate'] = $user->getLongDistanceSubscription()->getCreatedAt();
-            $parameters['allreadyAdded'] = array_map(function ($journey) {
+            $allreadyAdded = array_map(function ($journey) {
                 return $journey->getCarpoolProof();
             }, $user->getLongDistanceSubscription()->getLongDistanceJourneys()->toArray());
             $parameters['creditorStatus'] = CarpoolItem::CREDITOR_STATUS_ONLINE;
         } else {
             $parameters['subscriptionDate'] = $user->getShortDistanceSubscription()->getCreatedAt();
-            $parameters['allreadyAdded'] = array_map(function ($journey) {
+            $allreadyAdded = array_map(function ($journey) {
                 return $journey->getCarpoolProof();
             }, $user->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray());
             $parameters['class'] = CarpoolProof::TYPE_HIGH;
             $parameters['status'] = CarpoolProof::STATUS_VALIDATED;
         }
+
+        $parameters['allreadyAdded'] = !empty($allreadyAdded) ? $allreadyAdded : '';
 
         $qb = $this->repository->createQueryBuilder('cp');
 
@@ -336,11 +338,11 @@ class CarpoolProofRepository
             ->innerJoin('cp.ask', 'a')
             ->innerJoin('a.matching', 'm')
             ->innerJoin('m.waypoints', 'wo', 'WITH', 'wo.destination = 0 AND wo.position = 0')
-            ->innerJoin('m.waypoints', 'wd', 'WITH', 'wd.destination = 0 AND wd.position != 0')
+            ->innerJoin('m.waypoints', 'wd', 'WITH', 'wd.destination = 1 AND wd.position != 0')
             ->innerJoin('wo.address', 'ao')
             ->innerJoin('wd.address', 'ad')
             ->where('cp.driver = :driver')
-            ->andWhere('cp.createdDate > :subscriptionDate')
+            ->andWhere('cp.createdDate >= :subscriptionDate')
             ->andWhere('cp.id NOT IN (:allreadyAdded)')
             ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
         ;
