@@ -18,35 +18,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
 final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "homeAddressODTerritory") {
-            return;
-        }
-
-        $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder
-            ->leftJoin(sprintf("%s.addresses", $rootAlias), 'homeAddress')
-            ->leftJoin('homeAddress.territories', 'thaodtf')
-            ->leftJoin(sprintf("%s.proposals", $rootAlias), 'phaodtf')
-            ->leftJoin('phaodtf.waypoints', 'whaodtf')
-            ->leftJoin('whaodtf.address', 'ahaodtf')
-            ->leftJoin('ahaodtf.territories', 'tahaodtf')
-            ->andWhere('((tahaodtf.id in (:value) AND phaodtf.private <> 1 AND (whaodtf.position=0 OR whaodtf.destination=1)) OR (thaodtf.id in (:value) AND homeAddress.home=1))')
-            ->setParameter('value', $value)
-        ;
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -56,7 +38,7 @@ final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description["{$property}"] = [
                 'property' => $property,
                 'type' => 'number',
                 'format' => 'integer',
@@ -70,5 +52,28 @@ final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('homeAddressODTerritory' != $property) {
+            return;
+        }
+
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+        $queryBuilder
+            ->leftJoin(sprintf('%s.addresses', $rootAlias), 'homeAddress')
+            ->leftJoin('homeAddress.territories', 'thaodtf')
+            ->leftJoin(sprintf('%s.proposals', $rootAlias), 'phaodtf')
+            ->leftJoin('phaodtf.waypoints', 'whaodtf')
+            ->leftJoin('whaodtf.address', 'ahaodtf')
+            ->leftJoin('ahaodtf.territories', 'tahaodtf')
+            ->andWhere('((tahaodtf.id in (:value) AND phaodtf.private <> 1 AND (whaodtf.position=0 OR whaodtf.destination=1)) OR (thaodtf.id in (:value) AND homeAddress.home=1))')
+            ->andWhere('u.status != :status')
+            ->setParameters([
+                'status' => User::STATUS_PSEUDONYMIZED,
+                'value' => $value,
+            ])
+        ;
     }
 }

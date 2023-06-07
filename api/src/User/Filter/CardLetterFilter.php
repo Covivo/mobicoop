@@ -24,6 +24,7 @@ namespace App\User\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
 final class CardLetterFilter extends AbstractContextAwareFilter
@@ -58,15 +59,20 @@ final class CardLetterFilter extends AbstractContextAwareFilter
             return;
         }
 
+        $queryBuilder
+            ->andWhere('u.status != :status')
+            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+        ;
+
         if (true === json_decode($value)) {
             $queryBuilder
                 ->andWhere('u.cardLetter = \''.json_decode($value).'\'')
-        ;
+            ;
         } elseif (false === json_decode($value)) {
             $queryBuilder
                 ->andWhere('u.cardLetter = \''.json_decode($value).'\'')
                 ->orWhere('u.cardLetter IS null')
-        ;
+            ;
         } else {
             return;
         }

@@ -25,6 +25,7 @@ namespace App\User\Filter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\User\Entity\IdentityProof;
+use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
 final class IdentityStatusFilter extends AbstractContextAwareFilter
@@ -76,6 +77,10 @@ final class IdentityStatusFilter extends AbstractContextAwareFilter
             $where = "(u.identityStatus = {$value})";
         }
 
-        $queryBuilder->andWhere($where);
+        $queryBuilder
+            ->andWhere($where)
+            ->andWhere('u.status != :status')
+            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+        ;
     }
 }

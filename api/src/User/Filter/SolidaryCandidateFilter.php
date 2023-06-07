@@ -18,33 +18,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use Doctrine\ORM\QueryBuilder;
 use App\Auth\Entity\AuthItem;
+use App\User\Entity\User;
+use Doctrine\ORM\QueryBuilder;
 
 final class SolidaryCandidateFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "solidaryCandidate") {
-            return;
-        }
-
-        // we will create a new querybuilder for retrieving the solidary users, to avoid modifying the one used for the original query
-        $em = $queryBuilder->getEntityManager();
-
-        $queryBuilder
-        ->leftJoin('u.userAuthAssignments', 'uaa')
-        ->leftJoin('uaa.authItem', 'ai')
-        ->andWhere('ai.id in ('.AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE.','.AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE.')');
-        return;
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -54,7 +39,7 @@ final class SolidaryCandidateFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description["{$property}"] = [
                 'property' => $property,
                 'type' => 'boolean',
                 'required' => false,
@@ -67,5 +52,23 @@ final class SolidaryCandidateFilter extends AbstractContextAwareFilter
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('solidaryCandidate' != $property) {
+            return;
+        }
+
+        // we will create a new querybuilder for retrieving the solidary users, to avoid modifying the one used for the original query
+        $em = $queryBuilder->getEntityManager();
+
+        $queryBuilder
+            ->leftJoin('u.userAuthAssignments', 'uaa')
+            ->leftJoin('uaa.authItem', 'ai')
+            ->andWhere('ai.id in ('.AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE.','.AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE.')')
+            ->andWhere('u.status != :status')
+            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+        ;
     }
 }
