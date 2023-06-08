@@ -61,6 +61,7 @@ use App\User\Entity\User;
 use App\User\Event\TooLongInactivityFirstWarningEvent;
 use App\User\Event\TooLongInactivityLastWarningEvent;
 use App\User\Repository\UserNotificationRepository;
+use App\User\Repository\UserRepository;
 use App\User\Service\PseudonymizationManager;
 use App\User\Service\UserManager;
 use Doctrine\Common\Util\ClassUtils;
@@ -104,6 +105,7 @@ class NotificationManager
     private $communicationFolder;
     private $altCommunicationFolder;
     private $structureLogoUri;
+    private $userRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -130,7 +132,8 @@ class NotificationManager
         ProposalManager $proposalManager,
         string $communicationFolder,
         string $altCommunicationFolder,
-        string $structureLogoUri
+        string $structureLogoUri,
+        UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -157,6 +160,7 @@ class NotificationManager
         $this->communicationFolder = $communicationFolder;
         $this->altCommunicationFolder = $altCommunicationFolder;
         $this->structureLogoUri = $structureLogoUri;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -254,6 +258,7 @@ class NotificationManager
      */
     public function createNotified(Notification $notification, User $user, ?object $object)
     {
+        $this->entityManager->refresh($user);
         $notified = new Notified();
         $notified->setStatus(Notified::STATUS_SENT);
         $notified->setSentDate(new \DateTime());
@@ -294,8 +299,6 @@ class NotificationManager
     /**
      * Notify a user by email.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
-     *
-     * @param mixed $lang
      */
     private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
     {
@@ -770,8 +773,6 @@ class NotificationManager
     /**
      * Notify a user by sms.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
-     *
-     * @param mixed $lang
      */
     private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
     {
@@ -1004,7 +1005,6 @@ class NotificationManager
      * @param Notification $notification The notification
      * @param User         $recipient    The recipient user
      * @param null|object  $object       The object to use
-     * @param mixed        $lang
      */
     private function notifyByPush(Notification $notification, User $recipient, ?object $object = null)
     {
