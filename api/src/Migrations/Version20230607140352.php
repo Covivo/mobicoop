@@ -18,7 +18,7 @@ final class Version20230607140352 extends AbstractMigration
         $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql("INSERT INTO `action` (id, name, `position`) VALUES (132, 'pay_after_carpool_regular_mon', 0), (133, 'pay_after_carpool_regular_wed', 0)");
-        $this->addSql('INSERT INTO `notification` (action_id, medium_id, active, `position`) VALUES (132, 2, 1, 0), (132, 3, 1, 0), (132, 4, 1, 0), (133, 2, 1, 0), (133, 3, 1, 0), (133, 4, 1, 0)');
+        $this->addSql('INSERT INTO `notification` (id, action_id, medium_id, active, created_date, user_active_default, user_editable, `position`) VALUES (162, 132, 2, 1, "2023-06-07 14:03:52", 1, 0, 0), (163, 132, 3, 1, "2023-06-07 14:03:52", 1, 0, 0), (164, 132, 4, 1, "2023-06-07 14:03:52", 1, 0, 0), (165, 133, 2, 1, "2023-06-07 14:03:52", 1, 0, 0), (166, 133, 3, 1, "2023-06-07 14:03:52", 1, 0, 0), (167, 133, 4, 1, "2023-06-07 14:03:52", 1, 0, 0)');
     }
 
     public function down(Schema $schema): void
