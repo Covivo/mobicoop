@@ -39,7 +39,7 @@ final class SolidaryCandidateFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["{$property}"] = [
+            $description[$property] = [
                 'property' => $property,
                 'type' => 'boolean',
                 'required' => false,

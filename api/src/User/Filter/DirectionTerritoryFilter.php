@@ -38,7 +38,7 @@ final class DirectionTerritoryFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["{$property}"] = [
+            $description[$property] = [
                 'property' => $property,
                 'type' => 'number',
                 'format' => 'integer',
