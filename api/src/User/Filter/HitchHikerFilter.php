@@ -24,6 +24,7 @@ namespace App\User\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
 final class HitchHikerFilter extends AbstractContextAwareFilter
@@ -37,7 +38,7 @@ final class HitchHikerFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["{$property}"] = [
+            $description[$property] = [
                 'property' => $property,
                 'type' => 'boolean',
                 'required' => false,
@@ -59,6 +60,11 @@ final class HitchHikerFilter extends AbstractContextAwareFilter
         }
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
+
+        $queryBuilder
+            ->andWhere('u.status != :status')
+            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+        ;
 
         if (1 === $value || 'true' === $value) {
             $queryBuilder->andWhere($rootAlias.'.hitchHikeDriver is not null or '.$rootAlias.'.hitchHikePassenger is not null');
