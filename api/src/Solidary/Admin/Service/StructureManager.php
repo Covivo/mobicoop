@@ -24,6 +24,7 @@
 namespace App\Solidary\Admin\Service;
 
 use App\Auth\Entity\AuthItem;
+use App\Auth\Service\AuthManager as ServiceAuthManager;
 use App\Auth\ServiceAdmin\AuthManager;
 use App\Geography\Repository\TerritoryRepository;
 use App\Solidary\Entity\Need;
@@ -32,6 +33,7 @@ use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\StructureProof;
 use App\Solidary\Entity\Subject;
 use App\Solidary\Exception\SolidaryException;
+use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -48,6 +50,7 @@ class StructureManager
     private $authManager;
     private $operateManager;
     private $structureProofManager;
+    private $_authManagerBasic;
 
     /**
      * Constructor.
@@ -57,6 +60,7 @@ class StructureManager
         TerritoryRepository $territoryRepository,
         UserRepository $userRepository,
         AuthManager $authManager,
+        ServiceAuthManager $authManagerBasic,
         OperateManager $operateManager,
         StructureProofManager $structureProofManager
     ) {
@@ -66,6 +70,7 @@ class StructureManager
         $this->authManager = $authManager;
         $this->operateManager = $operateManager;
         $this->structureProofManager = $structureProofManager;
+        $this->_authManagerBasic = $authManagerBasic;
     }
 
     /**
@@ -245,7 +250,7 @@ class StructureManager
                     && null !== $asubject['id']
                     && array_key_exists('label', $asubject)
                     && null !== $asubject['label']
-                    ) {
+                ) {
                     // existing subject => update
                     foreach ($structure->getSubjects() as $subject) {
                         if ($subject->getId() === $asubject['id']) {
@@ -258,7 +263,7 @@ class StructureManager
                     !array_key_exists('id', $asubject)
                     && array_key_exists('label', $asubject)
                     && null !== $asubject['label']
-                    ) {
+                ) {
                     // new subject
                     $subject = new Subject();
                     $subject->setLabel($asubject['label']);
@@ -291,7 +296,7 @@ class StructureManager
                     && null !== $aneed['id']
                     && array_key_exists('label', $aneed)
                     && null !== $aneed['label']
-                    ) {
+                ) {
                     // existing need => update
                     foreach ($structure->getNeeds() as $need) {
                         if ($need->getId() === $aneed['id']) {
@@ -305,7 +310,7 @@ class StructureManager
                     !array_key_exists('id', $aneed)
                     && array_key_exists('label', $aneed)
                     && null !== $aneed['label']
-                    ) {
+                ) {
                     // new need
                     $need = new Need();
                     $need->setLabel($aneed['label']);
@@ -340,7 +345,7 @@ class StructureManager
                     && null !== $aproof['id']
                     && array_key_exists('label', $aproof)
                     && null !== $aproof['label']
-                    ) {
+                ) {
                     // existing proof => update
                     foreach ($structure->getStructureProofs() as $proof) {
                         /**
@@ -382,7 +387,7 @@ class StructureManager
                     !array_key_exists('id', $aproof)
                     && array_key_exists('label', $aproof)
                  && null !== $aproof['label']
-                    ) {
+                ) {
                     // new proof
                     $proof = new StructureProof();
                     $proof->setLabel($aproof['label']);
@@ -442,7 +447,7 @@ class StructureManager
                     && null !== $aproof['id']
                     && array_key_exists('label', $aproof)
                     && null !== $aproof['label']
-                    ) {
+                ) {
                     // existing proof => update
                     foreach ($structure->getStructureProofs() as $proof) {
                         /**
@@ -484,7 +489,7 @@ class StructureManager
                     !array_key_exists('id', $aproof)
                     && array_key_exists('label', $aproof)
                  && null !== $aproof['label']
-                    ) {
+                ) {
                     // new proof
                     $proof = new StructureProof();
                     $proof->setLabel($aproof['label']);
@@ -588,6 +593,25 @@ class StructureManager
     {
         $this->entityManager->remove($structure);
         $this->entityManager->flush();
+    }
+
+    public function getStructuresForUser(User $user)
+    {
+        if (empty($user->getOperates())) {
+            if ($this->_authManagerBasic->isAuthorized('structure_manage')) {
+                return $this->entityManager->getRepository(Structure::class)->findAll();
+            }
+
+            return [];
+        }
+
+        $structures = [];
+
+        foreach ($user->getOperates() as $operate) {
+            array_push($structures, $operate->getStructure());
+        }
+
+        return $structures;
     }
 
     /**
