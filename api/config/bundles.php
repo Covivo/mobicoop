@@ -22,5 +22,5 @@ return [
     Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['all' => true],
     Knp\Bundle\SnappyBundle\KnpSnappyBundle::class => ['all' => true],
     Misd\PhoneNumberBundle\MisdPhoneNumberBundle::class => ['all' => true],
-    Sentry\SentryBundle\SentryBundle::class => ['prod' => true],
+    Sentry\SentryBundle\SentryBundle::class => ['all' => true],
 ];
