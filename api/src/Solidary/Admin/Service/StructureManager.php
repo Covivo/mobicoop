@@ -33,6 +33,7 @@ use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\StructureProof;
 use App\Solidary\Entity\Subject;
 use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -52,6 +53,8 @@ class StructureManager
     private $structureProofManager;
     private $_authManagerBasic;
 
+    private $_structureRepository;
+
     /**
      * Constructor.
      */
@@ -62,7 +65,8 @@ class StructureManager
         AuthManager $authManager,
         ServiceAuthManager $authManagerBasic,
         OperateManager $operateManager,
-        StructureProofManager $structureProofManager
+        StructureProofManager $structureProofManager,
+        StructureRepository $structureRepository
     ) {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
@@ -71,6 +75,7 @@ class StructureManager
         $this->operateManager = $operateManager;
         $this->structureProofManager = $structureProofManager;
         $this->_authManagerBasic = $authManagerBasic;
+        $this->_structureRepository = $structureRepository;
     }
 
     /**
@@ -595,11 +600,11 @@ class StructureManager
         $this->entityManager->flush();
     }
 
-    public function getStructuresForUser(User $user)
+    public function getStructuresForUser(User $user): array
     {
         if (empty($user->getOperates())) {
             if ($this->_authManagerBasic->isAuthorized('structure_manage')) {
-                return $this->entityManager->getRepository(Structure::class)->findAll();
+                return $this->_structureRepository->findAllSorted();
             }
 
             return [];
