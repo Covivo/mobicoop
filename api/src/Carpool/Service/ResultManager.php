@@ -402,10 +402,6 @@ class ResultManager
 
         $carpooler = $this->canReceiveReview($currentUser, $carpooler);
 
-        if ((Ask::STATUS_PENDING_AS_PASSENGER === $ask->getStatus() || Ask::STATUS_PENDING_AS_DRIVER == $ask->getStatus()) && User::PHONE_DISPLAY_RESTRICTED == $carpooler->getPhoneDisplay()) {
-            $carpooler->setTelephone(null);
-        }
-
         $result->setCarpooler($carpooler);
         $result->setFrequency($ask->getCriteria()->getFrequency());
         $result->setFrequencyResult($ask->getCriteria()->getFrequency());
