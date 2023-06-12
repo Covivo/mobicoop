@@ -258,7 +258,6 @@ class NotificationManager
      */
     public function createNotified(Notification $notification, User $user, ?object $object)
     {
-        $this->entityManager->refresh($user);
         $notified = new Notified();
         $notified->setStatus(Notified::STATUS_SENT);
         $notified->setSentDate(new \DateTime());
