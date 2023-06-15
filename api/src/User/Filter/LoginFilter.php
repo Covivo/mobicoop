@@ -18,26 +18,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
 final class LoginFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "login") {
-            return;
-        }
-        
-        $queryBuilder
-            ->andWhere('u.email = \'' .$value . '\'');
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -47,7 +38,7 @@ final class LoginFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description[$property] = [
                 'property' => $property,
                 'type' => 'string',
                 'required' => false,
@@ -60,5 +51,18 @@ final class LoginFilter extends AbstractContextAwareFilter
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('login' != $property) {
+            return;
+        }
+
+        $queryBuilder
+            ->andWhere('u.email = \''.$value.'\'')
+            ->andWhere('u.status != :status')
+            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+        ;
     }
 }

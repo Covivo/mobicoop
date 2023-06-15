@@ -19,14 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Service;
 
 use App\Carpool\Ressource\Ad;
 use App\ExternalJourney\Entity\ExternalJourneyProvider;
+use App\ExternalJourney\Event\ExternalConnectionConfirmedEvent;
 use App\ExternalJourney\Ressource\ExternalConnection;
 use GuzzleHttp\Client;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * External connection service.
@@ -35,29 +37,27 @@ use GuzzleHttp\Client;
  */
 class ExternalConnectionManager
 {
-    private const EXTERNAL_CONNECTION_HASH = "sha256";         // hash algorithm
+    private const EXTERNAL_CONNECTION_HASH = 'sha256';         // hash algorithm
 
     private $providers;
     private $operator;
+    private $eventDispatcher;
 
-    public function __construct(array $providers, array $operator)
+    public function __construct(array $providers, array $operator, EventDispatcherInterface $eventDispatcher)
     {
         $this->providers = $providers;
         $this->operator = $operator;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
-     * Send an external connection
-     *
-     * @param ExternalConnection $externalConnection
-     * @return ExternalConnection
+     * Send an external connection.
      */
     public function sendConnection(ExternalConnection $externalConnection): ExternalConnection
     {
-        
         // Check if the provider is valid
         if (!isset($this->providers[$externalConnection->getProvider()])) {
-            throw new \LogicException("Not a valid provider in providers.json");
+            throw new \LogicException('Not a valid provider in providers.json');
         }
 
         $provider = new ExternalJourneyProvider();
@@ -68,47 +68,47 @@ class ExternalConnectionManager
         $provider->setPrivateKey($this->providers[$externalConnection->getProvider()]['private_key']);
 
         // Determine if the current User is the driver or the passenger
-        
+
         // By default, if not specified, the sender is the passenger
         $role = Ad::ROLE_PASSENGER;
         if (!is_null($externalConnection->getRole())) {
             $role = $externalConnection->getRole();
         }
-        
-        if (!is_numeric($role) ||
-            ($role !== Ad::ROLE_DRIVER && $role !== Ad::ROLE_PASSENGER  && $role !== Ad::ROLE_DRIVER_OR_PASSENGER)
+
+        if (!is_numeric($role)
+            || (Ad::ROLE_DRIVER !== $role && Ad::ROLE_PASSENGER !== $role && Ad::ROLE_DRIVER_OR_PASSENGER !== $role)
         ) {
-            throw new \LogicException("Invalid role");
-        } elseif ($role == Ad::ROLE_DRIVER_OR_PASSENGER) {
+            throw new \LogicException('Invalid role');
+        }
+        if (Ad::ROLE_DRIVER_OR_PASSENGER == $role) {
             // Force "driver_or_passenger" to passenger
             $role = Ad::ROLE_PASSENGER;
         }
 
-        
         // initialize client API for any request
         $client = new Client();
 
         $params = [
-            "origin" => $this->operator['origin'],
-            "operator" => $this->operator['name'],
-            "details" => $externalConnection->getContent(),
-            "journeys" => [
-                "uuid" => $externalConnection->getJourneysUuid()
+            'origin' => $this->operator['origin'],
+            'operator' => $this->operator['name'],
+            'details' => $externalConnection->getContent(),
+            'journeys' => [
+                'uuid' => $externalConnection->getJourneysUuid(),
             ],
-            "driver" => [
-                "uuid" => ($role == Ad::ROLE_PASSENGER) ? $externalConnection->getCarpoolerUuid() : null,
-                "state" => ($role == Ad::ROLE_PASSENGER) ? ExternalConnection::STATUS_RECIPIENT : ExternalConnection::STATUS_SENDER
+            'driver' => [
+                'uuid' => (Ad::ROLE_PASSENGER == $role) ? $externalConnection->getCarpoolerUuid() : null,
+                'state' => (Ad::ROLE_PASSENGER == $role) ? ExternalConnection::STATUS_RECIPIENT : ExternalConnection::STATUS_SENDER,
             ],
-            "passenger" => [
-                "uuid" => ($role == Ad::ROLE_PASSENGER) ? null : $externalConnection->getCarpoolerUuid(),
-                "state" => ($role == Ad::ROLE_PASSENGER) ? ExternalConnection::STATUS_SENDER : ExternalConnection::STATUS_RECIPIENT
-            ]
+            'passenger' => [
+                'uuid' => (Ad::ROLE_PASSENGER == $role) ? null : $externalConnection->getCarpoolerUuid(),
+                'state' => (Ad::ROLE_PASSENGER == $role) ? ExternalConnection::STATUS_SENDER : ExternalConnection::STATUS_RECIPIENT,
+            ],
         ];
 
-        $query = array(
+        $query = [
             'timestamp' => time(),
-            'apikey'    => $provider->getApiKey(),
-        );
+            'apikey' => $provider->getApiKey(),
+        ];
 
         // construct the requested url
         $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
@@ -116,10 +116,15 @@ class ExternalConnectionManager
         $signedUrl = $url.'&signature='.$signature;
 
         // Type of the body
-        $options['form_params']=$params;
+        $options['form_params'] = $params;
 
         $data = $client->post($signedUrl, $options);
         $data = $data->getBody()->getContents();
+
+        if (false == strpos($data, 'error')) {
+            $event = new ExternalConnectionConfirmedEvent($externalConnection);
+            $this->eventDispatcher->dispatch(ExternalConnectionConfirmedEvent::NAME, $event);
+        }
 
         return $externalConnection;
     }

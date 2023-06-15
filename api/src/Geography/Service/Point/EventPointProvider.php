@@ -28,6 +28,7 @@ namespace App\Geography\Service\Point;
 use App\Event\Entity\Event;
 use App\Event\Repository\EventRepository;
 use App\Geography\Ressource\Point;
+use App\User\Entity\User;
 
 class EventPointProvider implements PointProvider
 {
@@ -45,7 +46,7 @@ class EventPointProvider implements PointProvider
         $this->maxResults = $maxResults;
     }
 
-    public function search(string $search): array
+    public function search(string $search, ?User $user = null): array
     {
         return $this->eventsToPoints(
             $this->eventRepository->findByNameAndStatus($search, Event::STATUS_ACTIVE)

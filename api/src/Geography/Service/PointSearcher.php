@@ -34,6 +34,7 @@ use App\Geography\Service\Point\RelayPointPointProvider;
 use App\Geography\Service\Point\UserPointProvider;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\User\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -44,6 +45,7 @@ class PointSearcher
 {
     private $providers;
     private $reverseProviders;
+    private $tokenStorage;
 
     public function __construct(
         MobicoopGeocoder $mobicoopGeocoder,
@@ -52,6 +54,7 @@ class PointSearcher
         AddressRepository $addressRepository,
         TranslatorInterface $translator,
         Security $security,
+        TokenStorageInterface $tokenStorage,
         int $maxRelayPointResults,
         int $maxEventResults,
         int $maxUserResults,
@@ -62,6 +65,7 @@ class PointSearcher
         array $exclusionTypes = [],
         array $relayPointParams
     ) {
+        $this->tokenStorage = $tokenStorage;
         $user = $security->getUser();
         $userPointProvider = new UserPointProvider($addressRepository, $translator);
         if ($prioritizeCentroid) {
@@ -127,9 +131,13 @@ class PointSearcher
 
     public function geocode(string $search): array
     {
+        $user = null;
+        if ($this->tokenStorage->getToken()->getUser() instanceof User) {
+            $user = $this->tokenStorage->getToken()->getUser();
+        }
         $points = [];
         foreach ($this->providers as $provider) {
-            $points = array_merge($points, $provider->search(str_replace(['"', "'"], ' ', $search)));
+            $points = array_merge($points, $provider->search(str_replace(['"', "'"], ' ', $search), $user));
         }
 
         return $points;

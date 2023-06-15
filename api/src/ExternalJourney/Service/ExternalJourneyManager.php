@@ -99,6 +99,7 @@ class ExternalJourneyManager
                             } else {
                                 // No rawJson flag set or set to 0. We return array of Carpool -> Result.
                                 foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
+                                    $currentResult->setProtocol('RDEX');
                                     $aggregatedResults[] = $currentResult;
                                 }
                             }
@@ -114,6 +115,7 @@ class ExternalJourneyManager
                             } else {
                                 // No rawJson flag set or set to 0. We return array of Carpool -> Result.
                                 foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
+                                    $currentResult->setProtocol('STANDARD');
                                     $aggregatedResults[] = $currentResult;
                                 }
                             }

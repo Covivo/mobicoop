@@ -4,6 +4,7 @@ namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
+use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -111,11 +112,22 @@ class LongDistanceJourney
     private $carpoolPayment;
 
     /**
+     * The carpool item associate with the journey.
+     *
+     * @var null|CarpoolItem
+     *
+     * @ORM\OneToOne(targetEntity=CarpoolItem::class)
+     *
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $carpoolItem;
+
+    /**
      * The carpool proof associate with the journey.
      *
      * @var null|CarpoolProof
      *
-     * @ORM\OneToOne(targetEntity=CarpoolProof::class, inversedBy="mobConnectLongDistanceJourney")
+     * @ORM\OneToOne(targetEntity=CarpoolProof::class)
      *
      * @ORM\JoinColumn(nullable=true)
      */
@@ -124,13 +136,20 @@ class LongDistanceJourney
     /**
      * The proposal associate with the journey.
      *
-     * @var null|CarpoolProof
+     * @var null|Proposal
      *
      * @ORM\OneToOne(targetEntity=Proposal::class)
      *
      * @ORM\JoinColumn(nullable=true)
      */
     private $initialProposal;
+
+    public function __construct(Proposal $proposal = null)
+    {
+        if (!is_null($proposal)) {
+            $this->setInitialProposal($proposal);
+        }
+    }
 
     /**
      * @ORM\PrePersist
@@ -352,21 +371,21 @@ class LongDistanceJourney
     }
 
     /**
-     * Get the carpool proof associate with the journey.
+     * Get the carpool item associate with the journey.
      */
-    public function getCarpoolProof(): ?CarpoolProof
+    public function getCarpoolItem(): ?CarpoolItem
     {
-        return $this->carpoolProof;
+        return $this->carpoolItem;
     }
 
     /**
-     * Set the carpool proof associate with the journey.
+     * Set the carpool item associate with the journey.
      *
-     * @param null|CarpoolProof $carpoolProof the carpool proof associate with the journey
+     * @param null|CarpoolProof $carpoolItem the carpool item associate with the journey
      */
-    public function setCarpoolProof($carpoolProof): self
+    public function setCarpoolItem(?CarpoolItem $carpoolItem): self
     {
-        $this->carpoolProof = $carpoolProof;
+        $this->carpoolItem = $carpoolItem;
 
         return $this;
     }
@@ -393,16 +412,46 @@ class LongDistanceJourney
         return $this;
     }
 
-    public function updateJourney(CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment, int $carpoolersNumber): self
+    public function isCommitmentJourney(): ?bool
     {
-        $this->setCarpoolProof($carpoolProof);
+        return
+            !is_null($this->getSubscription())
+            && !is_null($this->getSubscription()->getCommitmentProofJourney())
+            && $this->getId() === $this->getSubscription()->getCommitmentProofJourney()->getId();
+    }
+
+    public function updateJourney(CarpoolItem $carpoolItem, CarpoolPayment $carpoolPayment, int $carpoolersNumber, array $addresses): self
+    {
+        $this->setCarpoolItem($carpoolItem);
         $this->setCarpoolPayment($carpoolPayment);
-        $this->setStartAddressLocality($this->carpoolProof->getOriginDriverAddress()->getAddressLocality());
-        $this->setEndAddressLocality($this->carpoolProof->getDestinationDriverAddress()->getAddressLocality());
-        $this->setDistance($this->carpoolProof->getAsk()->getMatching()->getCommonDistance());
+        $this->setStartAddressLocality($addresses['origin']);
+        $this->setEndAddressLocality($addresses['destination']);
+        $this->setDistance($this->carpoolItem->getAsk()->getMatching()->getCommonDistance());
         $this->setCarpoolersNumber($carpoolersNumber);
-        $this->setStartDate($this->carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setStartDate($this->carpoolItem->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
         $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
+
+        return $this;
+    }
+
+    /**
+     * Get the carpool proof associate with the journey.
+     */
+    public function getCarpoolProof(): ?CarpoolProof
+    {
+        return $this->carpoolProof;
+    }
+
+    /**
+     * Set the carpool proof associate with the journey.
+     *
+     * @param null|CarpoolProof $carpoolProof the carpool proof associate with the journey
+     *
+     * @return self
+     */
+    public function setCarpoolProof(?CarpoolProof $carpoolProof)
+    {
+        $this->carpoolProof = $carpoolProof;
 
         return $this;
     }

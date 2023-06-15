@@ -47,6 +47,7 @@ use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\DataProvider\Entity\Response;
 use App\Event\Entity\Event;
+use App\ExternalJourney\Ressource\ExternalConnection;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
@@ -703,6 +704,12 @@ class NotificationManager
                 case TooLongInactivityFirstWarningEvent::class:
                     $titleContext = [];
                     $bodyContext = ['user' => $recipient, 'details' => $object, 'signature' => $signature];
+
+                    break;
+
+                case ExternalConnection::class:
+                    $titleContext = [];
+                    $bodyContext = ['user' => $recipient, 'externalConnection' => $object];
 
                     break;
 

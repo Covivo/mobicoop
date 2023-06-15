@@ -79,6 +79,7 @@
             :external-origin="(result.externalOrigin) ? result.externalOrigin : null"
             :external-provider="(result.externalProvider) ? result.externalProvider : null"
             :external-journey-id="(result.externalJourneyId) ? result.externalJourneyId : null"
+            :protocol="result.protocol"
             :communities="result.communities"
             :origin="result.origin"
             :destination="result.destination"

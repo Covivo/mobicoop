@@ -137,8 +137,11 @@ class CommunityUserRepository
     {
         $query = $this->repository->createQueryBuilder('cu');
         $query->where('cu.community = :community')
-            ->join('cu.user', 'u')
-            ->setParameter('community', $community)
+            ->join('cu.user', 'u', 'WITH', 'u.status != :pseudonymizedStatus')
+            ->setParameters([
+                'community' => $community,
+                'pseudonymizedStatus' => EntityUser::STATUS_PSEUDONYMIZED,
+            ])
         ;
 
         // Sort and Filters
@@ -199,7 +202,8 @@ class CommunityUserRepository
             ->where('cu.id IN(:ids) and u.newsSubscription=1 and cu.status IN (:statuses)')
             ->setParameter('ids', $ids)
             ->setParameter('statuses', [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR])
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
     }
 
     /**
@@ -216,7 +220,8 @@ class CommunityUserRepository
             ->setParameter('community', $community)
             ->setParameter('pending', CommunityUser::STATUS_PENDING)
             ->setParameter('refused', CommunityUser::STATUS_REFUSED)
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
     }
 
     public function findUserCommunities(EntityUser $user)

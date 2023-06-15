@@ -49,8 +49,6 @@ class Tools
 
     /**
      * Set the value of _currentCarpoolProof.
-     *
-     * @param CarpoolProof $_currentCarpoolProof
      */
     public function setCurrentCarpoolProof(CarpoolProof $carpoolProof): self
     {
@@ -78,7 +76,7 @@ class Tools
 
         return hash(
             'sha256',
-            $phoneNumber.'-'.(!is_null($carpooler) ? $carpooler->getFamilyName() : null)
+            $phoneNumber.'-'.(!is_null($carpooler) ? $this->_familyNameToUppercase($carpooler->getFamilyName()) : null)
         );
     }
 
@@ -184,6 +182,16 @@ class Tools
         }
 
         return $over18;
+    }
+
+    private function _familyNameToUppercase(string $familyName): string
+    {
+        $familyName = htmlentities($familyName, ENT_NOQUOTES, 'utf-8');
+        $familyName = preg_replace('#&([A-za-z])(?:uml|circ|tilde|acute|grave|cedil|ring);#', '\1', $familyName);
+        $familyName = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $familyName);
+        $familyName = preg_replace('#&[^;]+;#', '', $familyName);
+
+        return str_replace('\'', ' ', $familyName);
     }
 
     private function _getCarpooler(string $carpoolerType): ?User

@@ -68,10 +68,15 @@ class RpcApiManager
     {
         return in_array($this->_rpcApiVersion, self::AVAILABLE_RPC_API_VERSIONS)
         ? (
-            self::RPC_API_V2 === $this->_rpcApiVersion
+            $this->isVersion(self::RPC_API_V2)
             ? new CarpoolProofGouvProvider($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger)
             : new CarpoolProofGouvProviderV3($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger)
         )
         : new CarpoolProofGouvProvider($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger);
+    }
+
+    public function isVersion(string $version): bool
+    {
+        return $this->_rpcApiVersion === $version;
     }
 }

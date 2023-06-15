@@ -132,6 +132,11 @@ class ShortDistanceJourney
      */
     private $carpoolProof;
 
+    public function __construct(CarpoolProof $carpoolProof)
+    {
+        $this->setCarpoolProof($carpoolProof);
+    }
+
     /**
      * @ORM\PrePersist
      */
@@ -265,8 +270,6 @@ class ShortDistanceJourney
 
     /**
      * Set the status of the user.
-     *
-     * @param string $rpcNumberStatus the status of the user
      */
     public function setRpcNumberStatus(): self
     {
@@ -403,6 +406,14 @@ class ShortDistanceJourney
         $this->httpRequestStatus = $httpRequestStatus;
 
         return $this;
+    }
+
+    public function isCommitmentJourney(): ?bool
+    {
+        return
+            !is_null($this->getSubscription())
+            && !is_null($this->getSubscription()->getCommitmentProofJourney())
+            && $this->getId() === $this->getSubscription()->getCommitmentProofJourney()->getId();
     }
 
     public function updateJourney(CarpoolProof $carpoolProof, string $rpcJourneyId, int $carpoolersNumber)

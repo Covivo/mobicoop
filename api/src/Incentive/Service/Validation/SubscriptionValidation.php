@@ -2,7 +2,7 @@
 
 namespace App\Incentive\Service\Validation;
 
-use App\Incentive\Entity\Flat\LongDistanceSubscription;
+use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Manager\MobConnectManager;
@@ -12,15 +12,21 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class SubscriptionValidation extends Validation
 {
     /**
+     * @var JourneyValidation
+     */
+    private $_journeyValidation;
+
+    /**
      * @var int
      */
     private $_verificationDeadline;
 
-    public function __construct(LoggerService $loggerService, int $deadline)
+    public function __construct(LoggerService $loggerService, JourneyValidation $journeyValidation, int $deadline)
     {
         parent::__construct($loggerService);
 
         $this->_setVerificationDeadline($deadline);
+        $this->_journeyValidation = $journeyValidation;
     }
 
     /**
@@ -37,13 +43,22 @@ class SubscriptionValidation extends Validation
             );
     }
 
+    /**
+     * Undocumented function.
+     *
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
     public function isSubscriptionReadyForVerify($subscription): bool
     {
-        // TODO: mettre en place un test permettant que le trajet utilisé pour la vérification est valide
         return
             is_null($subscription->getStatus())
-            && !is_null($subscription->getCommitmentProofDate())
-            && $subscription->getCommitmentProofDate() <= $this->_verificationDeadline
+            && $subscription->getJourneys()->isEmpty()
+                ? (
+                    $subscription instanceof LongDistanceSubscription
+                    ? $this->_journeyValidation->isLDJourneysReadyForVerify($subscription->getJourneys())
+                    : $this->_journeyValidation->isSDJourneysReadyForVerify($subscription->getJourneys())
+                )
+                : true
             && is_null($subscription->getVerificationDate());
     }
 
