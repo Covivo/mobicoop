@@ -338,11 +338,11 @@ class CarpoolProofRepository
             ->innerJoin('cp.ask', 'a')
             ->innerJoin('a.matching', 'm')
             ->innerJoin('m.waypoints', 'wo', 'WITH', 'wo.destination = 0 AND wo.position = 0')
-            ->innerJoin('m.waypoints', 'wd', 'WITH', 'wd.destination = 0 AND wd.position != 0')
+            ->innerJoin('m.waypoints', 'wd', 'WITH', 'wd.destination = 1 AND wd.position != 0')
             ->innerJoin('wo.address', 'ao')
             ->innerJoin('wd.address', 'ad')
             ->where('cp.driver = :driver')
-            ->andWhere('cp.createdDate > :subscriptionDate')
+            ->andWhere('cp.createdDate >= :subscriptionDate')
             ->andWhere('cp.id NOT IN (:allreadyAdded)')
             ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
         ;
