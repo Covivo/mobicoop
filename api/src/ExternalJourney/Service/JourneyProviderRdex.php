@@ -43,6 +43,7 @@ class JourneyProviderRdex extends JourneyProvider
         $outwardMinDate = $request->get('outward_mindate');
         $outwardMaxDate = $request->get('outward_maxdate');
         $frequency = $request->get('frequency');
+        $time = $request->get('time');
         $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
         // then we set these parameters
@@ -90,18 +91,28 @@ class JourneyProviderRdex extends JourneyProvider
             }
         }
 
-        // mintime and maxtime for days
-        foreach ($days as $day) {
-            $mintime = $request->get($day.'_mintime');
-            if ('' !== $mintime) {
-                $searchParameters['outward'][$day]['mintime'] = $mintime;
+        if ('punctual' == $searchParameters['frequency']) {
+            if ('' !== $time) {
+                if (substr_count($time, ':') < 2) {
+                    $time .= ':00';
+                }
+                $day = \DateTime::createFromFormat('Y-m-d', $searchParameters['outward']['mindate']);
+                $searchParameters['outward'][strtolower($day->format('l'))]['mintime'] = $time;
+                $searchParameters['outward'][strtolower($day->format('l'))]['maxtime'] = $time;
             }
-            $maxtime = $request->get($day.'_maxtime');
-            if ('' !== $maxtime) {
-                $searchParameters['outward'][$day]['maxtime'] = $maxtime;
+        } else {
+            // mintime and maxtime for days
+            foreach ($days as $day) {
+                $mintime = $request->get($day.'_mintime');
+                if ('' !== $mintime) {
+                    $searchParameters['outward'][$day]['mintime'] = $mintime;
+                }
+                $maxtime = $request->get($day.'_maxtime');
+                if ('' !== $maxtime) {
+                    $searchParameters['outward'][$day]['maxtime'] = $maxtime;
+                }
             }
         }
-
         // initialize client API for any request
         $client = new Client();
 
