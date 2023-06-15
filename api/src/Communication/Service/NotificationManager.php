@@ -62,6 +62,7 @@ use App\User\Entity\User;
 use App\User\Event\TooLongInactivityFirstWarningEvent;
 use App\User\Event\TooLongInactivityLastWarningEvent;
 use App\User\Repository\UserNotificationRepository;
+use App\User\Repository\UserRepository;
 use App\User\Service\PseudonymizationManager;
 use App\User\Service\UserManager;
 use Doctrine\Common\Util\ClassUtils;
@@ -105,6 +106,7 @@ class NotificationManager
     private $communicationFolder;
     private $altCommunicationFolder;
     private $structureLogoUri;
+    private $userRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -131,7 +133,8 @@ class NotificationManager
         ProposalManager $proposalManager,
         string $communicationFolder,
         string $altCommunicationFolder,
-        string $structureLogoUri
+        string $structureLogoUri,
+        UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -158,6 +161,7 @@ class NotificationManager
         $this->communicationFolder = $communicationFolder;
         $this->altCommunicationFolder = $altCommunicationFolder;
         $this->structureLogoUri = $structureLogoUri;
+        $this->userRepository = $userRepository;
     }
 
     /**

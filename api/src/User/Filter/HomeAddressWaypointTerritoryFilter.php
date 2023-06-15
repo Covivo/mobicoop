@@ -18,45 +18,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
 final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "homeAddressWaypointTerritory") {
-            return;
-        }
-
-        // we sanitize the value to be sure it's an int and not an iri
-        if (strrpos($value, '/')) {
-            $value = substr($value, strrpos($value, '/') + 1);
-        }
-        
-        // $queryBuilder
-        //     ->leftJoin('u.addresses', 'homeAddress')
-        //     ->leftJoin('u.proposals', 'p')
-        //     ->leftJoin('p.waypoints', 'w')
-        //     ->leftJoin('w.address', 'a')
-        //     ->join('\App\Geography\Entity\Territory', 'homeAddressWaypointTerritory')
-        //     ->andWhere(sprintf('(homeAddressWaypointTerritory.id = %s AND (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,a.geoJson)=1) OR (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1))', $value));
-    
-        $queryBuilder
-            ->leftJoin('u.addresses', 'homeAddress')
-            ->leftJoin('homeAddress.territories', 't')
-            ->leftJoin('u.proposals', 'p')
-            ->leftJoin('p.waypoints', 'w')
-            ->leftJoin('w.address', 'a')
-            ->leftJoin('a.territories', 'ta')
-            ->andWhere(sprintf('((ta.id = %s AND p.private <> 1) OR (t.id = %s AND homeAddress.home=1))', $value, $value));
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -66,7 +38,7 @@ final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilte
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description[$property] = [
                 'property' => $property,
                 'type' => 'number',
                 'format' => 'integer',
@@ -80,5 +52,37 @@ final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilte
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('homeAddressWaypointTerritory' != $property) {
+            return;
+        }
+
+        // we sanitize the value to be sure it's an int and not an iri
+        if (strrpos($value, '/')) {
+            $value = substr($value, strrpos($value, '/') + 1);
+        }
+
+        // $queryBuilder
+        //     ->leftJoin('u.addresses', 'homeAddress')
+        //     ->leftJoin('u.proposals', 'p')
+        //     ->leftJoin('p.waypoints', 'w')
+        //     ->leftJoin('w.address', 'a')
+        //     ->join('\App\Geography\Entity\Territory', 'homeAddressWaypointTerritory')
+        //     ->andWhere(sprintf('(homeAddressWaypointTerritory.id = %s AND (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,a.geoJson)=1) OR (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1))', $value));
+
+        $queryBuilder
+            ->leftJoin('u.addresses', 'homeAddress')
+            ->leftJoin('homeAddress.territories', 't')
+            ->leftJoin('u.proposals', 'p')
+            ->leftJoin('p.waypoints', 'w')
+            ->leftJoin('w.address', 'a')
+            ->leftJoin('a.territories', 'ta')
+            ->andWhere(sprintf('((ta.id = %s AND p.private <> 1) OR (t.id = %s AND homeAddress.home=1))', $value, $value))
+            ->andWhere('u.status != :status')
+            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+        ;
     }
 }

@@ -80,11 +80,6 @@ class ImageManager
 
     /**
      * Constructor.
-     *
-     * @param LoggerInterface     $loggerMaintenance
-     * @param CampaignRepository  $campaign
-     * @param BadgeRepository     $badge
-     * @param EditorialRepository $editorial
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -234,9 +229,9 @@ class ImageManager
     /**
      * Generates a filename depending on the class of the image owner.
      *
-     * @throws ImageException
-     *
      * @return string
+     *
+     * @throws ImageException
      */
     public function generateFilename(Image $image)
     {
@@ -328,9 +323,9 @@ class ImageManager
      * Generates the different versions of the image (thumbnails).
      * Returns the names of the generated versions.
      *
-     * @throws \ReflectionException
-     *
      * @return array
+     *
+     * @throws \ReflectionException
      */
     public function generateVersions(Image $image)
     {
@@ -375,9 +370,9 @@ class ImageManager
      * Get the different versions of the image (thumbnails).
      * Returns the names of the generated versions.
      *
-     * @throws \ReflectionException
-     *
      * @return array
+     *
+     * @throws \ReflectionException
      */
     public function getVersions(Image $image)
     {
@@ -392,9 +387,7 @@ class ImageManager
                 $fileName = substr($fileName, 0, -(strlen($extension) + 1));
             }
             $versionName = $types['folder']['versions'].$version['prefix'].$fileName.'.'.$extension;
-            if (file_exists($types['folder']['base'].$versionName)) {
-                $versions[$version['filterSet']] = $this->dataUri.$versionName;
-            }
+            $versions[$version['filterSet']] = $this->dataUri.$versionName;
         }
 
         // Add the original version
@@ -459,8 +452,7 @@ class ImageManager
     /**
      * Remove the image at the given position, for the owner of the image.
      *
-     * @param object $image    The owner
-     * @param int    $position The position of the image
+     * @param int $position The position of the image
      */
     public function removeImageAtPosition(object $owner, int $position)
     {

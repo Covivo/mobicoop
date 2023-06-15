@@ -114,6 +114,7 @@ class JourneyManager extends MobConnectManager
         $this->setDriver($proposal->getUser());
 
         $params = [
+            'Identifiant du trajet' => 'Proposal_'.$proposal->getId(),
             'Date de publication du trajet' => $proposal->getCreatedDate()->format(self::DATE_FORMAT),
         ];
 
