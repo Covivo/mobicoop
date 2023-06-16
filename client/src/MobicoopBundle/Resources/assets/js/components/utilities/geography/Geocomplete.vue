@@ -366,7 +366,7 @@ export default {
           "distance":this.selection.value.distance,
           "type":this.selection.type,
           "id":this.selection.value.id,
-          "displayLabel":this.selection.value.displayLabel ? this.selection.value.displayLabel : ""
+          "displayLabel":this.selection.value.displayLabel ? this.selection.value.displayLabel : null
         };
         if (this.selection.type == "event") {
           // so nice...
@@ -395,7 +395,7 @@ export default {
           "type":this.address.type ? this.address.type : "other",
           "id":this.address.id,
           "regionCode":this.address.regionCode,
-          "displayLabel":this.address.displayLabel ? this.address.displayLabel : ""
+          "displayLabel":this.address.displayLabel ? this.address.displayLabel : null
         };
       return null;
     }
