@@ -35,7 +35,7 @@ class SubscriptionValidation extends Validation
     public function isSubscriptionValidForTimestampsProcess($subscription): bool
     {
         return
-            SubscriptionManager::STATUS_VALIDATED === $subscription->getStatus()
+            SubscriptionManager::STATUS_VALIDATED !== $subscription->getStatus()
             && (
                 is_null($subscription->getIncentiveProofTimestampToken())
                 || is_null($subscription->getCommitmentProofTimestampToken())
