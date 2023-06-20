@@ -162,7 +162,9 @@ class MobConnectApiProvider extends MobConnectProvider
 
         $tokens = $provider->getRefreshToken($mobConnectAuth->getRefreshToken());
 
-        $mobConnectAuth->updateTokens($tokens);
+        if (isset($tokens['code']) && 400 != $tokens['code']) {
+            $mobConnectAuth->updateTokens($tokens);
+        }
 
         $this->_em->flush();
 

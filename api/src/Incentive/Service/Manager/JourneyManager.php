@@ -201,8 +201,15 @@ class JourneyManager extends MobConnectManager
                 continue;
             }
 
-            if ($this->_isLDJourneyCommitmentJourney($subscription, $carpoolItem)) {
-                $journey = $subscription->getCommitmentProofJourney();
+            if (
+                $this->_isLDJourneyCommitmentJourney($subscription, $carpoolItem)
+                || (
+                    empty($subscription->getJourneys()->toArray())
+                    && !is_null($subscription->getCommitmentProofTimestampToken())
+                )
+            ) {
+                $journey = is_null($subscription->getCommitmentProofJourney())
+                    ? new LongDistanceJourney() : $subscription->getCommitmentProofJourney();
 
                 $params = [
                     'Date de partage des frais' => $carpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
@@ -319,14 +326,12 @@ class JourneyManager extends MobConnectManager
         $carpoolItem = array_values($carpoolItems)[0];
 
         $carpoolPayments = array_values(array_filter($carpoolItem->getCarpoolPayments(), function ($payment) use ($carpoolProof) {
-            return $payment->getUser()->getId() === $carpoolProof->getPassenger()->getId();
+            return
+                $payment->getUser()->getId() === $carpoolProof->getPassenger()->getId()
+                && $this->_journeyValidation->isPaymentValidForEEC($payment);
         }));
 
-        if (count($carpoolPayments) > 1) {
-            return null;
-        }
-
-        return $carpoolPayments[0];
+        return !empty($carpoolPayments) ? $carpoolPayments[0] : null;
     }
 
     private function _getCarpoolItemsFromCarpoolPayment(CarpoolPayment $carpoolPayment): array
