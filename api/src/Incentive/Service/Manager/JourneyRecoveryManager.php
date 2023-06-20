@@ -10,6 +10,7 @@ use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\JourneyValidation;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
+use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,6 +50,7 @@ class JourneyRecoveryManager extends JourneyManager
 
     public function __construct(
         CarpoolProofRepository $carpoolProofRepository,
+        CarpoolItemRepository $carpoolItemRepository,
         EntityManagerInterface $em,
         EventDispatcherInterface $eventDispatcher,
         JourneyValidation $journeyValidation,
@@ -62,7 +64,7 @@ class JourneyRecoveryManager extends JourneyManager
         array $mobConnectParams,
         array $ssoServices
     ) {
-        parent::__construct($carpoolProofRepository, $em, $eventDispatcher, $journeyValidation, $loggerService, $honourCertificateService, $timestampTokenManager, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($carpoolProofRepository, $carpoolItemRepository, $em, $eventDispatcher, $journeyValidation, $loggerService, $honourCertificateService, $timestampTokenManager, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
         $this->_subscriptionValidation = $subscriptionValidation;
         $this->_userRepository = $userRepository;
