@@ -26,7 +26,7 @@ class JourneyManager extends MobConnectManager
     /**
      * @var TimestampTokenManager
      */
-    private $_timestampTokenManager;
+    protected $_timestampTokenManager;
 
     /**
      * @var CarpoolProofRepository

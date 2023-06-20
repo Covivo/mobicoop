@@ -4,6 +4,7 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\EecResponse;
+use App\Incentive\Entity\Log\Log;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\JourneyValidation;
@@ -97,6 +98,13 @@ class JourneyRecoveryManager extends JourneyManager
         $currentResponseData = new EecResponse($this->_currentUser);
 
         $errors = $this->_userValidation->isUserValidForEEC($this->_currentUser, $this->_subscriptionType);
+
+        // We recover the missing timestamp tokens available at moBConnect
+        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens(
+            MobConnectManager::LONG_SUBSCRIPTION_TYPE === $this->_subscriptionType
+                ? $this->_currentUser->getLongDistanceSubscription() : $this->_currentUser->getShortDistanceSubscription(),
+            Log::TYPE_VERIFY
+        );
 
         if (!empty($errors)) {
             foreach ($errors as $error) {
