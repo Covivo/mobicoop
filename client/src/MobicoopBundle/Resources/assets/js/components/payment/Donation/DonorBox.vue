@@ -1,19 +1,36 @@
 <template>
-  <v-row>
-    <v-col class="text-center">
-      <iframe
-        :src="$t('src')"
-        name="donorbox"
-        allowpaymentrequest="allowpaymentrequest"
-        seamless="seamless"
-        frameborder="0"
-        scrolling="no"
-        height="900px"
-        width="100%"
-        style="max-width: 500px; min-width: 250px; max-height:none!important"
-      />
-    </v-col>
-  </v-row>
+  <v-container>
+    <v-row>
+      <v-col class="text-center">
+        <h1>{{ $t('title') }}</h1>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <p>{{ $t('text') }}</p>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <h3>{{ $t('subtitle') }}</h3>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="text-center">
+        <iframe
+          :src="$t('src')"
+          name="donorbox"
+          allowpaymentrequest="allowpaymentrequest"
+          seamless="seamless"
+          frameborder="0"
+          scrolling="no"
+          height="900px"
+          width="100%"
+          style="max-width: 420px; min-width: 250px; max-height:none!important"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 
