@@ -255,7 +255,9 @@ abstract class MobConnectManager
 
     protected function _isLDJourneyCommitmentJourney(LongDistanceSubscription $subscription, CarpoolItem $carpoolItem): bool
     {
-        return $subscription->getCommitmentProofJourney()->getInitialProposal() === $this->getDriverPassengerProposalForCarpoolItem($carpoolItem, self::DRIVER);
+        return
+            !is_null($subscription->getCommitmentProofJourney())
+            && $subscription->getCommitmentProofJourney()->getInitialProposal() === $this->getDriverPassengerProposalForCarpoolItem($carpoolItem, self::DRIVER);
     }
 
     protected function getAddressesLocality(CarpoolItem $carpoolItem): array

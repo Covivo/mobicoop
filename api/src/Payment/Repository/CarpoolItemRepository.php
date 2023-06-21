@@ -24,7 +24,10 @@
 namespace App\Payment\Repository;
 
 use App\Carpool\Entity\Ask;
+use App\Incentive\Resource\CeeSubscriptions;
+use App\Incentive\Service\Validation\Validation;
 use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Ressource\PaymentItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -258,6 +261,43 @@ class CarpoolItemRepository
                 'itemStatus' => CarpoolItem::STATUS_NOT_REALIZED,
                 'startDate' => $period['Mon'],
             ])
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findUserEECEligibleItem(User $driver)
+    {
+        $subscription = $driver->getLongDistanceSubscription();
+
+        $allreadyAdded = array_map(function ($journey) {
+            return $journey->getCarpoolItem();
+        }, $subscription->getJourneys()->toArray());
+
+        $parameters = [
+            'country' => Validation::REFERENCE_COUNTRY,
+            'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
+            'driver' => $driver,
+            'status' => CarpoolPayment::STATUS_SUCCESS,
+            'subscriptionDate' => $subscription->getCreatedAt(),
+            'allreadyAdded' => !empty($allreadyAdded) ? $allreadyAdded : '',
+        ];
+
+        $qb = $this->repository->createQueryBuilder('ci');
+
+        $qb
+            ->innerJoin('ci.ask', 'a')
+            ->innerJoin('ci.carpoolPayments', 'cp', 'WITH', 'cp.status = :status AND cp.transactionId IS NOT NULL')
+            ->innerJoin('a.matching', 'm', 'WITH', 'm.commonDistance >= :distance')
+            ->innerJoin('m.waypoints', 'wo', 'WITH', 'wo.destination = 0 AND wo.position = 0')
+            ->innerJoin('m.waypoints', 'wd', 'WITH', 'wd.destination = 1 AND wd.position != 0')
+            ->innerJoin('wo.address', 'ao')
+            ->innerJoin('wd.address', 'ad')
+            ->where('ci.creditorUser = :driver')
+            ->andWhere('ci.createdDate >= :subscriptionDate')
+            ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
+            ->andWhere('cp.id NOT IN (:allreadyAdded)')
+            ->setParameters($parameters)
         ;
 
         return $qb->getQuery()->getResult();
