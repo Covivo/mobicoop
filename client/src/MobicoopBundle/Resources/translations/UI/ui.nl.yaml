@@ -68,3 +68,5 @@ user:
     title: Verificatie van uw e-mailadres
 browserUpdate:
   language: "nl"
+donation:
+  title: "Donation"
