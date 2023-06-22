@@ -128,7 +128,6 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <div
-              v-if="protocol ==='RDEX'"
               class="ma-0 pa-0"
               v-on="(user == null) && on"
             >
@@ -449,8 +448,7 @@ export default {
         });
     },
     standardContact() {
-      this.$emit("standardContact", {
-      });
+      console.log('yes');
     }
   }
 };

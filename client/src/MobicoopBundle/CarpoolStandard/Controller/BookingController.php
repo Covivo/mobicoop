@@ -38,11 +38,14 @@ class BookingController extends AbstractController
     use HydraControllerTrait;
 
     private $bookingManager;
+    private $operatorIdentifier;
 
     public function __construct(
-        BookingManager $bookingManager
+        BookingManager $bookingManager,
+        string $operatorIdentifier
     ) {
         $this->bookingManager = $bookingManager;
+        $this->operatorIdentifier = $operatorIdentifier;
     }
 
     /**
