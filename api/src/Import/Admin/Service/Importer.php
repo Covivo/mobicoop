@@ -51,11 +51,11 @@ class Importer
     {
         $this->_file = $file;
         $this->_filename = $filename;
+        $this->_validateFile();
     }
 
     public function importUsers(): Import
     {
-        $this->_validateFile();
         $this->_validateLines(new UserLineImportValidator());
 
         return $this->_buildImport();
