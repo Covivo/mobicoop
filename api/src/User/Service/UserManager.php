@@ -50,6 +50,7 @@ use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Service\PaymentDataProvider;
 use App\Scammer\Repository\ScammerRepository;
+use App\Service\DrivingLicenceService;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryUser;
@@ -668,6 +669,8 @@ class UserManager
         // we check if the user is not underaged
         $this->checkBirthDate($user);
 
+        $this->checkDriverLicenceNumber($user);
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -1152,8 +1155,6 @@ class UserManager
     /**
      * User password change request.
      *
-     * @param User $user
-     *
      * @return Response
      */
     public function updateUserPasswordRequest(User $data)
@@ -1187,8 +1188,6 @@ class UserManager
 
     /**
      * User password change confirmation.
-     *
-     * @param User $user
      *
      * @return Response
      */
@@ -1283,7 +1282,6 @@ class UserManager
      * Create user alerts.
      *
      * @param User  $user    The user to treat
-     * @param bool  $perist  Persist immediately (false for mass import)
      * @param mixed $persist
      *
      * @return User
@@ -1578,8 +1576,7 @@ class UserManager
     /**
      * Check if an user $user have a specific AuthItem $authItem.
      *
-     * @param User     $user     The user to check
-     * @param AuthItem $AuthItem The auth item to check
+     * @param User $user The user to check
      *
      * @return bool True if user have item
      */
@@ -2121,5 +2118,14 @@ class UserManager
         }
 
         throw new UserUnderAgeException(UserUnderAgeException::USER_UNDER_AGED);
+    }
+
+    private function checkDriverLicenceNumber(User $user)
+    {
+        $drivingLicenceService = new DrivingLicenceService($user->getDrivingLicenceNumber());
+
+        if (!$drivingLicenceService->isDrivingLicenceNumberValid()) {
+            $user->setDrivingLicenceNumber(null);
+        }
     }
 }

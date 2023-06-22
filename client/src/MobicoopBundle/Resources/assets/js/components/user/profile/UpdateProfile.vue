@@ -944,10 +944,6 @@ export default {
 
     validate () {
       if (this.$refs.form.validate()) {
-        this.checkDrivingLicenceNumber();
-        if(!this.drivingLicenceNumberValid){
-          return;
-        }
         this.checkForm();
         this.dialogEmail = false;
       }
@@ -1188,7 +1184,7 @@ export default {
           .await_post(
             this.$t("checkDrivingLicenceNumber.url"),
             {
-              driverLicenceNumber: this.drivingLicenceNumberValid,
+              driverLicenceNumber: this.drivingLicenceNumber,
             },
             {
               headers: {
