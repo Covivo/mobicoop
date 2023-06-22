@@ -23,6 +23,7 @@
 
 namespace App\Import\Admin\Resource;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Import\Admin\Controller\ImportUsersAction;
 use Doctrine\ORM\Mapping as ORM;
@@ -48,7 +49,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *              }
  *          },
  *          "ADMIN_post_import"={
- *              "path"="/admin/import_users",
+ *              "path"="/admin/imports",
  *              "method"="POST",
  *              "controller"=ImportUsersAction::class,
  *              "denormalization_context"={"groups"={"aWrite"}},
@@ -71,26 +72,30 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @Vich\Uploadable
  */
-class ImportUsers
+class Import
 {
+    public const DEFAULT_ID = 999999999999;
+
     /**
-     * @var int the id of this community security
+     * @var int the id of this import
      *
-     * @Groups({"aRead","readCommunity"})
+     * @ApiProperty(identifier=true)
+     *
+     * @Groups({"aRead"})
      */
     private $id;
 
     /**
      * @var null|File The document's file
      *
-     * @Vich\UploadableField(mapping="communitySecurityFile", fileNameProperty="filename", originalName="originalName")
+     * @Vich\UploadableField(mapping="massImportFile", fileNameProperty="filename", originalName="originalName")
      *
      * @Groups({"aWrite"})
      */
     private $file;
 
     /**
-     * @var string the filename of the community security
+     * @var string the filename of the import
      *
      * @Groups({"read","aRead","write"})
      */
@@ -102,6 +107,14 @@ class ImportUsers
      * @Groups({"read","aRead"})
      */
     private $originalName;
+
+    public function __construct($id = null)
+    {
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
+    }
 
     public function getId(): ?int
     {

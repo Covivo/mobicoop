@@ -23,7 +23,8 @@
 
 namespace App\Import\Admin\Controller;
 
-use App\Import\Admin\Resource\ImportUsers;
+use App\Import\Admin\Resource\Import;
+use App\Import\Admin\Service\Importer;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -31,17 +32,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class ImportUsersAction
 {
-    public function __construct()
-    {
-    }
-
-    public function __invoke(Request $request): ?ImportUsers
+    public function __invoke(Request $request): Import
     {
         if (!$request->files->get('file')) {
             throw new \Exception('File is mandatory');
         }
 
-        //        return $this->communitySecurityManager->createSecurity($request->files->get('file'), (int) $request->get('communityId'));
-        return null;
+        $importer = new Importer($request->files->get('file'), $request->get('filename'));
+
+        return $importer->importUsers();
     }
 }
