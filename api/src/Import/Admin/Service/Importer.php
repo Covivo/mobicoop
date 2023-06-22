@@ -23,6 +23,7 @@
 
 namespace App\Import\Admin\Service;
 
+use App\Import\Admin\Interfaces\LineImportValidatorInterface;
 use App\Import\Admin\Resource\Import;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -52,29 +53,35 @@ class Importer
         $this->_filename = $filename;
     }
 
-    private function __validateFile()
+    public function importUsers(): Import
+    {
+        $this->_validateFile();
+        $this->_validateLines(new UserLineImportValidator());
+
+        return $this->_buildImport();
+    }
+
+    private function _validateFile()
     {
         if (!in_array($this->_file->getMimeType(), self::MIME_TYPES)) {
             throw new \LogicException('Incorrect MIME type');
         }
+    }
 
+    private function _validateLines(LineImportValidatorInterface $usersImportValidator)
+    {
         $openedFile = fopen($this->_file, 'r');
 
         $numLine = 1;
         while (!feof($openedFile)) {
             $line = fgetcsv($openedFile, 0, ';');
             if ($line) {
-                // $this->__validate_line($line, $numLine);
+                $usersImportValidator->validate($line, $numLine);
             }
             ++$numLine;
         }
-    }
 
-    public function importUsers(): Import
-    {
-        $this->__validateFile();
-
-        return $this->_buildImport();
+        fclose($openedFile);
     }
 
     private function _buildImport()
