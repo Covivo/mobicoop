@@ -139,7 +139,7 @@
                 type="button"
                 target="_blank"
                 class="mt-1"
-                @click="externalContactModal"
+                @click="emitCarpoolStandardContact"
               >
                 <span>
                   {{ $t("externalResult.contact.button.label") }}
@@ -153,7 +153,7 @@
                 type="button"
                 target="_blank"
                 class="mt-1"
-                @click="standardContact"
+                @click="emitCarpoolStandardContact"
               >
                 <span>
                   {{ $t("externalResult.contact.button.label") }}
@@ -416,6 +416,9 @@ export default {
         this.$emit("loginOrRegister");
       }
     },
+    emitCarpoolStandardContact: function() {
+      this.$emit("carpoolStandardContact");
+    },
     externalContactModal() {
       this.dialogExternalContact = true;
     },
@@ -446,9 +449,6 @@ export default {
         .catch(function(error) {
           console.error(error);
         });
-    },
-    standardContact() {
-      console.log('yes');
     }
   }
 };

@@ -51,6 +51,7 @@
             :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
             @carpool="carpool(result)"
             @booking="booking(result)"
+            @carpoolStandardContact="carpoolStandardContact(result)"
             @loginOrRegister="loginOrRegister(result)"
           />
         </v-col>
@@ -165,6 +166,9 @@ export default {
     },
     booking(booking){
       this.$emit("booking", booking);
+    },
+    carpoolStandardContact(carpoolStandardContact){
+      this.$emit("carpoolStandardContact", carpoolStandardContact);
     },
   }
 }

@@ -202,6 +202,7 @@
                 :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
                 @loginOrRegister="loginOrRegister"
                 @booking="booking"
+                @carpoolStandardContact="carpoolStandardContact"
               />
             </v-tab-item>
             <!-- Public transport results tab item -->
@@ -304,6 +305,57 @@
         @close="bookingDialog = false"
         @booking="launchExternalBooking"
       />
+    </v-dialog>
+
+    <v-dialog
+      v-model="carpoolStandardContactDialog"
+      width="80%"
+      min-height="500px"
+    >
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          TEST
+        </v-card-title>
+
+        <v-card-text>
+          <p>
+            YESSSSS
+          </p>
+          <p>
+            Yeah!!!!!!.<br>
+            Top.
+          </p>
+        </v-card-text>
+        <v-card-text>
+          <v-textarea
+            v-model="carpoolStandardContactMessage"
+            name="input-7-1"
+            label="votre message"
+            rows="5"
+          />
+          <p class="text-right">
+            <v-btn
+              rounded
+              color="primary"
+              :loading="false"
+              @click="carpoolStandardContactDialog = false"
+            >
+              Envoyer
+            </v-btn>
+          </p>
+        </v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="error"
+            text
+            @click="carpoolStandardContactDialog = false"
+          >
+            Annuler
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
 
     <!-- login or register dialog -->
@@ -487,6 +539,8 @@ export default {
       carpoolDialog: false,
       bookingDialog: false,
       loginOrRegisterDialog: false,
+      carpoolStandardContactDialog: false,
+      carpoolStandardContactMessage: "",
       results: null,
       searchId: null,
       externalRDEXResults:null,
@@ -591,6 +645,11 @@ export default {
       this.result = booking;
       // open the dialog
       this.bookingDialog = true;
+    },
+    carpoolStandardContact(carpoolStandardContact){
+      this.result = carpoolStandardContact;
+      // open the dialog
+      this.carpoolStandardContactDialog = true;
     },
     loginOrRegister(carpool) {
       this.result = carpool;

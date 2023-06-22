@@ -91,6 +91,7 @@
             :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
             @carpool="carpool"
             @booking="booking"
+            @carpoolStandardContact="carpoolStandardContact"
             @loginOrRegister="loginOrRegister"
           />
         </v-col>
@@ -186,6 +187,11 @@ export default {
     },
     booking() {
       this.$emit("booking", {
+        //matching: this.matching
+      });
+    },
+    carpoolStandardContact() {
+      this.$emit("carpoolStandardContact", {
         //matching: this.matching
       });
     },
