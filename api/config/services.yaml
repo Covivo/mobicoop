@@ -776,7 +776,7 @@ services:
     tags:
       - {
           name: "console.command",
-          command: "app:incentive:subscription-verification",
+          command: "app:incentive:subscription-verify",
         }
 
   App\Incentive\Command\SubscriptionTimestampsCommand:

@@ -25,7 +25,7 @@ class SubscriptionVerificationCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:incentive:subscription-verification')
+            ->setName('app:incentive:subscription-verify')
             ->setDescription('Request verification of a subscription registered with mobConnect.')
             ->setHelp('Verify, with moB Connect, the subscription corresponding to the parameters.')
             ->addArgument('subscriptionType', InputArgument::REQUIRED, 'The type of subscription')
