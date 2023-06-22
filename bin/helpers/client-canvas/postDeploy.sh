@@ -76,7 +76,7 @@ cd ${ROOT}
 php bin/console doctrine:migrations:migrate --env=${VERSION_MIGRATE} -n
 
 # Crontab update
-python3 ${ROOT}/scripts/updateCrontab.py --env=${VERSION_MIGRATE}
+python3 ${ROOT}/mobicoop-platform/scripts/updateCrontab.py --env=${VERSION_MIGRATE}
 
 # External Cgu Mango
 EXTERNAL_CGU_DIRECTORY=${ROOT}/public/externalCgu

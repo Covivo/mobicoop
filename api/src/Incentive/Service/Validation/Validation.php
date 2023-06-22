@@ -9,6 +9,7 @@ use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\LoggerService;
+use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 
 abstract class Validation
@@ -42,6 +43,9 @@ abstract class Validation
     public function isOriginOrDestinationFromFrance($journey): bool
     {
         switch (true) {
+            case $journey instanceof CarpoolItem:
+                return $this->_isOriginOrDestinationFromFranceForCarpoolItem($journey);
+
             case $journey instanceof CarpoolProof:
                 return $this->_isOriginOrDestinationFromFranceForCarpoolProof($journey);
 
@@ -56,12 +60,12 @@ abstract class Validation
         }
     }
 
-    protected function _hasLongDistanceJourneyAlreadyDeclared(CarpoolProof $carpoolProof): bool
+    protected function _hasLongDistanceJourneyAlreadyDeclared(CarpoolItem $carpoolItem): bool
     {
         $filteredLongDistanceJourney = array_filter(
             $this->_driver->getLongDistanceSubscription()->getJourneys()->toArray(),
-            function (LongDistanceJourney $journey) use ($carpoolProof) {
-                return $journey->getCarpoolProof()->getId() === $carpoolProof->getId();
+            function (LongDistanceJourney $journey) use ($carpoolItem) {
+                return !is_null($journey->getCarpoolItem()) && $journey->getCarpoolItem()->getId() === $carpoolItem->getId();
             }
         );
 
@@ -111,6 +115,11 @@ abstract class Validation
         }
 
         return $this;
+    }
+
+    private function _isOriginOrDestinationFromFranceForCarpoolItem(CarpoolItem $carpoolItem): bool
+    {
+        return $this->_isOriginOrDestinationFromFranceForMatching($carpoolItem->getAsk()->getMatching());
     }
 
     private function _isOriginOrDestinationFromFranceForCarpoolProof(CarpoolProof $carpoolProof): bool

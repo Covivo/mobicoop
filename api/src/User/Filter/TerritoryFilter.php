@@ -16,7 +16,7 @@ class TerritoryFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["{$property}"] = [
+            $description[$property] = [
                 'property' => $property,
                 'type' => 'array',
                 'required' => false,

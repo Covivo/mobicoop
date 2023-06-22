@@ -61,6 +61,7 @@ class RelaunchManager
         switch ($this->_currentNotification->getName()) {
             case PayAfterCarpoolRegularEvent::NAME:
                 $objects = $this->_carpoolItemRepository->findUnpaydForRelaunch(Criteria::FREQUENCY_REGULAR, $this->_getLastWeek());
+                $this->_currentNotification->setTemplateNameSuffix($this->_currentNotification->getToday()->format('D'));
 
                 break;
                 // Define other actions
@@ -86,7 +87,7 @@ class RelaunchManager
 
     private function _executeRelaunch(User $recipient, $object): void
     {
-        $this->_notificationManager->notifies($this->_currentNotification->getName(), $recipient, $object);
+        $this->_notificationManager->notifies($this->_currentNotification->getActionName(), $recipient, $object);
     }
 
     private function _getLastWeek(): array

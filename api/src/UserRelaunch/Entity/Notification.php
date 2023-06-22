@@ -5,6 +5,7 @@ namespace App\UserRelaunch\Entity;
 class Notification
 {
     private const ERROR_MANDATORY_MISCONFIGURED = 'The mandatory property %s is mis configured';
+    private const DEFAULT_TEMPLATE_NAME_SEPARATOR = '_';
 
     /**
      * @var string
@@ -25,6 +26,11 @@ class Notification
      * @var \DateTime
      */
     private $_today;
+
+    /**
+     * @var string
+     */
+    private $_templateNameSuffix;
 
     public function __construct(array $notification)
     {
@@ -73,6 +79,29 @@ class Notification
         }
 
         return null;
+    }
+
+    /**
+     * Get the value of _templateName.
+     */
+    public function getActionName(): string
+    {
+        return $this->getName().(!is_null($this->_templateNameSuffix) ? self::DEFAULT_TEMPLATE_NAME_SEPARATOR.strtolower($this->_templateNameSuffix) : '');
+    }
+
+    /**
+     * Set the value of _templateName.
+     */
+    public function setTemplateNameSuffix(string $templateNameSuffix): self
+    {
+        $this->_templateNameSuffix = $templateNameSuffix;
+
+        return $this;
+    }
+
+    public function getToday(): \DateTimeInterface
+    {
+        return $this->_today;
     }
 
     private function _setNotification(): void

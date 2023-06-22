@@ -1,7 +1,7 @@
 {
     "getPublicProfileUri":"/utilisateur/profil/public",
     "yearsOld":"ans",
-    "carpoolRealized":"Covoiturages réalisés",
+    "carpoolRealized":"Covoiturages acceptés",
     "lastConnection":"Dernière connexion le",
     "answerRate":"Taux de réponse",
     "subscribedOn":"Inscrit le",

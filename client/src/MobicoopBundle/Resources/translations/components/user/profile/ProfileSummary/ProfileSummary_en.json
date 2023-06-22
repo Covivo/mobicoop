@@ -2,7 +2,7 @@
     "yearsOld": "years old",
     "getProfileSummaryUri": "/user/profile/summary",
     "infos": {
-        "carpoolRealized": "Carpools completed",
+        "carpoolRealized": "Carpools accepted",
         "answerPct": "Response rate",
         "lastConnection": "Last login"
     }

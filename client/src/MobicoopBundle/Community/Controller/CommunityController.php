@@ -109,7 +109,7 @@ class CommunityController extends AbstractController
                 $community->setFullDescription($data->get('fullDescription'));
                 $community->setAddress($address);
                 $community->addCommunityUser($communityUser);
-                $community->setDomain(trim($data->get('domain')));
+                $community->setDomain(!is_null($data->get('domain')) ? trim($data->get('domain')) : null);
 
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {

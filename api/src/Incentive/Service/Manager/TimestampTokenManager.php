@@ -9,6 +9,7 @@ use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TimestampTokenManager extends MobConnectManager
 {
@@ -124,6 +125,8 @@ class TimestampTokenManager extends MobConnectManager
         }
 
         $this->_resetAll();
+
+        $this->_em->flush();
 
         return $this->_currentSubscription;
     }
@@ -252,6 +255,10 @@ class TimestampTokenManager extends MobConnectManager
      */
     private function _setCurrentSubscription($subscription): self
     {
+        if (is_null($subscription)) {
+            throw new BadRequestHttpException('The subscription cannot be null');
+        }
+
         $this->_currentSubscription = $subscription;
 
         if (!is_null($this->_currentSubscription)) {

@@ -314,6 +314,18 @@
             "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
         }
     },
+    "sentry/sentry-symfony": {
+        "version": "4.8",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "3.0",
+            "ref": "31024cb40a800443dc032ce8b463b73879a7942a"
+        },
+        "files": [
+            "config/packages/prod/sentry.yaml"
+        ]
+    },
     "swiftmailer/swiftmailer": {
         "version": "v6.2.1"
     },
