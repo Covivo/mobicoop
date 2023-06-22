@@ -1286,7 +1286,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * Check if an email is already registered by a user
+     * Check if a phone number is valid
      * AJAX.
      */
     public function userPhoneNumberValidity(Request $request, UserManager $userManager)
@@ -1298,6 +1298,24 @@ class UserController extends AbstractController
             }
 
             return new JsonResponse(['error' => true, 'message' => 'Empty phone']);
+        }
+
+        return new JsonResponse(['error' => true, 'message' => 'Only POST is allowed']);
+    }
+
+    /**
+     * Check if a driver licence number is valid
+     * AJAX.
+     */
+    public function userDriverLicenceNumberValidity(Request $request, UserManager $userManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['driverLicenceNumber']) && '' !== $data['driverLicenceNumber']) {
+                return new JsonResponse($userManager->checkDriverLicenceNumberValidity($data['driverLicenceNumber']));
+            }
+
+            return new JsonResponse(['error' => true, 'message' => 'Empty driver licence number']);
         }
 
         return new JsonResponse(['error' => true, 'message' => 'Only POST is allowed']);
