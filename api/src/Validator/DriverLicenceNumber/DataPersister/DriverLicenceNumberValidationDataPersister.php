@@ -20,24 +20,17 @@
  *    LICENSE
  */
 
-namespace App\Validator\Phone\DataPersister;
+namespace App\Validator\DriverLicenceNumber\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Service\DrivingLicenceService;
 use App\Validator\DriverLicenceNumber\Resource\DriverLicenceNumberValidation;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class DriverLicenceNumberValidationDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $translator;
-
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
-
     public function supports($data, array $context = []): bool
     {
         return $data instanceof DriverLicenceNumberValidation && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
@@ -45,14 +38,8 @@ final class DriverLicenceNumberValidationDataPersister implements ContextAwareDa
 
     public function persist($data, array $context = [])
     {
-        echo 'yo';
-
-        exit;
-        // $data->setValid($this->phoneValidator->validate($data->getPhoneNumber()));
-
-        // if (!is_null($this->phoneValidator->message)) {
-        //     $data->setMessage($this->translator->trans($this->phoneValidator->message));
-        // }
+        $drivingLicenceService = new DrivingLicenceService($data->getDriverLicenceNumber());
+        $data->setValid($drivingLicenceService->isDrivingLicenceNumberValid());
 
         return $data;
     }

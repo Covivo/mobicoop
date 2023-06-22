@@ -95,13 +95,6 @@ class DriverLicenceNumberValidation
      */
     private $valid;
 
-    /**
-     * @var string Message (i.e. if the driver licence number is invalid)
-     *
-     * @Groups({"readDriverLicenceNumberValidation"})
-     */
-    private $message;
-
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -139,18 +132,6 @@ class DriverLicenceNumberValidation
     public function setValid(bool $valid): self
     {
         $this->valid = $valid;
-
-        return $this;
-    }
-
-    public function getMessage(): ?string
-    {
-        return $this->message;
-    }
-
-    public function setMessage(string $message): self
-    {
-        $this->message = $message;
 
         return $this;
     }
