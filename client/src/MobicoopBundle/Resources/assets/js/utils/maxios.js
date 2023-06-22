@@ -28,20 +28,6 @@ class MAxios {
         return response;
       })
   };
-  async await_post(route,params) {
-    try{
-      let res = await axios.post(route, params,{
-        headers:{
-          'content-type': 'application/json',
-          'X-LOCALE': localStorage.getItem('X-LOCALE')
-        }
-      })
-      return res;
-    }
-    catch(err){
-      console.log(err);
-    }
-  };
   put(route,params) {
     return axios
       .put(route, params,{

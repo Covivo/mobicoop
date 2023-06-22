@@ -1181,7 +1181,7 @@ export default {
       this.drivingLicenceNumberValid = true;
       if(this.drivingLicenceNumber){
         maxios
-          .await_post(
+          .post(
             this.$t("checkDrivingLicenceNumber.url"),
             {
               driverLicenceNumber: this.drivingLicenceNumber,
