@@ -79,6 +79,7 @@ import DynamicsLines from "@components/utilities/dynamicsLines/DynamicsLines";
 import DayListChips from "@components/utilities/DayListChips";
 import ErrorPage from "@components/utilities/ErrorPage";
 import MSnackInfos from "@components/utilities/MSnackInfos";
+import MDialog from "@components/utilities/MDialog";
 
 // PAYMENT
 import Payment from "@components/payment/Payment"
@@ -86,6 +87,7 @@ import PaymentPaid from "@components/user/profile/payment/PaymentPaid"
 
 // AssistiveDevices
 import Assistive from "@components/assistiveDevices/Assistive"
+
 
 export default {
   MHeader,
@@ -137,4 +139,5 @@ export default {
   ErrorPage,
   MSnackInfos,
   Assistive,
+  MDialog,
 }
