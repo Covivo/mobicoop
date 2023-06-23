@@ -188,8 +188,12 @@ class Tools
         return $over18;
     }
 
-    private function _familyNameToUppercase(string $familyName): string
+    private function _familyNameToUppercase(?string $familyName): ?string
     {
+        if (is_null($familyName)) {
+            return null;
+        }
+
         $familyName = htmlentities($familyName, ENT_NOQUOTES, 'utf-8');
         $familyName = preg_replace('#&([A-za-z])(?:uml|circ|tilde|acute|grave|cedil|ring);#', '\1', $familyName);
         $familyName = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $familyName);
