@@ -49,6 +49,7 @@
             :birthdate-display="birthdateDisplay"
             :carpool-standard-booking-enabled="carpoolStandardBookingEnabled"
             :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
+            :platform-name="platformName"
             @carpool="carpool(result)"
             @booking="booking(result)"
             @carpoolStandardContact="carpoolStandardContact(result)"
@@ -138,6 +139,10 @@ export default {
     carpoolStandardMessagingEnabled: {
       type: Boolean,
       default: false
+    },
+    platformName: {
+      type: String,
+      default: ""
     },
   },
   data(){

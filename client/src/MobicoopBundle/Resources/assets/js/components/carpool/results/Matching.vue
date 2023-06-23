@@ -307,6 +307,7 @@
       />
     </v-dialog>
 
+    <!-- carpoolStandard contact dialog -->
     <v-dialog
       v-model="carpoolStandardContactDialog"
       width="80%"
@@ -314,16 +315,20 @@
     >
       <v-card>
         <v-card-title class="headline grey lighten-2">
-          TEST
+          {{ $t("carpoolStandard.dialog.title") }}
         </v-card-title>
 
         <v-card-text>
           <p>
-            YESSSSS
+            {{
+              $t("carpoolStandard.dialog.intro", {
+                origin: result ? result.externalOperator : null,
+                platform: platformName
+              })
+            }}.
           </p>
           <p>
-            Yeah!!!!!!.<br>
-            Top.
+            {{ $t("carpoolStandard.dialog.instructions") }}
           </p>
         </v-card-text>
         <v-card-text>
@@ -337,10 +342,10 @@
             <v-btn
               rounded
               color="primary"
-              :loading="false"
-              @click="carpoolStandardContactDialog = false"
+              :loading="loadingCarpoolStandardContact"
+              @click="launchExternalBooking(result)"
             >
-              Envoyer
+              {{ $t("carpoolStandard.dialog.send") }}
             </v-btn>
           </p>
         </v-card-text>
@@ -350,9 +355,9 @@
           <v-btn
             color="error"
             text
-            @click="carpoolStandardContactDialog = false"
+            @click="carpoolStandardContactDialog = false, carpoolStandardContactMessage = null"
           >
-            Annuler
+            {{ $t("carpoolStandard.dialog.cancel") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -540,7 +545,8 @@ export default {
       bookingDialog: false,
       loginOrRegisterDialog: false,
       carpoolStandardContactDialog: false,
-      carpoolStandardContactMessage: "",
+      carpoolStandardContactMessage: null,
+      loadingCarpoolStandardContact: false,
       results: null,
       searchId: null,
       externalRDEXResults:null,
@@ -921,6 +927,8 @@ export default {
         })
     },
     launchExternalBooking(params) {
+      params.message = this.carpoolStandardContactMessage;
+      console.log(params);
       maxios.post(this.$t("bookingUrl"), params,
         {
           headers:{
@@ -929,7 +937,7 @@ export default {
         })
         .then((response) => {
           if(response.status == 200){
-            window.location = this.$t("carpoolMailBoxUrl");
+            // window.location = this.$t("carpoolMailBoxUrl");
           }
           else{
             console.log(response);
@@ -942,6 +950,9 @@ export default {
           this.carpoolDialog = false;
         })
       this.bookingDialog = false;
+      this.carpoolStandardContactDialog = false;
+      this.carpoolStandardContactMessage = null;
+      this.loadingCarpoolStandardContact = false;
     },
     updateFilters(data){
       this.page=1;

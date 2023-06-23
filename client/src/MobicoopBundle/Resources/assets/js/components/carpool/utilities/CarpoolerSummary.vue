@@ -139,7 +139,7 @@
                 type="button"
                 target="_blank"
                 class="mt-1"
-                @click="emitCarpoolStandardContact"
+                @click="dialogExternalContact=true"
               >
                 <span>
                   {{ $t("externalResult.contact.button.label") }}
