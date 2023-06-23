@@ -330,8 +330,7 @@ export default {
         currentUnreadDirectMessages: 0,
         currentUnreadSolidaryMessages: 0
       },
-      isExternalStandard: this.newThread.externalProviderType == 2 ? true : false,
-      isExternalRdex: this.newThread.externalProviderType == 1 ? true : false
+      isExternalStandard: false,
     };
   },
   created() {
