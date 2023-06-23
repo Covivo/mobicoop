@@ -141,7 +141,7 @@ class Tools
     public function getStartTimeGeopoint(): array
     {
         $startDatetime = !is_null($this->_currentCarpoolProof->getPickUpPassengerDate())
-            ? $this->_currentCarpoolProof->getPickUpPassengerDate()->format(CarpoolProofGouvProvider::ISO8601)
+            ? $this->_currentCarpoolProof->getPickUpPassengerDate()
             : $this->_getStartDateTime();
 
         $originAddress = !is_null($this->_currentCarpoolProof->getPickUpPassengerAddress())
@@ -154,7 +154,7 @@ class Tools
     public function getEndTimeGeopoint(): array
     {
         $endDatetime = !is_null($this->_currentCarpoolProof->getDropOffPassengerDate())
-            ? $this->_currentCarpoolProof->getDropOffPassengerDate()->format(CarpoolProofGouvProvider::ISO8601)
+            ? $this->_currentCarpoolProof->getDropOffPassengerDate()
             : $this->_getEndDateTime();
 
         $destinationAddress = !is_null($this->_currentCarpoolProof->getDropOffPassengerAddress())
@@ -188,8 +188,12 @@ class Tools
         return $over18;
     }
 
-    private function _familyNameToUppercase(string $familyName): string
+    private function _familyNameToUppercase(?string $familyName): ?string
     {
+        if (is_null($familyName)) {
+            return null;
+        }
+
         $familyName = htmlentities($familyName, ENT_NOQUOTES, 'utf-8');
         $familyName = preg_replace('#&([A-za-z])(?:uml|circ|tilde|acute|grave|cedil|ring);#', '\1', $familyName);
         $familyName = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $familyName);
