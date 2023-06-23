@@ -137,6 +137,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
             ],
             'driverJourneyId' => $booking->getDriverJourneyId(),
             'passengerJourneyId' => $booking->getPassengerJourneyId(),
+            'message' => $booking->getMessage(),
         ];
 
         return $dataProvider->postCollection($body, $headers);

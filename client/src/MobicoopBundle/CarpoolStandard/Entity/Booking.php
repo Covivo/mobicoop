@@ -35,7 +35,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Booking implements ResourceInterface, \JsonSerializable
 {
     public const RESOURCE_NAME = 'carpool_standard/bookings';
-    public const WAITING_CONFIRMATION = 'WAITING_CONFIRMATION';
+    public const INITIATED = 'INITIATED';
+    public const WAITING_PASSENGER_CONFIRMATION = 'WAITING_PASSENGER_CONFIRMATION';
+    public const WAITING_DRIVER_CONFIRMATION = 'WAITING_DRIVER_CONFIRMATION';
     public const CONFIRMED = 'CONFIRMED';
     public const CANCELLED = 'CANCELLED';
     public const COMPLETED_PENDING_VALIDATION = 'COMPLETED_PENDING_VALIDATION';
