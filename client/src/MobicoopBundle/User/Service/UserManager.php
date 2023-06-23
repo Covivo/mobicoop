@@ -33,6 +33,7 @@ use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\DriverLicenceNumberValidation;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PhoneValidation;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
@@ -412,8 +413,6 @@ class UserManager
     /**
      * Delete a user.
      *
-     * @param int $id The id of the user to delete
-     *
      * @return bool the result of the deletion
      */
     public function deleteUser(User $user)
@@ -582,8 +581,6 @@ class UserManager
 
     /**
      * Get the ads of an user.
-     *
-     * @param User $user
      *
      * @return array|object
      *
@@ -793,8 +790,6 @@ class UserManager
     /**
      * Unsubscribe the user from receiving news.
      *
-     * @param string $phone
-     *
      * @return null|User the user found or null if not found
      */
     public function unsubscribeUserFromEmail(string $token)
@@ -826,6 +821,23 @@ class UserManager
         $this->dataProvider->setClass(PhoneValidation::class);
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->post($phoneValidation);
+        if (201 == $response->getCode()) {
+            return json_decode($response->getValue());
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if the driver licence number is valid.
+     */
+    public function checkDriverLicenceNumberValidity(string $driverLicenceNumber)
+    {
+        $driverLicenceNumberValidation = new DriverLicenceNumberValidation($driverLicenceNumber);
+        $driverLicenceNumberValidation->setDriverLicenceNumber($driverLicenceNumber);
+        $this->dataProvider->setClass(DriverLicenceNumberValidation::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->post($driverLicenceNumberValidation);
         if (201 == $response->getCode()) {
             return json_decode($response->getValue());
         }

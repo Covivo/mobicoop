@@ -314,7 +314,15 @@
                 v-model="drivingLicenceNumber"
                 :label="$t('drivingLicenceNumber.label')"
                 class="drivingLicenceNumber"
+                @focusout="checkDrivingLicenceNumber"
+                @focusin="drivingLicenceNumberValid = true"
               />
+              <v-alert
+                v-if="!drivingLicenceNumberValid"
+                type="error"
+              >
+                {{ $t('checkDrivingLicenceNumber.error') }}
+              </v-alert>
             </v-col>
             <!-- Avatar -->
             <v-col cols="5">
@@ -831,7 +839,8 @@ export default {
       locale: null,
       emailChanged: false,
       dialogEmail: false,
-      ssoConnection: null
+      ssoConnection: null,
+      drivingLicenceNumberValid: true
     };
   },
   computed : {
@@ -1167,6 +1176,35 @@ export default {
     },
     changeTab(tab){
       this.$emit('changeTab', tab);
+    },
+    checkDrivingLicenceNumber(){
+      this.drivingLicenceNumberValid = true;
+      if(this.drivingLicenceNumber){
+        maxios
+          .post(
+            this.$t("checkDrivingLicenceNumber.url"),
+            {
+              driverLicenceNumber: this.drivingLicenceNumber,
+            },
+            {
+              headers: {
+                "content-type": "application/json",
+              },
+            }
+          )
+          .then((response) => {
+            if(response.data.valid){
+              this.drivingLicenceNumberValid = response.data.valid
+            }
+            else{
+              this.drivingLicenceNumberValid = false;
+            }
+          })
+          .catch(function(error) {
+            console.error(error);
+            this.drivingLicenceNumberValid = false;
+          });
+      }
     }
   }
 }
