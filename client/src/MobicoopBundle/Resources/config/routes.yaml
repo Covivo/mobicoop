@@ -1858,6 +1858,13 @@ payment_week_first:
     nl: /getFirstWeek
   controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getFirstWeek
 
+donation:
+  path:
+    fr: /donation
+    en: /donation
+    nl: /donation
+  controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\DonationController::donation
+
 #######################
 # Gamification routes #
 #######################
@@ -1900,14 +1907,12 @@ my_cee_subscriptions:
     nl: /getMyCeeSubscriptions
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::myCeeSubscriptions
 
-
 my_eec_subscriptions_eligibility:
   path:
     fr: /getMyEecEligibility
     en: /getMyEecEligibility
     nl: /getMyEecEligibility
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::myEecSubscriptionsEligibility
-
 
 ###############
 # misc routes #
@@ -1976,7 +1981,6 @@ assistives.sso-activation:
 ###############
 # carpool standard routes #
 ###############
-
 
 # external booking from results (POST) (AJAX json)
 post_external_booking:

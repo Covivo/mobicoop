@@ -263,8 +263,7 @@ services:
     resource: "@MobicoopBundle/User/Security/*"
 
   # Payment
-  Mobicoop\Bundle\MobicoopBundle\Payment\Controller\:
-    resource: "@MobicoopBundle/Payment/Controller/*"
+  Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController:
     arguments:
       $payment_electronic_active: "%env(bool:PAYMENT_ELECTRONIC_ACTIVE)%"
       $tipsEncouragement: "%env(bool:PAYMENT_TIPS_ENCOURAGEMENT)%"
