@@ -141,7 +141,7 @@ class Tools
     public function getStartTimeGeopoint(): array
     {
         $startDatetime = !is_null($this->_currentCarpoolProof->getPickUpPassengerDate())
-            ? $this->_currentCarpoolProof->getPickUpPassengerDate()->format(CarpoolProofGouvProvider::ISO8601)
+            ? $this->_currentCarpoolProof->getPickUpPassengerDate()
             : $this->_getStartDateTime();
 
         $originAddress = !is_null($this->_currentCarpoolProof->getPickUpPassengerAddress())
@@ -154,7 +154,7 @@ class Tools
     public function getEndTimeGeopoint(): array
     {
         $endDatetime = !is_null($this->_currentCarpoolProof->getDropOffPassengerDate())
-            ? $this->_currentCarpoolProof->getDropOffPassengerDate()->format(CarpoolProofGouvProvider::ISO8601)
+            ? $this->_currentCarpoolProof->getDropOffPassengerDate()
             : $this->_getEndDateTime();
 
         $destinationAddress = !is_null($this->_currentCarpoolProof->getDropOffPassengerAddress())
