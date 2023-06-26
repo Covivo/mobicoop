@@ -297,7 +297,7 @@ class Tools
         $carpooler = $this->_getCarpooler($carpoolerType);
 
         if (!is_null($carpooler)) {
-            $phoneService = new PhoneService($carpooler->getTelephone(), PhoneService::FR);
+            $phoneService = new PhoneService(PhoneService::FR, $carpooler->getTelephone());
 
             return $phoneService->getInternationalPhoneNumber($trunc, $truncLen);
         }

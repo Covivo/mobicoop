@@ -230,10 +230,10 @@ class PhoneService
      */
     private $_internationalPhoneNumber;
 
-    public function __construct(?string $phoneNumber, string $countryCode)
+    public function __construct(string $countryCode, ?string $phoneNumber)
     {
-        $this->_setOriginalPhoneNumber($phoneNumber);
         $this->_setCountryCode($countryCode);
+        $this->_setOriginalPhoneNumber($phoneNumber);
     }
 
     /**
@@ -294,7 +294,7 @@ class PhoneService
         return $this;
     }
 
-    private function _isCountryCodeSupported()
+    private function _isCountryCodeSupported(): bool
     {
         return array_key_exists($this->_getCountryCode(), self::COUNTRY_PHONE_PREFIX);
     }
@@ -325,8 +325,6 @@ class PhoneService
 
     /**
      * Set the value of _countryCode.
-     *
-     * @param string $_countryCode
      */
     private function _setCountryCode(string $countryCode): self
     {
@@ -345,12 +343,17 @@ class PhoneService
 
     /**
      * Set the value of _normalizedPhoneNumber.
-     *
-     * @param string $_normalizedPhoneNumber
      */
     private function _setNormalizedPhoneNumber(): self
     {
-        $this->_normalizedPhoneNumber = str_replace(' ', '', $this->_originalPhoneNumber);
+        $phoneNumber = str_replace(' ', '', $this->_originalPhoneNumber);
+
+        // We add the phone prefix char before the phone number if it has not been set
+        if (preg_match('/^'.self::COUNTRY_PHONE_PREFIX[$this->_getCountryCode()].'/', $phoneNumber)) {
+            $phoneNumber = self::PHONE_PREFIX.$phoneNumber;
+        }
+
+        $this->_normalizedPhoneNumber = $phoneNumber;
 
         return $this;
     }
