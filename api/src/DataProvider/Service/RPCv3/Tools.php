@@ -191,7 +191,7 @@ class Tools
 
     public function getCarpoolTime(\DateTimeInterface $fromDate): ?\DateTimeInterface
     {
-        if (Criteria::FREQUENCY_REGULAR === $this->_currentCarpoolProof->getAsk()->getCriteria()->getFrequency()) {
+        if (Criteria::FREQUENCY_PUNCTUAL === $this->_currentCarpoolProof->getAsk()->getCriteria()->getFrequency()) {
             return $this->_currentCarpoolProof->getAsk()->getCriteria()->getFromTime();
         }
 

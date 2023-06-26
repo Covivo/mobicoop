@@ -24,6 +24,7 @@
 namespace App\DataProvider\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Criteria;
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
 use App\DataProvider\Service\RPCv3\Tools;
@@ -181,7 +182,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
             if (is_null($journey['passenger']['start']['datetime'])) {
                 $fromDate = $carpoolProof->getStartDriverDate();
 
-                if (Criteria::FREQUENCY_REGULAR === $carpoolProof->getAsk()->getCriteria()->getFrequency()) {
+                if (Criteria::FREQUENCY_PUNCTUAL === $carpoolProof->getAsk()->getCriteria()->getFrequency()) {
                     $fromTime = $carpoolProof->getAsk()->getCriteria()->getFromTime();
                 }
 
