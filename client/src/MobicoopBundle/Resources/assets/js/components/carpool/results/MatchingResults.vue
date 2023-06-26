@@ -49,8 +49,10 @@
             :birthdate-display="birthdateDisplay"
             :carpool-standard-booking-enabled="carpoolStandardBookingEnabled"
             :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
+            :platform-name="platformName"
             @carpool="carpool(result)"
             @booking="booking(result)"
+            @carpoolStandardContact="carpoolStandardContact(result)"
             @loginOrRegister="loginOrRegister(result)"
           />
         </v-col>
@@ -138,6 +140,10 @@ export default {
       type: Boolean,
       default: false
     },
+    platformName: {
+      type: String,
+      default: ""
+    },
   },
   data(){
     return {
@@ -165,6 +171,9 @@ export default {
     },
     booking(booking){
       this.$emit("booking", booking);
+    },
+    carpoolStandardContact(carpoolStandardContact){
+      this.$emit("carpoolStandardContact", carpoolStandardContact);
     },
   }
 }

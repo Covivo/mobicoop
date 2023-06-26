@@ -19,5 +19,6 @@
         "context": "Iragarkia",
         "messages": "Mezuak"
     },
-    "title": "Mezutegia"
+    "title": "Mezutegia",
+    "urlSendExternalMessage": "/utilisateur/messages/externe/envoyer"
 }

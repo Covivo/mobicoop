@@ -10,7 +10,7 @@
             },
             "popup":{
                 "title":"Contacter",
-                "intro":"Cette annonce ne provient pas de {platform} de covoiturage mais du site partenaire {origin}",
+                "intro":"Cette annonce de covoiturage ne provient pas de {platform} mais du site partenaire {origin}",
                 "instructions":{
                     "line1":"Merci de compléter ou de modifier le message ci-dessous",
                     "line2":"Pensez à laisser au moins un moyen de contact, tel que votre adresse email et/ou votre numéro de téléphone afin que la personne du site partenaire puisse vous contacter"
