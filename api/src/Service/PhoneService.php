@@ -346,21 +346,30 @@ class PhoneService
      */
     private function _setNormalizedPhoneNumber(): self
     {
-        $this->_normalizedPhoneNumber = str_replace(' ', '', $this->_originalPhoneNumber);
-
-        return $this;
-    }
-
-    private function _setOriginalPhoneNumber(?string $phoneNumber): self
-    {
-        $phoneNumber = str_replace(' ', '', $this->_originalPhoneNumber);
+        $phoneNumber = $this->_originalPhoneNumber;
 
         // We add the phone prefix char before the phone number if it has not been set
         if (preg_match('/^'.self::COUNTRY_PHONE_PREFIX[$this->_getCountryCode()].'/', $phoneNumber)) {
             $phoneNumber = self::PHONE_PREFIX.$phoneNumber;
         }
 
+        // Wre replace the '00 ' prefix by '+'
+        if (preg_match('/^0{2} /', $phoneNumber)) {
+            $phoneNumber = self::PHONE_PREFIX.substr($phoneNumber, 3);
+        }
+
+        $phoneNumber = str_replace(' ', '', $phoneNumber);
+
         $this->_normalizedPhoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    private function _setOriginalPhoneNumber(?string $phoneNumber): self
+    {
+        $this->_originalPhoneNumber = $phoneNumber;
+
+        $this->_setNormalizedPhoneNumber();
 
         return $this;
     }
