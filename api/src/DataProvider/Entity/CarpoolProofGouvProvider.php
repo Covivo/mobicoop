@@ -182,7 +182,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
             if (is_null($journey['passenger']['start']['datetime'])) {
                 $fromDate = $carpoolProof->getStartDriverDate();
 
-                if (Criteria::FREQUENCY_REGULAR === $carpoolProof->getAsk()->getCriteria()->getFrequency()) {
+                if (Criteria::FREQUENCY_PUNCTUAL === $carpoolProof->getAsk()->getCriteria()->getFrequency()) {
                     $fromTime = $carpoolProof->getAsk()->getCriteria()->getFromTime();
                 }
 
