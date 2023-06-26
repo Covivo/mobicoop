@@ -3,6 +3,7 @@
 namespace App\DataProvider\Service\RPCv3;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Criteria;
 use App\DataProvider\Entity\CarpoolProofGouvProvider;
 use App\Geography\Entity\Address;
 use App\Incentive\Resource\CeeSubscriptions;
@@ -188,6 +189,78 @@ class Tools
         return $over18;
     }
 
+    public function getCarpoolTime(\DateTimeInterface $fromDate): ?\DateTimeInterface
+    {
+        if (Criteria::FREQUENCY_PUNCTUAL === $this->_currentCarpoolProof->getAsk()->getCriteria()->getFrequency()) {
+            return $this->_currentCarpoolProof->getAsk()->getCriteria()->getFromTime();
+        }
+
+        switch ($fromDate->format('w')) {
+            case 0:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isSunCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getSunTime();
+
+                break;
+
+            case 1:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isMonCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getMonTime();
+
+                break;
+
+            case 2:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isTueCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getTueTime();
+
+                break;
+
+            case 3:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isWedCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getWedTime();
+
+                break;
+
+            case 4:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isThuCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getThuTime();
+
+                break;
+
+            case 5:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isFriCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getFriTime();
+
+                break;
+
+            case 6:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isSatCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getSatTime();
+
+                break;
+        }
+    }
+
     private function _familyNameToUppercase(?string $familyName): ?string
     {
         if (is_null($familyName)) {
@@ -243,11 +316,17 @@ class Tools
 
     private function _getStartDatetime(): ?\DateTime
     {
-        return !is_null($this->_currentCarpoolProof->getAsk()->getMatching()) && !is_null($this->_currentCarpoolProof->getAsk()->getMatching()->getCriteria())
-            ? \DateTime::createFromFormat(
-                'Y-m-d H:m',
-                $this->_currentCarpoolProof->getAsk()->getMatching()->getCriteria()->getFromDate()->format('Y-m-d ').$this->_currentCarpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime()->format('H:m')
-            ) : null;
+        /**
+         * @var null|\DateTime
+         */
+        $fromDate = $this->_currentCarpoolProof->getStartDriverDate();
+        $fromTime = $this->getCarpoolTime($fromDate);
+
+        if (!is_null($fromDate) && !is_null($fromTime)) {
+            $fromDate->setTime($fromTime->format('H'), $fromTime->format('i'), $fromTime->format('s'));
+        }
+
+        return $fromDate;
     }
 
     private function _getEndDatetime(): ?\DateTime

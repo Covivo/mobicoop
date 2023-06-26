@@ -181,67 +181,74 @@ class CarpoolProofGouvProvider implements ProviderInterface
             // In organized, we need to use the driver's date and we search for the ask's criteria time for the passenger
             if (is_null($journey['passenger']['start']['datetime'])) {
                 $fromDate = $carpoolProof->getStartDriverDate();
-                if (Criteria::FREQUENCY_PUNCTUAL == $carpoolProof->getAsk()->getCriteria()->getFrequency()) {
+
+                if (Criteria::FREQUENCY_PUNCTUAL === $carpoolProof->getAsk()->getCriteria()->getFrequency()) {
                     $fromTime = $carpoolProof->getAsk()->getCriteria()->getFromTime();
-                } else {
-                    // Need to find the right time
-                    switch ($fromDate->format('w')) {
-                        case 0:
-                            if (!$carpoolProof->getAsk()->getCriteria()->isSunCheck()) {
-                                return null;
-                            }
-                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getSunTime();
+                }
 
-                            break;
+                switch ($fromDate->format('w')) {
+                    case 0:
+                        if (!$carpoolProof->getAsk()->getCriteria()->isSunCheck()) {
+                            return null;
+                        }
 
-                        case 1:
-                            if (!$carpoolProof->getAsk()->getCriteria()->isMonCheck()) {
-                                return null;
-                            }
-                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getMonTime();
+                        $fromTime = $carpoolProof->getAsk()->getCriteria()->getSunTime();
 
-                            break;
+                        break;
 
-                        case 2:
-                            if (!$carpoolProof->getAsk()->getCriteria()->isTueCheck()) {
-                                return null;
-                            }
-                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getTueTime();
+                    case 1:
+                        if (!$carpoolProof->getAsk()->getCriteria()->isMonCheck()) {
+                            return null;
+                        }
 
-                            break;
+                        $fromTime = $carpoolProof->getAsk()->getCriteria()->getMonTime();
 
-                        case 3:
-                            if (!$carpoolProof->getAsk()->getCriteria()->isWedCheck()) {
-                                return null;
-                            }
-                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getWedTime();
+                        break;
 
-                            break;
+                    case 2:
+                        if (!$carpoolProof->getAsk()->getCriteria()->isTueCheck()) {
+                            return null;
+                        }
 
-                        case 4:
-                            if (!$carpoolProof->getAsk()->getCriteria()->isThuCheck()) {
-                                return null;
-                            }
-                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getThuTime();
+                        $fromTime = $carpoolProof->getAsk()->getCriteria()->getTueTime();
 
-                            break;
+                        break;
 
-                        case 5:
-                            if (!$carpoolProof->getAsk()->getCriteria()->isFriCheck()) {
-                                return null;
-                            }
-                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getFriTime();
+                    case 3:
+                        if (!$carpoolProof->getAsk()->getCriteria()->isWedCheck()) {
+                            return null;
+                        }
 
-                            break;
+                        $fromTime = $carpoolProof->getAsk()->getCriteria()->getWedTime();
 
-                        case 6:
-                            if (!$carpoolProof->getAsk()->getCriteria()->isSatCheck()) {
-                                return null;
-                            }
-                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getSatTime();
+                        break;
 
-                            break;
-                    }
+                    case 4:
+                        if (!$carpoolProof->getAsk()->getCriteria()->isThuCheck()) {
+                            return null;
+                        }
+
+                        $fromTime = $carpoolProof->getAsk()->getCriteria()->getThuTime();
+
+                        break;
+
+                    case 5:
+                        if (!$carpoolProof->getAsk()->getCriteria()->isFriCheck()) {
+                            return null;
+                        }
+
+                        $fromTime = $carpoolProof->getAsk()->getCriteria()->getFriTime();
+
+                        break;
+
+                    case 6:
+                        if (!$carpoolProof->getAsk()->getCriteria()->isSatCheck()) {
+                            return null;
+                        }
+
+                        $fromTime = $carpoolProof->getAsk()->getCriteria()->getSatTime();
+
+                        break;
                 }
 
                 // We compute the pickup time
