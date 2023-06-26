@@ -215,8 +215,12 @@ class SubscriptionManager extends MobConnectManager
         $this->_loggerService->log('The timestamping process is complete');
     }
 
-    public function verifySubscriptionFromControllerCommand(string $subscriptionType, string $subscriptionId)
+    public function verifySubscriptionFromControllerCommand(?string $subscriptionType, ?string $subscriptionId)
     {
+        if (is_null($subscriptionType) || is_null($subscriptionId)) {
+            return $this->verifySubscriptions();
+        }
+
         $this->_subscriptionValidation->checkSubscriptionTypeValidity($subscriptionType);
 
         $this->_subscriptionValidation->checkSubscriptionIdValidity($subscriptionId);
