@@ -242,10 +242,16 @@ class ExternalJourneyManager
 
             // price - seats - distance - duration
             $result->setTime(('' !== $time) ? $time : null);
-            $result->setRoundedPrice($this->_formatDataManager->roundPrice(
-                ($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'],
-                $result->getFrequency()
-            ));
+
+            if (isset($currentJourney['cost']['fixed']) && $currentJourney['cost']['fixed'] > 0) {
+                $result->setRoundedPrice($this->_formatDataManager->roundPrice($currentJourney['cost']['fixed'], $result->getFrequency()));
+            } else {
+                $result->setRoundedPrice($this->_formatDataManager->roundPrice(
+                    ($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'],
+                    $result->getFrequency()
+                ));
+            }
+
             $result->setSeats(isset($currentJourney['driver']['seats']) ? $currentJourney['driver']['seats'] : 0);
 
             // return trip ?
