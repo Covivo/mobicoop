@@ -19,56 +19,56 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\User\Entity\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 
 /**
  * Collection data provider for User search.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 final class UserSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $collectionExtensions;
     private $managerRegistry;
-    
+
     public function __construct(ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->collectionExtensions = $collectionExtensions;
         $this->managerRegistry = $managerRegistry;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "get";
+        return User::class === $resourceClass && 'get' === $operationName;
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): PaginatorInterface
     {
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);
         $repository = $manager->getRepository($resourceClass);
         $queryBuilder = $repository->createQueryBuilder('u');
+        // We exclude pseudoynymized users
+        $queryBuilder->where('u.status != :status');
+        $queryBuilder->setParameter('status', User::STATUS_PSEUDONYMIZED);
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
-                $result = $extension->getResult($queryBuilder, $resourceClass, $operationName);
-                return $result;
+                return $extension->getResult($queryBuilder, $resourceClass, $operationName);
             }
         }
 
-        
         return $queryBuilder->getQuery()->getResult();
     }
 }
