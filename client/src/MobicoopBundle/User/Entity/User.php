@@ -498,6 +498,13 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $shortDistanceSubscription;
 
+    /**
+     * Specifies the user status in relation to the CEE incentives (true: has subscribed).
+     *
+     * @var bool
+     */
+    private $eecStatus = false;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1108,8 +1115,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * Set the Token of password mofification.
-     *
-     * @param null|string $pwdtoken
      */
     public function setPwdToken(?string $pwdToken)
     {
@@ -1464,6 +1469,24 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    /**
+     * Get the value of eecStatus.
+     */
+    public function getEecStatus(): bool
+    {
+        return $this->eecStatus;
+    }
+
+    /**
+     * Set the value of eecStatus.
+     */
+    public function setEecStatus(bool $eecStatus): self
+    {
+        $this->eecStatus = $eecStatus;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1515,6 +1538,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'ssoProvider' => $this->getSsoProvider(),
             'longDistanceSubscription' => $this->getLongDistanceSubscription(),
             'shortDistanceSubscription' => $this->getShortDistanceSubscription(),
+            'eecStatus' => $this->getEecStatus(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
