@@ -97,8 +97,13 @@ class BookingManager
         $booking->setPassengerDropLng($data['destination']['latitude']);
         $booking->setPassengerPickupAddress($data['origin']['streetAddress']);
         $booking->setPassengerDropAddress($data['destination']['streetAddress']);
-        $booking->setStatus(Booking::WAITING_CONFIRMATION);
         $booking->setDriverJourneyId($data['externalJourneyId']);
+        if (!is_null($data['message'])) {
+            $booking->setMessage($data['message']);
+            $booking->setStatus(Booking::INITIATED);
+        } else {
+            $booking->setStatus(Booking::WAITING_DRIVER_CONFIRMATION);
+        }
 
         return $booking;
     }

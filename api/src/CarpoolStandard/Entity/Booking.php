@@ -86,6 +86,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Booking
 {
     public const DEFAULT_ID = 999999999999;
+    public const INITIATED = 'INITIATED';
+    public const WAITING_PASSENGER_CONFIRMATION = 'WAITING_PASSENGER_CONFIRMATION';
+    public const WAITING_DRIVER_CONFIRMATION = 'WAITING_DRIVER_CONFIRMATION';
+    public const CONFIRMED = 'CONFIRMED';
+    public const CANCELLED = 'CANCELLED';
+    public const COMPLETED_PENDING_VALIDATION = 'COMPLETED_PENDING_VALIDATION';
+    public const VALIDATED = 'VALIDATED';
 
     /**
      * @var string the id of the booking
@@ -160,7 +167,7 @@ class Booking
     private $passengerDropAddress;
 
     /**
-     * @var string Status of the booking [WAITING_CONFIRMATION, CONFIRMED, CANCELLED, COMPLETED_PENDING_VALIDATION, VALIDATED]
+     * @var string Status of the booking [INITIATED, WAITING_DRIVER_CONFIRMATION", "WAITING_PASSENGER_CONFIRMATION, CONFIRMED, CANCELLED, COMPLETED_PENDING_VALIDATION, VALIDATED]
      *
      * @Assert\NotBlank
      *

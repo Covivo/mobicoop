@@ -76,8 +76,6 @@ class DataProvider
     /**
      * Get item operation.
      *
-     * @param int $id The id of the item
-     *
      * @return Response the response of the operation
      */
     public function getItem(array $params, array $headers = null): Response

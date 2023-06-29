@@ -98,7 +98,7 @@ class ExternalJourneyManager
                                 $aggregatedResults = json_decode($result['journeys'], true);
                             } else {
                                 // No rawJson flag set or set to 0. We return array of Carpool -> Result.
-                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
+                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName'], result::RDEX_PROVIDER) as $currentResult) {
                                     $currentResult->setProtocol('RDEX');
                                     $aggregatedResults[] = $currentResult;
                                 }
@@ -114,7 +114,7 @@ class ExternalJourneyManager
                                 $aggregatedResults = json_decode($result['journeys'], true);
                             } else {
                                 // No rawJson flag set or set to 0. We return array of Carpool -> Result.
-                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
+                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName'], result::STANDARD_RDEX_PROVIDER) as $currentResult) {
                                     $currentResult->setProtocol('STANDARD');
                                     $aggregatedResults[] = $currentResult;
                                 }
@@ -134,7 +134,7 @@ class ExternalJourneyManager
         return $aggregatedResults;
     }
 
-    private function createResultFromRDEX($data, $providerName): array
+    private function createResultFromRDEX($data, $providerName, int $providerType): array
     {
         $results = [];
         $journeys = json_decode($data, true);
@@ -242,10 +242,16 @@ class ExternalJourneyManager
 
             // price - seats - distance - duration
             $result->setTime(('' !== $time) ? $time : null);
-            $result->setRoundedPrice($this->_formatDataManager->roundPrice(
-                ($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'],
-                $result->getFrequency()
-            ));
+
+            if (isset($currentJourney['cost']['fixed']) && $currentJourney['cost']['fixed'] > 0) {
+                $result->setRoundedPrice($this->_formatDataManager->roundPrice($currentJourney['cost']['fixed'], $result->getFrequency()));
+            } else {
+                $result->setRoundedPrice($this->_formatDataManager->roundPrice(
+                    ($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'],
+                    $result->getFrequency()
+                ));
+            }
+
             $result->setSeats(isset($currentJourney['driver']['seats']) ? $currentJourney['driver']['seats'] : 0);
 
             // return trip ?
@@ -284,6 +290,7 @@ class ExternalJourneyManager
             $result->setExternalOrigin($currentJourney['origin']);
             $result->setExternalOperator($currentJourney['operator']);
             $result->setExternalProvider($providerName);
+            $result->setExternalProviderType($providerType);
             $result->setExternalJourneyId($currentJourney['uuid']);
             $results[] = $result;
         }
