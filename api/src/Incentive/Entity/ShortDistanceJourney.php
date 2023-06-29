@@ -3,7 +3,6 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
-use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -166,7 +165,7 @@ class ShortDistanceJourney
     /**
      * Get the start locality of the journey.
      */
-    public function getStartAddressLocality(): string
+    public function getStartAddressLocality(): ?string
     {
         return $this->startAddressLocality;
     }
@@ -186,7 +185,7 @@ class ShortDistanceJourney
     /**
      * Get the end locality of the journey.
      */
-    public function getEndAddressLocality(): string
+    public function getEndAddressLocality(): ?string
     {
         return $this->endAddressLocality;
     }
@@ -206,7 +205,7 @@ class ShortDistanceJourney
     /**
      * Get the distance in meter of the journey.
      */
-    public function getDistance(): int
+    public function getDistance(): ?int
     {
         return $this->distance;
     }
@@ -225,7 +224,7 @@ class ShortDistanceJourney
     /**
      * Get the ID of the user.
      */
-    public function getOperatorUserId(): string
+    public function getOperatorUserId(): ?string
     {
         return $this->operatorUserId;
     }
@@ -243,7 +242,7 @@ class ShortDistanceJourney
     /**
      * Get the value of rpcJourneyId.
      */
-    public function getRpcJourneyId(): string
+    public function getRpcJourneyId(): ?string
     {
         return $this->rpcJourneyId;
     }
@@ -263,7 +262,7 @@ class ShortDistanceJourney
     /**
      * Get the status of the user.
      */
-    public function getRpcNumberStatus(): string
+    public function getRpcNumberStatus(): ?string
     {
         return $this->rpcNumberStatus;
     }
@@ -281,7 +280,7 @@ class ShortDistanceJourney
     /**
      * Get the carpoolers number of the journey.
      */
-    public function getCarpoolersNumber(): int
+    public function getCarpoolersNumber(): ?int
     {
         return $this->carpoolersNumber;
     }
@@ -299,7 +298,7 @@ class ShortDistanceJourney
     /**
      * Get date and time of the start of the operation.
      */
-    public function getStartDate(): string
+    public function getStartDate(): ?string
     {
         return $this->startDate;
     }
@@ -317,7 +316,7 @@ class ShortDistanceJourney
     /**
      * Get date and time of the end of the operation.
      */
-    public function getEndDate(): string
+    public function getEndDate(): ?string
     {
         return $this->endDate;
     }

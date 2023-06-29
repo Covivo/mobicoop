@@ -208,11 +208,15 @@ class SubscriptionManager extends MobConnectManager
         $this->_loggerService->log('Performing the timestamping process');
         $this->setDriver($subscription->getUser());
 
-        $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
 
         $this->_em->flush();
 
-        $this->_loggerService->log('The timestamping process is complete');
+        $response = 'The timestamping process is complete';
+
+        $this->_loggerService->log($response);
+
+        return $response;
     }
 
     public function verifySubscriptionFromControllerCommand(?string $subscriptionType, ?string $subscriptionId)

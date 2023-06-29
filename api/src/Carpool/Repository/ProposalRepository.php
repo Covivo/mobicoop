@@ -53,6 +53,9 @@ class ProposalRepository
     private $use_passenger_proportion;      // use the ~passenger distance proportion~
     private $use_distance;                  // use the ~distance between the driver and the passenger~ filtering
 
+    /**
+     * @var EntityRepository
+     */
     private $repository;
     private $userManager;
     private $geoTools;
@@ -950,8 +953,6 @@ class ProposalRepository
      * Find all valid proposals ids
      * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates).
      *
-     * @param int $status
-     *
      * @return array
      */
     public function findAllValidWithoutMatchingsProposalIds()
@@ -1256,7 +1257,8 @@ class ProposalRepository
         }
         $result = $qb->setParameter('id', $userId)
             ->setParameter('now', $now->format('Y-m-d'))
-            ->getQuery()->getOneOrNullResult();
+            ->getQuery()->getOneOrNullResult()
+        ;
 
         if (!is_null($result['nb'])) {
             return (int) $result['nb'];
@@ -1299,14 +1301,18 @@ class ProposalRepository
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.communities', 'com')
             ->join('p.criteria', 'c')
+            ->join('p.user', 'u', 'WITH', 'u.status != :pseudonymizedStatus')
             ->where('com.id = :communityId')
             ->andWhere('p.private = 0')
             ->andWhere('p.type = 1 or p.type = 2')
             ->andWhere('(c.frequency = :punctual AND c.fromDate is not null AND c.fromDate >= :date) OR (c.frequency = :regular AND c.toDate is not null and c.toDate >= :date)')
-            ->setParameter('communityId', $community->getId())
-            ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
-            ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
-            ->setParameter('date', $now->format('Y-m-d 00:00:00'))
+            ->setParameters([
+                'communityId' => $community->getId(),
+                'date' => $now->format('Y-m-d 00:00:00'),
+                'punctual' => Criteria::FREQUENCY_PUNCTUAL,
+                'regular' => Criteria::FREQUENCY_REGULAR,
+                'pseudonymizedStatus' => User::STATUS_PSEUDONYMIZED,
+            ])
         ;
 
         return $query->getQuery()->getResult();
