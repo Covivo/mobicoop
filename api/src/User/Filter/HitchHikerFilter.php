@@ -63,7 +63,7 @@ final class HitchHikerFilter extends AbstractContextAwareFilter
 
         $queryBuilder
             ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
 
         if (1 === $value || 'true' === $value) {
