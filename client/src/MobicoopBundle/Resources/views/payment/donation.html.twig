@@ -1,0 +1,15 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}donation.title{% endtrans %} - {{ app_name }}{% endblock %}
+{% block stylesheets %}
+
+{% endblock %}
+{% block main %}
+
+<donor-box />
+
+{% block javascripts %}
+<script src="https://donorbox.org/widget.js" paypalExpress="false" />
+{% endblock %}
+
+{% endblock %}

@@ -67,6 +67,8 @@ relaypoints:
   title: "Points relais"
 payment:
   title: "Paiements"
+donation:
+  title: "Faire un don"
 rssfeeds:
   title: "Rss feeds"
 browserUpdate:

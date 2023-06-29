@@ -202,6 +202,7 @@
                 :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
                 @loginOrRegister="loginOrRegister"
                 @booking="booking"
+                @carpoolStandardContact="carpoolStandardContact"
               />
             </v-tab-item>
             <!-- Public transport results tab item -->
@@ -304,6 +305,62 @@
         @close="bookingDialog = false"
         @booking="launchExternalBooking"
       />
+    </v-dialog>
+
+    <!-- carpoolStandard contact dialog -->
+    <v-dialog
+      v-model="carpoolStandardContactDialog"
+      width="80%"
+      min-height="500px"
+    >
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          {{ $t("carpoolStandard.dialog.title") }}
+        </v-card-title>
+
+        <v-card-text>
+          <p>
+            {{
+              $t("carpoolStandard.dialog.intro", {
+                origin: result ? result.externalOperator : null,
+                platform: platformName
+              })
+            }}.
+          </p>
+          <p>
+            {{ $t("carpoolStandard.dialog.instructions") }}
+          </p>
+        </v-card-text>
+        <v-card-text>
+          <v-textarea
+            v-model="carpoolStandardContactMessage"
+            name="input-7-1"
+            label="votre message"
+            rows="5"
+          />
+          <p class="text-right">
+            <v-btn
+              rounded
+              color="primary"
+              :loading="loadingCarpoolStandardContact"
+              @click="launchExternalBooking(result)"
+            >
+              {{ $t("carpoolStandard.dialog.send") }}
+            </v-btn>
+          </p>
+        </v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="error"
+            text
+            @click="carpoolStandardContactDialog = false, carpoolStandardContactMessage = null"
+          >
+            {{ $t("carpoolStandard.dialog.cancel") }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
 
     <!-- login or register dialog -->
@@ -487,6 +544,9 @@ export default {
       carpoolDialog: false,
       bookingDialog: false,
       loginOrRegisterDialog: false,
+      carpoolStandardContactDialog: false,
+      carpoolStandardContactMessage: null,
+      loadingCarpoolStandardContact: false,
       results: null,
       searchId: null,
       externalRDEXResults:null,
@@ -591,6 +651,11 @@ export default {
       this.result = booking;
       // open the dialog
       this.bookingDialog = true;
+    },
+    carpoolStandardContact(carpoolStandardContact){
+      this.result = carpoolStandardContact;
+      // open the dialog
+      this.carpoolStandardContactDialog = true;
     },
     loginOrRegister(carpool) {
       this.result = carpool;
@@ -862,6 +927,8 @@ export default {
         })
     },
     launchExternalBooking(params) {
+      params.message = this.carpoolStandardContactMessage;
+      console.log(params);
       maxios.post(this.$t("bookingUrl"), params,
         {
           headers:{
@@ -870,7 +937,7 @@ export default {
         })
         .then((response) => {
           if(response.status == 200){
-            window.location = this.$t("carpoolMailBoxUrl");
+            // window.location = this.$t("carpoolMailBoxUrl");
           }
           else{
             console.log(response);
@@ -883,6 +950,9 @@ export default {
           this.carpoolDialog = false;
         })
       this.bookingDialog = false;
+      this.carpoolStandardContactDialog = false;
+      this.carpoolStandardContactMessage = null;
+      this.loadingCarpoolStandardContact = false;
     },
     updateFilters(data){
       this.page=1;

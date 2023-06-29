@@ -41,5 +41,15 @@
         "button": {
             "label": "Créer une alerte"
         }
-	}
+	},
+    "carpoolStandard": {
+        "dialog": {
+            "send": "Contacter",
+            "cancel": "Annuler",
+            "title": "Contacter",
+            "intro": "Cette annonce de covoiturage ne provient pas de {platform} mais du site partenaire {origin}",
+            "instructions": "Merci de compléter ou de modifier le message ci-dessous",
+            "label": "Votre message"
+        }
+    }
 }
