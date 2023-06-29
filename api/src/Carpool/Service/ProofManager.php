@@ -645,6 +645,8 @@ class ProofManager
             if (200 == $result->getCode()) {
                 $proof->setStatus(CarpoolProof::STATUS_SENT);
                 ++$nbSent;
+            } elseif (409 == $result->getCode()) {
+                $proof->setStatus(CarpoolProof::STATUS_SENT);
             } else {
                 $proof->setStatus(CarpoolProof::STATUS_ERROR);
             }
