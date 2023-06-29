@@ -49,6 +49,7 @@
             :show-destination="true"
             :is-widget="true"
             :date-time-picker="dateTimePicker"
+            :default-outward-date="defaultOutwardDate"
           />
         </v-col>
       </v-row>
@@ -126,6 +127,9 @@ export default {
     }
   },
   computed: {
+    defaultOutwardDate() {
+      return new Date();
+    },
     disableSearch() {
       return false;
     }
