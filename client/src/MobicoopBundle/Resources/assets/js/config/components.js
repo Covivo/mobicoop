@@ -84,7 +84,7 @@ import MDialog from "@components/utilities/MDialog";
 // PAYMENT
 import Payment from "@components/payment/Payment"
 import PaymentPaid from "@components/user/profile/payment/PaymentPaid"
-import Donorbox from "@components/payment/Donation/Donorbox"
+import DonorBox from "@components/payment/Donation/DonorBox"
 
 // AssistiveDevices
 import Assistive from "@components/assistiveDevices/Assistive"
@@ -136,7 +136,7 @@ export default {
   DayListChips,
   Payment,
   PaymentPaid,
-  Donorbox,
+  DonorBox,
   SsoLoginReturn,
   ErrorPage,
   MSnackInfos,
