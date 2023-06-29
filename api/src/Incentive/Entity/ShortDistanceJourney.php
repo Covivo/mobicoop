@@ -3,7 +3,6 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
-use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

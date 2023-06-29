@@ -95,17 +95,11 @@ class BankTransferEmitterValidator
 
     public function _checkRecipientsWallets()
     {
-        $recipientsIds = [];
         foreach ($this->_BankTransfers as $BankTransfer) {
-            if (!in_array($BankTransfer->getRecipient()->getId(), $recipientsIds)) {
-                $recipientsIds[] = $BankTransfer->getRecipient()->getId();
-                $wallet = $this->_getUserWallet($BankTransfer->getRecipient());
-                if (is_null($wallet)) {
-                    $this->_updateTransfertStatus($BankTransfer, BankTransfer::STATUS_ABANDONNED_NO_RECIPIENT_WALLET);
-                    $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No recipient Wallet for User '.$BankTransfer->getRecipient()->getId());
-
-                    continue;
-                }
+            $wallet = $this->_getUserWallet($BankTransfer->getRecipient());
+            if (is_null($wallet)) {
+                $this->_updateTransfertStatus($BankTransfer, BankTransfer::STATUS_ABANDONNED_NO_RECIPIENT_WALLET);
+                $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No recipient Wallet for User '.$BankTransfer->getRecipient()->getId());
             }
         }
     }
