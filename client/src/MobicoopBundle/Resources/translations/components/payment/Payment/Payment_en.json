@@ -1,62 +1,62 @@
 {
-    "wallet": "Wallet location",
-    "donations": "Donations",
-    "titleRegular": "Regular route payments",
-    "titlePunctual": "Payments",
-    "titleConfirmation": "Passenger payment confirmation",
-    "outward": "Outward",
-    "return": "Return",
-    "price": "Amount: € {price}",
-    "sumToPay": "Total to pay: € {price}",
-    "electronicPay": "I am paying online",
+  "wallet": "Wallet location",
+  "donations": "Donations",
+  "titleRegular": "Regular route payments",
+  "titlePunctual": "Payments",
+  "titleConfirmation": "Passenger payment confirmation",
+  "outward": "Outward",
+  "return": "Return",
+  "price": "Amount: € {price}",
+  "sumToPay": "Total to pay: € {price}",
+  "electronicPay": "I am paying online",
+  "directPay": "I have paid directly",
+  "directPaymentReceived": "Payment received directly | Payments received directly",
+  "report": {
+    "label": "Report an outstanding payment",
+    "text1": "You declare that you have not been paid for this carpooling. Please click on \"Validate\" to confirm.",
+    "text2": "A notification will be sent to the passenger. We invite you to contact the passenger via the messaging system to resolve the problem.",
+    "cancel": "Cancel",
+    "valid": "Validate",
+    "labelIsReported": "Not paid"
+  },
+  "buttons": {
+    "previous": "Previous",
+    "next": "Next",
+    "back": {
+      "label": "Return",
+      "route": "/user/profile/change/my-accepted-carpools"
+    },
+    "validate": "Validate",
+    "confirm": "Confirm",
     "directPay": "I have paid directly",
-    "directPaymentReceived": "Payment received directly | Payments received directly",
-    "report": {
-        "label": "Report an outstanding payment",
-        "text1": "You declare that you have not been paid for this carpooling. Please click on \"Validate\" to confirm.",
-        "text2": "A notification will be sent to the passenger. We invite you to contact the passenger via the messaging system to resolve the problem.",
-        "cancel": "Cancel",
-        "valid": "Validate",
-        "labelIsReported": "Not paid"
-    },
-    "buttons": {
-        "previous": "Previous",
-        "next": "Next",
-        "back": {
-            "label": "Return",
-            "route": "/user/profile/change/my-accepted-carpools"
-        },
-        "validate": "Validate",
-        "confirm": "Confirm",
-        "directPay": "I have paid directly",
-        "directPayConfirm": "Confirm direct payment",
-        "isConfirmed": "Direct payment confirmed"
-    },
-    "select": {
-        "label": "Period"
-    },
-    "payments": {
-        "getPayments": "/payments/get",
-        "postPayments": "/payments/post",
-        "getCalendar": "/getCalendar",
-        "getFirstWeek": "/getFirstWeek"
-    },
-    "tooltip": {
-        "message": "You cannot pay online because the driver has not entered their bank details."
-    },
-    "regularInfo": "If you haven't carpooled with {driver} on some days, you can uncheck them below.",
-    "redirectAfterPayment": "/user/profile/change/my-accepted-carpools",
-    "from": "from ",
-    "to": " to ",
-    "noOnlinePayment": {
-        "line1": "Your profile is not complete and you cannot pay online.",
-        "line2": "For example, you must enter your full address (number, street name, etc.) and not just your place of residence."
-    },
-    "noMoreItems": "There are no more payments to be made or pending confirmation.",
-    "loadingPageText": "Load payments to be made or confirmed",
-    "tipsEncouragement": {
-        "text": "{platformName} is a free service, without commission and without advertising. But to contribute to maintain the platform, you can give us a helping hand by making",
-        "textLink": "a donation here",
-        "link": "https://www.zeste.coop/fr/associations/mobicoop"
-    }
+    "directPayConfirm": "Confirm direct payment",
+    "isConfirmed": "Direct payment confirmed"
+  },
+  "select": {
+    "label": "Period"
+  },
+  "payments": {
+    "getPayments": "/payments/get",
+    "postPayments": "/payments/post",
+    "getCalendar": "/getCalendar",
+    "getFirstWeek": "/getFirstWeek"
+  },
+  "tooltip": {
+    "message": "You cannot pay online because the driver has not entered their bank details."
+  },
+  "regularInfo": "If you haven't carpooled with {driver} on some days, you can uncheck them below.",
+  "redirectAfterPayment": "/user/profile/change/my-accepted-carpools",
+  "from": "from ",
+  "to": " to ",
+  "noOnlinePayment": {
+    "line1": "Your profile is not complete and you cannot pay online.",
+    "line2": "For example, you must enter your full address (number, street name, etc.) and not just your place of residence."
+  },
+  "noMoreItems": "There are no more payments to be made or pending confirmation.",
+  "loadingPageText": "Load payments to be made or confirmed",
+  "tipsEncouragement": {
+    "text": "{platformName} is a free service, without commission and without advertising. But to contribute to maintain the platform, you can give us a helping hand by making",
+    "textLink": "a donation here",
+    "link": "/donation"
+  }
 }
