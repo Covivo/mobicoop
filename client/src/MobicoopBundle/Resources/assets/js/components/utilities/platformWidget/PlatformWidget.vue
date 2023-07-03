@@ -128,7 +128,7 @@ export default {
   },
   computed: {
     defaultOutwardDate() {
-      return new Date();
+      return new Date().toString();
     },
     disableSearch() {
       return false;
