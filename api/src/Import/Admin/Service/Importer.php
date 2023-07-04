@@ -62,7 +62,7 @@ class Importer
     public function importUsers(): Import
     {
         $this->_validateLines(new UserLineImportValidator());
-        $this->_populateImportTable(new UserImportPopulator($this->_manager));
+        // $this->_populateImportTable(new UserImportPopulator($this->_manager));
 
         return $this->_buildImport();
     }

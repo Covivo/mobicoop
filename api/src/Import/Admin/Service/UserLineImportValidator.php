@@ -34,9 +34,31 @@ class UserLineImportValidator implements LineImportValidatorInterface
     private const NUMBER_OF_COLUMN = 7;
 
     private const FIELDS_VALIDATORS = [
-        0 => ['App\Import\Admin\Service\Validator\MandatoryValidator', 'App\Import\Admin\Service\Validator\StringValidator'],
-        1 => ['App\Import\Admin\Service\Validator\StringValidator'],
-        2 => ['App\Import\Admin\Service\Validator\StringValidator'],
+        0 => [
+            'App\Import\Admin\Service\Validator\NotEmptyValidator',
+            'App\Import\Admin\Service\Validator\StringValidator',
+        ],
+        1 => [
+            'App\Import\Admin\Service\Validator\NotEmptyValidator',
+            'App\Import\Admin\Service\Validator\StringValidator',
+            'App\Import\Admin\Service\Validator\EmailValidator',
+        ],
+        2 => [
+            'App\Import\Admin\Service\Validator\NotEmptyValidator',
+            'App\Import\Admin\Service\Validator\StringValidator',
+        ],
+        3 => [
+            'App\Import\Admin\Service\Validator\NotEmptyValidator',
+            'App\Import\Admin\Service\Validator\StringValidator',
+        ],
+        4 => [
+            'App\Import\Admin\Service\Validator\NotEmptyValidator',
+            'App\Import\Admin\Service\Validator\GenderValidator',
+        ],
+        5 => [
+            'App\Import\Admin\Service\Validator\NotEmptyValidator',
+            'App\Import\Admin\Service\Validator\DateValidator',
+        ],
     ];
 
     public function validate(array $line, int $numLine)

@@ -24,19 +24,20 @@
 namespace App\Import\Admin\Service\Validator;
 
 use App\Import\Admin\Interfaces\FieldValidatorInterface;
+use App\User\Entity\User;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class MandatoryValidator implements FieldValidatorInterface
+class GenderValidator implements FieldValidatorInterface
 {
     public function validate($value): bool
     {
-        return 0 < strlen(trim($value)) && '' !== trim($value);
+        return in_array($value, User::GENDERS);
     }
 
     public function errorMessage($value): string
     {
-        return 'Missing mandatory parameter';
+        return $value.' is not a valid gender. Must be '.json_encode(User::GENDERS);
     }
 }
