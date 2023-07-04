@@ -178,11 +178,8 @@ class MobConnectApiProvider extends MobConnectProvider
             'consent' => true,
             'Type de trajet' => true === $isLongDistance ? [self::LONG_DISTANCE_LABEL] : [self::SHORT_DISTANCE_LABEL],
             'Numéro de permis de conduire' => $this->_user->getDrivingLicenceNumber(),
+            'Numéro de téléphone' => $this->_user->getTelephone(),
         ];
-
-        if ($isLongDistance) {
-            $data['Numéro de téléphone'] = $this->_user->getTelephone();
-        }
 
         $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS);
 
