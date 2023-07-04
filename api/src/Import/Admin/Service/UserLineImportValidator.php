@@ -31,7 +31,7 @@ use App\Import\Admin\Interfaces\LineImportValidatorInterface;
  */
 class UserLineImportValidator implements LineImportValidatorInterface
 {
-    private const NUMBER_OF_COLUMN = 3;
+    private const NUMBER_OF_COLUMN = 7;
 
     private const FIELDS_VALIDATORS = [
         0 => ['App\Import\Admin\Service\Validator\MandatoryValidator', 'App\Import\Admin\Service\Validator\StringValidator'],

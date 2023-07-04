@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2022, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,26 +21,18 @@
  *    LICENSE
  */
 
-namespace App\Import\Admin\Controller;
+namespace App\Import\Admin\Interfaces;
 
-use App\Import\Admin\Resource\Import;
-use App\Import\Admin\Service\Importer;
-use App\User\Admin\Service\UserManager;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
- *  @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class ImportUsersAction
+interface PopulatorInterface
 {
-    public function __invoke(Request $request, UserManager $userManager): Import
-    {
-        if (!$request->files->get('file')) {
-            throw new \Exception('File is mandatory');
-        }
+    public function populate(File $file);
 
-        $importer = new Importer($request->files->get('file'), $request->get('filename'), $userManager);
+    public function getEntity(): string;
 
-        return $importer->importUsers();
-    }
+    public function getLogEntity(): ?string;
 }

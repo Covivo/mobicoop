@@ -24,7 +24,9 @@
 namespace App\Import\Admin\Service;
 
 use App\Import\Admin\Interfaces\LineImportValidatorInterface;
+use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\Import\Admin\Resource\Import;
+use App\Import\Admin\Service\Populator\UserImportPopulator;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
@@ -47,17 +49,27 @@ class Importer
      */
     private $_filename;
 
-    public function __construct(File $file, string $filename)
+    private $_manager;
+
+    public function __construct(File $file, string $filename, $manager = null)
     {
         $this->_file = $file;
         $this->_filename = $filename;
         $this->_validateFile();
+        $this->_manager = $manager;
     }
 
     public function importUsers(): Import
     {
         $this->_validateLines(new UserLineImportValidator());
+        $this->_populateImportTable(new UserImportPopulator($this->_manager));
 
+        return $this->_buildImport();
+    }
+
+    public function importRelayPoints(): Import
+    {
+        // define validation and populator
         return $this->_buildImport();
     }
 
@@ -66,6 +78,11 @@ class Importer
         if (!in_array($this->_file->getMimeType(), self::MIME_TYPES)) {
             throw new \LogicException('Incorrect MIME type');
         }
+    }
+
+    private function _populateImportTable(PopulatorInterface $populator)
+    {
+        $populator->populate($this->_file);
     }
 
     private function _validateLines(LineImportValidatorInterface $usersImportValidator)
