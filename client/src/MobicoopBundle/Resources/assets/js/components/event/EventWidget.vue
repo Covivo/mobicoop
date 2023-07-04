@@ -49,6 +49,7 @@
             :show-destination="false"
             :is-widget="true"
             :date-time-picker="dateTimePicker"
+            :default-outward-date="defaultOutwardDate"
           />
         </v-col>
       </v-row>
@@ -142,7 +143,10 @@ export default {
         return true;
       else
         return false;
-    }
+    },
+    defaultOutwardDate() {
+      return new Date().toString();
+    },
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
