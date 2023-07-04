@@ -98,4 +98,9 @@ class BookingManager
 
         return $booking;
     }
+
+    public function getBookings(int $userId)
+    {
+        return $this->carpoolStandardProvider->getBookings($userId);
+    }
 }

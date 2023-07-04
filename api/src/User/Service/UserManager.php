@@ -33,6 +33,7 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\ProofManager;
+use App\CarpoolStandard\Service\BookingManager;
 use App\Communication\Entity\Medium;
 use App\Communication\Entity\Message;
 use App\Communication\Repository\MessageRepository;
@@ -131,6 +132,7 @@ class UserManager
     private $scammerRepository;
     private $userMinAge;
     private $paymentProfileRepository;
+    private $bookingManager;
 
     // Default carpool settings
     private $chat;
@@ -201,7 +203,8 @@ class UserManager
         GamificationManager $gamificationManager,
         ScammerRepository $scammerRepository,
         PseudonymizationManager $pseudonymizationManager,
-        $userMinAge
+        $userMinAge,
+        BookingManager $bookingManager
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -245,6 +248,7 @@ class UserManager
         $this->scammerRepository = $scammerRepository;
         $this->_pseudonymizationManager = $pseudonymizationManager;
         $this->userMinAge = $userMinAge;
+        $this->bookingManager = $bookingManager;
     }
 
     /**
@@ -1129,6 +1133,27 @@ class UserManager
 
                 $messages[] = $currentThread;
             }
+        }
+        // We get carpoolStandard bookings
+        $bookings = $this->bookingManager->getBookings($user->getId());
+        foreach ($bookings as $booking) {
+            $currentThread = [
+                'idRecipient' => $booking->getDriver()->getId(),
+                'givenName' => $booking->getDriver()->getAlias(),
+                'date' => '',
+                'selected' => false,
+                'unreadMessages' => 0,
+                'idBooking' => $booking->getId(),
+                'carpoolInfos' => [
+                    'origin' => $booking->getPassengerPickupAddress(),
+                    'destination' => $booking->getPassengerDropAddress(),
+                    'criteria' => [
+                        'frequency' => 1,
+                        'fromDate' => $booking->passengerPickupDate(),
+                        'fromTime' => $booking->passengerPickupDate(),
+                    ],
+                ],
+            ];
         }
 
         // Sort with the last message received first

@@ -101,4 +101,11 @@ class CarpoolStandardProvider
 
         return $this->providerInstance->getBooking($bookingId);
     }
+
+    public function getBookings(int $userId)
+    {
+        $this->checkCarpoolStandardConfiguration();
+
+        return $this->providerInstance->getBookings($userId);
+    }
 }
