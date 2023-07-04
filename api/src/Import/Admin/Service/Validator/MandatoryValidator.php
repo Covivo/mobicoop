@@ -21,16 +21,22 @@
  *    LICENSE
  */
 
-namespace App\Import\Admin\Interfaces;
+namespace App\Import\Admin\Service\Validator;
+
+use App\Import\Admin\Interfaces\FieldValidatorInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-interface LineImportValidatorInterface
+class MandatoryValidator implements FieldValidatorInterface
 {
-    public function validate(array $line, int $numLine);
+    public function validate($value): bool
+    {
+        return 0 < strlen(trim($value)) && '' !== trim($value);
+    }
 
-    public function _getNumberOfColumn(): int;
-
-    public function _getFieldsValidators(): array;
+    public function errorMessage($value): string
+    {
+        return 'Missing mandatory parameter';
+    }
 }

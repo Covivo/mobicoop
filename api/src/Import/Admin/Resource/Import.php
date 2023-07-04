@@ -49,7 +49,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *              }
  *          },
  *          "ADMIN_post_import"={
- *              "path"="/admin/imports",
+ *              "path"="/admin/imports/users",
  *              "method"="POST",
  *              "controller"=ImportUsersAction::class,
  *              "denormalization_context"={"groups"={"aWrite"}},

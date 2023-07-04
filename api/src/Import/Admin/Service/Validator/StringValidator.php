@@ -21,16 +21,22 @@
  *    LICENSE
  */
 
-namespace App\Import\Admin\Interfaces;
+namespace App\Import\Admin\Service\Validator;
+
+use App\Import\Admin\Interfaces\FieldValidatorInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-interface LineImportValidatorInterface
+class StringValidator implements FieldValidatorInterface
 {
-    public function validate(array $line, int $numLine);
+    public function validate($value): bool
+    {
+        return is_string($value);
+    }
 
-    public function _getNumberOfColumn(): int;
-
-    public function _getFieldsValidators(): array;
+    public function errorMessage($value): string
+    {
+        return $value.' is not a string';
+    }
 }

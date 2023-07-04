@@ -23,6 +23,7 @@
 
 namespace App\Import\Admin\Service;
 
+use App\Import\Admin\Interfaces\FieldValidatorInterface;
 use App\Import\Admin\Interfaces\LineImportValidatorInterface;
 
 /**
@@ -30,16 +31,41 @@ use App\Import\Admin\Interfaces\LineImportValidatorInterface;
  */
 class UserLineImportValidator implements LineImportValidatorInterface
 {
-    public const NUMBER_OF_COLUMN = 3;
-    public const MANDATORY_PARAMETERS = [0, 1, 2];
+    private const NUMBER_OF_COLUMN = 3;
+
+    private const FIELDS_VALIDATORS = [
+        0 => ['App\Import\Admin\Service\Validator\MandatoryValidator', 'App\Import\Admin\Service\Validator\StringValidator'],
+        1 => ['App\Import\Admin\Service\Validator\StringValidator'],
+        2 => ['App\Import\Admin\Service\Validator\StringValidator'],
+    ];
 
     public function validate(array $line, int $numLine)
     {
         $importLineValidator = new ImportLineValidator($line, $numLine);
 
-        $importLineValidator->validateNumberOfColumn(self::NUMBER_OF_COLUMN);
-        foreach (self::MANDATORY_PARAMETERS as $mandatoryParameter) {
-            $importLineValidator->validateMandatoryParameter($mandatoryParameter);
+        $importLineValidator->validateNumberOfColumn($this->_getNumberOfColumn());
+        $importLineValidator->validateLine($line, $this->_getFieldsValidators());
+    }
+
+    public function _getNumberOfColumn(): int
+    {
+        return self::NUMBER_OF_COLUMN;
+    }
+
+    public function _getFieldsValidators(): array
+    {
+        $validators = [];
+        foreach (self::FIELDS_VALIDATORS as $key => $validatorClasses) {
+            $validators[$key] = [];
+            foreach ($validatorClasses as $validatorClass) {
+                $validator = new $validatorClass();
+                if (!$validator instanceof FieldValidatorInterface) {
+                    throw new \LogicException('Validator '.$validatorClass.' MUST implements FieldValidatorInterface');
+                }
+                $validators[$key][] = $validator;
+            }
         }
+
+        return $validators;
     }
 }

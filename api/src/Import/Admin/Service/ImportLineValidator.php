@@ -53,10 +53,16 @@ class ImportLineValidator
         }
     }
 
-    public function validateMandatoryParameter(int $numParameter)
+    public function validateLine(array $line, array $fieldsValidators)
     {
-        if (0 == strlen(trim($this->_line[$numParameter])) || '' == trim($this->_line[$numParameter])) {
-            throw new \LogicException('Parameter '.($numParameter + 1).' cannot be empty line '.$this->_numLine);
+        foreach ($line as $key => $field) {
+            if (isset($fieldsValidators[$key])) {
+                foreach ($fieldsValidators[$key] as $fieldValidator) {
+                    if (!$fieldValidator->validate($field)) {
+                        throw new \LogicException($fieldValidator->errorMessage($field).' for line '.json_encode($line));
+                    }
+                }
+            }
         }
     }
 }

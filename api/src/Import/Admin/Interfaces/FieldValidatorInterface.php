@@ -26,11 +26,9 @@ namespace App\Import\Admin\Interfaces;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-interface LineImportValidatorInterface
+interface FieldValidatorInterface
 {
-    public function validate(array $line, int $numLine);
+    public function validate($value);
 
-    public function _getNumberOfColumn(): int;
-
-    public function _getFieldsValidators(): array;
+    public function errorMessage($value): string;
 }
