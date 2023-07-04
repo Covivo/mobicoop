@@ -29,6 +29,13 @@ abstract class MobConnectManager
 
     public const SUBSCRIPTION_EXPIRATION_DELAY = 3;     // Expressed in months
 
+    /**
+     * Period, expressed in months, preceding the subscription request during which the user must not have made a trip.
+     *
+     * @var int
+     */
+    public const WAITING_PERIOD = 3;     // Expressed in months
+
     public const LONG_SUBSCRIPTION_TYPE = 'long';
     public const SHORT_SUBSCRIPTION_TYPE = 'short';
 
@@ -279,5 +286,14 @@ abstract class MobConnectManager
         }
 
         return $addresses;
+    }
+
+    protected function getThresholdDate(): \DateTime
+    {
+        $now = new \DateTime('now');
+        $thresholdDate = clone $now;
+        $thresholdDate->sub(new \DateInterval('P'.self::WAITING_PERIOD.'M'));
+
+        return $thresholdDate;
     }
 }
