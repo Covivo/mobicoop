@@ -9,7 +9,6 @@ use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TimestampTokenManager extends MobConnectManager
 {
@@ -72,8 +71,13 @@ class TimestampTokenManager extends MobConnectManager
      */
     public function setSubscriptionTimestampToken($subscription, int $tokenType)
     {
+        if (is_null($subscription)) {
+            return;
+        }
+
         $this->_setCurrentSubscription($subscription);
 
+        // We define the current token type
         if ($this->_isTokenTypeAllowed($tokenType)) {
             switch ($tokenType) {
                 case self::TIMESTAMP_TOKEN_TYPE_INCENTIVE:
@@ -95,6 +99,7 @@ class TimestampTokenManager extends MobConnectManager
             $this->_setCurrentLogType($logType);
         }
 
+        // We get the tokens
         $this->_setCurrentTimestampTokensResponse();
 
         $this->_setSubscriptionTimestampToken($tokenType);
@@ -217,9 +222,11 @@ class TimestampTokenManager extends MobConnectManager
             $timestampSigninTimeSetter = str_replace(self::DEFAULT_TAG, $substituteValue, self::DEFAULT_TIMESTAMP_SIGNINTIME_SETTER);
 
             if (!is_null($this->_currentTimestampTokensResponse->{$timestampTokenGetter}())) {
+                $this->_loggerService->log('We define the token of type '.$substituteValue);
                 $this->_currentSubscription->{$timestampTokenSetter}($this->_currentTimestampTokensResponse->{$timestampTokenGetter}());
             }
             if (!is_null($this->_currentTimestampTokensResponse->{$timestampSigninTimeGetter}())) {
+                $this->_loggerService->log('We define the signinTime of type '.$substituteValue);
                 $this->_currentSubscription->{$timestampSigninTimeSetter}($this->_currentTimestampTokensResponse->{$timestampSigninTimeGetter}());
             }
         }
@@ -255,10 +262,6 @@ class TimestampTokenManager extends MobConnectManager
      */
     private function _setCurrentSubscription($subscription): self
     {
-        if (is_null($subscription)) {
-            throw new BadRequestHttpException('The subscription cannot be null');
-        }
-
         $this->_currentSubscription = $subscription;
 
         if (!is_null($this->_currentSubscription)) {

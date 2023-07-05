@@ -193,6 +193,8 @@ class JourneyManager extends MobConnectManager
      */
     public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
     {
+        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$carpoolPayment->getId());
+
         /**
          * @var CarpoolItem[]
          */
@@ -217,6 +219,8 @@ class JourneyManager extends MobConnectManager
                 continue;
             }
 
+            $this->_loggerService->log('Step 17 - Processing the carpoolItem ID'.$carpoolItem->getId());
+
             if (
                 $this->_isLDJourneyCommitmentJourney($subscription, $carpoolItem)
                 || (
@@ -224,6 +228,8 @@ class JourneyManager extends MobConnectManager
                     && !is_null($subscription->getCommitmentProofTimestampToken())
                 )
             ) {
+                $this->_loggerService->log('Step 17 - Processing for the commitment journey');
+
                 $journey = is_null($subscription->getCommitmentProofJourney())
                     ? new LongDistanceJourney() : $subscription->getCommitmentProofJourney();
 
@@ -256,6 +262,8 @@ class JourneyManager extends MobConnectManager
         }
 
         $this->_em->flush();
+
+        $this->_loggerService->log('Step 17 - End of treatment');
     }
 
     /**

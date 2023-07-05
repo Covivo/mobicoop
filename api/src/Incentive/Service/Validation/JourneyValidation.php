@@ -123,8 +123,8 @@ class JourneyValidation extends Validation
         $this->setDriver($carpoolItem->getCreditorUser());
 
         return
-            $this->_userValidation->hasValidMobConnectAuth($this->_driver)
-            && !is_null($this->_driver)
+            !is_null($this->_driver)
+            && $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver->getLongDistanceSubscription())
             && !is_null($carpoolItem->getAsk())
             && !is_null($carpoolItem->getAsk()->getMatching())
