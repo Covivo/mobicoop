@@ -53,6 +53,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *              "method"="POST",
  *              "controller"=ImportUsersAction::class,
  *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_user_create',object)",
  *              "deserialize"=false,
  *              "swagger_context" = {
  *                  "tags"={"Administration"}

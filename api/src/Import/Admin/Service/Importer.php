@@ -51,7 +51,7 @@ class Importer
 
     private $_manager;
 
-    public function __construct(File $file, string $filename, $manager = null)
+    public function __construct(File $file, string $filename, object $manager = null)
     {
         $this->_file = $file;
         $this->_filename = $filename;

@@ -39,7 +39,6 @@ class UserLineImportValidator implements LineImportValidatorInterface
             'App\Import\Admin\Service\Validator\StringValidator',
         ],
         1 => [
-            'App\Import\Admin\Service\Validator\NotEmptyValidator',
             'App\Import\Admin\Service\Validator\StringValidator',
             'App\Import\Admin\Service\Validator\EmailValidator',
         ],
@@ -52,12 +51,13 @@ class UserLineImportValidator implements LineImportValidatorInterface
             'App\Import\Admin\Service\Validator\StringValidator',
         ],
         4 => [
-            'App\Import\Admin\Service\Validator\NotEmptyValidator',
             'App\Import\Admin\Service\Validator\GenderValidator',
         ],
         5 => [
-            'App\Import\Admin\Service\Validator\NotEmptyValidator',
             'App\Import\Admin\Service\Validator\DateValidator',
+        ],
+        6 => [
+            'App\Import\Admin\Service\Validator\NotEmptyValidator',
         ],
     ];
 
