@@ -42,11 +42,16 @@ class UserImportPopulator implements PopulatorInterface
     private const BIRTHDATE = 4;
     private const PHONE_NUMBER = 5;
 
+    private const MESSAGE_OK = 'added';
+    private const MESSAGE_ALREADY_EXISTS = 'already exists';
+
     private $_userManager;
+    private $_messages;
 
     public function __construct(UserManager $userManager)
     {
         $this->_userManager = $userManager;
+        $this->_messages = [];
     }
 
     public function populate(File $file)
@@ -61,6 +66,8 @@ class UserImportPopulator implements PopulatorInterface
         }
 
         fclose($openedFile);
+
+        return $this->_messages;
     }
 
     public function getEntity(): string
@@ -68,8 +75,32 @@ class UserImportPopulator implements PopulatorInterface
         return self::ENTITY;
     }
 
+    private function _checkUserAlreadyExists(string $email): bool
+    {
+        if (!is_null($this->_userManager->getUserByEmail($email))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function _canAddUser(array $line): bool
+    {
+        if ($this->_checkUserAlreadyExists($line[self::EMAIL])) {
+            $this->_messages[] = $line[self::EMAIL].' '.self::MESSAGE_ALREADY_EXISTS;
+
+            return false;
+        }
+
+        return true;
+    }
+
     private function _addUser(array $line)
     {
+        if (!$this->_canAddUser($line)) {
+            return;
+        }
+
         $entity = $this->getEntity();
 
         /** @var User $user */
@@ -82,6 +113,14 @@ class UserImportPopulator implements PopulatorInterface
         $user->setFamilyName($line[self::FAMILY_NAME]);
         $user->setTelephone($line[self::PHONE_NUMBER]);
 
-        $this->_userManager->addUser($user);
+        try {
+            $this->_userManager->addUser($user);
+        } catch (\Exception $e) {
+            $this->_messages[] = $e->getMessage();
+
+            return;
+        }
+
+        $this->_messages[] = $line[self::EMAIL].' '.self::MESSAGE_OK;
     }
 }

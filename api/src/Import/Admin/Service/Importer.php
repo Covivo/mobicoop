@@ -89,7 +89,7 @@ class Importer
 
     private function _populateTable(PopulatorInterface $populator)
     {
-        $populator->populate($this->_file);
+        $this->_messages = array_merge($this->_messages, $populator->populate($this->_file));
     }
 
     private function _validateLines(LineImportValidatorInterface $usersImportValidator)
