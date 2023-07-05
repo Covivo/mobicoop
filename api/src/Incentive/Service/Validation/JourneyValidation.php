@@ -132,39 +132,12 @@ class JourneyValidation extends Validation
             && $this->isOriginOrDestinationFromFrance($carpoolItem);
     }
 
-    public function isLDJourneysReadyForVerify($journeys): bool
-    {
-        if ($journeys->isEmpty()) {
-            return false;
-        }
-
-        $commitmentJourney = $this->_getCommitmentJourney($journeys);
-
-        return
-            !is_null($commitmentJourney)
-            && $this->isPaymentValidForEec($commitmentJourney->getCarpoolPayment());
-    }
-
-    public function isSDJourneysReadyForVerify($journeys): bool
-    {
-        if ($journeys->isEmpty()) {
-            return false;
-        }
-
-        $commitmentJourney = $this->_getCommitmentJourney($journeys);
-
-        return
-            !is_null($commitmentJourney)
-            && CarpoolProof::TYPE_HIGH === $commitmentJourney->getCarpoolProof()->getType()
-            && CarpoolProof::STATUS_VALIDATED === $commitmentJourney->getCarpoolProof()->getStatus();
-    }
-
     /**
      * @param mixed $journeys
      *
      * @return null|LongDistanceJourney|ShortDistanceJourney
      */
-    private function _getCommitmentJourney($journeys)
+    public function getCommitmentJourney($journeys)
     {
         $commitmentJourney = null;
 
