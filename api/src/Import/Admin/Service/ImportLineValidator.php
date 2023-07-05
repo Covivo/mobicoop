@@ -53,16 +53,19 @@ class ImportLineValidator
         }
     }
 
-    public function validateLine(array $line, array $fieldsValidators)
+    public function validateLine(array $line, array $fieldsValidators): array
     {
+        $errors = [];
         foreach ($line as $key => $field) {
             if (isset($fieldsValidators[$key])) {
                 foreach ($fieldsValidators[$key] as $fieldValidator) {
                     if (!$fieldValidator->validate($field)) {
-                        throw new \LogicException($fieldValidator->errorMessage($field).' for line '.json_encode($line));
+                        $errors[] = $fieldValidator->errorMessage($field).' for line '.json_encode($line);
                     }
                 }
             }
         }
+
+        return $errors;
     }
 }

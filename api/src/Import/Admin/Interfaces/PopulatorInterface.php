@@ -33,6 +33,4 @@ interface PopulatorInterface
     public function populate(File $file);
 
     public function getEntity(): string;
-
-    public function getLogEntity(): ?string;
 }

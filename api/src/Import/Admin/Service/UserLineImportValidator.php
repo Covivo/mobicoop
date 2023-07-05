@@ -31,42 +31,39 @@ use App\Import\Admin\Interfaces\LineImportValidatorInterface;
  */
 class UserLineImportValidator implements LineImportValidatorInterface
 {
-    private const NUMBER_OF_COLUMN = 7;
+    private const NUMBER_OF_COLUMN = 6;
 
     private const FIELDS_VALIDATORS = [
         0 => [
-            'App\Import\Admin\Service\Validator\NotEmptyValidator',
-            'App\Import\Admin\Service\Validator\StringValidator',
-        ],
-        1 => [
             'App\Import\Admin\Service\Validator\StringValidator',
             'App\Import\Admin\Service\Validator\EmailValidator',
+        ],
+        1 => [
+            'App\Import\Admin\Service\Validator\NotEmptyValidator',
+            'App\Import\Admin\Service\Validator\StringValidator',
         ],
         2 => [
             'App\Import\Admin\Service\Validator\NotEmptyValidator',
             'App\Import\Admin\Service\Validator\StringValidator',
         ],
         3 => [
-            'App\Import\Admin\Service\Validator\NotEmptyValidator',
-            'App\Import\Admin\Service\Validator\StringValidator',
-        ],
-        4 => [
             'App\Import\Admin\Service\Validator\GenderValidator',
         ],
-        5 => [
+        4 => [
             'App\Import\Admin\Service\Validator\DateValidator',
         ],
-        6 => [
+        5 => [
             'App\Import\Admin\Service\Validator\NotEmptyValidator',
         ],
     ];
 
-    public function validate(array $line, int $numLine)
+    public function validate(array $line, int $numLine): array
     {
         $importLineValidator = new ImportLineValidator($line, $numLine);
 
         $importLineValidator->validateNumberOfColumn($this->_getNumberOfColumn());
-        $importLineValidator->validateLine($line, $this->_getFieldsValidators());
+
+        return $importLineValidator->validateLine($line, $this->_getFieldsValidators());
     }
 
     public function _getNumberOfColumn(): int

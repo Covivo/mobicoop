@@ -49,6 +49,9 @@ class Importer
      */
     private $_filename;
 
+    private $_errors;
+    private $_messages;
+
     private $_manager;
 
     public function __construct(File $file, string $filename, object $manager = null)
@@ -57,12 +60,16 @@ class Importer
         $this->_filename = $filename;
         $this->_validateFile();
         $this->_manager = $manager;
+        $this->_errors = [];
+        $this->_messages = [];
     }
 
     public function importUsers(): Import
     {
         $this->_validateLines(new UserLineImportValidator());
-        // $this->_populateImportTable(new UserImportPopulator($this->_manager));
+        if (0 == count($this->_errors)) {
+            $this->_populateTable(new UserImportPopulator($this->_manager));
+        }
 
         return $this->_buildImport();
     }
@@ -80,7 +87,7 @@ class Importer
         }
     }
 
-    private function _populateImportTable(PopulatorInterface $populator)
+    private function _populateTable(PopulatorInterface $populator)
     {
         $populator->populate($this->_file);
     }
@@ -93,7 +100,7 @@ class Importer
         while (!feof($openedFile)) {
             $line = fgetcsv($openedFile, 0, ';');
             if ($line) {
-                $usersImportValidator->validate($line, $numLine);
+                $this->_errors = array_merge($this->_errors, $usersImportValidator->validate($line, $numLine));
             }
             ++$numLine;
         }
@@ -107,6 +114,8 @@ class Importer
         $import->setFile($this->_file);
         $import->setFilename($this->_filename);
         $import->setOriginalName($this->_filename);
+        $import->setErrors($this->_errors);
+        $import->setMessages($this->_messages);
 
         return $import;
     }

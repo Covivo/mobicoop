@@ -109,12 +109,28 @@ class Import
      */
     private $originalName;
 
+    /**
+     * @var array Errors of there is any
+     *
+     * @Groups({"read","aRead"})
+     */
+    private $errors;
+
+    /**
+     * @var array Useful messages
+     *
+     * @Groups({"read","aRead"})
+     */
+    private $messages;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
         if ($id) {
             $this->id = $id;
         }
+        $this->errors = [];
+        $this->messages = [];
     }
 
     public function getId(): ?int
@@ -150,5 +166,25 @@ class Import
     public function setOriginalName(?string $originalName)
     {
         $this->originalName = $originalName;
+    }
+
+    public function getErrors(): ?array
+    {
+        return $this->errors;
+    }
+
+    public function setErrors(?array $errors)
+    {
+        $this->errors = $errors;
+    }
+
+    public function getMessages(): ?array
+    {
+        return $this->messages;
+    }
+
+    public function setMessages(?array $messages)
+    {
+        $this->messages = $messages;
     }
 }

@@ -34,15 +34,13 @@ use Symfony\Component\HttpFoundation\File\File;
 class UserImportPopulator implements PopulatorInterface
 {
     private const ENTITY = 'App\User\Entity\User';
-    private const LOG_ENTITY = 'App\Import\Entity\UserImport';
 
-    private const EXTERNAL_ID = 0;
-    private const EMAIL = 1;
-    private const GIVEN_NAME = 2;
-    private const FAMILY_NAME = 3;
-    private const GENDER = 4;
-    private const BIRTHDATE = 5;
-    private const PHONE_NUMBER = 6;
+    private const EMAIL = 0;
+    private const GIVEN_NAME = 1;
+    private const FAMILY_NAME = 2;
+    private const GENDER = 3;
+    private const BIRTHDATE = 4;
+    private const PHONE_NUMBER = 5;
 
     private $_userManager;
 
@@ -55,13 +53,11 @@ class UserImportPopulator implements PopulatorInterface
     {
         $openedFile = fopen($file, 'r');
 
-        $numLine = 1;
         while (!feof($openedFile)) {
             $line = fgetcsv($openedFile, 0, ';');
             if ($line) {
-                $this->_buildUserImport($line, $numLine);
+                $this->_addUser($line);
             }
-            ++$numLine;
         }
 
         fclose($openedFile);
@@ -72,12 +68,7 @@ class UserImportPopulator implements PopulatorInterface
         return self::ENTITY;
     }
 
-    public function getLogEntity(): ?string
-    {
-        return self::LOG_ENTITY;
-    }
-
-    private function _buildUserImport(array $line)
+    private function _addUser(array $line)
     {
         $entity = $this->getEntity();
 
@@ -90,6 +81,7 @@ class UserImportPopulator implements PopulatorInterface
         $user->setGivenName($line[self::GIVEN_NAME]);
         $user->setFamilyName($line[self::FAMILY_NAME]);
         $user->setTelephone($line[self::PHONE_NUMBER]);
+
         $this->_userManager->addUser($user);
     }
 }
