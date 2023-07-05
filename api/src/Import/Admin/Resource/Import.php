@@ -87,6 +87,13 @@ class Import
     private $id;
 
     /**
+     * @var string the Entity of the import (User, RelayPoint...)
+     *
+     * @Groups({"read","aRead","write"})
+     */
+    private $entity;
+
+    /**
      * @var null|File The document's file
      *
      * @Vich\UploadableField(mapping="massImportFile", fileNameProperty="filename", originalName="originalName")
@@ -136,6 +143,16 @@ class Import
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getEntity(): ?string
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?string $entity)
+    {
+        $this->entity = $entity;
     }
 
     public function getFile(): ?File

@@ -34,10 +34,12 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Importer
 {
-    public const MIME_TYPES = [
+    private const MIME_TYPES = [
         'text/plain',
         'text/csv',
     ];
+
+    private const USER_ENTITY = 'User';
 
     /**
      * @var File
@@ -71,7 +73,7 @@ class Importer
             $this->_populateTable(new UserImportPopulator($this->_manager));
         }
 
-        return $this->_buildImport();
+        return $this->_buildImport(self::USER_ENTITY);
     }
 
     public function importRelayPoints(): Import
@@ -108,9 +110,10 @@ class Importer
         fclose($openedFile);
     }
 
-    private function _buildImport()
+    private function _buildImport(string $entity)
     {
         $import = new Import();
+        $import->setEntity($entity);
         $import->setFile($this->_file);
         $import->setFilename($this->_filename);
         $import->setOriginalName($this->_filename);
