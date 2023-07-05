@@ -35,7 +35,18 @@ class RelayPointLineImportValidator extends LineImportValidator implements LineI
     private const FIELDS_VALIDATORS = [
         0 => [
             'App\Import\Admin\Service\Validator\StringValidator',
+            'App\Import\Admin\Service\Validator\NotEmptyValidator',
         ],
+        1 => [
+            'App\Import\Admin\Service\Validator\IntValidator',
+        ],
+        2 => ['App\Import\Admin\Service\Validator\LatitudeValidator'],
+        3 => ['App\Import\Admin\Service\Validator\LongitudeValidator'],
+        4 => ['App\Import\Admin\Service\Validator\IntValidator'],
+        5 => ['App\Import\Admin\Service\Validator\EmptyOrNumericBooleanValidator'],
+        6 => ['App\Import\Admin\Service\Validator\EmptyOrNumericBooleanValidator'],
+        7 => ['App\Import\Admin\Service\Validator\EmptyOrNumericBooleanValidator'],
+        8 => ['App\Import\Admin\Service\Validator\EmptyOrNumericBooleanValidator'],
     ];
 
     public function _getNumberOfColumn(): int
