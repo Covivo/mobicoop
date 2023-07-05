@@ -29,7 +29,6 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\ProofManager;
@@ -42,7 +41,6 @@ use App\Communication\Service\InternalMessageManager;
 use App\Community\Entity\CommunityUser;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Repository\CommunityUserRepository;
-use App\Event\Entity\Event;
 use App\Gamification\Service\GamificationManager;
 use App\Geography\Service\GeoTools;
 use App\I18n\Repository\LanguageRepository;
@@ -133,6 +131,7 @@ class UserManager
     private $userMinAge;
     private $paymentProfileRepository;
     private $bookingManager;
+    private $carpoolStandardEnabled;
 
     // Default carpool settings
     private $chat;
@@ -204,7 +203,8 @@ class UserManager
         ScammerRepository $scammerRepository,
         PseudonymizationManager $pseudonymizationManager,
         $userMinAge,
-        BookingManager $bookingManager
+        BookingManager $bookingManager,
+        bool $carpoolStandardEnabled
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -249,6 +249,7 @@ class UserManager
         $this->_pseudonymizationManager = $pseudonymizationManager;
         $this->userMinAge = $userMinAge;
         $this->bookingManager = $bookingManager;
+        $this->carpoolStandardEnabled = $carpoolStandardEnabled;
     }
 
     /**
@@ -827,7 +828,7 @@ class UserManager
             return [];
         }
 
-        if (!$threads) {
+        if (!$threads && !$this->carpoolStandardEnabled) {
             return [];
         }
 
@@ -1134,26 +1135,31 @@ class UserManager
                 $messages[] = $currentThread;
             }
         }
-        // We get carpoolStandard bookings
-        $bookings = $this->bookingManager->getBookings($user->getId());
-        foreach ($bookings as $booking) {
-            $currentThread = [
-                'idRecipient' => $booking->getDriver()->getId(),
-                'givenName' => $booking->getDriver()->getAlias(),
-                'date' => '',
-                'selected' => false,
-                'unreadMessages' => 0,
-                'idBooking' => $booking->getId(),
-                'carpoolInfos' => [
-                    'origin' => $booking->getPassengerPickupAddress(),
-                    'destination' => $booking->getPassengerDropAddress(),
-                    'criteria' => [
-                        'frequency' => 1,
-                        'fromDate' => $booking->passengerPickupDate(),
-                        'fromTime' => $booking->passengerPickupDate(),
+
+        // We get carpoolStandard bookings if enabled
+        if ($this->carpoolStandardEnabled) {
+            $bookings = $this->bookingManager->getBookings($user->getId());
+
+            foreach ($bookings as $booking) {
+                $currentThread = [
+                    'idRecipient' => $booking->getDriver()->getId(),
+                    'givenName' => $booking->getDriver()->getAlias(),
+                    'date' => '',
+                    'selected' => false,
+                    'unreadMessages' => 0,
+                    'idBooking' => $booking->getId(),
+                    'carpoolInfos' => [
+                        'origin' => $booking->getPassengerPickupAddress(),
+                        'destination' => $booking->getPassengerDropAddress(),
+                        'criteria' => [
+                            'frequency' => 1,
+                            'fromDate' => $booking->passengerPickupDate(),
+                            'fromTime' => $booking->passengerPickupDate(),
+                        ],
                     ],
-                ],
-            ];
+                ];
+                $messages[] = $currentThread;
+            }
         }
 
         // Sort with the last message received first

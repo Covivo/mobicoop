@@ -132,7 +132,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'webUrl' => $booking->getWebUrl(),
             'price' => [
                 'type' => $booking->getPrice()->getType(),
-                'operator' => $booking->getPrice()->getAmount(),
+                'amount' => $booking->getPrice()->getAmount(),
                 'currency' => $booking->getPrice()->getCurrency(),
             ],
             'driverJourneyId' => $booking->getDriverJourneyId(),
@@ -186,7 +186,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
         ];
         // Build the body
         $body = [
-            'userId' => $userId,
+            'id' => $userId,
             'driver' => false,
             'passenger' => true,
         ];

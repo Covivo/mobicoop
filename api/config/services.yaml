@@ -1246,6 +1246,7 @@ services:
       $passwordTokenValidity: "%env(int:PASSWORD_TOKEN_VALIDITY)%"
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
       $userMinAge: "%env(int:USER_MIN_AGE)%"
+      $carpoolStandardEnabled: "%env(bool:CARPOOL_STANDARD_ENABLED)%"
 
   App\User\Interoperability\Service\UserManager:
     arguments:

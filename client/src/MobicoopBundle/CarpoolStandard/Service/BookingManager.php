@@ -94,7 +94,7 @@ class BookingManager
         $booking->setPassengerPickupLat($data['origin']['latitude']);
         $booking->setPassengerPickupLng($data['origin']['longitude']);
         $booking->setPassengerDropLat($data['destination']['latitude']);
-        $booking->setPassengerDropLng($data['destination']['latitude']);
+        $booking->setPassengerDropLng($data['destination']['longitude']);
         $booking->setPassengerPickupAddress($data['origin']['streetAddress']);
         $booking->setPassengerDropAddress($data['destination']['streetAddress']);
         $booking->setDriverJourneyId($data['externalJourneyId']);
