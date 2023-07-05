@@ -25,22 +25,22 @@ namespace App\Import\Admin\Controller;
 
 use App\Import\Admin\Resource\Import;
 use App\Import\Admin\Service\Importer;
-use App\User\Admin\Service\UserManager;
+use App\RelayPoint\Admin\Service\RelayPointManager;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  *  @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class ImportUsersAction
+final class ImportRelayPointAction
 {
-    public function __invoke(Request $request, UserManager $userManager): Import
+    public function __invoke(Request $request, RelayPointManager $relayPointManager): Import
     {
         if (!$request->files->get('file')) {
             throw new \Exception('File is mandatory');
         }
 
-        $importer = new Importer($request->files->get('file'), $request->get('filename'), $userManager);
+        $importer = new Importer($request->files->get('file'), $request->get('filename'), $relayPointManager);
 
-        return $importer->importUsers();
+        return $importer->importRelayPoints();
     }
 }

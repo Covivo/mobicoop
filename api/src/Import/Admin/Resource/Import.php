@@ -25,6 +25,7 @@ namespace App\Import\Admin\Resource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Import\Admin\Controller\ImportRelayPointAction;
 use App\Import\Admin\Controller\ImportUsersAction;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -54,6 +55,17 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *              "controller"=ImportUsersAction::class,
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_user_create',object)",
+ *              "deserialize"=false,
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_post_relay_point"={
+ *              "path"="/admin/imports/relaypoints",
+ *              "method"="POST",
+ *              "controller"=ImportRelayPointAction::class,
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_relay_point_create',object)",
  *              "deserialize"=false,
  *              "swagger_context" = {
  *                  "tags"={"Administration"}

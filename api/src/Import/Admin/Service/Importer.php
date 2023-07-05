@@ -40,6 +40,7 @@ class Importer
     ];
 
     private const USER_ENTITY = 'User';
+    private const RELAY_POINT_ENTITY = 'RelayPoint';
 
     /**
      * @var File
@@ -79,7 +80,7 @@ class Importer
     public function importRelayPoints(): Import
     {
         // define validation and populator
-        return $this->_buildImport();
+        return $this->_buildImport(self::RELAY_POINT_ENTITY);
     }
 
     private function _validateFile()
