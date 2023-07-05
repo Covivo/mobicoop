@@ -277,7 +277,7 @@ class JourneyManager extends MobConnectManager
             return;
         }
 
-        $journey = $this->getShortDistanceCommitmentJourney($carpoolProof, $subscription);
+        $journey = $subscription->getCommitmentProofJourney();
 
         if (!is_null($journey)) {
             $params = [
