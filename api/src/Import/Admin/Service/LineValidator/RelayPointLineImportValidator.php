@@ -21,18 +21,30 @@
  *    LICENSE
  */
 
-namespace App\Import\Admin\Interfaces;
+namespace App\Import\Admin\Service\LineValidator;
+
+use App\Import\Admin\Interfaces\LineImportValidatorInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-interface LineImportValidatorInterface
+class RelayPointLineImportValidator extends LineImportValidator implements LineImportValidatorInterface
 {
-    public function validate(array $line, int $numLine);
+    private const NUMBER_OF_COLUMN = 9;
 
-    public function _getNumberOfColumn(): int;
+    private const FIELDS_VALIDATORS = [
+        0 => [
+            'App\Import\Admin\Service\Validator\StringValidator',
+        ],
+    ];
 
-    public function _getFieldsValidators(): array;
+    public function _getNumberOfColumn(): int
+    {
+        return self::NUMBER_OF_COLUMN;
+    }
 
-    public function _getInstanciatedFieldsValidators(): array;
+    public function _getFieldsValidators(): array
+    {
+        return self::FIELDS_VALIDATORS;
+    }
 }

@@ -26,6 +26,8 @@ namespace App\Import\Admin\Service;
 use App\Import\Admin\Interfaces\LineImportValidatorInterface;
 use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\Import\Admin\Resource\Import;
+use App\Import\Admin\Service\LineValidator\RelayPointLineImportValidator;
+use App\Import\Admin\Service\LineValidator\UserLineImportValidator;
 use App\Import\Admin\Service\Populator\UserImportPopulator;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -79,7 +81,8 @@ class Importer
 
     public function importRelayPoints(): Import
     {
-        // define validation and populator
+        $this->_validateLines(new RelayPointLineImportValidator());
+
         return $this->_buildImport(self::RELAY_POINT_ENTITY);
     }
 

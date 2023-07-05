@@ -21,41 +21,20 @@
  *    LICENSE
  */
 
-namespace App\Import\Admin\Service;
+namespace App\Import\Admin\Service\LineValidator;
 
 use App\Import\Admin\Interfaces\FieldValidatorInterface;
 use App\Import\Admin\Interfaces\LineImportValidatorInterface;
+use App\Import\Admin\Service\ImportLineValidator;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class UserLineImportValidator implements LineImportValidatorInterface
+abstract class LineImportValidator implements LineImportValidatorInterface
 {
-    private const NUMBER_OF_COLUMN = 6;
+    private const NUMBER_OF_COLUMN = 0;
 
-    private const FIELDS_VALIDATORS = [
-        0 => [
-            'App\Import\Admin\Service\Validator\StringValidator',
-            'App\Import\Admin\Service\Validator\EmailValidator',
-        ],
-        1 => [
-            'App\Import\Admin\Service\Validator\NotEmptyValidator',
-            'App\Import\Admin\Service\Validator\StringValidator',
-        ],
-        2 => [
-            'App\Import\Admin\Service\Validator\NotEmptyValidator',
-            'App\Import\Admin\Service\Validator\StringValidator',
-        ],
-        3 => [
-            'App\Import\Admin\Service\Validator\GenderValidator',
-        ],
-        4 => [
-            'App\Import\Admin\Service\Validator\DateValidator',
-        ],
-        5 => [
-            'App\Import\Admin\Service\Validator\NotEmptyValidator',
-        ],
-    ];
+    private const FIELDS_VALIDATORS = [];
 
     public function validate(array $line, int $numLine): array
     {
@@ -63,7 +42,7 @@ class UserLineImportValidator implements LineImportValidatorInterface
 
         $importLineValidator->validateNumberOfColumn($this->_getNumberOfColumn());
 
-        return $importLineValidator->validateLine($line, $this->_getFieldsValidators());
+        return $importLineValidator->validateLine($line, $this->_getInstanciatedFieldsValidators());
     }
 
     public function _getNumberOfColumn(): int
@@ -73,8 +52,13 @@ class UserLineImportValidator implements LineImportValidatorInterface
 
     public function _getFieldsValidators(): array
     {
+        return self::FIELDS_VALIDATORS;
+    }
+
+    public function _getInstanciatedFieldsValidators(): array
+    {
         $validators = [];
-        foreach (self::FIELDS_VALIDATORS as $key => $validatorClasses) {
+        foreach ($this->_getFieldsValidators() as $key => $validatorClasses) {
             $validators[$key] = [];
             foreach ($validatorClasses as $validatorClass) {
                 $validator = new $validatorClass();
