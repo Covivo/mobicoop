@@ -219,6 +219,9 @@ class SubscriptionManager extends MobConnectManager
         $this->_loggerService->log('The timestamping process is complete');
     }
 
+    /**
+     * Step 20.
+     */
     public function verifySubscriptionFromControllerCommand(string $subscriptionType, string $subscriptionId)
     {
         $this->_subscriptionValidation->checkSubscriptionTypeValidity($subscriptionType);
@@ -249,7 +252,7 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Verify subscriptions.
+     * Step 20 - Verify subscriptions.
      */
     public function verifySubscriptions()
     {
@@ -268,7 +271,7 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Vérify a subscription.
+     * Step 20 - Vérify a subscription.
      *
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */

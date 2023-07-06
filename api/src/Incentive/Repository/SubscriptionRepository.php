@@ -43,6 +43,9 @@ class SubscriptionRepository
             ->where('s.status IS NULL')
             ->andWhere('s.commitmentProofDate IS NOT NULL')
             ->andWhere('s.commitmentProofDate <= :deadline')
+            ->andWhere('s.incentiveProofTimestampToken IS NOT NULL')
+            ->andWhere('s.commitmentProofTimestampToken IS NOT NULL')
+            ->andWhere('s.honorCertificateProofTimestampToken IS NOT NULL')
             ->andWhere('s.verificationDate IS NULL')
             ->setParameters([
                 'deadline' => $deadline,
