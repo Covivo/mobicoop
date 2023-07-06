@@ -118,26 +118,6 @@ class MobConnectApiProvider extends MobConnectProvider
             ? $this->__refreshToken() : $mobConnectAuth->getAccessToken();
     }
 
-    private function __postSubscription(string $incentiveId, bool $isShortDistance = false)
-    {
-        $data = [
-            'incentiveId' => $incentiveId,
-            'consent' => true,
-            'Type de trajet' => true === $isShortDistance ? [self::SHORT_DISTANCE_LABEL] : [self::LONG_DISTANCE_LABEL],
-            'Numéro de permis de conduire' => $this->_user->getDrivingLicenceNumber(),
-        ];
-
-        if (false === $isShortDistance) {
-            $data['Numéro de téléphone'] = self::LONG_DISTANCE_LABEL;
-        }
-
-        $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS);
-
-        return $this->_getResponse(
-            $this->_dataProvider->postCollection($data, $this->_buildHeaders($this->__getToken()))
-        );
-    }
-
     private function __refreshToken()
     {
         if (!array_key_exists(self::SERVICE_NAME, $this->_ssoServices)) {
@@ -184,20 +164,6 @@ class MobConnectApiProvider extends MobConnectProvider
         return new MobConnectSubscriptionResponse(
             $this->_getResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($this->__getToken())))
         );
-    }
-
-    public function postSubscriptionForShortDistance()
-    {
-        $this->_loggerService->log('We create the short distance subscription on mobConnect', 'info', true);
-
-        return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getShortDistanceSubscriptionId(), true));
-    }
-
-    public function postSubscriptionForLongDistance()
-    {
-        $this->_loggerService->log('We create the long distance subscription on mobConnect', 'info', true);
-
-        return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getLongDistanceSubscriptionId(), false, $this->_user->getTelephone()));
     }
 
     /**
