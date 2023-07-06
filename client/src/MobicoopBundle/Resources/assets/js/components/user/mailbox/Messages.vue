@@ -207,6 +207,23 @@
           </v-row>
         </v-col>
         <v-col
+          v-if="isExternalStandard"
+          class="col-4"
+        >
+          <thread-actions-carpool-standard
+            :id-recipient="idRecipient"
+            :id-booking="idBooking"
+            :loading-init="loadingDetails"
+            :refresh="refreshActions"
+            :loading-btn="loadingBtnAction"
+            :recipient-name="recipientName"
+            :recipient-avatar="recipientAvatar"
+            @refreshActionsCompleted="refreshActionsCompleted"
+            @updateStatusAskHistory="updateStatusAskHistory"
+          />
+        </v-col>
+        <v-col
+          v-else
           class="col-4"
         >
           <thread-actions
@@ -237,6 +254,7 @@ import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
 import ThreadsSolidary from '@components/user/mailbox/ThreadsSolidary'
 import ThreadDetails from '@components/user/mailbox/ThreadDetails'
 import ThreadActions from '@components/user/mailbox/ThreadActions'
+import ThreadActionsCarpoolStandard from '@components/user/mailbox/ThreadActionsCarpoolStandard'
 import TypeText from '@components/user/mailbox/TypeText'
 import WarningMessage from '@components/utilities/WarningMessage.vue';
 
@@ -256,6 +274,7 @@ export default {
     ThreadsSolidary,
     ThreadDetails,
     ThreadActions,
+    ThreadActionsCarpoolStandard,
     TypeText,
     WarningMessage
   },
@@ -315,6 +334,7 @@ export default {
       recipientAvatar:null,
       newThreadDirect:null,
       newThreadCarpool:null,
+      idBooking: null,
       loadingTypeText:false,
       refreshDetails:false,
       refreshThreadsDirect:false,
@@ -372,6 +392,7 @@ export default {
       // console.error(data);
       this.hideClickIcon = false;
 
+      this.isExternalStandard = (data.idBooking !==null) ? true : false;
       // Update the current Ask
       (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
 

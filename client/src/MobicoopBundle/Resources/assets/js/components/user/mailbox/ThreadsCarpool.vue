@@ -11,6 +11,7 @@
       :given-name="message.givenName"
       :id-ask-selected="idAskSelected"
       :id-ask="message.idAsk"
+      :id-booking="message.idBooking"
       :id-message="message.idMessage"
       :id-recipient="message.idRecipient"
       :origin="message.carpoolInfos.origin"

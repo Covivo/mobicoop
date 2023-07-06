@@ -140,6 +140,10 @@ export default {
       type: Number,
       default: null
     },
+    idBooking:{
+      type: String,
+      default: null
+    },
     solidary:{
       type: Boolean,
       default: false
@@ -191,7 +195,7 @@ export default {
     }
   },
   mounted() { 
-    if (this.idAskSelected == this.idAsk) {
+    if (this.idAskSelected == this.idAsk && this.idAsk != null) {
       this.emit()
     }
   },
@@ -207,7 +211,8 @@ export default {
       this.selected = !this.selected;
     },
     emit(){
-      this.$emit("toggleSelected",{idAsk:this.idAsk});
+      console.log
+      this.$emit("toggleSelected",{idAsk:this.idAsk, idBooking:this.idBooking});
       this.$emit("idMessageForTimeLine",
         {
           type:this.solidary ? "Solidary" : "Carpool",
@@ -216,6 +221,7 @@ export default {
           name:this.name,
           avatar:this.avatar,
           idAsk:this.idAsk,
+          idBooking:this.idBooking,
           blockerId:this.blockerId,
           formerUnreadMessages:this.unreadMessages
         }
