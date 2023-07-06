@@ -146,8 +146,10 @@ class SubscriptionManager extends MobConnectManager
     {
         $userEligibility = new EecEligibility($user);
 
-        $userEligibility->setLongDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user));
-        $userEligibility->setShortDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, false));
+        $thresholdDate = $this->getThresholdDate();
+
+        $userEligibility->setLongDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, $thresholdDate));
+        $userEligibility->setShortDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, $thresholdDate, false));
         $userEligibility->setLongDistanceDrivingLicenceNumberDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
         $userEligibility->setLongDistancePhoneDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
         $userEligibility->setShortDistanceDrivingLicenceNumberDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
@@ -219,6 +221,9 @@ class SubscriptionManager extends MobConnectManager
         return $response;
     }
 
+    /**
+     * Step 20.
+     */
     public function verifySubscriptionFromControllerCommand(?string $subscriptionType, ?string $subscriptionId)
     {
         if (is_null($subscriptionType) || is_null($subscriptionId)) {
@@ -253,7 +258,11 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Verify subscriptions.
+     * <<<<<<< HEAD
+     * STEP 20 - Verify subscriptions.
+     * =======
+     * Step 20 - Verify subscriptions.
+     * >>>>>>> master.
      */
     public function verifySubscriptions()
     {
@@ -272,12 +281,17 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Vérify a subscription.
+     * <<<<<<< HEAD
+     * STEP 20 - Vérify a subscription.
+     * =======
+     * Step 20 - Vérify a subscription.
+     * >>>>>>> master.
      *
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
     public function verifySubscription($subscription)
     {
+        $this->_loggerService->log('Step 20 - Obtaining missing tokens');
         $subscription = $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
 
         if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {

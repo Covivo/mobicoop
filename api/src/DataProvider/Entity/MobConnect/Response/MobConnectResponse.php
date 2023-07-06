@@ -4,7 +4,7 @@ namespace App\DataProvider\Entity\MobConnect\Response;
 
 abstract class MobConnectResponse implements MobConnectResponseInterface
 {
-    public const ERROR_CODES = [400, 401, 403, 404, 409, 412, 415, 422, 500];
+    public const ERROR_CODES = [400, 401, 403, 404, 409, 412, 415, 422, 500, 503];
 
     /**
      * @var null|int

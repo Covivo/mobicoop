@@ -213,13 +213,13 @@ class CarpoolProofRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function getJourneysNumberMadeSinceThresholdDate(User $user, bool $isLongDistance = true)
+    public function getJourneysNumberMadeSinceThresholdDate(User $user, \DateTimeInterface $thresholdDate, bool $isLongDistance = true)
     {
         $qb = $this->repository->createQueryBuilder('cp');
 
         $parameters = [
             'distance' => Validation::LONG_DISTANCE_THRESHOLD,
-            'thresholdDate' => new \DateTime('now'),
+            'thresholdDate' => $thresholdDate,
             'driver' => $user,
         ];
 

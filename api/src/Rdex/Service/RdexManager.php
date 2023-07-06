@@ -27,7 +27,6 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Result;
 use App\Carpool\Exception\AdException;
 use App\Carpool\Service\AdManager;
-use App\Carpool\Service\ProposalManager;
 use App\Communication\Service\NotificationManager;
 use App\Rdex\Entity\RdexAddress;
 use App\Rdex\Entity\RdexClient;
@@ -88,8 +87,6 @@ class RdexManager
 
     /**
      * Constructor.
-     *
-     * @param ProposalManager $proposalManager
      */
     public function __construct(AdManager $adManager, NotificationManager $notificationManager, UserManager $userManager, LoggerInterface $logger, array $operator, array $clients, int $defaultMarginDuration)
     {
@@ -164,9 +161,9 @@ class RdexManager
     /**
      * Validates the parameters of a request.
      *
-     * @throws \Exception
-     *
      * @return bool|RdexError True if validation is ok, error if not
+     *
+     * @throws \Exception
      */
     public function validate(Request $request)
     {
@@ -221,7 +218,7 @@ class RdexManager
         $DTTimestamp->setTimestamp($timestamp);
         if ($DTTimestamp < $minTime || $DTTimestamp > $maxTime) {
             // UNCOMMENT WHEN DEV IS OVER
-//            return new RdexError("timestamp", RdexError::ERROR_TIMESTAMP_TOO_SKEWED);
+            //            return new RdexError("timestamp", RdexError::ERROR_TIMESTAMP_TOO_SKEWED);
         }
 
         // we check the signature
@@ -451,7 +448,7 @@ class RdexManager
             // We get some datas that relies on being passenger or driver
             $fromAddress = $resultItem->getOutward()->getOrigin();
             $toAddress = $resultItem->getOutward()->getDestination();
-            $distance = $resultItem->getOutward()->getCommonDistance();
+            $distance = $resultItem->getOutward()->getCommonDistance() + $resultItem->getOutward()->getDetourDistance();
             $kilometersPrice = $resultItem->getOutward()->getDriverPriceKm();
 
             $from->setAddress($fromAddress->getStreetAddress());
@@ -474,7 +471,7 @@ class RdexManager
             // Metrics / Prices
             $journey->setDistance($distance);
             $journey->setDuration($result->getCommonDuration());
-//            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
+            //            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
             $journey->setCost(['variable' => $kilometersPrice]);
 
             // Frequency

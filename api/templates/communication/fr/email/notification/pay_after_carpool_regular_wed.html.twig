@@ -16,7 +16,7 @@
 	</p>
     <p>Mobicoop est un service sans commission, mais vous pouvez faire un don pour soutenir le projet depuis la page des paiements ou ici.</p>
     <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;">
-		<a href="https://www.zeste.coop/fr/associations/mobicoop">Faire un don</a>
+		<a href="{{ api_env('EMAILS_PLATFORM_URL') }}/donation">Faire un don</a>
 	</p>
     <p>Vous pouvez aussi <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/avis">donner un avis</a> sur votre covoiturage passé. Celui-ci n’est pas obligatoire mais permet de rassurer des nouveaux usagers qui se lanceraient dans le covoiturage.</p>
 {% endblock %}
