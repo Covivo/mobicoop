@@ -21,16 +21,47 @@
  *    LICENSE
  */
 
-namespace App\Import\Admin\Interfaces;
+namespace App\Import\Admin\Service\Populator;
 
+use App\Import\Admin\Interfaces\PopulatorInterface;
+use App\User\Admin\Service\UserManager;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-interface PopulatorInterface
+abstract class ImportPopulator implements PopulatorInterface
 {
-    public function populate(File $file): array;
+    private $_userManager;
+    private $_messages;
 
-    public function getEntity(): string;
+    public function __construct(UserManager $userManager)
+    {
+        $this->_userManager = $userManager;
+        $this->_messages = [];
+    }
+
+    public function populate(File $file): array
+    {
+        $openedFile = fopen($file, 'r');
+
+        while (!feof($openedFile)) {
+            $line = fgetcsv($openedFile, 0, ';');
+            if ($line) {
+                $this->_addEntity($line);
+            }
+        }
+
+        fclose($openedFile);
+
+        return $this->getMessages();
+    }
+
+    abstract public function getEntity(): string;
+
+    abstract public function getMessages(): array;
+
+    abstract public function addMessage(string $message): array;
+
+    abstract protected function _addEntity(array $line);
 }

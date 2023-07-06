@@ -28,6 +28,7 @@ use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\Import\Admin\Resource\Import;
 use App\Import\Admin\Service\LineValidator\RelayPointLineImportValidator;
 use App\Import\Admin\Service\LineValidator\UserLineImportValidator;
+use App\Import\Admin\Service\Populator\RelayPointImportPopulator;
 use App\Import\Admin\Service\Populator\UserImportPopulator;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -82,6 +83,9 @@ class Importer
     public function importRelayPoints(): Import
     {
         $this->_validateLines(new RelayPointLineImportValidator());
+        if (0 == count($this->_errors)) {
+            $this->_populateTable(new RelayPointImportPopulator($this->_manager));
+        }
 
         return $this->_buildImport(self::RELAY_POINT_ENTITY);
     }
@@ -95,7 +99,8 @@ class Importer
 
     private function _populateTable(PopulatorInterface $populator)
     {
-        $this->_messages = array_merge($this->_messages, $populator->populate($this->_file));
+        $messages = $populator->populate($this->_file);
+        $this->_messages = array_merge($this->_messages, $messages);
     }
 
     private function _validateLines(LineImportValidatorInterface $usersImportValidator)

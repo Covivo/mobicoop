@@ -30,7 +30,7 @@ use App\User\Entity\User;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class UserImportPopulator extends ImportPopulator implements PopulatorInterface
+class RelayPointImportPopulator extends ImportPopulator implements PopulatorInterface
 {
     private const ENTITY = 'App\User\Entity\User';
 
@@ -91,12 +91,12 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         try {
             $this->_userManager->addUser($user);
         } catch (\Exception $e) {
-            $this->addMessage($e->getMessage());
+            $this->_messages[] = $e->getMessage();
 
             return;
         }
 
-        $this->addMessage($line[self::EMAIL].' '.self::MESSAGE_OK);
+        $this->_messages[] = $line[self::EMAIL].' '.self::MESSAGE_OK;
     }
 
     private function _checkUserAlreadyExists(string $email): bool
@@ -111,7 +111,7 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
     private function _canAddUser(array $line): bool
     {
         if ($this->_checkUserAlreadyExists($line[self::EMAIL])) {
-            $this->addMessage($line[self::EMAIL].' '.self::MESSAGE_ALREADY_EXISTS);
+            $this->_messages[] = $line[self::EMAIL].' '.self::MESSAGE_ALREADY_EXISTS;
 
             return false;
         }
