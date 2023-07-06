@@ -76,6 +76,9 @@ class RelayPointManager
     public function addRelayPoint(RelayPoint $relayPoint)
     {
         if ($creator = $this->userRepository->find($relayPoint->getCreatorId())) {
+            echo 'yo';
+
+            exit;
             $relayPoint->setUser($creator);
         } else {
             throw new RelayPointException('creator not found');
@@ -96,7 +99,6 @@ class RelayPointManager
                 throw new RelayPointException('Community not found');
             }
         }
-
         // persist the relay point
         $this->entityManager->persist($relayPoint);
         $this->entityManager->flush();
