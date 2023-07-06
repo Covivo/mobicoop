@@ -2,13 +2,13 @@
   <v-container
     text-center
     fluid
-    :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;width:100%;'"
+    :style="
+      'background-image:url(\'' +
+        $t('urlBackground') +
+        '\');background-size:contain;width:100%;'
+    "
     pa-0
   >
-    <MSnackInfos
-      :active="informativeMessageActive"
-      :text="informativeMessageText"
-    />
     <v-row v-if="displayVerifiedMessagePhone">
       <v-col class="pa-0">
         <v-snackbar
@@ -20,23 +20,21 @@
           :timeout="10000"
         >
           <div>
-            {{ $t('snackbar1') }}
+            {{ $t("snackbar1") }}
             <a
               :href="$t('profileLink')"
               :title="$t('myProfile')"
             >
-              " {{ $t('myProfile') }} "
+              " {{ $t("myProfile") }} "
             </a>
-            {{ $t('snackbar2') }}
+            {{ $t("snackbar2") }}
           </div>
           <v-btn
             color="info"
             elevation="0"
             @click="snackbar = false"
           >
-            <v-icon
-              color="primary"
-            >
+            <v-icon color="primary">
               mdi-close
             </v-icon>
           </v-btn>
@@ -55,16 +53,14 @@
           :timeout="10000"
         >
           <div>
-            {{ $t('snackbar3') }}
+            {{ $t("snackbar3") }}
           </div>
           <v-btn
             color="info"
             elevation="0"
             @click="snackbar = false"
           >
-            <v-icon
-              color="primary"
-            >
+            <v-icon color="primary">
               mdi-close
             </v-icon>
           </v-btn>
@@ -82,16 +78,14 @@
           vertical
         >
           <div>
-            {{ $t('snackbar-account-logout') }}
+            {{ $t("snackbar-account-logout") }}
           </div>
           <v-btn
             color="info"
             elevation="0"
             @click="snackbar = false"
           >
-            <v-icon
-              color="primary"
-            >
+            <v-icon color="primary">
               mdi-close
             </v-icon>
           </v-btn>
@@ -115,9 +109,7 @@
             elevation="0"
             @click="snackbar = false"
           >
-            <v-icon
-              color="primary"
-            >
+            <v-icon color="primary">
               mdi-close
             </v-icon>
           </v-btn>
@@ -127,16 +119,12 @@
 
     <!-- Title and subtitle -->
 
-    <v-row
-      justify="center"
-    >
+    <v-row justify="center">
       <v-col
         class="text-center mt-md-n8 pt-md-16 mt-lg-n4 white--text"
         :style="'font-size:1.25rem;line-height:1.25;'"
       >
-        <h1
-          v-html="$t('title')"
-        />
+        <h1 v-html="$t('title')" />
       </v-col>
     </v-row>
     <!-- end Title and subtitle -->
@@ -170,7 +158,7 @@
       :event-display="eventDisplay"
       :solidary-display="solidaryDisplay"
       :url-mobile="mobileUrl"
-      :user-id="(user && user.id) ? user.id : null"
+      :user-id="user && user.id ? user.id : null"
     />
     <v-snackbar
       v-model="mobConnectSnackbar"
@@ -189,17 +177,28 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <m-dialog v-if="displayCee" />
     <!-- end homeBottom -->
   </v-container>
 </template>
 
 <script>
-import {merge} from "lodash";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/home/Home/";
-import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/home/Home/";
+import { merge } from "lodash";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/home/Home/";
+import {
+  messages_client_en,
+  messages_client_fr,
+  messages_client_eu,
+  messages_client_nl
+} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
-import MSnackInfos from "@components/utilities/MSnackInfos";
+import MDialog from "@components/utilities/MDialog";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -209,16 +208,16 @@ let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'nl': MessagesMergedNl,
-      'fr': MessagesMergedFr,
-      'eu': MessagesMergedEu
+      en: MessagesMergedEn,
+      nl: MessagesMergedNl,
+      fr: MessagesMergedFr,
+      eu: MessagesMergedEu
     }
   },
   components: {
     Search,
     HomeContent,
-    MSnackInfos
+    MDialog
   },
   props: {
     geoSearchUrl: {
@@ -269,9 +268,9 @@ export default {
       type: Boolean,
       default: false
     },
-    publishButtonAlwaysActive:{
+    publishButtonAlwaysActive: {
       type: Boolean,
-      default:false
+      default: false
     },
     // params to add to the publish and search routes
     params: {
@@ -314,33 +313,40 @@ export default {
       type: Boolean,
       default: false
     },
+    displayCee: {
+      type: Boolean,
+      default: false
+    }
   },
-  data () {
+  data() {
     return {
       snackbar: true,
       displayVerifiedMessagePhone: false,
       mobileUrl: this.urlMobile,
       displayVerifiedMessageEmail: false,
-      mobConnectSnackbar: false,
-      mobConnect_snackbar_text: null
-    }
+      mobConnectSnackbar: false
+    };
   },
   mounted() {
-    if (this.user !==null && this.user.validatedDate !== null){
+    if (this.user !== null && this.user.validatedDate !== null) {
       this.checkVerifiedPhone();
     } else {
       this.checkVerifiedEmail();
     }
   },
-  methods:{
+  methods: {
     checkVerifiedPhone() {
-      if (this.user !==null && this.user.telephone !== null) {
-        this.displayVerifiedMessagePhone = this.user.phoneValidatedDate ? false : true;
+      if (this.user !== null && this.user.telephone !== null) {
+        this.displayVerifiedMessagePhone = this.user.phoneValidatedDate
+          ? false
+          : true;
       }
     },
     checkVerifiedEmail() {
-      if (this.user !==null && this.user.email !== null) {
-        this.displayVerifiedMessageEmail = this.user.validatedDate ? false : true;
+      if (this.user !== null && this.user.email !== null) {
+        this.displayVerifiedMessageEmail = this.user.validatedDate
+          ? false
+          : true;
       }
     }
   }

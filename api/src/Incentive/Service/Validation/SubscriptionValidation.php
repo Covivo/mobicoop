@@ -36,7 +36,7 @@ class SubscriptionValidation extends Validation
     public function isSubscriptionValidForTimestampsProcess($subscription): bool
     {
         return
-            SubscriptionManager::STATUS_VALIDATED === $subscription->getStatus()
+            SubscriptionManager::STATUS_VALIDATED !== $subscription->getStatus()
             && (
                 is_null($subscription->getIncentiveProofTimestampToken())
                 || is_null($subscription->getCommitmentProofTimestampToken())
@@ -94,16 +94,6 @@ class SubscriptionValidation extends Validation
         if (!in_array($type, MobConnectManager::ALLOWED_SUBSCRIPTION_TYPES)) {
             throw new BadRequestHttpException('The subscriptionType parameter is incorrect. Please choose from: '.join(', ', MobConnectManager::ALLOWED_SUBSCRIPTION_TYPES));
         }
-    }
-
-    /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     */
-    public function isSubscriptionReadyForVerification($subscription): bool
-    {
-        return
-            !is_null($subscription->getHonorCertificateProofTimestampToken())
-            && !is_null($subscription->getHonorCertificateProofTimestampSigningTime());
     }
 
     private function _setVerificationDeadline(int $deadline): self

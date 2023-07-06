@@ -21,38 +21,43 @@
  *    LICENSE
  */
 
-namespace App\Incentive\Command;
+declare(strict_types=1);
 
-use App\Incentive\Service\Manager\SubscriptionManager;
+namespace App\Command\Command;
+
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class JourneysVerificationCommand extends Command
+class SentryTestCommand extends Command
 {
     /**
-     * @var SubscriptionManager
+     * @var LoggerInterface
      */
-    private $_subscriptionManager;
+    private $logger;
 
-    public function __construct(SubscriptionManager $subscriptionManager)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->_subscriptionManager = $subscriptionManager;
-
+        $this->logger = $logger;
         parent::__construct();
     }
 
     protected function configure()
     {
         $this
-            ->setName('app:incentive:subscriptions-verification')
-            ->setDescription('Request verification of journeys registered with mobConnect.')
-            ->setHelp('Asks mobConnect, 7 days after their declaration, if each journey is verified.')
+            ->setName('app:commands:sentry-test')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->_subscriptionManager->verifySubscriptions();
+        // the following code will test if monolog integration logs to sentry
+        $this->logger->error('My custom logged error.');
+
+        \Sentry\captureMessage('Something went wrong');
+
+        // the following code will test if an uncaught exception logs to sentry
+        throw new \RuntimeException('Example exception.');
     }
 }

@@ -2,8 +2,8 @@
     "yearsOld":"ans",
     "getProfileSummaryUri":"/utilisateur/profil/resume",
     "infos":{
-        "carpoolRealized":"Covoiturages réalisés",
+        "carpoolRealized":"Covoiturages acceptés",
         "answerPct":"Taux de réponse",
         "lastConnection":"Dernière connexion"
-    }   
+    }
 }

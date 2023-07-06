@@ -265,7 +265,7 @@ services:
         defaultAnyRouteAsPassenger: "%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%"
         defaultPriceKm: "%env(float:CARPOOL_PRICE)%"
         batchTemp: "%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%"
-        matcherCustomization: "%env(resolve:MATCHER_CUSTOMIZATION)%"
+        matcherCustomization: "%env(bool:MATCHER_CUSTOMIZATION)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 
@@ -761,23 +761,23 @@ services:
       - { name: monolog.logger, channel: faker }
 
   # INCENTIVE
-  App\Incentive\Command\JourneysVerificationCommand:
+  App\Incentive\Command\SubscriptionsVerificationCommand:
     tags:
       - {
           name: "console.command",
           command: "app:incentive:subscriptions-verification",
         }
 
-  App\Incentive\Command\JourneyRecoveryCommand:
-    tags:
-      - { name: "console.command", command: "app:incentive:journeys-recovery" }
-
   App\Incentive\Command\SubscriptionVerificationCommand:
     tags:
       - {
           name: "console.command",
-          command: "app:incentive:subscription-verification",
+          command: "app:incentive:subscription-verify",
         }
+
+  App\Incentive\Command\JourneyRecoveryCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:journeys-recovery" }
 
   App\Incentive\Command\SubscriptionTimestampsCommand:
     tags:
@@ -855,6 +855,23 @@ services:
       - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\SubscriptionManager:
+    arguments:
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $mobConnectParams:
+        api_uri: "%env(string:MOBCONNECT_API_URI)%"
+        credentials:
+          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
+          api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
+        subscription_ids:
+          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
+          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+    tags:
+      - { name: monolog.logger, channel: incentive_subscription }
+
+  App\Incentive\Service\Manager\TimestampTokenManager:
     arguments:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $mobConnectParams:

@@ -23,7 +23,6 @@
 
 namespace App\Carpool\Entity;
 
-use App\Geography\Entity\Address;
 use App\User\Entity\User;
 
 /**
@@ -66,12 +65,12 @@ class CarpoolExport
     private $carpooler;
 
     /**
-     * @var Address The origin of the carpool
+     * @var null|string The origin of the carpool
      */
     private $pickUp;
 
     /**
-     * @var Address The destination of the carpool
+     * @var null|string The destination of the carpool
      */
     private $dropOff;
 
@@ -151,24 +150,24 @@ class CarpoolExport
         return $this;
     }
 
-    public function getPickUp(): ?Address
+    public function getPickUp(): ?string
     {
         return $this->pickUp;
     }
 
-    public function setPickUp(?Address $pickUp): self
+    public function setPickUp(?string $pickUp): self
     {
         $this->pickUp = $pickUp;
 
         return $this;
     }
 
-    public function getDropOff(): ?Address
+    public function getDropOff(): ?string
     {
         return $this->dropOff;
     }
 
-    public function setDropOff(?Address $dropOff): self
+    public function setDropOff(?string $dropOff): self
     {
         $this->dropOff = $dropOff;
 

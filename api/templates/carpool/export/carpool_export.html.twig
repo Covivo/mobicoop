@@ -124,14 +124,14 @@
 							{% endif %}
 							{# pickup locality #}
 							{% if (carpoolExport.pickUp) %}
-								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.pickUp.addressLocality }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.pickUp }}</td>
 							{% else %}
 								<td style="border: 1px solid black;padding: 10px;">{{ "deleted"|trans }}</td>
 							{% endif %}
 
 							{# dropOff locality #}
 							{% if (carpoolExport.dropOff) %}
-								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.dropOff.addressLocality }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.dropOff }}</td>
 							{% else %}
 								<td style="border: 1px solid black;padding: 10px;">{{ "deleted"|trans }}</td>
 							{% endif %}

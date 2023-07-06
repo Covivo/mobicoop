@@ -50,6 +50,11 @@ class BookingManager
 
     public function postBooking(Booking $booking)
     {
+        if (!is_null($booking->getMessage())) {
+            $booking->setStatus(Booking::INITIATED);
+        } else {
+            $booking->setStatus(Booking::WAITING_DRIVER_CONFIRMATION);
+        }
         $this->carpoolStandardProvider->postBooking($booking);
     }
 

@@ -210,10 +210,7 @@ export default {
           .utc(this.lResult.date)
           .format(this.$t("i18n.date.format.fullDate"));
       return null;
-    },
-  },
-  mounted() {
-    this.computedDate();
+    }
   },
   methods: {
     closeConfirmationDialog() {

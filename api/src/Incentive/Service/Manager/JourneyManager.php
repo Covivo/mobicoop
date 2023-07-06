@@ -18,6 +18,7 @@ use App\Incentive\Service\Validation\JourneyValidation;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
+use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -25,9 +26,19 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class JourneyManager extends MobConnectManager
 {
     /**
+     * @var TimestampTokenManager
+     */
+    protected $_timestampTokenManager;
+
+    /**
      * @var CarpoolProofRepository
      */
     private $_carpoolProofRepository;
+
+    /**
+     * @var CarpoolItemRepository
+     */
+    private $_carpoolItemRepository;
 
     /**
      * @var EventDispatcherInterface
@@ -41,18 +52,22 @@ class JourneyManager extends MobConnectManager
 
     public function __construct(
         CarpoolProofRepository $carpoolProofRepository,
+        CarpoolItemRepository $carpoolItemRepository,
         EntityManagerInterface $em,
         EventDispatcherInterface $eventDispatcher,
         JourneyValidation $journeyValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
+        TimestampTokenManager $timestampTokenManager,
         string $carpoolProofPrefix,
         array $mobConnectParams,
         array $ssoServices
     ) {
         parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
+        $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
+        $this->_carpoolItemRepository = $carpoolItemRepository;
         $this->_eventDispatcher = $eventDispatcher;
 
         $this->_journeyValidation = $journeyValidation;
@@ -62,27 +77,35 @@ class JourneyManager extends MobConnectManager
     {
         $result = false;
 
-        $carpoolProofs = $this->_carpoolProofRepository->findUserCEEEligibleProof($driver, $subscriptionType);
+        switch ($subscriptionType) {
+            case MobConnectManager::LONG_SUBSCRIPTION_TYPE:
+                $carpoolItems = $this->_carpoolItemRepository->findUserEECEligibleItem($driver);
 
-        foreach ($carpoolProofs as $proof) {
-            switch ($subscriptionType) {
-                case MobConnectManager::LONG_SUBSCRIPTION_TYPE:
+                foreach ($carpoolItems as $item) {
                     if (is_null($driver->getLongDistanceSubscription()->getCommitmentProofDate()) && empty($driver->getLongDistanceSubscription()->getJourneys())) {
-                        $proposal = $driver === $proof->getAsk()->getMatching()->getProposalOffer()->getUser()
-                            ? $proof->getAsk()->getMatching()->getProposalOffer()->getUser() : $proof->getAsk()->getMatching()->getProposalRequest()->getUser();
+                        $proposal = $driver === $item->getAsk()->getMatching()->getProposalOffer()->getUser()
+                            ? $item->getAsk()->getMatching()->getProposalOffer()->getUser() : $item->getAsk()->getMatching()->getProposalRequest()->getUser();
 
                         $event = new FirstLongDistanceJourneyPublishedEvent($proposal);
                         $this->_eventDispatcher->dispatch(FirstLongDistanceJourneyPublishedEvent::NAME, $event);
                     }
 
-                    $carpoolPayment = $this->_getCarpoolPaymentFromCarpoolProof($proof);
+                    $carpoolPayment = $this->_getCarpoolPaymentFromCarpoolItem($item);
 
-                    $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
-                    $this->_eventDispatcher->dispatch(ElectronicPaymentValidatedEvent::NAME, $event);
+                    if (!is_null($carpoolPayment)) {
+                        $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
+                        $this->_eventDispatcher->dispatch(ElectronicPaymentValidatedEvent::NAME, $event);
+                    }
 
-                    break;
+                    $result = true;
+                }
 
-                case MobConnectManager::SHORT_SUBSCRIPTION_TYPE:
+                break;
+
+            case MobConnectManager::SHORT_SUBSCRIPTION_TYPE:
+                $carpoolProofs = $this->_carpoolProofRepository->findUserCEEEligibleProof($driver, $subscriptionType);
+
+                foreach ($carpoolProofs as $proof) {
                     if (is_null($driver->getShortDistanceSubscription()->getCommitmentProofDate()) && empty($driver->getShortDistanceSubscription()->getJourneys())) {
                         $event = new FirstShortDistanceJourneyPublishedEvent($proof);
                         $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyPublishedEvent::NAME, $event);
@@ -91,10 +114,10 @@ class JourneyManager extends MobConnectManager
                     $event = new CarpoolProofValidatedEvent($proof);
                     $this->_eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
 
-                    break;
-            }
+                    $result = true;
+                }
 
-            $result = true;
+                break;
         }
 
         return $result;
@@ -128,13 +151,7 @@ class JourneyManager extends MobConnectManager
         $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
 
-        $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
-        $subscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_COMMITMENT);
-
-        if (!is_null($timestampResponse->getCommitmentProofTimestampToken())) {
-            $subscription->setCommitmentProofTimestampToken($timestampResponse->getCommitmentProofTimestampToken());
-            $subscription->setCommitmentProofTimestampSigningTime($timestampResponse->getCommitmentProofTimestampSigningTime());
-        }
+        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
         $this->_em->flush();
     }
@@ -167,13 +184,7 @@ class JourneyManager extends MobConnectManager
         $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
 
-        $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
-        $subscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_COMMITMENT);
-
-        if (!is_null($timestampResponse->getCommitmentProofTimestampToken())) {
-            $subscription->setCommitmentProofTimestampToken($timestampResponse->getCommitmentProofTimestampToken());
-            $subscription->setCommitmentProofTimestampSigningTime($timestampResponse->getCommitmentProofTimestampSigningTime());
-        }
+        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
         $this->_em->flush();
     }
@@ -211,10 +222,17 @@ class JourneyManager extends MobConnectManager
 
             $this->_loggerService->log('Step 17 - Processing the carpoolItem ID'.$carpoolItem->getId());
 
-            if ($this->_isLDJourneyCommitmentJourney($subscription, $carpoolItem)) {
+            if (
+                $this->_isLDJourneyCommitmentJourney($subscription, $carpoolItem)
+                || (
+                    empty($subscription->getJourneys()->toArray())
+                    && !is_null($subscription->getCommitmentProofTimestampToken())
+                )
+            ) {
                 $this->_loggerService->log('Step 17 - Processing for the commitment journey');
 
-                $journey = $subscription->getCommitmentProofJourney();
+                $journey = is_null($subscription->getCommitmentProofJourney())
+                    ? new LongDistanceJourney() : $subscription->getCommitmentProofJourney();
 
                 $params = [
                     'Date de partage des frais' => $carpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
@@ -224,13 +242,7 @@ class JourneyManager extends MobConnectManager
                 $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
                 $subscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
 
-                $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
-                $subscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_ATTESTATION);
-
-                if (!is_null($timestampResponse->getHonorCertificateProofTimestampToken())) {
-                    $subscription->setHonorCertificateProofTimestampToken($timestampResponse->getHonorCertificateProofTimestampToken());
-                    $subscription->setHonorCertificateProofTimestampSigningTime($timestampResponse->getHonorCertificateProofTimestampSigningTime());
-                }
+                $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
                 $subscription->setExpirationDate($this->getExpirationDate());
             } else {
@@ -296,13 +308,7 @@ class JourneyManager extends MobConnectManager
             $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
             $subscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
 
-            $timestampResponse = $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
-            $subscription->addLog($timestampResponse, Log::TYPE_TIMESTAMP_ATTESTATION);
-
-            if (!is_null($timestampResponse->getHonorCertificateProofTimestampToken())) {
-                $subscription->setHonorCertificateProofTimestampToken($timestampResponse->getHonorCertificateProofTimestampToken());
-                $subscription->setHonorCertificateProofTimestampSigningTime($timestampResponse->getHonorCertificateProofTimestampSigningTime());
-            }
+            $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
             $subscription->setExpirationDate($this->getExpirationDate());
         } else {
@@ -345,14 +351,12 @@ class JourneyManager extends MobConnectManager
         $carpoolItem = array_values($carpoolItems)[0];
 
         $carpoolPayments = array_values(array_filter($carpoolItem->getCarpoolPayments(), function ($payment) use ($carpoolProof) {
-            return $payment->getUser()->getId() === $carpoolProof->getPassenger()->getId();
+            return
+                $payment->getUser()->getId() === $carpoolProof->getPassenger()->getId()
+                && $this->_journeyValidation->isPaymentValidForEEC($payment);
         }));
 
-        if (count($carpoolPayments) > 1) {
-            return null;
-        }
-
-        return $carpoolPayments[0];
+        return !empty($carpoolPayments) ? $carpoolPayments[0] : null;
     }
 
     private function _getCarpoolItemsFromCarpoolPayment(CarpoolPayment $carpoolPayment): array
@@ -364,5 +368,14 @@ class JourneyManager extends MobConnectManager
                 !is_null($driver)
                 && !is_null($driver->getMobConnectAuth());
         });
+    }
+
+    private function _getCarpoolPaymentFromCarpoolItem(CarpoolItem $carpoolItem): ?CarpoolPayment
+    {
+        $carpoolPayments = array_filter($carpoolItem->getCarpoolPayments(), function ($carpoolPayment) {
+            return $this->_journeyValidation->isPaymentValidForEEC($carpoolPayment);
+        });
+
+        return !(empty($carpoolPayments)) ? $carpoolPayments[0] : null;
     }
 }

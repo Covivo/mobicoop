@@ -1,7 +1,7 @@
 {
     "getPublicProfileUri": "/user/profile/public",
     "yearsOld": "years old",
-    "carpoolRealized": "Carpool completed",
+    "carpoolRealized": "Carpool accepted",
     "lastConnection": "Last login on",
     "answerRate": "Response rate",
     "subscribedOn": "Registered on",

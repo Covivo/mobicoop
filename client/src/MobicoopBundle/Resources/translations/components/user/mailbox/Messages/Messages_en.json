@@ -19,5 +19,6 @@
       "link":"https://pro.mobicoop.fr/comment-regler-ses-covoiturages-sur-mobicoop/",
       "textLink":"En savoir plus.",
       "title":"Prenez garde aux fraudeurs!"
-    }
+    },
+    "urlSendExternalMessage": "/utilisateur/messages/externe/envoyer"
 }

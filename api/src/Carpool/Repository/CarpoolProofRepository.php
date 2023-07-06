@@ -26,7 +26,6 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Resource\CeeSubscriptions;
-use App\Incentive\Service\Manager\MobConnectManager;
 use App\Incentive\Service\Validation\Validation;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
@@ -214,13 +213,13 @@ class CarpoolProofRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function getJourneysNumberMadeSinceThresholdDate(User $user, bool $isLongDistance = true)
+    public function getJourneysNumberMadeSinceThresholdDate(User $user, \DateTimeInterface $thresholdDate, bool $isLongDistance = true)
     {
         $qb = $this->repository->createQueryBuilder('cp');
 
         $parameters = [
             'distance' => Validation::LONG_DISTANCE_THRESHOLD,
-            'thresholdDate' => new \DateTime('now'),
+            'thresholdDate' => $thresholdDate,
             'driver' => $user,
         ];
 
@@ -306,31 +305,21 @@ class CarpoolProofRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findUserCEEEligibleProof(User $user, string $subscriptionType)
+    public function findUserCEEEligibleProof(User $user)
     {
+        $allreadyAdded = array_map(function ($journey) {
+            return $journey->getCarpoolProof();
+        }, $user->getShortDistanceSubscription()->getJourneys()->toArray());
+
         $parameters = [
             'country' => Validation::REFERENCE_COUNTRY,
             'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
             'driver' => $user,
+            'subscriptionDate' => $user->getShortDistanceSubscription()->getCreatedAt(),
+            'class' => CarpoolProof::TYPE_HIGH,
+            'status' => CarpoolProof::STATUS_VALIDATED,
+            'allreadyAdded' => !empty($allreadyAdded) ? $allreadyAdded : '',
         ];
-
-        // Parameters determination
-        if (MobConnectManager::LONG_SUBSCRIPTION_TYPE === $subscriptionType) {
-            $parameters['subscriptionDate'] = $user->getLongDistanceSubscription()->getCreatedAt();
-            $allreadyAdded = array_map(function ($journey) {
-                return $journey->getCarpoolProof();
-            }, $user->getLongDistanceSubscription()->getJourneys()->toArray());
-            $parameters['creditorStatus'] = CarpoolItem::CREDITOR_STATUS_ONLINE;
-        } else {
-            $parameters['subscriptionDate'] = $user->getShortDistanceSubscription()->getCreatedAt();
-            $allreadyAdded = array_map(function ($journey) {
-                return $journey->getCarpoolProof();
-            }, $user->getShortDistanceSubscription()->getJourneys()->toArray());
-            $parameters['class'] = CarpoolProof::TYPE_HIGH;
-            $parameters['status'] = CarpoolProof::STATUS_VALIDATED;
-        }
-
-        $parameters['allreadyAdded'] = !empty($allreadyAdded) ? $allreadyAdded : '';
 
         $qb = $this->repository->createQueryBuilder('cp');
 
@@ -345,20 +334,10 @@ class CarpoolProofRepository
             ->andWhere('cp.createdDate >= :subscriptionDate')
             ->andWhere('cp.id NOT IN (:allreadyAdded)')
             ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
+            ->andWhere('m.commonDistance < :distance')
+            ->andWhere('cp.type = :class')
+            ->andWhere('cp.status = :status')
         ;
-
-        if (MobConnectManager::LONG_SUBSCRIPTION_TYPE === $subscriptionType) {
-            $qb
-                ->innerJoin('a.carpoolItems', 'ci', 'WITH', 'ci.creditorStatus = :creditorStatus')
-                ->andWhere('m.commonDistance >= :distance')
-            ;
-        } else {
-            $qb
-                ->andWhere('m.commonDistance < :distance')
-                ->andWhere('cp.type = :class')
-                ->andWhere('cp.status = :status')
-            ;
-        }
 
         $qb->setParameters($parameters);
 

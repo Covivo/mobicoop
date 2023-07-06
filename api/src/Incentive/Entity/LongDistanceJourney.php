@@ -123,17 +123,6 @@ class LongDistanceJourney
     private $carpoolItem;
 
     /**
-     * The carpool proof associate with the journey.
-     *
-     * @var null|CarpoolProof
-     *
-     * @ORM\OneToOne(targetEntity=CarpoolProof::class)
-     *
-     * @ORM\JoinColumn(nullable=true)
-     */
-    private $carpoolProof;
-
-    /**
      * The proposal associate with the journey.
      *
      * @var null|Proposal
@@ -428,28 +417,6 @@ class LongDistanceJourney
         $this->setCarpoolersNumber($carpoolersNumber);
         $this->setStartDate($this->carpoolItem->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
         $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
-
-        return $this;
-    }
-
-    /**
-     * Get the carpool proof associate with the journey.
-     */
-    public function getCarpoolProof(): ?CarpoolProof
-    {
-        return $this->carpoolProof;
-    }
-
-    /**
-     * Set the carpool proof associate with the journey.
-     *
-     * @param null|CarpoolProof $carpoolProof the carpool proof associate with the journey
-     *
-     * @return self
-     */
-    public function setCarpoolProof(?CarpoolProof $carpoolProof)
-    {
-        $this->carpoolProof = $carpoolProof;
 
         return $this;
     }

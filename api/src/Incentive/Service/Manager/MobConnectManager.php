@@ -3,15 +3,12 @@
 namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Entity\LongDistanceSubscription;
-use App\Incentive\Entity\ShortDistanceJourney;
-use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Payment\Entity\CarpoolItem;
@@ -28,6 +25,13 @@ abstract class MobConnectManager
     public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
 
     public const SUBSCRIPTION_EXPIRATION_DELAY = 3;     // Expressed in months
+
+    /**
+     * Period, expressed in months, preceding the subscription request during which the user must not have made a trip.
+     *
+     * @var int
+     */
+    public const WAITING_PERIOD = 3;     // Expressed in months
 
     public const LONG_SUBSCRIPTION_TYPE = 'long';
     public const SHORT_SUBSCRIPTION_TYPE = 'short';
@@ -215,23 +219,6 @@ abstract class MobConnectManager
         return $this;
     }
 
-    protected function getShortDistanceCommitmentJourney(CarpoolProof $carpoolProof, ShortDistanceSubscription $subscription): ?ShortDistanceJourney
-    {
-        /**
-         * @var ShortDistanceJourney
-         */
-        $commitmentJourney = $this->_em->getRepository(ShortDistanceJourney::class)->findOneBy([
-            'subscription' => $subscription,
-            'commitmentJourney' => true,
-        ]);
-
-        return
-            !is_null($commitmentJourney)
-            && !is_null($commitmentJourney->getCarpoolProof())
-            && $commitmentJourney->getCarpoolProof() === $carpoolProof
-            ? $commitmentJourney : null;
-    }
-
     protected function getDriverPassengerProposalForCarpoolItem(CarpoolItem $carpoolItem, int $carpoolerType): ?Proposal
     {
         $proposal = null;
@@ -255,7 +242,9 @@ abstract class MobConnectManager
 
     protected function _isLDJourneyCommitmentJourney(LongDistanceSubscription $subscription, CarpoolItem $carpoolItem): bool
     {
-        return $subscription->getCommitmentProofJourney()->getInitialProposal() === $this->getDriverPassengerProposalForCarpoolItem($carpoolItem, self::DRIVER);
+        return
+            !is_null($subscription->getCommitmentProofJourney())
+            && $subscription->getCommitmentProofJourney()->getInitialProposal() === $this->getDriverPassengerProposalForCarpoolItem($carpoolItem, self::DRIVER);
     }
 
     protected function getAddressesLocality(CarpoolItem $carpoolItem): array
@@ -277,5 +266,14 @@ abstract class MobConnectManager
         }
 
         return $addresses;
+    }
+
+    protected function getThresholdDate(): \DateTime
+    {
+        $now = new \DateTime('now');
+        $thresholdDate = clone $now;
+        $thresholdDate->sub(new \DateInterval('P'.self::WAITING_PERIOD.'M'));
+
+        return $thresholdDate;
     }
 }

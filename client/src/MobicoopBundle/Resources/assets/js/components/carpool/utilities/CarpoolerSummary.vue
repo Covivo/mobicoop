@@ -128,18 +128,32 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <div
-              v-if="protocol ==='RDEX'"
               class="ma-0 pa-0"
               v-on="(user == null) && on"
             >
               <v-btn
+                v-if="externalProviderType == 1"
                 :disabled="user == null"
                 rounded
                 color="primary"
                 type="button"
                 target="_blank"
                 class="mt-1"
-                @click="externalContactModal"
+                @click="dialogExternalContact=true"
+              >
+                <span>
+                  {{ $t("externalResult.contact.button.label") }}
+                </span>
+              </v-btn>
+              <v-btn
+                v-if="externalProviderType == 2 && carpoolStandardMessagingEnabled"
+                :disabled="user == null"
+                rounded
+                color="primary"
+                type="button"
+                target="_blank"
+                class="mt-1"
+                @click="emitCarpoolStandardContact"
               >
                 <span>
                   {{ $t("externalResult.contact.button.label") }}
@@ -286,6 +300,10 @@ export default {
       type: String,
       default: null
     },
+    externalProviderType: {
+      type: Number,
+      default: 1
+    },
     externalJourneyId: {
       type: String,
       default: null
@@ -397,6 +415,9 @@ export default {
       } else {
         this.$emit("loginOrRegister");
       }
+    },
+    emitCarpoolStandardContact: function() {
+      this.$emit("carpoolStandardContact");
     },
     externalContactModal() {
       this.dialogExternalContact = true;

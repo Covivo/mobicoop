@@ -59,3 +59,4 @@ twig:
         assistiveSsoProvider: '%env(string:ASSISTIVE_SSO_PROVIDER)%'
         specificSsoServices: '%env(json:SPECIFIC_SSO_SERVICES)%'
         dateTimePicker: '%env(bool:DATE_TIME_PICKER)%'
+        displayCee: '%env(bool:CEE_DISPLAY)%'
