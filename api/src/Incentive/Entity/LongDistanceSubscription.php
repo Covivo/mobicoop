@@ -24,6 +24,8 @@ class LongDistanceSubscription
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/long-distance-subscription/honour-certificate/';
 
+    public const COMMITMENT_PREFIX = 'Proposal_';
+
     /**
      * @var int The user subscription ID
      *

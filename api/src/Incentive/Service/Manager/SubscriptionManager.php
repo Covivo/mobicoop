@@ -221,6 +221,9 @@ class SubscriptionManager extends MobConnectManager
         return $response;
     }
 
+    /**
+     * Step 20.
+     */
     public function verifySubscriptionFromControllerCommand(?string $subscriptionType, ?string $subscriptionId)
     {
         if (is_null($subscriptionType) || is_null($subscriptionId)) {
@@ -255,7 +258,7 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Verify subscriptions.
+     * STEP 20 - Verify subscriptions.
      */
     public function verifySubscriptions()
     {
@@ -274,12 +277,13 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Vérify a subscription.
+     * STEP 20 - Vérify a subscription.
      *
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
     public function verifySubscription($subscription)
     {
+        $this->_loggerService->log('Step 20 - Obtaining missing tokens');
         $subscription = $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
 
         if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {

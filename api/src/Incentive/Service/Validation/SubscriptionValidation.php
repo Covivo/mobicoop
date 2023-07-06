@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Service\Validation;
 
+use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\LoggerService;
@@ -44,28 +45,41 @@ class SubscriptionValidation extends Validation
     }
 
     /**
-     * Undocumented function.
+     * Returns if the subscription is ready to be verified. Ready if:
+     * - The subscription has not been validated
+     * - All tokens are present
+     * - Depending on the type of subscription, the conditions specific to each are met.
      *
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
     public function isSubscriptionReadyForVerify($subscription): bool
     {
+        $journeys = $subscription->getJourneys();
+
+        if ($journeys->isEmpty()) {
+            return false;
+        }
+
+        $commitmentJourney = $subscription->getCommitmentProofJourney();
+
+        if (is_null($commitmentJourney)) {
+            return false;
+        }
+
         return
-            is_null($subscription->getStatus())
-            && $subscription->getJourneys()->isEmpty()
-                ? (
-                    $subscription instanceof LongDistanceSubscription
-                    ? $this->_journeyValidation->isLDJourneysReadyForVerify($subscription->getJourneys())
-                    : $this->_journeyValidation->isSDJourneysReadyForVerify($subscription->getJourneys())
-                )
-                : true
-            && is_null($subscription->getVerificationDate())
+            SubscriptionManager::STATUS_VALIDATED != $subscription->getStatus()                                 // We do not recheck subscriptions that have already been validated
             && !is_null($subscription->getIncentiveProofTimestampToken())
             && !is_null($subscription->getIncentiveProofTimestampSigningTime())
             && !is_null($subscription->getCommitmentProofTimestampToken())
             && !is_null($subscription->getCommitmentProofTimestampSigningTime())
             && !is_null($subscription->getHonorCertificateProofTimestampToken())
-            && !is_null($subscription->getHonorCertificateProofTimestampSigningTime());
+            && !is_null($subscription->getHonorCertificateProofTimestampSigningTime())
+            && $subscription instanceof LongDistanceSubscription
+                ? $this->_journeyValidation->isPaymentValidForEec($commitmentJourney->getCarpoolPayment())
+                : (
+                    CarpoolProof::TYPE_HIGH === $commitmentJourney->getCarpoolProof()->getType()
+                    && CarpoolProof::STATUS_VALIDATED === $commitmentJourney->getCarpoolProof()->getStatus()
+                );
     }
 
     public function checkSubscriptionIdValidity(string $id)

@@ -64,14 +64,14 @@ abstract class MobConnectManager
     protected $_honourCertificateService;
 
     /**
+     * @var int
+     */
+    protected $_carpoolProofPrefix;
+
+    /**
      * @var MobConnectApiProvider
      */
     private $_apiProvider;
-
-    /**
-     * @var int
-     */
-    private $_carpoolProofPrefix;
 
     /**
      * @var array
