@@ -258,7 +258,11 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * <<<<<<< HEAD
      * STEP 20 - Verify subscriptions.
+     * =======
+     * Step 20 - Verify subscriptions.
+     * >>>>>>> master.
      */
     public function verifySubscriptions()
     {
@@ -277,7 +281,11 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * <<<<<<< HEAD
      * STEP 20 - Vérify a subscription.
+     * =======
+     * Step 20 - Vérify a subscription.
+     * >>>>>>> master.
      *
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
