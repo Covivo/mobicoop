@@ -77,6 +77,7 @@ class Message
      * @var int the id of the message
      *
      * @Groups({"read"})
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -85,6 +86,7 @@ class Message
      * @var User the sender of the message
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $from;
@@ -93,6 +95,7 @@ class Message
      * @var User the recipient of the message
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $to;
@@ -101,6 +104,7 @@ class Message
      * @var string the content of the message
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $message;
@@ -109,6 +113,7 @@ class Message
      * @var string Defines if the recipient of this message is either the driver or the passenger. [DRIVER, PASSENGER]
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $recipientCarpoolerType;
@@ -128,7 +133,7 @@ class Message
     private $passengerJourneyId;
 
     /**
-     * @var null|string ID ($uuid) of the booking to which the message is related (if any)
+     * @var string ID ($uuid) of the booking to which the message is related (if any)
      *
      * @Groups({"read", "write"})
      */
@@ -226,12 +231,12 @@ class Message
         return $this;
     }
 
-    public function getBookingId(): ?string
+    public function getBookingId(): string
     {
         return $this->bookingId;
     }
 
-    public function setBookingId(?string $bookingId): self
+    public function setBookingId(string $bookingId): self
     {
         $this->bookingId = $bookingId;
 

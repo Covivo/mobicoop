@@ -765,23 +765,23 @@ services:
       - { name: monolog.logger, channel: faker }
 
   # INCENTIVE
-  App\Incentive\Command\JourneysVerificationCommand:
+  App\Incentive\Command\SubscriptionsVerificationCommand:
     tags:
       - {
           name: "console.command",
           command: "app:incentive:subscriptions-verification",
         }
 
-  App\Incentive\Command\JourneyRecoveryCommand:
-    tags:
-      - { name: "console.command", command: "app:incentive:journeys-recovery" }
-
   App\Incentive\Command\SubscriptionVerificationCommand:
     tags:
       - {
           name: "console.command",
-          command: "app:incentive:subscription-verification",
+          command: "app:incentive:subscription-verify",
         }
+
+  App\Incentive\Command\JourneyRecoveryCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:journeys-recovery" }
 
   App\Incentive\Command\SubscriptionTimestampsCommand:
     tags:

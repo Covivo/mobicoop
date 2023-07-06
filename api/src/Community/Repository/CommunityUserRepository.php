@@ -77,9 +77,11 @@ class CommunityUserRepository
         $query->where('cu.community = :community')
             ->andWhere('cu.status = :accepted_as_moderator or cu.status = :accepted_as_member')
             ->join('cu.user', 'u')
+            ->andWhere('u.status != :pseudonymizedStatus')
             ->setParameter('community', $community)
             ->setParameter('accepted_as_moderator', CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
             ->setParameter('accepted_as_member', CommunityUser::STATUS_ACCEPTED_AS_MEMBER)
+            ->setParameter('pseudonymizedStatus', EntityUser::STATUS_PSEUDONYMIZED)
         ;
 
         // Sort and Filters
@@ -212,14 +214,17 @@ class CommunityUserRepository
     public function findNLastUsersOfACommunity(Community $community): array
     {
         return $this->repository->createQueryBuilder('cu')
+            ->join('cu.user', 'u')
             ->where('cu.community = :community')
             ->andWhere('cu.status != :pending')
             ->andWhere('cu.status != :refused')
+            ->andWhere('u.status != :pseudonymizedStatus')
             ->orderBy('cu.createdDate', 'DESC')
             ->setMaxResults($this->communityNbLastUser)
             ->setParameter('community', $community)
             ->setParameter('pending', CommunityUser::STATUS_PENDING)
             ->setParameter('refused', CommunityUser::STATUS_REFUSED)
+            ->setParameter('pseudonymizedStatus', EntityUser::STATUS_PSEUDONYMIZED)
             ->getQuery()->getResult()
         ;
     }

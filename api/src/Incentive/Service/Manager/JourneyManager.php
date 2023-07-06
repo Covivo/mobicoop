@@ -8,6 +8,7 @@ use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
+use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
@@ -130,7 +131,7 @@ class JourneyManager extends MobConnectManager
         $this->setDriver($proposal->getUser());
 
         $params = [
-            'Identifiant du trajet' => 'Proposal_'.$proposal->getId(),
+            'Identifiant du trajet' => LongDistanceSubscription::COMMITMENT_PREFIX.$proposal->getId(),
             'Date de publication du trajet' => $proposal->getCreatedDate()->format(self::DATE_FORMAT),
         ];
 
@@ -193,6 +194,8 @@ class JourneyManager extends MobConnectManager
      */
     public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
     {
+        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$carpoolPayment->getId());
+
         /**
          * @var CarpoolItem[]
          */
@@ -217,6 +220,8 @@ class JourneyManager extends MobConnectManager
                 continue;
             }
 
+            $this->_loggerService->log('Step 17 - Processing the carpoolItem ID'.$carpoolItem->getId());
+
             if (
                 $this->_isLDJourneyCommitmentJourney($subscription, $carpoolItem)
                 || (
@@ -224,6 +229,8 @@ class JourneyManager extends MobConnectManager
                     && !is_null($subscription->getCommitmentProofTimestampToken())
                 )
             ) {
+                $this->_loggerService->log('Step 17 - Processing for the commitment journey');
+
                 $journey = is_null($subscription->getCommitmentProofJourney())
                     ? new LongDistanceJourney() : $subscription->getCommitmentProofJourney();
 
@@ -256,6 +263,8 @@ class JourneyManager extends MobConnectManager
         }
 
         $this->_em->flush();
+
+        $this->_loggerService->log('Step 17 - End of treatment');
     }
 
     /**
@@ -289,7 +298,7 @@ class JourneyManager extends MobConnectManager
             return;
         }
 
-        $journey = $this->getShortDistanceCommitmentJourney($carpoolProof, $subscription);
+        $journey = $subscription->getCommitmentProofJourney();
 
         if (!is_null($journey)) {
             $params = [

@@ -461,6 +461,14 @@ user_message_send:
     nl: /user/messages/send
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageSend
 
+# send an external message
+send_external_message:
+  path:
+    fr: /utilisateur/messages/externe/envoyer
+    en: /user/messages/external/send
+    nl: /user/messages/external/send
+  controller: Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\MessageController::sendExternalMessage  
+
 # get a message thread
 user_message_thread:
   path:
@@ -581,7 +589,16 @@ user_check_phone_number_validity:
     nl: /user/check/telephone
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPhoneNumberValidity
 
-  # Unsubscribe user from email
+# Check if the driver licence number is valid (POST)
+user_check_driver_licence_number_validity:
+  methods: [POST]
+  path:
+    fr: /utilisateur/verif/numeropermis
+    en: /user/check/driverlicencenumber
+    nl: /user/check/driverlicencenumber
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userDriverLicenceNumberValidity
+
+# Unsubscribe user from email
 user_unsubscribe_email:
   path:
     fr: /utilisateur/unsubscribe/{token}
@@ -1858,6 +1875,13 @@ payment_week_first:
     nl: /getFirstWeek
   controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getFirstWeek
 
+donation:
+  path:
+    fr: /donation
+    en: /donation
+    nl: /donation
+  controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\DonationController::donation
+
 #######################
 # Gamification routes #
 #######################
@@ -1900,14 +1924,12 @@ my_cee_subscriptions:
     nl: /getMyCeeSubscriptions
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::myCeeSubscriptions
 
-
 my_eec_subscriptions_eligibility:
   path:
     fr: /getMyEecEligibility
     en: /getMyEecEligibility
     nl: /getMyEecEligibility
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::myEecSubscriptionsEligibility
-
 
 ###############
 # misc routes #
@@ -1976,7 +1998,6 @@ assistives.sso-activation:
 ###############
 # carpool standard routes #
 ###############
-
 
 # external booking from results (POST) (AJAX json)
 post_external_booking:
