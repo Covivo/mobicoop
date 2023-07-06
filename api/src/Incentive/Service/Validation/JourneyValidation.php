@@ -131,30 +131,4 @@ class JourneyValidation extends Validation
             && $this->isDistanceLongDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance())
             && $this->isOriginOrDestinationFromFrance($carpoolItem);
     }
-
-    /**
-     * @param mixed $journeys
-     *
-     * @return null|LongDistanceJourney|ShortDistanceJourney
-     */
-    public function getCommitmentJourney($journeys)
-    {
-        $commitmentJourney = null;
-
-        foreach ($journeys->toArray() as $journey) {
-            if ($journey->isCommitmentJourney()) {
-                $commitmentJourney = $journey;
-
-                break;
-            }
-        }
-
-        return ($journeys->isEmpty())
-            ? null
-            : (
-                is_null($commitmentJourney)
-                ? $commitmentJourney = $journeys->toArray()[0]
-                : $commitmentJourney
-            );
-    }
 }
