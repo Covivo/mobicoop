@@ -23,33 +23,39 @@
 
 namespace App\Import\Admin\Service\Populator;
 
+use App\Geography\Entity\Address;
 use App\Import\Admin\Interfaces\PopulatorInterface;
-use App\User\Admin\Service\UserManager;
-use App\User\Entity\User;
+use App\RelayPoint\Admin\Service\RelayPointManager;
+use App\RelayPoint\Entity\RelayPoint;
+use App\RelayPoint\Entity\RelayPointType;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class RelayPointImportPopulator extends ImportPopulator implements PopulatorInterface
 {
-    private const ENTITY = 'App\User\Entity\User';
+    private const ENTITY = 'App\RelayPoint\Entity\RelayPoint';
 
-    private const EMAIL = 0;
-    private const GIVEN_NAME = 1;
-    private const FAMILY_NAME = 2;
-    private const GENDER = 3;
-    private const BIRTHDATE = 4;
-    private const PHONE_NUMBER = 5;
+    private const NAME = 0;
+    private const TYPE = 1;
+    private const LATITUDE = 2;
+    private const LONGITUDE = 3;
+    private const PLACES = 4;
+    private const SECURED = 5;
+    private const FREE = 6;
+    private const OFFICIAL = 7;
+    private const PRIVATE = 8;
 
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists';
+    private const RELAYPOINT_TYPE_UNKNOWN = 'RelayPointType unknown for';
 
-    private $_userManager;
+    private $_relayPointManager;
     private $_messages;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(RelayPointManager $relayPointManager)
     {
-        $this->_userManager = $userManager;
+        $this->_relayPointManager = $relayPointManager;
         $this->_messages = [];
     }
 
@@ -72,46 +78,70 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
 
     protected function _addEntity(array $line)
     {
-        if (!$this->_canAddUser($line)) {
+        if (!$this->_canAddRelayPoint($line)) {
+            return;
+        }
+
+        $relayPointType = $this->_getRelayPointType($line[self::TYPE]);
+        if (is_null($relayPointType)) {
+            $this->addMessage(self::RELAYPOINT_TYPE_UNKNOWN.' '.$this->_getLabel($line).' Type : '.$line[self::TYPE]);
+
             return;
         }
 
         $entity = $this->getEntity();
 
-        /** @var User $user */
-        $user = new $entity();
-        $user->setEmail($line[self::EMAIL]);
-        $user->setStatus(User::STATUS_ACTIVE);
-        $user->setGender($line[self::GENDER]);
-        $user->setBirthDate(new \DateTime($line[self::BIRTHDATE]));
-        $user->setGivenName($line[self::GIVEN_NAME]);
-        $user->setFamilyName($line[self::FAMILY_NAME]);
-        $user->setTelephone($line[self::PHONE_NUMBER]);
+        /** @var RelayPoint $relaypoint */
+        $relaypoint = new $entity();
+        $relaypoint->setName($line[self::NAME]);
+        $relaypoint->setRelayPointType($relayPointType);
+        $relaypoint->setPlaces((int) $line[self::PLACES]);
+        $relaypoint->setSecured((bool) $line[self::SECURED]);
+        $relaypoint->setFree((bool) $line[self::FREE]);
+        $relaypoint->setOfficial((bool) $line[self::OFFICIAL]);
+        $relaypoint->setPrivate((bool) $line[self::PRIVATE]);
+
+        $address = new Address();
+        $address->setLatitude((float) $line[self::LATITUDE]);
+        $address->setLongitude((float) $line[self::LONGITUDE]);
+
+        $relaypoint->setAddress($address);
 
         try {
-            $this->_userManager->addUser($user);
+            $this->_relayPointManager->addRelayPoint($relaypoint);
         } catch (\Exception $e) {
             $this->_messages[] = $e->getMessage();
 
             return;
         }
 
-        $this->_messages[] = $line[self::EMAIL].' '.self::MESSAGE_OK;
+        $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_OK;
     }
 
-    private function _checkUserAlreadyExists(string $email): bool
+    private function _getRelayPointType(int $id): ?RelayPointType
     {
-        if (!is_null($this->_userManager->getUserByEmail($email))) {
+        return $this->_relayPointManager->getRelayPointTypeById($id);
+    }
+
+    private function _getLabel(array $line)
+    {
+        return $line[self::NAME].' ('.$line[self::LATITUDE].';'.$line[self::LONGITUDE].')';
+    }
+
+    private function _checkRelayPointAlreadyExists(float $latitude, float $longitude): bool
+    {
+        $results = $this->_relayPointManager->getByLatLon($latitude, $longitude);
+        if (is_array($results) && count($results) > 0) {
             return true;
         }
 
         return false;
     }
 
-    private function _canAddUser(array $line): bool
+    private function _canAddRelayPoint(array $line): bool
     {
-        if ($this->_checkUserAlreadyExists($line[self::EMAIL])) {
-            $this->_messages[] = $line[self::EMAIL].' '.self::MESSAGE_ALREADY_EXISTS;
+        if ($this->_checkRelayPointAlreadyExists((float) $line[self::LATITUDE], (float) $line[self::LONGITUDE])) {
+            $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS;
 
             return false;
         }
