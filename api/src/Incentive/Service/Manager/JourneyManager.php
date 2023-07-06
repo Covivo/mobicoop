@@ -8,6 +8,7 @@ use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
+use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
@@ -130,7 +131,7 @@ class JourneyManager extends MobConnectManager
         $this->setDriver($proposal->getUser());
 
         $params = [
-            'Identifiant du trajet' => 'Proposal_'.$proposal->getId(),
+            'Identifiant du trajet' => LongDistanceSubscription::COMMITMENT_PREFIX.$proposal->getId(),
             'Date de publication du trajet' => $proposal->getCreatedDate()->format(self::DATE_FORMAT),
         ];
 

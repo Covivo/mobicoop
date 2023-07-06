@@ -60,7 +60,7 @@ class SubscriptionValidation extends Validation
             return false;
         }
 
-        $commitmentJourney = $this->_journeyValidation->getCommitmentJourney($journeys);
+        $commitmentJourney = $subscription->getCommitmentProofJourney();
 
         if (is_null($commitmentJourney)) {
             return false;
