@@ -32,10 +32,6 @@ use App\Import\Admin\Service\ImportLineValidator;
  */
 abstract class LineImportValidator implements LineImportValidatorInterface
 {
-    private const NUMBER_OF_COLUMN = 0;
-
-    private const FIELDS_VALIDATORS = [];
-
     public function validate(array $line, int $numLine): array
     {
         $importLineValidator = new ImportLineValidator($line, $numLine);
@@ -45,15 +41,9 @@ abstract class LineImportValidator implements LineImportValidatorInterface
         return $importLineValidator->validateLine($line, $this->_getInstanciatedFieldsValidators());
     }
 
-    public function _getNumberOfColumn(): int
-    {
-        return self::NUMBER_OF_COLUMN;
-    }
+    abstract public function _getNumberOfColumn(): int;
 
-    public function _getFieldsValidators(): array
-    {
-        return self::FIELDS_VALIDATORS;
-    }
+    abstract public function _getFieldsValidators(): array;
 
     public function _getInstanciatedFieldsValidators(): array
     {

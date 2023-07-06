@@ -33,4 +33,8 @@ interface PopulatorInterface
     public function populate(File $file): array;
 
     public function getEntity(): string;
+
+    public function getMessages(): array;
+
+    public function addMessage(string $message): array;
 }
