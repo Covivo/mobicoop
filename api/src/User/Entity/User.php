@@ -71,7 +71,6 @@ use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserDelete;
 use App\User\Controller\UserExport;
 use App\User\Controller\UserGeneratePhoneToken;
-use App\User\Controller\UserRegistration;
 use App\User\Controller\UserSendValidationEmail;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserUnsubscribeFromEmail;
@@ -103,7 +102,6 @@ use App\User\Filter\SolidaryFilter;
 use App\User\Filter\TerritoryFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\User\Filter\WaypointTerritoryFilter;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -1858,6 +1856,15 @@ class User implements UserInterface, EquatableInterface
      */
     private $externalJourneyUserId;
 
+    /**
+     * @var \DateTimeInterface import date of the user
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"aRead","write"})
+     */
+    private $importedDate;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1877,7 +1884,6 @@ class User implements UserInterface, EquatableInterface
         $this->logs = new ArrayCollection();
         $this->logsAsDelegate = new ArrayCollection();
         $this->diaries = new ArrayCollection();
-        $this->diariesAdmin = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
         $this->campaigns = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
@@ -4113,6 +4119,18 @@ class User implements UserInterface, EquatableInterface
     public function setExternalJourneyUserId(?string $externalJourneyUserId): self
     {
         $this->externalJourneyUserId = $externalJourneyUserId;
+
+        return $this;
+    }
+
+    public function getImportedDate(): ?\DateTimeInterface
+    {
+        return $this->importedDate;
+    }
+
+    public function setImportedDate(\DateTimeInterface $importedDate): self
+    {
+        $this->importedDate = $importedDate;
 
         return $this;
     }
