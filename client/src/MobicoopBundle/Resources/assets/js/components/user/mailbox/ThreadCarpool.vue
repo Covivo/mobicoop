@@ -155,7 +155,11 @@ export default {
     unreadMessages:{
       type: Number,
       default: 0
-    }
+    },
+    bookingInfos: {
+      type: Object,
+      default: null
+    },
   },
   data() {
     return {

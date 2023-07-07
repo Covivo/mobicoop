@@ -3,6 +3,7 @@
     <thread-carpool
       v-for="(message, index) in messages"
       :key="index"
+      :booking-infos="message.idBooking ? message.carpoolInfos : null"
       :avatar="message.avatarsRecipient"
       :blocker-id="message.blockerId"
       :criteria="message.carpoolInfos.criteria"
