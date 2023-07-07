@@ -28,6 +28,7 @@ use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\RelayPoint\Admin\Service\RelayPointManager;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
+use App\User\Entity\User;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -53,10 +54,16 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private $_relayPointManager;
     private $_messages;
 
-    public function __construct(RelayPointManager $relayPointManager)
+    /**
+     * @var User
+     */
+    private $_requester;
+
+    public function __construct(RelayPointManager $relayPointManager, User $requester)
     {
         $this->_relayPointManager = $relayPointManager;
         $this->_messages = [];
+        $this->_requester = $requester;
     }
 
     public function getEntity(): string
@@ -93,6 +100,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
 
         /** @var RelayPoint $relaypoint */
         $relaypoint = new $entity();
+        $relaypoint->setCreatorId($this->_requester->getId());
         $relaypoint->setName($line[self::NAME]);
         $relaypoint->setRelayPointType($relayPointType);
         $relaypoint->setPlaces((int) $line[self::PLACES]);
@@ -100,6 +108,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         $relaypoint->setFree((bool) $line[self::FREE]);
         $relaypoint->setOfficial((bool) $line[self::OFFICIAL]);
         $relaypoint->setPrivate((bool) $line[self::PRIVATE]);
+        $relaypoint->setStatus(RelayPoint::STATUS_ACTIVE);
 
         $address = new Address();
         $address->setLatitude((float) $line[self::LATITUDE]);
@@ -128,20 +137,20 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         return $line[self::NAME].' ('.$line[self::LATITUDE].';'.$line[self::LONGITUDE].')';
     }
 
-    private function _checkRelayPointAlreadyExists(float $latitude, float $longitude): bool
+    private function _checkRelayPointAlreadyExists(float $latitude, float $longitude): ?RelayPoint
     {
         $results = $this->_relayPointManager->getByLatLon($latitude, $longitude);
         if (is_array($results) && count($results) > 0) {
-            return true;
+            return $results[0];
         }
 
-        return false;
+        return null;
     }
 
     private function _canAddRelayPoint(array $line): bool
     {
-        if ($this->_checkRelayPointAlreadyExists((float) $line[self::LATITUDE], (float) $line[self::LONGITUDE])) {
-            $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS;
+        if ($relaypoint = $this->_checkRelayPointAlreadyExists((float) $line[self::LATITUDE], (float) $line[self::LONGITUDE])) {
+            $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS.' -> id = '.$relaypoint->getId();
 
             return false;
         }

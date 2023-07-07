@@ -27,19 +27,20 @@ use App\Import\Admin\Resource\Import;
 use App\Import\Admin\Service\Importer;
 use App\RelayPoint\Admin\Service\RelayPointManager;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 
 /**
  *  @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class ImportRelayPointAction
 {
-    public function __invoke(Request $request, RelayPointManager $relayPointManager): Import
+    public function __invoke(Request $request, RelayPointManager $relayPointManager, Security $security): Import
     {
         if (!$request->files->get('file')) {
             throw new \Exception('File is mandatory');
         }
 
-        $importer = new Importer($request->files->get('file'), $request->get('filename'), $relayPointManager);
+        $importer = new Importer($request->files->get('file'), $request->get('filename'), $relayPointManager, $security->getUser());
 
         return $importer->importRelayPoints();
     }

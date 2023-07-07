@@ -30,6 +30,7 @@ use App\Import\Admin\Service\LineValidator\RelayPointLineImportValidator;
 use App\Import\Admin\Service\LineValidator\UserLineImportValidator;
 use App\Import\Admin\Service\Populator\RelayPointImportPopulator;
 use App\Import\Admin\Service\Populator\UserImportPopulator;
+use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
@@ -60,7 +61,12 @@ class Importer
 
     private $_manager;
 
-    public function __construct(File $file, string $filename, object $manager = null)
+    /**
+     * @var User
+     */
+    private $_requester;
+
+    public function __construct(File $file, string $filename, object $manager = null, User $requester = null)
     {
         $this->_file = $file;
         $this->_filename = $filename;
@@ -68,6 +74,7 @@ class Importer
         $this->_manager = $manager;
         $this->_errors = [];
         $this->_messages = [];
+        $this->_requester = $requester;
     }
 
     public function importUsers(): Import
@@ -84,7 +91,7 @@ class Importer
     {
         $this->_validateLines(new RelayPointLineImportValidator());
         if (0 == count($this->_errors)) {
-            $this->_populateTable(new RelayPointImportPopulator($this->_manager));
+            $this->_populateTable(new RelayPointImportPopulator($this->_manager, $this->_requester));
         }
 
         return $this->_buildImport(self::RELAY_POINT_ENTITY);

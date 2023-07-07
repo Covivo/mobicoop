@@ -76,9 +76,6 @@ class RelayPointManager
     public function addRelayPoint(RelayPoint $relayPoint)
     {
         if ($creator = $this->userRepository->find($relayPoint->getCreatorId())) {
-            echo 'yo';
-
-            exit;
             $relayPoint->setUser($creator);
         } else {
             throw new RelayPointException('creator not found');
@@ -206,7 +203,7 @@ class RelayPointManager
 
     public function getByLatLon(float $lat, float $lon)
     {
-        return $this->relayPointRepository->getByLatLon($lat, $lon);
+        return $this->relayPointRepository->getByLatLon(round($lat, 6), round($lon, 6));
     }
 
     public function getRelayPointTypeById(int $id)
