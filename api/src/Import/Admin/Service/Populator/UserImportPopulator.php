@@ -94,6 +94,7 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         $user->setFamilyName($line[self::FAMILY_NAME]);
         $user->setTelephone($line[self::PHONE_NUMBER]);
         $user->setUserDelegate($this->_requester);
+        $user->setImportedDate(new \DateTime('now'));
 
         try {
             $this->_userManager->addUser($user);

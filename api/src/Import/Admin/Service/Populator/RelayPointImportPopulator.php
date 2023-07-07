@@ -109,6 +109,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         $relaypoint->setOfficial((bool) $line[self::OFFICIAL]);
         $relaypoint->setPrivate((bool) $line[self::PRIVATE]);
         $relaypoint->setStatus(RelayPoint::STATUS_ACTIVE);
+        $relaypoint->setImportedDate(new \DateTime('now'));
 
         $address = new Address();
         $address->setLatitude((float) $line[self::LATITUDE]);
