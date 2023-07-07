@@ -47,10 +47,16 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
     private $_userManager;
     private $_messages;
 
-    public function __construct(UserManager $userManager)
+    /**
+     * @var User
+     */
+    private $_requester;
+
+    public function __construct(UserManager $userManager, User $requester)
     {
         $this->_userManager = $userManager;
         $this->_messages = [];
+        $this->_requester = $requester;
     }
 
     public function getEntity(): string
@@ -87,6 +93,7 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         $user->setGivenName($line[self::GIVEN_NAME]);
         $user->setFamilyName($line[self::FAMILY_NAME]);
         $user->setTelephone($line[self::PHONE_NUMBER]);
+        $user->setUserDelegate($this->_requester);
 
         try {
             $this->_userManager->addUser($user);

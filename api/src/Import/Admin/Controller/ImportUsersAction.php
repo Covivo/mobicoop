@@ -27,19 +27,20 @@ use App\Import\Admin\Resource\Import;
 use App\Import\Admin\Service\Importer;
 use App\User\Admin\Service\UserManager;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 
 /**
  *  @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class ImportUsersAction
 {
-    public function __invoke(Request $request, UserManager $userManager): Import
+    public function __invoke(Request $request, UserManager $userManager, Security $security): Import
     {
         if (!$request->files->get('file')) {
             throw new \Exception('File is mandatory');
         }
 
-        $importer = new Importer($request->files->get('file'), $request->get('filename'), $userManager);
+        $importer = new Importer($request->files->get('file'), $request->get('filename'), $userManager, $security->getUser());
 
         return $importer->importUsers();
     }

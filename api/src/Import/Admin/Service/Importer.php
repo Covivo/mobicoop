@@ -81,7 +81,7 @@ class Importer
     {
         $this->_validateLines(new UserLineImportValidator());
         if (0 == count($this->_errors)) {
-            $this->_populateTable(new UserImportPopulator($this->_manager));
+            $this->_populateTable(new UserImportPopulator($this->_manager, $this->_requester));
         }
 
         return $this->_buildImport(self::USER_ENTITY);
