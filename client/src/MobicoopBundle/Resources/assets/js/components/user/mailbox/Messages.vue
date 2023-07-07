@@ -213,7 +213,7 @@
           <thread-actions-carpool-standard
             :id-recipient="idRecipient"
             :id-booking="idBooking"
-            :loading-init="loadingDetails"
+            :loading-init="false"
             :refresh="refreshActions"
             :loading-btn="loadingBtnAction"
             :recipient-name="recipientName"
@@ -524,7 +524,9 @@ export default {
 
     },
     refreshSelected(data){
-
+      if (null != data.idBooking){
+        this.idBooking = data.idBooking;
+      }
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;
