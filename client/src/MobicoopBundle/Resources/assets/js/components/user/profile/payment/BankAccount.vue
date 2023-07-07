@@ -100,6 +100,7 @@
                 :restrict="['housenumber','street']"
                 :label="$t('form.label.address.check')"
                 @address-selected="addressSelected"
+                @clear="clearAddress"
               />
             </v-col>
           </v-row>
@@ -126,6 +127,7 @@
                   <v-text-field
                     v-model="form.addressDetail.houseNumber"
                     :label="$t('form.label.address.houseNumber')"
+                    :rules="form.rules.houseNumberRules"
                     required
                   />
                 </v-col>
@@ -361,6 +363,9 @@ export default {
           addressLocalityRules: [
             v => !!v || this.$t('form.errors.addressLocalityRequired'),
           ],
+          houseNumberRules: [
+            v => !!v || this.$t('form.errors.houseNumberRequired'),
+          ],
         }
       },
       bankCoordinates: null,
@@ -368,7 +373,7 @@ export default {
       title:this.$t('title'),
       dialog:false,
       error:false,
-      addressValidation: false
+      addressValidation: false,
     }
   },
   computed:{
@@ -429,7 +434,6 @@ export default {
       this.form.formAddress.street = this.form.addressDetail.street;
       this.form.formAddress.postalCode = this.form.addressDetail.postalCode;
       this.form.formAddress.addressLocality = this.form.addressDetail.addressLocality;
-
       let params = {
         "iban":this.form.iban,
         "bic":this.form.bic,
@@ -450,14 +454,18 @@ export default {
         })
     },
     addressSelected(address){
+      console.log(address);
       this.form.formAddress = address;
       if(address){
         this.form.addressDetail.houseNumber = address.houseNumber;
         this.form.addressDetail.street = address.street;
         this.form.addressDetail.postalCode = address.postalCode;
         this.form.addressDetail.addressLocality = address.addressLocality;
+        this.addressValidation = true;
       }
-      this.addressValidation = true;
+      if (this.form.addressDetail.houseNumber != null && this.form.addressDetail.street !=null && this.form.addressDetail.postalCode != null && this.form.addressDetail.addressLocality !=null){
+        this.addressIsComplete = true;
+      }
     },
     identityDocumentSent(data){
       if(!data.id){
@@ -466,6 +474,13 @@ export default {
       else{
         this.bankCoordinates.validationAskedDate = moment();
       }
+    },
+    clearAddress(){
+      this.form.addressDetail.houseNumber = null;
+      this.form.addressDetail.street = null;
+      this.form.addressDetail.postalCode = null;
+      this.form.addressDetail.addressLocality = null;
+      this.addressValidation = false;
     }
   }
 }
