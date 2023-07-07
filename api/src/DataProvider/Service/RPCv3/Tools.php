@@ -3,6 +3,7 @@
 namespace App\DataProvider\Service\RPCv3;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Criteria;
 use App\DataProvider\Entity\CarpoolProofGouvProvider;
 use App\Geography\Entity\Address;
 use App\Incentive\Resource\CeeSubscriptions;
@@ -140,24 +141,28 @@ class Tools
 
     public function getStartTimeGeopoint(): array
     {
-        $datetime = !is_null($this->_currentCarpoolProof->getPickUpPassengerDate())
-            ? $this->_currentCarpoolProof->getPickUpPassengerDate() : null;
+        $startDatetime = !is_null($this->_currentCarpoolProof->getPickUpPassengerDate())
+            ? $this->_currentCarpoolProof->getPickUpPassengerDate()
+            : $this->_getStartDateTime();
 
-        $geopoint = !is_null($this->_currentCarpoolProof->getPickUpPassengerAddress())
-            ? $this->_getGeopoint($this->_currentCarpoolProof->getPickUpPassengerAddress(), self::POSITION_ORIGIN) : null;
+        $originAddress = !is_null($this->_currentCarpoolProof->getPickUpPassengerAddress())
+            ? $this->_currentCarpoolProof->getPickUpPassengerAddress()
+            : $this->_getOriginAddress();
 
-        return $this->_getTimeGeopoint($datetime, $geopoint['lat'], $geopoint['lon']);
+        return $this->_getTimeGeopoint($startDatetime, $originAddress);
     }
 
     public function getEndTimeGeopoint(): array
     {
-        $datetime = !is_null($this->_currentCarpoolProof->getDropOffPassengerDate())
-            ? $this->_currentCarpoolProof->getDropOffPassengerDate() : null;
+        $endDatetime = !is_null($this->_currentCarpoolProof->getDropOffPassengerDate())
+            ? $this->_currentCarpoolProof->getDropOffPassengerDate()
+            : $this->_getEndDateTime();
 
-        $geopoint = !is_null($this->_currentCarpoolProof->getDropOffPassengerAddress())
-            ? $this->_getGeopoint($this->_currentCarpoolProof->getDropOffPassengerAddress(), self::POSITION_DESTINATION) : null;
+        $destinationAddress = !is_null($this->_currentCarpoolProof->getDropOffPassengerAddress())
+            ? $this->_currentCarpoolProof->getDropOffPassengerAddress()
+            : $this->_getDestinationAddress();
 
-        return $this->_getTimeGeopoint($datetime, $geopoint['lat'], $geopoint['lon']);
+        return $this->_getTimeGeopoint($endDatetime, $destinationAddress);
     }
 
     public function getOperatorJourneyId(): string
@@ -184,8 +189,84 @@ class Tools
         return $over18;
     }
 
-    private function _familyNameToUppercase(string $familyName): string
+    public function getCarpoolTime(\DateTimeInterface $fromDate): ?\DateTimeInterface
     {
+        if (Criteria::FREQUENCY_PUNCTUAL === $this->_currentCarpoolProof->getAsk()->getCriteria()->getFrequency()) {
+            return $this->_currentCarpoolProof->getAsk()->getCriteria()->getFromTime();
+        }
+
+        switch ($fromDate->format('w')) {
+            case 0:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isSunCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getSunTime();
+
+                break;
+
+            case 1:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isMonCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getMonTime();
+
+                break;
+
+            case 2:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isTueCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getTueTime();
+
+                break;
+
+            case 3:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isWedCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getWedTime();
+
+                break;
+
+            case 4:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isThuCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getThuTime();
+
+                break;
+
+            case 5:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isFriCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getFriTime();
+
+                break;
+
+            case 6:
+                if (!$this->_currentCarpoolProof->getAsk()->getCriteria()->isSatCheck()) {
+                    return null;
+                }
+
+                return $this->_currentCarpoolProof->getAsk()->getCriteria()->getSatTime();
+
+                break;
+        }
+    }
+
+    private function _familyNameToUppercase(?string $familyName): ?string
+    {
+        if (is_null($familyName)) {
+            return null;
+        }
+
         $familyName = htmlentities($familyName, ENT_NOQUOTES, 'utf-8');
         $familyName = preg_replace('#&([A-za-z])(?:uml|circ|tilde|acute|grave|cedil|ring);#', '\1', $familyName);
         $familyName = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $familyName);
@@ -216,7 +297,7 @@ class Tools
         $carpooler = $this->_getCarpooler($carpoolerType);
 
         if (!is_null($carpooler)) {
-            $phoneService = new PhoneService($carpooler->getTelephone(), PhoneService::FR);
+            $phoneService = new PhoneService(PhoneService::FR, $carpooler->getTelephone());
 
             return $phoneService->getInternationalPhoneNumber($trunc, $truncLen);
         }
@@ -224,29 +305,79 @@ class Tools
         return null;
     }
 
-    private function _getTimeGeopoint(?\DateTimeInterface $datetime, ?float $lat, ?float $lon): array
+    private function _getTimeGeopoint(?\DateTimeInterface $datetime, ?Address $address): array
     {
         return [
             'datetime' => !is_null($datetime) ? $datetime->format(CarpoolProofGouvProvider::ISO8601) : null,
-            'lat' => $lat,
-            'lon' => $lon,
+            'lat' => !is_null($address) ? floatval($address->getLatitude()) : null,
+            'lon' => !is_null($address) ? floatval($address->getLongitude()) : null,
         ];
     }
 
     private function _getStartDatetime(): ?\DateTime
     {
-        return !is_null($this->_currentCarpoolProof->getAsk()->getMatching()) && !is_null($this->_currentCarpoolProof->getAsk()->getMatching()->getCriteria())
-            ? \DateTime::createFromFormat(
-                'Y-m-d H:m',
-                $this->_currentCarpoolProof->getAsk()->getMatching()->getCriteria()->getFromDate()->format('Y-m-d ').$this->_currentCarpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime('H:m')
-            ) : null;
+        /**
+         * @var null|\DateTime
+         */
+        $fromDate = $this->_currentCarpoolProof->getStartDriverDate();
+        $fromTime = $this->getCarpoolTime($fromDate);
+
+        if (!is_null($fromDate) && !is_null($fromTime)) {
+            $fromDate->setTime($fromTime->format('H'), $fromTime->format('i'), $fromTime->format('s'));
+        }
+
+        return $fromDate;
     }
 
-    private function _getGeopoint(Address $address): array
+    private function _getEndDatetime(): ?\DateTime
     {
-        return [
-            'lat' => $address->getLatitude(),
-            'lon' => $address->getLongitude(),
-        ];
+        $startDatetime = $this->_getStartDatetime();
+
+        if (is_null($startDatetime)) {
+            return null;
+        }
+
+        $endDatetime = clone $startDatetime;
+
+        return
+            !is_null($this->_currentCarpoolProof->getAsk())
+            && !is_null($this->_currentCarpoolProof->getAsk()->getMatching())
+            && !is_null($this->_currentCarpoolProof->getAsk()->getMatching()->getNewDuration())
+            ? $endDatetime->add(new \DateInterval('PT'.$this->_currentCarpoolProof->getAsk()->getMatching()->getNewDuration().'S'))
+            : null;
+    }
+
+    private function _getWaypoints(): array
+    {
+        return
+            !is_null($this->_currentCarpoolProof)
+            && !is_null($this->_currentCarpoolProof->getAsk())
+            && !is_null($this->_currentCarpoolProof->getAsk()->getMatching())
+            ? $this->_currentCarpoolProof->getAsk()->getMatching()->getWaypoints()
+            : [];
+    }
+
+    private function _getOriginAddress(): ?Address
+    {
+        $originWaypoint = array_values(array_filter(
+            $this->_getWaypoints(),
+            function ($waypoint) {
+                return 0 === $waypoint->getPosition() && false === $waypoint->isDestination();
+            }
+        ));
+
+        return !empty($originWaypoint) ? $originWaypoint[0]->getAddress() : null;
+    }
+
+    private function _getDestinationAddress(): ?Address
+    {
+        $destinationWaypoint = array_values(array_filter(
+            $this->_getWaypoints(),
+            function ($waypoint) {
+                return true === $waypoint->isDestination();
+            }
+        ));
+
+        return !empty($destinationWaypoint) ? $destinationWaypoint[0]->getAddress() : null;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Incentive\Service\Manager;
 
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
@@ -9,7 +11,6 @@ use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TimestampTokenManager extends MobConnectManager
 {
@@ -72,8 +73,13 @@ class TimestampTokenManager extends MobConnectManager
      */
     public function setSubscriptionTimestampToken($subscription, int $tokenType)
     {
+        if (is_null($subscription)) {
+            return;
+        }
+
         $this->_setCurrentSubscription($subscription);
 
+        // We define the current token type
         if ($this->_isTokenTypeAllowed($tokenType)) {
             switch ($tokenType) {
                 case self::TIMESTAMP_TOKEN_TYPE_INCENTIVE:
@@ -95,6 +101,7 @@ class TimestampTokenManager extends MobConnectManager
             $this->_setCurrentLogType($logType);
         }
 
+        // We get the tokens
         $this->_setCurrentTimestampTokensResponse();
 
         $this->_setSubscriptionTimestampToken($tokenType);
@@ -123,6 +130,8 @@ class TimestampTokenManager extends MobConnectManager
         if (!empty($this->_missingTimestampTokens)) {
             $this->_setSubscriptionMissingTimestampTokens();
         }
+
+        $this->_setMissingCommitmentJourney();
 
         $this->_resetAll();
 
@@ -217,9 +226,11 @@ class TimestampTokenManager extends MobConnectManager
             $timestampSigninTimeSetter = str_replace(self::DEFAULT_TAG, $substituteValue, self::DEFAULT_TIMESTAMP_SIGNINTIME_SETTER);
 
             if (!is_null($this->_currentTimestampTokensResponse->{$timestampTokenGetter}())) {
+                $this->_loggerService->log('We define the token of type '.$substituteValue);
                 $this->_currentSubscription->{$timestampTokenSetter}($this->_currentTimestampTokensResponse->{$timestampTokenGetter}());
             }
             if (!is_null($this->_currentTimestampTokensResponse->{$timestampSigninTimeGetter}())) {
+                $this->_loggerService->log('We define the signinTime of type '.$substituteValue);
                 $this->_currentSubscription->{$timestampSigninTimeSetter}($this->_currentTimestampTokensResponse->{$timestampSigninTimeGetter}());
             }
         }
@@ -255,10 +266,6 @@ class TimestampTokenManager extends MobConnectManager
      */
     private function _setCurrentSubscription($subscription): self
     {
-        if (is_null($subscription)) {
-            throw new BadRequestHttpException('The subscription cannot be null');
-        }
-
         $this->_currentSubscription = $subscription;
 
         if (!is_null($this->_currentSubscription)) {
@@ -279,6 +286,37 @@ class TimestampTokenManager extends MobConnectManager
     private function _setCurrentTimestampTokensResponse(): self
     {
         $this->_currentTimestampTokensResponse = $this->getDriverSubscriptionTimestamps($this->_currentSubscription->getSubscriptionId());
+
+        return $this;
+    }
+
+    private function _setMissingCommitmentJourney(): self
+    {
+        if (is_null($this->_currentSubscription->getCommitmentProofJourney()) && !is_null($this->_currentTimestampTokensResponse->getJourneyId())) {
+            $this->_loggerService->log('The commitment journey is missing; we will try to recover it from the moB data');
+            $journeyId = $this->_currentTimestampTokensResponse->getJourneyId();
+
+            $commitmentJourney = null;
+            $id = null;
+
+            if (preg_match('/^'.LongDistanceSubscription::COMMITMENT_PREFIX.'/', $journeyId)) {
+                $id = intval(substr($journeyId, strlen(LongDistanceSubscription::COMMITMENT_PREFIX.'_')));
+
+                switch (LongDistanceSubscription::COMMITMENT_PREFIX) {
+                    case 'Proposal':
+                        $commitmentJourney = $this->_em->getRepository(Proposal::class)->find($id);
+                }
+            } else {
+                $id = intval(substr($journeyId, strlen($this->_carpoolProofPrefix)));
+                $commitmentJourney = $this->_em->getRepository(CarpoolProof::class)->find($id);
+            }
+
+            if (!is_null($commitmentJourney)) {
+                $this->_currentSubscription->setCommitmentProofJourney($commitmentJourney);
+            } else {
+                $this->_loggerService->log('The commitment journey corresponding to '.$journeyId.' was not found');
+            }
+        }
 
         return $this;
     }

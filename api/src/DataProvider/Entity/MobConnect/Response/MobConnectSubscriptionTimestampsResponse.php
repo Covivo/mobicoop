@@ -34,6 +34,11 @@ class MobConnectSubscriptionTimestampsResponse extends MobConnectResponse
      */
     private $incentiveProofTimestampSigningTime;
 
+    /**
+     * @var null|string
+     */
+    private $journeyId;
+
     public function __construct(array $mobConnectResponse)
     {
         parent::__construct($mobConnectResponse);
@@ -159,6 +164,24 @@ class MobConnectSubscriptionTimestampsResponse extends MobConnectResponse
         return $this;
     }
 
+    /**
+     * Get the value of journeyId.
+     */
+    public function getJourneyId(): ?string
+    {
+        return $this->journeyId;
+    }
+
+    /**
+     * Set the value of journeyId.
+     */
+    public function setJourneyId(?string $journeyId): self
+    {
+        $this->journeyId = $journeyId;
+
+        return $this;
+    }
+
     private function _buildObject()
     {
         if (!in_array($this->getCode(), self::ERROR_CODES) && !is_null($this->_content)) {
@@ -173,6 +196,14 @@ class MobConnectSubscriptionTimestampsResponse extends MobConnectResponse
             if (isset($timestamps[1])) {
                 $this->setCommitmentProofTimestampToken($timestamps[1]->timestampToken);
                 $this->setCommitmentProofTimestampSigningTime(new \DateTime($timestamps[1]->signingTime));
+
+                if (
+                    property_exists($timestamps[1], 'subscription')
+                    && property_exists($timestamps[1]->subscription, 'specificFields')
+                    && property_exists($timestamps[1]->subscription->specificFields, 'Identifiant du trajet')
+                ) {
+                    $this->setJourneyId($timestamps[1]->subscription->specificFields->{'Identifiant du trajet'});
+                }
             }
 
             if (isset($timestamps[2])) {

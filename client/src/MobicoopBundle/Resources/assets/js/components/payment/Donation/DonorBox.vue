@@ -53,5 +53,11 @@ export default {
     return {
     };
   },
+  created() {
+    let donorWidgetScript = document.createElement('script');
+    donorWidgetScript.setAttribute('src',this.$t('donorWidget'));
+    donorWidgetScript.setAttribute('paypalExpress','false');
+    document.head.appendChild(donorWidgetScript);
+  },
 };
 </script>

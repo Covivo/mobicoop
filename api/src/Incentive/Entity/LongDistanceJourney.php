@@ -169,7 +169,7 @@ class LongDistanceJourney
     /**
      * Get the start locality of the journey.
      */
-    public function getStartAddressLocality(): string
+    public function getStartAddressLocality(): ?string
     {
         return $this->startAddressLocality;
     }
@@ -189,7 +189,7 @@ class LongDistanceJourney
     /**
      * Get the end locality of the journey.
      */
-    public function getEndAddressLocality(): string
+    public function getEndAddressLocality(): ?string
     {
         return $this->endAddressLocality;
     }
@@ -209,7 +209,7 @@ class LongDistanceJourney
     /**
      * Get the distance in meter of the journey.
      */
-    public function getDistance(): int
+    public function getDistance(): ?int
     {
         return $this->distance;
     }
@@ -228,7 +228,7 @@ class LongDistanceJourney
     /**
      * Get the carpoolers number of the journey.
      */
-    public function getCarpoolersNumber(): int
+    public function getCarpoolersNumber(): ?int
     {
         return $this->carpoolersNumber;
     }
@@ -246,7 +246,7 @@ class LongDistanceJourney
     /**
      * Get date and time of the start of the operation.
      */
-    public function getStartDate(): string
+    public function getStartDate(): ?string
     {
         return $this->startDate;
     }
@@ -266,7 +266,7 @@ class LongDistanceJourney
     /**
      * Get date and time of the end of the operation.
      */
-    public function getEndDate(): string
+    public function getEndDate(): ?string
     {
         return $this->endDate;
     }
@@ -381,8 +381,6 @@ class LongDistanceJourney
 
     /**
      * Get the proposal associate with the journey.
-     *
-     * @return null|CarpoolProof
      */
     public function getInitialProposal(): ?Proposal
     {
@@ -392,7 +390,7 @@ class LongDistanceJourney
     /**
      * Set the proposal associate with the journey.
      *
-     * @param null|CarpoolProof $initialProposal the proposal associate with the journey
+     * @param null|Proposal $initialProposal the proposal associate with the journey
      */
     public function setInitialProposal(?Proposal $initialProposal): self
     {

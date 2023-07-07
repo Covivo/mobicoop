@@ -83,7 +83,7 @@ abstract class MobConnectProvider
         ];
     }
 
-    private function _logRequestResult(int $code, string $content)
+    private function _logRequestResult(int $code, ?string $content)
     {
         switch ($code) {
             case 200:
@@ -99,6 +99,6 @@ abstract class MobConnectProvider
                 break;
         }
 
-        $this->_loggerService->log('The mobConnect request response is: '.$code.' | '.$content, $logType, true);
+        $this->_loggerService->log('The mobConnect request response is: '.$code.' | '.(is_null($content) ? '' : $content), $logType, true);
     }
 }

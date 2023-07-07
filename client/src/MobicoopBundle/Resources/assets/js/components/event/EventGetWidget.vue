@@ -30,7 +30,7 @@
               class="mt-8"
               v-html="$t('buttons.widget.textDetails.p1')"
             />
-            <p v-html="$t('buttons.widget.textDetails.p2', {'url':getUrl()})" />
+            <p v-html="$t('buttons.widget.textDetails.p2', {'url':getUrl(), 'width': widgetWidth, 'height': widgetHeight})" />
             <p v-html="$t('buttons.widget.textDetails.p3')" />
           </v-row>
         </v-col>
@@ -57,6 +57,14 @@ export default {
     event:{
       type: Object,
       default: null
+    },
+    widgetHeight: {
+      type: String,
+      default: '640px'
+    },
+    widgetWidth: {
+      type: String,
+      default: '100%'
     }
   },
   methods:{

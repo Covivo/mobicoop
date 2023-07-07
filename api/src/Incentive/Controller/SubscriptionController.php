@@ -5,8 +5,10 @@ namespace App\Incentive\Controller;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -31,9 +33,12 @@ class SubscriptionController extends AbstractController
     }
 
     /**
-     * Verify one or many subscriptions.
-     *
-     * @Route("/verify")
+     * @Route(
+     *      "/verify/{subscriptionType}/{subscriptionId}",
+     *      requirements={
+     *          "subscriptionId":"\d+"
+     *      }
+     * )
      *
      * @Security("is_granted('ROLE_ADMIN')")
      */
@@ -42,6 +47,26 @@ class SubscriptionController extends AbstractController
         return $this->_subscriptionManager->verifySubscriptionFromControllerCommand(
             $this->_request->get('subscription_type'),
             $this->_request->get('subscription_id')
+        );
+    }
+
+    /**
+     * @Route(
+     *      "/timestamps/{subscriptionType}/{subscriptionId}",
+     *      requirements={
+     *          "subscriptionId":"\d+"
+     *      }
+     * )
+     *
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function getSubscriptionMissingTimestamps(string $subscriptionType, string $subscriptionId)
+    {
+        return new JsonResponse(
+            [
+                'code' => Response::HTTP_OK,
+                'message' => $this->_subscriptionManager->setUserSubscriptionTimestamps($subscriptionType, $subscriptionId),
+            ]
         );
     }
 }
