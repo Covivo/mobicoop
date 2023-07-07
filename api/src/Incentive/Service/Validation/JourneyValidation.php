@@ -123,65 +123,12 @@ class JourneyValidation extends Validation
         $this->setDriver($carpoolItem->getCreditorUser());
 
         return
-            $this->_userValidation->hasValidMobConnectAuth($this->_driver)
-            && !is_null($this->_driver)
+            !is_null($this->_driver)
+            && $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver->getLongDistanceSubscription())
             && !is_null($carpoolItem->getAsk())
             && !is_null($carpoolItem->getAsk()->getMatching())
             && $this->isDistanceLongDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance())
             && $this->isOriginOrDestinationFromFrance($carpoolItem);
-    }
-
-    public function isLDJourneysReadyForVerify($journeys): bool
-    {
-        if ($journeys->isEmpty()) {
-            return false;
-        }
-
-        $commitmentJourney = $this->_getCommitmentJourney($journeys);
-
-        return
-            !is_null($commitmentJourney)
-            && $this->isPaymentValidForEec($commitmentJourney->getCarpoolPayment());
-    }
-
-    public function isSDJourneysReadyForVerify($journeys): bool
-    {
-        if ($journeys->isEmpty()) {
-            return false;
-        }
-
-        $commitmentJourney = $this->_getCommitmentJourney($journeys);
-
-        return
-            !is_null($commitmentJourney)
-            && CarpoolProof::TYPE_HIGH === $commitmentJourney->getCarpoolProof()->getType()
-            && CarpoolProof::STATUS_VALIDATED === $commitmentJourney->getCarpoolProof()->getStatus();
-    }
-
-    /**
-     * @param mixed $journeys
-     *
-     * @return null|LongDistanceJourney|ShortDistanceJourney
-     */
-    private function _getCommitmentJourney($journeys)
-    {
-        $commitmentJourney = null;
-
-        foreach ($journeys->toArray() as $journey) {
-            if ($journey->isCommitmentJourney()) {
-                $commitmentJourney = $journey;
-
-                break;
-            }
-        }
-
-        return ($journeys->isEmpty())
-            ? null
-            : (
-                is_null($commitmentJourney)
-                ? $commitmentJourney = $journeys->toArray()[0]
-                : $commitmentJourney
-            );
     }
 }
