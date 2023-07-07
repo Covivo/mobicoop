@@ -454,7 +454,6 @@ export default {
         })
     },
     addressSelected(address){
-      console.log(address);
       this.form.formAddress = address;
       if(address){
         this.form.addressDetail.houseNumber = address.houseNumber;
