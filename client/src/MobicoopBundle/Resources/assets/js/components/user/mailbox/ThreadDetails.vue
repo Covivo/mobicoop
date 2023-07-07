@@ -1,6 +1,10 @@
 <template>
   <v-main>
     <v-container class="window-scroll">
+      <EECWarning
+        v-if="hideNoThreadSelected"
+        :carpoolers-identity="carpoolersIdentity"
+      />
       <v-timeline
         v-if="items.length>0"
         :hidden="loading"
@@ -77,6 +81,7 @@
 import maxios from "@utils/maxios";
 import moment from "moment";
 import WarningMessage from '../../utilities/WarningMessage.vue';
+import EECWarning from '../../utilities/warningMessages/EECWarning.vue';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/ThreadDetails/";
 
 export default {
@@ -89,7 +94,8 @@ export default {
     }
   },
   components: {
-    WarningMessage
+    EECWarning,
+    WarningMessage,
   },
   props: {
     idMessage: {
@@ -111,6 +117,10 @@ export default {
     fraudWarningDisplay: {
       type: Boolean,
       default: false
+    },
+    carpoolersIdentity: {
+      type: Object,
+      default: () => {}
     }
   },
   data(){
