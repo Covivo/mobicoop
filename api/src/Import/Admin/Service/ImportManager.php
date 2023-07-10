@@ -24,10 +24,13 @@
 namespace App\Import\Admin\Service;
 
 use App\Community\Admin\Service\CommunityManager;
+use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use App\RelayPoint\Admin\Service\RelayPointManager;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Admin\Service\UserManager;
 use App\User\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -37,12 +40,14 @@ class ImportManager
     private $_userManager;
     private $_relayPointManager;
     private $_communityManager;
+    private $_entityManager;
 
-    public function __construct(UserManager $userManager, RelayPointManager $relayPointManager, CommunityManager $communityManager)
+    public function __construct(UserManager $userManager, RelayPointManager $relayPointManager, CommunityManager $communityManager, EntityManagerInterface $entityManager)
     {
         $this->_userManager = $userManager;
         $this->_relayPointManager = $relayPointManager;
         $this->_communityManager = $communityManager;
+        $this->_entityManager = $entityManager;
     }
 
     public function addUser(User $user): User
@@ -68,5 +73,22 @@ class ImportManager
     public function getRelayPointTypeById(int $id)
     {
         return $this->_relayPointManager->getRelayPointTypeById($id);
+    }
+
+    public function getCommunity(int $id): ?Community
+    {
+        return $this->_communityManager->getCommunity($id);
+    }
+
+    public function signUpUserInACommunity(Community $community, User $user)
+    {
+        $communityUser = new CommunityUser();
+        $communityUser->setCommunity($community);
+        $communityUser->setUser($user);
+        $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+        $communityUser->setAcceptedDate(new \DateTime('now'));
+
+        $this->_entityManager->persist($communityUser);
+        $this->_entityManager->flush();
     }
 }

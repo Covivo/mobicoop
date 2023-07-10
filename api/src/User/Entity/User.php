@@ -2736,8 +2736,8 @@ class User implements UserInterface, EquatableInterface
 
     public function addCommunityUser(CommunityUser $communityUser): self
     {
-        if (!$this->events->contains($communityUser)) {
-            $this->events->add($communityUser);
+        if (!$this->communityUsers->contains($communityUser)) {
+            $this->communityUsers->add($communityUser);
             $communityUser->setUser($this);
         }
 
@@ -2746,8 +2746,8 @@ class User implements UserInterface, EquatableInterface
 
     public function removeCommunityUser(CommunityUser $communityUser): self
     {
-        if ($this->events->contains($communityUser)) {
-            $this->events->removeElement($communityUser);
+        if ($this->communityUsers->contains($communityUser)) {
+            $this->communityUsers->removeElement($communityUser);
             // set the owning side to null (unless already changed)
             if ($communityUser->getUser() === $this) {
                 $communityUser->setUser(null);

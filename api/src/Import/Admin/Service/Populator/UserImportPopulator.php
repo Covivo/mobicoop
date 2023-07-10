@@ -44,9 +44,15 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
 
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists';
+    private const UNKNOWN_COMMUNITY = 'community is unknown';
 
     private $_importManager;
     private $_messages;
+
+    /**
+     * @var User
+     */
+    private $_user;
 
     /**
      * @var User
@@ -58,6 +64,7 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         $this->_importManager = $importManager;
         $this->_messages = [];
         $this->_requester = $requester;
+        $this->_user = null;
     }
 
     public function getEntity(): string
@@ -79,30 +86,27 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
 
     protected function _addEntity(array $line)
     {
-        if (!$this->_canAddUser($line)) {
+        if (!$this->_canAddUser($line) || !$this->_checkCommunity($line)) {
             return;
         }
 
         $entity = $this->getEntity();
 
-        /** @var User $user */
-        $user = new $entity();
-        $user->setEmail($line[self::EMAIL]);
-        $user->setStatus(User::STATUS_ACTIVE);
-        $user->setGender($line[self::GENDER]);
-        $user->setBirthDate(new \DateTime($line[self::BIRTHDATE]));
-        $user->setGivenName($line[self::GIVEN_NAME]);
-        $user->setFamilyName($line[self::FAMILY_NAME]);
-        $user->setTelephone($line[self::PHONE_NUMBER]);
-        $user->setUserDelegate($this->_requester);
-        $user->setImportedDate(new \DateTime('now'));
-
-        if ('' !== trim($line[self::COMMUNITY_ID])) {
-            $this->_treatCommunity($line);
-        }
+        // @var User $user
+        $this->_user = new $entity();
+        $this->_user->setEmail($line[self::EMAIL]);
+        $this->_user->setStatus(User::STATUS_ACTIVE);
+        $this->_user->setGender($line[self::GENDER]);
+        $this->_user->setBirthDate(new \DateTime($line[self::BIRTHDATE]));
+        $this->_user->setGivenName($line[self::GIVEN_NAME]);
+        $this->_user->setFamilyName($line[self::FAMILY_NAME]);
+        $this->_user->setTelephone($line[self::PHONE_NUMBER]);
+        $this->_user->setUserDelegate($this->_requester);
+        $this->_user->setImportedDate(new \DateTime('now'));
 
         try {
-            $this->_importManager->addUser($user);
+            $this->_user = $this->_importManager->addUser($this->_user);
+            $this->_treatCommunity($line);
         } catch (\Exception $e) {
             $this->addMessage($e->getMessage());
 
@@ -112,8 +116,28 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         $this->addMessage($line[self::EMAIL].' '.self::MESSAGE_OK);
     }
 
-    private function _treatCommunity()
+    private function _checkCommunity(array $line): bool
     {
+        if ('' === trim($line[self::COMMUNITY_ID])) {
+            return true;
+        }
+        if ($this->_importManager->getCommunity($line[self::COMMUNITY_ID])) {
+            return true;
+        }
+
+        $this->addMessage($line[self::COMMUNITY_ID].' '.self::UNKNOWN_COMMUNITY);
+
+        return false;
+    }
+
+    private function _treatCommunity(array $line)
+    {
+        if (!is_numeric($line[self::COMMUNITY_ID])) {
+            return;
+        }
+        if ($community = $this->_importManager->getCommunity($line[self::COMMUNITY_ID])) {
+            $this->_importManager->signUpUserInACommunity($community, $this->_user);
+        }
     }
 
     private function _checkUserAlreadyExists(string $email): bool
