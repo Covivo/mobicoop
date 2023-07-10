@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       isMessageDisplayed: false,
-      warningMessages: [],
+      warningMessages: null,
     }
   },
   computed: {
@@ -66,6 +66,9 @@ export default {
   watch: {
     carpoolersIdentity: function (newVal, oldVal) {
       if (newVal != oldVal && this.carpoolersIdentity) {
+        this.isMessageDisplayed = false;
+        this.warningMessages = [];
+
         this.build();
       }
     }
