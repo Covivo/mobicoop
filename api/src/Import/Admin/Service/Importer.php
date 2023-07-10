@@ -80,9 +80,9 @@ class Importer
     public function importUsers(): Import
     {
         $this->_validateLines(new UserLineImportValidator());
-        if (0 == count($this->_errors)) {
-            $this->_populateTable(new UserImportPopulator($this->_manager, $this->_requester));
-        }
+        // if (0 == count($this->_errors)) {
+        //     $this->_populateTable(new UserImportPopulator($this->_manager, $this->_requester));
+        // }
 
         return $this->_buildImport(self::USER_ENTITY);
     }
