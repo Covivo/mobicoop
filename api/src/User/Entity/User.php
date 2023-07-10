@@ -1863,7 +1863,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @var bool
      *
-     * @Groups({"readUser"})
+     * @Groups({"readUser", "results"})
      */
     private $eecStatus = false;
 
