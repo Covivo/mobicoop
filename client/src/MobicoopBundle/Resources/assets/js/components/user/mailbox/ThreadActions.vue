@@ -443,7 +443,10 @@ export default {
         id: this.infosComplete.carpooler.id,
         identityStatus: this.infosComplete.carpooler.identityStatus,
         eecStatus: this.infosComplete.carpooler.eecStatus,
-        role: this.infosComplete.resultDriver ? PASSENGER : DRIVER
+        role: this.infosComplete.resultDriver ? PASSENGER : DRIVER,
+        givenName: this.infosComplete.carpooler.givenName,
+        shortFamilyName: this.infosComplete.carpooler.shortFamilyName,
+        gender: this.infosComplete.carpooler.gender
       };
     },
     formatHour(date){
