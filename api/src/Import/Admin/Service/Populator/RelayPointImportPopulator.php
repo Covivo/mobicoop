@@ -25,7 +25,7 @@ namespace App\Import\Admin\Service\Populator;
 
 use App\Geography\Entity\Address;
 use App\Import\Admin\Interfaces\PopulatorInterface;
-use App\RelayPoint\Admin\Service\RelayPointManager;
+use App\Import\Admin\Service\ImportManager;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
 use App\User\Entity\User;
@@ -51,7 +51,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private const MESSAGE_ALREADY_EXISTS = 'already exists';
     private const RELAYPOINT_TYPE_UNKNOWN = 'RelayPointType unknown for';
 
-    private $_relayPointManager;
+    private $_importManager;
     private $_messages;
 
     /**
@@ -59,9 +59,9 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
      */
     private $_requester;
 
-    public function __construct(RelayPointManager $relayPointManager, User $requester)
+    public function __construct(ImportManager $importManager, User $requester)
     {
-        $this->_relayPointManager = $relayPointManager;
+        $this->_importManager = $importManager;
         $this->_messages = [];
         $this->_requester = $requester;
     }
@@ -118,7 +118,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         $relaypoint->setAddress($address);
 
         try {
-            $this->_relayPointManager->addRelayPoint($relaypoint);
+            $this->_importManager->addRelayPoint($relaypoint);
         } catch (\Exception $e) {
             $this->_messages[] = $e->getMessage();
 
@@ -130,7 +130,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
 
     private function _getRelayPointType(int $id): ?RelayPointType
     {
-        return $this->_relayPointManager->getRelayPointTypeById($id);
+        return $this->_importManager->getRelayPointTypeById($id);
     }
 
     private function _getLabel(array $line)
@@ -140,7 +140,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
 
     private function _checkRelayPointAlreadyExists(float $latitude, float $longitude): ?RelayPoint
     {
-        $results = $this->_relayPointManager->getByLatLon($latitude, $longitude);
+        $results = $this->_importManager->getByLatLon($latitude, $longitude);
         if (is_array($results) && count($results) > 0) {
             return $results[0];
         }

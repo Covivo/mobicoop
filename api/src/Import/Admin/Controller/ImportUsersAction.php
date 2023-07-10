@@ -25,7 +25,7 @@ namespace App\Import\Admin\Controller;
 
 use App\Import\Admin\Resource\Import;
 use App\Import\Admin\Service\Importer;
-use App\User\Admin\Service\UserManager;
+use App\Import\Admin\Service\ImportManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
@@ -34,13 +34,13 @@ use Symfony\Component\Security\Core\Security;
  */
 final class ImportUsersAction
 {
-    public function __invoke(Request $request, UserManager $userManager, Security $security): Import
+    public function __invoke(Request $request, Security $security, ImportManager $importManager): Import
     {
         if (!$request->files->get('file')) {
             throw new \Exception('File is mandatory');
         }
 
-        $importer = new Importer($request->files->get('file'), $request->get('filename'), $userManager, $security->getUser());
+        $importer = new Importer($request->files->get('file'), $request->get('filename'), $importManager, $security->getUser());
 
         return $importer->importUsers();
     }

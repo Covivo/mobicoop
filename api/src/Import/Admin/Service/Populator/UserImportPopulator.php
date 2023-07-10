@@ -24,7 +24,7 @@
 namespace App\Import\Admin\Service\Populator;
 
 use App\Import\Admin\Interfaces\PopulatorInterface;
-use App\User\Admin\Service\UserManager;
+use App\Import\Admin\Service\ImportManager;
 use App\User\Entity\User;
 
 /**
@@ -40,11 +40,12 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
     private const GENDER = 3;
     private const BIRTHDATE = 4;
     private const PHONE_NUMBER = 5;
+    private const COMMUNITY_ID = 6;
 
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists';
 
-    private $_userManager;
+    private $_importManager;
     private $_messages;
 
     /**
@@ -52,9 +53,9 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
      */
     private $_requester;
 
-    public function __construct(UserManager $userManager, User $requester)
+    public function __construct(ImportManager $importManager, User $requester)
     {
-        $this->_userManager = $userManager;
+        $this->_importManager = $importManager;
         $this->_messages = [];
         $this->_requester = $requester;
     }
@@ -96,8 +97,12 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         $user->setUserDelegate($this->_requester);
         $user->setImportedDate(new \DateTime('now'));
 
+        if ('' !== trim($line[self::COMMUNITY_ID])) {
+            $this->_treatCommunity($line);
+        }
+
         try {
-            $this->_userManager->addUser($user);
+            $this->_importManager->addUser($user);
         } catch (\Exception $e) {
             $this->addMessage($e->getMessage());
 
@@ -107,9 +112,13 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         $this->addMessage($line[self::EMAIL].' '.self::MESSAGE_OK);
     }
 
+    private function _treatCommunity()
+    {
+    }
+
     private function _checkUserAlreadyExists(string $email): bool
     {
-        if (!is_null($this->_userManager->getUserByEmail($email))) {
+        if (!is_null($this->_importManager->getUserByEmail($email))) {
             return true;
         }
 
