@@ -44,7 +44,7 @@
                 <span
                   class="font-weight-light"
                 >
-                  {{ origin }}        
+                  {{ origin }}
                   <v-icon color="tertiairy">
                     mdi-arrow-right
                   </v-icon>
@@ -198,7 +198,7 @@ export default {
       this.selected = this.selectedDefault;
     }
   },
-  mounted() { 
+  mounted() {
     if (this.idAskSelected == this.idAsk && this.idAsk != null) {
       this.emit()
     }
@@ -215,21 +215,26 @@ export default {
       this.selected = !this.selected;
     },
     emit(){
-      console.log
-      this.$emit("toggleSelected",{idAsk:this.idAsk, idBooking:this.idBooking});
-      this.$emit("idMessageForTimeLine",
-        {
-          type:this.solidary ? "Solidary" : "Carpool",
-          idMessage:this.idMessage,
-          idRecipient:this.idRecipient,
-          name:this.name,
-          avatar:this.avatar,
-          idAsk:this.idAsk,
-          idBooking:this.idBooking,
-          blockerId:this.blockerId,
-          formerUnreadMessages:this.unreadMessages
-        }
-      );
+      if (this.idBooking == null) {
+
+        this.$emit("toggleSelected",{idAsk:this.idAsk});
+        this.$emit("idMessageForTimeLine",
+          {
+            type:this.solidary ? "Solidary" : "Carpool",
+            idMessage:this.idMessage,
+            idRecipient:this.idRecipient,
+            name:this.name,
+            avatar:this.avatar,
+            idAsk:this.idAsk,
+            idBooking:this.idBooking,
+            blockerId:this.blockerId,
+            formerUnreadMessages:this.unreadMessages
+          }
+        );
+      } else {
+        this.$emit("toggleSelectedBooking",{idBooking:this.idBooking})
+      }
+
     }
   }
 }

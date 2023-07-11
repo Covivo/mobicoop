@@ -107,4 +107,14 @@ class BookingManager
 
         return $booking;
     }
+
+    public function getBooking(int $id)
+    {
+        $response = $this->dataProvider->getItem($id);
+        if (201 != $response->getCode()) {
+            return $response->getValue();
+        }
+
+        return $response->getValue();
+    }
 }

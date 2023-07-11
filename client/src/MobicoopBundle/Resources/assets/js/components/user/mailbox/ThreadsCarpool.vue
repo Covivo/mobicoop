@@ -21,6 +21,7 @@
       :unread-messages="message.unreadMessages"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
+      @toggleSelectedBooking="emitToggleBooking"
     />
     <v-skeleton-loader
       ref="skeleton"
@@ -85,13 +86,14 @@ export default {
       type: 'list-item-avatar-three-line',
       types: [],
       SkeletonHidden: false,
-      idAskSelected: this.idAskToSelect
+      idAskSelected: this.idAskToSelect,
     }
   },
   watch: {
     idAskToSelect() {
       this.idAskToSelect ? this.refreshSelected(this.idAskToSelect) : '';
     },
+
     refreshThreads(){
       (this.refreshThreads) ? this.getThreads(this.idMessageToSelect) : '';
     }
@@ -108,6 +110,9 @@ export default {
     },
     emitToggle(data){
       this.$emit("toggleSelected",data);
+    },
+    emitToggleBooking(data){
+      this.$emit("toggleSelectedBooking",data);
     },
     refreshSelected(idAsk){
       this.messages.forEach((item, index) => {

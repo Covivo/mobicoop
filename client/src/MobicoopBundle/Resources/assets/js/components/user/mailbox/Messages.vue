@@ -140,6 +140,7 @@
                   :refresh-threads="refreshThreadsCarpool"
                   @idMessageForTimeLine="updateDetails"
                   @toggleSelected="refreshSelected"
+                  @toggleSelectedBooking="refreshSelectedBooking"
                   @refreshThreadsCarpoolCompleted="refreshThreadsCarpoolCompleted"
                 />
               </v-tab-item>
@@ -211,15 +212,8 @@
           class="col-4"
         >
           <thread-actions-carpool-standard
-            :id-recipient="idRecipient"
             :id-booking="idBooking"
-            :loading-init="false"
-            :refresh="refreshActions"
-            :loading-btn="loadingBtnAction"
-            :recipient-name="recipientName"
-            :recipient-avatar="recipientAvatar"
-            @refreshActionsCompleted="refreshActionsCompleted"
-            @updateStatusAskHistory="updateStatusAskHistory"
+            :refresh="refreshBookingActions"
           />
         </v-col>
         <v-col
@@ -351,6 +345,7 @@ export default {
         currentUnreadSolidaryMessages: 0
       },
       isExternalStandard: false,
+      refreshBookingActions:false,
     };
   },
   created() {
@@ -509,7 +504,7 @@ export default {
           "status" : statusUpdate
         }
       }
-      // console.error(data);
+      // console.error(data);sk
       // console.error(params);
       maxios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
@@ -524,12 +519,14 @@ export default {
 
     },
     refreshSelected(data){
-      if (null != data.idBooking){
-        this.idBooking = data.idBooking;
-      }
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;
+    },
+    refreshSelectedBooking(data){
+      this.isExternalStandard = true;
+      this.idBooking = data.idBooking;
+      this.refreshBookingActions = true;
     },
     reloadOnIcon(){
       this.loadingDetails = true;

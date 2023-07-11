@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Service\BookingManager;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Report;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
@@ -96,6 +97,7 @@ class UserController extends AbstractController
     private $signInSsoOriented;
     private $ceeDisplay;
     private $gendersList;
+    private $bookingManager;
 
     /**
      * Constructor.
@@ -138,7 +140,8 @@ class UserController extends AbstractController
         bool $carpoolSettingsDisplay,
         bool $signInSsoOriented,
         bool $ceeDisplay,
-        array $gendersList
+        array $gendersList,
+        BookingManager $bookingManager
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -168,6 +171,7 @@ class UserController extends AbstractController
         $this->signInSsoOriented = $signInSsoOriented;
         $this->ceeDisplay = $ceeDisplay;
         $this->gendersList = $gendersList;
+        $this->bookingManager = $bookingManager;
     }
 
     private function __parsePostParams(string $response): array
@@ -1043,6 +1047,26 @@ class UserController extends AbstractController
                 $results = $response->getResults()[0];
                 $results['canUpdateAsk'] = $response->getCanUpdateAsk(); // Because it's not in result
                 $results['askStatus'] = $response->getAskStatus(); // Because it's not in result
+
+                return new JsonResponse($results);
+            }
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
+     * Get informations for Action Panel of the mailbox
+     * AJAX.
+     */
+    public function userMessagesActionsBookingInfos(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($data['idBooking']) {
+                $response = $this->bookingManager->getBooking($data['idBooking']);
+
+                $results = $response->getResults()[0];
 
                 return new JsonResponse($results);
             }
