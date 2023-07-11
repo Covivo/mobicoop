@@ -344,9 +344,22 @@ class ShortDistanceSubscription
         return $this->shortDistanceJourneys->removeElement($shortDistanceJourney);
     }
 
+    /**
+     * Return all journeys
+     */
     public function getJourneys()
     {
         return $this->shortDistanceJourneys;
+    }
+
+    /**
+     * Returns EEC compliant journeys
+     */
+    public function getCompliantJourneys(): array
+    {
+        return array_values(array_filter($this->getJourneys()->toArray(), function (ShortDistanceJourney $journey) {
+            return $journey->isCompliant();
+        }));
     }
 
     /**
