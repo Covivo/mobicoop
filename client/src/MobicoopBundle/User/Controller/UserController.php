@@ -1059,7 +1059,7 @@ class UserController extends AbstractController
      * Get informations for Action Panel of the mailbox
      * AJAX.
      */
-    public function userMessagesActionsBookingInfos(Request $request)
+    public function userMessagesActionsBookingInfos(Request $request, BookingManager $bookingManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
