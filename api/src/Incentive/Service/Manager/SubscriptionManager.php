@@ -40,6 +40,11 @@ class SubscriptionManager extends MobConnectManager
     private $_ceeEligibleProofs = [];
 
     /**
+     * @var JourneyManager
+     */
+    private $_journeyManager;
+
+    /**
      * @var TimestampTokenManager
      */
     private $_timestampTokenManager;
@@ -80,6 +85,7 @@ class SubscriptionManager extends MobConnectManager
         UserValidation $userValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
+        JourneyManager $journeyManager,
         TimestampTokenManager $timestampTokenManager,
         CarpoolProofRepository $carpoolProofRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
@@ -90,6 +96,7 @@ class SubscriptionManager extends MobConnectManager
     ) {
         parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
+        $this->_journeyManager = $journeyManager;
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
@@ -222,6 +229,18 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * Resets a short distance subscription when the commitment journey has not been validated by the RPC
+     */
+    public function unvalidationOfProof(CarpoolProof $carpoolProof): void
+    {
+        $subscription = $this->_shortDistanceSubscriptionRepository->findByProofCommitment($carpoolProof);
+
+        if (!is_null($subscription) && !is_null($subscription->getCommitmentProofJourney()) && !$subscription->getCommitmentProofJourney()->isCompliant()) {
+            $this->_journeyManager->resetShortDistanceSubscription($subscription, $subscription->getCommitmentProofJourney());
+        }
+    }
+
+    /**
      * Step 20.
      */
     public function verifySubscriptionFromControllerCommand(?string $subscriptionType, ?string $subscriptionId)
@@ -258,11 +277,7 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * <<<<<<< HEAD
      * STEP 20 - Verify subscriptions.
-     * =======
-     * Step 20 - Verify subscriptions.
-     * >>>>>>> master.
      */
     public function verifySubscriptions()
     {
@@ -281,11 +296,7 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * <<<<<<< HEAD
-     * STEP 20 - Vérify a subscription.
-     * =======
      * Step 20 - Vérify a subscription.
-     * >>>>>>> master.
      *
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */

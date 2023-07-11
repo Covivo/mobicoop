@@ -10,6 +10,16 @@ use App\Payment\Entity\CarpoolPayment;
 
 class JourneyValidation extends Validation
 {
+    public const PROOF_ERROR_STATUS = [
+        CarpoolProof::STATUS_ERROR,
+        CarpoolProof::STATUS_CANCELED,
+        CarpoolProof::STATUS_ACQUISITION_ERROR,
+        CarpoolProof::STATUS_NORMALIZATION_ERROR,
+        CarpoolProof::STATUS_FRAUD_ERROR,
+        CarpoolProof::STATUS_EXPIRED,
+        CarpoolProof::STATUS_CANCELED_BY_OPERATOR,
+    ];
+
     /**
      * @var UserValidation
      */
