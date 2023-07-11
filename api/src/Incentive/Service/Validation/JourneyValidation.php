@@ -44,14 +44,15 @@ class JourneyValidation extends Validation
      *      - the subscription has not been initialized
      *      - there is no recorded journey.
      */
-    public function isFirstValidShortECCJourney(): bool
+    public function isFirstValidShortECCJourney(bool $recovery = false): bool
     {
         return
             $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver)
             && !is_null($this->_driver->getShortDistanceSubscription())
             && is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate())
-            && empty($this->_driver->getShortDistanceSubscription()->getJourneys()->toArray());
+            && true === $recovery
+                ? empty($this->_driver->getShortDistanceSubscription()->getJourneys()->toArray()) : true;
     }
 
     /**
@@ -95,7 +96,7 @@ class JourneyValidation extends Validation
      *      - the driver and passenger pick-up addresses are defined
      *      - the journey is valid and the first.
      */
-    public function isStartedJourneyValidShortECCJourney(CarpoolProof $carpoolProof): bool
+    public function isStartedJourneyValidShortECCJourney(CarpoolProof $carpoolProof, bool $recovery = false): bool
     {
         $this->setDriver($carpoolProof->getDriver());
 
@@ -108,7 +109,7 @@ class JourneyValidation extends Validation
             && !$this->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
             && !is_null($carpoolProof->getPickUpDriverAddress())
             && !is_null($carpoolProof->getPickUpPassengerAddress())
-            && $this->isFirstValidShortECCJourney();
+            && $this->isFirstValidShortECCJourney($recovery);
     }
 
     /**

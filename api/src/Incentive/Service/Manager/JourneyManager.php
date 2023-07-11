@@ -10,6 +10,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
 use App\Incentive\Service\HonourCertificateService;
@@ -159,7 +160,7 @@ class JourneyManager extends MobConnectManager
     /**
      * Step 9 - Short distance journey.
      */
-    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof)
+    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof): ShortDistanceJourney
     {
         $this->setDriver($carpoolProof->getDriver());
 
@@ -187,6 +188,8 @@ class JourneyManager extends MobConnectManager
         $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
         $this->_em->flush();
+
+        return $journey;
     }
 
     /**
@@ -282,41 +285,64 @@ class JourneyManager extends MobConnectManager
 
         $shortDistanceJourneysNumber = count($subscription->getJourneys()->toArray());
 
-        // Checks :
-        //    - The maximum journey threshold has not been reached
-        //    - The journey is a short distance journey
-        //    - The journey is a C type
-        //    - The journey origin and/or destination is the reference country
-        if (
-            self::SHORT_DISTANCE_TRIP_THRESHOLD <= $shortDistanceJourneysNumber
-            || is_null($carpoolProof->getAsk())
-            || is_null($carpoolProof->getAsk()->getMatching())
-            || $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
-            || CarpoolProof::TYPE_HIGH !== $carpoolProof->getType()
-            || !$this->_journeyValidation->isOriginOrDestinationFromFrance($carpoolProof)
-        ) {
-            return;
+        $commitmentJourney = $subscription->getCommitmentProofJourney();
+
+        // There is not commitment journey
+        if (is_null($commitmentJourney)) {
+            if ($this->_journeyValidation->isStartedJourneyValidShortECCJourney($carpoolProof, true)) {
+                $this->_loggerService->log('Step 17 - We declare a new commitment journey');
+
+                $commitmentJourney = $this->declareFirstShortDistanceJourney($carpoolProof);
+                $subscription = $commitmentJourney->getSubscription();
+            } else {
+                return;
+            }
         }
 
-        $journey = $subscription->getCommitmentProofJourney();
+        // Processing with commitment journey
+        if ($commitmentJourney->getCarpoolProof()->getId() === $carpoolProof->getId()) {
+            // The journey is not EEC compliant : we are removing it from short distance trips and resetting the subscription
+            if (!$commitmentJourney->isCompliant()) {
+                $this->resetShortDistanceSubscription($subscription, $commitmentJourney);
 
-        if (!is_null($journey)) {
+                return;
+            }
+
             $params = [
                 "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(false),
             ];
 
-            $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
+            $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');
+            $patchResponse = $this->patchSubscription($this->getDriverShortSubscriptionId(), $params);
             $subscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
 
             $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
             $subscription->setExpirationDate($this->getExpirationDate());
-        } else {
-            $journey = new ShortDistanceJourney($carpoolProof);
-        }
 
-        $journey->updateJourney($carpoolProof, $this->getRPCOperatorId($carpoolProof->getId()), $this->getCarpoolersNumber($carpoolProof->getAsk()));
-        $subscription->addShortDistanceJourney($journey);
+            $commitmentJourney = $this->_updateShortDistanceJourney($commitmentJourney, $carpoolProof);
+        } else {
+            // Checks :
+            //    - The maximum journey threshold has not been reached
+            //    - The journey is a short distance journey
+            //    - The journey is a C type
+            //    - The journey origin and/or destination is the reference country
+            if (
+                self::SHORT_DISTANCE_TRIP_THRESHOLD <= $shortDistanceJourneysNumber
+                || is_null($carpoolProof->getAsk())
+                || is_null($carpoolProof->getAsk()->getMatching())
+                || $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
+                || CarpoolProof::TYPE_HIGH !== $carpoolProof->getType()
+                || !$this->_journeyValidation->isOriginOrDestinationFromFrance($carpoolProof)
+            ) {
+                return;
+            }
+
+            $this->_loggerService->log('Step 17 - Added a normal journey');
+            $journey = new ShortDistanceJourney($carpoolProof);
+            $journey = $this->_updateShortDistanceJourney($journey, $carpoolProof);
+            $subscription->addShortDistanceJourney($journey);
+        }
 
         if (self::SHORT_DISTANCE_TRIP_THRESHOLD === $shortDistanceJourneysNumber) {
             $subscription->setBonusStatus(self::BONUS_STATUS_PENDING);
@@ -325,38 +351,14 @@ class JourneyManager extends MobConnectManager
         $this->_em->flush();
     }
 
-    private function _getCarpoolPaymentFromCarpoolProof($carpoolProof): ?CarpoolPayment
+    public function resetShortDistanceSubscription(ShortDistanceSubscription $subscription, ShortDistanceJourney $journey): ShortDistanceSubscription
     {
-        if (
-            is_null($carpoolProof->getAsk())
-            || is_null($carpoolProof->getAsk()->getCarpoolItems())
-        ) {
-            return null;
-        }
+        $this->_loggerService->log('Step 17 - The commitment journey is invalid. We remove it from subscription');
+        $subscription->removeShortDistanceJourney($journey);
 
-        $carpoolItems = array_filter($carpoolProof->getAsk()->getCarpoolItems(), function ($item) use ($carpoolProof) {
-            return
-                $item->getCreditorUser()->getId() === $carpoolProof->getDriver()->getId()
-                && $item->getDebtorUser()->getId() === $carpoolProof->getPassenger()->getId()
-                && $item->getItemDate()->format(self::DATE_FORMAT) === $carpoolProof->getStartDriverDate()->format(self::DATE_FORMAT);
-        });
+        $this->_em->flush();
 
-        if (
-            empty($carpoolItems)
-            || count($carpoolItems) > 1
-        ) {
-            return null;
-        }
-
-        $carpoolItem = array_values($carpoolItems)[0];
-
-        $carpoolPayments = array_values(array_filter($carpoolItem->getCarpoolPayments(), function ($payment) use ($carpoolProof) {
-            return
-                $payment->getUser()->getId() === $carpoolProof->getPassenger()->getId()
-                && $this->_journeyValidation->isPaymentValidForEEC($payment);
-        }));
-
-        return !empty($carpoolPayments) ? $carpoolPayments[0] : null;
+        return $subscription;
     }
 
     private function _getCarpoolItemsFromCarpoolPayment(CarpoolPayment $carpoolPayment): array
@@ -377,5 +379,10 @@ class JourneyManager extends MobConnectManager
         });
 
         return !(empty($carpoolPayments)) ? $carpoolPayments[0] : null;
+    }
+
+    private function _updateShortDistanceJourney(ShortDistanceJourney $journey, CarpoolProof $carpoolProof): ShortDistanceJourney
+    {
+        return $journey->updateJourney($carpoolProof, $this->getRPCOperatorId($carpoolProof->getId()), $this->getCarpoolersNumber($carpoolProof->getAsk()));
     }
 }
