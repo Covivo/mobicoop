@@ -184,6 +184,7 @@
                 :hide-no-thread-selected="(idRecipient!==null)"
                 :fraud-warning-display="fraudWarningDisplay"
                 :carpoolers-identity="carpoolersIdentity"
+                :eec-display="eecDisplay"
                 @refreshCompleted="refreshDetailsCompleted"
               />
             </v-col>
@@ -305,6 +306,10 @@ export default {
     defaultThreadTab: {
       type: String,
       default: null
+    },
+    eecDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

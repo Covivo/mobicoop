@@ -4,6 +4,7 @@
       <EECWarning
         v-if="hideNoThreadSelected"
         :carpoolers-identity="carpoolersIdentity"
+        :eec-display="eecDisplay"
       />
       <v-timeline
         v-if="items.length>0"
@@ -121,6 +122,10 @@ export default {
     carpoolersIdentity: {
       type: Object,
       default: () => {}
+    },
+    eecDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data(){

@@ -50,6 +50,10 @@ export default {
     carpoolersIdentity: {
       type: Object,
       default: () => {}
+    },
+    eecDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -69,7 +73,9 @@ export default {
         this.isMessageDisplayed = false;
         this.warningMessages = [];
 
-        this.build();
+        if (this.eecDisplay) {
+          this.build();
+        }
       }
     }
   },
