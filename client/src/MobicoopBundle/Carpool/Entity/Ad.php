@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
@@ -33,395 +33,396 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
-    const ROLE_DRIVER = 1;
-    const ROLE_PASSENGER = 2;
-    const ROLE_DRIVER_OR_PASSENGER = 3;
-    const FREQUENCY_PUNCTUAL = 1;
-    const FREQUENCY_REGULAR = 2;
-    const TYPE_ONE_WAY = 1;
-    const TYPE_OUTWARD = 2;
-    const TYPE_RETURN = 3;
-    const RESOURCE_NAME = "carpools";
+    public const ROLE_DRIVER = 1;
+    public const ROLE_PASSENGER = 2;
+    public const ROLE_DRIVER_OR_PASSENGER = 3;
+    public const FREQUENCY_PUNCTUAL = 1;
+    public const FREQUENCY_REGULAR = 2;
+    public const TYPE_ONE_WAY = 1;
+    public const TYPE_OUTWARD = 2;
+    public const TYPE_RETURN = 3;
+    public const RESOURCE_NAME = 'carpools';
 
     /**
-     * @var int The id of this ad.
+     * @var int the id of this ad
      */
     private $id;
 
     /**
-     * @var boolean|null The ad is a search only.
+     * @var null|bool the ad is a search only
      *
      * @Groups({"post","put"})
      */
     private $search;
 
     /**
-     * @var int The role for this ad.
+     * @var int the role for this ad
      *
      * @Groups({"post","put"})
      */
     private $role;
 
     /**
-     * @var boolean|null The ad is a one way trip.
+     * @var null|bool the ad is a one way trip
      *
      * @Groups({"post","put"})
      */
     private $oneWay;
 
     /**
-     * @var int|null The frequency for this ad.
+     * @var null|int the frequency for this ad
      *
      * @Groups({"post","put"})
      */
     private $frequency;
 
     /**
-     * @var array The waypoints for the outward.
+     * @var array the waypoints for the outward
      *
      * @Groups({"post","put"})
      */
     private $outwardWaypoints;
 
     /**
-     * @var array|null The waypoints for the return.
+     * @var null|array the waypoints for the return
      *
      * @Groups({"post","put"})
      */
     private $returnWaypoints;
 
     /**
-     * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
+     * @var null|\DateTimeInterface the date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular
      *
      * @Groups({"post","put"})
      */
     private $outwardDate;
 
     /**
-     * @var \DateTimeInterface|null The limit date for the outward if the frequency is regular.
+     * @var null|\DateTimeInterface the limit date for the outward if the frequency is regular
      *
      * @Groups({"post","put"})
      */
     private $outwardLimitDate;
 
     /**
-     * @var \DateTimeInterface|null The date for the return if the frequency is punctual, the start date of the return if the frequency is regular.
+     * @var null|\DateTimeInterface the date for the return if the frequency is punctual, the start date of the return if the frequency is regular
      *
      * @Groups({"post","put"})
      */
     private $returnDate;
 
     /**
-     * @var \DateTimeInterface|null The limit date for the return if the frequency is regular.
+     * @var null|\DateTimeInterface the limit date for the return if the frequency is regular
      *
      * @Groups({"post","put"})
      */
     private $returnLimitDate;
 
     /**
-     * @var string|null The time for the outward if the frequency is punctual.
+     * @var null|string the time for the outward if the frequency is punctual
      *
      * @Groups({"post","put"})
      */
     private $outwardTime;
 
     /**
-     * @var string|null The time for the return if the frequency is punctual.
+     * @var null|string the time for the return if the frequency is punctual
      *
      * @Groups({"post","put"})
      */
     private $returnTime;
 
     /**
-     * @var array|null The schedule for if the frequency is regular.
+     * @var null|array the schedule for if the frequency is regular
      *
      * @Groups({"post","put"})
      */
     private $schedule;
 
     /**
-     * @var boolean|null For punctual proposals, the user accepts only matchings for the defined date (no ranges).
+     * @var null|bool for punctual proposals, the user accepts only matchings for the defined date (no ranges)
      *
      * @Groups({"post","put"})
      */
     private $strictDate;
 
     /**
-     * @var boolean|null For punctual proposals, the user accepts only matchings with punctual trips (no regular trips).
+     * @var null|bool for punctual proposals, the user accepts only matchings with punctual trips (no regular trips)
      *
      * @Groups({"post","put"})
      */
     private $strictPunctual;
 
     /**
-     * @var boolean|null For regular proposals, the user accepts only matchings with regular trips (no punctual trips).
+     * @var null|bool for regular proposals, the user accepts only matchings with regular trips (no punctual trips)
      *
      * @Groups({"post","put"})
      */
     private $strictRegular;
-    
+
     /**
-    * @var float|null The price per km.
-    *
-    * @Groups({"post","put"})
-    */
+     * @var null|float the price per km
+     *
+     * @Groups({"post","put"})
+     */
     private $priceKm;
 
     /**
-    * @var float|null The total price of the outward selected by the user as a driver.
-    *
-    * @Groups({"post","put"})
-    */
+     * @var null|float the total price of the outward selected by the user as a driver
+     *
+     * @Groups({"post","put"})
+     */
     private $outwardDriverPrice;
 
     /**
-    * @var float|null The total price of the return selected by the user as a driver.
-    *
-    * @Groups({"post","put"})
-    */
+     * @var null|float the total price of the return selected by the user as a driver
+     *
+     * @Groups({"post","put"})
+     */
     private $returnDriverPrice;
 
     /**
-    * @var float|null The total price of the outward selected by the user as a passenger.
-    *
-    * @Groups({"post","put"})
-    */
+     * @var null|float the total price of the outward selected by the user as a passenger
+     *
+     * @Groups({"post","put"})
+     */
     private $outwardPassengerPrice;
 
     /**
-    * @var float|null The total price of the return selected by the user as a passenger.
-    *
-    * @Groups({"post","put"})
-    */
+     * @var null|float the total price of the return selected by the user as a passenger
+     *
+     * @Groups({"post","put"})
+     */
     private $returnPassengerPrice;
 
     /**
-     * @var int|null The number of seats available.
+     * @var null|int the number of seats available
      *
      * @Groups({"post","put"})
      */
     private $seatsDriver;
 
     /**
-     * @var int|null The number of seats required.
+     * @var null|int the number of seats required
      *
      * @Groups({"post","put"})
      */
     private $seatsPassenger;
 
     /**
-     * @var boolean|null Big luggage accepted / asked.
+     * @var null|bool big luggage accepted / asked
      *
      * @Groups({"post","put"})
      */
     private $luggage;
 
     /**
-     * @var boolean|null Bike accepted / asked.
+     * @var null|bool bike accepted / asked
      *
      * @Groups({"post","put"})
      */
     private $bike;
 
     /**
-     * @var boolean|null 2 passengers max on the back seats.
+     * @var null|bool 2 passengers max on the back seats
      *
      * @Groups({"post","put"})
      */
     private $backSeats;
 
     /**
-     * @var boolean|null Solidary request.
+     * @var null|bool solidary request
      *
      * @Groups({"post","put"})
      */
     private $solidary;
 
     /**
-     * @var boolean|null Solidary exclusive.
+     * @var null|bool solidary exclusive
      *
      * @Groups({"post","put"})
      */
     private $solidaryExclusive;
 
     /**
-     * @var boolean|null Avoid motorway.
+     * @var null|bool avoid motorway
      *
      * @Groups({"post","put"})
      */
     private $avoidMotorway;
 
     /**
-     * @var boolean|null Avoid toll.
+     * @var null|bool avoid toll
      *
      * @Groups({"post","put"})
      */
     private $avoidToll;
 
     /**
-     * @var string A comment about the ad.
+     * @var string a comment about the ad
      *
      * @Groups({"post","put"})
      */
     private $comment;
 
     /**
-     * @var int|null The user id of the ad owner. Null for an anonymous search.
+     * @var null|int The user id of the ad owner. Null for an anonymous search.
      *
      * @Groups({"post","put"})
      */
     private $userId;
 
     /**
-     * @var int|null The user id of the poster (used for delegation).
+     * @var null|int the user id of the poster (used for delegation)
      *
      *@Groups({"post","put"})
      */
     private $posterId;
 
     /**
-     * @var array|null The communities associated with the ad.
+     * @var null|array the communities associated with the ad
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","get"})
      */
     private $communities;
 
     /**
-     * @var int|null The event id associated with the ad.
+     * @var null|int the event id associated with the ad
      *
      * @Groups({"post","put"})
      */
     private $eventId;
 
     /**
-     * @var array|null The carpool results.
+     * @var null|array the carpool results
      */
     private $results;
 
     /**
-     * @var int|null The number of results.
+     * @var null|int the number of results
      */
     private $nbResults;
 
     /**
-     * @var array|null The carpool asks.
+     * @var null|array the carpool asks
      */
     private $asks;
 
     /**
-     * @var int|null The ad id for which the current ad is an ask.
+     * @var null|int the ad id for which the current ad is an ask
      *
      * @Groups({"post","put"})
      */
     private $adId;
 
     /**
-     * @var int|null The ad id for which the current ad is an ask.
+     * @var null|int the ad id for which the current ad is an ask
      *
      * @Groups({"post","put"})
      */
     private $askId;
 
     /**
-     * @var int|null The matching id related to the above ad id.
+     * @var null|int the matching id related to the above ad id
      *
      * @Groups({"post","put"})
      */
     private $matchingId;
 
     /**
-     * @var array|null The filters to apply to the results.
+     * @var null|array the filters to apply to the results
      *
      * @Groups({"post","put"})
      */
     private $filters;
-    
+
     /**
-     * @var boolean|null If the current user can make a formal Ask from this Ad
+     * @var null|bool If the current user can make a formal Ask from this Ad
      */
     private $canUpdateAsk;
 
     /**
-     * @var int|null Status of the Ask related to this Ad
+     * @var null|int Status of the Ask related to this Ad
      *
      * @Groups({"post","put"})
      */
     private $askStatus;
 
     /**
-    * @var boolean Paused ad.
-    * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
-    *
-    * @Groups({"post","put"})
-    */
+     * @var bool Paused ad.
+     *           A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
+     *
+     * @Groups({"post","put"})
+     */
     private $paused;
 
     /**
-    * @var int|null proposalId.
-    *
-    * @Groups({"post","put"})
-    */
+     * @var null|int proposalId
+     *
+     * @Groups({"post","put"})
+     */
     private $proposalId;
 
     /**
-     * @var int $potentialCarpoolers
-     * Potential carpoolers count
+     * @var int
+     *          Potential carpoolers count
      */
     private $potentialCarpoolers;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $smoke;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $music;
 
     /**
-     * @var string|null The message if Ad owner is making major updates to his Ad
+     * @var null|string The message if Ad owner is making major updates to his Ad
      *
      * @Groups({"post", "put"})
      */
     private $cancellationMessage;
 
     /**
-     * @var string|null The message if Ad owner is deleting his Ad
+     * @var null|string The message if Ad owner is deleting his Ad
      *
      * @Groups({"post", "put"})
      */
     private $deletionMessage;
 
     /**
-     * @var int|null The user id of the deleter.
+     * @var null|int the user id of the deleter
      *
      *@Groups({"post","put"})
      */
     private $deleterId;
 
     /**
-     * @var int|null The payment status of the Ad
+     * @var null|int The payment status of the Ad
      */
     private $paymentStatus;
 
     /**
-     * @var int|null The id of the PaymentItem of the Ad
+     * @var null|int The id of the PaymentItem of the Ad
      */
     private $paymentItemId;
 
     /**
-    * @var int|null The default week of the PaymentItem
-    */
+     * @var null|int The default week of the PaymentItem
+     */
     private $paymentItemWeek;
 
     /**
-     * @var \DateTimeInterface|null The date of an unpaid declaration for this Ad
+     * @var null|\DateTimeInterface The date of an unpaid declaration for this Ad
+     *
      * @Groups({"read","readPaymentStatus"})
      */
     private $unpaidDate;
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         $this->outwardWaypoints = [];
         $this->returnWaypoints = [];
@@ -434,7 +435,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
             $this->id = $id;
         }
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -447,7 +448,6 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
         return $this;
     }
 
-
     public function isSearch(): ?bool
     {
         return $this->search;
@@ -459,7 +459,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
 
         return $this;
     }
-    
+
     public function getRole(): ?int
     {
         return $this->role;
@@ -483,7 +483,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
 
         return $this;
     }
-    
+
     public function getFrequency(): ?int
     {
         return $this->frequency;
@@ -500,11 +500,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->outwardWaypoints;
     }
-    
+
     public function setOutwardWaypoints(array $outwardWaypoints): self
     {
         $this->outwardWaypoints = $outwardWaypoints;
-        
+
         return $this;
     }
 
@@ -512,11 +512,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->returnWaypoints;
     }
-    
+
     public function setReturnWaypoints(?array $returnWaypoints): self
     {
         $this->returnWaypoints = $returnWaypoints;
-        
+
         return $this;
     }
 
@@ -596,11 +596,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->schedule;
     }
-    
+
     public function setSchedule(?array $schedule): self
     {
         $this->schedule = $schedule;
-        
+
         return $this;
     }
 
@@ -608,11 +608,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->communities;
     }
-    
+
     public function setCommunities(?array $communities): self
     {
         $this->communities = $communities;
-        
+
         return $this;
     }
 
@@ -632,11 +632,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->strictDate;
     }
-    
+
     public function setStrictDate(?bool $isStrictDate): self
     {
         $this->strictDate = $isStrictDate;
-        
+
         return $this;
     }
 
@@ -644,11 +644,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->strictPunctual;
     }
-    
+
     public function setStrictPunctual(?bool $isStrictPunctual): self
     {
         $this->strictPunctual = $isStrictPunctual;
-        
+
         return $this;
     }
 
@@ -656,11 +656,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->strictRegular;
     }
-    
+
     public function setStrictRegular(?bool $isStrictRegular): self
     {
         $this->strictRegular = $isStrictRegular;
-        
+
         return $this;
     }
 
@@ -668,7 +668,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->priceKm;
     }
-    
+
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
@@ -678,7 +678,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->outwardDriverPrice;
     }
-    
+
     public function setOutwardDriverPrice(?string $outwardDriverPrice)
     {
         $this->outwardDriverPrice = $outwardDriverPrice;
@@ -688,7 +688,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->returnDriverPrice;
     }
-    
+
     public function setReturnDriverPrice(?string $returnDriverPrice)
     {
         $this->returnDriverPrice = $returnDriverPrice;
@@ -698,7 +698,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->outwardPassengerPrice;
     }
-    
+
     public function setOutwardPassengerPrice(?string $outwardPassengerPrice)
     {
         $this->outwardPassengerPrice = $outwardPassengerPrice;
@@ -708,7 +708,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->returnPassengerPrice;
     }
-    
+
     public function setReturnPassengerPrice(?string $returnPassengerPrice)
     {
         $this->returnPassengerPrice = $returnPassengerPrice;
@@ -742,11 +742,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->luggage;
     }
-    
+
     public function setLuggage(?bool $hasLuggage): self
     {
         $this->luggage = $hasLuggage;
-        
+
         return $this;
     }
 
@@ -754,11 +754,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->bike;
     }
-    
+
     public function setBike(?bool $hasBike): self
     {
         $this->bike = $hasBike;
-        
+
         return $this;
     }
 
@@ -770,6 +770,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     public function setSmoke(?bool $smoke): ?bool
     {
         $this->smoke = $smoke;
+
         return $this;
     }
 
@@ -783,11 +784,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
 
     /**
      * @param bool $music
-     * @return Ad
      */
     public function setMusic(?bool $music): Ad
     {
         $this->music = $music;
+
         return $this;
     }
 
@@ -795,11 +796,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->backSeats;
     }
-    
+
     public function setBackSeats(?bool $hasBackSeats): self
     {
         $this->backSeats = $hasBackSeats;
-        
+
         return $this;
     }
 
@@ -807,11 +808,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?bool $isSolidary): self
     {
         $this->solidary = $isSolidary;
-        
+
         return $this;
     }
 
@@ -819,11 +820,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->solidaryExclusive;
     }
-    
+
     public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
     {
         $this->solidaryExclusive = $isSolidaryExclusive;
-        
+
         return $this;
     }
 
@@ -831,11 +832,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->avoidMotorway;
     }
-    
+
     public function setAvoidMotorway(?bool $avoidMotorway): self
     {
         $this->avoidMotorway = $avoidMotorway;
-        
+
         return $this;
     }
 
@@ -843,11 +844,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->avoidToll;
     }
-    
+
     public function setAvoidToll(?bool $avoidToll): self
     {
         $this->avoidToll = $avoidToll;
-        
+
         return $this;
     }
 
@@ -855,11 +856,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -975,11 +976,11 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         return $this->canUpdateAsk;
     }
-    
+
     public function setCanUpdateAsk(?bool $canUpdateAsk): self
     {
         $this->canUpdateAsk = $canUpdateAsk;
-        
+
         return $this;
     }
 
@@ -1027,6 +1028,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     public function setPotentialCarpoolers(int $potentialCarpoolers): self
     {
         $this->potentialCarpoolers = $potentialCarpoolers;
+
         return $this;
     }
 
@@ -1034,12 +1036,14 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         if (!empty($this->getOutwardWaypoints())) {
             $origin = $this->getOutwardWaypoints()[array_search(0, array_column($this->getOutwardWaypoints(), 'position'))];
-            if (isset($origin['@type']) && $origin["@type"] === "Address") {
+            if (isset($origin['@type']) && 'Address' === $origin['@type']) {
                 return $origin;
-            } elseif (isset($origin['address'])) {
-                return $origin["address"];
+            }
+            if (isset($origin['address'])) {
+                return $origin['address'];
             }
         }
+
         return null;
     }
 
@@ -1047,12 +1051,14 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     {
         if (!empty($this->getOutwardWaypoints())) {
             $destination = $this->getOutwardWaypoints()[array_search(true, array_column($this->getOutwardWaypoints(), 'destination'))];
-            if (isset($destination['@type']) && $destination["@type"] === "Address") {
+            if (isset($destination['@type']) && 'Address' === $destination['@type']) {
                 return $destination;
-            } elseif (isset($destination['address'])) {
-                return $destination["address"];
+            }
+            if (isset($destination['address'])) {
+                return $destination['address'];
             }
         }
+
         return null;
     }
 
@@ -1064,6 +1070,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     public function setCancellationMessage(?string $cancellationMessage): Ad
     {
         $this->cancellationMessage = $cancellationMessage;
+
         return $this;
     }
 
@@ -1087,6 +1094,7 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
     public function setDeletionMessage(?string $deletionMessage): Ad
     {
         $this->deletionMessage = $deletionMessage;
+
         return $this;
     }
 
@@ -1174,7 +1182,8 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
                 'paymentItemId' => $this->getPaymentItemId(),
                 'paymentItemWeek' => $this->getPaymentItemWeek(),
                 'unpaidDate' => !is_null($this->getUnpaidDate()) ? $this->getUnpaidDate()->format('Y-m-d') : null,
-                'gamificationNotifications' => $this->getGamificationNotifications()
+                'gamificationNotifications' => $this->getGamificationNotifications(),
+                'communities' => $this->getCommunities(),
             ];
     }
 }
