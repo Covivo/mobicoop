@@ -1858,6 +1858,15 @@ class User implements UserInterface, EquatableInterface
      */
     private $externalJourneyUserId;
 
+    /**
+     * Indicates if the user has subscribed to one of the 2 carpooling incentive.
+     *
+     * @var bool
+     *
+     * @Groups({"readUser", "results"})
+     */
+    private $eecStatus = false;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -4115,5 +4124,17 @@ class User implements UserInterface, EquatableInterface
         $this->externalJourneyUserId = $externalJourneyUserId;
 
         return $this;
+    }
+
+    /**
+     * Get the value of eecStatus.
+     *
+     * @return bool
+     */
+    public function getEecStatus()
+    {
+        $this->eecStatus = !is_null($this->getLongDistanceSubscription()) || !is_null($this->getShortDistanceSubscription());
+
+        return $this->eecStatus;
     }
 }
