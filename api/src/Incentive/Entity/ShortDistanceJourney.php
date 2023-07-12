@@ -428,4 +428,16 @@ class ShortDistanceJourney
         $this->setRpcNumberStatus();
         $this->setCarpoolersNumber($carpoolersNumber);
     }
+
+    /**
+     * Returns if the journey is EEC compliant
+     * - The associated proof is class C
+     * - The associated proof is validated by the RPC
+     */
+    public function isCompliant(): bool
+    {
+        return
+            CarpoolProof::TYPE_HIGH === $this->getCarpoolProof()->getType()
+            && CarpoolProof::STATUS_VALIDATED === $this->getCarpoolProof()->getStatus();
+    }
 }

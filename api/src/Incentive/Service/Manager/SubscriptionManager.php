@@ -171,7 +171,7 @@ class SubscriptionManager extends MobConnectManager
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
 
         if (!is_null($shortDistanceSubscription)) {
-            $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getJourneys());
+            $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getCompliantJourneys());
             $this->_subscriptions->setShortDistanceSubscriptions($shortDistanceSubscriptions);
             $this->_subscriptions->setShortDistanceExpirationDate($shortDistanceSubscription->getExpirationDate());
         }
