@@ -27,7 +27,8 @@
             "bicRequired": "BIC number is required",
             "streetRequired": "The number and the street are mandatory",
             "postalCodeRequired": "The postal code is mandatory",
-            "addressLocalityRequired": "The city is required"
+            "addressLocalityRequired": "The city is required",
+            "houseNumberRequired": "The house number is required"
         }
     },
     "register": "Save",
