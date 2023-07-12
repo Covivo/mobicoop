@@ -289,7 +289,7 @@ class JourneyManager extends MobConnectManager
 
         // There is not commitment journey
         if (is_null($commitmentJourney)) {
-            if ($this->_journeyValidation->isStartedJourneyValidShortECCJourney($carpoolProof, true)) {
+            if ($this->_journeyValidation->isStartedJourneyValidShortECCJourney($carpoolProof)) {
                 $this->_loggerService->log('Step 17 - We declare a new commitment journey');
 
                 $commitmentJourney = $this->declareFirstShortDistanceJourney($carpoolProof);
