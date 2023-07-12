@@ -10,6 +10,16 @@ use App\Payment\Entity\CarpoolPayment;
 
 class JourneyValidation extends Validation
 {
+    public const PROOF_ERROR_STATUS = [
+        CarpoolProof::STATUS_ERROR,
+        CarpoolProof::STATUS_CANCELED,
+        CarpoolProof::STATUS_ACQUISITION_ERROR,
+        CarpoolProof::STATUS_NORMALIZATION_ERROR,
+        CarpoolProof::STATUS_FRAUD_ERROR,
+        CarpoolProof::STATUS_EXPIRED,
+        CarpoolProof::STATUS_CANCELED_BY_OPERATOR,
+    ];
+
     /**
      * @var UserValidation
      */
@@ -47,11 +57,10 @@ class JourneyValidation extends Validation
     public function isFirstValidShortECCJourney(): bool
     {
         return
-            $this->_userValidation->hasValidMobConnectAuth($this->_driver)
-            && !is_null($this->_driver)
+            !is_null($this->_driver)
+            && $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver->getShortDistanceSubscription())
-            && is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate())
-            && empty($this->_driver->getShortDistanceSubscription()->getJourneys()->toArray());
+            && is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate());
     }
 
     /**
@@ -100,8 +109,8 @@ class JourneyValidation extends Validation
         $this->setDriver($carpoolProof->getDriver());
 
         return
-            $this->_userValidation->hasValidMobConnectAuth($this->_driver)
-            && !is_null($this->_driver)
+            !is_null($this->_driver)
+            && $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($carpoolProof->getAsk())
             && !is_null($carpoolProof->getAsk()->getMatching())
             && !is_null($carpoolProof->getAsk()->getMatching()->getCommonDistance())
