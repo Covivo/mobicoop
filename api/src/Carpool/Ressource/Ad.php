@@ -1443,4 +1443,26 @@ class Ad
 
         return $this;
     }
+
+    /**
+     * Returns the user's ID depending on whether he is a driver or a passenger
+     */
+    public function getUserIdByType(int $useType): ?int
+    {
+        if ($useType != self::ROLE_DRIVER && $useType != self::ROLE_PASSENGER) {
+            return null;
+        }
+
+        switch ($useType) {
+            case self::ROLE_DRIVER:
+                return !is_null($this->getResults()[0]->getResultDriver())
+                    ? $this->getUserId() : $this->getResults()[0]->getCarpooler()->getId();
+
+            case self::ROLE_PASSENGER:
+                return !is_null($this->getResults()[0]->getResultPassenger())
+                    ? $this->getUserId() : $this->getResults()[0]->getCarpooler()->getId();
+        }
+
+        return null;
+    }
 }

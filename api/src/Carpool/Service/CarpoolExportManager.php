@@ -165,14 +165,14 @@ class CarpoolExportManager
                     $sumPaid = $sumPaid + $carpoolItem->getAmount();
                 }
             }
+            //    we set the pickUp and dropOff
+            $carpoolExport->setPickUp($carpoolItem->getPickUp());
+            $carpoolExport->setDropOff($carpoolItem->getDropOff());
             if (is_null($carpoolItem->getAsk())) {
                 $carpoolExports[] = $carpoolExport;
 
                 continue;
             }
-            //    we set the pickUp and dropOff
-            $carpoolExport->setPickUp($carpoolItem->getPickUp());
-            $carpoolExport->setDropOff($carpoolItem->getDropOff());
             //    we set the certification type
             if ($carpoolItem->getAsk()->getCarpoolProofs()) {
                 foreach ($carpoolItem->getAsk()->getCarpoolProofs() as $carpoolProof) {

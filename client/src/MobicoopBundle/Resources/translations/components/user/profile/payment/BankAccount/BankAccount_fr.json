@@ -27,7 +27,8 @@
             "bicRequired": "Le numéro BIC est obligatoire",
             "streetRequired": "Le numéro et la rue sont obligatoires",
             "postalCodeRequired": "Le code postale est obligatoire",
-            "addressLocalityRequired": "La ville est obligatoire"
+            "addressLocalityRequired": "La ville est obligatoire",
+            "houseNumberRequired": "Le numéro de maison est obligatoire"
         }
     },
     "register": "Enregistrer",

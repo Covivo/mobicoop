@@ -184,6 +184,8 @@
                 :refresh="refreshDetails"
                 :hide-no-thread-selected="(idRecipient!==null)"
                 :fraud-warning-display="fraudWarningDisplay"
+                :carpoolers-identity="carpoolersIdentity"
+                :eec-display="eecDisplay"
                 @refreshCompleted="refreshDetailsCompleted"
               />
             </v-col>
@@ -233,6 +235,7 @@
             :blocker-id="blockerId"
             @refreshActionsCompleted="refreshActionsCompleted"
             @updateStatusAskHistory="updateStatusAskHistory"
+            @recipientIdentity="setCarpoolerIdentity"
           />
         </v-col>
       </v-row>
@@ -270,7 +273,7 @@ export default {
     ThreadActions,
     ThreadActionsCarpoolStandard,
     TypeText,
-    WarningMessage
+    WarningMessage,
   },
   props: {
     user: {
@@ -316,6 +319,10 @@ export default {
     defaultThreadTab: {
       type: String,
       default: null
+    },
+    eecDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -346,6 +353,7 @@ export default {
       },
       isExternalStandard: false,
       refreshBookingActions:false,
+      carpoolersIdentity: null
     };
   },
   created() {
@@ -559,9 +567,23 @@ export default {
       this.loadingDetails = false;
       this.refreshActions = false;
       this.loadingBtnAction = false;
+    },
+    setCarpoolerIdentity(e) {
+      this.carpoolersIdentity = {
+        sender: {
+          id: this.user.id,
+          identityStatus:this.user.identityStatus,
+          eecStatus:this.user.eecStatus,
+          role: e.role === DRIVER ? PASSENGER : DRIVER
+        },
+        recipient: e
+      };
     }
   }
 };
+
+export const DRIVER = 1;
+export const PASSENGER = 2;
 </script>
 <style lang="scss">
 .v-main__wrap{

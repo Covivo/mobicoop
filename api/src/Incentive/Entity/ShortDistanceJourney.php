@@ -415,7 +415,7 @@ class ShortDistanceJourney
             && $this->getId() === $this->getSubscription()->getCommitmentProofJourney()->getId();
     }
 
-    public function updateJourney(CarpoolProof $carpoolProof, string $rpcJourneyId, int $carpoolersNumber)
+    public function updateJourney(CarpoolProof $carpoolProof, string $rpcJourneyId, int $carpoolersNumber): self
     {
         $this->setCarpoolProof($carpoolProof);
         $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
@@ -427,5 +427,19 @@ class ShortDistanceJourney
         $this->setRpcJourneyId($rpcJourneyId);
         $this->setRpcNumberStatus();
         $this->setCarpoolersNumber($carpoolersNumber);
+
+        return $this;
+    }
+
+    /**
+     * Returns if the journey is EEC compliant
+     * - The associated proof is class C
+     * - The associated proof is validated by the RPC
+     */
+    public function isCompliant(): bool
+    {
+        return
+            CarpoolProof::TYPE_HIGH === $this->getCarpoolProof()->getType()
+            && CarpoolProof::STATUS_VALIDATED === $this->getCarpoolProof()->getStatus();
     }
 }

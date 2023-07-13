@@ -608,6 +608,7 @@ export default {
     },
     clearPropositions() {
       this.items = [];
+      this.$emit('clear');
     },
     clearSelection() {
       this.selection = null;
