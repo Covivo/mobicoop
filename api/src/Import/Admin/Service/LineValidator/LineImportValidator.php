@@ -36,7 +36,9 @@ abstract class LineImportValidator implements LineImportValidatorInterface
     {
         $importLineValidator = new ImportLineValidator($line, $numLine);
 
-        $importLineValidator->validateNumberOfColumn($this->_getNumberOfColumn());
+        if (!$importLineValidator->validateNumberOfColumn($this->_getNumberOfColumn())) {
+            return ['Incorrect number of column line '.$numLine.' ('.$this->_getNumberOfColumn().' expected)'];
+        }
 
         return $importLineValidator->validateLine($line, $this->_getInstanciatedFieldsValidators());
     }

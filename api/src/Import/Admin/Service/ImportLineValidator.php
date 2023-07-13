@@ -46,11 +46,13 @@ class ImportLineValidator
         $this->_numLine = $numLine;
     }
 
-    public function validateNumberOfColumn(int $numberOfColumn)
+    public function validateNumberOfColumn(int $numberOfColumn): bool
     {
         if ($numberOfColumn != count($this->_line)) {
-            throw new \LogicException('Incorrect number of column line '.$this->_numLine.' ('.$numberOfColumn.' expected)');
+            return false;
         }
+
+        return true;
     }
 
     public function validateLine(array $line, array $fieldsValidators): array

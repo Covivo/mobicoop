@@ -70,7 +70,6 @@ class Importer
     {
         $this->_file = $file;
         $this->_filename = $filename;
-        $this->_validateFile();
         $this->_manager = $manager;
         $this->_errors = [];
         $this->_messages = [];
@@ -79,6 +78,9 @@ class Importer
 
     public function importUsers(): Import
     {
+        if (!$this->_validateFile()) {
+            return $this->_buildImport(self::USER_ENTITY);
+        }
         $this->_validateLines(new UserLineImportValidator());
         if (0 == count($this->_errors)) {
             $this->_populateTable(new UserImportPopulator($this->_manager, $this->_requester));
@@ -89,6 +91,9 @@ class Importer
 
     public function importRelayPoints(): Import
     {
+        if (!$this->_validateFile()) {
+            return $this->_buildImport(self::USER_ENTITY);
+        }
         $this->_validateLines(new RelayPointLineImportValidator());
         if (0 == count($this->_errors)) {
             $this->_populateTable(new RelayPointImportPopulator($this->_manager, $this->_requester));
@@ -97,11 +102,15 @@ class Importer
         return $this->_buildImport(self::RELAY_POINT_ENTITY);
     }
 
-    private function _validateFile()
+    private function _validateFile(): bool
     {
         if (!in_array($this->_file->getMimeType(), self::MIME_TYPES)) {
-            throw new \LogicException('Incorrect MIME type');
+            $this->_errors[] = 'Incorrect MIME type';
+
+            return false;
         }
+
+        return true;
     }
 
     private function _populateTable(PopulatorInterface $populator)
