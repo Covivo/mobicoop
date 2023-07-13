@@ -47,6 +47,7 @@ class AnalyticManager
     private $tokenStorage;
 
     private $defaultCommunityId;
+    private $defaultTerritoryId;
 
     public function __construct(
         RequestStack $requestStack,
@@ -83,17 +84,30 @@ class AnalyticManager
         $analytic->setId($id);
         $dashboard = $this->getDashboard();
 
-        if (null == $this->territoryId) {
+        $community = null;
+        $territories = null;
+
+        if (null != $this->territoryId) {
+            $territories = $this->getOperationalValue($this->territoryId);
+        } elseif(null == $this->communityId) {
             $territories = $this->getTerritories($dashboard['auth_item']);
         } else {
-            $territories = $this->getTerritory($this->territoryId);
+            $territories = $this->getOperationalValue(null);
+        }
+
+        if (null != $this->communityId) {
+            $community = $this->getOperationalValue(null);
+        } elseif ([$this->getOperationalValue(null)] == $territories) {
+            $community = $this->getCommunity($this->communityId);
+        } else {
+            $community = $this->getOperationalValue(null);
         }
 
         $payload = [
             'resource' => ['dashboard' => $dashboard['dashboardId']],
             'params' => [
                 'idterritoryoperational' => $territories,
-                'idcommunityoperational' => $this->getCommunity($this->communityId),
+                'idcommunityoperational' => $community,
                 'organization' => $this->organization,
             ],
         ];
@@ -105,6 +119,7 @@ class AnalyticManager
 
         $analytic->setUrl($url);
         $analytic->setCommunityId($this->defaultCommunityId);
+        $analytic->setTerritoryId($this->defaultTerritoryId);
 
         return $analytic;
     }
@@ -129,39 +144,41 @@ class AnalyticManager
         }
     }
 
+    private function getOperationalValue(?int $id): string
+    {
+        if (null === $id) {
+            return strtolower($this->organization);
+        }
+        return strtolower($this->organization).'_'.strval($id);
+    }
+
     private function getCommunity(?int $communityId): string
     {
         if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
             if (null === $communityId) {
-                return strtolower($this->organization);
+                return getOperationalValue(null);
             }
 
-            return strtolower($this->organization).'_'.strval($communityId);
+            return getOperationalValue($communityId);
         }
         $this->getDefaultCommunityId();
 
         return strtolower($this->organization).'_'.$this->defaultCommunityId;
     }
 
-    private function getTerritory(?int $territoryId): array
-    {
-        if (null === $territoryId) {
-            return [strtolower($this->organization)];
-        }
-
-        return [strtolower($this->organization).'_'.strval($territoryId)];
-    }
-
     private function getTerritories(string $auth_item): array
     {
-        $territories = $this->authManager->getTerritoriesForItem($auth_item);
+        $territories = $this->authManager->getTerritoryListForItem($auth_item);
 
         if (0 == count($territories)) {
-            return [strtolower($this->organization)];
+            return $this->getOperationalValue(null);
         }
 
         foreach ($territories as $key => $territory) {
-            $territories[$key] = strtolower($this->organization).'_'.$territories[$key];
+            if ($this->defaultTerritoryId == null) {
+                $this->defaultTerritoryId = $territories[$key];
+            }
+            $territories[$key] = $this->getOperationalValue($territories[$key]);
         }
 
         return $territories;
