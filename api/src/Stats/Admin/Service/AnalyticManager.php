@@ -87,20 +87,25 @@ class AnalyticManager
         $community = null;
         $territories = null;
 
-        if (null != $this->territoryId) {
-            $territories = $this->getOperationalValue($this->territoryId);
-        } elseif(null == $this->communityId) {
-            $territories = $this->getTerritories($dashboard['auth_item']);
-        } else {
-            $territories = $this->getOperationalValue(null);
+        if ($this->territoryId == 'undefined') {
+            $this->territoryId = null;
         }
 
-        if (null != $this->communityId) {
-            $community = $this->getOperationalValue(null);
-        } elseif ([$this->getOperationalValue(null)] == $territories) {
+
+        if (null != $this->territoryId || null != $this->communityId) {
+            // the request has parameter(s)
+            $territories = [$this->getOperationalValue($this->territoryId)];
             $community = $this->getCommunity($this->communityId);
         } else {
-            $community = $this->getOperationalValue(null);
+            // apply filters defalut values
+            $territories = $this->getTerritories($dashboard['auth_item']);
+
+            if ([$this->getOperationalValue(null)] == $territories) {
+                $this->getDefaultCommunityId();
+                $community = $this->getCommunity($this->defaultCommunityId);
+            } else {
+                $community = $this->getOperationalValue(null);
+            }
         }
 
         $payload = [
@@ -156,14 +161,13 @@ class AnalyticManager
     {
         if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
             if (null === $communityId) {
-                return getOperationalValue(null);
+                return $this->getOperationalValue(null);
             }
 
-            return getOperationalValue($communityId);
+            return $this->getOperationalValue($communityId);
         }
-        $this->getDefaultCommunityId();
 
-        return strtolower($this->organization).'_'.$this->defaultCommunityId;
+        return $this->getOperationalValue($communityId);
     }
 
     private function getTerritories(string $auth_item): array
@@ -171,7 +175,7 @@ class AnalyticManager
         $territories = $this->authManager->getTerritoryListForItem($auth_item);
 
         if (0 == count($territories)) {
-            return $this->getOperationalValue(null);
+            return [$this->getOperationalValue(null)];
         }
 
         foreach ($territories as $key => $territory) {
