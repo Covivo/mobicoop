@@ -145,7 +145,7 @@ export default {
         return false;
     },
     defaultOutwardDate() {
-      return new Date().toString();
+      return this.event.fromDate.date;
     },
   },
   created() {
