@@ -144,7 +144,7 @@ class AuthManager
      *
      * @return array The array of territories where the requester is authorized
      */
-    private function getRawTerritoryLiestForItem(string $itemName)
+    private function getRawTerritoryListForItem(string $itemName)
     {
         if (!$item = $this->authItemRepository->findByName($itemName)) {
             throw new AuthItemNotFoundException('Auth item '.$itemName.' not found');
@@ -174,7 +174,7 @@ class AuthManager
      */
     public function getTerritoriesForItem(string $itemName)
     {
-        $territories = $this->getRawTerritoryLiestForItem($itemName);
+        $territories = $this->getRawTerritoryListForItem($itemName);
 
         if (in_array('all', $territories)) {
             $territories = [];
@@ -194,7 +194,7 @@ class AuthManager
      */
     public function getTerritoryListForItem(string $itemName)
     {
-        $territories = $this->getRawTerritoryLiestForItem($itemName);
+        $territories = $this->getRawTerritoryListForItem($itemName);
 
         if (in_array('all', $territories)) {
             $territories = \array_diff($territories, ["all"]);
