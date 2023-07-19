@@ -209,7 +209,7 @@ class JourneyManager extends MobConnectManager
 
             $subscription = $this->_driver->getLongDistanceSubscription();
 
-            if (is_null($subscription)) {
+            if (is_null($subscription) || $subscription->hasExpired()) {
                 continue;
             }
 
@@ -279,7 +279,7 @@ class JourneyManager extends MobConnectManager
 
         $subscription = $this->getDriver()->getShortDistanceSubscription();
 
-        if (is_null($subscription)) {
+        if (is_null($subscription) || $subscription->hasExpired()) {
             return;
         }
 
