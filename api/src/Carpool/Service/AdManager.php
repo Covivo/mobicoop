@@ -61,7 +61,6 @@ use App\User\Exception\UserAlreadyExistsException;
 use App\User\Exception\UserNotFoundException;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -1076,6 +1075,7 @@ class AdManager
         $ad->setBackSeats($proposal->getCriteria()->hasBackSeats());
         $ad->setComment($proposal->getComment());
         $ad->setPriceKm(strval(floatval($proposal->getCriteria()->getPriceKm())));
+        $ad->setCommunities($proposal->getCommunities());
 
         if ($matching && $matching->getProposalOffer()->getCriteria()->getFromTime()) {
             $date = $matching->getProposalOffer()->getCriteria()->getFromDate();
@@ -1339,7 +1339,7 @@ class AdManager
             }
             $ad = $this->createAd($ad, true, $withSolidaries, true, false, Ad::MATCHING_ALGORITHM_V3);
             $this->proposalManager->deleteProposal($proposal);
-        // minor update
+            // minor update
         } elseif (
             $oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()

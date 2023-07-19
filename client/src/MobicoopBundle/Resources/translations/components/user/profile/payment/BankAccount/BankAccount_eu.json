@@ -22,7 +22,8 @@
             "iban": "IBAN zenbakia bali izan behar da",
             "addressLocalityRequired": "Hiria baitezpadakoa da",
             "postalCodeRequired": "Posta kodea baitezpadakoa da",
-            "streetRequired": "Zenbakia eta karrika baitezpadakoak dira"
+            "streetRequired": "Zenbakia eta karrika baitezpadakoak dira",
+            "houseNumberRequired": "Le numéro de maison est obligatoire"
         },
         "tooltip": {
             "iban": "Zure IBAN-a idatz ezazu, artekarik gabe"

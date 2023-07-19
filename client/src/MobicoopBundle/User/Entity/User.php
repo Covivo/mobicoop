@@ -52,6 +52,12 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public const GENDER_MALE = 2;
     public const GENDER_OTHER = 3;
 
+    public const IDENTITY_STATUS_NONE = 0;
+    public const IDENTITY_STATUS_PENDING = 1;
+    public const IDENTITY_STATUS_ACCEPTED = 2;
+    public const IDENTITY_STATUS_REFUSED = 3;
+    public const IDENTITY_STATUS_CANCELED = 4;
+
     public const GENDERS = [
         'gender.choice.female' => self::GENDER_FEMALE,
         'gender.choice.male' => self::GENDER_MALE,
@@ -497,6 +503,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var null|array
      */
     private $shortDistanceSubscription;
+
+    /**
+     * @var null|int
+     */
+    private $identityStatus;
+
+    /**
+     * Specifies the user status in relation to the CEE incentives (true: has subscribed).
+     *
+     * @var bool
+     */
+    private $eecStatus = false;
 
     public function __construct($id = null, $status = null)
     {
@@ -1108,8 +1126,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * Set the Token of password mofification.
-     *
-     * @param null|string $pwdtoken
      */
     public function setPwdToken(?string $pwdToken)
     {
@@ -1464,6 +1480,24 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    /**
+     * Get the value of eecStatus.
+     */
+    public function getEecStatus(): bool
+    {
+        return $this->eecStatus;
+    }
+
+    /**
+     * Set the value of eecStatus.
+     */
+    public function setEecStatus(bool $eecStatus): self
+    {
+        $this->eecStatus = $eecStatus;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1515,6 +1549,9 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'ssoProvider' => $this->getSsoProvider(),
             'longDistanceSubscription' => $this->getLongDistanceSubscription(),
             'shortDistanceSubscription' => $this->getShortDistanceSubscription(),
+            'eecStatus' => $this->getEecStatus(),
+            'identityStatus' => $this->getIdentityStatus(),
+            'verifiedIdentity' => $this->getVerifiedIdentity(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
@@ -1525,5 +1562,31 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         }
 
         return $userSerialized;
+    }
+
+    /**
+     * Get the value of identityStatus
+     *
+     * @return  null|int
+     */
+    public function getIdentityStatus()
+    {
+        return $this->identityStatus;
+    }
+
+    /**
+     * Set the value of identityStatus
+     *
+     * @param  null|int  $identityStatus
+     *
+     * @return  self
+     */
+    public function setIdentityStatus($identityStatus)
+    {
+        $this->identityStatus = $identityStatus;
+
+        $this->setVerifiedIdentity(self::IDENTITY_STATUS_ACCEPTED === $this->identityStatus ? true : false);
+
+        return $this;
     }
 }

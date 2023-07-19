@@ -4,5 +4,12 @@
     "link": "https://pro.mobicoop.fr/comment-regler-ses-covoiturages-sur-mobicoop/",
     "textLink": "Learn more",
     "title": "Beware of scammers!"
+  },
+  "eecWarning": {
+    "driverWithoutEecStatus": "Bénéficier d'une prime covoiturage CEE de 100 €. <a href=\"/comment-obtenir-prime-covoiturage/\">En savoir plus</a>.",
+    "driverWithEecStatusPassengerWithoutValidatedIdentity": "Les covoiturages avec {givenName} {shortFamilyName} ne peuvent être comptabilisées pour votre Prime Covoiturage CEE, car {gender} n'a pas encore vérifié son identité. Légalement, seuls les covoiturages géolocalisés par le conducteur et le passager, et dont les identités sont vérifiées pour les 2 peuvent être comptabilisés pour la Prime Covoiturage CEE. <a href=\"/comment-obtenir-prime-covoiturage/\">En savoir plus</a>.",
+    "passengerWithoutValidatedIdentity": "Rappel: pour profiter de la plupart des primes pour le covoiturage comme la Prime Covoiturage CEE de 100€, la vérification de votre identité est nécessaire. Légalement, seuls les covoiturages géolocalisés par le conducteur et le passager, et dont les identités sont vérifiées pour les 2 peuvent être comptabilisés pour la Prime Covoiturage CEE. <a href=\"/comment-obtenir-prime-covoiturage/\">En savoir plus</a>.",
+    "female": "elle",
+    "male": "il"
   }
 }

@@ -22,7 +22,8 @@
             "bicRequired": "De BIC-code is verplicht",
             "bic": "De BIC-code moet geldig zijn",
             "ibanRequired": "Het IBAN-nummer is verplicht",
-            "iban": "Het moet om een geldig IBAN-nummer gaan"
+            "iban": "Het moet om een geldig IBAN-nummer gaan",
+            "houseNumberRequired": "Le numéro de maison est obligatoire"
         },
         "tooltip": {
             "iban": "Voer uw IBAN in zonder spaties"
