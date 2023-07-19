@@ -374,9 +374,9 @@ class JourneyManager extends MobConnectManager
 
     private function _getCarpoolPaymentFromCarpoolItem(CarpoolItem $carpoolItem): ?CarpoolPayment
     {
-        $carpoolPayments = array_filter($carpoolItem->getCarpoolPayments(), function ($carpoolPayment) {
+        $carpoolPayments = array_values(array_filter($carpoolItem->getCarpoolPayments(), function ($carpoolPayment) {
             return $this->_journeyValidation->isPaymentValidForEEC($carpoolPayment);
-        });
+        }));
 
         return !(empty($carpoolPayments)) ? $carpoolPayments[0] : null;
     }

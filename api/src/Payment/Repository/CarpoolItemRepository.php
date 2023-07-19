@@ -296,7 +296,7 @@ class CarpoolItemRepository
             ->where('ci.creditorUser = :driver')
             ->andWhere('ci.createdDate >= :subscriptionDate')
             ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
-            ->andWhere('cp.id NOT IN (:allreadyAdded)')
+            ->andWhere('ci.id NOT IN (:allreadyAdded)')
             ->setParameters($parameters)
         ;
 
