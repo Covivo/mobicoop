@@ -145,7 +145,9 @@ export default {
         return false;
     },
     defaultOutwardDate() {
-      return this.event.fromDate.date;
+      const now = new Date();
+
+      return now > new Date(this.event.fromDate.date) ? now.toString() : this.event.fromDate.date;
     },
   },
   created() {
