@@ -33,6 +33,7 @@
     "registerUrl": "/user/register/{id}",
     "AskNewSearch": "Try again by modifying your search? Another route ?",
     "newSearch": "New search",
+    "updateSearch": "I modify my search",
     "saveSearch": {
 		"route": "/covoiturage/recherche/{id}/enregistrer",
         "noAd": "Créer une alerte",

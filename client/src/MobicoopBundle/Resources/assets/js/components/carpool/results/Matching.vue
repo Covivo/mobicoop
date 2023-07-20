@@ -75,7 +75,7 @@
                 color="secondary"
                 @click="startNewSearch()"
               >
-                {{ $t('newSearch') }}
+                {{ $t('updateSearch') }}
               </v-btn>
             </v-col>
           </v-row>
