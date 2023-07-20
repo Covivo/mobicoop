@@ -175,10 +175,10 @@ class CarpoolExportManager
                 $carpoolExport->setDropOff($carpoolItem->getDropOff());
             } else {
                 $waypoints = $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
-                $carpoolExport->setPickUp($waypoints[0]->getAddress());
+                $carpoolExport->setPickUp($waypoints[0]->getAddress()->getAddressLocality());
                 foreach ($waypoints as $waypoint) {
                     if ($waypoint->isDestination()) {
-                        $carpoolExport->setDropOff($waypoint->getAddress());
+                        $carpoolExport->setDropOff($waypoint->getAddress()->getAddressLocality());
                     }
                 }
             }
