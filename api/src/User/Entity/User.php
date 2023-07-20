@@ -666,11 +666,13 @@ class User implements UserInterface, EquatableInterface
     public const STATUS_ANONYMIZED = 3;
     public const STATUS_PSEUDONYMIZED = 4;
 
+    public const GENDER_UNDEFINED = 0;
     public const GENDER_FEMALE = 1;
     public const GENDER_MALE = 2;
     public const GENDER_OTHER = 3;
 
     public const GENDERS = [
+        self::GENDER_UNDEFINED,
         self::GENDER_FEMALE,
         self::GENDER_MALE,
         self::GENDER_OTHER,

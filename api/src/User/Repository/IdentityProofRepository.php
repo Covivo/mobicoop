@@ -24,7 +24,6 @@
 namespace App\User\Repository;
 
 use App\User\Entity\IdentityProof;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -53,17 +52,5 @@ class IdentityProofRepository
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
-    }
-
-    public function findMostRecentForAUser(User $user): array
-    {
-        $query = $this->repository->createQueryBuilder('ip')
-            ->where('ip.user = :user')
-            ->setParameter('user', $user)
-            ->orderBy('ip.createdDate', 'DESC')
-            ->setMaxResults(1)
-        ;
-
-        return $query->getQuery()->getResult();
     }
 }
