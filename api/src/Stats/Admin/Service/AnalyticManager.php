@@ -101,8 +101,12 @@ class AnalyticManager
             $territories = $this->getTerritories($dashboard['auth_item']);
 
             if ([$this->getOperationalValue(null)] == $territories) {
-                $this->getDefaultCommunityId();
-                $community = $this->getCommunity($this->defaultCommunityId);
+                if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
+                    $community = $this->getOperationalValue(null);
+                } else {
+                    $this->getDefaultCommunityId();
+                    $community = $this->getCommunity($this->defaultCommunityId);
+                }
             } else {
                 $community = $this->getOperationalValue(null);
             }
