@@ -749,6 +749,10 @@ services:
     resource: "../src/Import/Controller"
     tags: ["controller.service_arguments"]
 
+  App\Import\Admin\Controller\:
+    resource: "../src/Import/Admin/Controller"
+    tags: ["controller.service_arguments"]
+
   App\Import\Service\ImportManager:
     arguments:
       $timeLimit: "%env(int:IMPORT_TIME_LIMIT)%"
