@@ -32,8 +32,16 @@
             label
             @click:close="clearSelection"
           >
+            <v-img
+              v-if="data.item.customIcon"
+              contain
+              :src="data.item.customIcon"
+              class="mr-1"
+              max-height="25"
+              max-width="25"
+            />
             <v-icon
-              v-if="data.item.icon"
+              v-else-if="data.item.icon"
               left
             >
               {{
@@ -93,14 +101,26 @@
       <!-- template for list items  -->
       <template v-slot:item="data">
         <template>
+          <v-img
+            v-if="data.item.customIcon"
+            contain
+            :src="data.item.customIcon"
+            class="mr-1"
+            max-height="40"
+            max-width="40"
+          />
+
           <v-list-item-avatar
-            v-if="data.item.icon"
+            v-else-if="data.item.icon"
             :class="iconColor(data.item.type)"
           >
-            <v-icon :class="iconTextColor(data.item.type)">
+            <v-icon
+              :class="iconTextColor(data.item.type)"
+            >
               {{ data.item.icon }}
             </v-icon>
           </v-list-item-avatar>
+
           <v-list-item-content>
             <v-list-item-title :class="titleColor(data.item.type)">
               {{ data.item.propositionTitle }}
@@ -443,7 +463,8 @@ export default {
         value: item,
         group: this.$t(item.type),
         type: item.type,
-        icon: this.getIcon(item.type)
+        icon: this.getIcon(item.type),
+        customIcon: (item.icon && item.icon.url) ? item.icon.url : null
       }
     },
     selectionText(item) {
@@ -557,11 +578,13 @@ export default {
     },
     setSelection() {
       if (!this.address) {
+        console.log("etape1");
         this.clearSelection();
       } else if (!this.selection || !(
         this.selection.id === this.address.id &&
         this.selection.type === this.address.type
       )) {
+        console.log("etape2");
         this.selection = this.createProposition(this.addressToSelection);
         this.items = [this.selection.value];
       }
