@@ -384,12 +384,12 @@ class Point
         $this->type = $type;
     }
 
-    public function getIcon(): Icon
+    public function getIcon(): ?Icon
     {
         return $this->icon;
     }
 
-    public function setIcon(Icon $icon)
+    public function setIcon(?Icon $icon)
     {
         $this->icon = $icon;
     }
