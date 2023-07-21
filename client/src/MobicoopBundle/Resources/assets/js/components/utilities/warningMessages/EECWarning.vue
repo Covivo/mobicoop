@@ -55,6 +55,8 @@ let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
+const STATUS_ACCEPTED = 2;
+
 export default {
   i18n: {
     messages: {
@@ -87,6 +89,7 @@ export default {
   },
   watch: {
     carpoolersIdentity: function (newVal, oldVal) {
+      console.log(newVal);
       if (newVal != oldVal && this.carpoolersIdentity) {
         this.isMessageDisplayed = false;
         this.warningMessages = [];
@@ -99,25 +102,27 @@ export default {
   },
   methods: {
     build() {
+      const recipientData = {
+        givenName: this.carpoolersIdentity.recipient.givenName,
+        shortFamilyName: this.carpoolersIdentity.recipient.shortFamilyName,
+        gender: this.carpoolersIdentity.recipient.gender === 1 ? this.$t('eecWarning.female') : this.$t('eecWarning.male')
+      };
+
       switch (this.carpoolersIdentity.sender.role) {
       case DRIVER:
-        // Driver with EEC status and passenger does not have his identity validated
-        if (this.carpoolersIdentity.sender.eecStatus && 2 != this.carpoolersIdentity.recipient.identityStatus) {
+        // Driver with EEC status and passenger does not have a validated identity
+        if (this.carpoolersIdentity.sender.eecStatus && STATUS_ACCEPTED != this.carpoolersIdentity.recipient.identityStatus) {
           this.isMessageDisplayed = true;
-          this.warningMessages.push(this.$t('eecWarning.driverWithEecStatusPassengerWithoutValidatedIdentity', {
-            givenName: this.carpoolersIdentity.recipient.givenName,
-            shortFamilyName: this.carpoolersIdentity.recipient.shortFamilyName,
-            gender: this.carpoolersIdentity.recipient.gender === 1 ? this.$t('eecWarning.female') : this.$t('eecWarning.male')
-          }, ));
+          this.warningMessages.push(this.$t('eecWarning.driverWithEecStatusPassengerWithoutValidatedIdentity', recipientData));
         }
 
         break;
 
       case PASSENGER:
         // Passenger does not have identity validated
-        if (2 != this.carpoolersIdentity.recipient.identityStatus) {
+        if (STATUS_ACCEPTED != this.carpoolersIdentity.recipient.identityStatus) {
           this.isMessageDisplayed = true;
-          this.warningMessages.push(this.$t('eecWarning.passengerWithoutValidatedIdentity'));
+          this.warningMessages.push(this.$t('eecWarning.passengerWithoutValidatedIdentity', recipientData));
         }
 
         break;
