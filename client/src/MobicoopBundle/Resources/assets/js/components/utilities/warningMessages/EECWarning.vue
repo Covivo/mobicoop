@@ -111,7 +111,7 @@ export default {
       switch (this.carpoolersIdentity.sender.role) {
       case DRIVER:
         // Driver with EEC status and passenger does not have a validated identity
-        if (this.carpoolersIdentity.sender.eecStatus && STATUS_ACCEPTED != this.carpoolersIdentity.recipient.identityStatus) {
+        if (this.carpoolersIdentity.sender.eecStatus && STATUS_ACCEPTED != this.carpoolersIdentity.recipient.bankingIdentityStatus) {
           this.isMessageDisplayed = true;
           this.warningMessages.push(this.$t('eecWarning.driverWithEecStatusPassengerWithoutValidatedIdentity', recipientData));
         }
@@ -120,7 +120,7 @@ export default {
 
       case PASSENGER:
         // Passenger does not have identity validated
-        if (STATUS_ACCEPTED != this.carpoolersIdentity.recipient.identityStatus) {
+        if (STATUS_ACCEPTED != this.carpoolersIdentity.recipient.bankingIdentityStatus) {
           this.isMessageDisplayed = true;
           this.warningMessages.push(this.$t('eecWarning.passengerWithoutValidatedIdentity', recipientData));
         }
