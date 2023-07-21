@@ -210,19 +210,12 @@
           </v-row>
         </v-col>
         <v-col
-          v-if="isExternalStandard"
-          class="col-4"
-        >
-          <thread-actions-carpool-standard
-            :id-booking="idBooking"
-            :refresh="refreshBookingActions"
-          />
-        </v-col>
-        <v-col
-          v-else
           class="col-4"
         >
           <thread-actions
+            :id-booking="idBooking"
+            :refresh-booking-actions="refreshBookingActions"
+            :is-external-standard="isExternalStandard"
             :id-ask="currentIdAsk"
             :id-user="idUser"
             :email-user="emailUser"
@@ -251,7 +244,6 @@ import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
 import ThreadsSolidary from '@components/user/mailbox/ThreadsSolidary'
 import ThreadDetails from '@components/user/mailbox/ThreadDetails'
 import ThreadActions from '@components/user/mailbox/ThreadActions'
-import ThreadActionsCarpoolStandard from '@components/user/mailbox/ThreadActionsCarpoolStandard'
 import TypeText from '@components/user/mailbox/TypeText'
 import WarningMessage from '@components/utilities/WarningMessage.vue';
 
@@ -271,7 +263,6 @@ export default {
     ThreadsSolidary,
     ThreadDetails,
     ThreadActions,
-    ThreadActionsCarpoolStandard,
     TypeText,
     WarningMessage,
   },
@@ -298,6 +289,10 @@ export default {
     },
     givenIdAsk: {
       type: Number,
+      default: null
+    },
+    givenIdBooking: {
+      type: String,
       default: null
     },
     givenIdMessage: {
@@ -331,6 +326,7 @@ export default {
       idMessage: this.givenIdMessage ? this.givenIdMessage : null,
       idRecipient: this.givenIdRecipient ? this.givenIdRecipient : null,
       currentIdAsk: this.givenIdAsk ? this.givenIdAsk : null,
+      currentIdBooking: this.givenIdBooking ? this.givenIdBooking : null,
       recipientName:null,
       recipientAvatar:null,
       newThreadDirect:null,
@@ -528,10 +524,15 @@ export default {
     },
     refreshSelected(data){
       this.loadingDetails = true;
+      this.isExternalStandard = false;
+      this.currentIdBooking = null;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;
     },
     refreshSelectedBooking(data){
+      this.currentIdAsk = null;
+      console.log(data);
+      this.currentIdBooking = data.idBooking;
       this.isExternalStandard = true;
       this.idBooking = data.idBooking;
       this.refreshBookingActions = true;

@@ -1,217 +1,222 @@
 <template>
   <v-main>
-    <v-card
-      class="pa-2 text-center"
-      :hidden="hideClickIcon"
-    >
+    <div v-if="!isExternalStandard">
       <v-card
-        v-if="idAsk"
-        class="mb-3"
-        flat
+        class="pa-2 text-center"
+        :hidden="hideClickIcon"
       >
-        <threads-actions-buttons
-          v-if="infosComplete"
-          :can-update-ask="infosComplete.canUpdateAsk && dataBlockerId==null"
-          :status="infosComplete.askStatus"
-          :regular="infosComplete.frequency==2"
-          :loading-btn="dataLoadingBtn"
-          :driver="driver"
-          :passenger="passenger"
-          :carpool-context="(idAsk) ? true : false"
-          @updateStatus="updateStatus"
-        />
-      </v-card>
+        <v-card
+          v-if="idAsk"
+          class="mb-3"
+          flat
+        >
+          <threads-actions-buttons
+            v-if="infosComplete"
+            :can-update-ask="infosComplete.canUpdateAsk && dataBlockerId==null"
+            :status="infosComplete.askStatus"
+            :regular="infosComplete.frequency==2"
+            :loading-btn="dataLoadingBtn"
+            :driver="driver"
+            :passenger="passenger"
+            :carpool-context="(idAsk) ? true : false"
+            @updateStatus="updateStatus"
+          />
+        </v-card>
 
-      <!-- Always visible (carpool or not) -->
-      <v-card
-        v-if="!loading"
-        flat
-        @click="showProfileDialog = true"
-      >
-        <v-avatar v-if="!loading && ((infosComplete && infosComplete.carpooler && infosComplete.carpooler.avatars && infosComplete.carpooler.status != 3) || recipientAvatar)">
-          <img :src="(recipientAvatar) ? recipientAvatar : infosComplete.carpooler.avatars[0]">
-        </v-avatar>
+        <!-- Always visible (carpool or not) -->
+        <v-card
+          v-if="!loading"
+          flat
+          @click="showProfileDialog = true"
+        >
+          <v-avatar v-if="!loading && ((infosComplete && infosComplete.carpooler && infosComplete.carpooler.avatars && infosComplete.carpooler.status != 3) || recipientAvatar)">
+            <img :src="(recipientAvatar) ? recipientAvatar : infosComplete.carpooler.avatars[0]">
+          </v-avatar>
 
+          <v-card-text
+            v-if="!loading && ((infosComplete && infosComplete.carpooler && infosComplete.carpooler.status != 3) || recipientName)"
+            class="font-weight-bold text-h5"
+          >
+            {{ buildedRecipientName }}
+          </v-card-text>
+        </v-card>
         <v-card-text
-          v-if="!loading && ((infosComplete && infosComplete.carpooler && infosComplete.carpooler.status != 3) || recipientName)"
+          v-if="infosComplete && infosComplete.carpooler && infosComplete.carpooler.status == 3"
           class="font-weight-bold text-h5"
         >
-          {{ buildedRecipientName }}
+          {{ $t("userDelete") }}
         </v-card-text>
-      </v-card>
-      <v-card-text
-        v-if="infosComplete && infosComplete.carpooler && infosComplete.carpooler.status == 3"
-        class="font-weight-bold text-h5"
-      >
-        {{ $t("userDelete") }}
-      </v-card-text>
 
-      <v-row dense>
-        <v-col
-          cols="6"
-          class="text-right align-center"
-        >
-          <div v-if="idRecipient && !loading">
-            <v-btn
-              v-if="dataBlockerId==null"
-              class="ma-2"
-              rounded
-              text
-              color="error"
-              :loading="loadingBlock"
-              @click="block"
-            >
-              <v-icon left>
-                mdi-account-cancel-outline
-              </v-icon>
-              {{ $t('block') }}
-            </v-btn>
-            <v-btn
-              v-else
-              class="ma-2"
-              rounded
-              color="error"
-              :loading="loadingBlock"
-              @click="block"
-            >
-              <v-icon left>
-                mdi-account-cancel
-              </v-icon> {{ $t('blocked') }}
-            </v-btn>
-          </div>
-        </v-col>
-        <v-col
-          cols="6"
-          class="text-left align-center"
-        >
-          <div
-            v-if="idRecipient"
-            class="pa-2"
+        <v-row dense>
+          <v-col
+            cols="6"
+            class="text-right align-center"
           >
-            <Report
-              :user-id="idRecipient"
-              :default-email="emailUser"
-            />
-          </div>
-        </v-col>
-      </v-row>
-      <!-- Only visible for carpool -->
-      <v-card
-        v-if="idAsk && !loading"
-        class="mb-3"
-        flat
-      >
-        <v-chip
-          v-if="infos.return"
-          class="secondary mb-4"
-        >
-          <v-icon
-            left
-            color="white"
+            <div v-if="idRecipient && !loading">
+              <v-btn
+                v-if="dataBlockerId==null"
+                class="ma-2"
+                rounded
+                text
+                color="error"
+                :loading="loadingBlock"
+                @click="block"
+              >
+                <v-icon left>
+                  mdi-account-cancel-outline
+                </v-icon>
+                {{ $t('block') }}
+              </v-btn>
+              <v-btn
+                v-else
+                class="ma-2"
+                rounded
+                color="error"
+                :loading="loadingBlock"
+                @click="block"
+              >
+                <v-icon left>
+                  mdi-account-cancel
+                </v-icon> {{ $t('blocked') }}
+              </v-btn>
+            </div>
+          </v-col>
+          <v-col
+            cols="6"
+            class="text-left align-center"
           >
-            mdi-swap-horizontal
-          </v-icon>
-          {{ $t('roundTrip') }}
-        </v-chip>
+            <div
+              v-if="idRecipient"
+              class="pa-2"
+            >
+              <Report
+                :user-id="idRecipient"
+                :default-email="emailUser"
+              />
+            </div>
+          </v-col>
+        </v-row>
+        <!-- Only visible for carpool -->
+        <v-card
+          v-if="idAsk && !loading"
+          class="mb-3"
+          flat
+        >
+          <v-chip
+            v-if="infos.return"
+            class="secondary mb-4"
+          >
+            <v-icon
+              left
+              color="white"
+            >
+              mdi-swap-horizontal
+            </v-icon>
+            {{ $t('roundTrip') }}
+          </v-chip>
 
-        <regular-days-summary
-          v-if="infosComplete.frequency==2"
-          :mon-active="infos.outward.monCheck"
-          :tue-active="infos.outward.tueCheck"
-          :wed-active="infos.outward.wedCheck"
-          :thu-active="infos.outward.thuCheck"
-          :fri-active="infos.outward.friCheck"
-          :sat-active="infos.outward.satCheck"
-          :sun-active="infos.outward.sunCheck"
-        />
+          <regular-days-summary
+            v-if="infosComplete.frequency==2"
+            :mon-active="infos.outward.monCheck"
+            :tue-active="infos.outward.tueCheck"
+            :wed-active="infos.outward.wedCheck"
+            :thu-active="infos.outward.thuCheck"
+            :fri-active="infos.outward.friCheck"
+            :sat-active="infos.outward.satCheck"
+            :sun-active="infos.outward.sunCheck"
+          />
 
-        <v-journey
-          :waypoints="infos.outward && infos.outward.waypoints"
-          :time="infos.outward && !infos.outward.multipleTimes"
-          :role="driver ? 'driver' : 'passenger'"
-        />
-        <v-simple-table v-if="infosComplete.carpooler && infosComplete.carpooler.status != 3">
-          <tbody>
-            <tr>
-              <td class="text-left">
-                {{ $t('distance') }}
-                <v-tooltip
-                  slot="append"
-                  right
-                  color="info"
-                  :max-width="'35%'"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-icon
-                      justify="left"
-                      v-on="on"
-                    >
-                      mdi-help-circle-outline
-                    </v-icon>
-                  </template>
-                  <span>{{ $t('distanceTooltip') }}</span>
-                </v-tooltip>
-              </td>
-              <td class="text-left">
-                {{ distanceInKm }}
-              </td>
-            </tr>
-            <tr>
-              <td class="text-left">
-                {{ $t('seatsAvailable') }}
-              </td>
-              <td class="text-left">
-                {{ infosComplete.seats }}
-              </td>
-            </tr>
-            <tr>
-              <td class="text-left font-weight-bold">
-                {{ $t('price') }}
-                <v-tooltip
-                  slot="append"
-                  right
-                  color="info"
-                  :max-width="'35%'"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-icon
-                      justify="left"
-                      v-on="on"
-                    >
-                      mdi-help-circle-outline
-                    </v-icon>
-                  </template>
-                  <span>{{ $t('priceTooltip') }}</span>
-                </v-tooltip>
-              </td>
-              <td class="text-left font-weight-bold">
-                {{ infosComplete.roundedPrice }} €
-              </td>
-            </tr>
-          </tbody>
-        </v-simple-table>
-      </v-card>
-      <!-- <v-card v-else-if="!loading">
+          <v-journey
+            :waypoints="infos.outward && infos.outward.waypoints"
+            :time="infos.outward && !infos.outward.multipleTimes"
+            :role="driver ? 'driver' : 'passenger'"
+          />
+          <v-simple-table v-if="infosComplete.carpooler && infosComplete.carpooler.status != 3">
+            <tbody>
+              <tr>
+                <td class="text-left">
+                  {{ $t('distance') }}
+                  <v-tooltip
+                    slot="append"
+                    right
+                    color="info"
+                    :max-width="'35%'"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon
+                        justify="left"
+                        v-on="on"
+                      >
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('distanceTooltip') }}</span>
+                  </v-tooltip>
+                </td>
+                <td class="text-left">
+                  {{ distanceInKm }}
+                </td>
+              </tr>
+              <tr>
+                <td class="text-left">
+                  {{ $t('seatsAvailable') }}
+                </td>
+                <td class="text-left">
+                  {{ infosComplete.seats }}
+                </td>
+              </tr>
+              <tr>
+                <td class="text-left font-weight-bold">
+                  {{ $t('price') }}
+                  <v-tooltip
+                    slot="append"
+                    right
+                    color="info"
+                    :max-width="'35%'"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon
+                        justify="left"
+                        v-on="on"
+                      >
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('priceTooltip') }}</span>
+                  </v-tooltip>
+                </td>
+                <td class="text-left font-weight-bold">
+                  {{ infosComplete.roundedPrice }} €
+                </td>
+              </tr>
+            </tbody>
+          </v-simple-table>
+        </v-card>
+        <!-- <v-card v-else-if="!loading">
         <v-card-text>
           {{ $t("notLinkedToACarpool") }}
         </v-card-text>
       </v-card> -->
-      <v-skeleton-loader
-        v-if="loading"
-        ref="skeleton"
-        type="card"
-        class="mx-auto"
+        <v-skeleton-loader
+          v-if="loading"
+          ref="skeleton"
+          type="card"
+          class="mx-auto"
+        />
+        <v-skeleton-loader
+          v-if="loading"
+          ref="skeleton"
+          type="actions"
+          class="mx-auto"
+        />
+      </v-card>
+    </div>
+    <div v-else>
+      <thread-actions-carpool-standard
+        :id-booking="idBooking"
+        :refresh="refreshBookingActions"
       />
-      <v-skeleton-loader
-        v-if="loading"
-        ref="skeleton"
-        type="actions"
-        class="mx-auto"
-      />
-    </v-card>
-
-
-
+    </div>
 
     <!-- Modal to propose a carpool -->
     <v-dialog
@@ -264,6 +269,8 @@ import PopupPublicProfile from "@components/user/profile/PopupPublicProfile";
 import { DRIVER, PASSENGER } from "./Messages";
 import maxios from "@utils/maxios";
 import moment from "moment";
+import ThreadActionsCarpoolStandard from '@components/user/mailbox/ThreadActionsCarpoolStandard'
+
 
 export default {
   i18n: {
@@ -280,9 +287,22 @@ export default {
     VJourney,
     MatchingJourney,
     Report,
-    PopupPublicProfile
+    PopupPublicProfile,
+    ThreadActionsCarpoolStandard,
   },
   props: {
+    idBooking: {
+      type: String,
+      default: null
+    },
+    refreshBookingActions: {
+      type: Boolean,
+      default: false
+    },
+    isExternalStandard: {
+      type: Boolean,
+      default: false
+    },
     idAsk: {
       type: Number,
       default: null
@@ -354,7 +374,7 @@ export default {
       hideClickIcon : false,
       loadingBlock: false,
       dataBlockerId: this.blockerId,
-      showProfileDialog: false
+      showProfileDialog: false,
     }
   },
   computed:{
@@ -375,6 +395,7 @@ export default {
       this.loading = this.loadingInit;
     },
     refresh(){
+      console.log('ici'+'    :'+this.refresh);
       (this.refresh) ? this.refreshInfos() : this.loading = false;
     },
     loadingBtn(){
@@ -394,6 +415,7 @@ export default {
   },
   methods:{
     refreshInfos() {
+      console.log('yeah');
       this.hideClickIcon = false;
       if (this.idAsk != -2){
         this.loading = true;
@@ -516,6 +538,7 @@ export default {
 
     },
     updateStatus(data){
+      console.log(data);
       this.dataLoadingBtn = true;
       // console.info(this.infosComplete)
       // console.info(this.infosComplete.carpooler)

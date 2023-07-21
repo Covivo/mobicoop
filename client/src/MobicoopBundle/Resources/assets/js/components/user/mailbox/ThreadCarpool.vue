@@ -201,7 +201,7 @@ export default {
   mounted() {
     if (this.idAskSelected == this.idAsk && this.idAsk != null) {
       this.emit()
-    }
+    } 
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE

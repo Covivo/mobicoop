@@ -102,6 +102,7 @@ export default {
       type: Number,
       default: null
     },
+    
     emailUser: {
       type: String,
       default: null
