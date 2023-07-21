@@ -578,13 +578,11 @@ export default {
     },
     setSelection() {
       if (!this.address) {
-        console.log("etape1");
         this.clearSelection();
       } else if (!this.selection || !(
         this.selection.id === this.address.id &&
         this.selection.type === this.address.type
       )) {
-        console.log("etape2");
         this.selection = this.createProposition(this.addressToSelection);
         this.items = [this.selection.value];
       }
