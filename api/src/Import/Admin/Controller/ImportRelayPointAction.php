@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2022, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,36 +21,27 @@
  *    LICENSE
  */
 
-namespace App\User\Repository;
+namespace App\Import\Admin\Controller;
 
-use App\User\Entity\IdentityProof;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use App\Import\Admin\Resource\Import;
+use App\Import\Admin\Service\Importer;
+use App\Import\Admin\Service\ImportManager;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 
-class IdentityProofRepository
+/**
+ *  @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+final class ImportRelayPointAction
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __invoke(Request $request, ImportManager $importManager, Security $security): Import
     {
-        $this->repository = $entityManager->getRepository(IdentityProof::class);
-    }
+        if (!$request->files->get('file')) {
+            throw new \Exception('File is mandatory');
+        }
 
-    public function find(int $id): ?IdentityProof
-    {
-        return $this->repository->find($id);
-    }
+        $importer = new Importer($request->files->get('file'), $request->get('filename'), $importManager, $security->getUser());
 
-    public function findOneBy(array $criteria): ?IdentityProof
-    {
-        return $this->repository->findOneBy($criteria);
-    }
-
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
-    {
-        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+        return $importer->importRelayPoints();
     }
 }
