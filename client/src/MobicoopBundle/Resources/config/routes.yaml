@@ -442,13 +442,13 @@ user_message_actions_infos:
     nl: /user/messages/actions/infos
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsInfos
 
-user_message_actions_booking_infos:
+user_message_booking_actions_infos:
   methods: [POST]
   path:
     fr: /utilisateur/messages/actions/infos/booking
     en: /user/messages/actions/infos/booking
     nl: /user/messages/actions/infos/booking
-  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsBookingInfos
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesBookingActionsInfos
 
 user_message_carpool_selected:
   path:

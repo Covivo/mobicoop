@@ -214,7 +214,7 @@
         >
           <thread-actions
             :id-booking="idBooking"
-            :refresh-booking-actions="refreshBookingActions"
+            :refresh-booking="refreshBookingActions"
             :is-external-standard="isExternalStandard"
             :id-ask="currentIdAsk"
             :id-user="idUser"
@@ -531,8 +531,8 @@ export default {
     },
     refreshSelectedBooking(data){
       this.currentIdAsk = null;
-      console.log(data);
       this.currentIdBooking = data.idBooking;
+      this.message = -99;
       this.isExternalStandard = true;
       this.idBooking = data.idBooking;
       this.refreshBookingActions = true;

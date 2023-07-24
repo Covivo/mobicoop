@@ -95,14 +95,14 @@ class CarpoolStandardProvider
         return $this->providerInstance->patchBooking($booking);
     }
 
-    public function getBooking(int $bookingId)
+    public function getBooking(string $bookingId)
     {
         $this->checkCarpoolStandardConfiguration();
 
         return $this->providerInstance->getBooking($bookingId);
     }
 
-    public function getBookings(int $userId)
+    public function getBookings(string $userId)
     {
         $this->checkCarpoolStandardConfiguration();
 

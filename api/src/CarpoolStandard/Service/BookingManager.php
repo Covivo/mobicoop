@@ -99,8 +99,13 @@ class BookingManager
         return $booking;
     }
 
-    public function getBookings(int $userId)
+    public function getBookings(string $userId)
     {
         return $this->carpoolStandardProvider->getBookings($userId);
+    }
+
+    public function getBooking(string $id)
+    {
+        return $this->carpoolStandardProvider->getBooking($id);
     }
 }

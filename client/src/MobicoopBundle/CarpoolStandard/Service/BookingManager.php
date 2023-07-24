@@ -108,9 +108,9 @@ class BookingManager
         return $booking;
     }
 
-    public function getBooking(int $id)
+    public function getBooking(string $id)
     {
-        $response = $this->dataProvider->getItem($id);
+        $response = $this->dataProvider->getItem(Booking::DEFAULT_ID, ['id' => $id]);
         if (201 != $response->getCode()) {
             return $response->getValue();
         }

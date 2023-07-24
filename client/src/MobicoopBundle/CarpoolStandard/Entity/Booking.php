@@ -34,6 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Booking implements ResourceInterface, \JsonSerializable
 {
+    public const DEFAULT_ID = 999999999999;
     public const RESOURCE_NAME = 'carpool_standard/bookings';
     public const INITIATED = 'INITIATED';
     public const WAITING_PASSENGER_CONFIRMATION = 'WAITING_PASSENGER_CONFIRMATION';
@@ -49,6 +50,13 @@ class Booking implements ResourceInterface, \JsonSerializable
      * @Groups({"get","post","put"})
      */
     private $id;
+
+    /**
+     * @var null|string The id of this booking
+     *
+     * @Groups({"read", "write"})
+     */
+    private $externalId;
 
     /**
      * @var User the driver of the carpool
@@ -179,6 +187,18 @@ class Booking implements ResourceInterface, \JsonSerializable
     public function setId(?int $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
 
         return $this;
     }
@@ -392,6 +412,7 @@ class Booking implements ResourceInterface, \JsonSerializable
         return
         [
             'id' => $this->getId(),
+            'externalId' => $this->getExternalId(),
             'driver' => $this->getDriver(),
             'passenger' => $this->getPassenger(),
             'passengerPickupDate' => $this->getPassengerPickupDate(),

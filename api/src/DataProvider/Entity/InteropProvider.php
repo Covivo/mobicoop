@@ -25,6 +25,8 @@ namespace App\DataProvider\Entity;
 
 use App\CarpoolStandard\Entity\Booking;
 use App\CarpoolStandard\Entity\Message;
+use App\CarpoolStandard\Entity\Price;
+use App\CarpoolStandard\Entity\User;
 use App\CarpoolStandard\Interfaces\CarpoolStandardProviderInterface;
 use App\DataProvider\Service\DataProvider;
 
@@ -160,10 +162,9 @@ class InteropProvider implements CarpoolStandardProviderInterface
         return $dataProvider->patchItem(null, $headers, $params);
     }
 
-    public function getBooking(int $bookingId)
+    public function getBooking(string $bookingId)
     {
         $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_BOOKING.'/'.$bookingId);
-
         $headers = [
             'X-API-KEY' => $this->apiKey,
             'Content-Type' => 'application/json',
@@ -173,10 +174,12 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'bookingId' => $bookingId,
         ];
 
-        return $dataProvider->getItem($body, $headers);
+        $data = (json_decode((string) $dataProvider->getItem($body, $headers)->getValue(), true));
+
+        return $this->mapBooking($data);
     }
 
-    public function getBookings(int $userId)
+    public function getBookings(string $userId)
     {
         $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_BOOKING);
 
@@ -192,6 +195,59 @@ class InteropProvider implements CarpoolStandardProviderInterface
         ];
 
         return $dataProvider->getCollection($body, $headers);
+    }
+
+    public function mapBooking(array $array)
+    {
+        $booking = new Booking();
+        $driver = new User();
+        $passenger = new User();
+        $price = new Price();
+
+        $driver->setExternalId($array['driver']['id']);
+        $driver->setAlias($array['driver']['alias']);
+        $driver->setOperator($array['driver']['operator']);
+        $driver->setFirstName($array['driver']['firstName']);
+        $driver->setLastName($array['driver']['lastName']);
+        $driver->setGender($array['driver']['gender']);
+        $driver->setGrade($array['driver']['grade']);
+        $driver->setPicture($array['driver']['picture']);
+        $driver->setVerifiedIdentity($array['driver']['verifiedIdentity']);
+
+        $passenger->setExternalId($array['passenger']['id']);
+        $passenger->setAlias($array['passenger']['alias']);
+        $passenger->setOperator($array['passenger']['operator']);
+        $passenger->setFirstName($array['passenger']['firstName']);
+        $passenger->setLastName($array['passenger']['lastName']);
+        $passenger->setGender($array['passenger']['gender']);
+        $passenger->setGrade($array['passenger']['grade']);
+        $passenger->setPicture($array['passenger']['picture']);
+        $passenger->setVerifiedIdentity($array['passenger']['verifiedIdentity']);
+
+        $price->setAmount($array['price']['amount']);
+        $price->setType($array['price']['type']);
+        $price->setCurrency($array['price']['currency']);
+
+        $booking->setDriver($driver);
+        $booking->setPassenger($passenger);
+        $booking->setPrice($price);
+        $booking->setId(Booking::DEFAULT_ID);
+        $booking->setExternalId($array['externalId']);
+        $booking->setPassengerPickupDate($array['passengerPickupDate']);
+        $booking->setPassengerPickupLat($array['passengerPickupLat']);
+        $booking->setPassengerPickupLng($array['passengerPickupLng']);
+        $booking->setPassengerDropLat($array['passengerDropLat']);
+        $booking->setPassengerDropLng($array['passengerDropLng']);
+        $booking->setPassengerPickupAddress($array['passengerPickupAddress']);
+        $booking->setPassengerDropAddress($array['passengerDropAddress']);
+        $booking->setStatus($array['status']);
+        $booking->setDriverJourneyId($array['driverJourneyId']);
+        $booking->setPassengerJourneyId($array['passengerJourneyId']);
+        $booking->setDuration($array['duration']);
+        $booking->setDistance($array['distance']);
+        $booking->setWebUrl($array['webUrl']);
+
+        return $booking;
     }
 
     private function _generateUuid()

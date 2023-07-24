@@ -211,13 +211,83 @@
         />
       </v-card>
     </div>
+    <!-- Booking infos -->
     <div v-else>
-      <thread-actions-carpool-standard
-        :id-booking="idBooking"
-        :refresh="refreshBookingActions"
-      />
-    </div>
+      <v-card
+        class="pa-2 text-center"
+      >
+        <v-card
+          class="mb-3"
+          flat
+        >
+          <div>
+            <v-btn
+              class="mb-2"
+              color="primary"
+              large
+              dark
+              rounded
+              depressed
+              :loading="loading"
+              dense
+              style="letter-spacing: -0.15px;white-space: normal;"
+            >
+              Test
+            </v-btn>
 
+            <v-btn
+              class="myButton"
+              color="primary"
+              large
+              dark
+              rounded
+              depressed
+              :loading="loading"
+              style="letter-spacing: -0.15px;white-space: normal;"
+            >
+              Test
+            </v-btn>
+          </div>
+        </v-card>
+
+
+        <v-card
+          v-if="!loading"
+          class="mb-3"
+          flat
+        >
+          <v-chip
+            class="secondary mb-4"
+          >
+            <v-icon
+              left
+              color="white"
+            >
+              mdi-swap-horizontal
+            </v-icon>
+            {{ $t('roundTrip') }}
+          </v-chip>
+        </v-card>
+        <!-- <v-card v-else-if="!loading">
+        <v-card-text>
+          {{ $t("notLinkedToACarpool") }}
+        </v-card-text>
+      </v-card> -->
+        <v-skeleton-loader
+          v-if="loading"
+          ref="skeleton"
+          type="card"
+          class="mx-auto"
+        />
+        <v-skeleton-loader
+          v-if="loading"
+          ref="skeleton"
+          type="actions"
+          class="mx-auto"
+        />
+      </v-card>
+    </div>
+    <!-- end booking infos -->
     <!-- Modal to propose a carpool -->
     <v-dialog
       v-model="dialogRegular"
@@ -269,7 +339,6 @@ import PopupPublicProfile from "@components/user/profile/PopupPublicProfile";
 import { DRIVER, PASSENGER } from "./Messages";
 import maxios from "@utils/maxios";
 import moment from "moment";
-import ThreadActionsCarpoolStandard from '@components/user/mailbox/ThreadActionsCarpoolStandard'
 
 
 export default {
@@ -288,14 +357,13 @@ export default {
     MatchingJourney,
     Report,
     PopupPublicProfile,
-    ThreadActionsCarpoolStandard,
   },
   props: {
     idBooking: {
       type: String,
       default: null
     },
-    refreshBookingActions: {
+    refreshBooking: {
       type: Boolean,
       default: false
     },
@@ -375,6 +443,7 @@ export default {
       loadingBlock: false,
       dataBlockerId: this.blockerId,
       showProfileDialog: false,
+      hideBookingActions: false
     }
   },
   computed:{
@@ -395,8 +464,10 @@ export default {
       this.loading = this.loadingInit;
     },
     refresh(){
-      console.log('ici'+'    :'+this.refresh);
       (this.refresh) ? this.refreshInfos() : this.loading = false;
+    },
+    refreshBooking(){
+      (this.refreshBooking) ? this.refreshInfosBooking() : this.loading = false;
     },
     loadingBtn(){
       this.dataLoadingBtn = this.loadingBtn;
@@ -415,7 +486,7 @@ export default {
   },
   methods:{
     refreshInfos() {
-      console.log('yeah');
+      console.log('ask');
       this.hideClickIcon = false;
       if (this.idAsk != -2){
         this.loading = true;
@@ -443,6 +514,35 @@ export default {
               }
 
               this.$emit( 'recipientIdentity', this.getCarpoolerIdentity() )
+            })
+            .catch(function (error) {
+            // console.log(error);
+            })
+            .finally(() => {
+              this.$emit("refreshActionsCompleted");
+            });
+        }
+        else{
+          this.$emit("refreshActionsCompleted");
+        }
+
+      }else{
+        this.hideClickIcon = true;
+        this.$emit("refreshActionsCompleted");
+      }
+    },
+    refreshInfosBooking() {
+      console.log('booking');
+      if (this.idBooking != -2){
+        this.loading = true;
+        if(this.idBooking){
+          let params = {
+            idBooking: this.idBooking,
+          }
+          maxios.post(this.$t("urlGetBooking"), params)
+            .then(response => {
+              console.log(response.data);
+
             })
             .catch(function (error) {
             // console.log(error);

@@ -66,7 +66,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "carpool_standard_get"={
  *             "method"="GET",
  *             "path"="/bookings/{id}",
- *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
@@ -102,6 +101,13 @@ class Booking
      * @ApiProperty(identifier=true)
      */
     private $id;
+
+    /**
+     * @var null|string The id of this booking
+     *
+     * @Groups({"read", "write"})
+     */
+    private $externalId;
 
     /**
      * @var User the driver of the carpool
@@ -240,6 +246,18 @@ class Booking
     public function setId(string $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
 
         return $this;
     }
