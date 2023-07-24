@@ -761,6 +761,13 @@ services:
       - { name: monolog.logger, channel: faker }
 
   # INCENTIVE
+  App\Incentive\Command\ProofValidationCommand:
+    tags:
+      - {
+          name: "console.command",
+          command: "app:incentive:proof-validate",
+        }
+
   App\Incentive\Command\SubscriptionsVerificationCommand:
     tags:
       - {
