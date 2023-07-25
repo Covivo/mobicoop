@@ -97,7 +97,6 @@ class UserController extends AbstractController
     private $signInSsoOriented;
     private $ceeDisplay;
     private $gendersList;
-    private $bookingManager;
 
     /**
      * Constructor.
@@ -140,8 +139,7 @@ class UserController extends AbstractController
         bool $carpoolSettingsDisplay,
         bool $signInSsoOriented,
         bool $ceeDisplay,
-        array $gendersList,
-        BookingManager $bookingManager
+        array $gendersList
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -171,7 +169,6 @@ class UserController extends AbstractController
         $this->signInSsoOriented = $signInSsoOriented;
         $this->ceeDisplay = $ceeDisplay;
         $this->gendersList = $gendersList;
-        $this->bookingManager = $bookingManager;
     }
 
     private function __parsePostParams(string $response): array
@@ -1064,13 +1061,9 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if ($data['idBooking']) {
-                $response = $this->bookingManager->getBooking($data['idBooking']);
+                $response = $bookingManager->getBooking($data['idBooking']);
 
-                var_dump($response);
-
-                exit;
-
-                return new JsonResponse($response);
+                return new JsonResponse($response->getValue());
             }
         }
 

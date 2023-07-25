@@ -110,11 +110,6 @@ class BookingManager
 
     public function getBooking(string $id)
     {
-        $response = $this->dataProvider->getItem(Booking::DEFAULT_ID, ['id' => $id]);
-        if (201 != $response->getCode()) {
-            return $response->getValue();
-        }
-
-        return $response->getValue();
+        return $this->dataProvider->getItem(Booking::DEFAULT_ID, ['id' => $id]);
     }
 }

@@ -403,6 +403,7 @@ class DataProvider
             } else {
                 $headers = $this->getHeaders();
                 $clientResponse = $this->client->get($this->resource.'/'.$id, ['query' => $params, 'headers' => $headers]);
+
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
             if (200 == $clientResponse->getStatusCode()) {
@@ -547,9 +548,9 @@ class DataProvider
      * @param string     $subClassRoute The class route of the subresource (used for custom routes, if not provided the route will be the subClassName pluralized)
      * @param null|array $params        An array of parameters
      *
-     * @return Response the response of the operation
-     *
      * @throws \ReflectionException
+     *
+     * @return Response the response of the operation
      */
     public function getSubCollection(int $id, string $subClassName, ?string $subClassRoute = null, ?array $params = null): Response
     {

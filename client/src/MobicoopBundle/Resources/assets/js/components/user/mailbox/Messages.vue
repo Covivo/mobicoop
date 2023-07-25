@@ -568,6 +568,7 @@ export default {
       this.loadingDetails = false;
       this.refreshActions = false;
       this.loadingBtnAction = false;
+      this.refreshBookingActions = false;
     },
     setCarpoolerIdentity(e) {
       this.carpoolersIdentity = {

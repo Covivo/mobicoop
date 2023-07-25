@@ -85,8 +85,6 @@ class DataProvider
 
             return new Response($clientResponse->getStatusCode(), $clientResponse->getBody()->getContents());
         } catch (TransferException $e) {
-            var_dump($e->getCode());
-
             return new Response($e->getCode());
         }
 

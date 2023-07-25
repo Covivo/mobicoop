@@ -216,7 +216,7 @@
       <v-card
         class="pa-2 text-center"
       >
-        <v-card
+        <!-- <v-card
           class="mb-3"
           flat
         >
@@ -248,31 +248,97 @@
               Test
             </v-btn>
           </div>
+        </v-card> -->
+        <v-card
+          v-if="!loading"
+          flat
+        >
+          <v-card-text
+            v-if="!loading"
+            class="font-weight-bold text-h5"
+          >
+            {{ infosCompleteBooking.driver.alias }}
+          </v-card-text>
         </v-card>
-
+        <v-card
+          flat
+        >
+          <v-card-text
+            v-if="!loading"
+            class="font-weight-bold primary--text"
+          >
+            {{ formaBookingHour(infosCompleteBooking.passengerPickupDate) }}
+          </v-card-text>
+        </v-card>
 
         <v-card
           v-if="!loading"
           class="mb-3"
           flat
         >
-          <v-chip
-            class="secondary mb-4"
-          >
-            <v-icon
-              left
-              color="white"
-            >
-              mdi-swap-horizontal
-            </v-icon>
-            {{ $t('roundTrip') }}
-          </v-chip>
+          <v-journey-booking
+            :booking="infosCompleteBooking"
+          />
+          <v-simple-table>
+            <tbody>
+              <tr v-if="infosCompleteBooking.distance != null">
+                <td class="text-left">
+                  {{ $t('distance') }}
+                  <v-tooltip
+                    slot="append"
+                    right
+                    color="info"
+                    :max-width="'35%'"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon
+                        justify="left"
+                        v-on="on"
+                      >
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('distanceTooltip') }}</span>
+                  </v-tooltip>
+                </td>
+                <td class="text-left">
+                  {{ infosCompleteBooking.distance }} km
+                </td>
+              </tr>
+              <tr
+                v-if="infosCompleteBooking.price != null && infosCompleteBooking.price.amount != null"
+              >
+                <td
+                  class="
+                text-left
+                font-weight-bold"
+                >
+                  {{ $t('price') }}
+                  <v-tooltip
+                    slot="append"
+                    right
+                    color="info"
+                    :max-width="'35%'"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon
+                        justify="left"
+                        v-on="on"
+                      >
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('priceTooltip') }}</span>
+                  </v-tooltip>
+                </td>
+                <td class="text-left font-weight-bold">
+                  {{ infosCompleteBooking.price.amount }} €
+                </td>
+              </tr>
+            </tbody>
+          </v-simple-table>
         </v-card>
-        <!-- <v-card v-else-if="!loading">
-        <v-card-text>
-          {{ $t("notLinkedToACarpool") }}
-        </v-card-text>
-      </v-card> -->
+
         <v-skeleton-loader
           v-if="loading"
           ref="skeleton"
@@ -333,6 +399,8 @@ import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons';
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary';
 import VJourney from '@components/carpool/utilities/VJourney';
+import VJourneyBooking from '@components/carpool/utilities/VJourneyBooking';
+
 import MatchingJourney from '@components/carpool/results/MatchingJourney';
 import Report from "@components/utilities/Report";
 import PopupPublicProfile from "@components/user/profile/PopupPublicProfile";
@@ -354,6 +422,7 @@ export default {
     ThreadsActionsButtons,
     RegularDaysSummary,
     VJourney,
+    VJourneyBooking,
     MatchingJourney,
     Report,
     PopupPublicProfile,
@@ -443,7 +512,9 @@ export default {
       loadingBlock: false,
       dataBlockerId: this.blockerId,
       showProfileDialog: false,
-      hideBookingActions: false
+      hideBookingActions: false,
+      infosCompleteBooking:[],
+      bookingWaypoints: []
     }
   },
   computed:{
@@ -486,7 +557,6 @@ export default {
   },
   methods:{
     refreshInfos() {
-      console.log('ask');
       this.hideClickIcon = false;
       if (this.idAsk != -2){
         this.loading = true;
@@ -512,7 +582,6 @@ export default {
                 this.driver = true;
                 this.passenger = false;
               }
-
               this.$emit( 'recipientIdentity', this.getCarpoolerIdentity() )
             })
             .catch(function (error) {
@@ -532,7 +601,6 @@ export default {
       }
     },
     refreshInfosBooking() {
-      console.log('booking');
       if (this.idBooking != -2){
         this.loading = true;
         if(this.idBooking){
@@ -541,8 +609,7 @@ export default {
           }
           maxios.post(this.$t("urlGetBooking"), params)
             .then(response => {
-              console.log(response.data);
-
+              this.infosCompleteBooking = response.data;
             })
             .catch(function (error) {
             // console.log(error);
@@ -573,6 +640,9 @@ export default {
     },
     formatHour(date){
       return moment.utc(date).format("HH")+'h'+moment.utc(date).format("mm")
+    },
+    formaBookingHour(date){
+      return moment.utc(new Date(date * 1000)).format('dddd')+' '+moment.utc(new Date(date * 1000)).format("Do MMMM")+' à '+moment.utc(new Date(date * 1000)).format("HH")+'h'+moment.utc(new Date(date * 1000)).format("mm")
     },
     formatArrayForRegular(results,direction){
       let currentTrip = null;

@@ -232,7 +232,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
         $booking->setPassenger($passenger);
         $booking->setPrice($price);
         $booking->setId(Booking::DEFAULT_ID);
-        $booking->setExternalId($array['externalId']);
+        $booking->setExternalId($array['id']);
         $booking->setPassengerPickupDate($array['passengerPickupDate']);
         $booking->setPassengerPickupLat($array['passengerPickupLat']);
         $booking->setPassengerPickupLng($array['passengerPickupLng']);

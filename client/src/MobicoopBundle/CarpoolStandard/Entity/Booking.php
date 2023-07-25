@@ -54,7 +54,7 @@ class Booking implements ResourceInterface, \JsonSerializable
     /**
      * @var null|string The id of this booking
      *
-     * @Groups({"read", "write"})
+     * @Groups({"get","post","put"})
      */
     private $externalId;
 
