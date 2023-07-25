@@ -87,29 +87,18 @@ class AnalyticManager
         $community = null;
         $territories = null;
 
+        $this->getDefaultCommunityId();
         if ($this->territoryId == 'undefined') {
             $this->territoryId = null;
         }
 
+        list($territories, $community) = $this->setUpFilters($analytic);
 
-        if (null != $this->territoryId || null != $this->communityId) {
-            // the request has parameter(s)
-            $territories = [$this->getOperationalValue($this->territoryId)];
-            $community = $this->getCommunity($this->communityId);
-        } else {
-            // apply filters defalut values
-            $territories = $this->getTerritories($dashboard['auth_item']);
-
-            if ([$this->getOperationalValue(null)] == $territories) {
-                if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
-                    $community = $this->getOperationalValue(null);
-                } else {
-                    $this->getDefaultCommunityId();
-                    $community = $this->getCommunity($this->defaultCommunityId);
-                }
-            } else {
-                $community = $this->getOperationalValue(null);
-            }
+        if ($community == null) {
+            throw new \LogicException('Community should not be null. This code should not be reached!');
+        }
+        if ($territories == null) {
+            throw new \LogicException('Territories should not be null. This code should not be reached!');
         }
 
         $payload = [
@@ -131,6 +120,63 @@ class AnalyticManager
         $analytic->setTerritoryId($this->defaultTerritoryId);
 
         return $analytic;
+    }
+
+    private function setUpFilters($analytic) : Array {
+        $dashboard = $this->getDashboard();
+        if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
+            if (null != $this->territoryId || null != $this->communityId) {
+                // the request has parameter(s)
+                $territories = [$this->getOperationalValue($this->territoryId)];
+                $community = $this->getCommunity($this->communityId);
+                $analytic->setCommunityId($this->communityId);
+                $analytic->setTerritoryId($this->territoryId);
+            } else {
+                // no filter
+                $territories = [$this->getOperationalValue(null)];
+                $community = $this->getOperationalValue(null);
+                $analytic->setCommunityId(null);
+                $analytic->setTerritoryId(null);
+            }
+
+            return array($territories, $community);
+        }
+
+        // apply filters defalut values
+        $territories = $this->getTerritories($dashboard['auth_item']);
+        if (null != $this->territoryId && in_array($this->territoryId, $territories)) {
+            // set asked territory filter
+            $territories = [$this->getOperationalValue($this->territoryId)];
+            if (null != $this->communityId) {
+                // TODO need check
+                $community = $this->getCommunity($this->communityId);
+            } else {
+                $community = $this->getOperationalValue(null);
+            }
+            $analytic->setCommunityId($this->communityId);
+            $analytic->setTerritoryId($this->territoryId);
+
+            return array($territories, $community);
+
+        } elseif(null != $this->territoryId) {
+            // actually not logic exception
+            throw new \LogicException('Forbidden territory. This code should not be reached!');
+        }
+
+        $territories = [$this->getOperationalValue(null)];
+        if (null != $this->communityId) {
+            // TODO need check
+            $community = $this->getCommunity($this->communityId);
+            $analytic->setCommunityId($this->communityId);
+        } elseif ($this->defaultCommunityId != null) {
+            $community = $this->getOperationalValue($this->defaultCommunityId);
+            $analytic->setCommunityId($this->defaultCommunityId);
+        } else {
+            throw new \LogicException('if we are here, we should have community id. This code should not be reached!');
+        }
+        $analytic->setTerritoryId(null);
+
+        return array($territories, $community);
     }
 
     private function getDashboard(): ?array
