@@ -4168,6 +4168,11 @@ class User implements UserInterface, EquatableInterface
         return $this->bankingIdentityStatus;
     }
 
+    public function hasBankingIdentityValidated(): bool
+    {
+        return $this->getBankingIdentityStatus();
+    }
+
     /**
      * Get the value of paymentProfiles.
      *
