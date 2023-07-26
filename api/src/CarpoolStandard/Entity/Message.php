@@ -42,7 +42,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "carpool_standard_get"={
  *             "method"="GET",
  *             "path"="/messages",
- *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }

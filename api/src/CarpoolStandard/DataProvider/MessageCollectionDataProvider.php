@@ -26,30 +26,31 @@ namespace App\CarpoolStandard\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\CarpoolStandard\Entity\Booking;
-use App\CarpoolStandard\Service\BookingManager;
+use App\CarpoolStandard\Entity\Message;
+use App\CarpoolStandard\Service\MessageManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for user's bookings.
+ * Collection data provider for user's messages link to a booking.
  */
-final class BookingCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class MessageCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $bookingManager;
+    private $messageManager;
     private $security;
 
-    public function __construct(BookingManager $bookingManager, Security $security)
+    public function __construct(MessageManager $messageManager, Security $security)
     {
-        $this->bookingManager = $bookingManager;
+        $this->messageManager = $messageManager;
         $this->security = $security;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Booking::class === $resourceClass && 'carpool_standard_get' === $operationName;
+        return Message::class === $resourceClass && 'carpool_standard_get' === $operationName;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?array
     {
-        return $this->bookingManager->getBookings($this->security->getUser()->getId());
+        return $this->messageManager->getMessages($context['filters']['idBooking']);
     }
 }

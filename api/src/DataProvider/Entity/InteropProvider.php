@@ -174,7 +174,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'bookingId' => $bookingId,
         ];
 
-        $data = (json_decode((string) $dataProvider->getItem($body, $headers)->getValue(), true));
+        $data = json_decode((string) $dataProvider->getItem($body, $headers)->getValue(), true);
 
         return $this->mapBooking($data);
     }
@@ -195,6 +195,20 @@ class InteropProvider implements CarpoolStandardProviderInterface
         ];
 
         return $dataProvider->getCollection($body, $headers);
+    }
+
+    public function getMessages(string $idBooking)
+    {
+        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_MESSAGE);
+        $headers = [
+            'X-API-KEY' => $this->apiKey,
+            'Content-Type' => 'application/json',
+        ];
+        $body = [
+            'idBooking' => $idBooking,
+        ];
+
+        return $dataProvider->getCollection($body, $headers)->getValue();
     }
 
     public function mapBooking(array $array)
