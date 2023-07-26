@@ -342,7 +342,7 @@ class ShortDistanceSubscription
     public function removeShortDistanceJourney(ShortDistanceJourney $journey)
     {
         // If the trip is the commitment trip, we also reset the subscription
-        if ($journey->getId() === $this->getCommitmentProofJourney()->getId()) {
+        if (!is_null($this->commitmentProofJourney) && $journey->getId() === $this->getCommitmentProofJourney()->getId()) {
             $this->setCommitmentProofDate(null);
             $this->setCommitmentProofJourney(null);
             $this->setCommitmentProofTimestampToken(null);
@@ -353,7 +353,7 @@ class ShortDistanceSubscription
     }
 
     /**
-     * Return all journeys
+     * Return all journeys.
      */
     public function getJourneys()
     {
@@ -361,7 +361,7 @@ class ShortDistanceSubscription
     }
 
     /**
-     * Returns EEC compliant journeys
+     * Returns EEC compliant journeys.
      */
     public function getCompliantJourneys(): array
     {
@@ -731,8 +731,6 @@ class ShortDistanceSubscription
 
     /**
      * Get the long distance EEC commitment proof timestamp token.
-     *
-     * @return null|string
      */
     public function getCommitmentProofTimestampToken(): ?string
     {

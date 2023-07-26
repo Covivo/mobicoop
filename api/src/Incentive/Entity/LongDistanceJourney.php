@@ -379,6 +379,11 @@ class LongDistanceJourney
         return $this;
     }
 
+    public function getCarpoolProof(): ?CarpoolProof
+    {
+        return !is_null($this->getCarpoolItem()) ? $this->getCarpoolItem()->getCarpoolProof() : null;
+    }
+
     /**
      * Get the proposal associate with the journey.
      */
@@ -419,5 +424,21 @@ class LongDistanceJourney
         $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
 
         return $this;
+    }
+
+    /**
+     * Returns if the journey is EEC compliant
+     * - The associated payment is successful and the transaction ID is not null
+     * - The associated proof is type C, validated by the RPC.
+     */
+    public function isCompliant(): bool
+    {
+        return
+            !is_null($this->getCarpoolPayment())
+            && !is_null($this->getCarpoolPayment()->getTransactionId())
+            && CarpoolPayment::STATUS_SUCCESS === $this->getCarpoolPayment()->getStatus()
+            && !is_null($this->getCarpoolProof())
+            && CarpoolProof::STATUS_VALIDATED === $this->getCarpoolProof()->getstatus()
+            && CarpoolProof::TYPE_HIGH === $this->getCarpoolProof()->getType();
     }
 }
