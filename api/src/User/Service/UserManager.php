@@ -1138,53 +1138,27 @@ class UserManager
 
         // We get carpoolStandard bookings if enabled
         if ($this->carpoolStandardEnabled) {
-            // $bookings = $this->bookingManager->getBookings($user->getId());
-            // foreach ($bookings as $booking) {
-            //     $currentThread = [
-            //         'idRecipient' => $booking->getDriver()->getId(),
-            //         'givenName' => $booking->getDriver()->getAlias(),
-            //         'date' => '',
-            //         'selected' => false,
-            //         'unreadMessages' => 0,
-            //         'idBooking' => $booking->getId(),
-            //         'carpoolInfos' => [
-            //             'origin' => $booking->getPassengerPickupAddress(),
-            //             'destination' => $booking->getPassengerDropAddress(),
-            //             'criteria' => [
-            //                 'frequency' => 1,
-            //                 'fromDate' => date('Y-m-d', $booking->passengerPickupDate()),
-            //                 'fromTime' => date('H:i:s', $booking->passengerPickupDate()),
-            //             ],
-            //         ],
-            //     ];
-            //     $messages[] = $currentThread;
-            // }
-            $currentThread = [
-                'idMessage' => -99,
-                'idRecipient' => 19,
-                'givenName' => 'Jeremi B.',
-                'date' => '',
-                'selected' => false,
-                'unreadMessages' => 0,
-                'idBooking' => '0fc843d5-ec02-4c2e-a9fe-6aacb20710f7',
-                'carpoolInfos' => [
-                    'origin' => ' 11300 Limoux',
-                    'destination' => '11000 Carcassonne',
-                    'criteria' => [
-                        'frequency' => 1,
-                        'fromDate' => new \DateTime(date('Y-m-d', 1689329136)),
-                        'fromTime' => new \DateTime(date('H:i:s', 1689329136)),
-                        'monCheck' => false,
-                        'tueCheck' => false,
-                        'wedCheck' => false,
-                        'thuCheck' => false,
-                        'friCheck' => false,
-                        'satCheck' => false,
-                        'sunCheck' => false,
+            $bookings = $this->bookingManager->getBookings($user->getId());
+            foreach ($bookings as $booking) {
+                $currentThread = [
+                    'idRecipient' => $booking->getDriver()->getId(),
+                    'givenName' => $booking->getDriver()->getAlias(),
+                    'date' => '',
+                    'selected' => false,
+                    'unreadMessages' => 0,
+                    'idBooking' => $booking->getId(),
+                    'carpoolInfos' => [
+                        'origin' => $booking->getPassengerPickupAddress(),
+                        'destination' => $booking->getPassengerDropAddress(),
+                        'criteria' => [
+                            'frequency' => 1,
+                            'fromDate' => date('Y-m-d', $booking->passengerPickupDate()),
+                            'fromTime' => date('H:i:s', $booking->passengerPickupDate()),
+                        ],
                     ],
-                ],
-            ];
-            $messages[] = $currentThread;
+                ];
+                $messages[] = $currentThread;
+            }
         }
 
         // Sort with the last message received first
