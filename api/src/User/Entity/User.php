@@ -1867,6 +1867,22 @@ class User implements UserInterface, EquatableInterface
      */
     private $eecStatus = false;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="\App\Payment\Entity\PaymentProfile", mappedBy="user")
+     */
+    private $paymentProfiles;
+
+    /**
+     * Banking identity status.
+     *
+     * @var bool
+     *
+     * @Groups({"readUser", "results"})
+     */
+    private $bankingIdentityStatus = false;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1898,6 +1914,7 @@ class User implements UserInterface, EquatableInterface
         $this->rewards = new ArrayCollection();
         $this->rewardSteps = new ArrayCollection();
         $this->identityProofs = new ArrayCollection();
+        $this->paymentProfiles = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
         $this->rolesTerritory = [];
@@ -4128,13 +4145,41 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * Get the value of eecStatus.
-     *
-     * @return bool
      */
-    public function getEecStatus()
+    public function getEecStatus(): bool
     {
         $this->eecStatus = !is_null($this->getLongDistanceSubscription()) || !is_null($this->getShortDistanceSubscription());
 
         return $this->eecStatus;
+    }
+
+    /**
+     * Returns if the banking identity has been validated
+     * - A least one banking profile exists
+     * - The existing banking profile has a validated status 1.
+     */
+    public function getBankingIdentityStatus(): bool
+    {
+        $this->bankingIdentityStatus =
+            !is_null($this->getPaymentProfiles())
+            && !$this->getPaymentProfiles()->isEmpty()
+            && $this->getPaymentProfiles()->toArray()[0]->isValidated();
+
+        return $this->bankingIdentityStatus;
+    }
+
+    public function hasBankingIdentityValidated(): bool
+    {
+        return $this->getBankingIdentityStatus();
+    }
+
+    /**
+     * Get the value of paymentProfiles.
+     *
+     * @return ArrayCollection
+     */
+    public function getPaymentProfiles()
+    {
+        return $this->paymentProfiles;
     }
 }

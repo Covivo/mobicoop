@@ -442,6 +442,7 @@ export default {
       return {
         id: this.infosComplete.carpooler.id,
         identityStatus: this.infosComplete.carpooler.identityStatus,
+        bankingIdentityStatus: this.infosComplete.carpooler.bankingIdentityStatus,
         eecStatus: this.infosComplete.carpooler.eecStatus,
         role: this.infosComplete.resultDriver ? PASSENGER : DRIVER,
         givenName: this.infosComplete.carpooler.givenName,
