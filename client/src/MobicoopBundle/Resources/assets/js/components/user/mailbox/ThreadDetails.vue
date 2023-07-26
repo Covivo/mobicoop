@@ -115,6 +115,10 @@ export default {
       type: Boolean,
       default:false
     },
+    refreshBooking:{
+      type: Boolean,
+      default:false
+    },
     hideNoThreadSelected:{
       type: Boolean,
       default:false
@@ -160,9 +164,11 @@ export default {
         if(this.idBooking!==null) this.getBookingCompleteThread();
       }
     },
-
     refresh(){
       (this.refresh) ? this.getCompleteThread() : '';
+    },
+    refreshBooking(){
+      (this.refreshBooking) ? this.getBookingCompleteThread() : '';
     }
   },
   created() {
@@ -233,17 +239,13 @@ export default {
 
 
       this.clearClickIcon = false
-      this.loading = true;
       maxios.get(this.$t("urlBookingCompleteThread",{idBooking:this.idBooking}))
         .then(response => {
-
-          console.log('get messages');
-
+          this.emit();
         })
         .catch(function (error) {
           console.log(error);
         });
-      
     },
     checkIfMessageIsDelete(messages){
       let tradMessageDelete = this.$t("messageDelete");

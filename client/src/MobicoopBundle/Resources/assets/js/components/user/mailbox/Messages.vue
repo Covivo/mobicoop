@@ -184,6 +184,7 @@
                 :id-message="idMessage"
                 :id-user="idUser"
                 :refresh="refreshDetails"
+                :refresh-booking="refreshBookingDetails"
                 :hide-no-thread-selected="(idRecipient!==null)"
                 :fraud-warning-display="fraudWarningDisplay"
                 :carpoolers-identity="carpoolersIdentity"
@@ -351,7 +352,8 @@ export default {
       },
       isExternalStandard: false,
       refreshBookingActions:false,
-      carpoolersIdentity: null
+      carpoolersIdentity: null,
+      refreshBookingDetails: false
     };
   },
   created() {
@@ -557,6 +559,7 @@ export default {
     refreshDetailsCompleted(data){
       //this.refreshActions = true;
       this.refreshDetails = false;
+      this.refreshBookingDetails = false;
     },
     refreshThreadsDirectCompleted(){
       this.refreshThreadsDirect = false;
