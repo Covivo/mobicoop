@@ -103,6 +103,10 @@ export default {
       type: Number,
       default:null
     },
+    idBooking: {
+      type: String,
+      default:null
+    },
     idUser:{
       type: Number,
       default:null
@@ -147,9 +151,16 @@ export default {
     idMessage: {
       immediate: true,
       handler(newVal, oldVal) {
-        if(this.idMessage!==null) this.getCompleteThread();
+        if(this.idMessage!==null && this.idBooking==null) this.getCompleteThread();
       }
     },
+    idBooking: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        if(this.idBooking!==null) this.getBookingCompleteThread();
+      }
+    },
+
     refresh(){
       (this.refresh) ? this.getCompleteThread() : '';
     }
@@ -216,6 +227,23 @@ export default {
       else{
         this.emit();
       }
+    },
+    getBookingCompleteThread(){
+      this.items = [];
+
+
+      this.clearClickIcon = false
+      this.loading = true;
+      maxios.get(this.$t("urlBookingCompleteThread",{idBooking:this.idBooking}))
+        .then(response => {
+
+          console.log('get messages');
+
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      
     },
     checkIfMessageIsDelete(messages){
       let tradMessageDelete = this.$t("messageDelete");

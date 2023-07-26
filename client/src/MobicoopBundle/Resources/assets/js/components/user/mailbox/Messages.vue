@@ -137,6 +137,7 @@
                   :id-message="idMessage"
                   :id-thread-default="idThreadDefault"
                   :id-ask-to-select="currentIdAsk"
+                  :id-booking-to-select="currentIdBooking"
                   :refresh-threads="refreshThreadsCarpool"
                   @idMessageForTimeLine="updateDetails"
                   @toggleSelected="refreshSelected"
@@ -179,6 +180,7 @@
           <v-row>
             <v-col cols="12">
               <thread-details
+                :id-booking="idBooking"
                 :id-message="idMessage"
                 :id-user="idUser"
                 :refresh="refreshDetails"
@@ -324,6 +326,7 @@ export default {
     return {
       modelTabs:"tab-cm",
       idMessage: this.givenIdMessage ? this.givenIdMessage : null,
+      idBooking: this.givenIdBooking ? this.givenIdBooking : null,
       idRecipient: this.givenIdRecipient ? this.givenIdRecipient : null,
       currentIdAsk: this.givenIdAsk ? this.givenIdAsk : null,
       currentIdBooking: this.givenIdBooking ? this.givenIdBooking : null,
@@ -331,7 +334,6 @@ export default {
       recipientAvatar:null,
       newThreadDirect:null,
       newThreadCarpool:null,
-      idBooking: null,
       loadingTypeText:false,
       refreshDetails:false,
       refreshThreadsDirect:false,
@@ -410,6 +412,7 @@ export default {
       }
 
       this.idMessage = data.idMessage;
+      this.idBooking = data.idBooking;
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;
       this.recipientAvatar = data.avatar;

@@ -10,7 +10,6 @@
         <v-avatar>
           <v-icon
             color="white"
-            v-on="on"
           >
             mdi-human-greeting
           </v-icon>

@@ -219,8 +219,6 @@ class DataProvider
 
     /**
      * Set the delegate username (for delegate user authentication).
-     *
-     * @param string $username The delegated username
      */
     public function setUsernameDelegate(string $usernameDelegate)
     {
@@ -548,9 +546,9 @@ class DataProvider
      * @param string     $subClassRoute The class route of the subresource (used for custom routes, if not provided the route will be the subClassName pluralized)
      * @param null|array $params        An array of parameters
      *
-     * @throws \ReflectionException
-     *
      * @return Response the response of the operation
+     *
+     * @throws \ReflectionException
      */
     public function getSubCollection(int $id, string $subClassName, ?string $subClassRoute = null, ?array $params = null): Response
     {

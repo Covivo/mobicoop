@@ -434,6 +434,14 @@ user_message_complete_thread:
     nl: /user/messages/{idMessage}/thread
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageCompleteThread
 
+user_message_booking_complete_thread:
+  path:
+    fr: /utilisateur/messages/booking/{idBooking}/fil
+    en: /user/messages/booking/{idBooking}/thread
+    nl: /user/messages/booking/{idBooking}/thread
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageBookingCompleteThread
+
+
 user_message_actions_infos:
   methods: [POST]
   path:

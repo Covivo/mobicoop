@@ -1162,7 +1162,7 @@ class UserManager
             $currentThread = [
                 'idMessage' => -99,
                 'idRecipient' => 19,
-                'givenName' => 'Jérémi B.',
+                'givenName' => 'Jeremi B.',
                 'date' => '',
                 'selected' => false,
                 'unreadMessages' => 0,

@@ -513,8 +513,7 @@ export default {
       dataBlockerId: this.blockerId,
       showProfileDialog: false,
       hideBookingActions: false,
-      infosCompleteBooking:[],
-      bookingWaypoints: []
+      infosCompleteBooking:[]
     }
   },
   computed:{

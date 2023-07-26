@@ -60,4 +60,14 @@ class MessageManager
 
         return $response->getValue();
     }
+
+    public function getMessages(string $idBooking)
+    {
+        $response = $this->dataProvider->getSpecialCollection('messages', ['idBooking' => $idBooking]);
+        if (201 != $response->getCode()) {
+            return $response->getValue();
+        }
+
+        return $response->getValue();
+    }
 }

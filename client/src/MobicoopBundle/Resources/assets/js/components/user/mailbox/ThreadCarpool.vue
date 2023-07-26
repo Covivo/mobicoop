@@ -216,25 +216,24 @@ export default {
     },
     emit(){
       if (this.idBooking == null) {
-
         this.$emit("toggleSelected",{idAsk:this.idAsk});
-        this.$emit("idMessageForTimeLine",
-          {
-            type:this.solidary ? "Solidary" : "Carpool",
-            idMessage:this.idMessage,
-            idRecipient:this.idRecipient,
-            name:this.name,
-            avatar:this.avatar,
-            idAsk:this.idAsk,
-            idBooking:this.idBooking,
-            blockerId:this.blockerId,
-            formerUnreadMessages:this.unreadMessages
-          }
-        );
+        
       } else {
         this.$emit("toggleSelectedBooking",{idBooking:this.idBooking})
       }
-
+      this.$emit("idMessageForTimeLine",
+        {
+          type:this.solidary ? "Solidary" : "Carpool",
+          idMessage:this.idMessage,
+          idRecipient:this.idRecipient,
+          name:this.name,
+          avatar:this.avatar,
+          idAsk:this.idAsk,
+          idBooking:this.idBooking,
+          blockerId:this.blockerId,
+          formerUnreadMessages:this.unreadMessages
+        }
+      );
     }
   }
 }
