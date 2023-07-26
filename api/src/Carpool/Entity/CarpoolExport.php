@@ -44,6 +44,10 @@ class CarpoolExport
     public const CERTIFICATION_B = 'B';
     public const CERTIFICATION_C = 'C';
 
+    public const CERTIFICATION_UNDER_CHECKING = 'En cours de certification';
+    public const CERTIFICATION_CANCELED = 'La certification a été annulé';
+    public const CERTIFICATION_ERROR = 'Non certifié par le RPC';
+
     /**
      * @var int the id of this carpoolExport item
      */
@@ -199,9 +203,35 @@ class CarpoolExport
         return $this->certification;
     }
 
-    public function setCertification(?string $certification)
+    public function setCertification(?CarpoolProof $carpoolProof): self
     {
+        $certification = self::CERTIFICATION_ERROR;
+
+        if (!is_null($carpoolProof)) {
+            switch ($carpoolProof->getStatus()) {
+                case CarpoolProof::STATUS_PENDING:
+                case CarpoolProof::STATUS_SENT:
+                case CarpoolProof::STATUS_UNDER_CHECKING:
+                    $certification = self::CERTIFICATION_UNDER_CHECKING;
+
+                    break;
+
+                case CarpoolProof::STATUS_CANCELED:
+                case CarpoolProof::STATUS_CANCELED_BY_OPERATOR:
+                    $certification = self::CERTIFICATION_CANCELED;
+
+                    break;
+
+                case CarpoolProof::STATUS_VALIDATED:
+                    $certification = $carpoolProof->getType();
+
+                    break;
+            }
+        }
+
         $this->certification = $certification;
+
+        return $this;
     }
 
     public function getDistance(): ?int
