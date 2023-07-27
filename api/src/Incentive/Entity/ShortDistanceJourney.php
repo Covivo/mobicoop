@@ -433,13 +433,13 @@ class ShortDistanceJourney
 
     /**
      * Returns if the journey is EEC compliant
-     * - The associated proof is class C
-     * - The associated proof is validated by the RPC
+     * - The associated proof is type C, validated by the RPC.
      */
     public function isCompliant(): bool
     {
         return
-            CarpoolProof::TYPE_HIGH === $this->getCarpoolProof()->getType()
-            && CarpoolProof::STATUS_VALIDATED === $this->getCarpoolProof()->getStatus();
+            !is_null($this->getCarpoolProof())
+            && CarpoolProof::STATUS_VALIDATED === $this->getCarpoolProof()->getStatus()
+            && CarpoolProof::TYPE_HIGH === $this->getCarpoolProof()->getType();
     }
 }
