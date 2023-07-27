@@ -19,23 +19,25 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\RelayPoint\Entity\RelayPointType;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\RelayPoint\Entity\RelayPointType;
 
 /**
- * An icon
+ * An icon.
  *
  * @ORM\Entity()
+ *
  * @ORM\EntityListeners({"App\Image\EntityListener\IconListener"})
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -72,69 +74,82 @@ use App\RelayPoint\Entity\RelayPointType;
  */
 class Icon
 {
-    const DEFAULT_ICON_ID = 1; // Default Icon
-    
+    public const DEFAULT_ICON_ID = 1; // Default Icon
+
     /**
-     * @var int The id of this icon.
+     * @var int the id of this icon
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","read","readRelayPoint"})
+     *
+     * @Groups({"aRead","read","readRelayPoint", "readGeography"})
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
-     * @var string The name of the icon.
+     * @var string the name of the icon
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","read","readRelayPoint"})
+     *
+     * @Groups({"aRead","read","readRelayPoint", "readGeography"})
      */
     private $name;
 
     /**
-     * @var string The filename of the icon.
+     * @var string the filename of the icon
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readRelayPoint"})
+     *
+     * @Groups({"read","readRelayPoint", "readGeography"})
      */
     private $fileName;
 
     /**
-     * @var string The url of the icon.
+     * @var string the url of the icon
      *
-     * @Groups({"aRead","read","readRelayPoint"})
+     * @Groups({"aRead","read","readRelayPoint", "readGeography"})
      */
     private $url;
 
     /**
-     * @var ArrayCollection|null The relayPointTypes associate to the icon.
+     * @var null|ArrayCollection the relayPointTypes associate to the icon
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPointType", mappedBy="icon")
+     *
      * @Groups({"read"})
+     *
      * @MaxDepth(1)
      */
     private $relayPointTypes;
 
     /**
-     * @var Icon|null Linked icon for the private related item.
+     * @var null|Icon linked icon for the private related item
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Icon", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","readRelayPoint"})
+     *
      * @MaxDepth(1)
      */
     private $privateIconLinked;
 
     /**
-    * @var string|null The private icon name
-    * @Groups("aRead")
-    */
+     * @var null|string The private icon name
+     *
+     * @Groups("aRead")
+     */
     private $privateName;
 
     /**
-     * @var string|null The private icon url
+     * @var null|string The private icon url
+     *
      * @Groups("aRead")
      */
     private $privateUrl;
@@ -143,22 +158,22 @@ class Icon
     {
         $this->relayPointTypes = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
     }
-    
+
     public function getName(): string
     {
         return $this->name;
     }
-    
+
     public function setName(string $name)
     {
         $this->name = $name;
@@ -168,7 +183,7 @@ class Icon
     {
         return $this->fileName;
     }
-    
+
     public function setFileName(string $fileName)
     {
         $this->fileName = $fileName;
@@ -178,7 +193,7 @@ class Icon
     {
         return $this->url;
     }
-    
+
     public function setUrl(string $url)
     {
         $this->url = $url;
@@ -220,13 +235,13 @@ class Icon
     public function setPrivateIconLinked(?self $privateIconLinked): self
     {
         $this->privateIconLinked = $privateIconLinked;
-        
+
         // set (or unset) the owning side of the relation if necessary
-        $newPrivateIconLinked = $privateIconLinked === null ? null : $this;
+        $newPrivateIconLinked = null === $privateIconLinked ? null : $this;
         if ($newPrivateIconLinked !== $privateIconLinked->getPrivateIconLinked()) {
             $privateIconLinked->setPrivateIconLinked($newPrivateIconLinked);
         }
-        
+
         return $this;
     }
 
@@ -235,6 +250,7 @@ class Icon
         if ($this->getPrivateIconLinked()) {
             return $this->getPrivateIconLinked()->getName();
         }
+
         return null;
     }
 
@@ -243,6 +259,7 @@ class Icon
         if ($this->getPrivateIconLinked()) {
             return $this->getPrivateIconLinked()->getUrl();
         }
+
         return null;
     }
 }
