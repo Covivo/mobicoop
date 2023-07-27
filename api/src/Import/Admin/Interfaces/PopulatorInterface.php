@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2022, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,36 +21,20 @@
  *    LICENSE
  */
 
-namespace App\User\Repository;
+namespace App\Import\Admin\Interfaces;
 
-use App\User\Entity\IdentityProof;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Symfony\Component\HttpFoundation\File\File;
 
-class IdentityProofRepository
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+interface PopulatorInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
+    public function populate(File $file): array;
 
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->repository = $entityManager->getRepository(IdentityProof::class);
-    }
+    public function getEntity(): string;
 
-    public function find(int $id): ?IdentityProof
-    {
-        return $this->repository->find($id);
-    }
+    public function getMessages(): array;
 
-    public function findOneBy(array $criteria): ?IdentityProof
-    {
-        return $this->repository->findOneBy($criteria);
-    }
-
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
-    {
-        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
-    }
+    public function addMessage(string $message): array;
 }

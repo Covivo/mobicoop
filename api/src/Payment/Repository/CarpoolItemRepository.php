@@ -163,7 +163,7 @@ class CarpoolItemRepository
      * @param mixed $toDate
      * @param mixed $fromDate
      *
-     * @return array
+     * @return CarpoolItem[]
      */
     public function findByUserAndDate(User $user, $fromDate, $toDate)
     {

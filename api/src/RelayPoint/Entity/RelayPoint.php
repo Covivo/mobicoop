@@ -40,7 +40,6 @@ use App\RelayPoint\Filter\RelayPointTypesFilter;
 use App\RelayPoint\Filter\TerritoryFilter;
 use App\Solidary\Entity\Structure;
 use App\User\Entity\User;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -51,8 +50,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A relay point.
  *
  * @ORM\Entity
+ *
  * @ORM\Table(indexes={@ORM\Index(name="FULL_TEXT_NAME", columns={"name"}, flags={"fulltext"})})
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -154,6 +156,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *      }
  * )
+ *
  * @ApiFilter(BooleanFilter::class, properties={"official"})
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "relayPointTypeName"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial","status":"exact","relayPointType.id":"exact"})
@@ -173,8 +176,11 @@ class RelayPoint
      * @var int the id of this relay point
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"aRead","readRelayPoint"})
      */
     private $id;
@@ -183,6 +189,7 @@ class RelayPoint
      * @var string the name of the relay point
      *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $name;
@@ -191,6 +198,7 @@ class RelayPoint
      * @var null|bool the relay point is private to a community or a solidary structure
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $private;
@@ -199,6 +207,7 @@ class RelayPoint
      * @var null|string the short description of the relay point
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $description;
@@ -207,6 +216,7 @@ class RelayPoint
      * @var null|string the full description of the relay point
      *
      * @ORM\Column(type="text", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $fullDescription;
@@ -215,6 +225,7 @@ class RelayPoint
      * @var int the status of the relay point (active/inactive/pending)
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $status;
@@ -223,6 +234,7 @@ class RelayPoint
      * @var null|int the number of places
      *
      * @ORM\Column(type="smallint", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $places;
@@ -231,6 +243,7 @@ class RelayPoint
      * @var null|int the number of places for disabled people
      *
      * @ORM\Column(type="smallint", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $placesDisabled;
@@ -239,6 +252,7 @@ class RelayPoint
      * @var null|bool the relay point is free
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $free;
@@ -247,6 +261,7 @@ class RelayPoint
      * @var null|bool the relay point is secured
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $secured;
@@ -255,6 +270,7 @@ class RelayPoint
      * @var null|bool the relay point is official
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $official;
@@ -263,6 +279,7 @@ class RelayPoint
      * @var null|bool the relay point appears in the autocompletion
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $suggested;
@@ -271,6 +288,7 @@ class RelayPoint
      * @var null|string the permalink of the relay point
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $permalink;
@@ -300,6 +318,7 @@ class RelayPoint
      * @var \DateTimeInterface creation date of the relay point
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups("readRelayPoint")
      */
     private $createdDate;
@@ -308,6 +327,7 @@ class RelayPoint
      * @var \DateTimeInterface updated date of the relay point
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups("readRelayPoint")
      */
     private $updatedDate;
@@ -316,9 +336,13 @@ class RelayPoint
      * @var Address the address of the relay point
      *
      * @Assert\NotBlank
+     *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="relayPoint", cascade={"persist"}, orphanRemoval=true)
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
+     *
      * @MaxDepth(1)
      */
     private $address;
@@ -327,8 +351,11 @@ class RelayPoint
      * @var User the creator of the relay point
      *
      * @Assert\NotBlank(groups={"writeRelayPoint"})
+     *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $user;
@@ -337,7 +364,9 @@ class RelayPoint
      * @var null|Community the community of the relay point
      *
      * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     *
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $community;
@@ -346,14 +375,18 @@ class RelayPoint
      * @var null|Structure the solidary structure of the relay point
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     *
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $structure;
 
     /**
      * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $relayPointType;
@@ -369,84 +402,109 @@ class RelayPoint
      * @var null|ArrayCollection the images of the relay point
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPoint", cascade={"persist"})
+     *
      * @ORM\OrderBy({"position" = "ASC"})
+     *
      * @Groups({"readRelayPoint","writeRelayPoint"})
+     *
      * @MaxDepth(1)
+     *
      * @ApiSubresource(maxDepth=1)
      */
     private $images;
 
     /**
      * @var null|int The relay point type id
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $relayPointTypeId;
 
     /**
      * @var string The relay point type name
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $relayPointTypeName;
 
     /**
      * @var null|string The relay point type avatar
+     *
      * @Groups({"aRead"})
      */
     private $relayPointTypeAvatar;
 
     /**
      * @var null|int The community id
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $communityId;
 
     /**
      * @var string The community name
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $communityName;
 
     /**
      * @var null|int The structure id
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $structureId;
 
     /**
      * @var string The structure name
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $structureName;
 
     /**
      * @var string The creator
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $creator;
 
     /**
      * @var int The creator id
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $creatorId;
 
     /**
      * @var null|string The creator avatar
+     *
      * @Groups({"aRead"})
      */
     private $creatorAvatar;
 
     /**
      * @var null|string The relay point main image
+     *
      * @Groups("aRead")
      */
     private $image;
 
     /**
      * @var null|string The relay point avatar
+     *
      * @Groups("aRead")
      */
     private $avatar;
+
+    /**
+     * @var \DateTimeInterface import date of the relaypoint
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"aRead","write"})
+     */
+    private $importedDate;
 
     public function __construct()
     {
@@ -871,6 +929,18 @@ class RelayPoint
         }
 
         return null;
+    }
+
+    public function getImportedDate(): ?\DateTimeInterface
+    {
+        return $this->importedDate;
+    }
+
+    public function setImportedDate(\DateTimeInterface $importedDate): self
+    {
+        $this->importedDate = $importedDate;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS

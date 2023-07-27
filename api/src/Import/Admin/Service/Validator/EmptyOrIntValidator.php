@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2022, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,36 +21,28 @@
  *    LICENSE
  */
 
-namespace App\User\Repository;
+namespace App\Import\Admin\Service\Validator;
 
-use App\User\Entity\IdentityProof;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use App\Import\Admin\Interfaces\FieldValidatorInterface;
 
-class IdentityProofRepository
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class EmptyOrIntValidator implements FieldValidatorInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function validate($value): bool
     {
-        $this->repository = $entityManager->getRepository(IdentityProof::class);
+        if (0 == strlen(trim($value)) || '' == trim($value)) {
+            return true;
+        }
+
+        $intValidator = new IntValidator();
+
+        return $intValidator->validate($value);
     }
 
-    public function find(int $id): ?IdentityProof
+    public function errorMessage($value): string
     {
-        return $this->repository->find($id);
-    }
-
-    public function findOneBy(array $criteria): ?IdentityProof
-    {
-        return $this->repository->findOneBy($criteria);
-    }
-
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
-    {
-        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+        return $value.' can only be empty or a number';
     }
 }

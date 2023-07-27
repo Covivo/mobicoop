@@ -24,7 +24,6 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\CarpoolExport;
-use App\Carpool\Entity\CarpoolProof;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
@@ -195,23 +194,8 @@ class CarpoolExportManager
                         case CarpoolProof::TYPE_UNDETERMINED_CLASSIC:
                             $carpoolExport->setCertification(null);
 
-                            break;
-
-                        case CarpoolProof::TYPE_UNDETERMINED_DYNAMIC:
-                            $carpoolExport->setCertification(null);
-
-                            break;
-
-                        default:
-                            $carpoolExport->setCertification(null);
-                            if (CarpoolProof::STATUS_VALIDATED == $carpoolProof->getStatus()) {
-                                $carpoolExport->setCertification($carpoolProof->getType());
-                            }
-
-                            break;
-                    }
-                }
-            }
+            // We set the certification type
+            $carpoolExport->setCertification($carpoolItem->getCarpoolProof());
 
             $carpoolExports[] = $carpoolExport;
         }

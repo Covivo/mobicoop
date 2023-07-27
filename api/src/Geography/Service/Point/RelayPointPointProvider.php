@@ -101,6 +101,7 @@ class RelayPointPointProvider implements PointProvider
         $point->setId((string) $relayPoint->getId());
         $point->setName($relayPoint->getName());
         $point->setType('relaypoint');
+        $point->setIcon($relayPoint->getRelayPointType()->getIcon());
 
         return $point;
     }
