@@ -26,6 +26,8 @@ class LongDistanceSubscription
 
     public const COMMITMENT_PREFIX = 'Proposal_';
 
+    public const VALIDITY_PERIOD = 3;               // Period expressed in months
+
     /**
      * @var int The user subscription ID
      *
@@ -685,10 +687,12 @@ class LongDistanceSubscription
      */
     public function hasExpired(): bool
     {
+        $now = new \DateTime('now');
+
         return
             !empty($this->getJourneys())
             && !is_null($this->getExpirationDate())
-            && $this->getExpirationDate() < new \DateTime('now');
+            && $this->getExpirationDate() < $now->sub(new \DateInterval('P'.self::VALIDITY_PERIOD.'M'));
     }
 
     /**

@@ -25,6 +25,8 @@ class ShortDistanceSubscription
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/short-distance-subscription/honour-certificate/';
 
+    public const VALIDITY_PERIOD = 3;               // Period expressed in months
+
     /**
      * @var int The user subscription ID
      *
@@ -60,14 +62,14 @@ class ShortDistanceSubscription
     private $subscriptionId;
 
     /**
-     * @var string the subscription status
+     * @var null|string the subscription status
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      */
     private $status;
 
     /**
-     * @var \DateTimeInterface
+     * @var null|\DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -347,6 +349,8 @@ class ShortDistanceSubscription
             $this->setCommitmentProofJourney(null);
             $this->setCommitmentProofTimestampToken(null);
             $this->setCommitmentProofTimestampSigningTime(null);
+            $this->setStatus(null);
+            $this->setVerificationDate(null);
         }
 
         return $this->shortDistanceJourneys->removeElement($journey);
@@ -401,9 +405,9 @@ class ShortDistanceSubscription
     /**
      * Set the status of the journey.
      *
-     * @param string $status the status of the journey
+     * @param null|string $status the status of the journey
      */
-    public function setStatus(string $status): self
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
 
@@ -651,9 +655,9 @@ class ShortDistanceSubscription
     /**
      * Set the value of verificationDate.
      */
-    public function setVerificationDate(): self
+    public function setVerificationDate(?\DateTimeInterface $verificationDate = null): self
     {
-        $this->verificationDate = new \DateTime('now');
+        $this->verificationDate = !is_null($verificationDate) ? $verificationDate : new \DateTime('now');
 
         return $this;
     }
@@ -683,10 +687,12 @@ class ShortDistanceSubscription
      */
     public function hasExpired(): bool
     {
+        $now = new \DateTime('now');
+
         return
             !empty($this->getJourneys())
             && !is_null($this->getExpirationDate())
-            && $this->getExpirationDate() < new \DateTime('now');
+            && $this->getExpirationDate() < $now->sub(new \DateInterval('P'.self::VALIDITY_PERIOD.'M'));
     }
 
     /**

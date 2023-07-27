@@ -516,6 +516,13 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $eecStatus = false;
 
+    /**
+     * Specifies the user banking identity status status.
+     *
+     * @var bool
+     */
+    private $bankingIdentityStatus = false;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1552,6 +1559,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'eecStatus' => $this->getEecStatus(),
             'identityStatus' => $this->getIdentityStatus(),
             'verifiedIdentity' => $this->getVerifiedIdentity(),
+            'bankingIdentityStatus' => $this->getBankingIdentityStatus(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
@@ -1565,9 +1573,9 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     }
 
     /**
-     * Get the value of identityStatus
+     * Get the value of identityStatus.
      *
-     * @return  null|int
+     * @return null|int
      */
     public function getIdentityStatus()
     {
@@ -1575,17 +1583,37 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     }
 
     /**
-     * Set the value of identityStatus
+     * Set the value of identityStatus.
      *
-     * @param  null|int  $identityStatus
+     * @param null|int $identityStatus
      *
-     * @return  self
+     * @return self
      */
     public function setIdentityStatus($identityStatus)
     {
         $this->identityStatus = $identityStatus;
 
         $this->setVerifiedIdentity(self::IDENTITY_STATUS_ACCEPTED === $this->identityStatus ? true : false);
+
+        return $this;
+    }
+
+    /**
+     * Get specifies the user banking identity status status.
+     */
+    public function getBankingIdentityStatus(): bool
+    {
+        return $this->bankingIdentityStatus;
+    }
+
+    /**
+     * Set specifies the user banking identity status status.
+     *
+     * @param bool $bankingIdentityStatus specifies the user banking identity status status
+     */
+    public function setBankingIdentityStatus(bool $bankingIdentityStatus): self
+    {
+        $this->bankingIdentityStatus = $bankingIdentityStatus;
 
         return $this;
     }

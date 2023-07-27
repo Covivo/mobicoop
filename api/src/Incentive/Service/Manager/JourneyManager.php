@@ -209,7 +209,7 @@ class JourneyManager extends MobConnectManager
 
             $subscription = $this->_driver->getLongDistanceSubscription();
 
-            if (is_null($subscription)) {
+            if (is_null($subscription) || $subscription->hasExpired()) {
                 continue;
             }
 
@@ -279,7 +279,7 @@ class JourneyManager extends MobConnectManager
 
         $subscription = $this->getDriver()->getShortDistanceSubscription();
 
-        if (is_null($subscription)) {
+        if (is_null($subscription) || $subscription->hasExpired()) {
             return;
         }
 
@@ -293,7 +293,6 @@ class JourneyManager extends MobConnectManager
                 $this->_loggerService->log('Step 17 - We declare a new commitment journey');
 
                 $commitmentJourney = $this->declareFirstShortDistanceJourney($carpoolProof);
-                $subscription = $commitmentJourney->getSubscription();
             } else {
                 return;
             }
@@ -322,6 +321,15 @@ class JourneyManager extends MobConnectManager
 
             $commitmentJourney = $this->_updateShortDistanceJourney($commitmentJourney, $carpoolProof);
         } else {
+            var_dump(
+                self::SHORT_DISTANCE_TRIP_THRESHOLD <= $shortDistanceJourneysNumber,
+                is_null($carpoolProof->getAsk()),
+                is_null($carpoolProof->getAsk()->getMatching()),
+                $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance()),
+                CarpoolProof::TYPE_HIGH !== $carpoolProof->getType(),
+                !$this->_journeyValidation->isOriginOrDestinationFromFrance($carpoolProof)
+            );
+
             // Checks :
             //    - The maximum journey threshold has not been reached
             //    - The journey is a short distance journey
@@ -374,9 +382,9 @@ class JourneyManager extends MobConnectManager
 
     private function _getCarpoolPaymentFromCarpoolItem(CarpoolItem $carpoolItem): ?CarpoolPayment
     {
-        $carpoolPayments = array_filter($carpoolItem->getCarpoolPayments(), function ($carpoolPayment) {
+        $carpoolPayments = array_values(array_filter($carpoolItem->getCarpoolPayments(), function ($carpoolPayment) {
             return $this->_journeyValidation->isPaymentValidForEEC($carpoolPayment);
-        });
+        }));
 
         return !(empty($carpoolPayments)) ? $carpoolPayments[0] : null;
     }

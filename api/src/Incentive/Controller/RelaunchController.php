@@ -2,11 +2,14 @@
 
 namespace App\Incentive\Controller;
 
+use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Service\Validation\JourneyValidation;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Event\ConfirmDirectPaymentEvent;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,6 +65,21 @@ class RelaunchController extends AbstractController
 
                 break;
         }
+
+        return new Response('Processing is complete');
+    }
+
+    /**
+     * Short distance - Step 17.
+     *
+     * @Route("/proof-validate/{carpoolProof}", requirements={"carpoolProof"="\d+"})
+     *
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function relaunchProofValidation(CarpoolProof $carpoolProof)
+    {
+        $event = new CarpoolProofValidatedEvent($carpoolProof);
+        $this->_eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
 
         return new Response('Processing is complete');
     }

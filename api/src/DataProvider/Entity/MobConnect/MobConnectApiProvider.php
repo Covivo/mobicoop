@@ -142,9 +142,13 @@ class MobConnectApiProvider extends MobConnectProvider
 
         $tokens = $provider->getRefreshToken($mobConnectAuth->getRefreshToken());
 
-        if (isset($tokens['code']) && 400 != $tokens['code']) {
-            $mobConnectAuth->updateTokens($tokens);
+        if (isset($tokens['code']) && 400 === $tokens['code']) {
+            $this->_loggerService->log('Refreshing the authentication token - The request returned an error for the user '.$mobConnectAuth->getUser()->getId());
+
+            throw new \LogicException('EEC - The token refresh request did not complete');
         }
+
+        $mobConnectAuth->updateTokens($tokens);
 
         $this->_em->flush();
 
