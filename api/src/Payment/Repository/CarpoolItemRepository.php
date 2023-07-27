@@ -171,7 +171,7 @@ class CarpoolItemRepository
             ->where('ci.creditorUser = :user OR ci.debtorUser = :user')
             ->setParameter('user', $user)
         ;
-        if (null != $fromDate && null != $toDate) {
+        if (!is_null($fromDate) && !is_null($toDate) && 'null' !== trim($fromDate) && 'null' !== trim($toDate)) {
             $query->andWhere('ci.itemDate BETWEEN :fromDate and :toDate')
                 ->setParameter('fromDate', $fromDate)
                 ->setParameter('toDate', $toDate)
