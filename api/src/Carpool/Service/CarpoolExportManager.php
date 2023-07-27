@@ -173,22 +173,23 @@ class CarpoolExportManager
             if (!is_null($carpoolItem->getPickUp()) && !is_null($carpoolItem->getDropOff())) {
                 $carpoolExport->setPickUp($carpoolItem->getPickUp());
                 $carpoolExport->setDropOff($carpoolItem->getDropOff());
-            } else {
+            } elseif (!is_null($carpoolItem->getAsk())) {
                 $waypoints = $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
                 $carpoolExport->setPickUp($waypoints[0]->getAddress()->getAddressLocality());
+
                 foreach ($waypoints as $waypoint) {
                     if ($waypoint->isDestination()) {
                         $carpoolExport->setDropOff($waypoint->getAddress()->getAddressLocality());
                     }
                 }
-            }
-            if (is_null($carpoolItem->getAsk())) {
+            } else {
                 $carpoolExports[] = $carpoolExport;
 
                 continue;
             }
+
             //    we set the certification type
-            if ($carpoolItem->getAsk()->getCarpoolProofs()) {
+            if (!is_null($carpoolItem->getAsk()) && $carpoolItem->getAsk()->getCarpoolProofs()) {
                 foreach ($carpoolItem->getAsk()->getCarpoolProofs() as $carpoolProof) {
                     switch ($carpoolProof->getType()) {
                         case CarpoolProof::TYPE_UNDETERMINED_CLASSIC:
