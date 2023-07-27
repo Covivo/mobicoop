@@ -187,13 +187,6 @@ class CarpoolExportManager
                 continue;
             }
 
-            //    we set the certification type
-            if (!is_null($carpoolItem->getAsk()) && $carpoolItem->getAsk()->getCarpoolProofs()) {
-                foreach ($carpoolItem->getAsk()->getCarpoolProofs() as $carpoolProof) {
-                    switch ($carpoolProof->getType()) {
-                        case CarpoolProof::TYPE_UNDETERMINED_CLASSIC:
-                            $carpoolExport->setCertification(null);
-
             // We set the certification type
             $carpoolExport->setCertification($carpoolItem->getCarpoolProof());
 
