@@ -129,9 +129,9 @@ class TimestampTokenManager extends MobConnectManager
 
         if (!empty($this->_missingTimestampTokens)) {
             $this->_setSubscriptionMissingTimestampTokens();
-        }
 
-        $this->_setMissingCommitmentJourney();
+            $this->_setMissingCommitmentJourney();
+        }
 
         $this->_resetAll();
 
