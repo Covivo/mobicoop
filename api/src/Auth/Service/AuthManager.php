@@ -138,13 +138,13 @@ class AuthManager
     }
 
     /**
-     * Get the allowed territories to the current requester for an auth item.
+     * fetch unordered raw list of territories to the current requester for an auth item.
      *
      * @param string $itemName The name of the item to check
      *
-     * @return array The array of territories where the requester is authorized (empty array if the requester is authorized on any territory)
+     * @return array The array of territories where the requester is authorized
      */
-    public function getTerritoriesForItem(string $itemName)
+    private function getRawTerritoryListForItem(string $itemName)
     {
         if (!$item = $this->authItemRepository->findByName($itemName)) {
             throw new AuthItemNotFoundException('Auth item '.$itemName.' not found');
@@ -162,8 +162,42 @@ class AuthManager
         // we search the territories
         $this->getTerritories($requester, $item, $territories);
 
+        return $territories;
+    }
+
+    /**
+     * Get the allowed territories to the current requester for an auth item.
+     *
+     * @param string $itemName The name of the item to check
+     *
+     * @return array The array of territories where the requester is authorized (empty array if the requester is authorized on any territory)
+     */
+    public function getTerritoriesForItem(string $itemName)
+    {
+        $territories = $this->getRawTerritoryListForItem($itemName);
+
         if (in_array('all', $territories)) {
             $territories = [];
+        }
+        $territories = array_unique($territories);
+        sort($territories);
+
+        return $territories;
+    }
+
+    /**
+     * Get the territory list to the current requester for an auth item.
+     *
+     * @param string $itemName The name of the item to check
+     *
+     * @return array The array of territories where the requester is authorized
+     */
+    public function getTerritoryListForItem(string $itemName)
+    {
+        $territories = $this->getRawTerritoryListForItem($itemName);
+
+        if (in_array('all', $territories)) {
+            $territories = \array_diff($territories, ["all"]);
         }
         $territories = array_unique($territories);
         sort($territories);

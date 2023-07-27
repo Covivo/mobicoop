@@ -24,7 +24,6 @@ namespace App\User\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -71,13 +70,7 @@ final class ProposalValidFilter extends AbstractContextAwareFilter
         $queryBuilder
             ->leftJoin('u.proposals', 'p2')
             ->leftJoin('p2.criteria', 'c')
-            ->andWhere('u.status != :status')
-            ->orWhere('c.frequency = 2 AND c.toDate <= \''.$value.'\'')
-            ->orWhere('c.frequency = 1 AND c.fromDate <= \''.$value.'\'')
-            ->orWHere('p2.id IS null')
-            ->setParameters([
-                'status' => User::STATUS_PSEUDONYMIZED,
-            ])
+            ->andWhere("(c.frequency = 2 AND c.toDate <= '{$value}') OR (c.frequency = 1 AND c.fromDate <= '{$value}') OR (p2.id IS null)")
         ;
     }
 }
