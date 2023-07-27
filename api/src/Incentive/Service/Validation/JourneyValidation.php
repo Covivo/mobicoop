@@ -44,8 +44,7 @@ class JourneyValidation extends Validation
             $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver)
             && !is_null($this->_driver->getLongDistanceSubscription())
-            && is_null($this->_driver->getLongDistanceSubscription()->getCommitmentProofDate())
-            && empty($this->_driver->getLongDistanceSubscription()->getJourneys()->toArray());
+            && is_null($this->_driver->getLongDistanceSubscription()->getCommitmentProofDate());
     }
 
     /**

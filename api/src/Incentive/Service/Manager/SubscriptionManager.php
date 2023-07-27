@@ -186,7 +186,7 @@ class SubscriptionManager extends MobConnectManager
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
 
         if (!is_null($longDistanceSubscription)) {
-            $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getJourneys());
+            $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getCompliantJourneys());
 
             $this->_subscriptions->setLongDistanceSubscriptions($longDistanceSubscriptions);
             $this->_subscriptions->setLongDistanceExpirationDate($longDistanceSubscription->getExpirationDate());
@@ -229,7 +229,7 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Resets a short distance subscription when the commitment journey has not been validated by the RPC
+     * Resets a short distance subscription when the commitment journey has not been validated by the RPC.
      */
     public function unvalidationOfProof(CarpoolProof $carpoolProof): void
     {
