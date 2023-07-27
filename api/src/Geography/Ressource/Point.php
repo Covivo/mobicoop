@@ -25,6 +25,7 @@ namespace App\Geography\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Image\Entity\Icon;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -65,24 +66,28 @@ class Point
 {
     /**
      * @var null|string the country
+     *
      * @Groups("readGeography")
      */
     private $country;
 
     /**
      * @var null|string the country code
+     *
      * @Groups("readGeography")
      */
     private $countryCode;
 
     /**
      * @var null|float the distance from the centroid, if relevant
+     *
      * @Groups("readGeography")
      */
     private $distance;
 
     /**
      * @var null|string the house number
+     *
      * @Groups("readGeography")
      */
     private $houseNumber;
@@ -91,78 +96,91 @@ class Point
      * @var string The id of the point
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups("readGeography")
      */
     private $id;
 
     /**
      * @var float the latitude
+     *
      * @Groups("readGeography")
      */
     private $lat;
 
     /**
      * @var null|string the locality
+     *
      * @Groups("readGeography")
      */
     private $locality;
 
     /**
      * @var null|string the locality code
+     *
      * @Groups("readGeography")
      */
     private $localityCode;
 
     /**
      * @var float the longitude
+     *
      * @Groups("readGeography")
      */
     private $lon;
 
     /**
      * @var null|string the macro region
+     *
      * @Groups("readGeography")
      */
     private $macroRegion;
 
     /**
      * @var null|string the name of the point
+     *
      * @Groups("readGeography")
      */
     private $name;
 
     /**
      * @var null|int the population
+     *
      * @Groups("readGeography")
      */
     private $population;
 
     /**
      * @var null|string the postal code
+     *
      * @Groups("readGeography")
      */
     private $postalCode;
 
     /**
      * @var string the name of the point provider
+     *
      * @Groups("readGeography")
      */
     private $provider;
 
     /**
      * @var null|string the region
+     *
      * @Groups("readGeography")
      */
     private $region;
 
     /**
      * @var null|string the region code
+     *
      * @Groups("readGeography")
      */
     private $regionCode;
 
     /**
      * @var null|string the street name
+     *
      * @Groups("readGeography")
      */
     private $streetName;
@@ -174,9 +192,17 @@ class Point
      *             - locality
      *             - venue
      *             - other : unknown type of point
+     *
      * @Groups("readGeography")
      */
     private $type;
+
+    /**
+     * @var null|Icon Icon of this point
+     *
+     * @Groups("readGeography")
+     */
+    private $icon;
 
     public function getCountry(): ?string
     {
@@ -356,5 +382,15 @@ class Point
     public function setType(string $type)
     {
         $this->type = $type;
+    }
+
+    public function getIcon(): ?Icon
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?Icon $icon)
+    {
+        $this->icon = $icon;
     }
 }
