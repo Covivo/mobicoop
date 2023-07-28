@@ -5,11 +5,11 @@ namespace App\Incentive\Controller;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
-use App\Incentive\Service\Manager\JourneyManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,6 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/eec/subscriptions")
+ *
+ * @Security("is_granted('ROLE_ADMIN')")
  */
 class SubscriptionController extends AbstractController
 {
@@ -48,6 +50,8 @@ class SubscriptionController extends AbstractController
 
     private const MANDATORY_TIMESTAMPS = self::MANDATORY_UPDATE_PARAMS;
 
+    private const MANDATORY_VERIFY = self::MANDATORY_UPDATE_PARAMS;
+
     /**
      * @var EntityManagerInterface
      */
@@ -57,11 +61,6 @@ class SubscriptionController extends AbstractController
      * @var EventDispatcherInterface
      */
     private $_eventDispatcher;
-
-    /**
-     * @var JourneyManager
-     */
-    private $_journeyManager;
 
     /**
      * @var Request
@@ -78,13 +77,12 @@ class SubscriptionController extends AbstractController
      */
     private $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, EntityManagerInterface $em, EventDispatcherInterface $eventDispatcherInterface, JourneyManager $journeyManager, SubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, EntityManagerInterface $em, EventDispatcherInterface $eventDispatcherInterface, SubscriptionManager $subscriptionManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
         $this->_em = $em;
         $this->_eventDispatcher = $eventDispatcherInterface;
 
-        $this->_journeyManager = $journeyManager;
         $this->_subscriptionManager = $subscriptionManager;
     }
 
@@ -165,6 +163,10 @@ class SubscriptionController extends AbstractController
     /**
      * Step 17a - Return the honor certificate.
      *
+     * Requires 2 parameters:
+     * - subscription_id
+     * - subscription_type
+     *
      * @Route("/honor_certificate")
      */
     public function getHonorCertificate()
@@ -175,19 +177,23 @@ class SubscriptionController extends AbstractController
             throw new BadRequestHttpException('The subscription has not been commited');
         }
 
-        $this->_journeyManager->setDriver($this->_subscription->getUser());
+        $this->_subscriptionManager->setDriver($this->_subscription->getUser());
 
         return new JsonResponse([
             'code' => Response::HTTP_OK,
             'message' => 'The process is complete',
             'data' => [
-                'honor_certificate' => $this->_journeyManager->getHonorCertificate($this->_subscription instanceof LongDistanceSubscription ? true : false),
+                'honor_certificate' => $this->_subscriptionManager->getHonorCertificate($this->_subscription instanceof LongDistanceSubscription ? true : false),
             ],
         ]);
     }
 
     /**
      * Gets the timestamp tokens and returns which ones have a value.
+     *
+     * Requires 2 parameters:
+     * - subscription_id
+     * - subscription_type
      *
      * @Route("/timestamps")
      */
@@ -213,41 +219,21 @@ class SubscriptionController extends AbstractController
     }
 
     /**
-     * @Route(
-     *      "/verify/{subscriptionType}/{subscriptionId}",
-     *      requirements={
-     *          "subscriptionId":"\d+"
-     *      }
-     * )
-     *
-     * @Security("is_granted('ROLE_ADMIN')")
+     * @Route("/verify")
      */
     public function verifySubscription()
     {
-        return $this->_subscriptionManager->verifySubscriptionFromControllerCommand(
-            $this->_request->get('subscription_type'),
-            $this->_request->get('subscription_id')
-        );
-    }
+        $this->_setSubscription(self::MANDATORY_VERIFY);
 
-    /**
-     * @Route(
-     *      "/timestamps/{subscriptionType}/{subscriptionId}",
-     *      requirements={
-     *          "subscriptionId":"\d+"
-     *      }
-     * )
-     *
-     * @Security("is_granted('ROLE_ADMIN')")
-     */
-    public function getSubscriptionMissingTimestamps(string $subscriptionType, string $subscriptionId)
-    {
-        return new JsonResponse(
-            [
-                'code' => Response::HTTP_OK,
-                'message' => $this->_subscriptionManager->setUserSubscriptionTimestamps($subscriptionType, $subscriptionId),
-            ]
-        );
+        $response = $this->_subscriptionManager->verifySubscription($this->_subscription);
+
+        return new JsonResponse([
+            'code' => Response::HTTP_OK,
+            'message' => 'The process is complete',
+            'data' => [
+                'subscription_state' => $response instanceof MobConnectSubscriptionTimestampsResponse ? $response->getContent() : $this->_subscription->getStatus(),
+            ],
+        ]);
     }
 
     private function _checkDependencies(array $mandatoryParams)

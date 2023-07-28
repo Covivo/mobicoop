@@ -317,7 +317,7 @@ class SubscriptionManager extends MobConnectManager
 
             $this->_em->flush();
 
-            return;
+            return $response;
         }
 
         switch (true) {
