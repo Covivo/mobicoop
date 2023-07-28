@@ -13,6 +13,7 @@ use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\JourneyValidation;
@@ -42,6 +43,11 @@ class JourneyManager extends MobConnectManager
     private $_carpoolItemRepository;
 
     /**
+     * @var LongDistanceJourneyRepository
+     */
+    private $_longDistanceJourneyRepository;
+
+    /**
      * @var EventDispatcherInterface
      */
     private $_eventDispatcher;
@@ -60,6 +66,7 @@ class JourneyManager extends MobConnectManager
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
         TimestampTokenManager $timestampTokenManager,
+        LongDistanceJourneyRepository $longDistanceJourneyRepository,
         string $carpoolProofPrefix,
         array $mobConnectParams,
         array $ssoServices
@@ -69,6 +76,7 @@ class JourneyManager extends MobConnectManager
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_carpoolItemRepository = $carpoolItemRepository;
+        $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
         $this->_eventDispatcher = $eventDispatcher;
 
         $this->_journeyValidation = $journeyValidation;
@@ -197,6 +205,10 @@ class JourneyManager extends MobConnectManager
      */
     public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
     {
+        if (CarpoolPayment::STATUS_SUCCESS !== $carpoolPayment->getStatus()) {
+            return;
+        }
+
         $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$carpoolPayment->getId());
 
         /**
@@ -205,6 +217,10 @@ class JourneyManager extends MobConnectManager
         $carpoolItems = $this->_getCarpoolItemsFromCarpoolPayment($carpoolPayment);
 
         foreach ($carpoolItems as $carpoolItem) {
+            if ($this->carpoolItemAlreadyTreated($carpoolItem)) {
+                continue;
+            }
+
             $this->setDriver($carpoolItem->getCreditorUser());
 
             $subscription = $this->_driver->getLongDistanceSubscription();
@@ -367,6 +383,16 @@ class JourneyManager extends MobConnectManager
         $this->_em->flush();
 
         return $subscription;
+    }
+
+    private function carpoolItemAlreadyTreated(CarpoolItem $carpoolItem): bool
+    {
+        $longDistanceJourneys = $this->_longDistanceJourneyRepository->findBy(['carpoolItem' => $carpoolItem]);
+        if (is_array($longDistanceJourneys) && count($longDistanceJourneys) > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     private function _getCarpoolItemsFromCarpoolPayment(CarpoolPayment $carpoolPayment): array
