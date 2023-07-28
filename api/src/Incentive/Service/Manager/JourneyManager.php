@@ -321,15 +321,6 @@ class JourneyManager extends MobConnectManager
 
             $commitmentJourney = $this->_updateShortDistanceJourney($commitmentJourney, $carpoolProof);
         } else {
-            var_dump(
-                self::SHORT_DISTANCE_TRIP_THRESHOLD <= $shortDistanceJourneysNumber,
-                is_null($carpoolProof->getAsk()),
-                is_null($carpoolProof->getAsk()->getMatching()),
-                $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance()),
-                CarpoolProof::TYPE_HIGH !== $carpoolProof->getType(),
-                !$this->_journeyValidation->isOriginOrDestinationFromFrance($carpoolProof)
-            );
-
             // Checks :
             //    - The maximum journey threshold has not been reached
             //    - The journey is a short distance journey
