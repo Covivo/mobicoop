@@ -239,7 +239,7 @@ class JourneyManager extends MobConnectManager
 
                 $params = [
                     'Date de partage des frais' => $carpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
-                    "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(),
+                    "Attestation sur l'Honneur" => $this->getHonorCertificate(),
                 ];
 
                 $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
@@ -308,7 +308,7 @@ class JourneyManager extends MobConnectManager
             }
 
             $params = [
-                "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(false),
+                "Attestation sur l'Honneur" => $this->getHonorCertificate(false),
             ];
 
             $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');

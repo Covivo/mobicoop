@@ -9,6 +9,7 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
+use App\Incentive\Service\Manager\JourneyManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -45,6 +46,8 @@ class JourneyController extends AbstractController
         self::PARAM_SUBSCRIPTION_TYPE,
     ];
 
+    private const MANDATORY_HONOR_CERTIFICATE = self::MANDATORY_UPDATE_PARAMS;
+
     /**
      * @var EntityManagerInterface
      */
@@ -56,6 +59,11 @@ class JourneyController extends AbstractController
     private $_eventDispatcher;
 
     /**
+     * @var JourneyManager
+     */
+    private $_journeyManager;
+
+    /**
      * @var Request
      */
     private $_request;
@@ -65,18 +73,20 @@ class JourneyController extends AbstractController
      */
     private $_subscription;
 
-    public function __construct(RequestStack $requestStack, EntityManagerInterface $em, EventDispatcherInterface $eventDispatcherInterface)
+    public function __construct(RequestStack $requestStack, EntityManagerInterface $em, EventDispatcherInterface $eventDispatcherInterface, JourneyManager $journeyManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
         $this->_em = $em;
         $this->_eventDispatcher = $eventDispatcherInterface;
+
+        $this->_journeyManager = $journeyManager;
     }
 
     /**
      * Step 9 - EEC subscription commit.
      *
      * Requires 3 parameters:
-     * - dependency_id -
+     * - dependency_id - LongDistanceSubscription = Proposal::id | ShortDistanceSubscription = CarpoolProof::id
      * - subscription_id
      * - subscription_type
      *
@@ -84,7 +94,7 @@ class JourneyController extends AbstractController
      */
     public function commitSubscription()
     {
-        $this->_setSubscription();
+        $this->_setSubscription(self::MANDATORY_COMMIT_PARAMS);
 
         $dependency = $this->_getDependency();
 
@@ -124,7 +134,7 @@ class JourneyController extends AbstractController
      */
     public function updateEECSubscription()
     {
-        $this->_setSubscription();
+        $this->_setSubscription(self::MANDATORY_UPDATE_PARAMS);
 
         if ($this->_subscription->getCommitmentProofJourney()) {
             $commitmentJourney = $this->_subscription->getCommitmentProofJourney();
@@ -146,9 +156,33 @@ class JourneyController extends AbstractController
         ]);
     }
 
-    private function _checkDependencies()
+    /**
+     * Step 17a - Return the honor certificate.
+     *
+     * @Route("/honor_certificate")
+     */
+    public function getHonorCertificate()
     {
-        foreach (self::MANDATORY_UPDATE_PARAMS as $key => $param) {
+        $this->_setSubscription(self::MANDATORY_HONOR_CERTIFICATE);
+
+        if (is_null($this->_subscription->getCommitmentProofJourney())) {
+            throw new BadRequestHttpException('The subscription has not been commited');
+        }
+
+        $this->_journeyManager->setDriver($this->_subscription->getUser());
+
+        return new JsonResponse([
+            'code' => Response::HTTP_OK,
+            'message' => 'The process is complete',
+            'data' => [
+                'honor_certificate' => $this->_journeyManager->getHonorCertificate($this->_subscription instanceof LongDistanceSubscription ? true : false),
+            ],
+        ]);
+    }
+
+    private function _checkDependencies(array $mandatoryParams)
+    {
+        foreach ($mandatoryParams as $key => $param) {
             if (is_null($this->_request->get($param))) {
                 throw new BadRequestHttpException('The mandatory param '.$param.' is missing');
             }
@@ -189,9 +223,9 @@ class JourneyController extends AbstractController
         return $dependency;
     }
 
-    private function _setSubscription(): self
+    private function _setSubscription(array $mandatoryParams): self
     {
-        $this->_checkDependencies();
+        $this->_checkDependencies($mandatoryParams);
 
         // @var LongDistanceSubscription|ShortDistanceSubscription
         $this->_subscription = $this->_getRepository()->findOneBy([

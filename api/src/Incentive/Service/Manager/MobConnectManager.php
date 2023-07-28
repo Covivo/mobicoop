@@ -100,6 +100,22 @@ abstract class MobConnectManager
         $this->_ssoServices = $ssoServices;
     }
 
+    public function getHonorCertificate(bool $isLongDistance = true): string
+    {
+        return $this->_honourCertificateService->generateHonourCertificate($isLongDistance);
+    }
+
+    public function setDriver(User $driver): self
+    {
+        $this->_driver = $driver;
+
+        if (!is_null($this->_driver)) {
+            $this->_honourCertificateService->setDriver($this->getDriver());
+        }
+
+        return $this;
+    }
+
     protected function isValidParameters(): bool
     {
         return
@@ -206,17 +222,6 @@ abstract class MobConnectManager
     protected function getDriver(): User
     {
         return $this->_driver;
-    }
-
-    protected function setDriver(User $driver): self
-    {
-        $this->_driver = $driver;
-
-        if (!is_null($this->_driver)) {
-            $this->_honourCertificateService->setDriver($this->getDriver());
-        }
-
-        return $this;
     }
 
     protected function getDriverPassengerProposalForCarpoolItem(CarpoolItem $carpoolItem, int $carpoolerType): ?Proposal
