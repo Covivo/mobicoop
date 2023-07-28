@@ -2,9 +2,13 @@
 
 namespace App\Incentive\Controller;
 
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Proposal;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
+use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -26,10 +30,15 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class JourneyController extends AbstractController
 {
+    public const PARAM_DEPENDENCY_ID = 'dependency_id';
     public const PARAM_SUBSCRIPTION_ID = 'subscription_id';
     public const PARAM_SUBSCRIPTION_TYPE = 'subscription_type';
 
-    private const MANDATORY_COMMIT_PARAMS = [];
+    private const MANDATORY_COMMIT_PARAMS = [
+        self::PARAM_DEPENDENCY_ID,
+        self::PARAM_SUBSCRIPTION_ID,
+        self::PARAM_SUBSCRIPTION_TYPE,
+    ];
 
     private const MANDATORY_UPDATE_PARAMS = [
         self::PARAM_SUBSCRIPTION_ID,
@@ -51,6 +60,11 @@ class JourneyController extends AbstractController
      */
     private $_request;
 
+    /**
+     * @var LongDistanceSubscription|ShortDistanceSubscription
+     */
+    private $_subscription;
+
     public function __construct(RequestStack $requestStack, EntityManagerInterface $em, EventDispatcherInterface $eventDispatcherInterface)
     {
         $this->_request = $requestStack->getCurrentRequest();
@@ -61,45 +75,66 @@ class JourneyController extends AbstractController
     /**
      * Step 9 - EEC subscription commit.
      *
+     * Requires 3 parameters:
+     * - dependency_id -
+     * - subscription_id
+     * - subscription_type
+     *
      * @Route("/commit")
      */
     public function commitSubscription()
     {
+        $this->_setSubscription();
+
+        $dependency = $this->_getDependency();
+
+        if ($dependency instanceof Proposal) {
+            if ($dependency->getUser()->getId() != $this->_subscription->getUser()->getId()) {
+                throw new BadRequestHttpException('The driver associated with the proposal is not the one associated with the subscription');
+            }
+
+            $event = new FirstLongDistanceJourneyPublishedEvent($dependency);
+            $this->_eventDispatcher->dispatch(FirstLongDistanceJourneyPublishedEvent::NAME, $event);
+        }
+
+        if ($dependency instanceof CarpoolProof) {
+            if ($dependency->getDriver()->getId() != $this->_subscription->getUser()->getId()) {
+                throw new BadRequestHttpException('The driver associated with the carpoolProof is not the one associated with the subscription');
+            }
+
+            exit('Fin de test - Check driver');
+            $event = new FirstShortDistanceJourneyPublishedEvent($dependency);
+            $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyPublishedEvent::NAME, $event);
+        }
+
+        return new JsonResponse([
+            'code' => Response::HTTP_OK,
+            'message' => 'The process is complete',
+        ]);
     }
 
     /**
      * Step 17 - EEC subscription update.
      *
+     * Requires 2 parameters:
+     * - subscription_id
+     * - subscription_type
+     *
      * @Route("/update")
      */
     public function updateEECSubscription()
     {
-        foreach (self::MANDATORY_UPDATE_PARAMS as $key => $param) {
-            if (is_null($this->_request->get($param))) {
-                throw new BadRequestHttpException('The mandatory param '.$param.' is missing');
-            }
-        }
+        $this->_setSubscription();
 
-        /**
-         * @var LongDistanceSubscription|ShortDistanceSubscription
-         */
-        $subscription = $this->_getRepository()->findOneBy([
-            'subscriptionId' => $this->_request->get(self::PARAM_SUBSCRIPTION_ID),
-        ]);
+        if ($this->_subscription->getCommitmentProofJourney()) {
+            $commitmentJourney = $this->_subscription->getCommitmentProofJourney();
 
-        if (is_null($subscription)) {
-            throw new NotFoundHttpException('The subscription with the '.$this->_request->get(self::PARAM_SUBSCRIPTION_ID).' ID was not found');
-        }
-
-        if ($subscription->getCommitmentProofJourney()) {
-            $commitmentJourney = $subscription->getCommitmentProofJourney();
-
-            if ($subscription instanceof LongDistanceSubscription && !is_null($commitmentJourney->getCarpoolPayment())) {
+            if ($this->_subscription instanceof LongDistanceSubscription && !is_null($commitmentJourney->getCarpoolPayment())) {
                 $event = new ElectronicPaymentValidatedEvent($commitmentJourney->getCarpoolPayment());
                 $this->_eventDispatcher->dispatch(ElectronicPaymentValidatedEvent::NAME, $event);
             }
 
-            if ($subscription instanceof ShortDistanceSubscription && !is_null($commitmentJourney->getCarpoolProof())) {
+            if ($this->_subscription instanceof ShortDistanceSubscription && !is_null($commitmentJourney->getCarpoolProof())) {
                 $event = new CarpoolProofValidatedEvent($commitmentJourney->getCarpoolProof());
                 $this->_eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
             }
@@ -109,6 +144,65 @@ class JourneyController extends AbstractController
             'code' => Response::HTTP_OK,
             'message' => 'The process is complete',
         ]);
+    }
+
+    private function _checkDependencies()
+    {
+        foreach (self::MANDATORY_UPDATE_PARAMS as $key => $param) {
+            if (is_null($this->_request->get($param))) {
+                throw new BadRequestHttpException('The mandatory param '.$param.' is missing');
+            }
+        }
+    }
+
+    /**
+     * @return CarpoolProof|Proposal
+     */
+    private function _getDependency()
+    {
+        switch (true) {
+            case $this->_subscription instanceof LongDistanceSubscription:
+                /**
+                 * @var Proposal
+                 */
+                $dependency = $this->_em->getRepository(Proposal::class)->find($this->_request->get(self::PARAM_DEPENDENCY_ID));
+
+                if (is_null($dependency)) {
+                    throw new NotFoundHttpException('The carpoolProof with the '.$this->_request->get(self::PARAM_DEPENDENCY_ID).' ID was not found');
+                }
+
+                break;
+
+            case $this->_subscription instanceof ShortDistanceSubscription:
+                /**
+                 * @var CarpoolProof
+                 */
+                $dependency = $this->_em->getRepository(CarpoolProof::class)->find($this->_request->get(self::PARAM_DEPENDENCY_ID));
+
+                if (is_null($dependency)) {
+                    throw new NotFoundHttpException('The carpoolProof with the '.$this->_request->get(self::PARAM_DEPENDENCY_ID).' ID was not found');
+                }
+
+                break;
+        }
+
+        return $dependency;
+    }
+
+    private function _setSubscription(): self
+    {
+        $this->_checkDependencies();
+
+        // @var LongDistanceSubscription|ShortDistanceSubscription
+        $this->_subscription = $this->_getRepository()->findOneBy([
+            'subscriptionId' => $this->_request->get(self::PARAM_SUBSCRIPTION_ID),
+        ]);
+
+        if (is_null($this->_subscription)) {
+            throw new NotFoundHttpException('The subscription with the '.$this->_request->get(self::PARAM_SUBSCRIPTION_ID).' ID was not found');
+        }
+
+        return $this;
     }
 
     /**
