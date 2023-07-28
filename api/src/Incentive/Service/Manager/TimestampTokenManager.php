@@ -140,6 +140,16 @@ class TimestampTokenManager extends MobConnectManager
         return $this->_currentSubscription;
     }
 
+    /**
+     * Get the value of _currentTimestampTokensResponse.
+     *
+     * @return MobConnectSubscriptionTimestampsResponse
+     */
+    public function getCurrentTimestampTokensResponse()
+    {
+        return $this->_currentTimestampTokensResponse;
+    }
+
     private function _isMissingTimestampToken(int $tokenType): bool
     {
         switch ($tokenType) {

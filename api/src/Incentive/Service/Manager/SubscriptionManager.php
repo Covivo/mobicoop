@@ -357,6 +357,29 @@ class SubscriptionManager extends MobConnectManager
         return $subscription;
     }
 
+    /**
+     * Set missing subscription timestamps.
+     *
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     *
+     * @return bool Returns if getting tokens was successful
+     */
+    public function setTimestamps($subscription): bool
+    {
+        $this->setDriver($subscription->getUser());
+
+        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
+
+        $this->_em->flush();
+
+        return false;
+    }
+
+    public function getTimestamps()
+    {
+        return $this->_timestampTokenManager->getCurrentTimestampTokensResponse();
+    }
+
     private function _computeShortDistance()
     {
         $this->_getCEEEligibleProofsShortDistance();

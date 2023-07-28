@@ -46,6 +46,8 @@ class SubscriptionController extends AbstractController
 
     private const MANDATORY_HONOR_CERTIFICATE = self::MANDATORY_UPDATE_PARAMS;
 
+    private const MANDATORY_TIMESTAMPS = self::MANDATORY_UPDATE_PARAMS;
+
     /**
      * @var EntityManagerInterface
      */
@@ -185,6 +187,32 @@ class SubscriptionController extends AbstractController
     }
 
     /**
+     * Gets the timestamp tokens and returns which ones have a value.
+     *
+     * @Route("/timestamps")
+     */
+    public function getTimestampToken()
+    {
+        $this->_setSubscription(self::MANDATORY_TIMESTAMPS);
+
+        $this->_subscriptionManager->setTimestamps($this->_subscription);
+
+        $tokens = $this->_subscriptionManager->getTimestamps();
+
+        return new JsonResponse([
+            'code' => Response::HTTP_OK,
+            'message' => 'The process is complete',
+            'data' => [
+                'timestamp_tokens' => [
+                    'subscription' => !is_null($tokens->getIncentiveProofTimestampToken()),
+                    'commitmment' => !is_null($tokens->getCommitmentProofTimestampToken()),
+                    'update' => !is_null($tokens->getHonorCertificateProofTimestampToken()),
+                ],
+            ],
+        ]);
+    }
+
+    /**
      * @Route(
      *      "/verify/{subscriptionType}/{subscriptionId}",
      *      requirements={
@@ -286,7 +314,7 @@ class SubscriptionController extends AbstractController
      */
     private function _getRepository()
     {
-        switch ($this->_request->get(self::PARAM_SUBSCRIPTION_TYPE)) {
+        switch (strtolower(trim($this->_request->get(self::PARAM_SUBSCRIPTION_TYPE)))) {
             case LongDistanceSubscription::SUBSCRIPTION_TYPE:
                 /**
                  * @var LongDistanceSubscription
