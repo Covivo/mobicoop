@@ -6,7 +6,9 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\Incentive\Entity\Log\Log;
+use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
@@ -130,7 +132,9 @@ class TimestampTokenManager extends MobConnectManager
         if (!empty($this->_missingTimestampTokens)) {
             $this->_setSubscriptionMissingTimestampTokens();
 
-            $this->_setMissingCommitmentJourney();
+            if (is_null($this->_currentSubscription->getCommitmentProofJourney()) && !is_null($this->_currentTimestampTokensResponse->getJourneyId())) {
+                $this->_setMissingCommitmentJourney();
+            }
         }
 
         $this->_resetAll();
@@ -302,30 +306,31 @@ class TimestampTokenManager extends MobConnectManager
 
     private function _setMissingCommitmentJourney(): self
     {
-        if (is_null($this->_currentSubscription->getCommitmentProofJourney()) && !is_null($this->_currentTimestampTokensResponse->getJourneyId())) {
-            $this->_loggerService->log('The commitment journey is missing; we will try to recover it from the moB data');
-            $journeyId = $this->_currentTimestampTokensResponse->getJourneyId();
+        $this->_loggerService->log('The commitment journey is missing; we will try to recover it from the moB data');
+        $journeyId = $this->_currentTimestampTokensResponse->getJourneyId();
 
-            $commitmentJourney = null;
-            $id = null;
+        $commitmentJourney = null;
+        $id = null;
 
-            if (preg_match('/^'.LongDistanceSubscription::COMMITMENT_PREFIX.'/', $journeyId)) {
-                $id = intval(substr($journeyId, strlen(LongDistanceSubscription::COMMITMENT_PREFIX.'_')));
+        if (preg_match('/^'.LongDistanceSubscription::COMMITMENT_PREFIX.'/', $journeyId)) {
+            $id = intval(substr($journeyId, strlen(LongDistanceSubscription::COMMITMENT_PREFIX.'_')));
 
-                switch (LongDistanceSubscription::COMMITMENT_PREFIX) {
-                    case 'Proposal':
-                        $commitmentJourney = $this->_em->getRepository(Proposal::class)->find($id);
-                }
-            } else {
-                $id = intval(substr($journeyId, strlen($this->_carpoolProofPrefix)));
-                $commitmentJourney = $this->_em->getRepository(CarpoolProof::class)->find($id);
+            $proposal = $this->_em->getRepository(Proposal::class)->find($id);
+            if (!is_null($proposal)) {
+                $commitmentJourney = new LongDistanceJourney($proposal);
             }
-
-            if (!is_null($commitmentJourney)) {
-                $this->_currentSubscription->setCommitmentProofJourney($commitmentJourney);
-            } else {
-                $this->_loggerService->log('The commitment journey corresponding to '.$journeyId.' was not found');
+        } else {
+            $id = intval(substr($journeyId, strlen($this->_carpoolProofPrefix)));
+            $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($id);
+            if (!is_null($carpoolProof)) {
+                $commitmentJourney = new ShortDistanceJourney($carpoolProof);
             }
+        }
+
+        if (!is_null($commitmentJourney)) {
+            $this->_currentSubscription->setCommitmentProofJourney($commitmentJourney);
+        } else {
+            $this->_loggerService->log('The commitment journey corresponding to '.$journeyId.' was not found');
         }
 
         return $this;
