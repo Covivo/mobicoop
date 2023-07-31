@@ -4,6 +4,7 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
@@ -355,6 +356,11 @@ class SubscriptionManager extends MobConnectManager
         $this->_em->flush();
 
         return $subscription;
+    }
+
+    public function getSubscription(string $subscriptionId): MobConnectSubscriptionResponse
+    {
+        return $this->getMobSubscription($subscriptionId);
     }
 
     /**

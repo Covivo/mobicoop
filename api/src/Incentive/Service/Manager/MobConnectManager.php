@@ -149,6 +149,13 @@ abstract class MobConnectManager
             );
     }
 
+    protected function getMobSubscription(string $subscriptionId)
+    {
+        $this->setApiProvider();
+
+        return $this->_apiProvider->getMobSubscription($subscriptionId);
+    }
+
     protected function getRPCOperatorId(int $id): string
     {
         return $this->_carpoolProofPrefix.$id;

@@ -4,18 +4,14 @@ namespace App\Incentive\Controller;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
-use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
-use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
+use App\Incentive\Service\Manager\JourneyManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
-use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -41,16 +37,18 @@ class SubscriptionController extends AbstractController
         self::PARAM_SUBSCRIPTION_TYPE,
     ];
 
-    private const MANDATORY_UPDATE_PARAMS = [
+    private const MANDATORY_GET = [
         self::PARAM_SUBSCRIPTION_ID,
         self::PARAM_SUBSCRIPTION_TYPE,
     ];
 
-    private const MANDATORY_HONOR_CERTIFICATE = self::MANDATORY_UPDATE_PARAMS;
+    private const MANDATORY_UPDATE_PARAMS = self::MANDATORY_GET;
 
-    private const MANDATORY_TIMESTAMPS = self::MANDATORY_UPDATE_PARAMS;
+    private const MANDATORY_HONOR_CERTIFICATE = self::MANDATORY_GET;
 
-    private const MANDATORY_VERIFY = self::MANDATORY_UPDATE_PARAMS;
+    private const MANDATORY_TIMESTAMPS = self::MANDATORY_GET;
+
+    private const MANDATORY_VERIFY = self::MANDATORY_GET;
 
     /**
      * @var EntityManagerInterface
@@ -58,9 +56,9 @@ class SubscriptionController extends AbstractController
     private $_em;
 
     /**
-     * @var EventDispatcherInterface
+     * @var JourneyManager
      */
-    private $_eventDispatcher;
+    private $_journeyManager;
 
     /**
      * @var Request
@@ -77,13 +75,29 @@ class SubscriptionController extends AbstractController
      */
     private $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, EntityManagerInterface $em, EventDispatcherInterface $eventDispatcherInterface, SubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, EntityManagerInterface $em, JourneyManager $journeyManager, SubscriptionManager $subscriptionManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
         $this->_em = $em;
-        $this->_eventDispatcher = $eventDispatcherInterface;
 
+        $this->_journeyManager = $journeyManager;
         $this->_subscriptionManager = $subscriptionManager;
+    }
+
+    /**
+     * Return the subscription details.
+     *
+     * @Route("/")
+     */
+    public function getSubscription()
+    {
+        $this->_setSubscription(self::MANDATORY_GET);
+
+        return new JsonResponse([
+            'code' => Response::HTTP_OK,
+            'message' => 'The process is complete',
+            'content' => $this->_subscriptionManager->getSubscription($this->_subscription->getSubscriptionId()),
+        ]);
     }
 
     /**
@@ -107,8 +121,7 @@ class SubscriptionController extends AbstractController
                 throw new BadRequestHttpException('The driver associated with the proposal is not the one associated with the subscription');
             }
 
-            $event = new FirstLongDistanceJourneyPublishedEvent($dependency);
-            $this->_eventDispatcher->dispatch(FirstLongDistanceJourneyPublishedEvent::NAME, $event);
+            $this->_journeyManager->declareFirstLongDistanceJourney($dependency);
         }
 
         if ($dependency instanceof CarpoolProof) {
@@ -116,9 +129,7 @@ class SubscriptionController extends AbstractController
                 throw new BadRequestHttpException('The driver associated with the carpoolProof is not the one associated with the subscription');
             }
 
-            exit('Fin de test - Check driver');
-            $event = new FirstShortDistanceJourneyPublishedEvent($dependency);
-            $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyPublishedEvent::NAME, $event);
+            $this->_journeyManager->declareFirstShortDistanceJourney($dependency);
         }
 
         return new JsonResponse([
@@ -144,13 +155,11 @@ class SubscriptionController extends AbstractController
             $commitmentJourney = $this->_subscription->getCommitmentProofJourney();
 
             if ($this->_subscription instanceof LongDistanceSubscription && !is_null($commitmentJourney->getCarpoolPayment())) {
-                $event = new ElectronicPaymentValidatedEvent($commitmentJourney->getCarpoolPayment());
-                $this->_eventDispatcher->dispatch(ElectronicPaymentValidatedEvent::NAME, $event);
+                $this->_journeyManager->receivingElectronicPayment($commitmentJourney->getCarpoolPayment());
             }
 
             if ($this->_subscription instanceof ShortDistanceSubscription && !is_null($commitmentJourney->getCarpoolProof())) {
-                $event = new CarpoolProofValidatedEvent($commitmentJourney->getCarpoolProof());
-                $this->_eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
+                $this->_journeyManager->validationOfProof($commitmentJourney->getCarpoolProof());
             }
         }
 
@@ -176,8 +185,6 @@ class SubscriptionController extends AbstractController
         if (is_null($this->_subscription->getCommitmentProofJourney())) {
             throw new BadRequestHttpException('The subscription has not been commited');
         }
-
-        $this->_subscriptionManager->setDriver($this->_subscription->getUser());
 
         return new JsonResponse([
             'code' => Response::HTTP_OK,
@@ -291,6 +298,8 @@ class SubscriptionController extends AbstractController
         if (is_null($this->_subscription)) {
             throw new NotFoundHttpException('The subscription with the '.$this->_request->get(self::PARAM_SUBSCRIPTION_ID).' ID was not found');
         }
+
+        $this->_subscriptionManager->setDriver($this->_subscription->getUser());
 
         return $this;
     }
