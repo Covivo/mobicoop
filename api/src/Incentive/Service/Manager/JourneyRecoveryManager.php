@@ -5,6 +5,7 @@ namespace App\Incentive\Service\Manager;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\EecResponse;
 use App\Incentive\Entity\Log\Log;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\JourneyValidation;
@@ -60,11 +61,12 @@ class JourneyRecoveryManager extends JourneyManager
         SubscriptionValidation $subscriptionValidation,
         UserRepository $userRepository,
         UserValidation $userValidation,
+        LongDistanceJourneyRepository $longDistanceJourneyRepository,
         string $carpoolProofPrefix,
         array $mobConnectParams,
         array $ssoServices
     ) {
-        parent::__construct($carpoolProofRepository, $carpoolItemRepository, $em, $eventDispatcher, $journeyValidation, $loggerService, $honourCertificateService, $timestampTokenManager, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($carpoolProofRepository, $carpoolItemRepository, $em, $eventDispatcher, $journeyValidation, $loggerService, $honourCertificateService, $timestampTokenManager, $longDistanceJourneyRepository, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
         $this->_subscriptionValidation = $subscriptionValidation;
         $this->_userRepository = $userRepository;
