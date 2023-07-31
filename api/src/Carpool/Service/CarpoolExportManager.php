@@ -24,7 +24,6 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\CarpoolExport;
-use App\Carpool\Entity\CarpoolProof;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
@@ -51,8 +50,6 @@ class CarpoolExportManager
 
     /**
      * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         Security $security,
@@ -112,7 +109,12 @@ class CarpoolExportManager
             $carpoolExport->setId($carpoolItem->getId());
             $carpoolExport->setDate($carpoolItem->getItemDate());
             $carpoolExport->setAmount($carpoolItem->getAmount());
-            $carpoolExport->setDistance($carpoolItem->getDistance());
+            // we have a carpoolItem distance since evol #5451 but not for carpools made before that evol
+            if (!is_null($carpoolItem->getDistance())) {
+                $carpoolExport->setDistance($carpoolItem->getDistance());
+            } else {
+                $carpoolExport->setDistance(!is_null($carpoolItem->getAsk()) ? $carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000 : null);
+            }
             $totalDistance += !is_null($carpoolItem->getAsk()) ? ($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000) : 0;
             $totalSavedCo2 += !is_null($carpoolItem->getAsk()) ? ($this->userManager->computeSavedCo2($carpoolItem->getAsk(), $user->getId(), true)) : 0;
             //    we set the payment mode
@@ -166,37 +168,27 @@ class CarpoolExportManager
                 }
             }
             //    we set the pickUp and dropOff
-            $carpoolExport->setPickUp($carpoolItem->getPickUp());
-            $carpoolExport->setDropOff($carpoolItem->getDropOff());
-            if (is_null($carpoolItem->getAsk())) {
+            // we have a carpoolItem PickUp and DropOff since evol #5451 but not for carpools made before that evol
+            if (!is_null($carpoolItem->getPickUp()) && !is_null($carpoolItem->getDropOff())) {
+                $carpoolExport->setPickUp($carpoolItem->getPickUp());
+                $carpoolExport->setDropOff($carpoolItem->getDropOff());
+            } elseif (!is_null($carpoolItem->getAsk())) {
+                $waypoints = $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
+                $carpoolExport->setPickUp($waypoints[0]->getAddress()->getAddressLocality());
+
+                foreach ($waypoints as $waypoint) {
+                    if ($waypoint->isDestination()) {
+                        $carpoolExport->setDropOff($waypoint->getAddress()->getAddressLocality());
+                    }
+                }
+            } else {
                 $carpoolExports[] = $carpoolExport;
 
                 continue;
             }
-            //    we set the certification type
-            if ($carpoolItem->getAsk()->getCarpoolProofs()) {
-                foreach ($carpoolItem->getAsk()->getCarpoolProofs() as $carpoolProof) {
-                    switch ($carpoolProof->getType()) {
-                        case CarpoolProof::TYPE_UNDETERMINED_CLASSIC:
-                            $carpoolExport->setCertification(null);
 
-                            break;
-
-                        case CarpoolProof::TYPE_UNDETERMINED_DYNAMIC:
-                            $carpoolExport->setCertification(null);
-
-                            break;
-
-                        default:
-                            $carpoolExport->setCertification(null);
-                            if (CarpoolProof::STATUS_VALIDATED == $carpoolProof->getStatus()) {
-                                $carpoolExport->setCertification($carpoolProof->getType());
-                            }
-
-                            break;
-                    }
-                }
-            }
+            // We set the certification type
+            $carpoolExport->setCertification($carpoolItem->getCarpoolProof());
 
             $carpoolExports[] = $carpoolExport;
         }

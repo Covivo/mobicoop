@@ -34,6 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A payment profile.
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -63,8 +64,11 @@ class PaymentProfile
      * @var int The id of this payment profile
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"readPayment"})
      */
     private $id;
@@ -73,10 +77,15 @@ class PaymentProfile
      * @var User The user owning this payment profile
      *
      * @ApiProperty(push=true)
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="paymentProfiles")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"readPayment","writePayment"})
+     *
      * @MaxDepth(1)
+     *
      * @Assert\NotBlank
      */
     private $user;
@@ -85,6 +94,7 @@ class PaymentProfile
      * @var string The provider managing this payment profile
      *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $provider;
@@ -93,6 +103,7 @@ class PaymentProfile
      * @var string The id used by the provider of this payment profile
      *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $identifier;
@@ -101,6 +112,7 @@ class PaymentProfile
      * @var string The id used by the provider for a validation (i.e KYC document...)
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $validationId;
@@ -109,6 +121,7 @@ class PaymentProfile
      * @var int The status of this payment profile (0 : Inactive, 1 : Active)
      *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $status;
@@ -117,6 +130,7 @@ class PaymentProfile
      * @var bool If the current payment profile is linked to one or several bank accounts
      *
      * @ORM\Column(type="boolean")
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $electronicallyPayable;
@@ -125,6 +139,7 @@ class PaymentProfile
      * @var int The validation status of the profile (0 : pending, 1 : validated, 2 : rejected, 3 : outdated)
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $validationStatus;
@@ -133,6 +148,7 @@ class PaymentProfile
      * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readPayment"})
      */
     private $createdDate;
@@ -141,6 +157,7 @@ class PaymentProfile
      * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readPayment"})
      */
     private $updatedDate;
@@ -149,6 +166,7 @@ class PaymentProfile
      * @var \DateTimeInterface Date when the validation has been asked to the payment provider
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readPayment"})
      */
     private $validationAskedDate;
@@ -157,6 +175,7 @@ class PaymentProfile
      * @var \DateTimeInterface Date when the validation has been granted by the payment provider
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readPayment"})
      */
     private $validatedDate;
@@ -165,25 +184,30 @@ class PaymentProfile
      * @var \DateTimeInterface Date when the validation has been declared outdated by the payment provider
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readPayment"})
      */
     private $validationOutdatedDate;
 
     /**
      * @var null|array A user Bank accounts
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $bankAccounts;
 
     /**
      * @var null|array A user wallets
+     *
      * @Groups({"readPayment"})
      */
     private $wallets;
 
     /**
      * @var null|int The reason why the document is refused
+     *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $refusalReason;
@@ -251,6 +275,14 @@ class PaymentProfile
         $this->status = $status;
 
         return $this;
+    }
+
+    /**
+     * Return the banking profile has a validated status 1.
+     */
+    public function isValidated(): bool
+    {
+        return self::VALIDATION_VALIDATED === $this->getValidationStatus();
     }
 
     public function getValidationStatus(): ?int

@@ -581,6 +581,7 @@ export default {
         sender: {
           id: this.user.id,
           identityStatus:this.user.identityStatus,
+          bankingIdentityStatus:this.user.bankingIdentityStatus,
           eecStatus:this.user.eecStatus,
           role: e.role === DRIVER ? PASSENGER : DRIVER
         },
