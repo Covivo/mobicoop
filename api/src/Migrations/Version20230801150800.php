@@ -16,6 +16,7 @@ final class Version20230801150800 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('UPDATE `structure` set `beneficiary_auto_approval` = true');
+        $this->addSql("ALTER TABLE `structure` CHANGE `beneficiary_auto_approval` `beneficiary_auto_approval` TINYINT(1) NULL DEFAULT '1'");
     }
 
     public function down(Schema $schema): void
