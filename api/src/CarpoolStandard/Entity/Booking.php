@@ -230,6 +230,13 @@ class Booking
      */
     private $message;
 
+    /**
+     * @var null|bool true if the user is the driver of the related booking
+     *
+     * @Groups({"read", "write"})
+     */
+    private $roleDriver;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -462,6 +469,18 @@ class Booking
     public function setMessage(?string $message): self
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function isRoleDriver(): ?bool
+    {
+        return $this->roleDriver;
+    }
+
+    public function setRoleDriver(bool $isRoleDriver): ?self
+    {
+        $this->roleDriver = $isRoleDriver;
 
         return $this;
     }

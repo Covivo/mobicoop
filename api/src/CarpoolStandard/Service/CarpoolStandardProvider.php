@@ -27,6 +27,7 @@ use App\CarpoolStandard\Entity\Booking;
 use App\CarpoolStandard\Entity\Message;
 use App\CarpoolStandard\Exception\CarpoolStandardException;
 use App\DataProvider\Entity\InteropProvider;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
@@ -40,15 +41,18 @@ class CarpoolStandardProvider
     private $baseUri;
     private $apiKey;
     private $providerInstance;
+    private $security;
 
     public function __construct(
         string $provider,
         string $baseUri,
-        string $apiKey
+        string $apiKey,
+        Security $security
     ) {
         $this->provider = $provider;
         $this->baseUri = $baseUri;
         $this->apiKey = $apiKey;
+        $this->security = $security;
     }
 
     public function checkCarpoolStandardConfiguration()
@@ -59,7 +63,8 @@ class CarpoolStandardProvider
                 $this->providerInstance = new $providerClass(
                     $this->provider,
                     $this->baseUri,
-                    $this->apiKey
+                    $this->apiKey,
+                    $this->security
                 );
             }
         } else {

@@ -179,6 +179,13 @@ class Booking implements ResourceInterface, \JsonSerializable
      */
     private $message;
 
+    /**
+     * @var null|bool true if the user is the driver for the concerned booking
+     *
+     * @Groups({"get","post","put"})
+     */
+    private $roleDriver;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -407,6 +414,18 @@ class Booking implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function isRoleDriver(): ?bool
+    {
+        return $this->roleDriver;
+    }
+
+    public function setRoleDriver(bool $isRoleDriver): ?self
+    {
+        $this->roleDriver = $isRoleDriver;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -430,6 +449,7 @@ class Booking implements ResourceInterface, \JsonSerializable
             'driverJourneyId' => $this->getDriverJourneyId(),
             'passengerJourneyId' => $this->getPassengerJourneyId(),
             'message' => $this->getMessage(),
+            'roleDriver' => $this->isRoleDriver(),
         ];
     }
 }
