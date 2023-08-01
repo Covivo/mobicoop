@@ -15,6 +15,7 @@
     },
     "urlUpdateAsk": "/utilisateur/messages/updateAsk",
     "urlSend": "/utilisateur/messages/envoyer",
+    "urlUpdateBooking": "/utilisateur/messages/updateBooking",
     "headers": {
         "context": "Iragarkia",
         "messages": "Mezuak"

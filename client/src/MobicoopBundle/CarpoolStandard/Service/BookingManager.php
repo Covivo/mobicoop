@@ -115,9 +115,7 @@ class BookingManager
 
     public function patchBooking(array $data)
     {
-        var_dump($data);
-
-        $response = $this->dataProvider->patch(Booking::DEFAULT_ID, null, ['externalId' => $data['externalId'], 'status' => $data['externalStatus']]);
+        $response = $this->dataProvider->patch(Booking::DEFAULT_ID, null, ['externalId' => $data['idBooking'], 'status' => $data['status']]);
         if (201 != $response->getCode()) {
             return $response->getValue();
         }

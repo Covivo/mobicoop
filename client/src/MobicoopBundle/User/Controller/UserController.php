@@ -1205,6 +1205,16 @@ class UserController extends AbstractController
         return new JsonResponse('Not a post');
     }
 
+    public function userMessageUpdateBooking(Request $request, BookingManager $bookingManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $return = $bookingManager->patchBooking($data);
+
+            return new JsonResponse($return);
+        }
+    }
+
     /**
      * Connect a user by his facebook credentials
      * AJAX.

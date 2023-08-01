@@ -154,9 +154,6 @@ class InteropProvider implements CarpoolStandardProviderInterface
 
     public function patchBooking(Booking $booking)
     {
-        var_dump($booking->getId());
-
-        exit;
         $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_BOOKING.'/'.$booking->getId());
 
         $headers = [
