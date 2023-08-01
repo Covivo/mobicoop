@@ -151,12 +151,12 @@ class SubscriptionManager extends MobConnectManager
 
     public function getUserEECEligibility(User $user): EecEligibility
     {
+        $this->setDriver($user);
+
         $userEligibility = new EecEligibility($user);
 
-        $thresholdDate = $this->getThresholdDate();
-
-        $userEligibility->setLongDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, $thresholdDate));
-        $userEligibility->setShortDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, $thresholdDate, false));
+        $userEligibility->setLongDistanceJourneysNumber(count($this->getEECCompliantProofsObtainedSinceDate(LongDistanceSubscription::SUBSCRIPTION_TYPE)));
+        $userEligibility->setShortDistanceJourneysNumber(count($this->getEECCompliantProofsObtainedSinceDate(ShortDistanceSubscription::SUBSCRIPTION_TYPE)));
         $userEligibility->setLongDistanceDrivingLicenceNumberDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
         $userEligibility->setLongDistancePhoneDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
         $userEligibility->setShortDistanceDrivingLicenceNumberDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
