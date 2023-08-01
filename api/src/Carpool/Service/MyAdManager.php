@@ -545,6 +545,8 @@ class MyAdManager
             'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
             'askId' => $ask->getId(),
             'askFrequency' => $ask->getCriteria()->getFrequency(),
+            'eecStatus' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getEecStatus() : $ask->getUser()->getEecStatus(),
+            'bankingIdentityStatus' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getBankingIdentityStatus() : $ask->getUser()->getBankingIdentityStatus(),
         ];
 
         // date and time
@@ -1096,6 +1098,8 @@ class MyAdManager
             'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
             'askId' => $ask->getId(),
             'askFrequency' => $ask->getCriteria()->getFrequency(),
+            'eecStatus' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getEecStatus() : $ask->getUser()->getEecStatus(),
+            'bankingIdentityStatus' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getBankingIdentityStatus() : $ask->getUser()->getBankingIdentityStatus(),
         ];
 
         // date and time
