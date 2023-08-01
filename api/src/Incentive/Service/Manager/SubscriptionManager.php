@@ -74,11 +74,6 @@ class SubscriptionManager extends MobConnectManager
      */
     private $_subscriptionValidation;
 
-    /**
-     * @var UserValidation
-     */
-    private $_userValidation;
-
     public function __construct(
         EntityManagerInterface $em,
         SubscriptionValidation $subscriptionValidation,
@@ -110,21 +105,21 @@ class SubscriptionManager extends MobConnectManager
      *
      * For the authenticated user, if needed, creates the CEE sheets.
      */
-    public function createSubscriptions(User $driver)
+    public function createSubscriptions(User $user)
     {
         if (!$this->isValidParameters()) {
             return;
         }
 
-        $this->_driver = $driver;
+        $this->setDriver($user);
 
         if (
-            is_null($this->_driver->getLongDistanceSubscription())
-            && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver)
+            is_null($this->getDriver()->getLongDistanceSubscription())
+            && $this->isDriverAccountReadyForSubscription(LongDistanceSubscription::SUBSCRIPTION_TYPE)
         ) {
             $postResponse = $this->postSubscription();
 
-            $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $postResponse);
+            $longDistanceSubscription = new LongDistanceSubscription($this->getDriver(), $postResponse);
             $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
             $longDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($longDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
@@ -133,12 +128,12 @@ class SubscriptionManager extends MobConnectManager
         }
 
         if (
-            is_null($this->_driver->getShortDistanceSubscription())
-            && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver, false)
+            is_null($this->getDriver()->getShortDistanceSubscription())
+            && $this->isDriverAccountReadyForSubscription(ShortDistanceSubscription::SUBSCRIPTION_TYPE)
         ) {
             $postResponse = $this->postSubscription(false);
 
-            $shortDistanceSubscription = new ShortDistanceSubscription($this->_driver, $postResponse);
+            $shortDistanceSubscription = new ShortDistanceSubscription($this->getDriver(), $postResponse);
             $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
             $shortDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($shortDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);

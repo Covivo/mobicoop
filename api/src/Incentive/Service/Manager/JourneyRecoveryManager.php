@@ -44,11 +44,6 @@ class JourneyRecoveryManager extends JourneyManager
      */
     private $_userRepository;
 
-    /**
-     * @var UserValidation
-     */
-    private $_userValidation;
-
     public function __construct(
         CarpoolProofRepository $carpoolProofRepository,
         CarpoolItemRepository $carpoolItemRepository,

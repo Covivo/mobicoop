@@ -13,6 +13,7 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Validation\UserValidation;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,6 +72,11 @@ abstract class MobConnectManager
      * @var int
      */
     protected $_carpoolProofPrefix;
+
+    /**
+     * @var UserValidation
+     */
+    protected $_userValidation;
 
     /**
      * @var MobConnectApiProvider
@@ -305,5 +311,17 @@ abstract class MobConnectManager
                     && $carpoolProof->isEECCompliant($distanceType);
             })
         );
+    }
+
+    /**
+     * Returns if the driver's account meets the conditions to subscribe to EEC incentives:
+     * - The driver moB Connect authentication is valid
+     * - The driver has not made any trip that complies with the EEC standard since the threshold date.
+     */
+    protected function isDriverAccountReadyForSubscription(string $distanceType): bool
+    {
+        return
+            $this->_userValidation->isUserValid($this->getDriver())
+            && 0 === count($this->getEECCompliantProofsObtainedSinceDate($distanceType));
     }
 }
