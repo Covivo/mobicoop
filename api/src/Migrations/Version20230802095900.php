@@ -55,46 +55,6 @@ final class Version20230802095900 extends AbstractMigration
                             user_auth_assignment
                         WHERE
                             auth_item_id = 172');
-
-        // Add ROLE_SOLIDARY_VOLUNTEER to all user with ROLE_SOLIDARY_VOLUNTEER_CANDIDATE and no ROLE_SOLIDARY_VOLUNTEER
-        $this->addSql('INSERT INTO user_auth_assignment (user_id, auth_item_id)
-            select
-                user.id,
-                11
-            from
-                user
-                inner join user_auth_assignment on user_auth_assignment.user_id = user.id
-            where
-                (
-                    user_auth_assignment.auth_item_id = 11
-                    or user_auth_assignment.auth_item_id = 171
-                )
-                and user.id in (
-                    select
-                        user.id
-                    from
-                        user
-                        inner join user_auth_assignment on user_auth_assignment.user_id = user.id
-                    where
-                        user_auth_assignment.auth_item_id = 171
-                )
-                and user.id not in (
-                    select
-                        user.id
-                    from
-                        user
-                        inner join user_auth_assignment on user_auth_assignment.user_id = user.id
-                    where
-                        user_auth_assignment.auth_item_id = 11
-                )
-            order by
-                user.id asc');
-
-        // REMOVE all ROLE_SOLIDARY_BENEFICIARY_CANDIDATE
-        $this->addSql('DELETE FROM
-                            user_auth_assignment
-                        WHERE
-                            auth_item_id = 171');
     }
 
     public function down(Schema $schema): void
