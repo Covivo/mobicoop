@@ -10,5 +10,5 @@
         "refuse": "Refuser",
         "cancel": "Annuler"
     },
-    "bookingAlert":"Cette annonce de covoiturage provient de <b>{platform}</b>"
+    "bookingAlert":"Vous êtes en relation avec {carpooler} dont l'annonce de covoiturage est sur <b>{platform}</b>"
 }

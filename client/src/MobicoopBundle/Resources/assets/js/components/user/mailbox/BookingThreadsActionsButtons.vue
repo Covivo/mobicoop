@@ -25,7 +25,7 @@
             cols="10"
           >
             <p
-              v-html="$t('bookingAlert', {'platform': carpoolerOperator})"
+              v-html="$t('bookingAlert', {'carpooler':carpooler, 'platform': carpoolerOperator})"
             />
           </v-col>
         </v-row>
@@ -176,8 +176,11 @@ export default {
     operator:{
       type:String,
       default:null
+    },
+    carpoolerName:{
+      type:String,
+      default:null
     }
-   
   },
   data(){
     return {
@@ -190,6 +193,7 @@ export default {
       completedPendingValidation:COMPLETED_PENDING_VALIDATION,
       validated: VALIDATED,
       carpoolerOperator: this.operator,
+      carpooler: this.carpoolerName
     }
   },
   computed:{
