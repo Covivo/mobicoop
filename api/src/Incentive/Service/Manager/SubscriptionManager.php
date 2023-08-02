@@ -75,11 +75,6 @@ class SubscriptionManager extends MobConnectManager
      */
     private $_subscriptionValidation;
 
-    /**
-     * @var UserValidation
-     */
-    private $_userValidation;
-
     public function __construct(
         EntityManagerInterface $em,
         SubscriptionValidation $subscriptionValidation,
@@ -111,21 +106,21 @@ class SubscriptionManager extends MobConnectManager
      *
      * For the authenticated user, if needed, creates the CEE sheets.
      */
-    public function createSubscriptions(User $driver)
+    public function createSubscriptions(User $user)
     {
         if (!$this->isValidParameters()) {
             return;
         }
 
-        $this->_driver = $driver;
+        $this->setDriver($user);
 
         if (
-            is_null($this->_driver->getLongDistanceSubscription())
-            && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver)
+            is_null($this->getDriver()->getLongDistanceSubscription())
+            && $this->isDriverAccountReadyForSubscription(LongDistanceSubscription::SUBSCRIPTION_TYPE)
         ) {
             $postResponse = $this->postSubscription();
 
-            $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $postResponse);
+            $longDistanceSubscription = new LongDistanceSubscription($this->getDriver(), $postResponse);
             $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
             $longDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($longDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
@@ -134,12 +129,12 @@ class SubscriptionManager extends MobConnectManager
         }
 
         if (
-            is_null($this->_driver->getShortDistanceSubscription())
-            && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver, false)
+            is_null($this->getDriver()->getShortDistanceSubscription())
+            && $this->isDriverAccountReadyForSubscription(ShortDistanceSubscription::SUBSCRIPTION_TYPE)
         ) {
             $postResponse = $this->postSubscription(false);
 
-            $shortDistanceSubscription = new ShortDistanceSubscription($this->_driver, $postResponse);
+            $shortDistanceSubscription = new ShortDistanceSubscription($this->getDriver(), $postResponse);
             $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
             $shortDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($shortDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
@@ -152,12 +147,12 @@ class SubscriptionManager extends MobConnectManager
 
     public function getUserEECEligibility(User $user): EecEligibility
     {
+        $this->setDriver($user);
+
         $userEligibility = new EecEligibility($user);
 
-        $thresholdDate = $this->getThresholdDate();
-
-        $userEligibility->setLongDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, $thresholdDate));
-        $userEligibility->setShortDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, $thresholdDate, false));
+        $userEligibility->setLongDistanceJourneysNumber(count($this->getEECCompliantProofsObtainedSinceDate(LongDistanceSubscription::SUBSCRIPTION_TYPE)));
+        $userEligibility->setShortDistanceJourneysNumber(count($this->getEECCompliantProofsObtainedSinceDate(ShortDistanceSubscription::SUBSCRIPTION_TYPE)));
         $userEligibility->setLongDistanceDrivingLicenceNumberDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
         $userEligibility->setLongDistancePhoneDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
         $userEligibility->setShortDistanceDrivingLicenceNumberDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));

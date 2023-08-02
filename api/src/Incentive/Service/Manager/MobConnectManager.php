@@ -3,17 +3,22 @@
 namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Validation\UserValidation;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class MobConnectManager
 {
@@ -67,6 +72,11 @@ abstract class MobConnectManager
      * @var int
      */
     protected $_carpoolProofPrefix;
+
+    /**
+     * @var UserValidation
+     */
+    protected $_userValidation;
 
     /**
      * @var MobConnectApiProvider
@@ -287,5 +297,43 @@ abstract class MobConnectManager
         $thresholdDate->sub(new \DateInterval('P'.self::WAITING_PERIOD.'M'));
 
         return $thresholdDate;
+    }
+
+    /**
+     * Returns EEC-compliant proofs obtained since a date.
+     *
+     * @param string $distanceType The distance type ('long' or 'short')
+     */
+    protected function getEECCompliantProofsObtainedSinceDate(string $distanceType): array
+    {
+        if (LongDistanceSubscription::SUBSCRIPTION_TYPE != $distanceType && ShortDistanceSubscription::SUBSCRIPTION_TYPE != $distanceType) {
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "The value of the '\$distanceType' parameter is incorrect");
+        }
+
+        if (is_null($this->getDriver())) {
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Driver must be defined before you can list proof');
+        }
+
+        $thresholdDate = $this->getThresholdDate();
+
+        return array_values(
+            array_filter($this->getDriver()->getCarpoolProofsAsDriver(), function (CarpoolProof $carpoolProof) use ($thresholdDate, $distanceType) {
+                return
+                    $carpoolProof->getCreatedDate() > $thresholdDate
+                    && $carpoolProof->isEECCompliant($distanceType);
+            })
+        );
+    }
+
+    /**
+     * Returns if the driver's account meets the conditions to subscribe to EEC incentives:
+     * - The driver moB Connect authentication is valid
+     * - The driver has not made any trip that complies with the EEC standard since the threshold date.
+     */
+    protected function isDriverAccountReadyForSubscription(string $distanceType): bool
+    {
+        return
+            $this->_userValidation->isUserValid($this->getDriver())
+            && 0 === count($this->getEECCompliantProofsObtainedSinceDate($distanceType));
     }
 }

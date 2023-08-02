@@ -416,4 +416,9 @@ class CarpoolPayment
     {
         $this->setUpdatedDate(new \DateTime());
     }
+
+    public function isEECCompliant(): bool
+    {
+        return self::STATUS_SUCCESS === $this->getStatus() && !is_null($this->getTransactionId());
+    }
 }

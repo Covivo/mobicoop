@@ -25,7 +25,11 @@ namespace App\Carpool\Entity;
 
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
+use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
+use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use CrEOF\Spatial\PHP\Types\Geometry\LineString;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
@@ -597,5 +601,62 @@ class CarpoolProof
         $this->mobConnectShortDistanceJourney = $mobConnectShortDistanceJourney;
 
         return $this;
+    }
+
+    public function getCarpoolItem(): ?CarpoolItem
+    {
+        if (
+            is_null($this->getAsk())
+            || !is_null($this->getAsk()) && empty($this->getAsk()->getCarpoolItems())
+        ) {
+            return null;
+        }
+
+        $carpoolProofId = $this->getId();
+
+        $filteredCarpoolItems = array_values(array_filter($this->getAsk()->getCarpoolItems(), function (CarpoolItem $carpoolItem) use ($carpoolProofId) {
+            return $carpoolProofId === $carpoolItem->getCarpoolProof()->getId();
+        }));
+
+        return !empty($filteredCarpoolItems) ? $filteredCarpoolItems[0] : null;
+    }
+
+    public function isEECCompliant(string $distanceType): bool
+    {
+        $compliance =
+            self::STATUS_VALIDATED === $this->getStatus()
+            && self::TYPE_HIGH === $this->getType();
+
+        if (!$compliance) {
+            return false;
+        }
+
+        switch ($distanceType) {
+            case LongDistanceSubscription::SUBSCRIPTION_TYPE:
+                $carpoolPayments =
+                    !is_null($this->getCarpoolItem()) && !empty($this->getCarpoolItem()->getCarpoolPayments())
+                    ? $this->getCarpoolItem()->getCarpoolPayments() : null;
+
+                if (is_null($carpoolPayments)) {
+                    $compliance = false;
+
+                    break;
+                }
+
+                $filteredCarpoolPayments = array_values(array_filter($carpoolPayments, function (CarpoolPayment $carpoolPayment) {
+                    return $carpoolPayment->isEECCompliant();
+                }));
+
+                $compliance = !empty($filteredCarpoolPayments);
+
+                break;
+
+            case ShortDistanceSubscription::SUBSCRIPTION_TYPE:
+                $compliance = true;
+
+                break;
+        }
+
+        return $compliance;
     }
 }
