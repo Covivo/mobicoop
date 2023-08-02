@@ -1,8 +1,38 @@
 <template>
   <v-main>
+    <div>
+      <v-card
+        class="primary mb-8"
+        flat
+      >
+        <v-row
+          align="center"
+        >
+          <v-col
+            cols="2"
+            class="text-center"
+            justify="center"
+          >
+            <v-img
+              class="ml-2"
+              src="/images/pages/mailBox/interopWhite.png"
+              contain
+              height="23"
+            />
+          </v-col>
+          <v-col
+            class="white--text justify-center"
+            cols="10"
+          >
+            <p
+              v-html="$t('bookingAlert', {'platform': carpoolerOperator})"
+            />
+          </v-col>
+        </v-row>
+      </v-card>
+    </div>
     <div v-if="checkBookingStatus==1">
       <v-btn
-        class="mr-12"
         color="primary"
         small
         dark
@@ -13,12 +43,11 @@
         style="letter-spacing: -0.15px;white-space: normal;"
         @click="updateBookingStatus(waitingPassengerConfirmation)"
       >
-        Demander un covoiturage
+        {{ $t('button.bookingCarpoolAsDriver') }}
       </v-btn> 
     </div>
     <div v-if="checkBookingStatus==2">
       <v-btn
-        class="mr-12"
         color="primary"
         small
         dark
@@ -29,13 +58,14 @@
         style="letter-spacing: -0.15px;white-space: normal;"
         @click="updateBookingStatus(waitingDriverConfirmation)"
       >
-        Demander un covoiturage
+        {{ $t('button.bookingCarpoolAsPassenger') }}
       </v-btn> 
     </div>
     <div v-if="checkBookingStatus==3">
       <v-btn
         class="mr-12"
         color="primary"
+        width="30%"
         small
         dark
         rounded
@@ -45,10 +75,11 @@
         style="letter-spacing: -0.15px;white-space: normal;"
         @click="updateBookingStatus(confirmed)"
       >
-        Accepter un covoiturage
+        {{ $t('button.accept') }}
       </v-btn> 
       <v-btn
         color="error"
+        width="30%"
         small
         dark
         rounded
@@ -57,7 +88,7 @@
         style="letter-spacing: -0.15px;white-space: normal;"
         @click="updateBookingStatus(cancelled)"
       >
-        Refuser
+        {{ $t('button.refuse') }}
       </v-btn>
     </div>
     <div
@@ -68,10 +99,11 @@
         class="white--text mb-8"
         flat
       >
-        {{ $t('askPending') }}
+        {{ $t('bookingPending') }}
       </v-card>
       <v-btn
         color="error"
+        width="30%"
         small
         dark
         rounded
@@ -80,7 +112,7 @@
         style="letter-spacing: -0.15px;white-space: normal;"
         @click="updateBookingStatus(cancelled)"
       >
-        Annuler
+        {{ $t('button.cancel') }}
       </v-btn>
     </div>
     <div
@@ -91,7 +123,7 @@
         class="white--text mb-8"
         flat
       >
-        Covoiturage accépté
+        {{ $t('bookingAccepted') }}
       </v-card>
     </div>
     <div
@@ -102,14 +134,14 @@
         class="white--text mb-8"
         flat
       >
-        Covoiturage refusé
+        {{ $t('bookingRefused') }}
       </v-card>
     </div>
   </v-main>
 </template>
 <script>
 
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/ThreadsActionsButtons/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/BookingThreadsActionsButtons/";
 
 const INITIATED = 'INITIATED';
 const WAITING_PASSENGER_CONFIRMATION = 'WAITING_PASSENGER_CONFIRMATION';
@@ -141,6 +173,10 @@ export default {
       type:Boolean,
       default:false
     },
+    operator:{
+      type:String,
+      default:null
+    }
    
   },
   data(){
@@ -153,6 +189,7 @@ export default {
       cancelled: CANCELLED,
       completedPendingValidation:COMPLETED_PENDING_VALIDATION,
       validated: VALIDATED,
+      carpoolerOperator: this.operator,
     }
   },
   computed:{

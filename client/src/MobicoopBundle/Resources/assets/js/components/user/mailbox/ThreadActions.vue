@@ -225,6 +225,8 @@
             :status="infosCompleteBooking.status"
             :loading-btn="dataLoadingBtn"
             :is-role-driver="infosCompleteBooking.isRoleDriver"
+            :carpooler-name="infosCompleteBooking.roleDriver ? infosCompleteBooking.passenger.alias : infosCompleteBooking.driver.alias"
+            :operator="infosCompleteBooking.roleDriver ? infosCompleteBooking.passenger.operator : infosCompleteBooking.driver.operator"
             @updateBookingStatus="updateBookingStatus"
           />
         </v-card>
