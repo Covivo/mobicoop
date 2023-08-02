@@ -4,6 +4,7 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
@@ -317,7 +318,7 @@ class SubscriptionManager extends MobConnectManager
 
             $this->_em->flush();
 
-            return;
+            return $response;
         }
 
         switch (true) {
@@ -355,6 +356,34 @@ class SubscriptionManager extends MobConnectManager
         $this->_em->flush();
 
         return $subscription;
+    }
+
+    public function getSubscription(string $subscriptionId): MobConnectSubscriptionResponse
+    {
+        return $this->getMobSubscription($subscriptionId);
+    }
+
+    /**
+     * Set missing subscription timestamps.
+     *
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     *
+     * @return bool Returns if getting tokens was successful
+     */
+    public function setTimestamps($subscription): bool
+    {
+        $this->setDriver($subscription->getUser());
+
+        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
+
+        $this->_em->flush();
+
+        return false;
+    }
+
+    public function getTimestamps()
+    {
+        return $this->_timestampTokenManager->getCurrentTimestampTokensResponse();
     }
 
     private function _computeShortDistance()

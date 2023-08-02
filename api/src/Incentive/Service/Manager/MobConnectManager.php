@@ -100,6 +100,22 @@ abstract class MobConnectManager
         $this->_ssoServices = $ssoServices;
     }
 
+    public function getHonorCertificate(bool $isLongDistance = true): string
+    {
+        return $this->_honourCertificateService->generateHonourCertificate($isLongDistance);
+    }
+
+    public function setDriver(User $driver): self
+    {
+        $this->_driver = $driver;
+
+        if (!is_null($this->_driver)) {
+            $this->_honourCertificateService->setDriver($this->getDriver());
+        }
+
+        return $this;
+    }
+
     protected function isValidParameters(): bool
     {
         return
@@ -131,6 +147,13 @@ abstract class MobConnectManager
                     && !empty($this->_mobConnectParams['subscription_ids']['long_distance'])
                 )
             );
+    }
+
+    protected function getMobSubscription(string $subscriptionId)
+    {
+        $this->setApiProvider();
+
+        return $this->_apiProvider->getMobSubscription($subscriptionId);
     }
 
     protected function getRPCOperatorId(int $id): string
@@ -206,17 +229,6 @@ abstract class MobConnectManager
     protected function getDriver(): User
     {
         return $this->_driver;
-    }
-
-    protected function setDriver(User $driver): self
-    {
-        $this->_driver = $driver;
-
-        if (!is_null($this->_driver)) {
-            $this->_honourCertificateService->setDriver($this->getDriver());
-        }
-
-        return $this;
     }
 
     protected function getDriverPassengerProposalForCarpoolItem(CarpoolItem $carpoolItem, int $carpoolerType): ?Proposal
