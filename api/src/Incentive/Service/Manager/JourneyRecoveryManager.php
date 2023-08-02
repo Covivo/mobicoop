@@ -15,7 +15,6 @@ use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class JourneyRecoveryManager extends JourneyManager
 {
@@ -53,7 +52,6 @@ class JourneyRecoveryManager extends JourneyManager
         CarpoolProofRepository $carpoolProofRepository,
         CarpoolItemRepository $carpoolItemRepository,
         EntityManagerInterface $em,
-        EventDispatcherInterface $eventDispatcher,
         JourneyValidation $journeyValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
@@ -66,7 +64,7 @@ class JourneyRecoveryManager extends JourneyManager
         array $mobConnectParams,
         array $ssoServices
     ) {
-        parent::__construct($carpoolProofRepository, $carpoolItemRepository, $em, $eventDispatcher, $journeyValidation, $loggerService, $honourCertificateService, $timestampTokenManager, $longDistanceJourneyRepository, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($carpoolProofRepository, $carpoolItemRepository, $em, $journeyValidation, $loggerService, $honourCertificateService, $timestampTokenManager, $longDistanceJourneyRepository, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
         $this->_subscriptionValidation = $subscriptionValidation;
         $this->_userRepository = $userRepository;
