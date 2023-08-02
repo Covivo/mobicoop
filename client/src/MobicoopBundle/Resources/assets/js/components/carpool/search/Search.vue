@@ -31,6 +31,7 @@
           :geo-complete-palette="geoCompletePalette"
           :geo-complete-chip="geoCompleteChip"
           :date-time-picker="dateTimePicker"
+          :switch-color="switchColor"
           @change="searchChanged"
         />
       </v-col>
@@ -245,6 +246,10 @@ export default {
       type:String,
       default: 'secondary'
     },
+    switchColor: {
+      type: String,
+      default: 'secondary'
+    }
   },
   data() {
     return {
