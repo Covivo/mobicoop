@@ -684,6 +684,7 @@ class Structure
         $this->territories = new ArrayCollection();
         $this->operators = [];
         $this->images = new ArrayCollection();
+        $this->beneficiaryAutoApproval = true;
     }
 
     public function getId(): ?int
