@@ -923,4 +923,44 @@ class LongDistanceSubscription
 
         return $this;
     }
+
+    public function isAddressValid(): bool
+    {
+        return
+            !is_null($this->getStreetAddress())
+            && !is_null($this->getPostalCode())
+            && !is_null($this->getAddressLocality());
+    }
+
+    /**
+     * Returns if the conditions are required for the subscription to be verified:
+     * - Can not be 'VERIFIEE'
+     * - Can not be expired
+     * - A full address must have been provided
+     * - The associated Journeys can not be empty
+     * - The commitment journey must have been defined
+     * - The carpool payment associated with the commitment journey must have been defined
+     * - The carpool payment associated with the commitment journey must be EEC compliant
+     * - The banking identity must be validated
+     * - The different timestamp tokens must be present.
+     */
+    public function isReadyToVerify(): bool
+    {
+        return
+            SubscriptionManager::STATUS_VALIDATED != $this->getStatus()
+            && !$this->hasExpired()
+            && $this->isAddressValid()
+            && !is_null($this->getUser())
+            && $this->getUser()->hasBankingIdentityValidated()
+            && !$this->getJourneys()->isEmpty()
+            && !is_null($this->getCommitmentProofJourney())
+            && !is_null($this->getCommitmentProofJourney()->getCarpoolPayment())
+            && $this->getCommitmentProofJourney()->getCarpoolPayment()->isEecCompliant()
+            && !is_null($this->getIncentiveProofTimestampToken())
+            && !is_null($this->getIncentiveProofTimestampSigningTime())
+            && !is_null($this->getCommitmentProofTimestampToken())
+            && !is_null($this->getCommitmentProofTimestampSigningTime())
+            && !is_null($this->getHonorCertificateProofTimestampToken())
+            && !is_null($this->getHonorCertificateProofTimestampSigningTime());
+    }
 }

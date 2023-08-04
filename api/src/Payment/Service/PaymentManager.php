@@ -1575,7 +1575,7 @@ class PaymentManager
         $this->entityManager->flush();
 
         if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) {
-            if ($this->_journeyValidation->isPaymentValidForEEC($carpoolPayment)) {
+            if ($carpoolPayment->isEecCompliant()) {
                 $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
                 $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
             }
