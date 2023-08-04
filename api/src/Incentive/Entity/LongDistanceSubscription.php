@@ -277,11 +277,9 @@ class LongDistanceSubscription
         $this->setGivenName($user->getGivenName());
         $this->setFamilyName($user->getFamilyName());
         $this->setDrivingLicenceNumber($user->getDrivingLicenceNumber());
-        if (!is_null($user->getHomeAddress())) {
-            $this->setStreetAddress($user->getHomeAddress()->getHouseNumber().' '.$user->getHomeAddress()->getStreetAddress());
-            $this->setPostalCode($user->getHomeAddress()->getPostalCode());
-            $this->setAddressLocality($user->getHomeAddress()->getAddressLocality());
-        }
+        $this->setStreetAddress();
+        $this->setAddressLocality();
+        $this->setPostalCode();
         $this->setTelephone($user->getTelephone());
         $this->setEmail($user->getEmail());
     }
@@ -477,9 +475,13 @@ class LongDistanceSubscription
     /**
      * Set the full street address of the user.
      */
-    public function setStreetAddress(?string $streetAddress): self
+    public function setStreetAddress(): self
     {
-        $this->streetAddress = $streetAddress;
+        if (!is_null($this->getUser() && !is_null($this->getUser()->getHomeAddress()))) {
+            $homeAddress = $this->getUser()->getHomeAddress();
+
+            $this->streetAddress = $homeAddress->getHouseNumber().', '.$homeAddress->getStreetAddress();
+        }
 
         return $this;
     }
@@ -494,12 +496,14 @@ class LongDistanceSubscription
 
     /**
      * Set the address postal code of the user.
-     *
-     * @param string $postalCode the address postal code of the user
      */
-    public function setPostalCode(?string $postalCode): self
+    public function setPostalCode(): self
     {
-        $this->postalCode = $postalCode;
+        if (!is_null($this->getUser() && !is_null($this->getUser()->getHomeAddress()))) {
+            $homeAddress = $this->getUser()->getHomeAddress();
+
+            $this->postalCode = $homeAddress->getPostalCode();
+        }
 
         return $this;
     }
@@ -514,12 +518,23 @@ class LongDistanceSubscription
 
     /**
      * Set the address locality of the user.
-     *
-     * @param string $addressLocality the address locality of the user
      */
-    public function setAddressLocality(?string $addressLocality): self
+    public function setAddressLocality(): self
     {
-        $this->addressLocality = $addressLocality;
+        if (!is_null($this->getUser() && !is_null($this->getUser()->getHomeAddress()))) {
+            $homeAddress = $this->getUser()->getHomeAddress();
+
+            $this->addressLocality = $homeAddress->getAddressLocality();
+        }
+
+        return $this;
+    }
+
+    public function updateAddress(): self
+    {
+        $this->setStreetAddress();
+        $this->setPostalCode();
+        $this->setAddressLocality();
 
         return $this;
     }

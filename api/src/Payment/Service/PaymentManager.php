@@ -1071,14 +1071,22 @@ class PaymentManager
 
         // We update the home Address by the bank account address
         if (!is_null($bankAccount->getAddress())) {
-            $user->setHomeAddress($bankAccount->getAddress());
+            if (!is_null($user->getHomeAddress())) {
+                $user->setHomeAddress(null);
+                $this->entityManager->remove($user->getHomeAddress());
+            }
+
+            $homeAddress = $bankAccount->getAddress();
+            $homeAddress->setId(null);
+            $homeAddress->setHome(true);
+            $homeAddress->setUser($user);
+
+            $this->entityManager->persist($homeAddress);
 
             $event = new UserHomeAddressUpdateEvent($user);
-
             $this->eventDispatcher->dispatch(UserHomeAddressUpdateEvent::NAME, $event);
         }
 
-        exit('Fin de test - Payment Manager');
         if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
             // No Payment Profile, we create one
             $identifier = null;

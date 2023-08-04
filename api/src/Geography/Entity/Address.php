@@ -724,6 +724,10 @@ class Address implements \JsonSerializable
 
     public function setUser(?User $user)
     {
+        if (!is_null($user)) {
+            $user->setHomeAddress($this);
+        }
+
         $this->user = $user;
     }
 

@@ -357,6 +357,21 @@ class SubscriptionManager extends MobConnectManager
         return $subscription;
     }
 
+    public function updateSubscriptionsAddress(User $user)
+    {
+        $this->setDriver($user);
+
+        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
+            $this->getDriver()->getLongDistanceSubscription()->updateAddress();
+        }
+
+        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
+            $this->getDriver()->getShortDistanceSubscription()->updateAddress();
+        }
+
+        $this->_em->flush();
+    }
+
     private function _computeShortDistance()
     {
         $this->_getCEEEligibleProofsShortDistance();
