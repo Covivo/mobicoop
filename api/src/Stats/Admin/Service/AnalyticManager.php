@@ -34,9 +34,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class AnalyticManager
 {
+    private const ROLE_ADMIN = 'ROLE_ADMIN';
+    private const ROLE_COMMUNITY_MANAGER_PUBLIC = 'ROLE_COMMUNITY_MANAGER_PUBLIC';
     private $paramId;
-    private $communityId;
-    private $territoryId;
+    private $territoryIdParam;
+    private $communityIdParam;
     private $darkTheme;
     private $uri;
     private $organization;
@@ -65,9 +67,9 @@ class AnalyticManager
         $request = $requestStack->getCurrentRequest();
         $this->paramId = $request->get('id');
         $communityIdParam = $request->query->get('communityId', null);
-        $this->communityId = is_null($communityIdParam) ? null : intval($communityIdParam);
+        $this->communityIdParam = is_null($communityIdParam) ? null : intval($communityIdParam);
         $territoryIdParam = $request->query->get('territoryId', null);
-        $this->territoryId = is_null($territoryIdParam) ? null : intval($territoryIdParam);
+        $this->territoryIdParam = is_null($territoryIdParam) ? null : intval($territoryIdParam);
         $this->darkTheme = $request->query->get('darkTheme', false);
         $this->communityRepository = $communityRepository;
         $this->tokenStorage = $tokenStorage;
@@ -84,20 +86,21 @@ class AnalyticManager
         $analytic->setId($id);
         $dashboard = $this->getDashboard();
 
-        $community = null;
-        $territories = null;
+        // $community = null;
+        // $territories = null;
 
-        $this->getDefaultCommunityId();
-        if ($this->territoryId == 'undefined') {
-            $this->territoryId = null;
-        }
+        // $this->getDefaultCommunityId();
+        // if ('undefined' == $this->territoryIdParam) {
+        //     $this->territoryIdParam = null;
+        // }
 
-        list($territories, $community) = $this->setUpFilters($analytic);
+        list($territories, $community) = $this->defineFilters($analytic);
+        // list($territories, $community) = $this->setUpFilters($analytic);
 
-        if ($community == null) {
+        if (null == $community) {
             throw new \LogicException('Community should not be null. This code should not be reached!');
         }
-        if ($territories == null) {
+        if (null == $territories) {
             throw new \LogicException('Territories should not be null. This code should not be reached!');
         }
 
@@ -122,15 +125,57 @@ class AnalyticManager
         return $analytic;
     }
 
-    private function setUpFilters($analytic) : Array {
+    private function defineFilters($analytic): array
+    {
+        $territories = [$this->getOperationalValue(null)];
+        $community = $this->getOperationalValue(null);
+
+        if ($this->authManager->isAuthorized(self::ROLE_ADMIN)) {
+            return $this->defineFiltersForAdmin();
+        }
+
+        if ($this->authManager->isAuthorized(self::ROLE_COMMUNITY_MANAGER_PUBLIC)) {
+            return $this->defineFiltersForCommunityModerator();
+        }
+
+        return [$territories, $community];
+    }
+
+    private function defineFiltersForAdmin(): array
+    {
+        $community = $this->getOperationalValue(null);
+
+        $dashboard = $this->getDashboard();
+
+        echo $this->territoryIdParam;
+
+        $territories = $this->getTerritories($dashboard['auth_item']);
+
+        return [$territories, $community];
+    }
+
+    private function defineFiltersForCommunityModerator(): array
+    {
+        $this->getDefaultCommunityId();
+        $community = $this->defaultCommunityId;
+
+        $dashboard = $this->getDashboard();
+
+        $territories = $this->getTerritories($dashboard['auth_item']);
+
+        return [$territories, $community];
+    }
+
+    private function setUpFilters($analytic): array
+    {
         $dashboard = $this->getDashboard();
         if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
-            if (null != $this->territoryId || null != $this->communityId) {
+            if (null != $this->territoryIdParam || null != $this->communityIdParam) {
                 // the request has parameter(s)
-                $territories = [$this->getOperationalValue($this->territoryId)];
-                $community = $this->getCommunity($this->communityId);
-                $analytic->setCommunityId($this->communityId);
-                $analytic->setTerritoryId($this->territoryId);
+                $territories = [$this->getOperationalValue($this->territoryIdParam)];
+                $community = $this->getCommunity($this->communityIdParam);
+                $analytic->setCommunityId($this->communityIdParam);
+                $analytic->setTerritoryId($this->territoryIdParam);
             } else {
                 // no filter
                 $territories = [$this->getOperationalValue(null)];
@@ -138,37 +183,38 @@ class AnalyticManager
                 $analytic->setCommunityId(null);
                 $analytic->setTerritoryId(null);
             }
+            var_dump($this->getTerritories($dashboard['auth_item']));
 
-            return array($territories, $community);
+            return [$territories, $community];
         }
 
         // apply filters defalut values
         $territories = $this->getTerritories($dashboard['auth_item']);
-        if (null != $this->territoryId && in_array($this->territoryId, $territories)) {
+        if (null != $this->territoryIdParam && in_array($this->territoryIdParam, $territories)) {
             // set asked territory filter
-            $territories = [$this->getOperationalValue($this->territoryId)];
-            if (null != $this->communityId) {
+            $territories = [$this->getOperationalValue($this->territoryIdParam)];
+            if (null != $this->communityIdParam) {
                 // TODO need check
-                $community = $this->getCommunity($this->communityId);
+                $community = $this->getCommunity($this->communityIdParam);
             } else {
                 $community = $this->getOperationalValue(null);
             }
-            $analytic->setCommunityId($this->communityId);
-            $analytic->setTerritoryId($this->territoryId);
+            $analytic->setCommunityId($this->communityIdParam);
+            $analytic->setTerritoryId($this->territoryIdParam);
 
-            return array($territories, $community);
-
-        } elseif(null != $this->territoryId) {
+            return [$territories, $community];
+        }
+        if (null != $this->territoryIdParam) {
             // actually not logic exception
             throw new \LogicException('Forbidden territory. This code should not be reached!');
         }
 
         $territories = [$this->getOperationalValue(null)];
-        if (null != $this->communityId) {
+        if (null != $this->communityIdParam) {
             // TODO need check
-            $community = $this->getCommunity($this->communityId);
-            $analytic->setCommunityId($this->communityId);
-        } elseif ($this->defaultCommunityId != null) {
+            $community = $this->getCommunity($this->communityIdParam);
+            $analytic->setCommunityId($this->communityIdParam);
+        } elseif (null != $this->defaultCommunityId) {
             $community = $this->getOperationalValue($this->defaultCommunityId);
             $analytic->setCommunityId($this->defaultCommunityId);
         } else {
@@ -176,7 +222,7 @@ class AnalyticManager
         }
         $analytic->setTerritoryId(null);
 
-        return array($territories, $community);
+        return [$territories, $community];
     }
 
     private function getDashboard(): ?array
@@ -204,6 +250,7 @@ class AnalyticManager
         if (null === $id) {
             return strtolower($this->organization);
         }
+
         return strtolower($this->organization).'_'.strval($id);
     }
 
@@ -229,7 +276,7 @@ class AnalyticManager
         }
 
         foreach ($territories as $key => $territory) {
-            if ($this->defaultTerritoryId == null) {
+            if (null == $this->defaultTerritoryId) {
                 $this->defaultTerritoryId = $territories[$key];
             }
             $territories[$key] = $this->getOperationalValue($territories[$key]);
