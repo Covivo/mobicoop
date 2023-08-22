@@ -147,8 +147,6 @@ class AnalyticManager
 
         $dashboard = $this->getDashboard();
 
-        echo $this->territoryIdParam;
-
         $territories = $this->getTerritories($dashboard['auth_item']);
 
         return [$territories, $community];
