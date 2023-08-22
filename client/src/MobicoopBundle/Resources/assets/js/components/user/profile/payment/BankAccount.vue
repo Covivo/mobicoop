@@ -1,5 +1,13 @@
 <template>
   <div>
+    <v-snackbar
+      v-model="displaySnackbar"
+      color="success"
+      top
+      :timeout="5000"
+    >
+      {{ $t('msg.bank-account.create') }}
+    </v-snackbar>
     <div v-if="loading">
       <v-skeleton-loader
         ref="skeleton"
@@ -12,7 +20,7 @@
         v-if="error"
         type="error"
       >
-        {{ $t('error') }}
+        {{ $t("error") }}
       </v-alert>
       <PaymentStatus :can-be-paid="canBePaid" />
       <v-form
@@ -33,9 +41,9 @@
                 class="text-left my-2"
                 dense
               >
-                {{ $t('textInfo') }}
+                {{ $t("textInfo") }}
               </v-alert>
-              {{ $t('titleCoordinates') }}
+              {{ $t("titleCoordinates") }}
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -53,7 +61,7 @@
                     v-on="on"
                   />
                 </template>
-                <span>{{ $t('form.tooltip.iban') }}</span>
+                <span>{{ $t("form.tooltip.iban") }}</span>
               </v-tooltip>
             </v-col>
           </v-row>
@@ -75,7 +83,7 @@
               md="10"
               class="text-center text-h6 pt-4"
             >
-              {{ $t('titleAddress') }}
+              {{ $t("titleAddress") }}
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -84,7 +92,7 @@
               md="10"
               class="text-left pt-4 font-italic"
             >
-              {{ $t('textAddress') }}
+              {{ $t("textAddress") }}
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -97,7 +105,7 @@
                 :results-order="geoCompleteResultsOrder"
                 :palette="geoCompletePalette"
                 :chip="geoCompleteChip"
-                :restrict="['housenumber','street']"
+                :restrict="['housenumber', 'street']"
                 :label="$t('form.label.address.check')"
                 @address-selected="addressSelected"
                 @clear="clearAddress"
@@ -119,7 +127,7 @@
                   md="10"
                   class="text-left pt-4 font-italic"
                 >
-                  {{ $t('textAddressDetails') }}
+                  {{ $t("textAddressDetails") }}
                 </v-col>
               </v-row>
               <v-row>
@@ -173,7 +181,7 @@
                 :disabled="!addressValidation || !valid"
                 @click="addBankCoordinates"
               >
-                {{ $t('register') }}
+                {{ $t("register") }}
               </v-btn>
             </v-col>
           </v-row>
@@ -186,7 +194,7 @@
             md="10"
             class="text-center text-h6 pt-4"
           >
-            {{ $t('titleAlreadyRegistered') }}
+            {{ $t("titleAlreadyRegistered") }}
           </v-col>
         </v-row>
         <v-row justify="center">
@@ -195,28 +203,26 @@
               <v-col cols="8">
                 <v-row>
                   <v-col cols="12">
-                    <label class="caption">{{ $t('form.label.iban') }}</label> {{ bankCoordinates.iban }}
+                    <label class="caption">{{ $t("form.label.iban") }}</label>
+                    {{ bankCoordinates.iban }}
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col cols="12">
-                    <label class="caption">{{ $t('form.label.bic') }}</label> {{ bankCoordinates.bic }}
+                    <label class="caption">{{ $t("form.label.bic") }}</label>
+                    {{ bankCoordinates.bic }}
                   </v-col>
                 </v-row>
               </v-col>
               <v-col cols="2">
                 <v-row align="center">
-                  <v-col
-                    cols="12"
-                  >
+                  <v-col cols="12">
                     <v-btn
                       class="secondary my-1"
                       icon
                       @click.stop="dialog = true"
                     >
-                      <v-icon
-                        class="white--text"
-                      >
+                      <v-icon class="white--text">
                         mdi-delete-outline
                       </v-icon>
                     </v-btn>
@@ -226,8 +232,14 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <p>{{ bankCoordinates.address.houseNumber }} {{ bankCoordinates.address.street }}</p>
-                <p>{{ bankCoordinates.address.postalCode }} {{ bankCoordinates.address.addressLocality }}</p>
+                <p>
+                  {{ bankCoordinates.address.houseNumber }}
+                  {{ bankCoordinates.address.street }}
+                </p>
+                <p>
+                  {{ bankCoordinates.address.postalCode }}
+                  {{ bankCoordinates.address.addressLocality }}
+                </p>
               </v-col>
             </v-row>
           </v-col>
@@ -236,11 +248,21 @@
       <v-row justify="center">
         <v-col cols="10">
           <IdentityValidation
-            :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
-            :payment-profile-status="(bankCoordinates) ? bankCoordinates.status : 0"
-            :validation-status="(bankCoordinates) ? bankCoordinates.validationStatus : 0"
-            :validation-asked-date="(bankCoordinates) ? bankCoordinates.validationAskedDate : null"
-            :refusal-reason="(bankCoordinates) ? bankCoordinates.refusalReason : null"
+            :validation-docs-authorized-extensions="
+              validationDocsAuthorizedExtensions
+            "
+            :payment-profile-status="
+              bankCoordinates ? bankCoordinates.status : 0
+            "
+            :validation-status="
+              bankCoordinates ? bankCoordinates.validationStatus : 0
+            "
+            :validation-asked-date="
+              bankCoordinates ? bankCoordinates.validationAskedDate : null
+            "
+            :refusal-reason="
+              bankCoordinates ? bankCoordinates.refusalReason : null
+            "
             @identityDocumentSent="identityDocumentSent"
           />
         </v-col>
@@ -253,13 +275,13 @@
     >
       <v-card>
         <v-card-title class="headline">
-          {{ $t('modalSuppr.title') }}
+          {{ $t("modalSuppr.title") }}
         </v-card-title>
 
         <v-card-text>
-          <p>{{ $t('modalSuppr.line1') }}</p>
-          <p>{{ $t('modalSuppr.line2') }}</p>
-          <p>{{ $t('modalSuppr.line3') }}</p>
+          <p>{{ $t("modalSuppr.line1") }}</p>
+          <p>{{ $t("modalSuppr.line2") }}</p>
+          <p>{{ $t("modalSuppr.line3") }}</p>
         </v-card-text>
 
         <v-card-actions>
@@ -270,7 +292,7 @@
             text
             @click="dialog = false"
           >
-            {{ $t('modalSuppr.no') }}
+            {{ $t("modalSuppr.no") }}
           </v-btn>
 
           <v-btn
@@ -278,7 +300,7 @@
             text
             @click="deleteBankCoordinates()"
           >
-            {{ $t('modalSuppr.yes') }}
+            {{ $t("modalSuppr.yes") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -288,7 +310,12 @@
 <script>
 import maxios from "@utils/maxios";
 import moment from "moment";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/payment/BankAccount/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/user/profile/payment/BankAccount/";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
 import IdentityValidation from "@js/components/user/profile/payment/IdentityValidation";
@@ -296,10 +323,10 @@ import IdentityValidation from "@js/components/user/profile/payment/IdentityVali
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
     }
   },
   components: {
@@ -331,100 +358,111 @@ export default {
     geoCompleteChip: {
       type: Boolean,
       default: false
-    },
+    }
   },
-  data () {
+  data() {
     return {
       valid: false,
       form: {
-        iban:"",
-        bic:"",
-        formAddress:null,
-        addressDetail:{
-          houseNumber:null,
-          street:null,
-          postalCode:null,
-          addressLocality:null
+        iban: "",
+        bic: "",
+        formAddress: null,
+        addressDetail: {
+          houseNumber: null,
+          street: null,
+          postalCode: null,
+          addressLocality: null
         },
-        rules:{
+        rules: {
           ibanRules: [
-            v => !!v || this.$t('form.errors.ibanRequired'),
-            v => (/[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}/).test(v) || this.$t('form.errors.iban'),
+            v => !!v || this.$t("form.errors.ibanRequired"),
+            v =>
+              /[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}/.test(
+                v
+              ) || this.$t("form.errors.iban")
           ],
           bicRules: [
-            v => (/[a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?|^$/).test(v) || this.$t('form.errors.bic'),
+            v =>
+              /[a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?|^$/.test(
+                v
+              ) || this.$t("form.errors.bic")
           ],
-          streetRules: [
-            v => !!v || this.$t('form.errors.streetRequired'),
-          ],
+          streetRules: [v => !!v || this.$t("form.errors.streetRequired")],
           postalCodeRules: [
-            v => !!v || this.$t('form.errors.postalCodeRequired'),
+            v => !!v || this.$t("form.errors.postalCodeRequired")
           ],
           addressLocalityRules: [
-            v => !!v || this.$t('form.errors.addressLocalityRequired'),
+            v => !!v || this.$t("form.errors.addressLocalityRequired")
           ],
           houseNumberRules: [
-            v => !!v || this.$t('form.errors.houseNumberRequired'),
-          ],
+            v => !!v || this.$t("form.errors.houseNumberRequired")
+          ]
         }
       },
       bankCoordinates: null,
-      loading:false,
-      title:this.$t('title'),
-      dialog:false,
-      error:false,
+      loading: false,
+      title: this.$t("title"),
+      dialog: false,
+      error: false,
       addressValidation: false,
-    }
+      displaySnackbar: false
+    };
   },
-  computed:{
-    canBePaid(){
-      if(!this.bankCoordinates || this.bankCoordinates.status == 0 || this.bankCoordinates.validationStatus == 0 || this.bankCoordinates.validationStatus > 1){
+  computed: {
+    canBePaid() {
+      if (
+        !this.bankCoordinates ||
+        this.bankCoordinates.status == 0 ||
+        this.bankCoordinates.validationStatus == 0 ||
+        this.bankCoordinates.validationStatus > 1
+      ) {
         return false;
       }
       return true;
     }
   },
-  mounted(){
+  mounted() {
     this.getBankCoordinates();
   },
-  methods:{
-    getBankCoordinates(){
+  methods: {
+    getBankCoordinates() {
       this.loading = true;
-      maxios.post(this.$t("uri.getCoordinates"))
+      maxios
+        .post(this.$t("uri.getCoordinates"))
         .then(response => {
           // console.error(response.data);
-          if(response.data){
-            if(response.data[0]) this.bankCoordinates = response.data[0];
-            this.title = this.$t('titleAlreadyRegistered')
+          if (response.data) {
+            if (response.data[0]) this.bankCoordinates = response.data[0];
+            this.title = this.$t("titleAlreadyRegistered");
             this.loading = false;
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error(error);
         });
     },
-    deleteBankCoordinates(){
+    deleteBankCoordinates() {
       this.dialog = false;
       this.loading = true;
       this.error = false;
       let params = {
-        "bankAccountId":this.bankCoordinates.id
-      }
-      maxios.post(this.$t("uri.deleteCoordinates"),params)
+        bankAccountId: this.bankCoordinates.id
+      };
+      maxios
+        .post(this.$t("uri.deleteCoordinates"), params)
         .then(response => {
-          if(response.data.error){
+          if (response.data.error) {
             this.error = true;
-          }
-          else{
+          } else {
             this.bankCoordinates = null;
           }
           this.loading = false;
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error(error);
-        })
+        });
     },
-    addBankCoordinates(){
+    addBankCoordinates() {
       this.loading = true;
       this.error = false;
 
@@ -435,46 +473,51 @@ export default {
       this.form.formAddress.postalCode = this.form.addressDetail.postalCode;
       this.form.formAddress.addressLocality = this.form.addressDetail.addressLocality;
       let params = {
-        "iban":this.form.iban,
-        "bic":this.form.bic,
-        "address":this.form.formAddress
-      }
-      maxios.post(this.$t("uri.addCoordinates"),params)
+        iban: this.form.iban,
+        bic: this.form.bic,
+        address: this.form.formAddress
+      };
+      maxios
+        .post(this.$t("uri.addCoordinates"), params)
         .then(response => {
-          if(response.data.error){
+          if (response.data.error) {
             this.error = true;
             this.loading = false;
-          }
-          else{
+          } else {
+            this.displaySnackbar = true;
             this.getBankCoordinates();
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error(error);
-        })
+        });
     },
-    addressSelected(address){
+    addressSelected(address) {
       this.form.formAddress = address;
-      if(address){
+      if (address) {
         this.form.addressDetail.houseNumber = address.houseNumber;
         this.form.addressDetail.street = address.street;
         this.form.addressDetail.postalCode = address.postalCode;
         this.form.addressDetail.addressLocality = address.addressLocality;
         this.addressValidation = true;
       }
-      if (this.form.addressDetail.houseNumber != null && this.form.addressDetail.street !=null && this.form.addressDetail.postalCode != null && this.form.addressDetail.addressLocality !=null){
+      if (
+        this.form.addressDetail.houseNumber != null &&
+        this.form.addressDetail.street != null &&
+        this.form.addressDetail.postalCode != null &&
+        this.form.addressDetail.addressLocality != null
+      ) {
         this.addressIsComplete = true;
       }
     },
-    identityDocumentSent(data){
-      if(!data.id){
+    identityDocumentSent(data) {
+      if (!data.id) {
         this.error = true;
-      }
-      else{
+      } else {
         this.bankCoordinates.validationAskedDate = moment();
       }
     },
-    clearAddress(){
+    clearAddress() {
       this.form.addressDetail.houseNumber = null;
       this.form.addressDetail.street = null;
       this.form.addressDetail.postalCode = null;
@@ -482,5 +525,5 @@ export default {
       this.addressValidation = false;
     }
   }
-}
+};
 </script>

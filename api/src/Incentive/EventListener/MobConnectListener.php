@@ -13,6 +13,7 @@ use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
+use App\User\Event\UserHomeAddressUpdateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -67,6 +68,7 @@ class MobConnectListener implements EventSubscriberInterface
             FirstLongDistanceJourneyPublishedEvent::NAME => 'onFirstLongDistanceJourneyPublished',
             FirstShortDistanceJourneyPublishedEvent::NAME => 'onFirstShortDistanceJourneyPublished',
             SsoAssociationEvent::NAME => 'onUserAssociated',
+            UserHomeAddressUpdateEvent::NAME => 'onUserHomeAddressUpdated',
         ];
     }
 
@@ -118,5 +120,10 @@ class MobConnectListener implements EventSubscriberInterface
     public function onProofUnvalidated(CarpoolProofUnvalidatedEvent $event): void
     {
         $this->_subscriptionManager->unvalidationOfProof($event->getCarpoolProof());
+    }
+
+    public function onUserHomeAddressUpdated(UserHomeAddressUpdateEvent $event)
+    {
+        $this->_subscriptionManager->updateSubscriptionsAddress($event->getUser());
     }
 }

@@ -598,4 +598,16 @@ class CarpoolProof
 
         return $this;
     }
+
+    /**
+     * Returns if the carpool proof is ESC compliant:
+     * - The class must be High (C)
+     * - The status must be validated (8).
+     */
+    public function isEECCompliant(): bool
+    {
+        return
+            self::TYPE_HIGH === $this->getType()
+            && self::STATUS_VALIDATED === $this->getStatus();
+    }
 }

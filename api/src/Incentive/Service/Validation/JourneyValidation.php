@@ -6,7 +6,6 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Service\LoggerService;
 use App\Payment\Entity\CarpoolItem;
-use App\Payment\Entity\CarpoolPayment;
 
 class JourneyValidation extends Validation
 {
@@ -60,18 +59,6 @@ class JourneyValidation extends Validation
             && $this->_userValidation->hasValidMobConnectAuth($this->_driver)
             && !is_null($this->_driver->getShortDistanceSubscription())
             && is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate());
-    }
-
-    /**
-     * Checks if the payment is valid :
-     *      - The payment status is 1
-     *      - The payment transaction id has been set.
-     */
-    public function isPaymentValidForEEC(CarpoolPayment $carpoolPayment): bool
-    {
-        return
-            CarpoolPayment::STATUS_SUCCESS === $carpoolPayment->getStatus()
-            && !is_null($carpoolPayment->getTransactionId());
     }
 
     /**

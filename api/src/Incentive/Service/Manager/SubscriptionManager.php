@@ -305,8 +305,12 @@ class SubscriptionManager extends MobConnectManager
         $this->_loggerService->log('Step 20 - Obtaining missing tokens');
         $subscription = $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
 
-        if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {
+        if (!$subscription->isReadyToVerify()) {
             $this->_loggerService->log('The subscription '.$subscription->getId().' is not ready for verification');
+
+            if (!$subscription->isAddressValid()) {
+                // TODO: notify the user that his residence address must be entered.
+            }
 
             $response = new MobConnectSubscriptionTimestampsResponse([
                 'code' => Log::VERIFICATION_VALIDATION_ERROR,
@@ -355,6 +359,21 @@ class SubscriptionManager extends MobConnectManager
         $this->_em->flush();
 
         return $subscription;
+    }
+
+    public function updateSubscriptionsAddress(User $user)
+    {
+        $this->setDriver($user);
+
+        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
+            $this->getDriver()->getLongDistanceSubscription()->updateAddress();
+        }
+
+        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
+            $this->getDriver()->getShortDistanceSubscription()->updateAddress();
+        }
+
+        $this->_em->flush();
     }
 
     private function _computeShortDistance()

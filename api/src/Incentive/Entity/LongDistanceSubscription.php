@@ -277,11 +277,9 @@ class LongDistanceSubscription
         $this->setGivenName($user->getGivenName());
         $this->setFamilyName($user->getFamilyName());
         $this->setDrivingLicenceNumber($user->getDrivingLicenceNumber());
-        if (!is_null($user->getHomeAddress())) {
-            $this->setStreetAddress($user->getHomeAddress()->getHouseNumber().' '.$user->getHomeAddress()->getStreetAddress());
-            $this->setPostalCode($user->getHomeAddress()->getPostalCode());
-            $this->setAddressLocality($user->getHomeAddress()->getAddressLocality());
-        }
+        $this->setStreetAddress();
+        $this->setAddressLocality();
+        $this->setPostalCode();
         $this->setTelephone($user->getTelephone());
         $this->setEmail($user->getEmail());
     }
@@ -477,9 +475,13 @@ class LongDistanceSubscription
     /**
      * Set the full street address of the user.
      */
-    public function setStreetAddress(?string $streetAddress): self
+    public function setStreetAddress(): self
     {
-        $this->streetAddress = $streetAddress;
+        if (!is_null($this->getUser() && !is_null($this->getUser()->getHomeAddress()))) {
+            $homeAddress = $this->getUser()->getHomeAddress();
+
+            $this->streetAddress = $homeAddress->getHouseNumber().', '.$homeAddress->getStreetAddress();
+        }
 
         return $this;
     }
@@ -494,12 +496,14 @@ class LongDistanceSubscription
 
     /**
      * Set the address postal code of the user.
-     *
-     * @param string $postalCode the address postal code of the user
      */
-    public function setPostalCode(?string $postalCode): self
+    public function setPostalCode(): self
     {
-        $this->postalCode = $postalCode;
+        if (!is_null($this->getUser() && !is_null($this->getUser()->getHomeAddress()))) {
+            $homeAddress = $this->getUser()->getHomeAddress();
+
+            $this->postalCode = $homeAddress->getPostalCode();
+        }
 
         return $this;
     }
@@ -514,12 +518,23 @@ class LongDistanceSubscription
 
     /**
      * Set the address locality of the user.
-     *
-     * @param string $addressLocality the address locality of the user
      */
-    public function setAddressLocality(?string $addressLocality): self
+    public function setAddressLocality(): self
     {
-        $this->addressLocality = $addressLocality;
+        if (!is_null($this->getUser() && !is_null($this->getUser()->getHomeAddress()))) {
+            $homeAddress = $this->getUser()->getHomeAddress();
+
+            $this->addressLocality = $homeAddress->getAddressLocality();
+        }
+
+        return $this;
+    }
+
+    public function updateAddress(): self
+    {
+        $this->setStreetAddress();
+        $this->setPostalCode();
+        $this->setAddressLocality();
 
         return $this;
     }
@@ -907,5 +922,45 @@ class LongDistanceSubscription
         $this->addLongDistanceJourney($this->getCommitmentProofJourney());
 
         return $this;
+    }
+
+    public function isAddressValid(): bool
+    {
+        return
+            !is_null($this->getStreetAddress())
+            && !is_null($this->getPostalCode())
+            && !is_null($this->getAddressLocality());
+    }
+
+    /**
+     * Returns if the conditions are required for the subscription to be verified:
+     * - Can not be 'VERIFIEE'
+     * - Can not be expired
+     * - A full address must have been provided
+     * - The associated Journeys can not be empty
+     * - The commitment journey must have been defined
+     * - The carpool payment associated with the commitment journey must have been defined
+     * - The carpool payment associated with the commitment journey must be EEC compliant
+     * - The banking identity must be validated
+     * - The different timestamp tokens must be present.
+     */
+    public function isReadyToVerify(): bool
+    {
+        return
+            SubscriptionManager::STATUS_VALIDATED != $this->getStatus()
+            && !$this->hasExpired()
+            && $this->isAddressValid()
+            && !is_null($this->getUser())
+            && $this->getUser()->hasBankingIdentityValidated()
+            && !$this->getJourneys()->isEmpty()
+            && !is_null($this->getCommitmentProofJourney())
+            && !is_null($this->getCommitmentProofJourney()->getCarpoolPayment())
+            && $this->getCommitmentProofJourney()->getCarpoolPayment()->isEecCompliant()
+            && !is_null($this->getIncentiveProofTimestampToken())
+            && !is_null($this->getIncentiveProofTimestampSigningTime())
+            && !is_null($this->getCommitmentProofTimestampToken())
+            && !is_null($this->getCommitmentProofTimestampSigningTime())
+            && !is_null($this->getHonorCertificateProofTimestampToken())
+            && !is_null($this->getHonorCertificateProofTimestampSigningTime());
     }
 }
