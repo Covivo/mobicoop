@@ -145,11 +145,22 @@ class AnalyticManager
     {
         $community = $this->getOperationalValue(null);
 
-        $dashboard = $this->getDashboard();
-
-        $territories = $this->getTerritories($dashboard['auth_item']);
+        $territories = $this->treatTerritoryParams();
 
         return [$territories, $community];
+    }
+
+    private function treatTerritoryParams(): array
+    {
+        $dashboard = $this->getDashboard();
+        if (!$this->territoryIdParam) {
+            $territories = $this->getTerritoriesFromAuthItem($dashboard['auth_item']);
+        } else {
+            $territories = [$this->getOperationalValue($this->territoryIdParam)];
+            $this->defaultTerritoryId = $this->territoryIdParam;
+        }
+
+        return $territories;
     }
 
     private function defineFiltersForCommunityModerator(): array
@@ -157,9 +168,7 @@ class AnalyticManager
         $this->getDefaultCommunityId();
         $community = $this->defaultCommunityId;
 
-        $dashboard = $this->getDashboard();
-
-        $territories = $this->getTerritories($dashboard['auth_item']);
+        $territories = $this->treatTerritoryParams();
 
         return [$territories, $community];
     }
@@ -181,13 +190,12 @@ class AnalyticManager
                 $analytic->setCommunityId(null);
                 $analytic->setTerritoryId(null);
             }
-            var_dump($this->getTerritories($dashboard['auth_item']));
 
             return [$territories, $community];
         }
 
         // apply filters defalut values
-        $territories = $this->getTerritories($dashboard['auth_item']);
+        $territories = $this->getTerritoriesFromAuthItem($dashboard['auth_item']);
         if (null != $this->territoryIdParam && in_array($this->territoryIdParam, $territories)) {
             // set asked territory filter
             $territories = [$this->getOperationalValue($this->territoryIdParam)];
@@ -265,7 +273,7 @@ class AnalyticManager
         return $this->getOperationalValue($communityId);
     }
 
-    private function getTerritories(string $auth_item): array
+    private function getTerritoriesFromAuthItem(string $auth_item): array
     {
         $territories = $this->authManager->getTerritoryListForItem($auth_item);
 
