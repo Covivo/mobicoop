@@ -684,6 +684,7 @@ class Structure
         $this->territories = new ArrayCollection();
         $this->operators = [];
         $this->images = new ArrayCollection();
+        $this->beneficiaryAutoApproval = true;
     }
 
     public function getId(): ?int
@@ -736,12 +737,12 @@ class Structure
 
     public function hasBeneficiaryAutoApproval(): ?bool
     {
-        return $this->beneficiaryAutoApproval ? true : false;
+        return true;
     }
 
     public function setBeneficiaryAutoApproval(bool $beneficiaryAutoApproval): self
     {
-        $this->beneficiaryAutoApproval = $beneficiaryAutoApproval;
+        $this->beneficiaryAutoApproval = true;
 
         return $this;
     }
