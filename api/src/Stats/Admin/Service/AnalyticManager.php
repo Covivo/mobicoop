@@ -95,9 +95,6 @@ class AnalyticManager
             throw new \LogicException('Territories should not be null. This code should not be reached!');
         }
 
-        // var_dump($territories);
-        // var_dump($community);
-
         $payload = [
             'resource' => ['dashboard' => $dashboard['dashboardId']],
             'params' => [
