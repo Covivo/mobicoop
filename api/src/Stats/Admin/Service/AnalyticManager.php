@@ -140,7 +140,7 @@ class AnalyticManager
         $community = $this->getOperationalValue(null);
 
         $territories = $this->treatTerritoryParams();
-        $community = $this->treatCommunityParams();
+        $community = $this->treatCommunityParamsWithoutCheck();
 
         return [$territories, $community];
     }
@@ -158,7 +158,7 @@ class AnalyticManager
         return $territories;
     }
 
-    private function treatCommunityParams()
+    private function treatCommunityParams(): ?string
     {
         $community = $this->getOperationalValue($this->defaultCommunityId);
         if ($this->communityIdParam) {
@@ -169,12 +169,41 @@ class AnalyticManager
         return $community;
     }
 
+    private function treatCommunityParamsWithoutCheck(): ?string
+    {
+        return $this->treatCommunityParams();
+    }
+
+    private function treatCommunityParamsWithCheckIfAuthorized(): ?string
+    {
+        $community = $this->treatCommunityParams();
+
+        if (!$this->canGetCommunity()) {
+            throw new \LogicException('Can get data for this Community. You need to be its referer or a moderator.');
+        }
+
+        return $community;
+    }
+
+    private function canGetCommunity(): bool
+    {
+        if (!$communityEntity = $this->communityRepository->find($this->defaultCommunityId)) {
+            throw new \LogicException('Unknown Community');
+        }
+        $user = $this->tokenStorage->getToken()->getUser();
+        if ($communityEntity->getUser()->getId() == $user->getId() || $this->communityRepository->isModerator($communityEntity, $user)) {
+            return true;
+        }
+
+        return false;
+    }
+
     private function defineFiltersForCommunityModerator(): array
     {
         $this->getDefaultCommunityId();
 
         $territories = $this->treatTerritoryParams();
-        $community = $this->treatCommunityParams();
+        $community = $this->treatCommunityParamsWithCheckIfAuthorized();
 
         return [$territories, $community];
     }
