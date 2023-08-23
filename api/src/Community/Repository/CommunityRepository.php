@@ -204,6 +204,26 @@ class CommunityRepository
     }
 
     /**
+     * Find if a user is a moderator in a given community.
+     */
+    public function isModerator(Community $community, User $user)
+    {
+        $result = $this->repository->createQueryBuilder('c')
+            ->join('c.communityUsers', 'cu')
+            ->where('cu.user = :user and cu.community = :community and cu.status = :accepted_as_moderator')
+            ->setParameter('user', $user)
+            ->setParameter('community', $community)
+            ->setParameter('accepted_as_moderator', CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
+            ->getQuery()->getResult()
+        ;
+        if ($result) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Check if a user is a referrer.
      *
      * @param User      $user      The user id
