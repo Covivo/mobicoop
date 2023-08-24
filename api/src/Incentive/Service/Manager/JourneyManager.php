@@ -199,6 +199,10 @@ class JourneyManager extends MobConnectManager
      */
     public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
     {
+        if (CarpoolPayment::STATUS_SUCCESS !== $carpoolPayment->getStatus()) {
+            return;
+        }
+
         $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$carpoolPayment->getId());
 
         /**
