@@ -26,7 +26,6 @@ namespace App\RelayPoint\Repository;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
-use App\Community\Entity\Community;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -46,6 +45,8 @@ class RelayPointRepository
     private $repository;
 
     private $entityManager;
+    private $collectionExtensions;
+    private $managerRegistry;
 
     public function __construct(EntityManagerInterface $entityManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
@@ -136,8 +137,7 @@ class RelayPointRepository
             and ST_CONTAINS(t.geoJsonDetail,a.geoJson)=1
         ');
 
-        return $query->getResult()
-        ;
+        return $query->getResult();
     }
 
     /**
@@ -172,6 +172,19 @@ class RelayPointRepository
                 return $extension->getResult($query, RelayPoint::class, $operationName);
             }
         }
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function getByLatLon(float $lat, float $lon)
+    {
+        $query = $this->repository->createQueryBuilder('rp');
+        $query->join('rp.address', 'a')
+            ->where('a.latitude = :lat')
+            ->andWhere('a.longitude = :lon')
+            ->setParameter('lat', $lat)
+            ->setParameter('lon', $lon)
+        ;
 
         return $query->getQuery()->getResult();
     }

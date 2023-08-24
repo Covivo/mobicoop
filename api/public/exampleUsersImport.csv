@@ -1,0 +1,7 @@
+email;givenName;familyName;gender;birthDate;phoneNumber;communityId
+max.testimport@yopmail.com;Max;TestImport;1;1982-02-03;0666666666;communityId
+
+indications about data formating:
+gender: 1=female, 2=male, 3=nc
+birthDate: YYYY-MM-DD
+communityId : empty or int number refering to an EXISTING Community

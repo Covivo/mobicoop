@@ -4,5 +4,11 @@
     "link": "https://pro.mobicoop.fr/comment-regler-ses-covoiturages-sur-mobicoop/",
     "textLink": "En savoir plus.",
     "title": "Prenez garde aux fraudeurs !"
+  },
+  "eecWarning": {
+    "driverWithEecStatusPassengerWithoutValidatedIdentity": "Les covoiturages avec {givenName} {shortFamilyName} ne peuvent être comptabilisées pour votre Prime Covoiturage CEE, car {gender} n'a pas encore vérifié son identité bancaire. N'hésitez pas à le lui demander. Légalement en effet, seuls les covoiturages géolocalisés par le conducteur et le passager, et dont les identités sont vérifiées pour les 2, peuvent être comptabilisés pour la Prime Covoiturage CEE. <a href=\"/comment-obtenir-prime-covoiturage/\">En savoir plus</a>.",
+    "passengerWithoutValidatedIdentity": "Rappel: pour la plupart des primes pour le covoiturage comme la Prime Covoiturage CEE permettant au conducteur de toucher 100€, la saisie de votre identité bancaire et de la sienne sont nécessaires. Selon le type de prime, celle-ci est versée au conducteur et/ou au passager. En savoir plus.",
+    "female": "elle",
+    "male": "il"
   }
 }

@@ -261,6 +261,7 @@ import VJourney from '@components/carpool/utilities/VJourney';
 import MatchingJourney from '@components/carpool/results/MatchingJourney';
 import Report from "@components/utilities/Report";
 import PopupPublicProfile from "@components/user/profile/PopupPublicProfile";
+import { DRIVER, PASSENGER } from "./Messages";
 import maxios from "@utils/maxios";
 import moment from "moment";
 
@@ -367,7 +368,7 @@ export default {
       else{
         return this.infosComplete.carpooler.givenName+' '+this.infosComplete.carpooler.shortFamilyName
       }
-    }
+    },
   },
   watch:{
     loadingInit(){
@@ -418,6 +419,8 @@ export default {
                 this.driver = true;
                 this.passenger = false;
               }
+
+              this.$emit( 'recipientIdentity', this.getCarpoolerIdentity() )
             })
             .catch(function (error) {
             // console.log(error);
@@ -434,6 +437,18 @@ export default {
         this.hideClickIcon = true;
         this.$emit("refreshActionsCompleted");
       }
+    },
+    getCarpoolerIdentity() {
+      return {
+        id: this.infosComplete.carpooler.id,
+        identityStatus: this.infosComplete.carpooler.identityStatus,
+        bankingIdentityStatus: this.infosComplete.carpooler.bankingIdentityStatus,
+        eecStatus: this.infosComplete.carpooler.eecStatus,
+        role: this.infosComplete.resultDriver ? PASSENGER : DRIVER,
+        givenName: this.infosComplete.carpooler.givenName,
+        shortFamilyName: this.infosComplete.carpooler.shortFamilyName,
+        gender: this.infosComplete.carpooler.gender
+      };
     },
     formatHour(date){
       return moment.utc(date).format("HH")+'h'+moment.utc(date).format("mm")

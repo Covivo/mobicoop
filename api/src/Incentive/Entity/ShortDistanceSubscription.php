@@ -25,6 +25,10 @@ class ShortDistanceSubscription
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/short-distance-subscription/honour-certificate/';
 
+    public const VALIDITY_PERIOD = 3;               // Period expressed in months
+
+    public const SUBSCRIPTION_TYPE = 'short';
+
     /**
      * @var int The user subscription ID
      *
@@ -60,14 +64,14 @@ class ShortDistanceSubscription
     private $subscriptionId;
 
     /**
-     * @var string the subscription status
+     * @var null|string the subscription status
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      */
     private $status;
 
     /**
-     * @var \DateTimeInterface
+     * @var null|\DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -167,7 +171,7 @@ class ShortDistanceSubscription
     private $updatedAt;
 
     /**
-     * @var ShortDistanceJourney
+     * @var null|ShortDistanceJourney
      *
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceJourney")
      *
@@ -196,7 +200,7 @@ class ShortDistanceSubscription
     /**
      * The long distance ECC commitment proof date.
      *
-     * @var \DateTimeInterface
+     * @var null|\DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance ECC commitment proof date"})
      */
@@ -205,7 +209,7 @@ class ShortDistanceSubscription
     /**
      * The long distance EEC commitment proof timestamp token.
      *
-     * @var string
+     * @var null|string
      *
      * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance ECC commitment proof timestamp"})
      */
@@ -214,7 +218,7 @@ class ShortDistanceSubscription
     /**
      * The long distance EEC commitment proof timestamp signing time.
      *
-     * @var \DateTimeInterface
+     * @var null|\DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC commitment proof timestamp signing time"})
      */
@@ -339,14 +343,37 @@ class ShortDistanceSubscription
         return $this;
     }
 
-    public function removeShortDistanceJourney(ShortDistanceJourney $shortDistanceJourney)
+    public function removeShortDistanceJourney(ShortDistanceJourney $journey)
     {
-        return $this->shortDistanceJourneys->removeElement($shortDistanceJourney);
+        // If the trip is the commitment trip, we also reset the subscription
+        if (!is_null($this->commitmentProofJourney) && $journey->getId() === $this->getCommitmentProofJourney()->getId()) {
+            $this->setCommitmentProofDate(null);
+            $this->setCommitmentProofJourney(null);
+            $this->setCommitmentProofTimestampToken(null);
+            $this->setCommitmentProofTimestampSigningTime(null);
+            $this->setStatus(null);
+            $this->setVerificationDate(null);
+        }
+
+        return $this->shortDistanceJourneys->removeElement($journey);
     }
 
+    /**
+     * Return all journeys.
+     */
     public function getJourneys()
     {
         return $this->shortDistanceJourneys;
+    }
+
+    /**
+     * Returns EEC compliant journeys.
+     */
+    public function getCompliantJourneys(): array
+    {
+        return array_values(array_filter($this->getJourneys()->toArray(), function (ShortDistanceJourney $journey) {
+            return $journey->isCompliant();
+        }));
     }
 
     /**
@@ -380,9 +407,9 @@ class ShortDistanceSubscription
     /**
      * Set the status of the journey.
      *
-     * @param string $status the status of the journey
+     * @param null|string $status the status of the journey
      */
-    public function setStatus(string $status): self
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
 
@@ -630,9 +657,9 @@ class ShortDistanceSubscription
     /**
      * Set the value of verificationDate.
      */
-    public function setVerificationDate(): self
+    public function setVerificationDate(?\DateTimeInterface $verificationDate = null): self
     {
-        $this->verificationDate = new \DateTime('now');
+        $this->verificationDate = !is_null($verificationDate) ? $verificationDate : new \DateTime('now');
 
         return $this;
     }
@@ -662,10 +689,12 @@ class ShortDistanceSubscription
      */
     public function hasExpired(): bool
     {
+        $now = new \DateTime('now');
+
         return
             !empty($this->getJourneys())
             && !is_null($this->getExpirationDate())
-            && $this->getExpirationDate() < new \DateTime('now');
+            && $this->getExpirationDate() < $now->sub(new \DateInterval('P'.self::VALIDITY_PERIOD.'M'));
     }
 
     /**
@@ -691,7 +720,7 @@ class ShortDistanceSubscription
     /**
      * Get the value of commitmentProofDate.
      *
-     * @return \DateTimeInterface
+     * @return null|\DateTimeInterface
      */
     public function getCommitmentProofDate(): ?\DateTime
     {
@@ -701,7 +730,7 @@ class ShortDistanceSubscription
     /**
      * Set the value of commitmentProofDate.
      */
-    public function setCommitmentProofDate(\DateTimeInterface $commitmentProofDate): self
+    public function setCommitmentProofDate(?\DateTimeInterface $commitmentProofDate): self
     {
         $this->commitmentProofDate = $commitmentProofDate;
 
@@ -710,8 +739,6 @@ class ShortDistanceSubscription
 
     /**
      * Get the long distance EEC commitment proof timestamp token.
-     *
-     * @return string
      */
     public function getCommitmentProofTimestampToken(): ?string
     {
@@ -723,7 +750,7 @@ class ShortDistanceSubscription
      *
      * @param string $commitmentProofTimestampToken the long distance EEC commitment proof timestamp token
      */
-    public function setCommitmentProofTimestampToken(string $commitmentProofTimestampToken): self
+    public function setCommitmentProofTimestampToken(?string $commitmentProofTimestampToken): self
     {
         $this->commitmentProofTimestampToken = $commitmentProofTimestampToken;
 
@@ -733,7 +760,7 @@ class ShortDistanceSubscription
     /**
      * Get the long distance EEC commitment proof timestamp signing time.
      *
-     * @return \DateTimeInterface
+     * @return null|\DateTimeInterface
      */
     public function getCommitmentProofTimestampSigningTime(): ?\DateTime
     {
@@ -745,7 +772,7 @@ class ShortDistanceSubscription
      *
      * @param \DateTimeInterface $commitmentProofTimestampSigningTime the long distance EEC commitment proof timestamp signing time
      */
-    public function setCommitmentProofTimestampSigningTime(\DateTimeInterface $commitmentProofTimestampSigningTime): self
+    public function setCommitmentProofTimestampSigningTime(?\DateTimeInterface $commitmentProofTimestampSigningTime): self
     {
         $this->commitmentProofTimestampSigningTime = $commitmentProofTimestampSigningTime;
 
@@ -872,7 +899,7 @@ class ShortDistanceSubscription
     /**
      * Set the value of commitmentProofJourney.
      */
-    public function setCommitmentProofJourney(ShortDistanceJourney $commitmentProofJourney): self
+    public function setCommitmentProofJourney(?ShortDistanceJourney $commitmentProofJourney): self
     {
         $this->commitmentProofJourney = $commitmentProofJourney;
         $this->addShortDistanceJourney($this->getCommitmentProofJourney());

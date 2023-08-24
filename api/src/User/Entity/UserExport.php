@@ -17,6 +17,7 @@ class UserExport
     public const HITCHHIKING_DRIVER = 'Conducteur';
     public const HITCHHIKING_PASSENGER = 'Passager';
     public const HITCHHIKING_BOTH = 'Passager et Conducteur';
+    public const HITCHHIKING_NONE = 'Aucun';
 
     public const IDENTITY_REJECTED = 'Rejetée';
     public const IDENTITY_VERIFIED = 'Vérifiée';
@@ -494,6 +495,9 @@ class UserExport
                 $gender = 'Autre';
 
                 break;
+
+            default:
+                $gender = 'Sans';
         }
 
         $this->gender = $gender;

@@ -47,6 +47,7 @@ use App\Carpool\Event\ProposalCanceledEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Event\ProposalWillExpireEvent;
 use App\Carpool\Repository\AskHistoryRepository;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AskManager;
 use App\Communication\Service\NotificationManager;
 use App\TranslatorTrait;
@@ -141,9 +142,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
         // we send the email to requester of the carpool
         $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
         $this->notificationManager->notifies(AskAcceptedEvent::NAME, $adRecipient, $event->getAd());
-        //  we also send the eail to the offerer of the carpool
+        //  we also send the email to the offerer of the carpool
         $adRecipient = $this->userManager->getUser($event->getAd()->getuserId());
         $this->notificationManager->notifies(AskAcceptedEvent::NAME, $adRecipient, $event->getAd());
+
+        // We notify the EEC driver if his passenger does not have his identity validated
+        $this->_sendDriverEecNotificationOnAskAccepted($event->getAd());
     }
 
     /**
@@ -412,12 +416,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 'date' => $date,
             ];
             // todo: use if we can keep the proposal (request or offer) if we delete the matched one
-//            if ($ask->getCriteria()->isDriver()) {
-//                $proposalId = $ask->getMatching()->getProposalOffer()->getId();
-//            } else {
-//                $proposalId = $ask->getMatching()->getProposalRequest()->getId();
-//            }
-//            $routeParams = ["pid" => $proposalId];
+            //            if ($ask->getCriteria()->isDriver()) {
+            //                $proposalId = $ask->getMatching()->getProposalOffer()->getId();
+            //            } else {
+            //                $proposalId = $ask->getMatching()->getProposalRequest()->getId();
+            //            }
+            //            $routeParams = ["pid" => $proposalId];
             $object->searchLink = $event->getMailSearchLink().'?'.http_build_query($routeParams);
             if ($this->canNotify($ask->getUser(), $ask->getUserRelated())) {
                 $ad = $this->askManager->getAskFromAd($ask->getId(), $ask->getUser()->getId());
@@ -629,5 +633,15 @@ class CarpoolSubscriber implements EventSubscriberInterface
         }
 
         return $multipleSchedules;
+    }
+
+    private function _sendDriverEecNotificationOnAskAccepted(Ad $ad): void
+    {
+        $driver = $this->userManager->getUser($ad->getUserIdByType(Ad::ROLE_DRIVER));
+        $passenger = $this->userManager->getUser($ad->getUserIdByType(Ad::ROLE_PASSENGER));
+
+        if ($driver->getEecStatus() && !$passenger->hasBankingIdentityValidated()) {
+            $this->notificationManager->notifies('carpool_ask_accepted_eec', $driver, $ad);
+        }
     }
 }

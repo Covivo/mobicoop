@@ -92,6 +92,7 @@
                   :api-uri="apiUri"
                   :genders-list="gendersList"
                   @changeTab="changeTab"
+                  @updateUser="updateUser"
                 />
               </v-tab-item>
 
@@ -346,6 +347,11 @@ export default {
     },
     changeTab(tab){
       this.modelTabsH = tab;
+    },
+    updateUser(e) {
+      for (const property in e) {
+        this.user[property] = e[property];
+      }
     }
   }
 }

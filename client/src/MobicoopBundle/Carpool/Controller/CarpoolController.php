@@ -187,6 +187,9 @@ class CarpoolController extends AbstractController
 
         return $this->render('@Mobicoop/carpool/update.html.twig', [
             'ad' => $ad,
+            'communityIds' => array_map(function ($community) {
+                return $community['id'];
+            }, $ad->getCommunities()),
             'hasAsks' => $hasAsks,
             'hasPotentialAds' => $hasPotentialAds,
             'solidaryExclusive' => $ad->isSolidaryExclusive(),

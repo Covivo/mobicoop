@@ -25,6 +25,8 @@ namespace App\Payment\Entity;
 
 use App\Action\Entity\Log;
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Proposal;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -672,5 +674,56 @@ class CarpoolItem
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    public function getProposalAccordingUser(User $user): ?Proposal
+    {
+        return
+            !is_null($this->getAsk())
+            && !is_null($this->getAsk()->getMatching())
+            && !is_null($this->getAsk()->getMatching()->getProposalOffer())
+            && !is_null($this->getAsk()->getMatching()->getProposalOffer()->getUser())
+            && $user->getId() === $this->getAsk()->getMatching()->getProposalOffer()->getUser()->getId()
+            ? $this->getAsk()->getMatching()->getProposalOffer()->getUser()
+            : (
+                !is_null($this->getAsk())
+                && !is_null($this->getAsk()->getMatching())
+                && !is_null($this->getAsk()->getMatching()->getProposalRequest())
+                && !is_null($this->getAsk()->getMatching()->getProposalRequest()->getUser())
+                ? $this->getAsk()->getMatching()->getProposalRequest()->getUser()
+                : null
+            );
+    }
+
+    public function getCarpoolProof(): ?CarpoolProof
+    {
+        if (
+            is_null($this->getAsk())
+            || is_null($this->getAsk()->getCarpoolProofs())
+            || empty($this->getAsk()->getCarpoolProofs())
+        ) {
+            return null;
+        }
+
+        $carpoolProofs = $this->getAsk()->getCarpoolProofs();
+
+        $filteredCarpoolProofs = array_values(array_filter($carpoolProofs, function ($carpoolProof) {
+            $referenceDate =
+                !is_null($carpoolProof->getPickUpDriverDate())
+                ? $carpoolProof->getPickUpDriverDate()                              // Returns the driver pickup date
+                : (
+                    !is_null($carpoolProof->getPickUpPassengerDate())
+                    ? $carpoolProof->getPickUpPassengerDate()                       // Returns the passenger pickup date
+                    : function ($carpoolProof) {
+                        $date = new \DateTime($carpoolProof->getCreatedDate()->format('Y-m-d'));
+
+                        return $date->sub(new \DateInterval('P1D'));                // Returns the day before the proof creation date
+                    }
+                );
+
+            return $this->getItemDate()->format('Y-m-d') === $referenceDate->format('Y-m-d');
+        }));
+
+        return !empty($filteredCarpoolProofs) ? $filteredCarpoolProofs[0] : null;
     }
 }

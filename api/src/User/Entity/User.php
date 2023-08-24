@@ -71,7 +71,6 @@ use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserDelete;
 use App\User\Controller\UserExport;
 use App\User\Controller\UserGeneratePhoneToken;
-use App\User\Controller\UserRegistration;
 use App\User\Controller\UserSendValidationEmail;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserUnsubscribeFromEmail;
@@ -103,7 +102,6 @@ use App\User\Filter\SolidaryFilter;
 use App\User\Filter\TerritoryFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\User\Filter\WaypointTerritoryFilter;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -668,11 +666,13 @@ class User implements UserInterface, EquatableInterface
     public const STATUS_ANONYMIZED = 3;
     public const STATUS_PSEUDONYMIZED = 4;
 
+    public const GENDER_UNDEFINED = 0;
     public const GENDER_FEMALE = 1;
     public const GENDER_MALE = 2;
     public const GENDER_OTHER = 3;
 
     public const GENDERS = [
+        self::GENDER_UNDEFINED,
         self::GENDER_FEMALE,
         self::GENDER_MALE,
         self::GENDER_OTHER,
@@ -1858,6 +1858,40 @@ class User implements UserInterface, EquatableInterface
      */
     private $externalJourneyUserId;
 
+    /**
+     * @var \DateTimeInterface import date of the user
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"aRead","write"})
+     */
+    private $importedDate;
+
+    /**
+     * Indicates if the user has subscribed to one of the 2 carpooling incentive.
+     *
+     * @var bool
+     *
+     * @Groups({"readUser", "results"})
+     */
+    private $eecStatus = false;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="\App\Payment\Entity\PaymentProfile", mappedBy="user")
+     */
+    private $paymentProfiles;
+
+    /**
+     * Banking identity status.
+     *
+     * @var bool
+     *
+     * @Groups({"readUser", "results"})
+     */
+    private $bankingIdentityStatus = false;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1877,7 +1911,6 @@ class User implements UserInterface, EquatableInterface
         $this->logs = new ArrayCollection();
         $this->logsAsDelegate = new ArrayCollection();
         $this->diaries = new ArrayCollection();
-        $this->diariesAdmin = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
         $this->campaigns = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
@@ -1889,6 +1922,7 @@ class User implements UserInterface, EquatableInterface
         $this->rewards = new ArrayCollection();
         $this->rewardSteps = new ArrayCollection();
         $this->identityProofs = new ArrayCollection();
+        $this->paymentProfiles = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
         $this->rolesTerritory = [];
@@ -2730,8 +2764,8 @@ class User implements UserInterface, EquatableInterface
 
     public function addCommunityUser(CommunityUser $communityUser): self
     {
-        if (!$this->events->contains($communityUser)) {
-            $this->events->add($communityUser);
+        if (!$this->communityUsers->contains($communityUser)) {
+            $this->communityUsers->add($communityUser);
             $communityUser->setUser($this);
         }
 
@@ -2740,8 +2774,8 @@ class User implements UserInterface, EquatableInterface
 
     public function removeCommunityUser(CommunityUser $communityUser): self
     {
-        if ($this->events->contains($communityUser)) {
-            $this->events->removeElement($communityUser);
+        if ($this->communityUsers->contains($communityUser)) {
+            $this->communityUsers->removeElement($communityUser);
             // set the owning side to null (unless already changed)
             if ($communityUser->getUser() === $this) {
                 $communityUser->setUser(null);
@@ -4115,5 +4149,57 @@ class User implements UserInterface, EquatableInterface
         $this->externalJourneyUserId = $externalJourneyUserId;
 
         return $this;
+    }
+
+    public function getImportedDate(): ?\DateTimeInterface
+    {
+        return $this->importedDate;
+    }
+
+    public function setImportedDate(\DateTimeInterface $importedDate): self
+    {
+        $this->importedDate = $importedDate;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of eecStatus.
+     */
+    public function getEecStatus(): bool
+    {
+        $this->eecStatus = !is_null($this->getLongDistanceSubscription()) || !is_null($this->getShortDistanceSubscription());
+
+        return $this->eecStatus;
+    }
+
+    /**
+     * Returns if the banking identity has been validated
+     * - A least one banking profile exists
+     * - The existing banking profile has a validated status 1.
+     */
+    public function getBankingIdentityStatus(): bool
+    {
+        $this->bankingIdentityStatus =
+            !is_null($this->getPaymentProfiles())
+            && !$this->getPaymentProfiles()->isEmpty()
+            && $this->getPaymentProfiles()->toArray()[0]->isValidated();
+
+        return $this->bankingIdentityStatus;
+    }
+
+    public function hasBankingIdentityValidated(): bool
+    {
+        return $this->getBankingIdentityStatus();
+    }
+
+    /**
+     * Get the value of paymentProfiles.
+     *
+     * @return ArrayCollection
+     */
+    public function getPaymentProfiles()
+    {
+        return $this->paymentProfiles;
     }
 }

@@ -54,6 +54,10 @@ class SubscriptionValidation extends Validation
      */
     public function isSubscriptionReadyForVerify($subscription): bool
     {
+        if ($subscription->hasExpired()) {
+            return false;
+        }
+
         $journeys = $subscription->getJourneys();
 
         if ($journeys->isEmpty()) {

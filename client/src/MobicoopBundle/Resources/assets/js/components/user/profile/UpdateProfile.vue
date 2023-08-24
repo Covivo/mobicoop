@@ -983,6 +983,9 @@ export default {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
           this.loading = false;
+          if (this.drivingLicenceNumber && this.user.drivingLicenceNumber != this.drivingLicenceNumber) {
+            this.$emit('updateUser', {"drivingLicenceNumber": this.drivingLicenceNumber})
+          }
           if (this.user.telephone != this.telephone) {
             this.phoneValidatedDate = null;
             this.phoneToken = null;

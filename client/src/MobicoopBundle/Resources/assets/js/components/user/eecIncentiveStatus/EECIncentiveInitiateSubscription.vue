@@ -258,6 +258,11 @@ export default {
         this.checkboxesAllChecked = true;
       }
     },
+    drivingLicenceNumberFilled(n) {
+      if (n) {
+        this.updateStore(this.canSubscribe);
+      }
+    },
     checkboxesAllChecked(){
       this.updateStore(this.canSubscribe);
     }
