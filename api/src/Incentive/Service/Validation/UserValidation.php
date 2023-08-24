@@ -11,40 +11,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class UserValidation extends Validation
 {
-    /**
-     * @var TokenStorageInterface
-     */
-    private $_tokenStorage;
-
     public function __construct(LoggerService $loggerService, TokenStorageInterface $tokenStorageInterface)
     {
         $this->_tokenStorage = $tokenStorageInterface;
 
         parent::__construct($loggerService);
-    }
-
-    /**
-     * The user has not made any valid long-distance journeys for 3 years.
-     */
-    public function isUserAccountReadyForSubscription(User $driver, bool $isLongDistance = true): bool
-    {
-        $this->setDriver($driver);
-
-        $isUserValid = $this->isUserValid();
-        $carpoolProofs = $this->_driver->getCarpoolProofsAsDriver();
-
-        // The user is valid and he has not made any trips
-        if ($isUserValid && (is_null($carpoolProofs) || empty($carpoolProofs))) {
-            return true;
-        }
-
-        $filteredCarpoolProofs = $isLongDistance ? $this->_getCarpoolProofsForLongDistance($carpoolProofs) : $this->_getCarpoolProofsForShortDistance($carpoolProofs);
-
-        if (!$isUserValid) {
-            return false;
-        }
-
-        return empty($filteredCarpoolProofs);
     }
 
     public function isUserProperlyConnectToMob(User $driver): bool
@@ -69,28 +40,6 @@ class UserValidation extends Validation
         }
 
         return $errors;
-    }
-
-    public function hasValidMobConnectAuth(?User $user): bool
-    {
-        /**
-         * @var User $requester
-         */
-        $requester = is_null($user) ? $this->_tokenStorage->getToken()->getUser() : $user;
-
-        if (is_null($requester->getMobConnectAuth())) {
-            return false;
-        }
-
-        $now = new \DateTime('now');
-        if (
-            is_null($requester->getMobConnectAuth()->getRefreshTokenExpiresDate())
-            || ($requester->getMobConnectAuth()->getRefreshTokenExpiresDate() < $now)
-        ) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

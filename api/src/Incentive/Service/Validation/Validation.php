@@ -30,6 +30,11 @@ abstract class Validation
      */
     protected $_loggerService;
 
+    /**
+     * @var TokenStorageInterface
+     */
+    protected $_tokenStorage;
+
     public function __construct(LoggerService $loggerService)
     {
         $this->_loggerService = $loggerService;
@@ -58,6 +63,30 @@ abstract class Validation
             default:
                 throw new \LogicException('The class '.get_class($journey).' cannot be processed');
         }
+    }
+
+    public function hasValidMobConnectAuth(?User $user): bool
+    {
+        /**
+         * @var User $requester
+         */
+        $requester = is_null($user) ? $this->_tokenStorage->getToken()->getUser() : $user;
+
+        return
+            !is_null($requester->getMobConnectAuth())
+            && $requester->getMobConnectAuth()->isValid();
+    }
+
+    public function isUserValid(User $user): bool
+    {
+        $this->setDriver($user);
+
+        return
+            !is_null($this->getDriver())
+            && !is_null($this->getDriver()->getDrivingLicenceNumber())
+            && !is_null($this->getDriver()->getTelephone())
+            && !is_null($this->getDriver()->getPhoneValidatedDate())
+            && $this->hasValidMobConnectAuth($this->getDriver());
     }
 
     protected function _hasLongDistanceJourneyAlreadyDeclared(CarpoolItem $carpoolItem): bool
@@ -98,12 +127,9 @@ abstract class Validation
         return $dateStartPeriod <= $dateToCheck && $dateToCheck <= $dateEndPeriod;
     }
 
-    protected function isUserValid(): bool
+    protected function getDriver(): ?User
     {
-        return
-            !is_null($this->_driver->getDrivingLicenceNumber())
-            && !is_null($this->_driver->getTelephone())
-            && !is_null($this->_driver->getPhoneValidatedDate());
+        return $this->_driver;
     }
 
     protected function setDriver(User $driver): self

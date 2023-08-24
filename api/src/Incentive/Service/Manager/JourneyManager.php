@@ -4,25 +4,21 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
-use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
-use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\JourneyValidation;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
-use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class JourneyManager extends MobConnectManager
 {
@@ -42,9 +38,9 @@ class JourneyManager extends MobConnectManager
     private $_carpoolItemRepository;
 
     /**
-     * @var EventDispatcherInterface
+     * @var LongDistanceJourneyRepository
      */
-    private $_eventDispatcher;
+    private $_longDistanceJourneyRepository;
 
     /**
      * @var JourneyValidation
@@ -55,11 +51,11 @@ class JourneyManager extends MobConnectManager
         CarpoolProofRepository $carpoolProofRepository,
         CarpoolItemRepository $carpoolItemRepository,
         EntityManagerInterface $em,
-        EventDispatcherInterface $eventDispatcher,
         JourneyValidation $journeyValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
         TimestampTokenManager $timestampTokenManager,
+        LongDistanceJourneyRepository $longDistanceJourneyRepository,
         string $carpoolProofPrefix,
         array $mobConnectParams,
         array $ssoServices
@@ -69,33 +65,38 @@ class JourneyManager extends MobConnectManager
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_carpoolItemRepository = $carpoolItemRepository;
-        $this->_eventDispatcher = $eventDispatcher;
+        $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
 
         $this->_journeyValidation = $journeyValidation;
     }
 
     public function userProofsRecovery(User $driver, string $subscriptionType): bool
     {
+        $this->setDriver($driver);
+
         $result = false;
 
         switch ($subscriptionType) {
             case MobConnectManager::LONG_SUBSCRIPTION_TYPE:
+                /**
+                 * @var CarpoolItem[]
+                 */
                 $carpoolItems = $this->_carpoolItemRepository->findUserEECEligibleItem($driver);
 
                 foreach ($carpoolItems as $item) {
-                    if (is_null($driver->getLongDistanceSubscription()->getCommitmentProofDate()) && empty($driver->getLongDistanceSubscription()->getJourneys())) {
-                        $proposal = $driver === $item->getAsk()->getMatching()->getProposalOffer()->getUser()
-                            ? $item->getAsk()->getMatching()->getProposalOffer()->getUser() : $item->getAsk()->getMatching()->getProposalRequest()->getUser();
+                    if (
+                        is_null($driver->getLongDistanceSubscription()->getCommitmentProofDate())
+                        && empty($driver->getLongDistanceSubscription()->getJourneys())
+                    ) {
+                        $proposal = $item->getProposalAccordingUser($this->getDriver());
 
-                        $event = new FirstLongDistanceJourneyPublishedEvent($proposal);
-                        $this->_eventDispatcher->dispatch(FirstLongDistanceJourneyPublishedEvent::NAME, $event);
+                        $this->declareFirstLongDistanceJourney($proposal);
                     }
 
                     $carpoolPayment = $this->_getCarpoolPaymentFromCarpoolItem($item);
 
-                    if (!is_null($carpoolPayment)) {
-                        $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
-                        $this->_eventDispatcher->dispatch(ElectronicPaymentValidatedEvent::NAME, $event);
+                    if (!is_null($carpoolPayment) && CarpoolPayment::STATUS_SUCCESS === $carpoolPayment->getStatus()) {
+                        $this->receivingElectronicPayment($carpoolPayment);
                     }
 
                     $result = true;
@@ -106,14 +107,15 @@ class JourneyManager extends MobConnectManager
             case MobConnectManager::SHORT_SUBSCRIPTION_TYPE:
                 $carpoolProofs = $this->_carpoolProofRepository->findUserCEEEligibleProof($driver, $subscriptionType);
 
-                foreach ($carpoolProofs as $proof) {
-                    if (is_null($driver->getShortDistanceSubscription()->getCommitmentProofDate()) && empty($driver->getShortDistanceSubscription()->getJourneys())) {
-                        $event = new FirstShortDistanceJourneyPublishedEvent($proof);
-                        $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyPublishedEvent::NAME, $event);
+                foreach ($carpoolProofs as $carpoolProof) {
+                    if (
+                        is_null($driver->getShortDistanceSubscription()->getCommitmentProofDate())
+                        && empty($driver->getShortDistanceSubscription()->getJourneys())
+                    ) {
+                        $this->declareFirstShortDistanceJourney($carpoolProof);
                     }
 
-                    $event = new CarpoolProofValidatedEvent($proof);
-                    $this->_eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
+                    $this->validationOfProof($carpoolProof);
 
                     $result = true;
                 }
@@ -197,6 +199,10 @@ class JourneyManager extends MobConnectManager
      */
     public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
     {
+        if (CarpoolPayment::STATUS_SUCCESS !== $carpoolPayment->getStatus()) {
+            return;
+        }
+
         $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$carpoolPayment->getId());
 
         /**
@@ -205,6 +211,10 @@ class JourneyManager extends MobConnectManager
         $carpoolItems = $this->_getCarpoolItemsFromCarpoolPayment($carpoolPayment);
 
         foreach ($carpoolItems as $carpoolItem) {
+            if ($this->carpoolItemAlreadyTreated($carpoolItem)) {
+                continue;
+            }
+
             $this->setDriver($carpoolItem->getCreditorUser());
 
             $subscription = $this->_driver->getLongDistanceSubscription();
@@ -239,7 +249,7 @@ class JourneyManager extends MobConnectManager
 
                 $params = [
                     'Date de partage des frais' => $carpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
-                    "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(),
+                    "Attestation sur l'Honneur" => $this->getHonorCertificate(),
                 ];
 
                 $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
@@ -308,7 +318,7 @@ class JourneyManager extends MobConnectManager
             }
 
             $params = [
-                "Attestation sur l'Honneur" => $this->_honourCertificateService->generateHonourCertificate(false),
+                "Attestation sur l'Honneur" => $this->getHonorCertificate(false),
             ];
 
             $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');
@@ -321,15 +331,6 @@ class JourneyManager extends MobConnectManager
 
             $commitmentJourney = $this->_updateShortDistanceJourney($commitmentJourney, $carpoolProof);
         } else {
-            var_dump(
-                self::SHORT_DISTANCE_TRIP_THRESHOLD <= $shortDistanceJourneysNumber,
-                is_null($carpoolProof->getAsk()),
-                is_null($carpoolProof->getAsk()->getMatching()),
-                $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance()),
-                CarpoolProof::TYPE_HIGH !== $carpoolProof->getType(),
-                !$this->_journeyValidation->isOriginOrDestinationFromFrance($carpoolProof)
-            );
-
             // Checks :
             //    - The maximum journey threshold has not been reached
             //    - The journey is a short distance journey
@@ -367,6 +368,16 @@ class JourneyManager extends MobConnectManager
         $this->_em->flush();
 
         return $subscription;
+    }
+
+    private function carpoolItemAlreadyTreated(CarpoolItem $carpoolItem): bool
+    {
+        $longDistanceJourneys = $this->_longDistanceJourneyRepository->findBy(['carpoolItem' => $carpoolItem]);
+        if (is_array($longDistanceJourneys) && count($longDistanceJourneys) > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     private function _getCarpoolItemsFromCarpoolPayment(CarpoolPayment $carpoolPayment): array

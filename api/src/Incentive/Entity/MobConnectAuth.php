@@ -10,7 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
  * Mob Connect user authentication.
  *
  * @ORM\Entity
+ *
  * @ORM\Table(name="mobconnect__auth")
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class MobConnectAuth
@@ -19,7 +21,9 @@ class MobConnectAuth
      * @var int The user subscription ID
      *
      * @ORM\Column(name="id", type="integer")
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -108,6 +112,7 @@ class MobConnectAuth
 
     /**
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
      */
     public function preUpdate()
@@ -247,6 +252,17 @@ class MobConnectAuth
     public function getUpdatedAt(): \DateTime
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * Returns if it is possible to get an access_token from the refresh_token.
+     */
+    public function isValid(): bool
+    {
+        return
+            !is_null($this->getRefreshToken())
+            && !is_null($this->getRefreshTokenExpiresDate())
+            && $this->getRefreshTokenExpiresDate() > new \DateTime();
     }
 
     private function getExpirationDateFromDuration(int $duration): \DateTime

@@ -27,6 +27,8 @@ class ShortDistanceSubscription
 
     public const VALIDITY_PERIOD = 3;               // Period expressed in months
 
+    public const SUBSCRIPTION_TYPE = 'short';
+
     /**
      * @var int The user subscription ID
      *
