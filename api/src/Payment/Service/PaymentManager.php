@@ -816,10 +816,10 @@ class PaymentManager
                     if (count($onlineReturns) > 0) {
                         $updated = $this->_treatOnlineCarpoolPayment($carpoolPayment->getStatus(), $item, $onlineReturns);
                     }
-                    if (!$updated) {
-                        $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
-                        $item->setCreditorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::CREDITOR_STATUS_ONLINE : CarpoolItem::CREDITOR_STATUS_PENDING);
-                    }
+                    // if (!$updated) {
+                    //     $item->setDebtorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
+                    //     $item->setCreditorStatus((CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) ? CarpoolItem::CREDITOR_STATUS_ONLINE : CarpoolItem::CREDITOR_STATUS_PENDING);
+                    // }
 
                     break;
             }

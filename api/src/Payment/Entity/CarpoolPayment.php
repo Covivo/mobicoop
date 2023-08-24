@@ -417,15 +417,8 @@ class CarpoolPayment
         $this->setUpdatedDate(new \DateTime());
     }
 
-    /**
-     * Returns if the carpool payment is ESC compliant:
-     * - The status must be successful (1)
-     * - The transaction ID must be defined.
-     */
-    public function isEecCompliant(): bool
+    public function isEECCompliant(): bool
     {
-        return
-            self::STATUS_SUCCESS === $this->getStatus()
-            && !is_null($this->getTransactionId());
+        return self::STATUS_SUCCESS === $this->getStatus() && !is_null($this->getTransactionId());
     }
 }

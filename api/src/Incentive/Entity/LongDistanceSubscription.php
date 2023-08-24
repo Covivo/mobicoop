@@ -28,6 +28,8 @@ class LongDistanceSubscription
 
     public const VALIDITY_PERIOD = 3;               // Period expressed in months
 
+    public const SUBSCRIPTION_TYPE = 'long';
+
     /**
      * @var int The user subscription ID
      *

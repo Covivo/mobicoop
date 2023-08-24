@@ -26,6 +26,7 @@ namespace App\Payment\Entity;
 use App\Action\Entity\Log;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Proposal;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -673,6 +674,25 @@ class CarpoolItem
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    public function getProposalAccordingUser(User $user): ?Proposal
+    {
+        return
+            !is_null($this->getAsk())
+            && !is_null($this->getAsk()->getMatching())
+            && !is_null($this->getAsk()->getMatching()->getProposalOffer())
+            && !is_null($this->getAsk()->getMatching()->getProposalOffer()->getUser())
+            && $user->getId() === $this->getAsk()->getMatching()->getProposalOffer()->getUser()->getId()
+            ? $this->getAsk()->getMatching()->getProposalOffer()->getUser()
+            : (
+                !is_null($this->getAsk())
+                && !is_null($this->getAsk()->getMatching())
+                && !is_null($this->getAsk()->getMatching()->getProposalRequest())
+                && !is_null($this->getAsk()->getMatching()->getProposalRequest()->getUser())
+                ? $this->getAsk()->getMatching()->getProposalRequest()->getUser()
+                : null
+            );
     }
 
     public function getCarpoolProof(): ?CarpoolProof

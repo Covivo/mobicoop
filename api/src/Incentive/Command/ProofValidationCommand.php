@@ -2,13 +2,12 @@
 
 namespace App\Incentive\Command;
 
-use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\Incentive\Service\Manager\JourneyManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProofValidationCommand extends Command
@@ -19,14 +18,15 @@ class ProofValidationCommand extends Command
     private $_carpoolProofRepository;
 
     /**
-     * @var EventDispatcherInterface
+     * @var JourneyManager
      */
-    private $_eventDispatcher;
+    private $_journeyManager;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher, CarpoolProofRepository $carpoolProofRepository)
+    public function __construct(CarpoolProofRepository $carpoolProofRepository, JourneyManager $journeyManager)
     {
-        $this->_eventDispatcher = $eventDispatcher;
         $this->_carpoolProofRepository = $carpoolProofRepository;
+
+        $this->_journeyManager = $journeyManager;
 
         parent::__construct();
     }
@@ -49,7 +49,6 @@ class ProofValidationCommand extends Command
             throw new NotFoundHttpException('The proof was not found');
         }
 
-        $event = new CarpoolProofValidatedEvent($carpoolProof);
-        $this->_eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
+        $this->_journeyManager->validationOfProof($carpoolProof);
     }
 }

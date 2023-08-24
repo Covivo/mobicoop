@@ -23,9 +23,10 @@ class MobConnectApiProvider extends MobConnectProvider
     public const SERVICE_NAME = 'mobConnect';
 
     private const ROUTE_SUBSCRIPTIONS = '/v1/subscriptions';
-    private const ROUTE_PATCH_SUBSCRIPTIONS = '/v1/subscriptions/{SUBSCRIPTION_ID}';
-    private const ROUTE_SUBSCRIPTIONS_VERIFY = '/v1/subscriptions/{SUBSCRIPTION_ID}/verify';
-    private const ROUTE_SUBSCRIPTIONS_TIMESTAMPS = '/v1/subscriptions/timestamps';
+    private const ROUTE_GET_SUBSCRIPTION = self::ROUTE_SUBSCRIPTIONS.'/{SUBSCRIPTION_ID}';
+    private const ROUTE_PATCH_SUBSCRIPTIONS = self::ROUTE_GET_SUBSCRIPTION;
+    private const ROUTE_SUBSCRIPTIONS_VERIFY = self::ROUTE_GET_SUBSCRIPTION.'/verify';
+    private const ROUTE_SUBSCRIPTIONS_TIMESTAMPS = self::ROUTE_SUBSCRIPTIONS.'/timestamps';
 
     private const SHORT_DISTANCE_LABEL = 'Court';
     private const LONG_DISTANCE_LABEL = 'Long';
@@ -153,6 +154,15 @@ class MobConnectApiProvider extends MobConnectProvider
         $this->_em->flush();
 
         return $mobConnectAuth->getAccessToken();
+    }
+
+    public function getMobSubscription(string $subscriptionId)
+    {
+        $this->_createDataProvider(self::ROUTE_GET_SUBSCRIPTION, $subscriptionId);
+
+        return new MobConnectSubscriptionResponse(
+            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($this->__getToken())))
+        );
     }
 
     public function postSubscription(bool $isLongDistance = true): MobConnectSubscriptionResponse
