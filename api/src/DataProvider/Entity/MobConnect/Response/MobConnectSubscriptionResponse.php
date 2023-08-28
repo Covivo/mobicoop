@@ -2,7 +2,7 @@
 
 namespace App\DataProvider\Entity\MobConnect\Response;
 
-class MobConnectSubscriptionResponse extends MobConnectResponse
+class MobConnectSubscriptionResponse extends MobConnectResponse implements \JsonSerializable
 {
     /**
      * The Mob connect subscription ID.
@@ -32,6 +32,14 @@ class MobConnectSubscriptionResponse extends MobConnectResponse
     public function getId(): string
     {
         return $this->_id;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'code' => $this->getCode(),
+            'content' => $this->getContent(),
+        ];
     }
 
     /**

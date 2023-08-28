@@ -213,44 +213,6 @@ class CarpoolProofRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function getJourneysNumberMadeSinceThresholdDate(User $user, \DateTimeInterface $thresholdDate, bool $isLongDistance = true)
-    {
-        $qb = $this->repository->createQueryBuilder('cp');
-
-        $parameters = [
-            'distance' => Validation::LONG_DISTANCE_THRESHOLD,
-            'thresholdDate' => $thresholdDate,
-            'driver' => $user,
-        ];
-
-        $qb
-            ->select('COUNT(cp.id)')
-            ->innerJoin('cp.ask', 'a')
-            ->innerJoin('a.matching', 'm')
-            ->where('cp.driver = :driver')
-            ->andWhere('cp.startDriverDate >= :thresholdDate')
-        ;
-
-        if (true === $isLongDistance) {
-            $qb
-                ->innerJoin('a.carpoolItems', 'ci', 'WITH', 'ci.creditorUser = :driver AND ci.creditorStatus IN (:creditorStatus)')
-                ->innerJoin('ci.carpoolPayments', 'p', 'WITH', 'p.user = cp.passenger')
-                ->andWhere('m.commonDistance >= :distance')
-            ;
-            $parameters['creditorStatus'] = [CarpoolItem::CREDITOR_STATUS_ONLINE, CarpoolItem::CREDITOR_STATUS_DIRECT];
-        } else {
-            $qb
-                ->andWhere('m.commonDistance < :distance')
-                ->andWhere('cp.type = :class')
-            ;
-            $parameters['class'] = CarpoolProof::TYPE_HIGH;
-        }
-
-        $qb->setParameters($parameters);
-
-        return $qb->getQuery()->getSingleScalarResult();
-    }
-
     public function findProofsToSendAsHistory(bool $longDistance = true)
     {
         $users = $this->_userRepository->findUsersCeeSubscribed();

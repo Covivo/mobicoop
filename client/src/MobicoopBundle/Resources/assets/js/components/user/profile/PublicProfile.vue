@@ -130,6 +130,7 @@
           <v-col class="text-right">
             <Report
               :user="user"
+              :user-id="userId"
             />
           </v-col>
         </v-row>
