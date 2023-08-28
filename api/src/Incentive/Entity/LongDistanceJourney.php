@@ -322,7 +322,7 @@ class LongDistanceJourney
     /**
      * Get the carpool proof associate with the journey.
      */
-    public function getCarpoolPayment(): CarpoolPayment
+    public function getCarpoolPayment(): ?CarpoolPayment
     {
         return $this->carpoolPayment;
     }
