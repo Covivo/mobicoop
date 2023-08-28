@@ -4,6 +4,7 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
@@ -74,11 +75,6 @@ class SubscriptionManager extends MobConnectManager
      */
     private $_subscriptionValidation;
 
-    /**
-     * @var UserValidation
-     */
-    private $_userValidation;
-
     public function __construct(
         EntityManagerInterface $em,
         SubscriptionValidation $subscriptionValidation,
@@ -110,21 +106,21 @@ class SubscriptionManager extends MobConnectManager
      *
      * For the authenticated user, if needed, creates the CEE sheets.
      */
-    public function createSubscriptions(User $driver)
+    public function createSubscriptions(User $user)
     {
         if (!$this->isValidParameters()) {
             return;
         }
 
-        $this->_driver = $driver;
+        $this->setDriver($user);
 
         if (
-            is_null($this->_driver->getLongDistanceSubscription())
-            && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver)
+            is_null($this->getDriver()->getLongDistanceSubscription())
+            && $this->isDriverAccountReadyForSubscription(LongDistanceSubscription::SUBSCRIPTION_TYPE)
         ) {
             $postResponse = $this->postSubscription();
 
-            $longDistanceSubscription = new LongDistanceSubscription($this->_driver, $postResponse);
+            $longDistanceSubscription = new LongDistanceSubscription($this->getDriver(), $postResponse);
             $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
             $longDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($longDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
@@ -133,12 +129,12 @@ class SubscriptionManager extends MobConnectManager
         }
 
         if (
-            is_null($this->_driver->getShortDistanceSubscription())
-            && $this->_userValidation->isUserAccountReadyForSubscription($this->_driver, false)
+            is_null($this->getDriver()->getShortDistanceSubscription())
+            && $this->isDriverAccountReadyForSubscription(ShortDistanceSubscription::SUBSCRIPTION_TYPE)
         ) {
             $postResponse = $this->postSubscription(false);
 
-            $shortDistanceSubscription = new ShortDistanceSubscription($this->_driver, $postResponse);
+            $shortDistanceSubscription = new ShortDistanceSubscription($this->getDriver(), $postResponse);
             $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
             $shortDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($shortDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
@@ -151,12 +147,12 @@ class SubscriptionManager extends MobConnectManager
 
     public function getUserEECEligibility(User $user): EecEligibility
     {
+        $this->setDriver($user);
+
         $userEligibility = new EecEligibility($user);
 
-        $thresholdDate = $this->getThresholdDate();
-
-        $userEligibility->setLongDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, $thresholdDate));
-        $userEligibility->setShortDistanceJourneysNumber($this->_carpoolProofRepository->getJourneysNumberMadeSinceThresholdDate($user, $thresholdDate, false));
+        $userEligibility->setLongDistanceJourneysNumber(count($this->getEECCompliantProofsObtainedSinceDate(LongDistanceSubscription::SUBSCRIPTION_TYPE)));
+        $userEligibility->setShortDistanceJourneysNumber(count($this->getEECCompliantProofsObtainedSinceDate(ShortDistanceSubscription::SUBSCRIPTION_TYPE)));
         $userEligibility->setLongDistanceDrivingLicenceNumberDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
         $userEligibility->setLongDistancePhoneDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
         $userEligibility->setShortDistanceDrivingLicenceNumberDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
@@ -305,8 +301,12 @@ class SubscriptionManager extends MobConnectManager
         $this->_loggerService->log('Step 20 - Obtaining missing tokens');
         $subscription = $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
 
-        if (!$this->_subscriptionValidation->isSubscriptionReadyForVerify($subscription)) {
+        if (!$subscription->isReadyToVerify()) {
             $this->_loggerService->log('The subscription '.$subscription->getId().' is not ready for verification');
+
+            if (!$subscription->isAddressValid()) {
+                // TODO: notify the user that his residence address must be entered.
+            }
 
             $response = new MobConnectSubscriptionTimestampsResponse([
                 'code' => Log::VERIFICATION_VALIDATION_ERROR,
@@ -317,7 +317,7 @@ class SubscriptionManager extends MobConnectManager
 
             $this->_em->flush();
 
-            return;
+            return $response;
         }
 
         switch (true) {
@@ -355,6 +355,49 @@ class SubscriptionManager extends MobConnectManager
         $this->_em->flush();
 
         return $subscription;
+    }
+
+    public function updateSubscriptionsAddress(User $user)
+    {
+        $this->setDriver($user);
+
+        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
+            $this->getDriver()->getLongDistanceSubscription()->updateAddress();
+        }
+
+        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
+            $this->getDriver()->getShortDistanceSubscription()->updateAddress();
+        }
+
+        $this->_em->flush();
+    }
+
+    public function getSubscription(string $subscriptionId): MobConnectSubscriptionResponse
+    {
+        return $this->getMobSubscription($subscriptionId);
+    }
+
+    /**
+     * Set missing subscription timestamps.
+     *
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     *
+     * @return bool Returns if getting tokens was successful
+     */
+    public function setTimestamps($subscription): bool
+    {
+        $this->setDriver($subscription->getUser());
+
+        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
+
+        $this->_em->flush();
+
+        return false;
+    }
+
+    public function getTimestamps()
+    {
+        return $this->_timestampTokenManager->getCurrentTimestampTokensResponse();
     }
 
     private function _computeShortDistance()

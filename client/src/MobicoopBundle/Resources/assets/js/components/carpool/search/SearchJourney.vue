@@ -146,7 +146,7 @@
             hide-details
             class="mt-0"
             :aria-label="$t('switch.aria-label')"
-            color="secondary"
+            :color="switchColor"
             @change="switched"
           />
         </v-col>
@@ -330,6 +330,10 @@ export default {
     initOutwardTime: {
       type: String,
       default: null
+    },
+    switchColor: {
+      type: String,
+      default: 'secondary'
     }
   },
   data() {

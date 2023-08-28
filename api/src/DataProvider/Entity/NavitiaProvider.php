@@ -72,9 +72,6 @@ class NavitiaProvider implements ProviderInterface
         $this->uri = $uri;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCollection(string $class, string $apikey, array $params)
     {
         switch ($class) {
@@ -83,23 +80,17 @@ class NavitiaProvider implements ProviderInterface
 
                 return $this->collection;
 
-               break;
+                break;
 
             default:
                 break;
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getItem(string $class, string $apikey, array $params)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deserialize(string $class, array $data)
     {
         switch ($class) {
@@ -141,10 +132,10 @@ class NavitiaProvider implements ProviderInterface
             }
         } elseif (510 == $response->getCode() || 404 == $response->getCode() || 500 == $response->getCode()) {
             // Out of bound
-            //throw new DataProviderException(DataProviderException::OUT_OF_BOUND);
+            // throw new DataProviderException(DataProviderException::OUT_OF_BOUND);
             // For out of bound we do nothing. We just treat it as a no found solution
         } else {
-            throw new DataProviderException(DataProviderException::ERROR_COLLECTION_RESSOURCE_JOURNEYS);
+            throw new DataProviderException(DataProviderException::ERROR_COLLECTION_RESSOURCE_JOURNEYS.' Code : '.$response->getCode());
         }
     }
 
@@ -243,7 +234,7 @@ class NavitiaProvider implements ProviderInterface
             $leg->setTravelMode($travelMode);
         } elseif (self::PT_TYPE_PT == $data['type']
                 && (self::PT_MODE_TRAIN_LOCAL == $data['display_informations']['physical_mode'] || self::PT_MODE_TRAIN == $data['display_informations']['physical_mode'])
-            ) {
+        ) {
             // train local mode
             $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAIN_LOCAL);
             $leg->setTravelMode($travelMode);

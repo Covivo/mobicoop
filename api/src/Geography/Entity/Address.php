@@ -184,7 +184,7 @@ class Address implements \JsonSerializable
      *
      * @ORM\Column(type="string", length=45, nullable=true)
      *
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary","readPayment","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary","writePayment","readPayment","readCommunityAds"})
      */
     private $houseNumber;
 
@@ -724,6 +724,10 @@ class Address implements \JsonSerializable
 
     public function setUser(?User $user)
     {
+        if (!is_null($user)) {
+            $user->setHomeAddress($this);
+        }
+
         $this->user = $user;
     }
 

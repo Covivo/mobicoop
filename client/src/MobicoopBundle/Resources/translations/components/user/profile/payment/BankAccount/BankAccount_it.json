@@ -1,1 +1,7 @@
-{}
+{
+  "msg": {
+    "bank-account": {
+      "create": "Les coordonnées bancaires ont bien été enregistrées et votre adresse de résidence mise à jour."
+    }
+  }
+}
