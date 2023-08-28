@@ -231,6 +231,7 @@
             :blocker-id="blockerId"
             @refreshActionsCompleted="refreshActionsCompleted"
             @updateStatusAskHistory="updateStatusAskHistory"
+            @updateStatusBooking="updateStatusBooking"
             @recipientIdentity="setCarpoolerIdentity"
           />
         </v-col>
@@ -518,6 +519,25 @@ export default {
       maxios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
           //console.error(response.data);
+          this.refreshActions = true;
+          // buttons become usable before the whole component is updated and so user can accept or refused multiple times, creating multiple proposals
+          // this.loadingBtnAction = false;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+
+    },
+    updateStatusBooking(data){
+      this.loadingBtnAction = true;
+      let params = {
+        idBooking:this.currentIdBooking,
+        status:data.status,
+        isRoleDriver:data.isRoleDriver
+      }
+      maxios.post(this.$t("urlUpdateBooking"),params)
+        .then(response => {
+          console.error(response.data);
           this.refreshActions = true;
           // buttons become usable before the whole component is updated and so user can accept or refused multiple times, creating multiple proposals
           // this.loadingBtnAction = false;

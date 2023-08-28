@@ -216,39 +216,20 @@
       <v-card
         class="pa-2 text-center"
       >
-        <!-- <v-card
+        <v-card
           class="mb-3"
           flat
         >
-          <div>
-            <v-btn
-              class="mb-2"
-              color="primary"
-              large
-              dark
-              rounded
-              depressed
-              :loading="loading"
-              dense
-              style="letter-spacing: -0.15px;white-space: normal;"
-            >
-              Test
-            </v-btn>
-
-            <v-btn
-              class="myButton"
-              color="primary"
-              large
-              dark
-              rounded
-              depressed
-              :loading="loading"
-              style="letter-spacing: -0.15px;white-space: normal;"
-            >
-              Test
-            </v-btn>
-          </div>
-        </v-card> -->
+          <booking-threads-actions-buttons
+            v-if="infosCompleteBooking"
+            :status="infosCompleteBooking.status"
+            :loading-btn="dataLoadingBtn"
+            :is-role-driver="infosCompleteBooking.isRoleDriver"
+            :carpooler-name="infosCompleteBooking.roleDriver ? infosCompleteBooking.passenger.alias : infosCompleteBooking.driver.alias"
+            :operator="infosCompleteBooking.roleDriver ? infosCompleteBooking.passenger.operator : infosCompleteBooking.driver.operator"
+            @updateBookingStatus="updateBookingStatus"
+          />
+        </v-card>
         <v-card
           v-if="!loading"
           flat
@@ -397,6 +378,7 @@
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/ThreadActions/";
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons';
+import BookingThreadsActionsButtons from '@components/user/mailbox/BookingThreadsActionsButtons';
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary';
 import VJourney from '@components/carpool/utilities/VJourney';
 import VJourneyBooking from '@components/carpool/utilities/VJourneyBooking';
@@ -420,6 +402,7 @@ export default {
   },
   components:{
     ThreadsActionsButtons,
+    BookingThreadsActionsButtons,
     RegularDaysSummary,
     VJourney,
     VJourneyBooking,
@@ -708,7 +691,6 @@ export default {
 
     },
     updateStatus(data){
-      console.log(data);
       this.dataLoadingBtn = true;
       // console.info(this.infosComplete)
       // console.info(this.infosComplete.carpooler)
@@ -763,6 +745,10 @@ export default {
         this.dataLoadingBtn = true;
         this.$emit("updateStatusAskHistory",data);
       }
+    },
+    updateBookingStatus(data){
+      this.dataLoadingBtn = true;
+      this.$emit("updateStatusBooking",data);
     },
     carpoolFromMatchingJourney(data){
       this.dialogRegular = false;

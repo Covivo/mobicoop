@@ -784,7 +784,7 @@ class DataProvider
         return new Response();
     }
 
-    public function patch($id, string $operation, array $params = null, bool $reverseOperationId = false): Response
+    public function patch($id, string $operation = null, array $params = null, bool $reverseOperationId = false): Response
     {
         try {
             $headers = $this->getHeaders();

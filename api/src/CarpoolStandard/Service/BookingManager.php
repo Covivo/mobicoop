@@ -60,6 +60,7 @@ class BookingManager
 
     public function patchBooking(Booking $booking)
     {
+        $booking->setId($booking->getExternalId());
         $this->carpoolStandardProvider->patchBooking($booking);
     }
 

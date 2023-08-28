@@ -504,6 +504,15 @@ user_message_update_ask:
     nl: /user/messages/updateAsk
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageUpdateAsk
 
+# update an Booking from messages
+user_message_update_booking:
+  methods: [POST]
+  path:
+    fr: /utilisateur/messages/updateBooking
+    en: /user/messages/updateBooking
+    nl: /user/messages/updateBooking
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageUpdateBooking
+
 # Connection by facebook (POST)
 user_facebook_connect:
   methods: [POST]

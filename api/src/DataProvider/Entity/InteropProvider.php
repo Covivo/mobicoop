@@ -29,6 +29,7 @@ use App\CarpoolStandard\Entity\Price;
 use App\CarpoolStandard\Entity\User;
 use App\CarpoolStandard\Interfaces\CarpoolStandardProviderInterface;
 use App\DataProvider\Service\DataProvider;
+use Symfony\Component\Security\Core\Security;
 
 class InteropProvider implements CarpoolStandardProviderInterface
 {
@@ -38,12 +39,18 @@ class InteropProvider implements CarpoolStandardProviderInterface
     private $provider;
     private $baseUri;
     private $apiKey;
+    private $security;
 
-    public function __construct(string $provider, string $baseUri, string $apiKey)
-    {
+    public function __construct(
+        string $provider,
+        string $baseUri,
+        string $apiKey,
+        Security $security
+    ) {
         $this->provider = $provider;
         $this->baseUri = $baseUri;
         $this->apiKey = $apiKey;
+        $this->security = $security;
     }
 
     public function postMessage(Message $message)
@@ -211,8 +218,9 @@ class InteropProvider implements CarpoolStandardProviderInterface
         return $dataProvider->getCollection($body, $headers)->getValue();
     }
 
-    public function mapBooking(array $array)
-    {
+    public function mapBooking(
+        array $array
+    ) {
         $booking = new Booking();
         $driver = new User();
         $passenger = new User();
@@ -260,6 +268,11 @@ class InteropProvider implements CarpoolStandardProviderInterface
         $booking->setDuration($array['duration']);
         $booking->setDistance($array['distance']);
         $booking->setWebUrl($array['webUrl']);
+        $booking->setRoleDriver(false);
+
+        if ($this->security->getUser()->getId() == intval($booking->getDriver()->getExternalId())) {
+            $booking->setRoleDriver(true);
+        }
 
         return $booking;
     }

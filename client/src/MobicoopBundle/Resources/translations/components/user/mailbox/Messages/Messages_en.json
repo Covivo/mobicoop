@@ -6,6 +6,7 @@
     },
     "urlSend": "/user/messages/send",
     "urlUpdateAsk": "/user/messages/updateRequest",
+    "urlUpdateBooking": "/user/messages/updateBooking",
     "headersCategories": {
         "titleCarpool": "Carpool",
         "titleLive": "Direct",
