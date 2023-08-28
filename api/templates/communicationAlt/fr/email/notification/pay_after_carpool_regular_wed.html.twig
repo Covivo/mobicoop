@@ -8,7 +8,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Avez-vous réglé les covoiturages de la semaine passée ?</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:22px;" text-align="center" ><b>Avez-vous réglé les covoiturages de la semaine passée ?</b></p>
                     </td>
                 </tr>
             </table>
@@ -22,7 +22,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.debtor.givenName|capitalize}} {{context.debtor.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:13px; margin-bottom:16px;">Bonjour {{context.debtor.givenName|capitalize}} {{context.debtor.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -36,7 +36,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Votre semaine de covoiturage régulier, avec {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }} de {{context.origin}} à {{context.destination}} est terminée.</p>
+                        <p style="font-size:13px; text-align: justify;">Votre semaine de covoiturage régulier, avec {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }} de {{context.origin}} à {{context.destination}} est terminée.</p>
                     </td>
                 </tr>
             </table>
@@ -55,7 +55,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Si vous ne l'avez pas encore fait, n’oubliez pas de <b>marquer le trajet comme payé à la main</b> si vous avez déjà réglé le conducteur, ou de le <b>payer en ligne.</b></p>
+                        <p style="font-size:13px; text-align: justify;">Si vous ne l'avez pas encore fait, n’oubliez pas de <b>marquer le trajet comme payé à la main</b> si vous avez déjà réglé le conducteur, ou de le <b>payer en ligne.</b></p>
                     </td>
                 </tr>
             </table>
@@ -95,7 +95,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Mobicoop est un <b>service sans commission</b>, mais vous pouvez faire un don pour soutenir le projet depuis la page des paiements ou ici.</p>
+                        <p style="font-size:13px; text-align: justify;">Mobicoop est un <b>service sans commission</b>, mais vous pouvez faire un don pour soutenir le projet depuis la page des paiements ou ici.</p>
                     </td>
                 </tr>
             </table>
@@ -135,7 +135,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Vous pouvez aussi <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/avis" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">donner un avis</a> sur votre covoiturage passé. Celui-ci n’est pas obligatoire mais permet de rassurer des nouveaux usagers qui se lanceraient dans le covoiturage.</p>
+                        <p style="font-size:13px; text-align: justify;">Vous pouvez aussi <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/avis" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">donner un avis</a> sur votre covoiturage passé. Celui-ci n’est pas obligatoire mais permet de rassurer des nouveaux usagers qui se lanceraient dans le covoiturage.</p>
                     </td>
                 </tr>
             </table>

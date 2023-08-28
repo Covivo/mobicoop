@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Nouvelle demande de contact</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:22px;" text-align="center" ><b>Nouvelle demande de contact</b></p>
                     </td>
                 </tr>
             </table>
@@ -23,7 +23,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour vous avez une nouvelle demande de contact.</p>
+                        <p style="font-size:13px; margin-bottom:16px;">Bonjour vous avez une nouvelle demande de contact.</p>
                     </td>
                 </tr>
             </table>
@@ -35,10 +35,10 @@
                 <tr>
                     <td align="left">
                        <ul>
-                            <li style="font-size:11px;">Nom : {{ context.contact.familyName ? context.contact.familyName : "Non renseigné" }}</li>
-                            <li style="font-size:11px;">Prénom : {{ context.contact.givenName ? context.contact.givenName : "Non renseigné" }}</li>
-                            <li style="font-size:11px;">Email : {{ context.contact.email }}</li>
-                            <li style="font-size:11px;">Demande : {{ context.contact.demand ? context.contact.demand : "Non renseigné" }}</li>
+                            <li style="font-size:13px;">Nom : {{ context.contact.familyName ? context.contact.familyName : "Non renseigné" }}</li>
+                            <li style="font-size:13px;">Prénom : {{ context.contact.givenName ? context.contact.givenName : "Non renseigné" }}</li>
+                            <li style="font-size:13px;">Email : {{ context.contact.email }}</li>
+                            <li style="font-size:13px;">Demande : {{ context.contact.demand ? context.contact.demand : "Non renseigné" }}</li>
                         </ul>
                     </td>
                 </tr>
@@ -53,7 +53,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align:justify">{{ context.contact.message | nl2br }}</p>
+                        <p style="font-size:13px; text-align:justify">{{ context.contact.message | nl2br }}</p>
                     </td>
                     <td style="width:5px">
                         <p> </p>
@@ -67,7 +67,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">"A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">Rezo Mobicoop</a></p>
+                        <p style="font-size:13px; margin-bottom:16px; text-align: justify;">"A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">Rezo Mobicoop</a></p>
                     </td>
                 </tr>
             </table>

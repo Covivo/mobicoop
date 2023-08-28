@@ -11,7 +11,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Vous avez un nouveau message !</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:22px;" text-align="center" ><b>Vous avez un nouveau message !</b></p>
                     </td>
                 </tr>
             </table>
@@ -27,7 +27,7 @@
             <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:13px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -38,7 +38,7 @@
             <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} vous a contacté le {{ sendingDate|date("d/m/Y") }}. A ce jour, vous n’avez pas encore répondu à son message, faites-le au plus vite, la personne attend votre retour pour organiser ses prochains trajets en covoiturage.</p>
+                        <p style="font-size:13px; margin-bottom:16px;">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} vous a contacté le {{ sendingDate|date("d/m/Y") }}. A ce jour, vous n’avez pas encore répondu à son message, faites-le au plus vite, la personne attend votre retour pour organiser ses prochains trajets en covoiturage.</p>
                     </td>
                 </tr>
             </table>
@@ -70,7 +70,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Pour que la communauté fonctionne, il est important de répondre à ses messages reçus. Si votre trajet n’est plus d’actualité, vous pouvez le supprimer ou le mettre en pause depuis la page <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-annonces" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Mes Annonces.</a> Après plusieurs signalements d’utilisateurs, Mobicoop se réserve le droit de suspendre un compte jugé inactif.</p>
+                        <p style="font-size:13px; text-align: justify;"> Pour que la communauté fonctionne, il est important de répondre à ses messages reçus. Si votre trajet n’est plus d’actualité, vous pouvez le supprimer ou le mettre en pause depuis la page <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-annonces" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Mes Annonces.</a> Après plusieurs signalements d’utilisateurs, Mobicoop se réserve le droit de suspendre un compte jugé inactif.</p>
                     </td>
                 </tr>
             </table>
