@@ -411,13 +411,24 @@ export default {
       return `${this.formatedNewThreadFromDate} ${this.$t("at")} ${this.formatedNewThreadFromTime}`;
     },
     newThreadDetailsRegular(){
-      return `${this.newThread.origin} ${this.newThread.destination}`;
+      return `${this.regularCarpoolDays}`;
     },
     formatedNewThreadFromDate(){
       return moment.utc(this.newThread.fromDate).format("ddd DD MMM YYYY");
     },
     formatedNewThreadFromTime(){
       return (this.newThread.fromTime) ? moment.utc(this.newThread.fromTime).format("HH")+"h"+moment.utc(this.newThread.fromTime).format("mm") : null;
+    },
+    regularCarpoolDays(){
+      let carpoolDays = [];
+      if(this.newThread.monCheck==true){carpoolDays.push(this.$t('Mon'));}
+      if(this.newThread.tueCheck==true){carpoolDays.push(this.$t('Tue'));}
+      if(this.newThread.wedCheck==true){carpoolDays.push(this.$t('Wed'));}
+      if(this.newThread.thuCheck==true){carpoolDays.push(this.$t('Thu'));}
+      if(this.newThread.friCheck==true){carpoolDays.push(this.$t('Fri'));}
+      if(this.newThread.satCheck==true){carpoolDays.push(this.$t('Sat'));}
+      if(this.newThread.sunCheck==true){carpoolDays.push(this.$t('Sun'));}
+      return carpoolDays.join(", ");
     },
   },
   watch:{

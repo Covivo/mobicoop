@@ -14,5 +14,12 @@
   "urlGetAdAsk": "/utilisateur/messages/actions/infos",
   "roundTrip": "Joan-etorri bidaia",
   "notLinkedToACarpool": "Solasaldi hari hau ez da autokidetza bati lotua",
-  "at": "à"
+  "at": "à",
+  "Mon": "Lun",
+  "Tue": "Mar",
+  "Wed": "Mer",
+  "Thu": "Jeu",
+  "Fri": "Ven",
+  "Sat": "Sam",
+  "Sun": "Dim"
 }

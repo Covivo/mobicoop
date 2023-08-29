@@ -14,5 +14,12 @@
   "urlGetAdAsk": "/utilisateur/messages/actions/infos",
   "roundTrip": "Heen-terugtraject",
   "notLinkedToACarpool": "Deze thread is niet gerelateerd aan carpoolen",
-  "at": "à"
+  "at": "à",
+  "Mon": "Lun",
+  "Tue": "Mar",
+  "Wed": "Mer",
+  "Thu": "Jeu",
+  "Fri": "Ven",
+  "Sat": "Sam",
+  "Sun": "Dim"
 }

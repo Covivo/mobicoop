@@ -14,5 +14,12 @@
   "block": "Bloquer",
   "blocked": "Bloqué",
   "blockUrl": "/user/block",
-  "at": "à"
+  "at": "à",
+  "Mon": "Lun",
+  "Tue": "Mar",
+  "Wed": "Mer",
+  "Thu": "Jeu",
+  "Fri": "Ven",
+  "Sat": "Sam",
+  "Sun": "Dim"
 }
