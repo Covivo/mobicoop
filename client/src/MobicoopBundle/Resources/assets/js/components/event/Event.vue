@@ -282,7 +282,7 @@ export default {
   },
   computed: {
     dateFormated() {
-      return this.date ? moment.utc(this.date).format(DATE_FORMAT) : "";
+      return this.date ? moment.utc(this.date, "YYYY-MM-DD HH:mm:ss.SSSSSS").format(DATE_FORMAT) : "";
     },
     eventFormatedDate() {               // If the event start date has passed, then the current date is displayed
       const now = new Date();
