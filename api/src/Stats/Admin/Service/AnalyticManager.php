@@ -69,7 +69,6 @@ class AnalyticManager
         $request = $requestStack->getCurrentRequest();
         $this->paramId = $request->get('id');
         $communityIdParam = $request->query->get('communityId', null);
-        // var_dump($communityIdParam);
         $this->communityIdParam = is_null($communityIdParam) ? null : intval($communityIdParam);
         $territoryIdParam = $request->query->get('territoryId', null);
         $this->territoryIdParam = is_null($territoryIdParam) ? null : intval($territoryIdParam);
