@@ -47,7 +47,7 @@
       </v-card-text>
 
       <v-row
-        v-if="newThread"
+        v-if="newThread && !idAsk"
         dense
       >
         <v-col>
