@@ -208,12 +208,16 @@ class AnalyticManager
 
     private function defineFiltersForCommunityModerator(): array
     {
-        if (!$this->forceDefaultCommunityId) {
+        $community = $this->getOperationalValue(null);
+
+        if ($this->forceDefaultCommunityId) {
             $this->getDefaultCommunityId();
+            $community = $this->getOperationalValue($this->defaultCommunityId);
+        } elseif ($this->communityIdParam && !$this->forceDefaultCommunityId) {
+            $community = $this->treatCommunityParamsWithCheckIfAuthorized();
         }
 
         $territories = $this->treatTerritoryParams();
-        $community = $this->treatCommunityParamsWithCheckIfAuthorized();
 
         return [$territories, $community];
     }
