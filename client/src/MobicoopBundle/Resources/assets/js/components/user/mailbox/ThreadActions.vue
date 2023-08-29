@@ -394,12 +394,6 @@ export default {
         return this.infosComplete.carpooler.givenName+' '+this.infosComplete.carpooler.shortFamilyName
       }
     },
-    newThreadLabel(){
-      if(this.newThread){
-        return this.newThread.frequency == 1 ? this.newThreadLabelPunctual : this.newThreadLabelRegular;
-      }
-      return "";
-    },
     newThreadDetails(){
       let details = "";
       if(this.newThread){
