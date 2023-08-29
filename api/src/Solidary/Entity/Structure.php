@@ -189,11 +189,11 @@ class Structure
     /**
      * @var bool auto approval of beneficiaries
      *
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=true, options={"default": true})
      *
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
-    private $beneficiaryAutoApproval;
+    private $beneficiaryAutoApproval = true;
 
     /**
      * @var null|int Solidary record create mode :
@@ -684,7 +684,6 @@ class Structure
         $this->territories = new ArrayCollection();
         $this->operators = [];
         $this->images = new ArrayCollection();
-        $this->beneficiaryAutoApproval = true;
     }
 
     public function getId(): ?int
