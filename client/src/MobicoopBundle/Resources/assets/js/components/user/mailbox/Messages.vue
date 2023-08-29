@@ -222,6 +222,7 @@
             :recipient-name="recipientName"
             :recipient-avatar="recipientAvatar"
             :blocker-id="blockerId"
+            :new-thread="newThread"
             @refreshActionsCompleted="refreshActionsCompleted"
             @updateStatusAskHistory="updateStatusAskHistory"
             @recipientIdentity="setCarpoolerIdentity"

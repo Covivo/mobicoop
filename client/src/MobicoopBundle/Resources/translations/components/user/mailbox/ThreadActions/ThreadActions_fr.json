@@ -1,17 +1,18 @@
 {
-    "notLinkedToACarpool": "Ce fil de discussion n'est pas lié à un covoiturage",
-    "roundTrip": "Trajet Aller-Retour",
-    "urlGetAdAsk": "/utilisateur/messages/actions/infos",
-    "regular": {
-        "ask": "Proposer un covoiturage régulier"
-    },
-    "distance": "Distance",
-    "distanceTooltip": "Distance covoiturée incluant le détour conducteur",
-    "seatsAvailable": "Places disponibles",
-    "price": "Prix",
-    "priceTooltip": "Tarif indicatif",
-    "userDelete": "Utilisateur désinscrit",
-    "block": "Bloquer",
-    "blocked": "Bloqué",
-    "blockUrl": "/user/block"
+  "notLinkedToACarpool": "Ce fil de discussion n'est pas lié à un covoiturage",
+  "roundTrip": "Trajet Aller-Retour",
+  "urlGetAdAsk": "/utilisateur/messages/actions/infos",
+  "regular": {
+    "ask": "Proposer un covoiturage régulier"
+  },
+  "distance": "Distance",
+  "distanceTooltip": "Distance covoiturée incluant le détour conducteur",
+  "seatsAvailable": "Places disponibles",
+  "price": "Prix",
+  "priceTooltip": "Tarif indicatif",
+  "userDelete": "Utilisateur désinscrit",
+  "block": "Bloquer",
+  "blocked": "Bloqué",
+  "blockUrl": "/user/block",
+  "at": "à"
 }
