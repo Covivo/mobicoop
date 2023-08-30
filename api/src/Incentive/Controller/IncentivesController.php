@@ -29,7 +29,7 @@ class IncentivesController
     public function __invoke(array $data)
     {
         return !is_null($this->_request->get(self::ALLOWED_PARAM))
-            ? $this->_incentiveManager->getIncentive($this->_request->get(self::ALLOWED_PARAM))
-            : $this->_incentiveManager->getIncentives();
+            ? $this->_incentiveManager->getMobConnectIncentive($this->_request->get(self::ALLOWED_PARAM))
+            : $this->_incentiveManager->getMobConnectIncentives();
     }
 }

@@ -61,9 +61,14 @@ class Incentive
      */
     private $description;
 
-    public function __construct(string $id)
-    {
+    public function __construct(
+        string $id,
+        string $title,
+        string $description
+    ) {
         $this->setId($id);
+        $this->setTitle($title);
+        $this->setDescription($description);
     }
 
     /**
