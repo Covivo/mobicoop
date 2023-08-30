@@ -5,6 +5,7 @@ namespace App\Incentive\Service\Manager;
 use App\Incentive\Resource\Incentive;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
+use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -23,8 +24,13 @@ class IncentiveManager extends MobConnectManager
     ) {
         parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
-        if (is_null($security->getUser()) || is_null($security->getUser()->getMobConnectAuth())) {
-            throw new AccessDeniedException();
+        /**
+         * @var User
+         */
+        $user = $security->getUser();
+
+        if (is_null($user) || is_null($user->getMobConnectAuth())) {
+            throw new AccessDeniedException('Access denied - The user must be authenticated and have subscribed to the incentives to access this resource');
         }
 
         $this->setDriver($security->getUser());
