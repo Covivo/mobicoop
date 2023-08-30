@@ -1995,6 +1995,20 @@ assistives.sso-activation:
     nl: /aides-a-la-mobilite/sso-activation
   controller: Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\AssistiveController::ssoActivation
 
+incentive.list:
+  path:
+    fr: /liste-des-aides
+    en: /liste-des-aides
+    nl: /liste-des-aides
+  controller: Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\AssistiveController::incentives
+
+incentive.details:
+  path:
+    fr: /details-de-l-aide
+    en: /details-de-l-aide
+    nl: /details-de-l-aide
+  controller: Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\AssistiveController::incentive
+
 ###############
 # carpool standard routes #
 ###############

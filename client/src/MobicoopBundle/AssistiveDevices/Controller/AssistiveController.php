@@ -75,4 +75,18 @@ class AssistiveController extends AbstractController
 
         return $this->redirectToRoute('assistive.devices');
     }
+
+    public function incentives()
+    {
+        return $this->render(
+            '@Mobicoop/assistiveDevices/incentives-list.html.twig'
+        );
+    }
+
+    public function incentive()
+    {
+        return $this->render(
+            '@Mobicoop/assistiveDevices/incentive-details.html.twig'
+        );
+    }
 }

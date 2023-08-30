@@ -28,7 +28,7 @@
       },
       "assistiveConsult": {
         "text": "Consulter les aides",
-        "href": "https://moncomptemobilite.fr/recherche"
+        "href": "/liste-des-aides"
       }
     }
   },
