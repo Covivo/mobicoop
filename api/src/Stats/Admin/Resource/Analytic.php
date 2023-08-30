@@ -67,25 +67,39 @@ class Analytic
     private $id;
 
     /**
-     * Analytic url.
+     * @var string analytic url
      *
      * @Groups({"aRead"})
      */
     private $url;
 
     /**
-     * Default Community id.
+     * @var int default Community id
      *
      * @Groups({"aRead"})
      */
     private $communityId;
 
     /**
-     * Default Territory id.
+     * @var int default Territory id
      *
      * @Groups({"aRead"})
      */
     private $territoryId;
+
+    /**
+     * @var bool Force to get the default value for communityId
+     *
+     * @Groups({"aRead"})
+     */
+    private $forceDefaultCommunityId;
+
+    /**
+     * @var bool Force to get the default value for terrotoryId
+     *
+     * @Groups({"aRead"})
+     */
+    private $forceDefaultTerritoryId;
 
     public function getId(): ?int
     {
@@ -99,12 +113,12 @@ class Analytic
         return $this;
     }
 
-    public function getUrl()
+    public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    public function setUrl($url): self
+    public function setUrl(?string $url): self
     {
         $this->url = $url;
 
@@ -131,6 +145,30 @@ class Analytic
     public function setTerritoryId(?int $territoryId): self
     {
         $this->territoryId = $territoryId;
+
+        return $this;
+    }
+
+    public function hasForceDefaultCommunityId(): ?bool
+    {
+        return $this->forceDefaultCommunityId;
+    }
+
+    public function setForceDefaultCommunityId(?bool $forceDefaultCommunityId): self
+    {
+        $this->forceDefaultCommunityId = $forceDefaultCommunityId;
+
+        return $this;
+    }
+
+    public function hasforceDefaultTerritoryId(): ?bool
+    {
+        return $this->forceDefaultTerritoryId;
+    }
+
+    public function setForceDefaultTerritoryId(?bool $forceDefaultTerritoryId): self
+    {
+        $this->forceDefaultTerritoryId = $forceDefaultTerritoryId;
 
         return $this;
     }

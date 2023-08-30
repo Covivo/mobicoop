@@ -152,7 +152,7 @@ export default {
           }
           // I'm pushing the new "virtual" thread
           if(this.newThread){
-            response.data.threads.push({
+            response.data.threads.unshift({
               date: (this.newThread.date) ? this.newThread.date : moment().format(),
               time: (this.newThread.time) ? this.newThread.time : moment().format(),
               shortFamilyName:this.newThread.shortFamilyName,

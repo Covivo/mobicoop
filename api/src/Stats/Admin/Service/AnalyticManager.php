@@ -50,6 +50,8 @@ class AnalyticManager
 
     private $defaultCommunityId;
     private $defaultTerritoryId;
+    private $forceDefaultCommunityId;
+    private $forceDefaultTerritoryId;
 
     public function __construct(
         RequestStack $requestStack,
@@ -70,6 +72,8 @@ class AnalyticManager
         $this->communityIdParam = is_null($communityIdParam) ? null : intval($communityIdParam);
         $territoryIdParam = $request->query->get('territoryId', null);
         $this->territoryIdParam = is_null($territoryIdParam) ? null : intval($territoryIdParam);
+        $this->forceDefaultCommunityId = $request->query->get('forceDefaultCommunityId', null);
+        $this->forceDefaultTerritoryId = $request->query->get('forceDefaultTerritoryId', null);
         $this->darkTheme = $request->query->get('darkTheme', false);
         $this->communityRepository = $communityRepository;
         $this->tokenStorage = $tokenStorage;
@@ -112,6 +116,8 @@ class AnalyticManager
         $analytic->setUrl($url);
         $analytic->setCommunityId($this->defaultCommunityId);
         $analytic->setTerritoryId($this->defaultTerritoryId);
+        $analytic->setForceDefaultCommunityId($this->forceDefaultCommunityId);
+        $analytic->setForceDefaultTerritoryId($this->forceDefaultTerritoryId);
 
         return $analytic;
     }
@@ -145,11 +151,15 @@ class AnalyticManager
     private function treatTerritoryParams(): array
     {
         $dashboard = $this->getDashboard();
-        if (!$this->territoryIdParam) {
+        if (!$this->territoryIdParam && !$this->forceDefaultTerritoryId) {
             $territories = $this->getTerritoriesFromAuthItem($dashboard['auth_item']);
         } else {
-            $territories = [$this->getOperationalValue($this->territoryIdParam)];
-            $this->defaultTerritoryId = $this->territoryIdParam;
+            if (!$this->forceDefaultTerritoryId) {
+                $territories = [$this->getOperationalValue($this->territoryIdParam)];
+                $this->defaultTerritoryId = $this->territoryIdParam;
+            } else {
+                $territories = $this->getTerritoriesFromAuthItem($dashboard['auth_item']);
+            }
         }
 
         return $territories;
@@ -158,7 +168,7 @@ class AnalyticManager
     private function treatCommunityParams(): ?string
     {
         $community = $this->getOperationalValue($this->defaultCommunityId);
-        if ($this->communityIdParam) {
+        if ($this->communityIdParam && !$this->forceDefaultCommunityId) {
             $community = $this->getOperationalValue($this->communityIdParam);
             $this->defaultCommunityId = $this->communityIdParam;
         }
@@ -197,10 +207,16 @@ class AnalyticManager
 
     private function defineFiltersForCommunityModerator(): array
     {
-        $this->getDefaultCommunityId();
+        $community = $this->getOperationalValue(null);
+
+        if ($this->forceDefaultCommunityId) {
+            $this->getDefaultCommunityId();
+            $community = $this->getOperationalValue($this->defaultCommunityId);
+        } elseif ($this->communityIdParam && !$this->forceDefaultCommunityId) {
+            $community = $this->treatCommunityParamsWithCheckIfAuthorized();
+        }
 
         $territories = $this->treatTerritoryParams();
-        $community = $this->treatCommunityParamsWithCheckIfAuthorized();
 
         return [$territories, $community];
     }
