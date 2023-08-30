@@ -46,6 +46,27 @@
         {{ $t("userDelete") }}
       </v-card-text>
 
+      <v-row
+        v-if="newThread && !idAsk"
+        dense
+      >
+        <v-col>
+          <v-card flat>
+            <v-card-text>
+              <p>
+                {{ newThread.origin }}
+                <v-icon color="tertiairy">
+                  mdi-arrow-right
+                </v-icon>
+                {{ newThread.destination }}
+              </p>
+              <p>{{ newThreadDetails }}</p>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+
+
       <v-row dense>
         <v-col
           cols="6"
@@ -322,7 +343,11 @@ export default {
     blockerId: {
       type: Number,
       default: null
-    }
+    },
+    newThread:{
+      type:Object,
+      default:null
+    },
   },
   data(){
     return{
@@ -368,6 +393,36 @@ export default {
       else{
         return this.infosComplete.carpooler.givenName+' '+this.infosComplete.carpooler.shortFamilyName
       }
+    },
+    newThreadDetails(){
+      let details = "";
+      if(this.newThread){
+        details = this.newThread.frequency == 1 ? this.newThreadDetailsPunctual : this.newThreadDetailsRegular;
+      }
+      return details;
+    },
+    newThreadDetailsPunctual(){
+      return `${this.formatedNewThreadFromDate} ${this.$t("at")} ${this.formatedNewThreadFromTime}`;
+    },
+    newThreadDetailsRegular(){
+      return `${this.regularCarpoolDays}`;
+    },
+    formatedNewThreadFromDate(){
+      return moment.utc(this.newThread.fromDate).format("ddd DD MMM YYYY");
+    },
+    formatedNewThreadFromTime(){
+      return (this.newThread.fromTime) ? moment.utc(this.newThread.fromTime).format("HH")+"h"+moment.utc(this.newThread.fromTime).format("mm") : null;
+    },
+    regularCarpoolDays(){
+      let carpoolDays = [];
+      if(this.newThread.monCheck==true){carpoolDays.push(this.$t('Mon'));}
+      if(this.newThread.tueCheck==true){carpoolDays.push(this.$t('Tue'));}
+      if(this.newThread.wedCheck==true){carpoolDays.push(this.$t('Wed'));}
+      if(this.newThread.thuCheck==true){carpoolDays.push(this.$t('Thu'));}
+      if(this.newThread.friCheck==true){carpoolDays.push(this.$t('Fri'));}
+      if(this.newThread.satCheck==true){carpoolDays.push(this.$t('Sat'));}
+      if(this.newThread.sunCheck==true){carpoolDays.push(this.$t('Sun'));}
+      return carpoolDays.join(", ");
     },
   },
   watch:{
