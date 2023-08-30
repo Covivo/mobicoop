@@ -40,8 +40,6 @@ class IncentiveManager extends MobConnectManager
     {
         $getResponse = $this->getIncentives();
 
-        $getResponse = null;
-
         return !is_null($getResponse) ? $getResponse->getIncentives() : new ArrayCollection();
     }
 
