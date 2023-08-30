@@ -797,6 +797,10 @@ services:
           command: "app:incentive:subscription-timestamps",
         }
 
+  App\Incentive\Controller\IncentivesController:
+    tags:
+      - controller.service_arguments
+
   App\Carpool\Command\CarpoolProofSendHistory:
     tags:
       - { name: "console.command", command: "app:carpool:proof-send-history" }
