@@ -1,18 +1,25 @@
 {
-    "notLinkedToACarpool": "This discussion thread is not linked to a carpool",
-    "roundTrip": "Round trip",
-    "urlGetAdAsk": "/user/messages/actions/info",
-    "urlGetBooking": "/user/messages/actions/infos/booking",
-    "regular": {
-        "ask": "Propose a regular carpool"
-    },
-    "distance": "Distance",
-    "distanceTooltip": "Carpooled distance including driver detour",
-    "seatsAvailable": "Available seats",
-    "price": "Price",
-    "priceTooltip": "Indicative price",
-    "userDelete": "Unsubscribed user",
-    "block": "Block",
-    "blocked": "Blocked",
-    "blockUrl": "/user/block"
+  "notLinkedToACarpool": "This discussion thread is not linked to a carpool",
+  "roundTrip": "Round trip",
+  "urlGetAdAsk": "/user/messages/actions/info",
+  "regular": {
+    "ask": "Propose a regular carpool"
+  },
+  "distance": "Distance",
+  "distanceTooltip": "Carpooled distance including driver detour",
+  "seatsAvailable": "Available seats",
+  "price": "Price",
+  "priceTooltip": "Indicative price",
+  "userDelete": "Unsubscribed user",
+  "block": "Block",
+  "blocked": "Blocked",
+  "blockUrl": "/user/block",
+  "at": "at",
+  "Mon": "Mon",
+  "Tue": "Tue",
+  "Wed": "Wed",
+  "Thu": "Thu",
+  "Fri": "Fri",
+  "Sat": "Sat",
+  "Sun": "Sun"
 }

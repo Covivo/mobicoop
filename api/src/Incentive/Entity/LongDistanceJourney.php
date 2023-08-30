@@ -116,7 +116,7 @@ class LongDistanceJourney
      *
      * @var null|CarpoolItem
      *
-     * @ORM\OneToOne(targetEntity=CarpoolItem::class)
+     * @ORM\ManyToOne(targetEntity=CarpoolItem::class)
      *
      * @ORM\JoinColumn(nullable=true)
      */
