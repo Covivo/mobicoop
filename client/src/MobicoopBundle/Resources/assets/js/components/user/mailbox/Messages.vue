@@ -534,7 +534,6 @@ export default {
       let params = {
         idBooking:this.currentIdBooking,
         status:data.status,
-        isRoleDriver:data.isRoleDriver
       }
       maxios.post(this.$t("urlUpdateBooking"),params)
         .then(response => {
