@@ -785,8 +785,6 @@ class UserManager
 
     /**
      * Get the private communities of the given user.
-     *
-     * @param User $user
      */
     public function getPrivateCommunities(?User $user): array
     {
@@ -1162,7 +1160,7 @@ class UserManager
             $currentThread = [
                 'idRecipient' => 19,
                 'givenName' => 'jeremi B.',
-                'date' => '',
+                'date' => '2023-08-30',
                 'selected' => false,
                 'unreadMessages' => 0,
                 'idBooking' => '0fc843d5-ec02-4c2e-a9fe-6aacb20710f7',
@@ -1171,7 +1169,7 @@ class UserManager
                     'destination' => 'carcassonne',
                     'criteria' => [
                         'frequency' => 1,
-                        'fromDate' => '2023-08-05',
+                        'fromDate' => '2023-09-23',
                         'fromTime' => '08:30:00',
                     ],
                 ],
@@ -1253,6 +1251,7 @@ class UserManager
             // dispatch en event
             $event = new UserPasswordChangedEvent($user);
             $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
+
             // return the user
             return $user;
         }
@@ -1503,6 +1502,7 @@ class UserManager
 
             return $userFound;
         }
+
         // No user found. We return nothing.
         return new JsonResponse();
     }

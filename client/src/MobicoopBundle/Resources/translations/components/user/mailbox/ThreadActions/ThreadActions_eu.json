@@ -12,6 +12,7 @@
     "ask": "Autokidetza erregular bat proposatu"
   },
   "urlGetAdAsk": "/utilisateur/messages/actions/infos",
+  "urlGetBooking": "/utilisateur/messages/actions/infos/booking",
   "roundTrip": "Joan-etorri bidaia",
   "notLinkedToACarpool": "Solasaldi hari hau ez da autokidetza bati lotua",
   "at": "à",
