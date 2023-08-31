@@ -44,6 +44,10 @@
     },
     "incentives": {
       "title": "Liste des aides",
+      "subtitles": {
+        "company": "Vos aides employeurs",
+        "territory": "Catalogue d'aides publiques"
+      },
       "buttons": {
         "card": {
           "text": "Détails",

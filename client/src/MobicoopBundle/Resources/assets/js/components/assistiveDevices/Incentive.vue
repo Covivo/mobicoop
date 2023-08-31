@@ -25,6 +25,7 @@
           <v-card-actions>
             <v-spacer />
             <v-btn
+              v-if="isActionBtnDisplayed"
               class="my-5"
               color="secondary"
               target="_blank"
@@ -41,7 +42,10 @@
   </v-container>
 </template>
 <script>
+import { not_displayed_incentive_types } from "@utils/constants";
+
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/assistiveDevices";
+
 
 export default {
   i18n: {
@@ -56,6 +60,11 @@ export default {
     incentive: {
       type: Object,
       default: () => {}
+    }
+  },
+  computed: {
+    isActionBtnDisplayed() {
+      return !not_displayed_incentive_types.find(type => type === this.incentive.type);
     }
   },
   methods: {

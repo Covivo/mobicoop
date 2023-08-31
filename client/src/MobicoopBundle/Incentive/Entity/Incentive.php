@@ -14,6 +14,11 @@ class Incentive implements \JsonSerializable
     /**
      * @var null|string
      */
+    private $type;
+
+    /**
+     * @var null|string
+     */
     private $title;
 
     /**
@@ -44,6 +49,24 @@ class Incentive implements \JsonSerializable
     public function setId(?string $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of type.
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set the value of type.
+     */
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
@@ -106,6 +129,7 @@ class Incentive implements \JsonSerializable
     {
         return [
             'id' => $this->getId(),
+            'type' => $this->getType(),
             'title' => $this->getTitle(),
             'description' => $this->getDescription(),
             'subscriptionLink' => $this->getSubscriptionLink(),
