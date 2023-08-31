@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AssistiveController extends AbstractController
 {
@@ -88,6 +89,10 @@ class AssistiveController extends AbstractController
 
     public function incentives()
     {
+        if (is_null($this->getUser())) {
+            return $this->redirectToRoute('home');
+        }
+
         return $this->render(
             '@Mobicoop/assistiveDevices/incentives-list.html.twig',
             [
@@ -96,13 +101,21 @@ class AssistiveController extends AbstractController
         );
     }
 
-    public function getIncentiveAsXMLRequest()
+    public function getIncentiveAsXMLRequest(Request $request)
     {
+        if (is_null($this->getUser())) {
+            throw new AccessDeniedException();
+        }
+
         return new JsonResponse($this->_incentiveManager->getIncentives());
     }
 
     public function incentive($incentive_id)
     {
+        if (is_null($this->getUser())) {
+            return $this->redirectToRoute('home');
+        }
+
         $incentive = $this->_incentiveManager->getIncentive($incentive_id);
 
         return $this->render(
