@@ -1,6 +1,6 @@
 <?php
 
-namespace Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Incentive\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Psr\Log\LoggerInterface;
@@ -78,13 +78,15 @@ class AssistiveController extends AbstractController
 
     public function incentives()
     {
+        // TODO obtention de la liste des incitations depuis la vue
         return $this->render(
             '@Mobicoop/assistiveDevices/incentives-list.html.twig'
         );
     }
 
-    public function incentive()
+    public function incentive($incentive_id)
     {
+        // TODO obtention du détail de l'incitation
         return $this->render(
             '@Mobicoop/assistiveDevices/incentive-details.html.twig'
         );
