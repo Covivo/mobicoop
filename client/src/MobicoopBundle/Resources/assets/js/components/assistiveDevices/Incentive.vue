@@ -28,6 +28,7 @@
               class="my-5"
               color="secondary"
               target="_blank"
+              :disabled="!incentive.subscriptionLink"
               :href="incentive.subscriptionLink"
             >
               {{ $t('incentives.incentive.button.text') }}
