@@ -5,5 +5,7 @@
 {% endblock %}
 
 {% block main %}
-Détail d'une aide
+    <incentive
+        :incentive="{{ incentive | json_encode }}"
+    ></incentive>
 {% endblock %}

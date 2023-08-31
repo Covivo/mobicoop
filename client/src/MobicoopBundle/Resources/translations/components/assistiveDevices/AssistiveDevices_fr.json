@@ -34,5 +34,16 @@
   },
   "errors": {
     "mob-activation": "Nous rencontrons un problème dans l'activation de moB"
+  },
+  "incentives": {
+    "incentive": {
+      "title": "Détails de l'aide",
+      "button": {
+        "text": "Initier ma demande"
+      }
+    },
+    "incentives": {
+      "title": "Liste des aides"
+    }
   }
 }

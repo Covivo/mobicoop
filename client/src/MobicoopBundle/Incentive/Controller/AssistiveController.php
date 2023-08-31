@@ -2,9 +2,11 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Incentive\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\IncentiveManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -16,10 +18,17 @@ class AssistiveController extends AbstractController
     private $_logger;
     private $_userManager;
 
-    public function __construct(UserManager $userManager, LoggerInterface $logger, string $assistiveSsoProvider)
+    /**
+     * @var IncentiveManager
+     */
+    private $_incentiveManager;
+
+    public function __construct(UserManager $userManager, LoggerInterface $logger, IncentiveManager $incentiveManager, string $assistiveSsoProvider)
     {
         $this->_userManager = $userManager;
         $this->_logger = $logger;
+        $this->_incentiveManager = $incentiveManager;
+
         $this->_assistiveSsoProvider = $assistiveSsoProvider;
     }
 
@@ -78,17 +87,29 @@ class AssistiveController extends AbstractController
 
     public function incentives()
     {
-        // TODO obtention de la liste des incitations depuis la vue
+        var_dump($this->_incentiveManager->getIncentives());
+
+        exit;
+
         return $this->render(
             '@Mobicoop/assistiveDevices/incentives-list.html.twig'
         );
     }
 
+    public function getIncentiveAsXMLRequest()
+    {
+        return new JsonResponse($this->_incentiveManager->getIncentives());
+    }
+
     public function incentive($incentive_id)
     {
-        // TODO obtention du détail de l'incitation
+        $incentive = $this->_incentiveManager->getIncentive($incentive_id);
+
         return $this->render(
-            '@Mobicoop/assistiveDevices/incentive-details.html.twig'
+            '@Mobicoop/assistiveDevices/incentive-details.html.twig',
+            [
+                'incentive' => $this->_incentiveManager->getIncentive($incentive_id),
+            ]
         );
     }
 }
