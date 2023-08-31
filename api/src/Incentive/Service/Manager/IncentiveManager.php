@@ -29,7 +29,7 @@ class IncentiveManager extends MobConnectManager
          */
         $user = $security->getUser();
 
-        if (is_null($user) || is_null($user->getMobConnectAuth())) {
+        if (is_null($user) || !$user instanceof User || is_null($user->getMobConnectAuth())) {
             throw new AccessDeniedException('Access denied - The user must be authenticated and have subscribed to the incentives to access this resource');
         }
 
@@ -47,6 +47,6 @@ class IncentiveManager extends MobConnectManager
     {
         $getResponse = $this->getIncentive($incentive_id);
 
-        return new Incentive($getResponse->getId(), $getResponse->getTitle(), $getResponse->getDescription());
+        return new Incentive($getResponse->getId(), $getResponse->getTitle(), $getResponse->getDescription(), $getResponse->getSubscriptionLink());
     }
 }

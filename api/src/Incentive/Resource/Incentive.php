@@ -59,16 +59,25 @@ class Incentive
      *
      * @Groups({"eecIncentive"})
      */
+    private $subscriptionLink;
+
+    /**
+     * @var string
+     *
+     * @Groups({"eecIncentive"})
+     */
     private $description;
 
     public function __construct(
         string $id,
         string $title,
-        string $description
+        string $description,
+        string $subscriptionLink = null
     ) {
         $this->setId($id);
         $this->setTitle($title);
         $this->setDescription($description);
+        $this->setSubscriptionLink($subscriptionLink);
     }
 
     /**
@@ -121,6 +130,24 @@ class Incentive
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of subscriptionLink.
+     */
+    public function getSubscriptionLink(): ?string
+    {
+        return $this->subscriptionLink;
+    }
+
+    /**
+     * Set the value of subscriptionLink.
+     */
+    public function setSubscriptionLink(?string $subscriptionLink): self
+    {
+        $this->subscriptionLink = $subscriptionLink;
 
         return $this;
     }
