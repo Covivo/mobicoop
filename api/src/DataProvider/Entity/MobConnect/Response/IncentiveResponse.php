@@ -24,6 +24,11 @@ class IncentiveResponse extends MobConnectResponse
     /**
      * @var string
      */
+    private $type;
+
+    /**
+     * @var string
+     */
     private $title;
 
     /**
@@ -51,6 +56,14 @@ class IncentiveResponse extends MobConnectResponse
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    /**
+     * Get the value of type.
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
     }
 
     /**
@@ -83,6 +96,10 @@ class IncentiveResponse extends MobConnectResponse
             $this->_setId($this->_content->id);
         }
 
+        if (property_exists($this->_content, 'incentiveType')) {
+            $this->_setType($this->_content->incentiveType);
+        }
+
         if (property_exists($this->_content, 'title')) {
             $this->_setTitle($this->_content->title);
         }
@@ -102,6 +119,16 @@ class IncentiveResponse extends MobConnectResponse
     private function _setId(string $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of type.
+     */
+    private function _setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -47,6 +47,6 @@ class IncentiveManager extends MobConnectManager
     {
         $getResponse = $this->getIncentive($incentive_id);
 
-        return new Incentive($getResponse->getId(), $getResponse->getTitle(), $getResponse->getDescription(), $getResponse->getSubscriptionLink());
+        return new Incentive($getResponse->getId(), $getResponse->getType(), $getResponse->getTitle(), $getResponse->getDescription(), $getResponse->getSubscriptionLink());
     }
 }

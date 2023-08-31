@@ -48,21 +48,28 @@ class Incentive
     private $id;
 
     /**
-     * @var string
+     * @var null|string
      *
      * @Groups({"eecIncentive"})
      */
     private $title;
 
     /**
-     * @var string
+     * @var null|string
+     *
+     * @Groups({"eecIncentive"})
+     */
+    private $type;
+
+    /**
+     * @var null|string
      *
      * @Groups({"eecIncentive"})
      */
     private $subscriptionLink;
 
     /**
-     * @var string
+     * @var null|string
      *
      * @Groups({"eecIncentive"})
      */
@@ -70,11 +77,13 @@ class Incentive
 
     public function __construct(
         string $id,
+        string $type,
         string $title,
         string $description,
         string $subscriptionLink = null
     ) {
         $this->setId($id);
+        $this->setType($type);
         $this->setTitle($title);
         $this->setDescription($description);
         $this->setSubscriptionLink($subscriptionLink);
@@ -94,6 +103,24 @@ class Incentive
     public function setId(?string $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of type.
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set the value of type.
+     */
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -46,14 +46,14 @@ class IncentivesResponse extends MobConnectResponse
     {
         if (!is_array($this->getContent() && !empty($this->getContent()))) {
             foreach ($this->getContent() as $incentive) {
-                $this->_addIncentive($incentive->id, $incentive->title, $incentive->description);
+                $this->_addIncentive($incentive->id, $incentive->incentiveType, $incentive->title, $incentive->description);
             }
         }
     }
 
-    private function _addIncentive(string $id, string $title, string $description)
+    private function _addIncentive(string $id, string $type, string $title, string $description)
     {
-        $this->incentives->add(new Incentive($id, $title, $description));
+        $this->incentives->add(new Incentive($id, $type, $title, $description, null));
     }
 
     private function _throwExceptions()
