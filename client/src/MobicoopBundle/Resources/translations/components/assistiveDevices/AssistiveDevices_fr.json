@@ -43,7 +43,17 @@
       }
     },
     "incentives": {
-      "title": "Liste des aides"
+      "title": "Liste des aides",
+      "buttons": {
+        "card": {
+          "text": "Détails",
+          "URI": "/details-de-l-aide/{incentiveId}"
+        }
+      },
+      "messages": {
+        "error": "Une erreur est survenue"
+      },
+      "no-content": "Il n'y a aucune aide à afficher pour le moment."
     }
   }
 }

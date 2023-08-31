@@ -2002,6 +2002,13 @@ incentive.list:
     nl: /liste-des-aides
   controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::incentives
 
+incentives.xmlHttpRequest:
+  path:
+    fr: /incentives
+    en: /incentives
+    nl: /incentives
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::getIncentiveAsXMLRequest
+
 incentive.details:
   path:
     fr: /details-de-l-aide/{incentive_id}

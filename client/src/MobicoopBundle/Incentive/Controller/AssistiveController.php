@@ -2,6 +2,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Incentive\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Entity\Incentive;
 use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\IncentiveManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Psr\Log\LoggerInterface;
@@ -87,12 +88,11 @@ class AssistiveController extends AbstractController
 
     public function incentives()
     {
-        var_dump($this->_incentiveManager->getIncentives());
-
-        exit;
-
         return $this->render(
-            '@Mobicoop/assistiveDevices/incentives-list.html.twig'
+            '@Mobicoop/assistiveDevices/incentives-list.html.twig',
+            [
+                'resourcePath' => Incentive::RESOURCE_NAME,
+            ]
         );
     }
 

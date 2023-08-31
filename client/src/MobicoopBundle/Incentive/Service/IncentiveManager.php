@@ -2,6 +2,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Incentive\Service;
 
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Response;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Incentive\Entity\Incentive;
 
@@ -22,6 +23,12 @@ class IncentiveManager
     {
         $this->_dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->_dataProvider->getCollection([]);
+
+        if (!is_null($response) && $response instanceof Response && !is_null($response->getValue())) {
+            return $response->getValue();
+        }
+
+        return [];
     }
 
     public function getIncentive(string $incentive_id)
