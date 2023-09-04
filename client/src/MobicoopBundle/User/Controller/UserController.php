@@ -1034,7 +1034,7 @@ class UserController extends AbstractController
      */
     public function userMessageBookingCompleteThread(string $idBooking, MessageManager $messageManager)
     {
-        return new Response($messageManager->getMessages($idBooking));
+        return new JsonResponse($messageManager->getMessages($idBooking));
     }
 
     /**

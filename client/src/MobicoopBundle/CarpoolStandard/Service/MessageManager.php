@@ -65,6 +65,6 @@ class MessageManager
     {
         $response = $this->dataProvider->getSpecialCollection('messages', ['idBooking' => $idBooking]);
 
-        return $response->getValue();
+        return $response->getValue()->getMember();
     }
 }

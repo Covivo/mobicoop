@@ -1247,10 +1247,10 @@ class Deserializer
     {
         $csMessage = new CsMessage();
         if (isset($data['from'])) {
-            $csMessage->setFrom($this->deserializeCsUser($data['driver']));
+            $csMessage->setFrom($this->deserializeCsUser($data['from']));
         }
         if (isset($data['to'])) {
-            $csMessage->setTo($this->deserializeCsUser($data['passenger']));
+            $csMessage->setTo($this->deserializeCsUser($data['to']));
         }
 
         return $this->autoSet($csMessage, $data);
