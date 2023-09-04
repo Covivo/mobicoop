@@ -206,21 +206,22 @@ class InteropProvider implements CarpoolStandardProviderInterface
 
     public function getMessages(string $idBooking)
     {
-        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_MESSAGE);
+        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_MESSAGE.'/'.$idBooking);
         $headers = [
             'X-API-KEY' => $this->apiKey,
             'Content-Type' => 'application/json',
         ];
-        $body = [
-            'idBooking' => $idBooking,
-        ];
+        $data = json_decode((string) $dataProvider->getCollection(null, $headers)->getValue(), true);
+        $messages = [];
+        foreach ($data as $message) {
+            $messages[] = $this->mapMessage($message);
+        }
 
-        return $dataProvider->getCollection($body, $headers)->getValue();
+        return $messages;
     }
 
-    public function mapBooking(
-        array $array
-    ) {
+    public function mapBooking(array $array)
+    {
         $booking = new Booking();
         $driver = new User();
         $passenger = new User();
@@ -275,6 +276,38 @@ class InteropProvider implements CarpoolStandardProviderInterface
         }
 
         return $booking;
+    }
+
+    public function mapMessage(array $array)
+    {
+        $message = new Message();
+
+        $message->setTo($this->mapUser($array['to']));
+        $message->setFrom($this->mapUser($array['from']));
+        $message->setBookingId(isset($array['bookingId']) ? $array['bookingId'] : null);
+        $message->setMessage(isset($array['message']) ? $array['message'] : null);
+        $message->setRecipientCarpoolerType(isset($array['recipientCarpoolerType']) ? $array['recipientCarpoolerType'] : null);
+        $message->setPassengerJourneyId(isset($array['passengerJourneyId']) ? $array['passengerJourneyId'] : null);
+        $message->setDriverJourneyId(isset($array['driverJourneyId']) ? $array['driverJourneyId'] : null);
+
+        return $message;
+    }
+
+    public function mapUser(array $array)
+    {
+        $user = new User();
+        $user->setId(USER::DEFAULT_ID);
+        $user->setExternalId(isset($array['externalId']) ? $array['externalId'] : null);
+        $user->setOperator(isset($array['operator']) ? $array['operator'] : null);
+        $user->setAlias(isset($array['alias']) ? $array['alias'] : null);
+        $user->setFirstName(isset($array['firstName']) ? $array['firstName'] : null);
+        $user->setLastName(isset($array['lastName']) ? $array['lastName'] : null);
+        $user->setGrade(isset($array['grade']) ? $array['grade'] : null);
+        $user->setPicture(isset($array['picture']) ? $array['picture'] : null);
+        $user->setGender(isset($array['gender']) ? $array['gender'] : null);
+        $user->setVerifiedIdentity(isset($array['verifiedIdentity']) ? $array['verifiedIdentity'] : null);
+
+        return $user;
     }
 
     private function _generateUuid()
