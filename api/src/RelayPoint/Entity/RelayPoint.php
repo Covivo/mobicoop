@@ -297,6 +297,8 @@ class RelayPoint
      * @var null|string the external id of the relay point, if the relay point is imported
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"writeRelayPoint"})
      */
     private $externalId;
 
@@ -304,6 +306,8 @@ class RelayPoint
      * @var null|string the external author of the relay point, if the relay point is imported
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"writeRelayPoint"})
      */
     private $externalAuthor;
 
@@ -311,6 +315,8 @@ class RelayPoint
      * @var \DateTimeInterface the external updated date of the relay point, if the relay point is imported
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"writeRelayPoint"})
      */
     private $externalUpdatedDate;
 
@@ -952,7 +958,7 @@ class RelayPoint
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -962,6 +968,6 @@ class RelayPoint
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }
