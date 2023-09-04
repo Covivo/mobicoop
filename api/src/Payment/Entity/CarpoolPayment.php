@@ -417,8 +417,27 @@ class CarpoolPayment
         $this->setUpdatedDate(new \DateTime());
     }
 
+    public function hasAtLeastAProofEECCompliant(): bool
+    {
+        $response = false;
+
+        foreach ($this->getCarpoolItems() as $carpoolItem) {
+            $carpoolProof = $carpoolItem->getCarpoolProof();
+
+            if (!is_null($carpoolProof) && $carpoolProof->isEECCompliant()) {
+                $response = true;
+
+                break;
+            }
+        }
+
+        return $response;
+    }
+
     public function isEECCompliant(): bool
     {
-        return self::STATUS_SUCCESS === $this->getStatus() && !is_null($this->getTransactionId());
+        return
+            self::STATUS_SUCCESS === $this->getStatus() && !is_null($this->getTransactionId())
+            && $this->hasAtLeastAProofEECCompliant();
     }
 }
