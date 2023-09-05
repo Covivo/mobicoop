@@ -9,7 +9,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Votre demande d’adhésion à une communauté</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:22px;" text-align="center" ><b>Votre demande d’adhésion à une communauté</b></p>
                     </td>
                 </tr>
             </table>
@@ -26,7 +26,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:13px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -37,7 +37,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Merci beaucoup pour l’intérêt que vous portez au covoiturage et à la plateforme {{api_env('EMAILS_PLATFORM_NAME')}}!</p>
+                        <p style="font-size:13px; margin-bottom:16px; text-align: justify;">Merci beaucoup pour l’intérêt que vous portez au covoiturage et à la plateforme {{api_env('EMAILS_PLATFORM_NAME')}}!</p>
                     </td>
                 </tr>
             </table>
@@ -48,7 +48,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Vous avez demandé une adhésion à la communauté « {{context.community.name}} » et cette dernière n’a pas pu être accepté. Vous n’y avez donc pas accès.</p>
+                        <p style="font-size:13px; margin-bottom:16px; text-align: justify;">Vous avez demandé une adhésion à la communauté « {{context.community.name}} » et cette dernière n’a pas pu être accepté. Vous n’y avez donc pas accès.</p>
                     </td>
                 </tr>
             </table>
@@ -59,7 +59,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Cela n’entraine aucune restriction à votre utilisation du service et votre pratique du covoiturage : vous pouvez utiliser la totalité des fonctionnalités de la plateforme et vous mettre en relation avec tous ses utilisateurs en publiant une annonce.</p>
+                        <p style="font-size:13px; margin-bottom:16px; text-align: justify;">Cela n’entraine aucune restriction à votre utilisation du service et votre pratique du covoiturage : vous pouvez utiliser la totalité des fonctionnalités de la plateforme et vous mettre en relation avec tous ses utilisateurs en publiant une annonce.</p>
                     </td>
                 </tr>
             </table>
@@ -86,7 +86,7 @@
                         <p> </p>
                     </td>
                     <td align="center" style="width:100%;">
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt pour vos prochains trajets partagés !</b></p>
+                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt pour vos prochains trajets partagés !</b></p>
                     </td>
                 </tr>
                 <tr>
@@ -94,7 +94,7 @@
                         <p> </p>
                     </td>
                     <td align="right" style="width:100%;">
-                        <p style="font-size:11px;">L'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
+                        <p style="font-size:13px;">L'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
                     </td>
                 </tr>
             </table>
