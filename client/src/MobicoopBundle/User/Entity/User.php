@@ -387,6 +387,16 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $language;
 
     /**
+     * @var bool the user can be driver for a hitch hike
+     */
+    private $hitchHikeDriver;
+
+    /**
+     * @var bool the user can be passenger for a hitch hike
+     */
+    private $hitchHikePassenger;
+
+    /**
      * @var null|string Facebook ID of the user
      *
      * @Groups({"post"})
@@ -1233,8 +1243,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * get the native language of the client.
-     *
-     * @return Language
      */
     public function getLanguage(): ?Language
     {
@@ -1243,8 +1251,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * Set the native language of the client.
-     *
-     * @param Language $language
      */
     public function setLanguage(?Language $language)
     {
@@ -1593,7 +1599,9 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     {
         $this->identityStatus = $identityStatus;
 
-        $this->setVerifiedIdentity(self::IDENTITY_STATUS_ACCEPTED === $this->identityStatus ? true : false);
+        if ($this->isHitchHikeDriver() || $this->isHitchHikePassenger()) {
+            $this->setVerifiedIdentity(self::IDENTITY_STATUS_ACCEPTED === $this->identityStatus ? true : false);
+        }
 
         return $this;
     }
@@ -1614,6 +1622,30 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setBankingIdentityStatus(bool $bankingIdentityStatus): self
     {
         $this->bankingIdentityStatus = $bankingIdentityStatus;
+
+        return $this;
+    }
+
+    public function isHitchHikeDriver(): ?bool
+    {
+        return $this->hitchHikeDriver;
+    }
+
+    public function setHitchHikeDriver(?bool $isHitchHikeDriver): self
+    {
+        $this->hitchHikeDriver = $isHitchHikeDriver;
+
+        return $this;
+    }
+
+    public function isHitchHikePassenger(): ?bool
+    {
+        return $this->hitchHikePassenger;
+    }
+
+    public function setHitchHikePassenger(?bool $isHitchHikePassenger): self
+    {
+        $this->hitchHikePassenger = $isHitchHikePassenger;
 
         return $this;
     }
