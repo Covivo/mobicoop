@@ -75,3 +75,8 @@ browserUpdate:
   language: "fr"
 assistiveDevices:
   title: "Aides à la mobilité"
+incentives:
+  list:
+    title: Liste des aides
+  details:
+    title: Détails de l'aide
