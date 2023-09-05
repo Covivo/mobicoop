@@ -202,6 +202,15 @@ abstract class MobConnectManager
         return $this->_apiProvider->patchUserSubscription($subscriptionId, $params);
     }
 
+    protected function hasSubscriptionCommited(string $subscriptionId): bool
+    {
+        $this->setApiProvider();
+
+        // TODO: Add the query allowing you to know if a subscription has been commited
+
+        return false;
+    }
+
     /**
      * Sets subscription expiration date.
      */
@@ -262,7 +271,7 @@ abstract class MobConnectManager
         return $proposal;
     }
 
-    protected function _isLDJourneyCommitmentJourney(LongDistanceSubscription $subscription, CarpoolItem $carpoolItem): bool
+    protected function _isCarpoolItemCommitmentJourney(LongDistanceSubscription $subscription, CarpoolItem $carpoolItem): bool
     {
         return
             !is_null($subscription->getCommitmentProofJourney())

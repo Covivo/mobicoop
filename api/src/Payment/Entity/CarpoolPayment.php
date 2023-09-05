@@ -434,6 +434,12 @@ class CarpoolPayment
         return $response;
     }
 
+    /**
+     * Checks if the payment complies with the CEE standard:
+     * - Payment must have been completed successfully,
+     * - Payment must keep track of the transaction,
+     * - The payment must be associated with at least a compliant CarpoolProof with the EEC standard.
+     */
     public function isEECCompliant(): bool
     {
         return
