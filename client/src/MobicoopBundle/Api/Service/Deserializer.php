@@ -1292,9 +1292,9 @@ class Deserializer
 
     private function deserializeIncentive($data)
     {
-        var_dump($data);
+        $incentive = new Incentive();
 
-        exit;
+        return $this->autoSet($incentive, $data);
     }
 
     private function autoSet($object, $data)
