@@ -138,7 +138,7 @@
           :regular="regular"
           :default-destination="defaultDestination"
           :publish-button-always-active="publishButtonAlwaysActive"
-          :default-outward-date="dateFormated"
+          :default-outward-date="eventFormatedDate"
           :date-time-picker="dateTimePicker"
         />
       </v-row>
@@ -165,6 +165,8 @@ import LoginOrRegisterFirst from "@components/utilities/LoginOrRegisterFirst";
 import MMap from "@components/utilities/MMap/MMap";
 import L from "leaflet";
 import moment from "moment";
+
+const DATE_FORMAT = "YYYY-MM-DD";
 
 export default {
   components: {
@@ -280,9 +282,13 @@ export default {
   },
   computed: {
     dateFormated() {
-      return this.date ? moment.utc(this.date).format("YYYY-MM-DD") : "";
-    }
+      return this.date ? moment.utc(this.date, "YYYY-MM-DD HH:mm:ss.SSSSSS").format(DATE_FORMAT) : "";
+    },
+    eventFormatedDate() {               // If the event start date has passed, then the current date is displayed
+      const now = new Date();
 
+      return now > new Date(this.date) ? moment.utc(now).format(DATE_FORMAT) : this.dateFormated;
+    }
     // Link the event in the adresse
   },
   created: function() {
