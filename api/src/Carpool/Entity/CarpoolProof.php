@@ -700,4 +700,14 @@ class CarpoolProof
             self::STATUS_VALIDATED === $this->getStatus()
             && self::TYPE_HIGH != $this->getType();
     }
+
+    /**
+     * Used in the context of CEE, return the associated payment. This latest must meet the criteria:
+     * - Have been successfully paid,
+     * - Keep track of the transaction.
+     */
+    public function getSuccessFullPayment(): ?CarpoolPayment
+    {
+        return $this->getCarpoolItem()->getSuccessfullPayment();
+    }
 }

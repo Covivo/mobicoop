@@ -345,4 +345,17 @@ abstract class MobConnectManager
             $this->_userValidation->isUserValid($this->getDriver())
             && 0 === count($this->getEECCompliantProofsObtainedSinceDate($distanceType));
     }
+
+    protected function getDistanceTraveled(CarpoolProof $carpoolProof): ?int
+    {
+        return
+            !is_null($carpoolProof->getAsk())
+            && !is_null($carpoolProof->getAsk()->getMatching())
+            ? $carpoolProof->getAsk()->getMatching()->getCommonDistance() : null;
+    }
+
+    protected function isJourneyPaid(CarpoolProof $carpoolProof): bool
+    {
+        return !is_null($carpoolProof->getSuccessfullPayment());
+    }
 }

@@ -726,4 +726,18 @@ class CarpoolItem
 
         return !empty($filteredCarpoolProofs) ? $filteredCarpoolProofs[0] : null;
     }
+
+    /**
+     * Used in the context of CEE, return the associated payment. This latest must meet the criteria:
+     * - Have been successfully paid,
+     * - Keep track of the transaction.
+     */
+    public function getSuccessfullPayment(): ?CarpoolPayment
+    {
+        $successFulPayment = array_filter($this->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) {
+            return $carpoolPayment->isEECCompliant();
+        });
+
+        return !empty($successFulPayment) ? $successFulPayment[0] : null;
+    }
 }

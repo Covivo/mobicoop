@@ -229,11 +229,14 @@ class SubscriptionManager extends MobConnectManager
      */
     public function unvalidationOfProof(CarpoolProof $carpoolProof): void
     {
-        $subscription = $this->_shortDistanceSubscriptionRepository->findByProofCommitment($carpoolProof);
+        // TODO: Qu'est ce qui se passe quand une preuve a été invalidée ?
+        // Todo: Pour les trajets longue distance, exécution du process spécifique
 
-        if (!is_null($subscription) && !is_null($subscription->getCommitmentProofJourney()) && !$subscription->getCommitmentProofJourney()->isCompliant()) {
-            $this->_journeyManager->resetShortDistanceSubscription($subscription, $subscription->getCommitmentProofJourney());
-        }
+        // $subscription = $this->_shortDistanceSubscriptionRepository->findByProofCommitment($carpoolProof);
+
+        // if (!is_null($subscription) && !is_null($subscription->getCommitmentProofJourney()) && !$subscription->getCommitmentProofJourney()->isCompliant()) {
+        //     $this->_journeyManager->resetShortDistanceSubscription($subscription, $subscription->getCommitmentProofJourney());
+        // }
     }
 
     /**
