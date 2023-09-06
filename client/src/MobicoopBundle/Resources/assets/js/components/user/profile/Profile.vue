@@ -178,7 +178,7 @@
             <ProfileSummary
               :user-id="user.id"
               :show-link-profile="false"
-              :verified-identity="user.verifiedIdentity"
+              :verified-identity="user.verifiedIdentity ? user.verifiedIdentity : false"
               :show-verified-identity="user.verifiedIdentity !== null"
             />
           </div>
