@@ -2,7 +2,9 @@
 
 namespace App\Incentive\Repository;
 
+use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceJourney;
+use App\Payment\Entity\CarpoolItem;
 use Doctrine\ORM\EntityManagerInterface;
 
 class LongDistanceJourneyRepository
@@ -19,5 +21,21 @@ class LongDistanceJourneyRepository
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->_repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneByCarpoolItemOrProposal(CarpoolItem $carpoolItem, ?Proposal $proposal): ?LongDistanceJourney
+    {
+        $qb = $this->_entityManager->createQueryBuilder('j');
+
+        $qb
+            ->where('j.carpoolItem = :ci')
+            ->orWhere('j.initialProposal = :p')
+            ->setParameters([
+                'ci' => $carpoolItem,
+                'p' => $proposal,
+            ])
+        ;
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

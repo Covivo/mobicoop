@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Carpool\Event;
 
 use App\Carpool\Entity\CarpoolProof;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class CarpoolProofUnvalidatedEvent extends Event
+class CarpoolProofInvalidatedEvent extends Event
 {
-    public const NAME = 'carpool_proof_unvalidated';
+    public const NAME = 'carpool_proof_invalidated';
 
     protected $carpoolProof;
 

@@ -617,8 +617,6 @@ class ShortDistanceSubscription
 
     /**
      * Get the mobConnect rejection reason.
-     *
-     * @return string
      */
     public function getRejectReason(): ?string
     {
@@ -639,8 +637,6 @@ class ShortDistanceSubscription
 
     /**
      * Get a mobConnect comment for the verify operation.
-     *
-     * @return string
      */
     public function getComment(): ?string
     {
@@ -796,8 +792,6 @@ class ShortDistanceSubscription
 
     /**
      * Get the long distance EEC honor certificate proof timestamp token.
-     *
-     * @return string
      */
     public function getHonorCertificateProofTimestampToken(): ?string
     {
@@ -840,8 +834,6 @@ class ShortDistanceSubscription
 
     /**
      * Get the long distance EEC incentive proof timestamp token.
-     *
-     * @return string
      */
     public function getIncentiveProofTimestampToken(): ?string
     {
@@ -909,6 +901,13 @@ class ShortDistanceSubscription
     public function getCommitmentProofJourney(): ?ShortDistanceJourney
     {
         return $this->commitmentProofJourney;
+    }
+
+    public function isCommitmentJourney(ShortDistanceJourney $journey): bool
+    {
+        return
+            !is_null($this->getCommitmentProofJourney())
+            && $this->getCommitmentProofJourney()->getId() === $journey->getId();
     }
 
     /**

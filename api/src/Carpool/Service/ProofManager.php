@@ -27,7 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
-use App\Carpool\Event\CarpoolProofUnvalidatedEvent;
+use App\Carpool\Event\CarpoolProofInvalidatedEvent;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Carpool\Exception\DynamicException;
 use App\Carpool\Exception\ProofException;
@@ -723,8 +723,8 @@ class ProofManager
                 $event = new CarpoolProofValidatedEvent($proof);
                 $this->eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
             } elseif (in_array($proof->getStatus(), JourneyValidation::PROOF_ERROR_STATUS)) {
-                $event = new CarpoolProofUnvalidatedEvent($proof);
-                $this->eventDispatcher->dispatch(CarpoolProofUnvalidatedEvent::NAME, $event);
+                $event = new CarpoolProofInvalidatedEvent($proof);
+                $this->eventDispatcher->dispatch(CarpoolProofInvalidatedEvent::NAME, $event);
             }
         }
 
