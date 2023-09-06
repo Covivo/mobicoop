@@ -45,5 +45,10 @@
         "deleteCoordinates": "/utilisateur/coordonnees-bancaires/supprimer",
         "addCoordinates": "/utilisateur/coordonnees-bancaires/ajouter"
     },
-    "error": "Une erreur est survenue"
+    "error": "Une erreur est survenue",
+    "msg": {
+      "bank-account": {
+        "create": "Les coordonnées bancaires ont bien été enregistrées et votre adresse de résidence mise à jour."
+      }
+    }
 }

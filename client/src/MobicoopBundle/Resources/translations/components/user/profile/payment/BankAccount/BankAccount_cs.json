@@ -1,4 +1,9 @@
 {
     "titleCoordinates": "1. Bankovní údaje",
-    "textInfo": "Abyste mohli přijímat platby online, je nutné vyplnit všechny níže uvedené údaje."
+    "textInfo": "Abyste mohli přijímat platby online, je nutné vyplnit všechny níže uvedené údaje.",
+    "msg": {
+      "bank-account": {
+        "create": "Les coordonnées bancaires ont bien été enregistrées et votre adresse de résidence mise à jour."
+      }
+    }
 }

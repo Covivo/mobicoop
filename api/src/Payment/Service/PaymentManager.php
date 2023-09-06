@@ -57,6 +57,7 @@ use App\Payment\Ressource\PaymentWeek;
 use App\Payment\Ressource\ValidationDocument;
 use App\User\DataProvider\ConsumptionFeedbackDataProvider;
 use App\User\Entity\User;
+use App\User\Event\UserHomeAddressUpdateEvent;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -1067,6 +1068,25 @@ class PaymentManager
     {
         // Check if there is a paymentProfile
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+
+        // We update the home Address by the bank account address
+        if (!is_null($bankAccount->getAddress())) {
+            if (!is_null($user->getHomeAddress())) {
+                $user->setHomeAddress(null);
+                $this->entityManager->remove($user->getHomeAddress());
+            }
+
+            $homeAddress = $bankAccount->getAddress();
+            $homeAddress->setId(null);
+            $homeAddress->setHome(true);
+            $homeAddress->setUser($user);
+
+            $this->entityManager->persist($homeAddress);
+
+            $event = new UserHomeAddressUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserHomeAddressUpdateEvent::NAME, $event);
+        }
+
         if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
             // No Payment Profile, we create one
             $identifier = null;
@@ -1555,7 +1575,7 @@ class PaymentManager
         $this->entityManager->flush();
 
         if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) {
-            if ($this->_journeyValidation->isPaymentValidForEEC($carpoolPayment)) {
+            if ($carpoolPayment->isEecCompliant()) {
                 $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
                 $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
             }

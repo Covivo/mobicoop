@@ -162,7 +162,7 @@ export default {
         return this.$t('popup.user.content', {userName: this.user.givenName+' '+this.user.shortFamilyName});
       }
       return "";
-    }    
+    }
   },
   methods:{
     report() {
@@ -179,6 +179,7 @@ export default {
         url = this.$t("routes.userReport", {id: this.userId});
       }
       else{
+        this.isLoading = false;
         return;
       }
 

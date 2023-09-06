@@ -45,5 +45,10 @@
     "textAddress": "Zoek uw volledige adres (straat, nummer, ...) en niet alleen de gemeente waarin u woont.",
     "titleAddress": "2. Volledig adres",
     "textInfo": "Om online betalingen te ontvangen, moeten de onderstaande gegevens opgegeven worden.",
-    "titleCoordinates": "1. Bankgegevens"
+    "titleCoordinates": "1. Bankgegevens",
+    "msg": {
+      "bank-account": {
+        "create": "Les coordonnées bancaires ont bien été enregistrées et votre adresse de résidence mise à jour."
+      }
+    }
 }

@@ -133,9 +133,9 @@ class CarpoolItemRepository
             ;
         } else {
             $query->andWhere('ci.creditorUser = :user')
-                ->andWhere('ci.creditorStatus = :creditorStatusWaiting')
+                ->andWhere('ci.creditorStatus IN (:creditorStatusWaiting)')
                 ->setParameter('user', $user)
-                ->setParameter('creditorStatusWaiting', CarpoolItem::CREDITOR_STATUS_PENDING)
+                ->setParameter('creditorStatusWaiting', [CarpoolItem::CREDITOR_STATUS_PENDING, CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE])
             ;
         }
 
