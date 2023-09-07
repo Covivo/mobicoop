@@ -212,12 +212,14 @@ class JourneyManager extends MobConnectManager
             return;
         }
 
-        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$carpoolPayment->getId());
+        $this->_currentPayment = $carpoolPayment;
+
+        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$this->_currentPayment->getId());
 
         /**
          * @var CarpoolItem[]
          */
-        $carpoolItems = $this->_getEECCarpoolItemsFromCarpoolPayment($carpoolPayment);
+        $carpoolItems = $this->_getEECCarpoolItemsFromCarpoolPayment($this->_currentPayment);
 
         foreach ($carpoolItems as $carpoolItem) {
             $this->_subscriptionConfirmationForLDJourney($carpoolItem);
@@ -396,7 +398,6 @@ class JourneyManager extends MobConnectManager
         $this->setDriver($carpoolItem->getCreditorUser());
 
         $subscription = $this->_driver->getLongDistanceSubscription();
-        $carpoolPayment = $carpoolItem->getSuccessfullPayment(LongDistanceSubscription::SUBSCRIPTION_TYPE);
 
         if (
             is_null($subscription)
@@ -436,7 +437,7 @@ class JourneyManager extends MobConnectManager
             $patchResponse = $this->patchSubscription(
                 $this->getDriverLongSubscriptionId(),
                 [
-                    'Date de partage des frais' => $carpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
+                    'Date de partage des frais' => $this->_currentPayment->getUpdatedDate()->format(self::DATE_FORMAT),
                     "Attestation sur l'Honneur" => $this->getHonorCertificate(),
                 ]
             );
@@ -460,7 +461,7 @@ class JourneyManager extends MobConnectManager
 
         $journey->updateJourney(
             $carpoolItem,
-            $carpoolPayment,
+            $this->_currentPayment,
             $this->getCarpoolersNumber($carpoolItem->getAsk()),
             $this->getAddressesLocality($carpoolItem)
         );

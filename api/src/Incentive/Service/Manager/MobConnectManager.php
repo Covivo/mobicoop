@@ -16,6 +16,7 @@ use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\UserValidation;
 use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -93,6 +94,11 @@ abstract class MobConnectManager
      * @var array
      */
     private $_ssoServices;
+
+    /**
+     * @var CarpoolPayment
+     */
+    protected $_currentPayment;
 
     public function __construct(
         EntityManagerInterface $em,
