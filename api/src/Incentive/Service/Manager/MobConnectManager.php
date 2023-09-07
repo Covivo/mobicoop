@@ -11,6 +11,7 @@ use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestamps
 use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\UserValidation;
@@ -349,6 +350,39 @@ abstract class MobConnectManager
 
     protected function isJourneyPaid(CarpoolProof $carpoolProof): bool
     {
-        return !is_null($carpoolProof->getSuccessfullPayment());
+        $distance = $carpoolProof->getDistance();
+
+        if (is_null($distance)) {
+            return false;
+        }
+
+        $distanceType = $this->getDistanceType($distance);
+
+        return !is_null($carpoolProof->getSuccessfullPayment($distanceType));
+    }
+
+    protected function isLongDistance(?int $distance): bool
+    {
+        return !is_null($distance) && CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distance;
+    }
+
+    protected function isShortDistance(?int $distance): bool
+    {
+        return !is_null($distance) && CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS > $distance;
+    }
+
+    /**
+     * Returns if the distance passed as an argument is long or short.
+     */
+    protected function getDistanceType(int $distance): ?string
+    {
+        return
+            $this->isLongDistance($distance)
+            ? LongDistanceSubscription::SUBSCRIPTION_TYPE
+            : (
+                $this->isShortDistance($distance)
+                ? ShortDistanceSubscription::SUBSCRIPTION_TYPE
+                : null
+            );
     }
 }

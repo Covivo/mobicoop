@@ -643,8 +643,8 @@ class CarpoolProof
                     break;
                 }
 
-                $filteredCarpoolPayments = array_values(array_filter($carpoolPayments, function (CarpoolPayment $carpoolPayment) {
-                    return $carpoolPayment->isEECCompliant();
+                $filteredCarpoolPayments = array_values(array_filter($carpoolPayments, function (CarpoolPayment $carpoolPayment) use ($distanceType) {
+                    return $carpoolPayment->isEECCompliant($distanceType);
                 }));
 
                 $compliance = !empty($filteredCarpoolPayments);
@@ -706,8 +706,19 @@ class CarpoolProof
      * - Have been successfully paid,
      * - Keep track of the transaction.
      */
-    public function getSuccessFullPayment(): ?CarpoolPayment
+    public function getSuccessFullPayment(string $distanceType): ?CarpoolPayment
     {
-        return $this->getCarpoolItem()->getSuccessfullPayment();
+        return $this->getCarpoolItem()->getSuccessfullPayment($distanceType);
+    }
+
+    /**
+     * Used in the context of CEE, returns the matching common distance.
+     */
+    public function getDistance(): ?int
+    {
+        return !is_null($this->getAsk())
+            && !is_null($this->getAsk()->getMatching())
+            ? $this->getAsk()->getMatching()->getCommonDistance()
+            : null;
     }
 }

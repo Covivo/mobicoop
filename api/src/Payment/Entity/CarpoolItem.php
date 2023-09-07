@@ -728,16 +728,32 @@ class CarpoolItem
     }
 
     /**
-     * Used in the context of CEE, return the associated payment. This latest must meet the criteria:
+     * Used in the context of EEC, return the associated payment. This latest must meet the criteria:
      * - Have been successfully paid,
      * - Keep track of the transaction.
      */
-    public function getSuccessfullPayment(): ?CarpoolPayment
+    public function getSuccessfullPayment(string $distanceType): ?CarpoolPayment
     {
-        $successFulPayment = array_filter($this->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) {
-            return $carpoolPayment->isEECCompliant();
+        $successFulPayment = array_filter($this->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) use ($distanceType) {
+            return $carpoolPayment->isEECCompliant($distanceType);
         });
 
         return !empty($successFulPayment) ? $successFulPayment[0] : null;
+    }
+
+    /**
+     * Used in the context of EEC, returns the distance of the carpoolitem and if it is zero, that of the corresponding matching.
+     */
+    public function getRelativeDistance(): ?int
+    {
+        return
+            !is_null($this->getDistance())
+            ? $this->getDistance()
+            : (
+                !is_null($this->getAsk())
+                && !is_null($this->getAsk()->getMatching())
+                ? $this->getAsk()->getMatching()->getCommonDistance()
+                : null
+            );
     }
 }
