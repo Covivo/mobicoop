@@ -2,6 +2,8 @@
 
 namespace App\DataProvider\Entity\MobConnect;
 
+use App\DataProvider\Entity\MobConnect\Response\IncentiveResponse;
+use App\DataProvider\Entity\MobConnect\Response\IncentivesResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
@@ -23,10 +25,12 @@ class MobConnectApiProvider extends MobConnectProvider
     public const SERVICE_NAME = 'mobConnect';
 
     private const ROUTE_SUBSCRIPTIONS = '/v1/subscriptions';
-    private const ROUTE_GET_SUBSCRIPTION = self::ROUTE_SUBSCRIPTIONS.'/{SUBSCRIPTION_ID}';
+    private const ROUTE_GET_SUBSCRIPTION = self::ROUTE_SUBSCRIPTIONS.'/'.self::SUBSCRIPTION_ID_TAG;
     private const ROUTE_PATCH_SUBSCRIPTIONS = self::ROUTE_GET_SUBSCRIPTION;
     private const ROUTE_SUBSCRIPTIONS_VERIFY = self::ROUTE_GET_SUBSCRIPTION.'/verify';
     private const ROUTE_SUBSCRIPTIONS_TIMESTAMPS = self::ROUTE_SUBSCRIPTIONS.'/timestamps';
+    private const ROUTE_INCENTIVES = '/v1/incentives';
+    private const ROUTE_INCENTIVE = self::ROUTE_INCENTIVES.'/'.self::INCENTIVE_ID_TAG;
 
     private const SHORT_DISTANCE_LABEL = 'Court';
     private const LONG_DISTANCE_LABEL = 'Long';
@@ -222,6 +226,24 @@ class MobConnectApiProvider extends MobConnectProvider
             $this->_getResponse(
                 $this->_dataProvider->postCollection(null, $this->_buildHeaders($this->__getToken()))
             )
+        );
+    }
+
+    public function getIncentives(): ?IncentivesResponse
+    {
+        $this->_createDataProvider(self::ROUTE_INCENTIVES);
+
+        return new IncentivesResponse(
+            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($this->__getToken())))
+        );
+    }
+
+    public function getIncentive(string $incentive_id): ?IncentiveResponse
+    {
+        $this->_createDataProvider(self::ROUTE_INCENTIVE, $incentive_id, self::INCENTIVE_ID_TAG);
+
+        return new IncentiveResponse(
+            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($this->__getToken())))
         );
     }
 }

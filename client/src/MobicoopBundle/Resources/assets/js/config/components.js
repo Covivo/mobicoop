@@ -88,6 +88,8 @@ import DonorBox from "@components/payment/Donation/DonorBox"
 
 // AssistiveDevices
 import Assistive from "@components/assistiveDevices/Assistive"
+import Incentive from "@components/assistiveDevices/Incentive"
+import IncentiveList from "@components/assistiveDevices/IncentiveList"
 
 
 export default {
@@ -142,4 +144,6 @@ export default {
   MSnackInfos,
   Assistive,
   MDialog,
+  Incentive,
+  IncentiveList,
 }

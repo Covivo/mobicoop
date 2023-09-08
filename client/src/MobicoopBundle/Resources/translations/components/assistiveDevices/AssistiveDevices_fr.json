@@ -28,11 +28,36 @@
       },
       "assistiveConsult": {
         "text": "Consulter les aides",
-        "href": "https://moncomptemobilite.fr/recherche"
+        "href": "/liste-des-aides"
       }
     }
   },
   "errors": {
     "mob-activation": "Nous rencontrons un problème dans l'activation de moB"
+  },
+  "incentives": {
+    "incentive": {
+      "title": "Détails de l'aide",
+      "button": {
+        "text": "Initier ma demande"
+      }
+    },
+    "incentives": {
+      "title": "Liste des aides",
+      "subtitles": {
+        "company": "Vos aides employeurs",
+        "territory": "Catalogue d'aides publiques"
+      },
+      "buttons": {
+        "card": {
+          "text": "Détails",
+          "URI": "/details-de-l-aide/{incentiveId}"
+        }
+      },
+      "messages": {
+        "error": "Une erreur est survenue"
+      },
+      "no-content": "Il n'y a aucune aide à afficher pour le moment."
+    }
   }
 }

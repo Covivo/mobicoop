@@ -6,6 +6,8 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
+use App\DataProvider\Entity\MobConnect\Response\IncentiveResponse;
+use App\DataProvider\Entity\MobConnect\Response\IncentivesResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
@@ -397,5 +399,19 @@ abstract class MobConnectManager
                 ? ShortDistanceSubscription::SUBSCRIPTION_TYPE
                 : null
             );
+    }
+
+    protected function getIncentives(): ?IncentivesResponse
+    {
+        $this->setApiProvider();
+
+        return $this->_apiProvider->getIncentives();
+    }
+
+    protected function getIncentive(string $incentive_id): ?IncentiveResponse
+    {
+        $this->setApiProvider();
+
+        return $this->_apiProvider->getIncentive($incentive_id);
     }
 }

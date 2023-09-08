@@ -1,12 +1,16 @@
 <?php
 
-namespace Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Incentive\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Entity\Incentive;
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\IncentiveManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AssistiveController extends AbstractController
 {
@@ -16,10 +20,17 @@ class AssistiveController extends AbstractController
     private $_logger;
     private $_userManager;
 
-    public function __construct(UserManager $userManager, LoggerInterface $logger, string $assistiveSsoProvider)
+    /**
+     * @var IncentiveManager
+     */
+    private $_incentiveManager;
+
+    public function __construct(UserManager $userManager, LoggerInterface $logger, IncentiveManager $incentiveManager, string $assistiveSsoProvider)
     {
         $this->_userManager = $userManager;
         $this->_logger = $logger;
+        $this->_incentiveManager = $incentiveManager;
+
         $this->_assistiveSsoProvider = $assistiveSsoProvider;
     }
 
@@ -74,5 +85,44 @@ class AssistiveController extends AbstractController
         }
 
         return $this->redirectToRoute('assistive.devices');
+    }
+
+    public function incentives()
+    {
+        if (is_null($this->getUser())) {
+            return $this->redirectToRoute('home');
+        }
+
+        return $this->render(
+            '@Mobicoop/assistiveDevices/incentives-list.html.twig',
+            [
+                'resourcePath' => Incentive::RESOURCE_NAME,
+            ]
+        );
+    }
+
+    public function getIncentiveAsXMLRequest(Request $request)
+    {
+        if (is_null($this->getUser())) {
+            throw new AccessDeniedException();
+        }
+
+        return new JsonResponse($this->_incentiveManager->getIncentives());
+    }
+
+    public function incentive($incentive_id)
+    {
+        if (is_null($this->getUser())) {
+            return $this->redirectToRoute('home');
+        }
+
+        $incentive = $this->_incentiveManager->getIncentive($incentive_id);
+
+        return $this->render(
+            '@Mobicoop/assistiveDevices/incentive-details.html.twig',
+            [
+                'incentive' => $this->_incentiveManager->getIncentive($incentive_id),
+            ]
+        );
     }
 }
