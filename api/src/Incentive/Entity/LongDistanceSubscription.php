@@ -30,6 +30,12 @@ class LongDistanceSubscription
 
     public const SUBSCRIPTION_TYPE = 'long';
 
+    public const TRIP_THRESHOLD = 3;
+
+    public const BONUS_STATUS_PENDING = 0;
+    public const BONUS_STATUS_NO = 1;
+    public const BONUS_STATUS_OK = 2;
+
     /**
      * @var int The user subscription ID
      *
@@ -337,6 +343,10 @@ class LongDistanceSubscription
         $this->longDistanceJourneys[] = $longDistanceJourney;
         $longDistanceJourney->setSubscription($this);
 
+        if (self::TRIP_THRESHOLD === $this->getJourneysNumber()) {
+            $this->setBonusStatus(self::BONUS_STATUS_PENDING);
+        }
+
         return $this;
     }
 
@@ -355,6 +365,11 @@ class LongDistanceSubscription
     public function getJourneys()
     {
         return $this->longDistanceJourneys;
+    }
+
+    public function getJourneysNumber(): int
+    {
+        return count($this->getJourneys()->toArray());
     }
 
     /**

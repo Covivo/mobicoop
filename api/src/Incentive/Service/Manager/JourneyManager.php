@@ -9,7 +9,6 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
-use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\ShortDistanceJourneyRepository;
 use App\Incentive\Resource\CeeSubscriptions;
@@ -212,17 +211,19 @@ class JourneyManager extends MobConnectManager
             return;
         }
 
-        $this->_currentPayment = $carpoolPayment;
+        $this->_currentCarpoolPayment = $carpoolPayment;
 
-        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$this->_currentPayment->getId());
+        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$this->_currentCarpoolPayment->getId());
 
         /**
          * @var CarpoolItem[]
          */
-        $carpoolItems = $this->_getEECCarpoolItemsFromCarpoolPayment($this->_currentPayment);
+        $carpoolItems = $this->_getEECCarpoolItemsFromCarpoolPayment($this->_currentCarpoolPayment);
 
         foreach ($carpoolItems as $carpoolItem) {
-            $this->_subscriptionConfirmationForLDJourney($carpoolItem);
+            $this->_currentCarpoolItem = $carpoolItem;
+
+            $this->_subscriptionConfirmationForLDJourney();
         }
 
         $this->_loggerService->log('Step 17 - End of treatment');
@@ -391,87 +392,59 @@ class JourneyManager extends MobConnectManager
     /**
      * Step 17 - Process for long distance journey. Processing of a single carpool if it complies with the CEE standard.
      */
-    private function _subscriptionConfirmationForLDJourney(CarpoolItem $carpoolItem): void
+    private function _subscriptionConfirmationForLDJourney(): void
     {
         $this->_loggerService->log('Step 17 - We start the processing process for a long distance trip.');
 
-        $this->setDriver($carpoolItem->getCreditorUser());
+        $this->setDriver($this->_currentCarpoolItem->getCreditorUser());
 
-        $subscription = $this->_driver->getLongDistanceSubscription();
+        $this->_currentSubscription = $this->_driver->getLongDistanceSubscription();
 
         if (
-            is_null($subscription)
-            || $subscription->hasExpired()
-            || is_null($carpoolItem->getCarpoolProof())
-            || $this->carpoolItemAlreadyTreated($carpoolItem)
+            is_null($this->_currentSubscription)
+            || $this->_currentSubscription->hasExpired()
+            || is_null($this->_currentCarpoolItem->getCarpoolProof())
+            || $this->carpoolItemAlreadyTreated()
         ) {
             return;
         }
 
-        $longDistanceJourneysNumber = count($subscription->getJourneys()->toArray());
+        $this->_currentCarpoolProof = $this->_currentCarpoolItem->getCarpoolProof();
 
-        $journey = $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal($carpoolItem, $this->getDriverPassengerProposalForCarpoolItem($carpoolItem, self::DRIVER));
-
-        switch (true) {
-            case $carpoolItem->getCarpoolProof()->isStatusPending(): return;
-
-            case $carpoolItem->getCarpoolProof()->isStatusError():
-            case $carpoolItem->getCarpoolProof()->isCarpoolProofDowngraded():
-                $this->_invalidateJourney($subscription, $journey);
-
-                return;
-        }
-
-        $this->_loggerService->log('Step 17 - Processing the carpoolItem ID'.$carpoolItem->getId().'with normal process');
-
-        if (is_null($subscription->getCommitmentProofJourney())) {
-            $subscription = $this->_removeMobJourneyReference($subscription);
-        }
-
-        if ($subscription->isCommitmentJourney($journey)) {
-            // L'attestation sur l'honneur doit être transmise à mob
-            $this->_loggerService->log('Step 17 - Processing for the commitment journey');
-
-            $journey = $subscription->getCommitmentProofJourney();
-
-            $patchResponse = $this->patchSubscription(
-                $this->getDriverLongSubscriptionId(),
-                [
-                    'Date de partage des frais' => $this->_currentPayment->getUpdatedDate()->format(self::DATE_FORMAT),
-                    "Attestation sur l'Honneur" => $this->getHonorCertificate(),
-                ]
-            );
-
-            $subscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
-            $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
-            $subscription->setExpirationDate($this->getExpirationDate());
-        } else {
-            if (self::LONG_DISTANCE_TRIP_THRESHOLD <= $longDistanceJourneysNumber) {
-                return;
-            }
-
-            $journey = new LongDistanceJourney();
-
-            $subscription->addLongDistanceJourney($journey);
-        }
-
-        if (self::LONG_DISTANCE_TRIP_THRESHOLD === $longDistanceJourneysNumber) {
-            $subscription->setBonusStatus(self::BONUS_STATUS_PENDING);
-        }
-
-        $journey->updateJourney(
-            $carpoolItem,
-            $this->_currentPayment,
-            $this->getCarpoolersNumber($carpoolItem->getAsk()),
-            $this->getAddressesLocality($carpoolItem)
+        $journey = $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal(
+            $this->_currentCarpoolItem,
+            $this->getDriverPassengerProposalForCarpoolItem($this->_currentCarpoolItem, self::DRIVER)
         );
 
-        $this->_em->flush();
+        // Use case where there is not yet a LD journey associated with the carpoolitem
+        if (is_null($journey)) {
+            if ($this->_currentCarpoolProof->isEECCompliant()) {
+                $this->_addLDJourneyToSubscription();
+            }
+
+            return;
+        }
+
+        switch (true) {
+            case $this->_currentCarpoolProof->isStatusPending(): return;
+
+            case $this->_currentCarpoolProof->isStatusError():
+            case $this->_currentCarpoolProof->isCarpoolProofDowngraded():
+                $this->_invalidateJourney($journey);
+
+                return;
+        }
+
+        $this->_loggerService->log('Step 17 - Processing the carpoolItem ID'.$this->_currentCarpoolItem->getId().'with normal process');
+
+        if ($this->_currentSubscription->isCommitmentJourney($journey)) {
+            $this->_updateSubscriptionForCommitmentJourney();
+        }
     }
 
-    private function carpoolItemAlreadyTreated(CarpoolItem $carpoolItem): bool
+    private function carpoolItemAlreadyTreated(): bool
     {
-        $longDistanceJourneys = $this->_longDistanceJourneyRepository->findBy(['carpoolItem' => $carpoolItem]);
+        $longDistanceJourneys = $this->_longDistanceJourneyRepository->findBy(['carpoolItem' => $this->_currentCarpoolItem]);
         if (is_array($longDistanceJourneys) && count($longDistanceJourneys) > 0) {
             return true;
         }
@@ -514,23 +487,67 @@ class JourneyManager extends MobConnectManager
         return $journey->updateJourney($carpoolProof, $this->getRPCOperatorId($carpoolProof->getId()), $this->getCarpoolersNumber($carpoolProof->getAsk()));
     }
 
+    private function _addLDJourneyToSubscription()
+    {
+        if (self::LONG_DISTANCE_TRIP_THRESHOLD <= $this->_currentSubscription->getJourneysNumber()) {
+            return;
+        }
+
+        $journey = new LongDistanceJourney();
+
+        $this->_currentSubscription->addLongDistanceJourney($journey);
+
+        $journey->updateJourney(
+            $this->_currentCarpoolItem,
+            $this->_currentCarpoolPayment,
+            $this->getCarpoolersNumber($this->_currentCarpoolItem->getAsk()),
+            $this->getAddressesLocality($this->_currentCarpoolItem)
+        );
+
+        $this->_em->flush();
+    }
+
+    private function _updateSubscriptionForCommitmentJourney()
+    {
+        // L'attestation sur l'honneur doit être transmise à mob
+        $this->_loggerService->log('Step 17 - Processing for the commitment journey');
+
+        $patchResponse = $this->patchSubscription(
+            $this->getDriverLongSubscriptionId(),
+            [
+                'Date de partage des frais' => $this->_currentCarpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
+                "Attestation sur l'Honneur" => $this->getHonorCertificate(),
+            ]
+        );
+
+        $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
+        $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
+        $this->_currentSubscription->setExpirationDate($this->getExpirationDate());
+
+        $this->_currentSubscription->getCommitmentProofJourney()->updateJourney(
+            $this->_currentCarpoolItem,
+            $this->_currentCarpoolPayment,
+            $this->getCarpoolersNumber($this->_currentCarpoolItem->getAsk()),
+            $this->getAddressesLocality($this->_currentCarpoolItem)
+        );
+
+        $this->_em->flush();
+    }
+
     /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     * @param LongDistanceJourney|ShortDistanceJourney           $journey
-     *
-     * @return LongDistanceSubscription|ShortDistanceSubscription
+     * @param LongDistanceJourney|ShortDistanceJourney $journey
      */
-    private function _resetSubscription($subscription, $journey = null)
+    private function _resetSubscription($journey = null)
     {
         $this->_loggerService->log('Step 17 - The commitment journey is invalid. We remove it from subscription');
 
-        $subscription = $this->_removeMobJourneyReference($subscription);
+        $this->_removeMobJourneyReference();
 
-        $subscription->reset();
+        $this->_currentSubscription->reset();
 
         // If there are other journeys associated with the subscription, then we declare the 1st one as the commitment journey
-        if (!empty($subscription->getJourneys())) {
-            $journey = $subscription->getJourneys()[0];
+        if (!empty($this->_currentSubscription->getJourneys())) {
+            $journey = $this->_currentSubscription->getJourneys()[0];
 
             if ($journey instanceof LongDistanceJourney && !is_null($journey->getInitialProposal())) {
                 $this->declareFirstLongDistanceJourney($journey->getInitialProposal());
@@ -542,40 +559,26 @@ class JourneyManager extends MobConnectManager
         }
 
         $this->_em->flush();
-
-        return $subscription;
     }
 
     /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     * @param LongDistanceJourney|ShortDistanceJourney           $journey
-     *
-     * @return LongDistanceSubscription|ShortDistanceSubscription
+     * @param LongDistanceJourney|ShortDistanceJourney $journey
      */
-    private function _invalidateJourney($subscription, $journey)
+    private function _invalidateJourney($journey)
     {
-        if ($subscription->isCommitmentJourney($journey)) {
-            return $this->_resetSubscription($subscription, $journey);
+        if ($this->_currentSubscription->isCommitmentJourney($journey)) {
+            return $this->_resetSubscription($this->_currentSubscription, $journey);
         }
 
-        $subscription->removeJourney($journey);
+        $this->_currentSubscription->removeJourney($journey);
 
         $this->_em->flush();
-
-        return $subscription;
     }
 
-    /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     *
-     * @return LongDistanceSubscription|ShortDistanceSubscription
-     */
-    private function _removeMobJourneyReference($subscription)
+    private function _removeMobJourneyReference()
     {
-        if ($this->hasSubscriptionCommited($subscription->getSubscriptionId())) {
+        if ($this->hasSubscriptionCommited($this->_currentSubscription->getSubscriptionId())) {
             // TODO: Remove subscription commitment (journey and token) on moB API
         }
-
-        return $subscription;
     }
 }

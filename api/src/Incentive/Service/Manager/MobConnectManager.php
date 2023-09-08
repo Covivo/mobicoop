@@ -81,9 +81,24 @@ abstract class MobConnectManager
     protected $_userValidation;
 
     /**
-     * @var CarpoolPayment
+     * @var null|CarpoolItem
      */
-    protected $_currentPayment;
+    protected $_currentCarpoolItem;
+
+    /**
+     * @var null|CarpoolPayment
+     */
+    protected $_currentCarpoolPayment;
+
+    /**
+     * @var null|CarpoolProof
+     */
+    protected $_currentCarpoolProof;
+
+    /**
+     * @var null|LongDistanceSubscription|ShortDistanceSubscription
+     */
+    protected $_currentSubscription;
 
     /**
      * @var MobConnectApiProvider
