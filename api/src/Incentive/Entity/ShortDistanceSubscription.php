@@ -370,7 +370,7 @@ class ShortDistanceSubscription
     public function getCompliantJourneys(): array
     {
         return array_values(array_filter($this->getJourneys()->toArray(), function (ShortDistanceJourney $journey) {
-            return $journey->isCompliant();
+            return $journey->isEECCompliant();
         }));
     }
 

@@ -418,7 +418,7 @@ class CarpoolPayment
         $this->setUpdatedDate(new \DateTime());
     }
 
-    public function hasAtLeastAProofEECCompliant(string $subscriptionType): bool
+    public function hasAtLeastAProofEECCompliant(): bool
     {
         $response = false;
 
@@ -428,7 +428,7 @@ class CarpoolPayment
              */
             $carpoolProof = $carpoolItem->getCarpoolProof();
 
-            if (!is_null($carpoolProof) && $carpoolProof->isEECCompliant($subscriptionType)) {
+            if (!is_null($carpoolProof) && $carpoolProof->isEECCompliant()) {
                 $response = true;
 
                 break;
@@ -444,10 +444,10 @@ class CarpoolPayment
      * - Payment must keep track of the transaction,
      * - The payment must be associated with at least a compliant CarpoolProof with the EEC standard.
      */
-    public function isEECCompliant(string $subscriptionType): bool
+    public function isEECCompliant(): bool
     {
         return
             self::STATUS_SUCCESS === $this->getStatus() && !is_null($this->getTransactionId())
-            && $this->hasAtLeastAProofEECCompliant($subscriptionType);
+            && $this->hasAtLeastAProofEECCompliant();
     }
 }

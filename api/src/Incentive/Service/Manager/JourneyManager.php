@@ -208,7 +208,7 @@ class JourneyManager extends MobConnectManager
      */
     public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
     {
-        if (!$carpoolPayment->isEECCompliant(LongDistanceSubscription::SUBSCRIPTION_TYPE)) {
+        if (!$carpoolPayment->isEECCompliant()) {
             return;
         }
 
@@ -284,7 +284,7 @@ class JourneyManager extends MobConnectManager
         // Processing with commitment journey
         if ($commitmentJourney->getCarpoolProof()->getId() === $carpoolProof->getId()) {
             // The journey is not EEC compliant : we are removing it from short distance trips and resetting the subscription
-            if (!$commitmentJourney->isCompliant()) {
+            if (!$commitmentJourney->isEECCompliant()) {
                 $this->_resetSubscription($subscription, $commitmentJourney);
 
                 return;
@@ -498,14 +498,12 @@ class JourneyManager extends MobConnectManager
             return null;
         }
 
-        $distanceType = $this->getDistanceType($distance);
-
-        if (is_null($distanceType)) {
+        if (is_null($this->getDistanceType($distance))) {
             return null;
         }
 
-        $carpoolPayments = array_values(array_filter($carpoolItem->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) use ($distanceType) {
-            return $carpoolPayment->isEecCompliant($distanceType);
+        $carpoolPayments = array_values(array_filter($carpoolItem->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) {
+            return $carpoolPayment->isEecCompliant();
         }));
 
         return !(empty($carpoolPayments)) ? $carpoolPayments[0] : null;

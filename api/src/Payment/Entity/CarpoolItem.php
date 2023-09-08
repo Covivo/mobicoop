@@ -732,10 +732,10 @@ class CarpoolItem
      * - Have been successfully paid,
      * - Keep track of the transaction.
      */
-    public function getSuccessfullPayment(string $distanceType): ?CarpoolPayment
+    public function getSuccessfullPayment(): ?CarpoolPayment
     {
-        $successFulPayment = array_filter($this->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) use ($distanceType) {
-            return $carpoolPayment->isEECCompliant($distanceType);
+        $successFulPayment = array_filter($this->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) {
+            return $carpoolPayment->isEECCompliant();
         });
 
         return !empty($successFulPayment) ? $successFulPayment[0] : null;

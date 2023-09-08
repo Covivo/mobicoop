@@ -368,7 +368,7 @@ class LongDistanceSubscription
     public function getCompliantJourneys(): array
     {
         return array_values(array_filter($this->getJourneys()->toArray(), function (LongDistanceJourney $journey) {
-            return $journey->isCompliant();
+            return $journey->isEECCompliant();
         }));
     }
 

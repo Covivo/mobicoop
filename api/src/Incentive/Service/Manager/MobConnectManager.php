@@ -81,6 +81,11 @@ abstract class MobConnectManager
     protected $_userValidation;
 
     /**
+     * @var CarpoolPayment
+     */
+    protected $_currentPayment;
+
+    /**
      * @var MobConnectApiProvider
      */
     private $_apiProvider;
@@ -94,11 +99,6 @@ abstract class MobConnectManager
      * @var array
      */
     private $_ssoServices;
-
-    /**
-     * @var CarpoolPayment
-     */
-    protected $_currentPayment;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -326,10 +326,10 @@ abstract class MobConnectManager
         $thresholdDate = $this->getThresholdDate();
 
         return array_values(
-            array_filter($this->getDriver()->getCarpoolProofsAsDriver(), function (CarpoolProof $carpoolProof) use ($thresholdDate, $distanceType) {
+            array_filter($this->getDriver()->getCarpoolProofsAsDriver(), function (CarpoolProof $carpoolProof) use ($thresholdDate) {
                 return
                     $carpoolProof->getCreatedDate() > $thresholdDate
-                    && $carpoolProof->isEECCompliant($distanceType);
+                    && $carpoolProof->isEECCompliant();
             })
         );
     }
@@ -356,15 +356,7 @@ abstract class MobConnectManager
 
     protected function isJourneyPaid(CarpoolProof $carpoolProof): bool
     {
-        $distance = $carpoolProof->getDistance();
-
-        if (is_null($distance)) {
-            return false;
-        }
-
-        $distanceType = $this->getDistanceType($distance);
-
-        return !is_null($carpoolProof->getSuccessfullPayment($distanceType));
+        return !is_null($carpoolProof->getSuccessfullPayment());
     }
 
     protected function isLongDistance(?int $distance): bool

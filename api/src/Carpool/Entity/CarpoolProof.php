@@ -25,9 +25,7 @@ namespace App\Carpool\Entity;
 
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
-use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
-use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
@@ -621,43 +619,9 @@ class CarpoolProof
         return !empty($filteredCarpoolItems) ? $filteredCarpoolItems[0] : null;
     }
 
-    public function isEECCompliant(string $distanceType): bool
+    public function isEECCompliant(): bool
     {
-        $compliance =
-            self::STATUS_VALIDATED === $this->getStatus()
-            && self::TYPE_HIGH === $this->getType();
-
-        if (!$compliance) {
-            return false;
-        }
-
-        switch ($distanceType) {
-            case LongDistanceSubscription::SUBSCRIPTION_TYPE:
-                $carpoolPayments =
-                    !is_null($this->getCarpoolItem()) && !empty($this->getCarpoolItem()->getCarpoolPayments())
-                    ? $this->getCarpoolItem()->getCarpoolPayments() : null;
-
-                if (is_null($carpoolPayments)) {
-                    $compliance = false;
-
-                    break;
-                }
-
-                $filteredCarpoolPayments = array_values(array_filter($carpoolPayments, function (CarpoolPayment $carpoolPayment) use ($distanceType) {
-                    return $carpoolPayment->isEECCompliant($distanceType);
-                }));
-
-                $compliance = !empty($filteredCarpoolPayments);
-
-                break;
-
-            case ShortDistanceSubscription::SUBSCRIPTION_TYPE:
-                $compliance = true;
-
-                break;
-        }
-
-        return $compliance;
+        return self::STATUS_VALIDATED === $this->getStatus() && self::TYPE_HIGH === $this->getType();
     }
 
     /**
@@ -706,9 +670,9 @@ class CarpoolProof
      * - Have been successfully paid,
      * - Keep track of the transaction.
      */
-    public function getSuccessFullPayment(string $distanceType): ?CarpoolPayment
+    public function getSuccessfullPayment(): ?CarpoolPayment
     {
-        return $this->getCarpoolItem()->getSuccessfullPayment($distanceType);
+        return !is_null($this->getCarpoolItem()) ? $this->getCarpoolItem()->getSuccessfullPayment() : null;
     }
 
     /**
