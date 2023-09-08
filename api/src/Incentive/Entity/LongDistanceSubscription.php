@@ -340,18 +340,13 @@ class LongDistanceSubscription
         return $this;
     }
 
-    public function removeLongDistanceJourney(LongDistanceJourney $journey)
+    public function removeJourney(?LongDistanceJourney $journey): self
     {
-        if (!is_null($this->commitmentProofJourney) && $journey->getId() === $this->getCommitmentProofJourney()->getId()) {
-            $this->setCommitmentProofDate(null);
-            $this->setCommitmentProofJourney(null);
-            $this->setCommitmentProofTimestampToken(null);
-            $this->setCommitmentProofTimestampSigningTime(null);
-            $this->setStatus(null);
-            $this->setVerificationDate(null);
+        if (!is_null($journey)) {
+            $this->longDistanceJourneys->removeElement($journey);
         }
 
-        return $this->longDistanceJourneys->removeElement($journey);
+        return $this;
     }
 
     /**
@@ -961,6 +956,8 @@ class LongDistanceSubscription
 
     public function reset()
     {
+        $this->removeJourney($this->getCommitmentProofJourney());
+
         $this->setCommitmentProofDate(null);
         $this->setCommitmentProofTimestampToken(null);
         $this->setExpirationDate(null);                                 // Todo: Vérifer que cela est possible

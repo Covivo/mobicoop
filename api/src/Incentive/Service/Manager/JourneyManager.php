@@ -528,16 +528,7 @@ class JourneyManager extends MobConnectManager
 
         $subscription->reset();
 
-        if (!is_null($journey)) {
-            if ($journey instanceof LongDistanceJourney && !is_null($journey->getInitialProposal())) {
-                $subscription->removeLongDistanceJourney($journey);
-            }
-
-            if ($journey instanceof ShortDistanceJourney && !is_null($journey->getCarpoolProof())) {
-                $subscription->removeShortDistanceJourney($journey);
-            }
-        }
-
+        // If there are other journeys associated with the subscription, then we declare the 1st one as the commitment journey
         if (!empty($subscription->getJourneys())) {
             $journey = $subscription->getJourneys()[0];
 
@@ -567,7 +558,8 @@ class JourneyManager extends MobConnectManager
             return $this->_resetSubscription($subscription, $journey);
         }
 
-        $this->_em->remove($journey);
+        $subscription->removeJourney($journey);
+
         $this->_em->flush();
 
         return $subscription;
