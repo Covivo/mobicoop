@@ -1,11 +1,6 @@
 <template>
   <v-main>
     <v-container class="window-scroll">
-      <EECWarning
-        v-if="hideNoThreadSelected"
-        :carpoolers-identity="carpoolersIdentity"
-        :eec-display="eecDisplay"
-      />
       <v-timeline
         v-if="items.length>0"
         :hidden="loading"
@@ -25,7 +20,7 @@
             v-slot:icon
           >
             <v-avatar color="secondary">
-              <img :src="item.user.avatars[0]">
+              <img src="/images/avatarsDefault/square_100.svg">
             </v-avatar>
           </template>
           <template
@@ -40,7 +35,7 @@
             :class="(item.origin==='own')?'own primary lighten-5':''"
           >
             <v-card-text
-              v-html="item.text"
+              v-html="item.message"
             />
           </v-card>
           <p
@@ -82,7 +77,6 @@
 import maxios from "@utils/maxios";
 import moment from "moment";
 import WarningMessage from '../../utilities/WarningMessage.vue';
-import EECWarning from '../../utilities/warningMessages/EECWarning.vue';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/ThreadDetails/";
 
 export default {
@@ -95,19 +89,18 @@ export default {
     }
   },
   components: {
-    EECWarning,
     WarningMessage,
   },
   props: {
-    idMessage: {
-      type: Number,
+    idBooking: {
+      type: String,
       default:null
     },
     idUser:{
       type: Number,
       default:null
     },
-    refresh:{
+    refreshBooking:{
       type: Boolean,
       default:false
     },
@@ -123,10 +116,6 @@ export default {
       type: Object,
       default: () => {}
     },
-    eecDisplay: {
-      type: Boolean,
-      default: false
-    }
   },
   data(){
     return{
@@ -144,80 +133,53 @@ export default {
     }
   },
   watch:{
-    idMessage: {
+    idBooking: {
       immediate: true,
       handler(newVal, oldVal) {
-        if(this.idMessage!==null) this.getCompleteThread();
+        if(this.idBooking!==null) this.getBookingCompleteThread();
       }
     },
-    refresh(){
-      (this.refresh) ? this.getCompleteThread() : '';
+    refreshBooking(){
+      (this.refreshBooking) ? this.getBookingCompleteThread() : '';
     }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
-    getCompleteThread(){
+    getBookingCompleteThread(){
       this.items = [];
 
-      // if idMessage = -1 it means that is a "virtuel" thread. When you initiate a contact without previous message
-      if(this.idMessage>-1 && this.idMessage != null){
 
-        this.clearClickIcon = false
-        this.loading = true;
-        maxios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
-          .then(response => {
+      this.clearClickIcon = false
+      maxios.get(this.$t("urlBookingCompleteThread",{idBooking:this.idBooking}))
+        .then(response => {
+          this.loading = false;
+          this.items.length = 0;
 
-            response = this.checkIfMessageIsDelete(response);
+          let firstItem = {
+            divider: true,
+            createdDate: moment(response.data[0].createdDate).format("L")
+          }
+          this.items.push(firstItem);
+          response.data.forEach((item, index) => {
 
-            this.threadedPosts = response.data.map(element => element.text);
-
-            this.loading = false;
-            this.items.length = 0;
-
-            let firstItem = {
-              divider: true,
-              createdDate: moment(response.data[0].createdDate).format("L")
+            item.divider = false;
+            // Set the origin (for display purpose)
+            item.origin = ""
+            if(this.idUser==item.from.externalId){
+              item.origin = "own";
             }
-            this.items.push(firstItem);
+            this.items.push(item);
 
-            let currentDate = moment(response.data[0].createdDate).format("DDMMYYYY");
-            response.data.forEach((item, index) => {
-              item.divider = false;
-
-              // If the date is different, push a divider
-              if (moment(item.createdDate).format("DDMMYYYY") !== currentDate) {
-                let divider = {
-                  divider: true,
-                  createdDate: moment(item.createdDate).format("L")
-                };
-                currentDate = moment(item.createdDate).format("DDMMYYYY");
-                this.items.push(divider);
-              }
-
-              // Set the origin (for display purpose)
-              item.origin = ""
-              if(this.idUser==item.user.id){
-                item.origin = "own";
-              }
-              this.items.push(item);
-
-              this.emit();
-            });
-
-          })
-          .catch(function (error) {
-            console.log(error);
+            this.emit();
           });
-      }else if (this.idMessage == -2){
-        this.clearClickIcon = true
-      }
-      else{
-        this.emit();
-      }
+          console.log(this.items)
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
-
     checkIfMessageIsDelete(messages){
       let tradMessageDelete = this.$t("messageDelete");
       messages.data.forEach(function (message) {

@@ -652,16 +652,16 @@ export default {
             // console.log(error);
             })
             .finally(() => {
-              this.$emit("refreshActionsCompleted");
+              this.$emit("refreshBookingActionsCompleted",this.infosCompleteBooking);
             });
         }
         else{
-          this.$emit("refreshActionsCompleted");
+          this.$emit("refreshActionsCompleted",this.infosCompleteBooking);
         }
 
       }else{
         this.hideClickIcon = true;
-        this.$emit("refreshActionsCompleted");
+        this.$emit("refreshActionsCompleted",this.infosCompleteBooking);
       }
     },
     getCarpoolerIdentity() {

@@ -206,7 +206,9 @@ class InteropProvider implements CarpoolStandardProviderInterface
 
     public function getMessages(string $idBooking)
     {
-        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_MESSAGE.'/'.$idBooking);
+        // $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_MESSAGE.'/'.$idBooking);
+        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_MESSAGE);
+
         $headers = [
             'X-API-KEY' => $this->apiKey,
             'Content-Type' => 'application/json',
@@ -297,7 +299,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
     {
         $user = new User();
         $user->setId(USER::DEFAULT_ID);
-        $user->setExternalId(isset($array['externalId']) ? $array['externalId'] : null);
+        $user->setExternalId(isset($array['id']) ? $array['id'] : null);
         $user->setOperator(isset($array['operator']) ? $array['operator'] : null);
         $user->setAlias(isset($array['alias']) ? $array['alias'] : null);
         $user->setFirstName(isset($array['firstName']) ? $array['firstName'] : null);

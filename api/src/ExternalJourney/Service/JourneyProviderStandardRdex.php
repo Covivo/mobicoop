@@ -117,6 +117,7 @@ class JourneyProviderStandardRdex extends JourneyProvider
                 'X-API-KEY' => $provider->getApiKey(),
             ],
         ]);
+        var_dump($url);
 
         return ['STANDARD_RDEX' => ['providerName' => $provider->getName(), 'journeys' => $data->getBody()->getContents()]];
     }
