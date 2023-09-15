@@ -471,8 +471,8 @@ export default {
         text: data.textToSend,
         from: this.newThreadCarpool.roleDriver ? this.newThreadCarpool.driver : this.newThreadCarpool.passenger,
         to: this.newThreadCarpool.roleDriver ? this.newThreadCarpool.passenger : this.newThreadCarpool.driver,
-        driverJourneyId: this.newThreadCarpool.externalJourneyId,
-        passengerJourneyId: this.newThreadCarpool.externalJourneyOperator,
+        driverJourneyId: this.newThreadCarpool.driverJourneyId,
+        passengerJourneyId: this.newThreadCarpool.passengerJourneyId,
         recipientCarpoolerType: this.newThreadCarpool.roleDriver ? 'PASSENGER' : 'DRIVER',
         bookingId: this.newThreadCarpool.externalId
       };

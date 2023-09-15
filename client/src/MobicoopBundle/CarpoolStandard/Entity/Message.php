@@ -100,6 +100,13 @@ class Message implements ResourceInterface, \JsonSerializable
      */
     private $bookingId;
 
+    /**
+     * @var null|\DateTimeInterface The created dateTime of the lessage
+     *
+     * @Groups({"get","post","put"})
+     */
+    private $createdDateTime;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -196,6 +203,18 @@ class Message implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getCreatedDateTime(): ?\DateTimeInterface
+    {
+        return $this->createdDateTime;
+    }
+
+    public function setCreatedDateTime(\DateTimeInterface $createdDateTime): self
+    {
+        $this->createdDateTime = $createdDateTime;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -208,6 +227,7 @@ class Message implements ResourceInterface, \JsonSerializable
             'driverJourneyId' => $this->getDriverJourneyId(),
             'passengerJourneyId' => $this->getPassengerJourneyId(),
             'bookingId' => $this->getBookingId(),
+            'createdDateTime' => $this->getCreatedDateTime(),
         ];
     }
 }

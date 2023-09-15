@@ -138,6 +138,13 @@ class Message
      */
     private $bookingId;
 
+    /**
+     * @var null|\DateTimeInterface The created dateTime of the lessage
+     *
+     * @Groups({"read", "write"})
+     */
+    private $createdDateTime;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -238,6 +245,18 @@ class Message
     public function setBookingId(string $bookingId): self
     {
         $this->bookingId = $bookingId;
+
+        return $this;
+    }
+
+    public function getCreatedDateTime(): ?\DateTimeInterface
+    {
+        return $this->createdDateTime;
+    }
+
+    public function setCreatedDateTime(\DateTimeInterface $createdDateTime): self
+    {
+        $this->createdDateTime = $createdDateTime;
 
         return $this;
     }

@@ -73,6 +73,8 @@ class MessageController extends AbstractController
 
             $message->setRecipientCarpoolerType($data['recipientCarpoolerType']);
             $message->setBookingId($data['bookingId']);
+            $message->setDriverJourneyId($data['driverJourneyId']);
+            $message->setPassengerJourneyId($data['passengerJourneyId']);
 
             return new Response($this->messageManager->postCarpoolStandardMessage($message));
         }

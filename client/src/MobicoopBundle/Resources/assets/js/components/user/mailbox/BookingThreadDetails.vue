@@ -159,14 +159,23 @@ export default {
 
           let firstItem = {
             divider: true,
-            createdDate: moment(response.data[0].createdDate).format("L")
+            createdDate: moment(response.data[0].createdDateTime.date).format("L")
           }
           this.items.push(firstItem);
+          let currentDate = moment(response.data[0].createdDateTime.date).format("DDMMYYYY");
+
           response.data.forEach((item, index) => {
 
             item.divider = false;
-            // Set the origin (for display purpose)
-            item.origin = ""
+            if (moment(item.createdDateTime.date).format("DDMMYYYY") !== currentDate) {
+              let divider = {
+                divider: true,
+                createdDate: moment(item.createdDateTime.date).format("L")
+              };
+              currentDate = moment(item.createdDateTime.date).format("DDMMYYYY");
+              this.items.push(divider);
+            }
+
             if(this.idUser==item.from.externalId){
               item.origin = "own";
             }
