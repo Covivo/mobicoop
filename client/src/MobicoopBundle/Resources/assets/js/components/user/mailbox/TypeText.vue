@@ -78,9 +78,8 @@ export default {
     }
   },
   methods:{
-    emit(message){
+    emit(){
       if(this.isExternalStandardMessage) {
-        console.log('yes');
         this.$emit("sendExternalStandardMessage",
           {
             textToSend:this.textToSend

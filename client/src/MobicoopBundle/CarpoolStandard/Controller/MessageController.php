@@ -51,6 +51,7 @@ class MessageController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
             $message = new Message();
             $to = new User();
             $from = new User();
@@ -63,18 +64,15 @@ class MessageController extends AbstractController
 
             $message->setFrom($from);
 
-            $to->setId($data['externalJourneyUserId']);
-            $to->setAlias($data['recipientName']);
-            $to->setOperator($data['externalJourneyOperator']);
+            $to->setExternalId($data['to']['externalId']);
+            $to->setAlias($data['to']['alias']);
+            $to->setOperator($data['to']['operator']);
 
             $message->setTo($to);
             $message->setMessage($data['text']);
 
-            if ($data['senderIsPassenger']) {
-                $message->setRecipientCarpoolerType('DRIVER');
-            } else {
-                $message->setRecipientCarpoolerType('PASSENGER');
-            }
+            $message->setRecipientCarpoolerType($data['recipientCarpoolerType']);
+            $message->setBookingId($data['bookingId']);
 
             return new Response($this->messageManager->postCarpoolStandardMessage($message));
         }

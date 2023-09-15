@@ -107,7 +107,6 @@ class JourneyProviderStandardRdex extends JourneyProvider
             'timestamp' => time(),
             'p' => $searchParameters,
         ];
-
         // construct the requested url
         $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
         // request url
@@ -117,7 +116,6 @@ class JourneyProviderStandardRdex extends JourneyProvider
                 'X-API-KEY' => $provider->getApiKey(),
             ],
         ]);
-        var_dump($url);
 
         return ['STANDARD_RDEX' => ['providerName' => $provider->getName(), 'journeys' => $data->getBody()->getContents()]];
     }

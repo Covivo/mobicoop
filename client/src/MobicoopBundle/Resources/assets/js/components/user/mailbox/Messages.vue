@@ -466,30 +466,19 @@ export default {
       });
     },
     sendExternalStandardMessage(data){
-      console.log(this.newThreadCarpool);
       this.loadingTypeText = true;
       let messageToSend = {
         text: data.textToSend,
-        senderIsDriver: this.newThreadCarpool.driver,
-        senderIsPassenger: this.newThreadCarpool.passenger,
-        externalJourneyId: this.newThreadCarpool.externalJourneyId,
-        externalJourneyOperator: this.newThreadCarpool.externalJourneyOperator,
-        externalJourneyUserId: this.newThreadCarpool.externalJourneyUserId,
-        recipientName: this.newThreadCarpool.givenName,
-        origin: this.newThreadCarpool.origin,
-        destination: this.newThreadCarpool.destination,
-        originLat: this.newThreadCarpool.origin,
-        originLng: this.newThreadCarpool.origin,
-        destinationLat: this.newThreadCarpool.destination,
-        destinationLng: this.newThreadCarpool.destination,
-        date: this.newThreadCarpool.date,
-        bookingId: this.bookingId
+        from: this.newThreadCarpool.roleDriver ? this.newThreadCarpool.driver : this.newThreadCarpool.passenger,
+        to: this.newThreadCarpool.roleDriver ? this.newThreadCarpool.passenger : this.newThreadCarpool.driver,
+        driverJourneyId: this.newThreadCarpool.externalJourneyId,
+        passengerJourneyId: this.newThreadCarpool.externalJourneyOperator,
+        recipientCarpoolerType: this.newThreadCarpool.roleDriver ? 'PASSENGER' : 'DRIVER',
+        bookingId: this.newThreadCarpool.externalId
       };
       this.loadingTypeText = false;
-
       console.log(messageToSend);
       maxios.post(this.$t("urlSendExternalMessage"), messageToSend).then(res => {
-        console.log('res');
         this.loadingTypeText = false;
         // Update the threads list
         this.refreshThreadsCarpool = true;

@@ -100,20 +100,12 @@ class Message implements ResourceInterface, \JsonSerializable
      */
     private $bookingId;
 
-    public function __construct($id = null)
-    {
-        $this->id = self::DEFAULT_ID;
-        if ($id) {
-            $this->id = $id;
-        }
-    }
-
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(?int $id): self
     {
         $this->id = $id;
 
