@@ -79,12 +79,17 @@ class JWTCreatedListener
                 $user->setMobile(true);
             }
 
-            if (!is_null($this->security->getUser())) {
-                if ($user->getId() === $this->security->getUser()->getId()) {
-                    $this->userManager->updateActivity($user);
-                } else {
+            switch (true) {
+                // Delegate authentication use case
+                case !is_null($user) && !is_null($this->security->getUser()) && $user->getId() != $this->security->getUser()->getId():
                     $this->userManager->createAuthenticationDelegation($this->security->getUser(), $user);
-                }
+
+                    break;
+
+                default:
+                    $this->userManager->updateActivity($user);
+
+                    break;
             }
         }
         $event->setData($payload);
