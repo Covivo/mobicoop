@@ -377,6 +377,7 @@ class PaymentManager
                 $treatedAsks[] = $carpoolItem->getAsk()->getId();
             }
         }
+
         // finally we return the array of PaymentItem
         return $items;
         // return [
@@ -1414,8 +1415,6 @@ class PaymentManager
      * Build a PaymentPayment from a CarpoolPayment.
      *
      * @param int $carpoolPaymentId The carpoolPayment
-     *
-     * @return PaymentPayment
      */
     public function buildPaymentPaymentFromCarpoolPayment(int $carpoolPaymentId): ?PaymentPayment
     {
@@ -1575,10 +1574,8 @@ class PaymentManager
         $this->entityManager->flush();
 
         if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) {
-            if ($carpoolPayment->isEecCompliant()) {
-                $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
-                $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
-            }
+            $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
+            $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
 
             //  we dispatch the gamification event associated
             $action = $this->actionRepository->findOneBy(['name' => 'electronic_payment_made']);

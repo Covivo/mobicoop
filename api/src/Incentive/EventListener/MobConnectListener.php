@@ -2,7 +2,7 @@
 
 namespace App\Incentive\EventListener;
 
-use App\Carpool\Event\CarpoolProofUnvalidatedEvent;
+use App\Carpool\Event\CarpoolProofInvalidatedEvent;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
@@ -63,7 +63,7 @@ class MobConnectListener implements EventSubscriberInterface
     {
         return [
             CarpoolProofValidatedEvent::NAME => 'onProofValidated',
-            CarpoolProofUnvalidatedEvent::NAME => 'onProofUnvalidated',
+            CarpoolProofInvalidatedEvent::NAME => 'onProofInvalidated',
             ElectronicPaymentValidatedEvent::NAME => 'onElectronicPaymentValidated',
             FirstLongDistanceJourneyPublishedEvent::NAME => 'onFirstLongDistanceJourneyPublished',
             FirstShortDistanceJourneyPublishedEvent::NAME => 'onFirstShortDistanceJourneyPublished',
@@ -117,9 +117,9 @@ class MobConnectListener implements EventSubscriberInterface
         $this->_journeyManager->validationOfProof($event->getCarpoolProof());
     }
 
-    public function onProofUnvalidated(CarpoolProofUnvalidatedEvent $event): void
+    public function onProofInvalidated(CarpoolProofInvalidatedEvent $event): void
     {
-        $this->_subscriptionManager->unvalidationOfProof($event->getCarpoolProof());
+        $this->_journeyManager->invalidationOfProof($event->getCarpoolProof());
     }
 
     public function onUserHomeAddressUpdated(UserHomeAddressUpdateEvent $event)

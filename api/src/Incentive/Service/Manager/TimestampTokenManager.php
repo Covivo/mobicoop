@@ -43,11 +43,6 @@ class TimestampTokenManager extends MobConnectManager
     private $_currentLogType;
 
     /**
-     * @var LongDistanceSubscription|ShortDistanceSubscription
-     */
-    private $_currentSubscription;
-
-    /**
      * @var MobConnectSubscriptionTimestampsResponse
      */
     private $_currentTimestampTokensResponse;
