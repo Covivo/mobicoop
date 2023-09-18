@@ -756,4 +756,14 @@ class CarpoolItem
                 : null
             );
     }
+
+    /**
+     * Used in the EEC context, returns if the carpool item and its associated CarpoolPaiement is EEC Compliant.
+     */
+    public function isEECompliant(): bool
+    {
+        return
+            self::CREDITOR_STATUS_ONLINE === $this->getCreditorStatus()
+            && !is_null($this->getSuccessfullPayment());
+    }
 }

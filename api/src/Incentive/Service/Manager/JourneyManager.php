@@ -207,10 +207,6 @@ class JourneyManager extends MobConnectManager
      */
     public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
     {
-        if (!$carpoolPayment->isEECCompliant()) {
-            return;
-        }
-
         $this->_currentCarpoolPayment = $carpoolPayment;
 
         $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$this->_currentCarpoolPayment->getId());
@@ -459,7 +455,8 @@ class JourneyManager extends MobConnectManager
 
             return
                 !is_null($driver)
-                && !is_null($driver->getMobConnectAuth());
+                && !is_null($driver->getMobConnectAuth())
+                && $carpoolItem->isEECompliant();
         });
     }
 
