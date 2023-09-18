@@ -345,7 +345,8 @@ export default {
       showDate:true,
       showTime:false,
       time: this.initOutwardTime,
-      dateTime: this.initOutwardDate ? this.initOutwardDate+' '+this.initOutwardTime : null,
+      dateTime: this.initOutwardDate
+        ? `${this.initOutwardDate} ${this.initOutwardTime ? this.initOutwardTime : ''}` : null,
       regular: this.initRegular,
       role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : 3),
       passenger: this.initRole == 2 ? true : (this.initRole == 3 || (this.initRole == null && !this.solidaryExclusiveAd) ? true : false),
@@ -368,6 +369,7 @@ export default {
   },
   computed: {
     computedDateFormat() {
+      console.log(this.dateTime);
       if (this.dateTimePicker) {
         return this.dateTime ? moment(this.dateTime).format(this.$t("fullDateTime"))
           : null;
@@ -400,6 +402,10 @@ export default {
       this.customInitDestination = this.initDestination;
       this.destination = this.initDestination;
     }
+  },
+  mounted() {
+    console.log(this.initOutwardDate);
+    console.log(this.initOutwardTime);
   },
   created() {
     this.setMomentLocale();
