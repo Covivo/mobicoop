@@ -9,7 +9,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19px;" text-align="center" ><b>Votre annonce va bientôt expirer !</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:21px;" text-align="center" ><b>Votre annonce va bientôt expirer !</b></p>
                     </td>
                 </tr>
             </table>
@@ -24,8 +24,8 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
-                        <p style="font-size:11px;">Votre annonce de covoiturage va bientôt expirer:</p>
+                        <p style="font-size:13px; margin-bottom:16px;">Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:13px;">Votre annonce de covoiturage va bientôt expirer:</p>
                     </td>
                 </tr>
             </table>
@@ -48,11 +48,11 @@
                     </td>
                     {% if proposal.criteria.frequency == 1 %}
                         <td>
-                            <p style="font-size:11px;">{{context.departureTime.time|date('H:i')}}</p>
+                            <p style="font-size:13px;">{{context.departureTime.time|date('H:i')}}</p>
                         </td>
                     {% endif %}
                     <td>
-                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ context.origin.address.displayLabel[0] }}</b></p>
+                        <p style="font-size:13px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ context.origin.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
                 <tr>
@@ -67,11 +67,11 @@
                     </td>
                     {% if proposal.criteria.frequency == 1 %}
                         <td>
-                            <p style="font-size:11px;">{{context.arrivalTime.time|date('H:i')}}</p>
+                            <p style="font-size:13px;">{{context.arrivalTime.time|date('H:i')}}</p>
                         </td>
                     {% endif %}
                     <td>
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ context.destination.address.displayLabel[0] }}</b></p>
+                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ context.destination.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
             </table>
@@ -92,7 +92,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Vous êtes maintenant plus de 550 000 covoitureurs sur notre plateforme, votre implication compte alors n’hésitez pas à mettre à jour vos annonces !</p>
+                        <p style="font-size:13px; text-align: justify;">Vous êtes maintenant plus de 550 000 covoitureurs sur notre plateforme, votre implication compte alors n’hésitez pas à mettre à jour vos annonces !</p>
                     </td>
                 </tr>
             </table>
@@ -139,7 +139,7 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;">Économiser jusqu’à 2000 € par an.</p>
+                        <p style="font-size:13px; text-align: justify;">Économiser jusqu’à 2000 € par an.</p>
                     </td>
                 </tr>
                 <tr>
@@ -153,7 +153,7 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;">Réduire votre empreinte carbone de 1,5 tonnes de CO2, soit l’équivalent d’environ 3 mois de chauffage au gaz, pas mal !</p>
+                        <p style="font-size:13px; text-align: justify;">Réduire votre empreinte carbone de 1,5 tonnes de CO2, soit l’équivalent d’environ 3 mois de chauffage au gaz, pas mal !</p>
                     </td>
                 </tr>
                 <tr>
@@ -167,7 +167,7 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;"> Limiter les embouteillages et la mauvaise humeur qui en découle !</p>
+                        <p style="font-size:13px; text-align: justify;"> Limiter les embouteillages et la mauvaise humeur qui en découle !</p>
                     </td>
                 </tr>
             </table>
@@ -186,7 +186,7 @@
                         <p> </p>
                     </td>
                     <td align="center" style="width:100%;">
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Bon covoiturage sur {{api_env('EMAILS_PLATFORM_NAME')}}</b></p>
+                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Bon covoiturage sur {{api_env('EMAILS_PLATFORM_NAME')}}</b></p>
                     </td>
                 </tr>
             </table>

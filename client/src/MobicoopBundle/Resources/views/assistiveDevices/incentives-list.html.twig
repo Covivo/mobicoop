@@ -1,0 +1,11 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}
+    {% trans from 'ui' %}incentives.list.title{% endtrans %} - {{ app_name }}
+{% endblock %}
+
+{% block main %}
+    <incentive-list
+        resource-path="{{ resourcePath }}"
+    />
+{% endblock %}

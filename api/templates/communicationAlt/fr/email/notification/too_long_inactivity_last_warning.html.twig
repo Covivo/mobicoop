@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Attention, suppression automatique très prochaine de votre compte inactif</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:22px;" text-align="center" ><b>Attention, suppression automatique très prochaine de votre compte inactif</b></p>
                     </td>
                 </tr>
             </table>
@@ -21,8 +21,8 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p style="font-size:11px;">Votre compte est inactif depuis {{context.details.nbMonthsOfInactvity}} mois. Sans action de votre part, il sera automatiquement supprimé le {{context.details.autoDeleteDate|date("d/m/Y")}}.
+                        <p style="font-size:13px; margin-bottom:16px;">Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
+                        <p style="font-size:13px;">Votre compte est inactif depuis {{context.details.nbMonthsOfInactvity}} mois. Sans action de votre part, il sera automatiquement supprimé le {{context.details.autoDeleteDate|date("d/m/Y")}}.
                         <br />Cette suppression <strong>détruira totalement toutes les données associées à votre compte</strong>, et ces données ne seront pas récupérables. <br />Pour relancer votre compte, il vous suffit de vous connecter.</p>
                     </td>
                 </tr>
@@ -42,7 +42,7 @@
                         <p> </p>
                     </td>
                     <td align="center" style="width:100%;">
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Rezo Mobicoop</b></p>
+                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Rezo Mobicoop</b></p>
                     </td>
                 </tr>
             </table>
@@ -55,7 +55,7 @@
             <td>
                 {% if context.signature != null %}
                     {% if context.signature.text != null %}
-                        <p style="font-size:11px;">{{ context.signature.text }}</p>
+                        <p style="font-size:13px;">{{ context.signature.text }}</p>
                     {% endif %}
                     {% if context.signature.logo != null %}
                         <img src="{{ context.signature.logo }}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />

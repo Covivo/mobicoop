@@ -2011,14 +2011,35 @@ assistive.devices:
     fr: /aides-a-la-mobilite
     en: /aides-a-la-mobilite
     nl: /aides-a-la-mobilite
-  controller: Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\AssistiveController::assistiveDevices
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::assistiveDevices
 
 assistives.sso-activation:
   path:
     fr: /aides-a-la-mobilite/sso-activation
     en: /aides-a-la-mobilite/sso-activation
     nl: /aides-a-la-mobilite/sso-activation
-  controller: Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\AssistiveController::ssoActivation
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::ssoActivation
+
+incentive.list:
+  path:
+    fr: /liste-des-aides
+    en: /liste-des-aides
+    nl: /liste-des-aides
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::incentives
+
+incentives.xmlHttpRequest:
+  path:
+    fr: /incentives
+    en: /incentives
+    nl: /incentives
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::getIncentiveAsXMLRequest
+
+incentive.details:
+  path:
+    fr: /details-de-l-aide/{incentive_id}
+    en: /details-de-l-aide/{incentive_id}
+    nl: /details-de-l-aide/{incentive_id}
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::incentive
 
 ###############
 # carpool standard routes #

@@ -91,7 +91,6 @@
           v-if="isMobActivated"
           class="font-weight-bold"
           rounded
-          target="_blank"
           :href="$t('assistiveDevices.buttons.assistiveConsult.href')"
         >
           {{ $t('assistiveDevices.buttons.assistiveConsult.text') }}

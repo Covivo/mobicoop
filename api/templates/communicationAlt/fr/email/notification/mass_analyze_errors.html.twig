@@ -7,7 +7,7 @@
             <table>
                 <tr>
                     <td>
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};font-size:20px" ><strong> L'analyse de l'import n° {{ context.massId }} comporte des erreurs }}</strong></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};font-size:22px" ><strong> L'analyse de l'import n° {{ context.massId }} comporte des erreurs }}</strong></p>
                         <hr>
                     </td>
                 </tr>
@@ -21,7 +21,7 @@
                     <td style="width:70%">
                         <ul>
                         {% for error in context.errors %}
-                            <li style="font-size:11px">{{ error }}</li>
+                            <li style="font-size:13px">{{ error }}</li>
                         {% endfor %}
                         </ul>
                     </td>
@@ -34,7 +34,7 @@
             <table  style="width:100%;">
                 <tr style="text-align:left">
                     <td>
-                        <p style="font-size:11px">A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                        <p style="font-size:13px">A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
                     </td>
                 </tr>
                 <hr>
