@@ -1136,44 +1136,28 @@ class UserManager
 
         // We get carpoolStandard bookings if enabled
         if ($this->carpoolStandardEnabled) {
-            // $bookings = $this->bookingManager->getBookings($user->getId());
-            // foreach ($bookings as $booking) {
-            //     $currentThread = [
-            //         'idRecipient' => $booking->getDriver()->getId(),
-            //         'givenName' => $booking->getDriver()->getAlias(),
-            //         'date' => '',
-            //         'selected' => false,
-            //         'unreadMessages' => 0,
-            //         'idBooking' => $booking->getId(),
-            //         'carpoolInfos' => [
-            //             'origin' => $booking->getPassengerPickupAddress(),
-            //             'destination' => $booking->getPassengerDropAddress(),
-            //             'criteria' => [
-            //                 'frequency' => 1,
-            //                 'fromDate' => date('Y-m-d', $booking->passengerPickupDate()),
-            //                 'fromTime' => date('H:i:s', $booking->passengerPickupDate()),
-            //             ],
-            //         ],
-            //     ];
-            //     $messages[] = $currentThread;
-            // }
-            $currentThread = [
-                'idRecipient' => 19,
-                'givenName' => 'jeremi B.',
-                'date' => '2023-08-30',
-                'selected' => false,
-                'unreadMessages' => 0,
-                'idBooking' => '0fc843d5-ec02-4c2e-a9fe-6aacb20710f7',
-                'carpoolInfos' => [
-                    'origin' => 'limoux',
-                    'destination' => 'carcassonne',
-                    'criteria' => [
-                        'frequency' => 1,
-                        'fromDate' => '2023-09-23',
-                        'fromTime' => '08:30:00',
+            $bookings = $this->bookingManager->getBookings($user->getId());
+            foreach ($bookings as $booking) {
+                $currentThread = [
+                    'idRecipient' => $booking->getDriver()->getId(),
+                    'givenName' => $booking->getDriver()->getAlias(),
+                    'date' => '',
+                    'selected' => false,
+                    'unreadMessages' => 0,
+                    'idBooking' => $booking->getId(),
+                    'carpoolInfos' => [
+                        'origin' => $booking->getPassengerPickupAddress(),
+                        'destination' => $booking->getPassengerDropAddress(),
+                        'criteria' => [
+                            'frequency' => 1,
+                            'fromDate' => date('Y-m-d', $booking->passengerPickupDate()),
+                            'fromTime' => date('H:i:s', $booking->passengerPickupDate()),
+                        ],
                     ],
-                ],
-            ];
+                ];
+                $messages[] = $currentThread;
+            }
+
             $messages[] = $currentThread;
         }
 
