@@ -44,9 +44,9 @@
         >
           <v-tab>{{ $t('carpools.active') }}</v-tab>
           <v-tab-item>
-            <v-container v-if="carpools.active">
+            <v-container v-if="inProgressPunctualCarpools && inProgressPunctualCarpools.length">
               <v-row
-                v-for="ad in carpools.active"
+                v-for="ad in inProgressPunctualCarpools"
                 :key="ad.id"
               >
                 <v-col cols="12">
@@ -58,12 +58,56 @@
                 </v-col>
               </v-row>
             </v-container>
+            <v-container v-if="inProgressRegularCarpools && inProgressRegularCarpools.length">
+              <v-row>
+                <v-col cols="12">
+                  <h2 class="h4 secondary--text">
+                    {{ $t('regular.title') }}
+                  </h2>
+                </v-col>
+              </v-row>
+              <v-row
+                v-for="ad in inProgressRegularCarpools"
+                :key="ad.id"
+              >
+                <v-col cols="12">
+                  <Carpool
+                    :ad="ad"
+                    :is-archived="true"
+                    :user="user"
+                    :payment-electronic-active="paymentElectronicActive"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
           </v-tab-item>
           <v-tab>{{ $t('carpools.archived') }}</v-tab>
           <v-tab-item>
-            <v-container v-if="carpools.archived">
+            <v-container v-if="archivedPunctualCarpools && archivedPunctualCarpools.length">
               <v-row
-                v-for="ad in carpools.archived"
+                v-for="ad in archivedPunctualCarpools"
+                :key="ad.id"
+              >
+                <v-col cols="12">
+                  <Carpool
+                    :ad="ad"
+                    :is-archived="true"
+                    :user="user"
+                    :payment-electronic-active="paymentElectronicActive"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+            <v-container v-if="archivedRegularCarpools && archivedRegularCarpools.length">
+              <v-row>
+                <v-col cols="12">
+                  <h2 class="h4 secondary--text">
+                    {{ $t('regular.title') }}
+                  </h2>
+                </v-col>
+              </v-row>
+              <v-row
+                v-for="ad in archivedRegularCarpools"
                 :key="ad.id"
               >
                 <v-col cols="12">
@@ -216,6 +260,8 @@
 import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/carpool/AcceptedCarpools/";
 import Carpool from "@components/user/profile/carpool/Carpool.vue";
+import { regular, punctual } from "@utils/constants";
+
 
 export default {
   i18n: {
@@ -249,13 +295,25 @@ export default {
       fromDate: null,
       toDate: null,
       menu: false,
-      menu2: false
+      menu2: false,
+      inProgressPunctualCarpools: [],
+      inProgressRegularCarpools: [],
+      archivedPunctualCarpools: [],
+      archivedRegularCarpools: []
     }
   },
   computed: {
     disableExportButton() {
       return !this.carpools.active && !this.carpools.archived;
     }
+  },
+  watch: {
+    carpools() {
+      this.buildCarpools();
+    }
+  },
+  mounted() {
+    this.buildCarpools();
   },
   methods:{
     getExport(){
@@ -282,6 +340,46 @@ export default {
       document.body.appendChild(link);
       link.click();
     },
+    buildCarpools() {
+      if (this.carpools) {
+        if (this.carpools.active && this.carpools.active.length) {
+          this.inProgressPunctualCarpools = this.getTypedCarpools(this.carpools.active, punctual).reverse();
+          this.inProgressRegularCarpools = this.getTypedCarpools(this.carpools.active, regular);
+        }
+        if (this.carpools.archived && this.carpools.archived.length) {
+          this.archivedPunctualCarpools = this.getTypedCarpools(this.carpools.archived, punctual);
+          this.archivedRegularCarpools = this.getTypedCarpools(this.carpools.archived, regular);
+        }
+      }
+    },
+    getTypedCarpools(carpools, type) {
+      return punctual === type
+        ? [...carpools]
+          .filter(carpool => 1 === carpool.frequency)
+          .sort((a, b) => this.sortCarpoolsByDate(a, b))
+        : [...carpools]
+          .filter(carpool => 2 === carpool.frequency)
+      ;
+    },
+    sortCarpoolsByDate(a, b) {
+      switch (true) {
+      // Si a est conducteur et b passager
+      case a.roleDriver && b.rolePassenger: return new Date(`${b.passengers[0].fromDate} ${b.passengers[0].startTime}`) - new Date(`${a.driver.fromDate} ${a.driver.startTime}`);
+
+      // Si a est conducteur et b conducteur
+      case a.roleDriver && b.roleDriver: return new Date(`${b.passengers[0].fromDate} ${b.passengers[0].startTime}`) - new Date(`${a.passengers[0].fromDate} ${a.passengers[0].startTime}`);
+
+      // Si a est passager et b conducteur
+      case a.rolePassenger && b.roleDriver: return new Date(`${b.passengers[0].fromDate} ${b.passengers[0].startTime}`) - new Date(`${a.driver.fromDate} ${a.driver.startTime}`);
+
+      // si b est passager est b passager
+      case a.rolePassenger && b.rolePassenger: return new Date(`${b.driver.fromDate} ${b.driver.startTime}`) - new Date(`${a.driver.fromDate} ${a.driver.startTime}`);
+
+      default:
+        // This use case should never happen
+        break;
+      }
+    }
   }
 }
 </script>
