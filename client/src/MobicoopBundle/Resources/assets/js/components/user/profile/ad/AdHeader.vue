@@ -121,7 +121,7 @@
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-div v-on="on">
+            <div v-on="on">
               <v-btn
                 v-if="!isArchived"
                 class="secondary my-1"
@@ -134,7 +134,7 @@
                   mdi-pencil
                 </v-icon>
               </v-btn>
-            </v-div>
+            </div>
           </template>
           <span> {{ isUpdatable ? $t("ads.tooltips.update") : $t("ads.tooltips.notUpdatable") }} </span>
         </v-tooltip>
