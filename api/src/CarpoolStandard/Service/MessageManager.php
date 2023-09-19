@@ -39,6 +39,11 @@ class MessageManager
 
     public function postMessage(Message $message)
     {
-        $this->carpoolStandardProvider->postMessage($message);
+        return $this->carpoolStandardProvider->postMessage($message);
+    }
+
+    public function getMessages(string $idBooking)
+    {
+        return $this->carpoolStandardProvider->getMessages($idBooking);
     }
 }

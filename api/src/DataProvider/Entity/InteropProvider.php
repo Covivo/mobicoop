@@ -25,8 +25,11 @@ namespace App\DataProvider\Entity;
 
 use App\CarpoolStandard\Entity\Booking;
 use App\CarpoolStandard\Entity\Message;
+use App\CarpoolStandard\Entity\Price;
+use App\CarpoolStandard\Entity\User;
 use App\CarpoolStandard\Interfaces\CarpoolStandardProviderInterface;
 use App\DataProvider\Service\DataProvider;
+use Symfony\Component\Security\Core\Security;
 
 class InteropProvider implements CarpoolStandardProviderInterface
 {
@@ -36,12 +39,18 @@ class InteropProvider implements CarpoolStandardProviderInterface
     private $provider;
     private $baseUri;
     private $apiKey;
+    private $security;
 
-    public function __construct(string $provider, string $baseUri, string $apiKey)
-    {
+    public function __construct(
+        string $provider,
+        string $baseUri,
+        string $apiKey,
+        Security $security
+    ) {
         $this->provider = $provider;
         $this->baseUri = $baseUri;
         $this->apiKey = $apiKey;
+        $this->security = $security;
     }
 
     public function postMessage(Message $message)
@@ -132,7 +141,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'webUrl' => $booking->getWebUrl(),
             'price' => [
                 'type' => $booking->getPrice()->getType(),
-                'operator' => $booking->getPrice()->getAmount(),
+                'amount' => $booking->getPrice()->getAmount(),
                 'currency' => $booking->getPrice()->getCurrency(),
             ],
             'driverJourneyId' => $booking->getDriverJourneyId(),
@@ -160,10 +169,9 @@ class InteropProvider implements CarpoolStandardProviderInterface
         return $dataProvider->patchItem(null, $headers, $params);
     }
 
-    public function getBooking(int $bookingId)
+    public function getBooking(string $bookingId)
     {
         $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_BOOKING.'/'.$bookingId);
-
         $headers = [
             'X-API-KEY' => $this->apiKey,
             'Content-Type' => 'application/json',
@@ -173,7 +181,135 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'bookingId' => $bookingId,
         ];
 
-        return $dataProvider->getItem($body, $headers);
+        $data = json_decode((string) $dataProvider->getItem($body, $headers)->getValue(), true);
+
+        return $this->mapBooking($data);
+    }
+
+    public function getBookings(string $userId)
+    {
+        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_BOOKING);
+
+        $headers = [
+            'X-API-KEY' => $this->apiKey,
+            'Content-Type' => 'application/json',
+        ];
+        // Build the body
+        $body = [
+            'id' => $userId,
+            'driver' => false,
+            'passenger' => true,
+        ];
+
+        return $dataProvider->getCollection($body, $headers);
+    }
+
+    public function getMessages(string $idBooking)
+    {
+        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_MESSAGE.'/'.$idBooking);
+
+        $headers = [
+            'X-API-KEY' => $this->apiKey,
+            'Content-Type' => 'application/json',
+        ];
+        $data = json_decode((string) $dataProvider->getCollection(null, $headers)->getValue(), true);
+        $messages = [];
+        foreach ($data as $message) {
+            $messages[] = $this->mapMessage($message);
+        }
+
+        return $messages;
+    }
+
+    public function mapBooking(array $array)
+    {
+        $booking = new Booking();
+        $driver = new User();
+        $passenger = new User();
+        $price = new Price();
+
+        $driver->setExternalId($array['driver']['id']);
+        $driver->setAlias($array['driver']['alias']);
+        $driver->setOperator($array['driver']['operator']);
+        $driver->setFirstName($array['driver']['firstName']);
+        $driver->setLastName($array['driver']['lastName']);
+        $driver->setGender($array['driver']['gender']);
+        $driver->setGrade($array['driver']['grade']);
+        $driver->setPicture($array['driver']['picture']);
+        $driver->setVerifiedIdentity($array['driver']['verifiedIdentity']);
+
+        $passenger->setExternalId($array['passenger']['id']);
+        $passenger->setAlias($array['passenger']['alias']);
+        $passenger->setOperator($array['passenger']['operator']);
+        $passenger->setFirstName($array['passenger']['firstName']);
+        $passenger->setLastName($array['passenger']['lastName']);
+        $passenger->setGender($array['passenger']['gender']);
+        $passenger->setGrade($array['passenger']['grade']);
+        $passenger->setPicture($array['passenger']['picture']);
+        $passenger->setVerifiedIdentity($array['passenger']['verifiedIdentity']);
+
+        $price->setAmount($array['price']['amount']);
+        $price->setType($array['price']['type']);
+        $price->setCurrency($array['price']['currency']);
+
+        $booking->setDriver($driver);
+        $booking->setPassenger($passenger);
+        $booking->setPrice($price);
+        $booking->setId(Booking::DEFAULT_ID);
+        $booking->setExternalId($array['id']);
+        $booking->setPassengerPickupDate($array['passengerPickupDate']);
+        $booking->setPassengerPickupLat($array['passengerPickupLat']);
+        $booking->setPassengerPickupLng($array['passengerPickupLng']);
+        $booking->setPassengerDropLat($array['passengerDropLat']);
+        $booking->setPassengerDropLng($array['passengerDropLng']);
+        $booking->setPassengerPickupAddress($array['passengerPickupAddress']);
+        $booking->setPassengerDropAddress($array['passengerDropAddress']);
+        $booking->setStatus($array['status']);
+        $booking->setDriverJourneyId($array['driverJourneyId']);
+        $booking->setPassengerJourneyId($array['passengerJourneyId']);
+        $booking->setDuration($array['duration']);
+        $booking->setDistance($array['distance']);
+        $booking->setWebUrl($array['webUrl']);
+        $booking->setRoleDriver(false);
+
+        if ($this->security->getUser()->getId() == intval($booking->getDriver()->getExternalId())) {
+            $booking->setRoleDriver(true);
+        }
+
+        return $booking;
+    }
+
+    public function mapMessage(array $array)
+    {
+        $message = new Message();
+
+        $message->setTo($this->mapUser($array['to']));
+        $message->setFrom($this->mapUser($array['from']));
+        $message->setBookingId(isset($array['bookingId']) ? $array['bookingId'] : null);
+        $message->setMessage(isset($array['message']) ? $array['message'] : null);
+        $message->setRecipientCarpoolerType(isset($array['recipientCarpoolerType']) ? $array['recipientCarpoolerType'] : null);
+        $message->setPassengerJourneyId(isset($array['passengerJourneyId']) ? $array['passengerJourneyId'] : null);
+        $message->setDriverJourneyId(isset($array['driverJourneyId']) ? $array['driverJourneyId'] : null);
+        $message->setCreatedDateTime(isset($array['createdDate']) ? \DateTime::createFromFormat('U', $array['createdDate']) : null);
+
+        return $message;
+    }
+
+    public function mapUser(array $array)
+    {
+        $user = new User();
+        $user->setId(USER::DEFAULT_ID);
+        $user->setExternalId(isset($array['id']) ? $array['id'] : null);
+        $user->setOperator(isset($array['operator']) ? $array['operator'] : null);
+        $user->setAlias(isset($array['alias']) ? $array['alias'] : null);
+        $user->setFirstName(isset($array['firstName']) ? $array['firstName'] : null);
+        $user->setLastName(isset($array['lastName']) ? $array['lastName'] : null);
+        $user->setGrade(isset($array['grade']) ? $array['grade'] : null);
+        $user->setPicture(isset($array['picture']) ? $array['picture'] : null);
+        $user->setGender(isset($array['gender']) ? $array['gender'] : null);
+        $user->setVerifiedIdentity(isset($array['verifiedIdentity']) ? $array['verifiedIdentity'] : null);
+
+        return $user;
     }
 
     private function _generateUuid()

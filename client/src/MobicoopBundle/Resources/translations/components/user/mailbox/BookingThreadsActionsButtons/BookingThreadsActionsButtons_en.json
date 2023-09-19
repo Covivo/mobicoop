@@ -1,0 +1,14 @@
+{
+    "bookingPending": "Une demande formelle a été envoyée",
+    "bookingAccepted": "Le covoiturage a été accepté",
+    "bookingRefused": "Le covoiturage a été refusé",
+    "button": {
+        "bookingCarpool": "Demander un covoiturage",
+        "bookingCarpoolAsDriver": "Demander un covoiturage comme conducteur",
+        "bookingCarpoolAsPassenger": "Demander un covoiturage comme passager",
+        "accept": "Accepter",
+        "refuse": "Refuser",
+        "cancel": "Annuler"
+    },
+    "bookingAlert":"Vous êtes en relation avec {carpooler} dont l'annonce de covoiturage est sur <b>{platform}</b>"
+}

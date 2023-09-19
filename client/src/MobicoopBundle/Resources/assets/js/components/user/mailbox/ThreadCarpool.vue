@@ -44,7 +44,7 @@
                 <span
                   class="font-weight-light"
                 >
-                  {{ origin }}        
+                  {{ origin }}
                   <v-icon color="tertiairy">
                     mdi-arrow-right
                   </v-icon>
@@ -140,6 +140,10 @@ export default {
       type: Number,
       default: null
     },
+    idBooking:{
+      type: String,
+      default: null
+    },
     solidary:{
       type: Boolean,
       default: false
@@ -151,7 +155,11 @@ export default {
     unreadMessages:{
       type: Number,
       default: 0
-    }
+    },
+    bookingInfos: {
+      type: Object,
+      default: null
+    },
   },
   data() {
     return {
@@ -190,10 +198,10 @@ export default {
       this.selected = this.selectedDefault;
     }
   },
-  mounted() { 
-    if (this.idAskSelected == this.idAsk) {
+  mounted() {
+    if (this.idAskSelected == this.idAsk && this.idAsk != null) {
       this.emit()
-    }
+    } 
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -207,7 +215,12 @@ export default {
       this.selected = !this.selected;
     },
     emit(){
-      this.$emit("toggleSelected",{idAsk:this.idAsk});
+      if (this.idBooking == null) {
+        this.$emit("toggleSelected",{idAsk:this.idAsk});
+        
+      } else {
+        this.$emit("toggleSelectedBooking",{idBooking:this.idBooking})
+      }
       this.$emit("idMessageForTimeLine",
         {
           type:this.solidary ? "Solidary" : "Carpool",
@@ -216,6 +229,7 @@ export default {
           name:this.name,
           avatar:this.avatar,
           idAsk:this.idAsk,
+          idBooking:this.idBooking,
           blockerId:this.blockerId,
           formerUnreadMessages:this.unreadMessages
         }

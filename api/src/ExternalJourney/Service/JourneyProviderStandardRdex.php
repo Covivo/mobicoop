@@ -107,7 +107,6 @@ class JourneyProviderStandardRdex extends JourneyProvider
             'timestamp' => time(),
             'p' => $searchParameters,
         ];
-
         // construct the requested url
         $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
         // request url

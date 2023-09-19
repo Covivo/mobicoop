@@ -29,10 +29,10 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\ProofManager;
+use App\CarpoolStandard\Service\BookingManager;
 use App\Communication\Entity\Medium;
 use App\Communication\Entity\Message;
 use App\Communication\Repository\MessageRepository;
@@ -41,7 +41,6 @@ use App\Communication\Service\InternalMessageManager;
 use App\Community\Entity\CommunityUser;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Repository\CommunityUserRepository;
-use App\Event\Entity\Event;
 use App\Gamification\Service\GamificationManager;
 use App\Geography\Service\GeoTools;
 use App\I18n\Repository\LanguageRepository;
@@ -131,6 +130,8 @@ class UserManager
     private $scammerRepository;
     private $userMinAge;
     private $paymentProfileRepository;
+    private $bookingManager;
+    private $carpoolStandardEnabled;
 
     // Default carpool settings
     private $chat;
@@ -201,7 +202,9 @@ class UserManager
         GamificationManager $gamificationManager,
         ScammerRepository $scammerRepository,
         PseudonymizationManager $pseudonymizationManager,
-        $userMinAge
+        $userMinAge,
+        BookingManager $bookingManager,
+        bool $carpoolStandardEnabled
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -245,6 +248,8 @@ class UserManager
         $this->scammerRepository = $scammerRepository;
         $this->_pseudonymizationManager = $pseudonymizationManager;
         $this->userMinAge = $userMinAge;
+        $this->bookingManager = $bookingManager;
+        $this->carpoolStandardEnabled = $carpoolStandardEnabled;
     }
 
     /**
@@ -780,8 +785,6 @@ class UserManager
 
     /**
      * Get the private communities of the given user.
-     *
-     * @param User $user
      */
     public function getPrivateCommunities(?User $user): array
     {
@@ -823,7 +826,7 @@ class UserManager
             return [];
         }
 
-        if (!$threads) {
+        if (!$threads && !$this->carpoolStandardEnabled) {
             return [];
         }
 
@@ -1131,6 +1134,33 @@ class UserManager
             }
         }
 
+        // We get carpoolStandard bookings if enabled
+        if ($this->carpoolStandardEnabled) {
+            $bookings = $this->bookingManager->getBookings($user->getId());
+            foreach ($bookings as $booking) {
+                $currentThread = [
+                    'idRecipient' => $booking->getDriver()->getId(),
+                    'givenName' => $booking->getDriver()->getAlias(),
+                    'date' => '',
+                    'selected' => false,
+                    'unreadMessages' => 0,
+                    'idBooking' => $booking->getId(),
+                    'carpoolInfos' => [
+                        'origin' => $booking->getPassengerPickupAddress(),
+                        'destination' => $booking->getPassengerDropAddress(),
+                        'criteria' => [
+                            'frequency' => 1,
+                            'fromDate' => date('Y-m-d', $booking->passengerPickupDate()),
+                            'fromTime' => date('H:i:s', $booking->passengerPickupDate()),
+                        ],
+                    ],
+                ];
+                $messages[] = $currentThread;
+            }
+
+            $messages[] = $currentThread;
+        }
+
         // Sort with the last message received first
         usort($messages, [$this, 'sortThread']);
 
@@ -1205,6 +1235,7 @@ class UserManager
             // dispatch en event
             $event = new UserPasswordChangedEvent($user);
             $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
+
             // return the user
             return $user;
         }
@@ -1455,6 +1486,7 @@ class UserManager
 
             return $userFound;
         }
+
         // No user found. We return nothing.
         return new JsonResponse();
     }

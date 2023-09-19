@@ -94,7 +94,7 @@ class BookingManager
         $booking->setPassengerPickupLat($data['origin']['latitude']);
         $booking->setPassengerPickupLng($data['origin']['longitude']);
         $booking->setPassengerDropLat($data['destination']['latitude']);
-        $booking->setPassengerDropLng($data['destination']['latitude']);
+        $booking->setPassengerDropLng($data['destination']['longitude']);
         $booking->setPassengerPickupAddress($data['origin']['streetAddress']);
         $booking->setPassengerDropAddress($data['destination']['streetAddress']);
         $booking->setDriverJourneyId($data['externalJourneyId']);
@@ -106,5 +106,20 @@ class BookingManager
         }
 
         return $booking;
+    }
+
+    public function getBooking(string $id)
+    {
+        return $this->dataProvider->getItem(Booking::DEFAULT_ID, ['id' => $id]);
+    }
+
+    public function patchBooking(array $data)
+    {
+        $response = $this->dataProvider->patch(Booking::DEFAULT_ID, null, ['externalId' => $data['idBooking'], 'status' => $data['status']]);
+        if (201 != $response->getCode()) {
+            return $response->getValue();
+        }
+
+        return $response->getValue();
     }
 }
