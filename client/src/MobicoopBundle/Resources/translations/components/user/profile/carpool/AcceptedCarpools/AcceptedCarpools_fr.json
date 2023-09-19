@@ -14,5 +14,8 @@
         "title": "Exporter les covoiturages :",
         "label1": "entre le",
         "label2": "et le"
+    },
+    "regular": {
+      "title": "Trajet régulier"
     }
 }

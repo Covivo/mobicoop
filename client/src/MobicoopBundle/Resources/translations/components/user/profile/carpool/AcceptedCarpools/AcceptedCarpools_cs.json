@@ -7,5 +7,8 @@
     "export": "Export",
     "tooltip": "Aktivní, jakmile jsou potvrzeny spolujízdy.",
     "needCarpoolProofs": "Potřebujete doklad o spolujízdě?",
-    "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export"
+    "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export",
+    "regular": {
+      "title": "Trajet régulier"
+    }
 }
