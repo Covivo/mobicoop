@@ -83,6 +83,10 @@ class Message
     public const TYPE_CARPOOL = 'Carpool';
     public const TYPE_SOLIDARY = 'Solidary';
 
+    public const SYSTEM_ASK_POSTED = 'Demande de covoiturage';
+    public const SYSTEM_ASK_ACCEPTED = 'Covoiturage accépté';
+    public const SYSTEM_ASK_DECLINED = 'Covoiturage refusé';
+
     /**
      * @var int the id of this message
      *

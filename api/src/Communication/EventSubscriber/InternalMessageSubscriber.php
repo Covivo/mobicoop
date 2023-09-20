@@ -56,6 +56,9 @@ class InternalMessageSubscriber implements EventSubscriberInterface
 
     public function onInternalMessageReceived(InternalMessageReceivedEvent $event)
     {
+        if ($event->getRecipient()->getMessage()->isMessageSystem()) {
+            return;
+        }
         $this->notificationManager->notifies(InternalMessageReceivedEvent::NAME, $event->getRecipient()->getUser(), $event->getRecipient()->getMessage());
 
         //  we dispatch the gamification event associated
