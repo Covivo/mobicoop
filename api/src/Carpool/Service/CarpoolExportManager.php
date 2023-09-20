@@ -156,7 +156,7 @@ class CarpoolExportManager
                     $carpoolExport->setCarpooler($carpoolItem->getDebtorUser());
                 }
                 if (0 !== $carpoolItem->getItemStatus()) {
-                    $sumReceived = $sumReceived + $carpoolItem->getAmount();
+                    $sumReceived += $carpoolItem->getAmount();
                 }
             } else {
                 $carpoolExport->setRole(CarpoolExport::ROLE_PASSENGER);
@@ -164,7 +164,7 @@ class CarpoolExportManager
                     $carpoolExport->setCarpooler($carpoolItem->getCreditorUser());
                 }
                 if (0 !== $carpoolItem->getItemStatus()) {
-                    $sumPaid = $sumPaid + $carpoolItem->getAmount();
+                    $sumPaid += $carpoolItem->getAmount();
                 }
             }
             //    we set the pickUp and dropOff
