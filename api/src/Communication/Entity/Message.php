@@ -241,6 +241,13 @@ class Message
      */
     private $updatedDate;
 
+    /**
+     * @var null|bool indicate if the message is a message system
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","threads","thread"})
+     */
+    private $messageSystem;
+
     public function __construct()
     {
         $this->recipients = new ArrayCollection();
@@ -526,6 +533,22 @@ class Message
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function isMessageSystem(): ?bool
+    {
+        if (!isset($this->messageSystem)) {
+            return false;
+        }
+
+        return $this->messageSystem;
+    }
+
+    public function setMessageSystem(?bool $isMessageSystem): self
+    {
+        $this->messageSystem = $isMessageSystem;
 
         return $this;
     }
