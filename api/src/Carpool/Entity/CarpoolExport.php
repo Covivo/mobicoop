@@ -205,7 +205,7 @@ class CarpoolExport
 
     public function setCertification(?CarpoolProof $carpoolProof): self
     {
-        $certification = self::CERTIFICATION_ERROR;
+        $certification = null;
 
         if (!is_null($carpoolProof)) {
             switch ($carpoolProof->getStatus()) {
@@ -224,6 +224,13 @@ class CarpoolExport
 
                 case CarpoolProof::STATUS_VALIDATED:
                     $certification = $carpoolProof->getType();
+
+                    break;
+
+                case CarpoolProof::STATUS_ERROR:
+                case CarpoolProof::STATUS_ACQUISITION_ERROR:
+                case CarpoolProof::STATUS_FRAUD_ERROR:
+                    $certification = self::CERTIFICATION_ERROR;
 
                     break;
             }
