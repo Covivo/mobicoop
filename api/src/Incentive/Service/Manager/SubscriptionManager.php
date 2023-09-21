@@ -225,18 +225,6 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Resets a short distance subscription when the commitment journey has not been validated by the RPC.
-     */
-    public function unvalidationOfProof(CarpoolProof $carpoolProof): void
-    {
-        $subscription = $this->_shortDistanceSubscriptionRepository->findByProofCommitment($carpoolProof);
-
-        if (!is_null($subscription) && !is_null($subscription->getCommitmentProofJourney()) && !$subscription->getCommitmentProofJourney()->isCompliant()) {
-            $this->_journeyManager->resetShortDistanceSubscription($subscription, $subscription->getCommitmentProofJourney());
-        }
-    }
-
-    /**
      * Step 20.
      */
     public function verifySubscriptionFromControllerCommand(?string $subscriptionType, ?string $subscriptionId)

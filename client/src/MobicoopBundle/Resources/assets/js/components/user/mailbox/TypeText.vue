@@ -78,7 +78,7 @@ export default {
     }
   },
   methods:{
-    emit(message){
+    emit(){
       if(this.isExternalStandardMessage) {
         this.$emit("sendExternalStandardMessage",
           {

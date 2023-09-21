@@ -12,6 +12,7 @@
     "ask": "Een regelmatig carpooltraject aanbieden"
   },
   "urlGetAdAsk": "/utilisateur/messages/actions/infos",
+  "urlGetBooking": "/utilisateur/messages/actions/infos/booking",
   "roundTrip": "Heen-terugtraject",
   "notLinkedToACarpool": "Deze thread is niet gerelateerd aan carpoolen",
   "at": "à",

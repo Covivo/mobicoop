@@ -2,6 +2,7 @@
   "notLinkedToACarpool": "Ce fil de discussion n'est pas lié à un covoiturage",
   "roundTrip": "Trajet Aller-Retour",
   "urlGetAdAsk": "/utilisateur/messages/actions/infos",
+  "urlGetBooking": "/utilisateur/messages/actions/infos/booking",
   "regular": {
     "ask": "Proposer un covoiturage régulier"
   },

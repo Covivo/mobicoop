@@ -66,7 +66,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "carpool_standard_get"={
  *             "method"="GET",
  *             "path"="/bookings/{id}",
- *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
@@ -102,6 +101,13 @@ class Booking
      * @ApiProperty(identifier=true)
      */
     private $id;
+
+    /**
+     * @var null|string The id of this booking
+     *
+     * @Groups({"read", "write"})
+     */
+    private $externalId;
 
     /**
      * @var User the driver of the carpool
@@ -224,6 +230,13 @@ class Booking
      */
     private $message;
 
+    /**
+     * @var null|bool true if the user is the driver of the related booking
+     *
+     * @Groups({"read", "write"})
+     */
+    private $roleDriver;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -240,6 +253,18 @@ class Booking
     public function setId(string $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
 
         return $this;
     }
@@ -444,6 +469,18 @@ class Booking
     public function setMessage(?string $message): self
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function isRoleDriver(): ?bool
+    {
+        return $this->roleDriver;
+    }
+
+    public function setRoleDriver(bool $isRoleDriver): ?self
+    {
+        $this->roleDriver = $isRoleDriver;
 
         return $this;
     }

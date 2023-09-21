@@ -24,7 +24,18 @@
             v-if="item.divider===false"
             v-slot:icon
           >
-            <v-avatar color="secondary">
+            <v-avatar
+              v-if="item.messageSystem === true"
+              color="info lighten-4"
+            >
+              <v-icon class="white--text mx-2">
+                mdi-bell
+              </v-icon>
+            </v-avatar>
+            <v-avatar
+              v-else
+              color="secondary"
+            >
               <img :src="item.user.avatars[0]">
             </v-avatar>
           </template>
@@ -37,9 +48,10 @@
           <v-card
             v-if="item.divider===false"
             class="elevation-2 font-weight-bold"
-            :class="(item.origin==='own')?'own primary lighten-5':''"
+            :class="(item.messageSystem === true) ? 'info lighten-4' : (item.origin==='own') ? 'own primary lighten-5' : ''"
           >
             <v-card-text
+              :class="(item.messageSystem === true) ? 'white--text' : ''"
               v-html="item.text"
             />
           </v-card>
@@ -217,6 +229,7 @@ export default {
         this.emit();
       }
     },
+
     checkIfMessageIsDelete(messages){
       let tradMessageDelete = this.$t("messageDelete");
       messages.data.forEach(function (message) {

@@ -60,6 +60,7 @@ class BookingManager
 
     public function patchBooking(Booking $booking)
     {
+        $booking->setId($booking->getExternalId());
         $this->carpoolStandardProvider->patchBooking($booking);
     }
 
@@ -97,5 +98,15 @@ class BookingManager
         $booking->setPassengerDropAddress($reversedGeocodeDropOffAddress->getLocality());
 
         return $booking;
+    }
+
+    public function getBookings(string $userId)
+    {
+        return $this->carpoolStandardProvider->getBookings($userId);
+    }
+
+    public function getBooking(string $id)
+    {
+        return $this->carpoolStandardProvider->getBooking($id);
     }
 }

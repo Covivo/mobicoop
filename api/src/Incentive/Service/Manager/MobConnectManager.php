@@ -13,10 +13,12 @@ use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestamps
 use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\UserValidation;
 use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -79,6 +81,26 @@ abstract class MobConnectManager
      * @var UserValidation
      */
     protected $_userValidation;
+
+    /**
+     * @var null|CarpoolItem
+     */
+    protected $_currentCarpoolItem;
+
+    /**
+     * @var null|CarpoolPayment
+     */
+    protected $_currentCarpoolPayment;
+
+    /**
+     * @var null|CarpoolProof
+     */
+    protected $_currentCarpoolProof;
+
+    /**
+     * @var null|LongDistanceSubscription|ShortDistanceSubscription
+     */
+    protected $_currentSubscription;
 
     /**
      * @var MobConnectApiProvider
@@ -204,6 +226,15 @@ abstract class MobConnectManager
         return $this->_apiProvider->patchUserSubscription($subscriptionId, $params);
     }
 
+    protected function hasSubscriptionCommited(string $subscriptionId): bool
+    {
+        $this->setApiProvider();
+
+        // TODO: Add the query allowing you to know if a subscription has been commited
+
+        return false;
+    }
+
     /**
      * Sets subscription expiration date.
      */
@@ -264,13 +295,6 @@ abstract class MobConnectManager
         return $proposal;
     }
 
-    protected function _isLDJourneyCommitmentJourney(LongDistanceSubscription $subscription, CarpoolItem $carpoolItem): bool
-    {
-        return
-            !is_null($subscription->getCommitmentProofJourney())
-            && $subscription->getCommitmentProofJourney()->getInitialProposal() === $this->getDriverPassengerProposalForCarpoolItem($carpoolItem, self::DRIVER);
-    }
-
     protected function getAddressesLocality(CarpoolItem $carpoolItem): array
     {
         $addresses = [
@@ -319,10 +343,10 @@ abstract class MobConnectManager
         $thresholdDate = $this->getThresholdDate();
 
         return array_values(
-            array_filter($this->getDriver()->getCarpoolProofsAsDriver(), function (CarpoolProof $carpoolProof) use ($thresholdDate, $distanceType) {
+            array_filter($this->getDriver()->getCarpoolProofsAsDriver(), function (CarpoolProof $carpoolProof) use ($thresholdDate) {
                 return
                     $carpoolProof->getCreatedDate() > $thresholdDate
-                    && $carpoolProof->isEECCompliant($distanceType);
+                    && $carpoolProof->isEECCompliant();
             })
         );
     }
@@ -337,6 +361,44 @@ abstract class MobConnectManager
         return
             $this->_userValidation->isUserValid($this->getDriver())
             && 0 === count($this->getEECCompliantProofsObtainedSinceDate($distanceType));
+    }
+
+    protected function getDistanceTraveled(CarpoolProof $carpoolProof): ?int
+    {
+        return
+            !is_null($carpoolProof->getAsk())
+            && !is_null($carpoolProof->getAsk()->getMatching())
+            ? $carpoolProof->getAsk()->getMatching()->getCommonDistance() : null;
+    }
+
+    protected function isJourneyPaid(CarpoolProof $carpoolProof): bool
+    {
+        return !is_null($carpoolProof->getSuccessfullPayment());
+    }
+
+    protected function isLongDistance(?int $distance): bool
+    {
+        return !is_null($distance) && CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distance;
+    }
+
+    protected function isShortDistance(?int $distance): bool
+    {
+        return !is_null($distance) && CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS > $distance;
+    }
+
+    /**
+     * Returns if the distance passed as an argument is long or short.
+     */
+    protected function getDistanceType(int $distance): ?string
+    {
+        return
+            $this->isLongDistance($distance)
+            ? LongDistanceSubscription::SUBSCRIPTION_TYPE
+            : (
+                $this->isShortDistance($distance)
+                ? ShortDistanceSubscription::SUBSCRIPTION_TYPE
+                : null
+            );
     }
 
     protected function getIncentives(): ?IncentivesResponse

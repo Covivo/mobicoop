@@ -2,6 +2,7 @@
   "notLinkedToACarpool": "This discussion thread is not linked to a carpool",
   "roundTrip": "Round trip",
   "urlGetAdAsk": "/user/messages/actions/info",
+  "urlGetBooking": "/utilisateur/messages/actions/infos/booking",
   "regular": {
     "ask": "Propose a regular carpool"
   },

@@ -50,7 +50,6 @@ class DataProvider
     /**
      * Constructor.
      *
-     * @param string $uri
      * @param string $resource Resource name for normal resource
      */
     public function __construct(?string $uri = null, ?string $resource = null)

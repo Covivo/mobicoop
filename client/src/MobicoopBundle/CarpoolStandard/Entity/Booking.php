@@ -34,6 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Booking implements ResourceInterface, \JsonSerializable
 {
+    public const DEFAULT_ID = 999999999999;
     public const RESOURCE_NAME = 'carpool_standard/bookings';
     public const INITIATED = 'INITIATED';
     public const WAITING_PASSENGER_CONFIRMATION = 'WAITING_PASSENGER_CONFIRMATION';
@@ -49,6 +50,13 @@ class Booking implements ResourceInterface, \JsonSerializable
      * @Groups({"get","post","put"})
      */
     private $id;
+
+    /**
+     * @var null|string The id of this booking
+     *
+     * @Groups({"get","post","put"})
+     */
+    private $externalId;
 
     /**
      * @var User the driver of the carpool
@@ -171,6 +179,13 @@ class Booking implements ResourceInterface, \JsonSerializable
      */
     private $message;
 
+    /**
+     * @var null|bool true if the user is the driver for the concerned booking
+     *
+     * @Groups({"get","post","put"})
+     */
+    private $roleDriver;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -179,6 +194,18 @@ class Booking implements ResourceInterface, \JsonSerializable
     public function setId(?int $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
 
         return $this;
     }
@@ -387,11 +414,24 @@ class Booking implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function isRoleDriver(): ?bool
+    {
+        return $this->roleDriver;
+    }
+
+    public function setRoleDriver(bool $isRoleDriver): ?self
+    {
+        $this->roleDriver = $isRoleDriver;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
         [
             'id' => $this->getId(),
+            'externalId' => $this->getExternalId(),
             'driver' => $this->getDriver(),
             'passenger' => $this->getPassenger(),
             'passengerPickupDate' => $this->getPassengerPickupDate(),
@@ -409,6 +449,7 @@ class Booking implements ResourceInterface, \JsonSerializable
             'driverJourneyId' => $this->getDriverJourneyId(),
             'passengerJourneyId' => $this->getPassengerJourneyId(),
             'message' => $this->getMessage(),
+            'roleDriver' => $this->isRoleDriver(),
         ];
     }
 }

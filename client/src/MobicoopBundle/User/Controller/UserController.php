@@ -26,6 +26,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Service\BookingManager;
+use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Service\MessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Report;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
@@ -1026,6 +1028,16 @@ class UserController extends AbstractController
     }
 
     /**
+     * Get booking messages threads.
+     *
+     * @param mixed $idBooking
+     */
+    public function userMessageBookingCompleteThread(string $idBooking, MessageManager $messageManager)
+    {
+        return new JsonResponse($messageManager->getMessages($idBooking));
+    }
+
+    /**
      * Get informations for Action Panel of the mailbox
      * AJAX.
      */
@@ -1045,6 +1057,24 @@ class UserController extends AbstractController
                 $results['askStatus'] = $response->getAskStatus(); // Because it's not in result
 
                 return new JsonResponse($results);
+            }
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
+     * Get informations for Action Panel of the mailbox
+     * AJAX.
+     */
+    public function userMessagesBookingActionsInfos(Request $request, BookingManager $bookingManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($data['idBooking']) {
+                $response = $bookingManager->getBooking($data['idBooking']);
+
+                return new JsonResponse($response->getValue());
             }
         }
 
@@ -1173,6 +1203,16 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse('Not a post');
+    }
+
+    public function userMessageUpdateBooking(Request $request, BookingManager $bookingManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $return = $bookingManager->patchBooking($data);
+
+            return new JsonResponse($return);
+        }
     }
 
     /**

@@ -137,9 +137,11 @@
                   :id-message="idMessage"
                   :id-thread-default="idThreadDefault"
                   :id-ask-to-select="currentIdAsk"
+                  :id-booking-to-select="currentIdBooking"
                   :refresh-threads="refreshThreadsCarpool"
                   @idMessageForTimeLine="updateDetails"
                   @toggleSelected="refreshSelected"
+                  @toggleSelectedBooking="refreshSelectedBooking"
                   @refreshThreadsCarpoolCompleted="refreshThreadsCarpoolCompleted"
                 />
               </v-tab-item>
@@ -178,6 +180,7 @@
           <v-row>
             <v-col cols="12">
               <thread-details
+                v-if="idMessage"
                 :id-message="idMessage"
                 :id-user="idUser"
                 :refresh="refreshDetails"
@@ -190,8 +193,22 @@
             </v-col>
           </v-row>
           <v-row>
+            <v-col cols="12">
+              <booking-thread-details
+                v-if="idBooking"
+                :id-booking="idBooking"
+                :id-user="idUser"
+                :refresh-booking="refreshBookingDetails"
+                :hide-no-thread-selected="(idRecipient!==null)"
+                :fraud-warning-display="fraudWarningDisplay"
+                :carpoolers-identity="carpoolersIdentity"
+                @refreshCompleted="refreshBookingDetailsCompleted"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
             <v-col
-              v-if="(idMessage && idMessage !== -2) || newThread"
+              v-if="(idMessage && idMessage !== -2) || newThread || idBooking !== null"
               cols="12"
             >
               <type-text
@@ -212,6 +229,9 @@
           class="col-4"
         >
           <thread-actions
+            :id-booking="idBooking"
+            :refresh-booking="refreshBookingActions"
+            :is-external-standard="isExternalStandard"
             :id-ask="currentIdAsk"
             :id-user="idUser"
             :email-user="emailUser"
@@ -224,7 +244,9 @@
             :blocker-id="blockerId"
             :new-thread="newThread"
             @refreshActionsCompleted="refreshActionsCompleted"
+            @refreshBookingActionsCompleted="refreshBookingActionsCompleted"
             @updateStatusAskHistory="updateStatusAskHistory"
+            @updateStatusBooking="updateStatusBooking"
             @recipientIdentity="setCarpoolerIdentity"
           />
         </v-col>
@@ -240,6 +262,7 @@ import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
 import ThreadsSolidary from '@components/user/mailbox/ThreadsSolidary'
 import ThreadDetails from '@components/user/mailbox/ThreadDetails'
+import BookingThreadDetails from '@components/user/mailbox/BookingThreadDetails'
 import ThreadActions from '@components/user/mailbox/ThreadActions'
 import TypeText from '@components/user/mailbox/TypeText'
 import WarningMessage from '@components/utilities/WarningMessage.vue';
@@ -262,6 +285,7 @@ export default {
     ThreadActions,
     TypeText,
     WarningMessage,
+    BookingThreadDetails
   },
   props: {
     user: {
@@ -286,6 +310,10 @@ export default {
     },
     givenIdAsk: {
       type: Number,
+      default: null
+    },
+    givenIdBooking: {
+      type: String,
       default: null
     },
     givenIdMessage: {
@@ -317,8 +345,10 @@ export default {
     return {
       modelTabs:"tab-cm",
       idMessage: this.givenIdMessage ? this.givenIdMessage : null,
+      idBooking: this.givenIdBooking ? this.givenIdBooking : null,
       idRecipient: this.givenIdRecipient ? this.givenIdRecipient : null,
       currentIdAsk: this.givenIdAsk ? this.givenIdAsk : null,
+      currentIdBooking: this.givenIdBooking ? this.givenIdBooking : null,
       recipientName:null,
       recipientAvatar:null,
       newThreadDirect:null,
@@ -339,7 +369,9 @@ export default {
         currentUnreadSolidaryMessages: 0
       },
       isExternalStandard: false,
-      carpoolersIdentity: null
+      refreshBookingActions:false,
+      carpoolersIdentity: null,
+      refreshBookingDetails: false
     };
   },
   created() {
@@ -381,6 +413,7 @@ export default {
       // console.error(data);
       this.hideClickIcon = false;
 
+      this.isExternalStandard = (data.idBooking !==null) ? true : false;
       // Update the current Ask
       (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
 
@@ -399,6 +432,7 @@ export default {
       }
 
       this.idMessage = data.idMessage;
+      this.idBooking = data.idBooking;
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;
       this.recipientAvatar = data.avatar;
@@ -435,29 +469,21 @@ export default {
       this.loadingTypeText = true;
       let messageToSend = {
         text: data.textToSend,
-        senderIsDriver: this.newThreadCarpool.driver,
-        senderIsPassenger: this.newThreadCarpool.passenger,
-        externalJourneyId: this.newThreadCarpool.externalJourneyId,
-        externalJourneyOperator: this.newThreadCarpool.externalJourneyOperator,
-        externalJourneyUserId: this.newThreadCarpool.externalJourneyUserId,
-        recipientName: this.newThreadCarpool.givenName,
-        origin: this.newThreadCarpool.origin,
-        destination: this.newThreadCarpool.destination,
-        originLat: this.newThreadCarpool.origin,
-        originLng: this.newThreadCarpool.origin,
-        destinationLat: this.newThreadCarpool.destination,
-        destinationLng: this.newThreadCarpool.destination,
-        date: this.newThreadCarpool.date
+        from: this.newThreadCarpool.roleDriver ? this.newThreadCarpool.driver : this.newThreadCarpool.passenger,
+        to: this.newThreadCarpool.roleDriver ? this.newThreadCarpool.passenger : this.newThreadCarpool.driver,
+        driverJourneyId: this.newThreadCarpool.driverJourneyId,
+        passengerJourneyId: this.newThreadCarpool.passengerJourneyId,
+        recipientCarpoolerType: this.newThreadCarpool.roleDriver ? 'PASSENGER' : 'DRIVER',
+        bookingId: this.newThreadCarpool.externalId
       };
       this.loadingTypeText = false;
-
-
+      console.log(messageToSend);
       maxios.post(this.$t("urlSendExternalMessage"), messageToSend).then(res => {
         this.loadingTypeText = false;
         // Update the threads list
         this.refreshThreadsCarpool = true;
         // We need to delete new thread data or we'll have two identical entries
-        this.refreshDetails = true;
+        this.refreshBookingDetails = true;
         this.newThreadDirect = null;
         this.newThreadCarpool = null;
       });
@@ -497,7 +523,7 @@ export default {
           "status" : statusUpdate
         }
       }
-      // console.error(data);
+      // console.error(data);sk
       // console.error(params);
       maxios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
@@ -511,11 +537,38 @@ export default {
         });
 
     },
-    refreshSelected(data){
+    updateStatusBooking(data){
+      this.loadingBtnAction = true;
+      let params = {
+        idBooking:this.currentIdBooking,
+        status:data.status,
+      }
+      maxios.post(this.$t("urlUpdateBooking"),params)
+        .then(response => {
+          console.error(response.data);
+          this.refreshActions = true;
+          // buttons become usable before the whole component is updated and so user can accept or refused multiple times, creating multiple proposals
+          // this.loadingBtnAction = false;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
 
+    },
+    refreshSelected(data){
       this.loadingDetails = true;
+      this.isExternalStandard = false;
+      this.currentIdBooking = null;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;
+    },
+    refreshSelectedBooking(data){
+      this.currentIdAsk = null;
+      this.currentIdBooking = data.idBooking;
+      this.message = -99;
+      this.isExternalStandard = true;
+      this.idBooking = data.idBooking;
+      this.refreshBookingActions = true;
     },
     reloadOnIcon(){
       this.loadingDetails = true;
@@ -535,6 +588,10 @@ export default {
       //this.refreshActions = true;
       this.refreshDetails = false;
     },
+    refreshBookingDetailsCompleted(data){
+      //this.refreshActions = true;
+      this.refreshBookingDetails = false;
+    },
     refreshThreadsDirectCompleted(){
       this.refreshThreadsDirect = false;
     },
@@ -548,6 +605,14 @@ export default {
       this.loadingDetails = false;
       this.refreshActions = false;
       this.loadingBtnAction = false;
+      this.refreshBookingActions = false;
+    },
+    refreshBookingActionsCompleted(booking){
+      console.log(booking);
+      this.loadingDetails = false;
+      this.loadingBtnAction = false;
+      this.refreshBookingActions = false;
+      this.newThreadCarpool = booking;
     },
     setCarpoolerIdentity(e) {
       this.carpoolersIdentity = {

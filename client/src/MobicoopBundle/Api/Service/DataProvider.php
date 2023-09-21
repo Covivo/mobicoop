@@ -219,8 +219,6 @@ class DataProvider
 
     /**
      * Set the delegate username (for delegate user authentication).
-     *
-     * @param string $username The delegated username
      */
     public function setUsernameDelegate(string $usernameDelegate)
     {
@@ -403,6 +401,7 @@ class DataProvider
             } else {
                 $headers = $this->getHeaders();
                 $clientResponse = $this->client->get($this->resource.'/'.$id, ['query' => $params, 'headers' => $headers]);
+
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
             if (200 == $clientResponse->getStatusCode()) {
@@ -785,7 +784,7 @@ class DataProvider
         return new Response();
     }
 
-    public function patch($id, string $operation, array $params = null, bool $reverseOperationId = false): Response
+    public function patch($id, string $operation = null, array $params = null, bool $reverseOperationId = false): Response
     {
         try {
             $headers = $this->getHeaders();
