@@ -42,6 +42,7 @@ class AnalyticManager
     private $darkTheme;
     private $uri;
     private $organization;
+    private $database;
     private $secret;
     private $dashboards;
     private $authManager;
@@ -62,6 +63,7 @@ class AnalyticManager
     ) {
         $this->uri = $params['url'];
         $this->organization = $params['organization'];
+        $this->database = $params['database'];
         $this->secret = $params['secret'];
         $this->dashboards = $params['dashboards'];
         $this->authManager = $authManager;
@@ -244,10 +246,10 @@ class AnalyticManager
     private function getOperationalValue(?int $id): string
     {
         if (null === $id) {
-            return strtolower($this->organization);
+            return $this->database;
         }
 
-        return strtolower($this->organization).'_'.strval($id);
+        return $this->database.'_'.strval($id);
     }
 
     private function getTerritoriesFromAuthItem(string $auth_item): array
