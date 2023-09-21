@@ -913,7 +913,7 @@ export default {
         })
         .then((response) => {
           if(response.status == 200){
-            // window.location = this.$t("mailboxUrl", {'askId':response.data.askId});
+            window.location = this.$t("mailboxUrl", {'askId':response.data.askId});
           }
           else{
             console.log(response);
@@ -937,7 +937,7 @@ export default {
         })
         .then((response) => {
           if(response.status == 200){
-            //window.location = this.$t("carpoolMailBoxUrl");
+            window.location = this.$t("carpoolMailBoxUrl");
           }
           else{
             console.log(response);

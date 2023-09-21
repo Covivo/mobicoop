@@ -116,9 +116,9 @@ class InternalMessageManager
     }
 
     /**
-     * @throws \Exception
-     *
      * @return Message
+     *
+     * @throws \Exception
      */
     public function createMessage(User $sender, array $recipients, string $text, ?string $title = null, ?Message $reply)
     {
@@ -239,19 +239,35 @@ class InternalMessageManager
         switch ($ask->getStatus()) {
             case Ask::STATUS_PENDING_AS_DRIVER:
             case Ask::STATUS_PENDING_AS_PASSENGER:
-                    $message->setText(Message::SYSTEM_ASK_POSTED);
+                $message->setText(Message::SYSTEM_ASK_POSTED);
 
-                    break;
+                break;
 
             case Ask::STATUS_ACCEPTED_AS_DRIVER:
             case Ask::STATUS_ACCEPTED_AS_PASSENGER:
                 $message->setText(Message::SYSTEM_ASK_ACCEPTED);
+                foreach ($ask->getAskHistories() as $askHistory) {
+                    if (is_null($askHistory->getMessage())) {
+                        continue;
+                    }
+                    $message->setMessage($askHistory->getMessage());
+
+                    break;
+                }
 
                 break;
 
             case Ask::STATUS_DECLINED_AS_DRIVER:
             case Ask::STATUS_DECLINED_AS_PASSENGER:
                 $message->setText(Message::SYSTEM_ASK_DECLINED);
+                foreach ($ask->getAskHistories() as $askHistory) {
+                    if (is_null($askHistory->getMessage())) {
+                        continue;
+                    }
+                    $message->setMessage($askHistory->getMessage());
+
+                    break;
+                }
 
                 break;
         }
