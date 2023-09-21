@@ -19,19 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
-
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Communication\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  *  A message.
@@ -39,115 +35,121 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 class Message implements ResourceInterface
 {
     /**
-     * @var int The id of this message.
+     * @var int the id of this message
      *
      * @Groups({"put","post","completeThread"})
      */
     private $id;
 
     /**
-     * @var string|null The iri of this message.
+     * @var null|string the iri of this message
      *
      * @Groups({"post","put","completeThread"})
      */
     private $iri;
 
     /**
-     * @var string The title of the message.
+     * @var string the title of the message
      *
      * @Groups({"put","post","completeThread"})
      */
     private $title;
 
     /**
-     * @var string The text of the message.
+     * @var string the text of the message
      *
      * @Groups({"put","post","completeThread"})
      */
     private $text;
 
     /**
-     * @var User The creator of the message.
+     * @var User the creator of the message
      *
      * @Groups({"put","post","get"})
      */
     private $user;
 
     /**
-     * @var AskHistory|null The ask history item if the message is related to an ask.
+     * @var null|AskHistory the ask history item if the message is related to an ask
      *
      * @Groups({"put","post","get","completeThread"})
      */
     private $askHistory;
 
     /**
-     * @var int|null Id of an Ask if this message is related to an Ask
+     * @var null|int Id of an Ask if this message is related to an Ask
      *
      * @Groups({"post"})
      */
     private $idAsk;
 
     /**
-     * @var int|null Id of an ad if this message is a first contact in a carpool context (id of the ad we want to respond)
+     * @var null|int Id of an ad if this message is a first contact in a carpool context (id of the ad we want to respond)
      *
      * @Groups({"post"})
      */
     private $idAdToRespond;
 
     /**
-     * @var int|null Id of a proposal if this message is a first contact in a carpool context (id of the search)
+     * @var null|int Id of a proposal if this message is a first contact in a carpool context (id of the search)
      *
      * @Groups({"post"})
      */
     private $idProposal;
-    
+
     /**
-     * @var int|null Id of a matching if this message is a first contact in a carpool context
+     * @var null|int Id of a matching if this message is a first contact in a carpool context
      *
      * @Groups({"post"})
      */
     private $idMatching;
-    
+
     /**
-     * @var Message|null The original message if the message is a reply to another message.
+     * @var null|Message the original message if the message is a reply to another message
      *
      * @Groups({"put","post","get"})
      */
     private $message;
 
     /**
-     * @var ArrayCollection The recipients linked with the message.
+     * @var ArrayCollection the recipients linked with the message
      *
      * @Groups({"put","post","get"})
      */
     private $recipients;
 
     /**
-     * @var \DateTimeInterface Creation date of the message.
+     * @var \DateTimeInterface creation date of the message
      * @Groups({"put","post","get"})
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the message.
+     * @var \DateTimeInterface updated date of the message
      * @Groups({"put","post","get"})
      */
     private $updatedDate;
-    
-    public function __construct($id=null)
+
+    /**
+     * @var null|bool indicate if the message is a message system
+     * @Groups({"put","post","get"})
+     */
+    private $messageSystem;
+
+    public function __construct($id = null)
     {
         if ($id) {
             $this->setId($id);
-            $this->setIri("/messages/".$id);
+            $this->setIri('/messages/'.$id);
         }
         $this->recipients = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
@@ -157,18 +159,17 @@ class Message implements ResourceInterface
     {
         return $this->iri;
     }
-    
+
     public function setIri($iri)
     {
         $this->iri = $iri;
     }
-    
 
     public function getTitle()
     {
         return $this->title;
     }
-    
+
     public function setTitle($title)
     {
         $this->title = $title;
@@ -178,7 +179,7 @@ class Message implements ResourceInterface
     {
         return $this->text;
     }
-    
+
     public function setText($text)
     {
         $this->text = $text;
@@ -188,7 +189,7 @@ class Message implements ResourceInterface
     {
         return $this->user;
     }
-    
+
     public function setUser($user)
     {
         $this->user = $user;
@@ -227,7 +228,7 @@ class Message implements ResourceInterface
 
         return $this;
     }
-    
+
     public function getIdProposal(): ?int
     {
         return $this->idProposal;
@@ -239,7 +240,7 @@ class Message implements ResourceInterface
 
         return $this;
     }
-    
+
     public function getIdMatching(): ?int
     {
         return $this->idMatching;
@@ -273,7 +274,7 @@ class Message implements ResourceInterface
     {
         return $this->recipients->getValues();
     }
-    
+
     public function addRecipient($recipient)
     {
         if (!$this->recipients->contains($recipient)) {
@@ -281,12 +282,12 @@ class Message implements ResourceInterface
             //$recipient->setMessage($this);
         }
     }
-    
+
     public function removeRecipient($recipient)
     {
         if ($this->recipients->contains($recipient)) {
             $this->recipients->removeElement($recipient);
-            
+
             // Is it useful in the bundle ????
             // // set the owning side to null (unless already changed)
             // if ($recipient->getMessage() === $this) {
@@ -313,6 +314,18 @@ class Message implements ResourceInterface
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function isMessageSystem(): ?bool
+    {
+        return $this->messageSystem;
+    }
+
+    public function setMessageSystem(?bool $isMessageSystem): self
+    {
+        $this->messageSystem = $isMessageSystem;
 
         return $this;
     }

@@ -1157,8 +1157,6 @@ class UserManager
                 ];
                 $messages[] = $currentThread;
             }
-
-            $messages[] = $currentThread;
         }
 
         // Sort with the last message received first
