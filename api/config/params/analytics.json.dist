@@ -1,7 +1,8 @@
 {
   "url": "",
   "secret": "",
-  "organization": "",
+  "organization": "Organization name like in the param file of the ETL",
+  "database": "database name if the instance",
   "dashboards":[
     {
       "paramId":1,
