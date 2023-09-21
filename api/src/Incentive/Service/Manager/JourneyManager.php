@@ -9,6 +9,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
+use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\ShortDistanceJourneyRepository;
 use App\Incentive\Resource\CeeSubscriptions;
@@ -142,8 +143,8 @@ class JourneyManager extends MobConnectManager
         $this->setDriver($proposal->getUser());
 
         $params = [
-            'Identifiant du trajet' => LongDistanceSubscription::COMMITMENT_PREFIX.$proposal->getId(),
-            'Date de publication du trajet' => $proposal->getCreatedDate()->format(self::DATE_FORMAT),
+            SpecificFields::JOURNEY_ID => LongDistanceSubscription::COMMITMENT_PREFIX.$proposal->getId(),
+            SpecificFields::JOURNEY_PUBLISH_DATE => $proposal->getCreatedDate()->format(self::DATE_FORMAT),
         ];
 
         $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
@@ -175,8 +176,8 @@ class JourneyManager extends MobConnectManager
         $this->setDriver($carpoolProof->getDriver());
 
         $params = [
-            'Identifiant du trajet' => $this->getRPCOperatorId($carpoolProof->getId()),
-            'Date de départ du trajet' => $carpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
+            SpecificFields::JOURNEY_ID => $this->getRPCOperatorId($carpoolProof->getId()),
+            SpecificFields::JOURNEY_START_DATE => $carpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
         ];
 
         $patchResponse = $this->patchSubscription($this->getDriver()->getShortDistanceSubscription()->getSubscriptionId(), $params);
@@ -288,7 +289,7 @@ class JourneyManager extends MobConnectManager
             }
 
             $params = [
-                "Attestation sur l'Honneur" => $this->getHonorCertificate(false),
+                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate(false),
             ];
 
             $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');
@@ -512,8 +513,8 @@ class JourneyManager extends MobConnectManager
         $patchResponse = $this->patchSubscription(
             $this->getDriverLongSubscriptionId(),
             [
-                'Date de partage des frais' => $this->_currentCarpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
-                "Attestation sur l'Honneur" => $this->getHonorCertificate(),
+                SpecificFields::JOURNEY_COST_SHARING_DATE => $this->_currentCarpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
+                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate(),
             ]
         );
 
