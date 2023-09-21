@@ -244,10 +244,6 @@ export default {
     },
     emit(){
       this.$emit("refreshCompleted");
-    },
-
-    cardColor(item) {
-
     }
   }
 }
