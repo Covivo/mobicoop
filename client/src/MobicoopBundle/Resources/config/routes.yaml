@@ -1626,7 +1626,7 @@ MoreAboutAlt3:
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAboutAlt3
 
 # display defi
-RezoPouce:
+defi:
   path:
     fr: /defi
     en: /defi
@@ -1634,7 +1634,7 @@ RezoPouce:
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDefi
 
   # display Rezo Pouce
-defi:
+RezoPouce:
   path:
     fr: /Rezo-Pouce
     en: /Rezo-Pouce
