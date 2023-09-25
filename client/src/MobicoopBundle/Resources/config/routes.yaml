@@ -1626,12 +1626,20 @@ MoreAboutAlt3:
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAboutAlt3
 
 # display defi
-defi:
+RezoPouce:
   path:
     fr: /defi
     en: /defi
     nl: /defi
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDefi
+
+  # display Rezo Pouce
+defi:
+  path:
+    fr: /Rezo-Pouce
+    en: /Rezo-Pouce
+    nl: /Rezo-Pouce
+  controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showRezoPouce
 
 # Get the last external articles (AJAX)
 editorial:
