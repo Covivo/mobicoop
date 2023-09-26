@@ -70,6 +70,8 @@ class CarpoolItemRepository
             ->andWhere('ci.itemDate = :date')
             ->setParameter('ask', $ask)
             ->setParameter('date', $date->format('Y-m-d'))
+            ->orderBy('ci.id', 'DESC')
+            ->setMaxResults(1)
         ;
 
         return $query->getQuery()->getOneOrNullResult();
