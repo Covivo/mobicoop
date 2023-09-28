@@ -42,7 +42,6 @@
 <script>
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/carpool/AcceptedCarpools/";
 import Carpool from "@components/user/profile/carpool/Carpool.vue";
-import { regular, punctual } from "@utils/constants";
 
 export default {
   i18n: {
@@ -60,6 +59,10 @@ export default {
     carpools: {
       type: Array,
       default: () => []
+    },
+    chronologicalSorted: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -78,17 +81,19 @@ export default {
   },
   methods: {
     buildCarpools() {
-      if (this.carpools) {
-        if (this.carpools && this.carpools.length) {
-          this.setPunctualCarpools();
-          this.setRegularCarpools();
-        }
+      if (this.carpools && this.carpools.length) {
+        this.setPunctualCarpools();
+        this.setRegularCarpools();
       }
     },
     setPunctualCarpools() {
       this.punctualCarpools = [...this.carpools]
         .filter(carpool => 1 === carpool.frequency)
         .sort((a, b) => this.sortCarpoolsByDate(a, b));
+
+      if (this.chronologicalSorted) {
+        this.punctualCarpools.reverse();
+      }
     },
     setRegularCarpools() {
       this.regularCarpools = [...this.carpools]
