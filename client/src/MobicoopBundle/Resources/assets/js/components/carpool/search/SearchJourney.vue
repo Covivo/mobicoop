@@ -369,16 +369,24 @@ export default {
   },
   computed: {
     computedDateFormat() {
-      console.log(this.dateTime);
+      console.log(`this.datetime (l-372): ${this.dateTime}`);
+
+      let datetime = null;
+
       if (this.dateTimePicker) {
-        return this.dateTime ? moment(this.dateTime).format(this.$t("fullDateTime"))
+        console.log(`this.locale (l-377): ${this.locale}`);
+        datetime = this.dateTime ? moment(this.dateTime).format(this.$t("fullDateTime"))
           : null;
       } else {
-        return this.date
+        console.log(`this.locale (l-381): ${this.locale}`);
+        datetime = this.date
           ? moment(this.date).format(this.$t("fullDate"))
           : null;
       }
 
+      console.log(`this.datetime (l-387): ${this.dateTime}`);
+
+      return datetime;
     },
     checkOutwardDate() {
       if (this.outwardDateClicked && !this.regular && !this.date && !this.punctualDateOptional) {
@@ -406,6 +414,12 @@ export default {
   mounted() {
     console.log(this.initOutwardDate);
     console.log(this.initOutwardTime);
+    console.log(
+      'mounted',
+      `this.locale (l-419): ${this.locale}`,
+      `this.datetime (l-420): ${this.dateTime}`,
+      `this.date (l-421): ${this.dateTime}`
+    );
   },
   created() {
     this.setMomentLocale();
@@ -419,9 +433,21 @@ export default {
     default:
       this.showDate = true;
     }
+    console.log(
+      'mounted',
+      `this.locale (l-438): ${this.locale}`,
+      `this.datetime (l-439): ${this.dateTime}`,
+      `this.date (l-440): ${this.dateTime}`
+    );
   },
   beforeUpdate() {
     this.setMomentLocale();
+    console.log(
+      'mounted',
+      `this.locale (l-447): ${this.locale}`,
+      `this.datetime (l-448): ${this.dateTime}`,
+      `this.date (l-449): ${this.dateTime}`
+    );
   },
   methods: {
     setMomentLocale() {
