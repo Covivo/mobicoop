@@ -46,6 +46,7 @@
           <v-tab-item>
             <CarpoolsByFrequency
               v-if="carpools && carpools.active"
+              :chronological-sorted="false"
               :carpools="carpools.active"
             />
           </v-tab-item>
@@ -53,6 +54,7 @@
           <v-tab-item>
             <CarpoolsByFrequency
               v-if="carpools && carpools.archived"
+              :chronological-sorted="true"
               :carpools="carpools.archived"
             />
           </v-tab-item>
