@@ -377,6 +377,7 @@ class PaymentManager
                 $treatedAsks[] = $carpoolItem->getAsk()->getId();
             }
         }
+
         // finally we return the array of PaymentItem
         return $items;
         // return [
@@ -839,7 +840,8 @@ class PaymentManager
     {
         // if no dates are sent, we use the origin of times till "now" ("now" = now less the margin time)
         if (is_null($fromDate)) {
-            $fromDate = new \DateTime('1970-01-01');
+            $fromDate = new \DateTime();
+            $fromDate->modify('-3 month');
             $fromDate->setTime(0, 0);
         }
         if (is_null($toDate)) {
@@ -1414,8 +1416,6 @@ class PaymentManager
      * Build a PaymentPayment from a CarpoolPayment.
      *
      * @param int $carpoolPaymentId The carpoolPayment
-     *
-     * @return PaymentPayment
      */
     public function buildPaymentPaymentFromCarpoolPayment(int $carpoolPaymentId): ?PaymentPayment
     {
