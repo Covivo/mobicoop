@@ -30,7 +30,7 @@ use App\Import\Admin\Interfaces\LineImportValidatorInterface;
  */
 class RelayPointLineImportValidator extends LineImportValidator implements LineImportValidatorInterface
 {
-    private const NUMBER_OF_COLUMN = 9;
+    private const NUMBER_OF_COLUMN = 10;
 
     private const FIELDS_VALIDATORS = [
         0 => [
@@ -47,6 +47,7 @@ class RelayPointLineImportValidator extends LineImportValidator implements LineI
         6 => ['App\Import\Admin\Service\Validator\EmptyOrNumericBooleanValidator'],
         7 => ['App\Import\Admin\Service\Validator\EmptyOrNumericBooleanValidator'],
         8 => ['App\Import\Admin\Service\Validator\EmptyOrNumericBooleanValidator'],
+        9 => ['App\Import\Admin\Service\Validator\EmptyOrStringValidator'],
     ];
 
     public function _getNumberOfColumn(): int
