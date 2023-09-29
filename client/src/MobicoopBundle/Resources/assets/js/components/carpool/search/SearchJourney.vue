@@ -375,13 +375,11 @@ export default {
 
       if (this.dateTimePicker) {
         console.log(`this.locale (l-377): ${this.locale}`);
-        datetime = this.dateTime ? moment(this.dateTime).format(this.$t("fullDateTime"))
-          : null;
+        datetime = this.dateTime ? moment(this.dateTime, this.$t("fullDateTime")) : null;
       } else {
-        console.log(`this.locale (l-381): ${this.locale}`);
-        datetime = this.date
-          ? moment(this.date).format(this.$t("fullDate"))
-          : null;
+        console.log(`this.locale (l-380): ${this.locale}`);
+        console.log(`this.date (l-381): ${this.date}`);
+        datetime = this.date ? moment(this.date, this.$t("fullDate")) : null;
       }
 
       console.log(`this.datetime (l-387): ${this.dateTime}`);
