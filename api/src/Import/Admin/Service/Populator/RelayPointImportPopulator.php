@@ -49,11 +49,12 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private const EXTERNAL_ID = 9;
 
     private const MESSAGE_OK = 'added';
-    private const MESSAGE_ALREADY_EXISTS = 'already exists';
+    private const MESSAGE_ALREADY_EXISTS = 'already exists and will be updated';
     private const RELAYPOINT_TYPE_UNKNOWN = 'RelayPointType unknown for';
 
     private $_importManager;
     private $_messages;
+    private $_existingRelayPointId;
 
     /**
      * @var User
@@ -87,20 +88,46 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     protected function _addEntity(array $line)
     {
         if (!$this->_canAddRelayPoint($line)) {
+            $this->_updateRelayPoint($line);
+
             return;
         }
 
+        $this->_addRelayPoint($line);
+    }
+
+    private function _updateRelayPoint(array $line)
+    {
+        if (is_null($this->_existingRelayPointId)) {
+            return;
+        }
+
+        if (!$relaypoint = $this->_importManager->getRelayPointById($this->_existingRelayPointId)) {
+            return;
+        }
+
+        if (!$relaypoint = $this->_fillRelayPoint($relaypoint, $line)) {
+            return;
+        }
+
+        try {
+            $this->_importManager->updateRelayPoint($relaypoint);
+        } catch (\Exception $e) {
+            $this->_messages[] = $e->getMessage();
+
+            return;
+        }
+    }
+
+    private function _fillRelayPoint(RelayPoint $relaypoint, array $line): ?RelayPoint
+    {
         $relayPointType = $this->_getRelayPointType($line[self::TYPE]);
         if (is_null($relayPointType)) {
             $this->addMessage(self::RELAYPOINT_TYPE_UNKNOWN.' '.$this->_getLabel($line).' Type : '.$line[self::TYPE]);
 
-            return;
+            return null;
         }
 
-        $entity = $this->getEntity();
-
-        /** @var RelayPoint $relaypoint */
-        $relaypoint = new $entity();
         $relaypoint->setCreatorId($this->_requester->getId());
         $relaypoint->setName($line[self::NAME]);
         $relaypoint->setRelayPointType($relayPointType);
@@ -122,6 +149,20 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         $address->setLongitude((float) $line[self::LONGITUDE]);
 
         $relaypoint->setAddress($address);
+
+        return $relaypoint;
+    }
+
+    private function _addRelayPoint(array $line)
+    {
+        $entity = $this->getEntity();
+
+        /** @var RelayPoint $relaypoint */
+        $relaypoint = new $entity();
+
+        if (!$relaypoint = $this->_fillRelayPoint($relaypoint, $line)) {
+            return;
+        }
 
         try {
             $this->_importManager->addRelayPoint($relaypoint);
@@ -162,6 +203,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private function _canAddRelayPoint(array $line): bool
     {
         if ($relaypoint = $this->_checkRelayPointAlreadyExists((float) $line[self::LATITUDE], (float) $line[self::LONGITUDE], $line[self::EXTERNAL_ID])) {
+            $this->_existingRelayPointId = $relaypoint->getId();
             $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS.' -> id = '.$relaypoint->getId();
 
             return false;

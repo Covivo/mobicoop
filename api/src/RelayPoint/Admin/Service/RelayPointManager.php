@@ -66,6 +66,11 @@ class RelayPointManager
         $this->relayPointRepository = $relayPointRepository;
     }
 
+    public function getById(int $id): ?RelayPoint
+    {
+        return $this->relayPointRepository->find($id);
+    }
+
     /**
      * Add an relay point.
      *

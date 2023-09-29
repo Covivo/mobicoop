@@ -65,6 +65,19 @@ class ImportManager
         return $this->_relayPointManager->addRelayPoint($relayPoint);
     }
 
+    public function updateRelayPoint(RelayPoint $relayPoint): ?RelayPoint
+    {
+        $this->_entityManager->persist($relayPoint);
+        $this->_entityManager->flush();
+
+        return $relayPoint;
+    }
+
+    public function getRelayPointById(int $id)
+    {
+        return $this->_relayPointManager->getById($id);
+    }
+
     public function getByLatLon(float $lat, float $lon)
     {
         return $this->_relayPointManager->getByLatLon(round($lat, 6), round($lon, 6));
