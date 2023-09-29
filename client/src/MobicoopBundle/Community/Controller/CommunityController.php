@@ -46,17 +46,19 @@ class CommunityController extends AbstractController
     private $createFromFront;
     private $communityUserDirectMessage;
     private $defaultNbCommunitiesPerPage;
+    private $communityWidget;
 
     /**
      * Constructor.
      *
      * @param string $createFromFront
      */
-    public function __construct(bool $createFromFront, bool $communityUserDirectMessage, int $defaultNbCommunitiesPerPage)
+    public function __construct(bool $createFromFront, bool $communityUserDirectMessage, int $defaultNbCommunitiesPerPage, bool $communityWidget)
     {
         $this->createFromFront = $createFromFront;
         $this->communityUserDirectMessage = $communityUserDirectMessage;
         $this->defaultNbCommunitiesPerPage = $defaultNbCommunitiesPerPage;
+        $this->communityWidget = $communityWidget;
     }
 
     /**
@@ -121,14 +123,17 @@ class CommunityController extends AbstractController
                     if ($image = $imageManager->createImage($image)) {
                         return new Response();
                     }
+
                     // If an error occur on upload image, the community is already create, so we delete her
                     // $communityManager->deleteCommunity($community->getId());
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
+
                 // return error if community post didn't work
                 return new Response(json_encode('error.community.create'));
             }
+
             // return error because name already exists
             return new Response(json_encode('error.community.name'));
         }
@@ -200,6 +205,7 @@ class CommunityController extends AbstractController
             'communityUserStatus' => $community->getMemberStatus(),
             'isMember' => $community->isMember(),
             'communityUserDirectMessage' => $this->communityUserDirectMessage,
+            'communityWidget' => $this->communityWidget,
         ]);
     }
 
@@ -321,8 +327,6 @@ class CommunityController extends AbstractController
     /**
      * Get all users of a community
      * Ajax.
-     *
-     * @param int $id
      */
     public function communityMemberList(Request $request, CommunityManager $communityManager)
     {
