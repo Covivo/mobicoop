@@ -111,7 +111,7 @@
           :frequency="frequency"
           :payment-item-id="carpooler.payment.itemId"
           :payment-electronic-active="paymentElectronicActive"
-        />        
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -169,20 +169,22 @@ export default {
   },
   data () {
     return {
-      
+
     }
   },
   computed: {
     origin () {
       return {
         streetAddress: this.carpooler.waypoints.find(el => el.origin === true)['streetAddress'],
-        addressLocality: this.carpooler.waypoints.find(el => el.origin === true)['addressLocality']
+        addressLocality: this.carpooler.waypoints.find(el => el.origin === true)['addressLocality'],
+        name: this.carpooler.waypoints.find(el => el.origin === true)['name'],
       }
     },
     destination () {
       return {
         streetAddress: this.carpooler.waypoints.find(el => el.destination === true)['streetAddress'],
-        addressLocality: this.carpooler.waypoints.find(el => el.destination === true)['addressLocality']
+        addressLocality: this.carpooler.waypoints.find(el => el.destination === true)['addressLocality'],
+        name: this.carpooler.waypoints.find(el => el.destination === true)['name']
       }
     }
   }
