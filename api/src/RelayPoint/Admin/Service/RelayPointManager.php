@@ -206,6 +206,11 @@ class RelayPointManager
         return $this->relayPointRepository->getByLatLon(round($lat, 6), round($lon, 6));
     }
 
+    public function getByLatLonOrExternalId(float $lat, float $lon, string $externalId)
+    {
+        return $this->relayPointRepository->getByLatLonOrExternalId(round($lat, 6), round($lon, 6), $externalId);
+    }
+
     public function getRelayPointTypeById(int $id)
     {
         return $this->relayPointTypeRepository->find($id);

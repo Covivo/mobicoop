@@ -144,9 +144,14 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         return $line[self::NAME].' ('.$line[self::LATITUDE].';'.$line[self::LONGITUDE].')';
     }
 
-    private function _checkRelayPointAlreadyExists(float $latitude, float $longitude): ?RelayPoint
+    private function _checkRelayPointAlreadyExists(float $latitude, float $longitude, string $externalId): ?RelayPoint
     {
-        $results = $this->_importManager->getByLatLon($latitude, $longitude);
+        if ('' == trim($externalId)) {
+            $results = $this->_importManager->getByLatLon($latitude, $longitude);
+        } else {
+            $results = $this->_importManager->getByLatLonOrExternalId($latitude, $longitude, $externalId);
+        }
+
         if (is_array($results) && count($results) > 0) {
             return $results[0];
         }
@@ -156,7 +161,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
 
     private function _canAddRelayPoint(array $line): bool
     {
-        if ($relaypoint = $this->_checkRelayPointAlreadyExists((float) $line[self::LATITUDE], (float) $line[self::LONGITUDE])) {
+        if ($relaypoint = $this->_checkRelayPointAlreadyExists((float) $line[self::LATITUDE], (float) $line[self::LONGITUDE], $line[self::EXTERNAL_ID])) {
             $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS.' -> id = '.$relaypoint->getId();
 
             return false;

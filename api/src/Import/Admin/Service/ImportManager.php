@@ -70,6 +70,11 @@ class ImportManager
         return $this->_relayPointManager->getByLatLon(round($lat, 6), round($lon, 6));
     }
 
+    public function getByLatLonOrExternalId(float $lat, float $lon, string $externalId)
+    {
+        return $this->_relayPointManager->getByLatLonOrExternalId(round($lat, 6), round($lon, 6), $externalId);
+    }
+
     public function getRelayPointTypeById(int $id)
     {
         return $this->_relayPointManager->getRelayPointTypeById($id);
