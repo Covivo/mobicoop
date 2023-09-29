@@ -49,7 +49,8 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private const EXTERNAL_ID = 9;
 
     private const MESSAGE_OK = 'added';
-    private const MESSAGE_ALREADY_EXISTS = 'already exists and will be updated';
+    private const MESSAGE_ALREADY_EXISTS = 'already exists and will be ignored';
+    private const MESSAGE_ALREADY_EXISTS_WILL_BE_UPDATED = 'already exists and will be updated';
     private const RELAYPOINT_TYPE_UNKNOWN = 'RelayPointType unknown for';
 
     private $_importManager;
@@ -106,9 +107,17 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
             return;
         }
 
+        if (!$this->_canUpdateRelayPoint($relaypoint, $line[self::EXTERNAL_ID])) {
+            $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS.' -> id = '.$relaypoint->getId();
+
+            return;
+        }
+
         if (!$relaypoint = $this->_fillRelayPoint($relaypoint, $line)) {
             return;
         }
+
+        $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS_WILL_BE_UPDATED.' -> id = '.$relaypoint->getId().', externalID = '.$relaypoint->getExternalId();
 
         try {
             $this->_importManager->updateRelayPoint($relaypoint);
@@ -200,11 +209,15 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         return null;
     }
 
+    private function _canUpdateRelayPoint(RelayPoint $relaypoint, string $lineExternalId): bool
+    {
+        return $relaypoint->getExternalId() === $lineExternalId;
+    }
+
     private function _canAddRelayPoint(array $line): bool
     {
         if ($relaypoint = $this->_checkRelayPointAlreadyExists((float) $line[self::LATITUDE], (float) $line[self::LONGITUDE], $line[self::EXTERNAL_ID])) {
             $this->_existingRelayPointId = $relaypoint->getId();
-            $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS.' -> id = '.$relaypoint->getId();
 
             return false;
         }
