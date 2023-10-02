@@ -48,6 +48,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private const OFFICIAL = 8;
     private const PRIVATE = 9;
     private const EXTERNAL_ID = 10;
+    private const EXTERNAL_AUTHOR = 11;
 
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists and will be ignored';
@@ -151,6 +152,10 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
 
         if ('' !== trim($line[self::EXTERNAL_ID])) {
             $relaypoint->setExternalId($line[self::EXTERNAL_ID]);
+        }
+
+        if ('' !== trim($line[self::EXTERNAL_AUTHOR])) {
+            $relaypoint->setExternalAuthor($line[self::EXTERNAL_AUTHOR]);
         }
 
         $relaypoint->setImportedDate(new \DateTime('now'));
