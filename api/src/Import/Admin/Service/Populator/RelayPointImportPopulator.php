@@ -42,11 +42,12 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private const LATITUDE = 2;
     private const LONGITUDE = 3;
     private const PLACES = 4;
-    private const SECURED = 5;
-    private const FREE = 6;
-    private const OFFICIAL = 7;
-    private const PRIVATE = 8;
-    private const EXTERNAL_ID = 9;
+    private const DISABLED_PLACES = 5;
+    private const SECURED = 6;
+    private const FREE = 7;
+    private const OFFICIAL = 8;
+    private const PRIVATE = 9;
+    private const EXTERNAL_ID = 10;
 
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists and will be ignored';
@@ -141,6 +142,7 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         $relaypoint->setName($line[self::NAME]);
         $relaypoint->setRelayPointType($relayPointType);
         $relaypoint->setPlaces((int) $line[self::PLACES]);
+        $relaypoint->setPlacesDisabled((int) $line[self::DISABLED_PLACES]);
         $relaypoint->setSecured((bool) $line[self::SECURED]);
         $relaypoint->setFree((bool) $line[self::FREE]);
         $relaypoint->setOfficial((bool) $line[self::OFFICIAL]);
