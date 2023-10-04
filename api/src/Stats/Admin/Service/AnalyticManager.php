@@ -90,15 +90,11 @@ class AnalyticManager
 
     public function getAnalytic(string $type): Analytic
     {
-        echo 'getAnalytic'.PHP_EOL;
-        echo $type.PHP_EOL;
+        $this->_validParamsRequest();
 
         $analytic = new Analytic();
         $analytic->setType($type);
         $dashboard = $this->_getDashboard();
-        var_dump($dashboard);
-
-        exit;
 
         list($territories, $community) = $this->_defineFilters($analytic);
 
@@ -130,6 +126,16 @@ class AnalyticManager
         $analytic->setForceDefaultTerritoryId($this->_forceDefaultTerritoryId);
 
         return $analytic;
+    }
+
+    private function _validParamsRequest()
+    {
+        if (!in_array($this->_paramType, Analytic::AUTHORIZED_TYPES)) {
+            throw new \LogicException('Analytic type is not a valid type must be in '.json_encode(Analytic::AUTHORIZED_TYPES));
+        }
+        if (!in_array($this->_paramPeriodicity, Analytic::AUTHORIZED_PERIODICITY)) {
+            throw new \LogicException('Analytic periodicity is not a valid type must be in '.json_encode(Analytic::AUTHORIZED_PERIODICITY));
+        }
     }
 
     private function _defineFilters($analytic): array
