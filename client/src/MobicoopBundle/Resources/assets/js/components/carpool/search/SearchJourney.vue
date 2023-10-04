@@ -241,7 +241,6 @@ import moment from "moment";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 
-
 export default {
   i18n: {
     messages: {
@@ -369,24 +368,11 @@ export default {
   },
   computed: {
     computedDateFormat() {
-      console.log(`this.datetime (l-372): ${this.dateTime}`);
-
-      let datetime = null;
-
       if (this.dateTimePicker) {
-        console.log(`this.locale (l-377): ${this.locale}`);
-        datetime = this.dateTime ? moment(this.dateTime).format(this.$t("fullDateTime"))
-          : null;
+        return this.dateTime ? moment(this.dateTime, this.$t('defaultDatetime')).format(this.$t("fullDateTime")) : null;
       } else {
-        console.log(`this.locale (l-381): ${this.locale}`);
-        datetime = this.date
-          ? moment(this.date).format(this.$t("fullDate"))
-          : null;
+        return this.date ? moment(this.date, this.$t('defaultDate')).format(this.$t("fullDate")) : null;
       }
-
-      console.log(`this.datetime (l-387): ${this.dateTime}`);
-
-      return datetime;
     },
     checkOutwardDate() {
       if (this.outwardDateClicked && !this.regular && !this.date && !this.punctualDateOptional) {
@@ -411,16 +397,6 @@ export default {
       this.destination = this.initDestination;
     }
   },
-  mounted() {
-    console.log(this.initOutwardDate);
-    console.log(this.initOutwardTime);
-    console.log(
-      'mounted',
-      `this.locale (l-419): ${this.locale}`,
-      `this.datetime (l-420): ${this.dateTime}`,
-      `this.date (l-421): ${this.dateTime}`
-    );
-  },
   created() {
     this.setMomentLocale();
     switch (this.type) {
@@ -433,21 +409,9 @@ export default {
     default:
       this.showDate = true;
     }
-    console.log(
-      'mounted',
-      `this.locale (l-438): ${this.locale}`,
-      `this.datetime (l-439): ${this.dateTime}`,
-      `this.date (l-440): ${this.dateTime}`
-    );
   },
   beforeUpdate() {
     this.setMomentLocale();
-    console.log(
-      'mounted',
-      `this.locale (l-447): ${this.locale}`,
-      `this.datetime (l-448): ${this.dateTime}`,
-      `this.date (l-449): ${this.dateTime}`
-    );
   },
   methods: {
     setMomentLocale() {
