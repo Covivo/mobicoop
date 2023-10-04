@@ -73,15 +73,6 @@ class Analytic
         'yearly',
     ];
 
-    public const DEFAULT_ID = 999999999999;
-
-    /**
-     * @var int The id of this Analytic
-     *
-     * @Groups({"aRead"})
-     */
-    private $id;
-
     /**
      * @var string The type of this Analytic
      *
@@ -132,26 +123,6 @@ class Analytic
      * @Groups({"aRead"})
      */
     private $forceDefaultTerritoryId;
-
-    public function __construct($id = null)
-    {
-        $this->id = self::DEFAULT_ID;
-        if ($id) {
-            $this->id = $id;
-        }
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
 
     public function getType(): ?string
     {

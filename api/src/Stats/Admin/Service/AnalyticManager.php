@@ -94,6 +94,7 @@ class AnalyticManager
 
         $analytic = new Analytic();
         $analytic->setType($type);
+        $analytic->setPeriodicity($this->_paramPeriodicity);
         $dashboard = $this->_getDashboard();
 
         list($territories, $community) = $this->_defineFilters($analytic);
@@ -106,7 +107,7 @@ class AnalyticManager
         }
 
         $payload = [
-            'resource' => ['dashboard' => $dashboard['dashboardId']],
+            'resource' => ['dashboard' => $dashboard['visualDashboardId']],
             'params' => [
                 'idterritoryoperational' => $territories,
                 'idcommunityoperational' => $community,
