@@ -72,6 +72,10 @@
     "mobicoop": {
       "link": "https://pro.mobicoop.fr/",
       "title": "pro.mobicoop.fr"
+    },
+    "rezoPouce": {
+      "title": "Présentation du service Rezo Pouce",
+      "link": "/Rezo-Pouce"
     }
   },
   "cooperative": {

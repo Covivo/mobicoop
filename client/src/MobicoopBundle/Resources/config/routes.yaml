@@ -1633,6 +1633,14 @@ defi:
     nl: /defi
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDefi
 
+  # display Rezo Pouce
+RezoPouce:
+  path:
+    fr: /Rezo-Pouce
+    en: /Rezo-Pouce
+    nl: /Rezo-Pouce
+  controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showRezoPouce
+
 # Get the last external articles (AJAX)
 editorial:
   methods: [POST]
