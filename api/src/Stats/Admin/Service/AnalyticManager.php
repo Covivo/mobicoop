@@ -36,7 +36,8 @@ class AnalyticManager
 {
     private const ROLE_ADMIN = 'ROLE_ADMIN';
     private const ROLE_COMMUNITY_MANAGER_PUBLIC = 'ROLE_COMMUNITY_MANAGER_PUBLIC';
-    private $paramId;
+    private $paramType;
+    private $_paramPeriodicity;
     private $territoryIdParam;
     private $communityIdParam;
     private $darkTheme;
@@ -69,7 +70,8 @@ class AnalyticManager
         $this->authManager = $authManager;
 
         $request = $requestStack->getCurrentRequest();
-        $this->paramId = $request->get('id');
+        $this->paramType = $request->get('id');
+        $this->_paramPeriodicity = $request->query->get('periodicity', null);
         $communityIdParam = $request->query->get('communityId', null);
         $this->communityIdParam = is_null($communityIdParam) ? null : intval($communityIdParam);
         $territoryIdParam = $request->query->get('territoryId', null);
@@ -86,11 +88,17 @@ class AnalyticManager
         return [];
     }
 
-    public function getAnalytic(int $id): Analytic
+    public function getAnalytic(string $type): Analytic
     {
+        echo 'getAnalytic'.PHP_EOL;
+        echo $type.PHP_EOL;
+
         $analytic = new Analytic();
-        $analytic->setId($id);
+        $analytic->setType($type);
         $dashboard = $this->getDashboard();
+        var_dump($dashboard);
+
+        exit;
 
         list($territories, $community) = $this->defineFilters($analytic);
 
@@ -225,9 +233,15 @@ class AnalyticManager
 
     private function getDashboard(): ?array
     {
-        foreach ($this->dashboards as $dashboard) {
-            if ($dashboard['paramId'] == $this->paramId) {
-                return $dashboard;
+        foreach ($this->dashboards as $typeDashboard) {
+            if (isset($typeDashboard[$this->paramType])) {
+                foreach ($typeDashboard[$this->paramType] as $dashboard) {
+                    if ($dashboard['periodicity'] == $this->_paramPeriodicity) {
+                        return $dashboard;
+                    }
+                }
+
+                break;
             }
         }
 

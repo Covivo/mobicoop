@@ -5,28 +5,20 @@
     "database": "database name if the instance",
     "dashboards": [
         {
-            "daily": [
+            "type": [
                 {
-                    "type": 1,
+                    "periodicity": "daily",
                     "visualDashboardId": 35,
                     "auth_item": "the_right_to_read"
-                }
-            ]
-        },
-        {
-            "monthly": [
+                },
                 {
-                    "type": 1,
-                    "visualDashboardId": 36,
+                    "periodicity": "monthly",
+                    "visualDashboardId": 35,
                     "auth_item": "the_right_to_read"
-                }
-            ]
-        },
-        {
-            "yearly": [
+                },
                 {
-                    "type": 1,
-                    "visualDashboardId": 37,
+                    "periodicity": "yearly",
+                    "visualDashboardId": 35,
                     "auth_item": "the_right_to_read"
                 }
             ]
