@@ -63,7 +63,15 @@ export default {
     chronologicalSorted: {
       type: Boolean,
       default: true
-    }
+    },
+    paymentElectronicActive: {
+      type: Boolean,
+      default: false
+    },
+    user: {
+      type: Object,
+      default: null
+    },
   },
   data() {
     return {
@@ -89,7 +97,7 @@ export default {
     setPunctualCarpools() {
       this.punctualCarpools = [...this.carpools]
         .filter(carpool => 1 === carpool.frequency)
-        .sort((a, b) => this.sortCarpoolsByDate(a, b));
+        .sort((a, b) => new Date(`${a.outwardDate} ${a.passengers.outwardTime}`) - new Date(`${b.outwardDate} ${b.outwardTime}`));
 
       if (this.chronologicalSorted) {
         this.punctualCarpools.reverse();
@@ -98,25 +106,6 @@ export default {
     setRegularCarpools() {
       this.regularCarpools = [...this.carpools]
         .filter(carpool => 2 === carpool.frequency);
-    },
-    sortCarpoolsByDate(a, b) {
-      switch (true) {
-      // Si a est conducteur et b passager
-      case a.roleDriver && b.rolePassenger: return new Date(`${b.passengers[0].fromDate} ${b.passengers[0].startTime}`) - new Date(`${a.driver.fromDate} ${a.driver.startTime}`);
-
-      // Si a est conducteur et b conducteur
-      case a.roleDriver && b.roleDriver: return new Date(`${b.passengers[0].fromDate} ${b.passengers[0].startTime}`) - new Date(`${a.passengers[0].fromDate} ${a.passengers[0].startTime}`);
-
-      // Si a est passager et b conducteur
-      case a.rolePassenger && b.roleDriver: return new Date(`${b.passengers[0].fromDate} ${b.passengers[0].startTime}`) - new Date(`${a.driver.fromDate} ${a.driver.startTime}`);
-
-      // si b est passager est b passager
-      case a.rolePassenger && b.rolePassenger: return new Date(`${b.driver.fromDate} ${b.driver.startTime}`) - new Date(`${a.driver.fromDate} ${a.driver.startTime}`);
-
-      default:
-        // This use case should never happen
-        break;
-      }
     }
   }
 }

@@ -48,6 +48,8 @@
               v-if="carpools && carpools.active"
               :chronological-sorted="false"
               :carpools="carpools.active"
+              :payment-electronic-active="paymentElectronicActive"
+              :user="user"
             />
           </v-tab-item>
           <v-tab>{{ $t('carpools.archived') }}</v-tab>
@@ -56,6 +58,8 @@
               v-if="carpools && carpools.archived"
               :chronological-sorted="true"
               :carpools="carpools.archived"
+              :payment-electronic-active="paymentElectronicActive"
+              :user="user"
             />
           </v-tab-item>
         </v-tabs>
