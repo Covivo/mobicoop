@@ -66,6 +66,11 @@ class RelayPointManager
         $this->relayPointRepository = $relayPointRepository;
     }
 
+    public function getById(int $id): ?RelayPoint
+    {
+        return $this->relayPointRepository->find($id);
+    }
+
     /**
      * Add an relay point.
      *
@@ -204,6 +209,11 @@ class RelayPointManager
     public function getByLatLon(float $lat, float $lon)
     {
         return $this->relayPointRepository->getByLatLon(round($lat, 6), round($lon, 6));
+    }
+
+    public function getByLatLonOrExternalId(float $lat, float $lon, string $externalId)
+    {
+        return $this->relayPointRepository->getByLatLonOrExternalId(round($lat, 6), round($lon, 6), $externalId);
     }
 
     public function getRelayPointTypeById(int $id)

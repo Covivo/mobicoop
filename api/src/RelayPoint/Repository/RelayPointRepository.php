@@ -188,4 +188,17 @@ class RelayPointRepository
 
         return $query->getQuery()->getResult();
     }
+
+    public function getByLatLonOrExternalId(float $lat, float $lon, string $externalId)
+    {
+        $query = $this->repository->createQueryBuilder('rp');
+        $query->join('rp.address', 'a')
+            ->where('(a.latitude = :lat and a.longitude = :lon) or rp.externalId = :externalId')
+            ->setParameter('lat', $lat)
+            ->setParameter('lon', $lon)
+            ->setParameter('externalId', $externalId)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }

@@ -50,6 +50,7 @@
             :is-widget="true"
             :date-time-picker="dateTimePicker"
             :default-outward-date="defaultOutwardDate"
+            :default-outward-time="defaultOutwardTime"
           />
         </v-col>
       </v-row>
@@ -145,9 +146,14 @@ export default {
         return false;
     },
     defaultOutwardDate() {
-      const now = new Date();
+      const now = moment();
 
-      return now > new Date(this.event.fromDate.date) ? now.toString() : this.event.fromDate.date;
+      return now > moment(this.event.fromDate.date) ? now.format('YYYY-MM-DD HH:mm') : this.event.fromDate.date;
+    },
+    defaultOutwardTime() {
+      const now = moment();
+
+      return now > moment(this.event.fromDate.date) ? now.format('HH:mm') : this.event.fromDate.date;
     },
   },
   created() {
