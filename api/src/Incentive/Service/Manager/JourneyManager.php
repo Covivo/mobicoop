@@ -416,12 +416,14 @@ class JourneyManager extends MobConnectManager
         // Use case where there is not yet a LD journey associated with the carpoolitem
         if (is_null($journey)) {
             if ($this->_currentCarpoolProof->isEECCompliant()) {
+                // Processes for journeys that are not the commitment journey
                 $this->_addLDJourneyToSubscription();
             }
 
             return;
         }
 
+        // Process for commitment journey
         switch (true) {
             case $this->_currentCarpoolProof->isStatusPending(): return;
 
@@ -437,8 +439,6 @@ class JourneyManager extends MobConnectManager
         if ($this->_currentSubscription->isCommitmentJourney($journey)) {
             $this->_updateSubscriptionForCommitmentJourney();
         }
-
-        // Todo and what's append if it's not the commitment journey ?
     }
 
     private function carpoolItemAlreadyTreated(): bool
