@@ -437,6 +437,8 @@ class JourneyManager extends MobConnectManager
         if ($this->_currentSubscription->isCommitmentJourney($journey)) {
             $this->_updateSubscriptionForCommitmentJourney();
         }
+
+        // Todo and what's append if it's not the commitment journey ?
     }
 
     private function carpoolItemAlreadyTreated(): bool
@@ -520,6 +522,7 @@ class JourneyManager extends MobConnectManager
 
         $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
         $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
+
         $this->_currentSubscription->setExpirationDate($this->getExpirationDate());
 
         $this->_currentSubscription->getCommitmentProofJourney()->updateJourney(
