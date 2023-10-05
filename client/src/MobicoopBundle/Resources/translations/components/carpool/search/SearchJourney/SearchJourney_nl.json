@@ -49,5 +49,7 @@
         "label": "Vertrekplaats"
     },
     "subtitle": "Een gebruiksvriendelijke en solidaire carpooldienst in de buurt.<br />Vind vanaf nu uw carpooling en bied uw traject aan.",
-    "title": "Mobicoop"
+    "title": "Mobicoop",
+    "defaultDate": "YYYY-MM-DD",
+    "defaultDatetime": "YYYY-MM-DD HH:mm"
 }

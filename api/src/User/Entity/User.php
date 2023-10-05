@@ -62,7 +62,6 @@ use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
-use App\User\Admin\Controller\DeleteUsers;
 use App\User\Controller\EECSubscription;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
@@ -358,9 +357,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              }
  *          },
  *          "ADMIN_delete_filtered"={
- *              "path"="/admin/users",
- *              "controller"=DeleteUsers::class,
- *              "method"="DELETE",
+ *              "path"="/admin/users/delete",
+ *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_users_delete',object)",
@@ -3292,6 +3290,7 @@ class User implements UserInterface, EquatableInterface
                 $this->roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
+
         // Security : if an user has no roles but it shouldn't be possible
         return $this->roles ? array_unique($this->roles) : [AuthItem::ROLE_USER_REGISTERED_FULL];
     }
@@ -3306,9 +3305,7 @@ class User implements UserInterface, EquatableInterface
         return $this->email;
     }
 
-    public function eraseCredentials()
-    {
-    }
+    public function eraseCredentials() {}
 
     public function isEqualTo(UserInterface $user)
     {

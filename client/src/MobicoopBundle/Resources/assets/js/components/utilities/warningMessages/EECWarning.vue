@@ -55,8 +55,6 @@ let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
-const STATUS_ACCEPTED = 2;
-
 export default {
   i18n: {
     messages: {
@@ -111,7 +109,7 @@ export default {
       switch (this.carpoolersIdentity.sender.role) {
       case DRIVER:
         // Driver with EEC status and passenger does not have a validated identity
-        if (this.carpoolersIdentity.sender.eecStatus && STATUS_ACCEPTED != this.carpoolersIdentity.recipient.bankingIdentityStatus) {
+        if (this.carpoolersIdentity.sender.eecStatus && !this.carpoolersIdentity.recipient.bankingIdentityStatus) {
           this.isMessageDisplayed = true;
           this.warningMessages.push(this.$t('eecWarning.driverWithEecStatusPassengerWithoutValidatedIdentity', recipientData));
         }
@@ -120,7 +118,7 @@ export default {
 
       case PASSENGER:
         // Passenger does not have identity validated
-        if (STATUS_ACCEPTED != this.carpoolersIdentity.recipient.bankingIdentityStatus) {
+        if (!this.carpoolersIdentity.sender.bankingIdentityStatus) {
           this.isMessageDisplayed = true;
           this.warningMessages.push(this.$t('eecWarning.passengerWithoutValidatedIdentity', recipientData));
         }

@@ -42,17 +42,22 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private const LATITUDE = 2;
     private const LONGITUDE = 3;
     private const PLACES = 4;
-    private const SECURED = 5;
-    private const FREE = 6;
-    private const OFFICIAL = 7;
-    private const PRIVATE = 8;
+    private const DISABLED_PLACES = 5;
+    private const SECURED = 6;
+    private const FREE = 7;
+    private const OFFICIAL = 8;
+    private const PRIVATE = 9;
+    private const EXTERNAL_ID = 10;
+    private const EXTERNAL_AUTHOR = 11;
 
     private const MESSAGE_OK = 'added';
-    private const MESSAGE_ALREADY_EXISTS = 'already exists';
+    private const MESSAGE_ALREADY_EXISTS = 'already exists and will be ignored';
+    private const MESSAGE_ALREADY_EXISTS_WILL_BE_UPDATED = 'already exists and will be updated';
     private const RELAYPOINT_TYPE_UNKNOWN = 'RelayPointType unknown for';
 
     private $_importManager;
     private $_messages;
+    private $_existingRelayPointId;
 
     /**
      * @var User
@@ -86,29 +91,73 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     protected function _addEntity(array $line)
     {
         if (!$this->_canAddRelayPoint($line)) {
+            $this->_updateRelayPoint($line);
+
             return;
         }
 
+        $this->_addRelayPoint($line);
+    }
+
+    private function _updateRelayPoint(array $line)
+    {
+        if (is_null($this->_existingRelayPointId)) {
+            return;
+        }
+
+        if (!$relaypoint = $this->_importManager->getRelayPointById($this->_existingRelayPointId)) {
+            return;
+        }
+
+        if (!$this->_canUpdateRelayPoint($relaypoint, $line[self::EXTERNAL_ID])) {
+            $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS.' -> id = '.$relaypoint->getId();
+
+            return;
+        }
+
+        if (!$relaypoint = $this->_fillRelayPoint($relaypoint, $line)) {
+            return;
+        }
+
+        $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS_WILL_BE_UPDATED.' -> id = '.$relaypoint->getId().', externalID = '.$relaypoint->getExternalId();
+
+        try {
+            $this->_importManager->updateRelayPoint($relaypoint);
+        } catch (\Exception $e) {
+            $this->_messages[] = $e->getMessage();
+
+            return;
+        }
+    }
+
+    private function _fillRelayPoint(RelayPoint $relaypoint, array $line): ?RelayPoint
+    {
         $relayPointType = $this->_getRelayPointType($line[self::TYPE]);
         if (is_null($relayPointType)) {
             $this->addMessage(self::RELAYPOINT_TYPE_UNKNOWN.' '.$this->_getLabel($line).' Type : '.$line[self::TYPE]);
 
-            return;
+            return null;
         }
 
-        $entity = $this->getEntity();
-
-        /** @var RelayPoint $relaypoint */
-        $relaypoint = new $entity();
         $relaypoint->setCreatorId($this->_requester->getId());
         $relaypoint->setName($line[self::NAME]);
         $relaypoint->setRelayPointType($relayPointType);
         $relaypoint->setPlaces((int) $line[self::PLACES]);
+        $relaypoint->setPlacesDisabled((int) $line[self::DISABLED_PLACES]);
         $relaypoint->setSecured((bool) $line[self::SECURED]);
         $relaypoint->setFree((bool) $line[self::FREE]);
         $relaypoint->setOfficial((bool) $line[self::OFFICIAL]);
         $relaypoint->setPrivate((bool) $line[self::PRIVATE]);
         $relaypoint->setStatus(RelayPoint::STATUS_ACTIVE);
+
+        if ('' !== trim($line[self::EXTERNAL_ID])) {
+            $relaypoint->setExternalId($line[self::EXTERNAL_ID]);
+        }
+
+        if ('' !== trim($line[self::EXTERNAL_AUTHOR])) {
+            $relaypoint->setExternalAuthor($line[self::EXTERNAL_AUTHOR]);
+        }
+
         $relaypoint->setImportedDate(new \DateTime('now'));
 
         $address = new Address();
@@ -116,6 +165,20 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         $address->setLongitude((float) $line[self::LONGITUDE]);
 
         $relaypoint->setAddress($address);
+
+        return $relaypoint;
+    }
+
+    private function _addRelayPoint(array $line)
+    {
+        $entity = $this->getEntity();
+
+        /** @var RelayPoint $relaypoint */
+        $relaypoint = new $entity();
+
+        if (!$relaypoint = $this->_fillRelayPoint($relaypoint, $line)) {
+            return;
+        }
 
         try {
             $this->_importManager->addRelayPoint($relaypoint);
@@ -138,9 +201,14 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         return $line[self::NAME].' ('.$line[self::LATITUDE].';'.$line[self::LONGITUDE].')';
     }
 
-    private function _checkRelayPointAlreadyExists(float $latitude, float $longitude): ?RelayPoint
+    private function _checkRelayPointAlreadyExists(float $latitude, float $longitude, string $externalId): ?RelayPoint
     {
-        $results = $this->_importManager->getByLatLon($latitude, $longitude);
+        if ('' == trim($externalId)) {
+            $results = $this->_importManager->getByLatLon($latitude, $longitude);
+        } else {
+            $results = $this->_importManager->getByLatLonOrExternalId($latitude, $longitude, $externalId);
+        }
+
         if (is_array($results) && count($results) > 0) {
             return $results[0];
         }
@@ -148,10 +216,15 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         return null;
     }
 
+    private function _canUpdateRelayPoint(RelayPoint $relaypoint, string $lineExternalId): bool
+    {
+        return $relaypoint->getExternalId() === $lineExternalId;
+    }
+
     private function _canAddRelayPoint(array $line): bool
     {
-        if ($relaypoint = $this->_checkRelayPointAlreadyExists((float) $line[self::LATITUDE], (float) $line[self::LONGITUDE])) {
-            $this->_messages[] = $this->_getLabel($line).' '.self::MESSAGE_ALREADY_EXISTS.' -> id = '.$relaypoint->getId();
+        if ($relaypoint = $this->_checkRelayPointAlreadyExists((float) $line[self::LATITUDE], (float) $line[self::LONGITUDE], $line[self::EXTERNAL_ID])) {
+            $this->_existingRelayPointId = $relaypoint->getId();
 
             return false;
         }
