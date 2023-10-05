@@ -5,6 +5,7 @@ namespace App\Incentive\Controller;
 use App\Incentive\Service\Manager\JourneyManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Incentive\Service\Validation\JourneyValidation;
+use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/incentives/test")
+ * @Route("/EEC/test")
  */
 class TestController extends AbstractController
 {
@@ -56,10 +57,12 @@ class TestController extends AbstractController
     }
 
     /**
-     * @Route("/")
+     * @Route("/{carpoolPayment}")
      */
-    public function test()
+    public function test(CarpoolPayment $carpoolPayment)
     {
+        $this->_journeyManager->receivingElectronicPayment($carpoolPayment);
+
         return new Response('Ok');
     }
 }
