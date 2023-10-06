@@ -358,16 +358,18 @@ class JourneyManager extends MobConnectManager
 
             case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distanceTraveled && $journey instanceof LongDistanceJourney:
                 // Use case for long distance journey
-                $this->_invalidateJourney($this->getDriver()->getLongDistanceSubscription(), $journey);
+                $this->_currentSubscription = $this->getDriver()->getLongDistanceSubscription();
 
-                return;
+                break;
 
             case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS > $distanceTraveled && $journey instanceof ShortDistanceJourney:
                 // Use case for short distance journey
-                $this->_invalidateJourney($this->getDriver()->getShortDistanceSubscription(), $journey);
+                $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
 
-                return;
+                break;
         }
+
+        $this->_invalidateJourney($journey);
     }
 
     /**
@@ -377,7 +379,14 @@ class JourneyManager extends MobConnectManager
      */
     private function _getEECJourneyFromCarpoolProof(CarpoolProof $carpoolProof)
     {
-        $journey = $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal($carpoolProof->getCarpoolItem(), $this->getDriverPassengerProposalForCarpoolItem($carpoolProof->getCarpoolItem(), self::DRIVER));
+        $journey = $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal(
+            $carpoolProof->getCarpoolItem(),
+            $this->getDriverPassengerProposalForCarpoolItem($carpoolProof->getCarpoolItem(), self::DRIVER)
+        );
+
+        var_dump($journey);
+
+        exit;
 
         if (is_null($journey)) {
             $journey = $this->_shortDistanceJourneyRepository->findOneByCarpoolProof($carpoolProof);

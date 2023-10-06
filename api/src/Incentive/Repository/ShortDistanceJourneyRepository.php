@@ -23,7 +23,7 @@ class ShortDistanceJourneyRepository
             ->select('j')
             ->from(ShortDistanceJourney::class, 'j')
             ->where('j.carpoolProof = :cp')
-            ->setParameter($carpoolProof, 'cp')
+            ->setParameter('cp', $carpoolProof)
         ;
 
         return $qb->getQuery()->getOneOrNullResult();
