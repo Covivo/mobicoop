@@ -909,8 +909,15 @@ class ShortDistanceSubscription
      */
     public function setCommitmentProofJourney(?ShortDistanceJourney $commitmentProofJourney): self
     {
+        if (!is_null($commitmentProofJourney)) {
+            if (!$this->getJourneys()->contains($commitmentProofJourney)) {
+                $this->addShortDistanceJourney($this->getCommitmentProofJourney());
+            }
+        } else {
+            $this->removeJourney($this->getCommitmentProofJourney());
+        }
+
         $this->commitmentProofJourney = $commitmentProofJourney;
-        $this->addShortDistanceJourney($this->getCommitmentProofJourney());
 
         return $this;
     }
@@ -955,9 +962,13 @@ class ShortDistanceSubscription
             && !is_null($this->getHonorCertificateProofTimestampSigningTime());
     }
 
-    public function reset()
+    public function reset(): self
     {
-        $this->removeJourney($this->getCommitmentProofJourney());
+        $commitmentProofJourney = $this->getCommitmentProofJourney();
+
+        if (!is_null($commitmentProofJourney)) {
+            $this->setCommitmentProofJourney(null);
+        }
 
         $this->setCommitmentProofDate(null);
         $this->setCommitmentProofTimestampToken(null);
@@ -968,5 +979,7 @@ class ShortDistanceSubscription
         $this->setHonorCertificateProofTimestampSigningTime(null);
         $this->setStatus(null);
         $this->setVerificationDate(null);
+
+        return $this;
     }
 }

@@ -384,10 +384,6 @@ class JourneyManager extends MobConnectManager
             $this->getDriverPassengerProposalForCarpoolItem($carpoolProof->getCarpoolItem(), self::DRIVER)
         );
 
-        var_dump($journey);
-
-        exit;
-
         if (is_null($journey)) {
             $journey = $this->_shortDistanceJourneyRepository->findOneByCarpoolProof($carpoolProof);
         }
@@ -553,7 +549,7 @@ class JourneyManager extends MobConnectManager
 
         $this->_removeMobJourneyReference();
 
-        $this->_currentSubscription->reset();
+        $this->_currentSubscription = $this->_currentSubscription->reset();
 
         // If there are other journeys associated with the subscription, then we declare the 1st one as the commitment journey
         if (!empty($this->_currentSubscription->getJourneys())) {
