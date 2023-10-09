@@ -16,7 +16,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 abstract class MobConnectProvider
 {
+    public const INCENTIVE_ID_TAG = '{INCENTIVE_ID}';
     public const SUBSCRIPTION_ID_TAG = '{SUBSCRIPTION_ID}';
+
+    public const ALLOWED_ID_TAGS = [self::INCENTIVE_ID_TAG, self::SUBSCRIPTION_ID_TAG];
 
     /**
      * The Data provider.
@@ -42,14 +45,18 @@ abstract class MobConnectProvider
      */
     protected $_user;
 
-    private function __buildResource(string $resource, string $subscriptionId = null): string
+    private function __buildResource(string $resource, string $resource_id = null, ?string $tag = null): string
     {
-        if (strpos($resource, self::SUBSCRIPTION_ID_TAG)) {
-            if (is_null($subscriptionId)) {
+        if (strpos($resource, self::SUBSCRIPTION_ID_TAG) || strpos($resource, self::INCENTIVE_ID_TAG)) {
+            if (is_null($resource_id)) {
                 throw new BadRequestHttpException(MobConnectMessages::SUBSCRIPTION_PARAMETER_MISSING);
             }
 
-            $resource = str_replace(self::SUBSCRIPTION_ID_TAG, $subscriptionId, $resource);
+            $resource = str_replace(
+                !is_null($tag) ? $tag : self::SUBSCRIPTION_ID_TAG,
+                $resource_id,
+                $resource
+            );
         }
 
         return $resource;
@@ -66,9 +73,9 @@ abstract class MobConnectProvider
         return $headers;
     }
 
-    protected function _createDataProvider(string $resource, string $subscriptionId = null)
+    protected function _createDataProvider(string $resource, string $resource_id = null, ?string $tag = null)
     {
-        $this->_dataProvider = new DataProvider($this->_apiUri, $this->__buildResource($resource, $subscriptionId));
+        $this->_dataProvider = new DataProvider($this->_apiUri, $this->__buildResource($resource, $resource_id, $tag));
     }
 
     protected function _getResponse(Response $response)

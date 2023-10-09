@@ -174,12 +174,37 @@
             {{ $t("seeDetails") }}
           </span>
         </v-btn>
-        <v-card-text class="py-0">
+        
+        <v-card-text
+          v-else
+          class="py-0"
+        >
           <em>{{ externalOrigin }}</em>
         </v-card-text>
       </v-col>
     </v-row>
-
+    <v-row class="mt-4 mb-n4">
+      <v-card-text
+        v-if="protocol ==='STANDARD'"
+        flat
+      >
+        <v-row>
+          <v-col cols="7" />
+          <v-col cols="1">
+            <v-img
+              src="/images/pages/results/interopPink.png"
+              height="23"
+              contain
+            />
+          </v-col>
+          <v-col col="3">
+            <p class="secondary--text">
+              {{ externalOrigin }}
+            </p>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-row>
     <v-dialog
       v-model="dialogExternalContact"
       width="80%"

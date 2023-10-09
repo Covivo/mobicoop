@@ -2,5 +2,6 @@
     "notThreadSelected": "Aucun fil selectionné",
     "urlCompleteThread": "/utilisateur/messages/{idMessage}/fil",
     "messageDelete": "Message supprimé",
-    "sendBy": "Envoyé par {name}"
+    "sendBy": "Envoyé par {name}",
+    "urlBookingCompleteThread": "/utilisateur/messages/booking/{idBooking}/fil"
 }

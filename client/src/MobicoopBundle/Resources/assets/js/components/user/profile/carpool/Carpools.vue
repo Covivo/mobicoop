@@ -44,38 +44,23 @@
         >
           <v-tab>{{ $t('carpools.active') }}</v-tab>
           <v-tab-item>
-            <v-container v-if="carpools.active">
-              <v-row
-                v-for="ad in carpools.active"
-                :key="ad.id"
-              >
-                <v-col cols="12">
-                  <Carpool
-                    :ad="ad"
-                    :user="user"
-                    :payment-electronic-active="paymentElectronicActive"
-                  />
-                </v-col>
-              </v-row>
-            </v-container>
+            <CarpoolsByFrequency
+              v-if="carpools && carpools.active"
+              :chronological-sorted="false"
+              :carpools="carpools.active"
+              :payment-electronic-active="paymentElectronicActive"
+              :user="user"
+            />
           </v-tab-item>
           <v-tab>{{ $t('carpools.archived') }}</v-tab>
           <v-tab-item>
-            <v-container v-if="carpools.archived">
-              <v-row
-                v-for="ad in carpools.archived"
-                :key="ad.id"
-              >
-                <v-col cols="12">
-                  <Carpool
-                    :ad="ad"
-                    :is-archived="true"
-                    :user="user"
-                    :payment-electronic-active="paymentElectronicActive"
-                  />
-                </v-col>
-              </v-row>
-            </v-container>
+            <CarpoolsByFrequency
+              v-if="carpools && carpools.archived"
+              :chronological-sorted="true"
+              :carpools="carpools.archived"
+              :payment-electronic-active="paymentElectronicActive"
+              :user="user"
+            />
           </v-tab-item>
         </v-tabs>
       </v-col>
@@ -215,7 +200,8 @@
 
 import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/carpool/AcceptedCarpools/";
-import Carpool from "@components/user/profile/carpool/Carpool.vue";
+import CarpoolsByFrequency from "@components/user/profile/carpool/CarpoolsByFrequency.vue";
+
 
 export default {
   i18n: {
@@ -227,7 +213,7 @@ export default {
     }
   },
   components: {
-    Carpool
+    CarpoolsByFrequency,
   },
   props: {
     carpools: {
@@ -281,7 +267,7 @@ export default {
       link.target = "_blank";
       document.body.appendChild(link);
       link.click();
-    },
+    }
   }
 }
 </script>

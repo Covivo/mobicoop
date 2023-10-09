@@ -25,9 +25,7 @@ namespace App\Carpool\Entity;
 
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
-use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
-use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
@@ -621,42 +619,70 @@ class CarpoolProof
         return !empty($filteredCarpoolItems) ? $filteredCarpoolItems[0] : null;
     }
 
-    public function isEECCompliant(string $distanceType): bool
+    public function isEECCompliant(): bool
     {
-        $compliance =
+        return self::STATUS_VALIDATED === $this->getStatus() && self::TYPE_HIGH === $this->getType();
+    }
+
+    /**
+     * Used in the context of CEE, checks and returns if proof is awaiting validation of the RPC.
+     */
+    public function isStatusPending(): bool
+    {
+        $status = $this->getStatus();
+
+        return
+            self::STATUS_INITIATED === $status
+            || self::STATUS_PENDING === $status
+            || self::STATUS_SENT === $status
+            || self::STATUS_UNDER_CHECKING === $status;
+    }
+
+    /**
+     * Used in the context of CEE, checks and returns if the RPC returned an error during the validation of the request.
+     */
+    public function isStatusError(): bool
+    {
+        $status = $this->getStatus();
+
+        return
+            self::STATUS_ERROR === $status
+            || self::STATUS_CANCELED === $status
+            || self::STATUS_ACQUISITION_ERROR === $status
+            || self::STATUS_NORMALIZATION_ERROR === $status
+            || self::STATUS_FRAUD_ERROR === $status
+            || self::STATUS_EXPIRED === $status
+            || self::STATUS_CANCELED_BY_OPERATOR === $status;
+    }
+
+    /**
+     * Used in the context of CEE, checks and returns if the RPC has validated a proof but not with class C.
+     */
+    public function isCarpoolProofDowngraded(): bool
+    {
+        return
             self::STATUS_VALIDATED === $this->getStatus()
-            && self::TYPE_HIGH === $this->getType();
+            && self::TYPE_HIGH != $this->getType();
+    }
 
-        if (!$compliance) {
-            return false;
-        }
+    /**
+     * Used in the context of CEE, return the associated payment. This latest must meet the criteria:
+     * - Have been successfully paid,
+     * - Keep track of the transaction.
+     */
+    public function getSuccessfullPayment(): ?CarpoolPayment
+    {
+        return !is_null($this->getCarpoolItem()) ? $this->getCarpoolItem()->getSuccessfullPayment() : null;
+    }
 
-        switch ($distanceType) {
-            case LongDistanceSubscription::SUBSCRIPTION_TYPE:
-                $carpoolPayments =
-                    !is_null($this->getCarpoolItem()) && !empty($this->getCarpoolItem()->getCarpoolPayments())
-                    ? $this->getCarpoolItem()->getCarpoolPayments() : null;
-
-                if (is_null($carpoolPayments)) {
-                    $compliance = false;
-
-                    break;
-                }
-
-                $filteredCarpoolPayments = array_values(array_filter($carpoolPayments, function (CarpoolPayment $carpoolPayment) {
-                    return $carpoolPayment->isEECCompliant();
-                }));
-
-                $compliance = !empty($filteredCarpoolPayments);
-
-                break;
-
-            case ShortDistanceSubscription::SUBSCRIPTION_TYPE:
-                $compliance = true;
-
-                break;
-        }
-
-        return $compliance;
+    /**
+     * Used in the context of CEE, returns the matching common distance.
+     */
+    public function getDistance(): ?int
+    {
+        return !is_null($this->getAsk())
+            && !is_null($this->getAsk()->getMatching())
+            ? $this->getAsk()->getMatching()->getCommonDistance()
+            : null;
     }
 }

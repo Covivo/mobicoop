@@ -43,11 +43,6 @@ class TimestampTokenManager extends MobConnectManager
     private $_currentLogType;
 
     /**
-     * @var LongDistanceSubscription|ShortDistanceSubscription
-     */
-    private $_currentSubscription;
-
-    /**
      * @var MobConnectSubscriptionTimestampsResponse
      */
     private $_currentTimestampTokensResponse;
@@ -167,7 +162,7 @@ class TimestampTokenManager extends MobConnectManager
         return false;
     }
 
-    private function _isTokenTypeAllowed(string $tokenType): bool
+    private function _isTokenTypeAllowed(int $tokenType): bool
     {
         return in_array($tokenType, self::AVAILABLE_TIMESTAMP_TOKEN_TYPES);
     }

@@ -1575,10 +1575,8 @@ class PaymentManager
         $this->entityManager->flush();
 
         if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus()) {
-            if ($carpoolPayment->isEecCompliant()) {
-                $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
-                $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
-            }
+            $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
+            $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
 
             //  we dispatch the gamification event associated
             $action = $this->actionRepository->findOneBy(['name' => 'electronic_payment_made']);

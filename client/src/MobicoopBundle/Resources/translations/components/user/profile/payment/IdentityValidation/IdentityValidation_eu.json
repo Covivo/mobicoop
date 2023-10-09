@@ -1,29 +1,29 @@
 {
-    "sendUrl": "/utilisateur/document-validation-identite/envoyer",
-    "send": "Bidali",
-    "status": {
-        "refused": {
-            "10": "Document refusé (raison non donnée)",
-            "9": "Dokumentua ez da onartua ez baita osatua",
-            "8": "Dokumentua ez da onartua ezin irakurria baita",
-            "7": "Dokumentua ez da onartua, datuak ez baitira erabiltzailearen araberakoak",
-            "6": "Dokumentua ez da onartua izan, honen mota ez baita araberakoa",
-            "5": "Dokumentua ez da onartua izan, epemugaz kanpo baita",
-            "4": "Dokumentua ez da onartua izan fitxategia hutsa baita",
-            "3": "Dokumentua ez da onartua izan faltsutua izan baita",
-            "2": "Dokumentua ez da onartua izan, adina ez baituzu betea",
-            "1": "Zure datu pertsonalak aldatu dira, zure nortasuna berriz egiazta ezazu",
-            "0": "Dokumentu ez onartua"
-        },
-        "outdated": "Epemugaz kanpoko dokumentua",
-        "validated": "Nortasuna egiaztatua izan da",
-        "pending": "Dokumentua egiaztatzen ari da"
+  "sendUrl": "/utilisateur/document-validation-identite/envoyer",
+  "send": "Bidali",
+  "status": {
+    "refused": {
+      "10": "Document refusé (raison non donnée)",
+      "9": "Dokumentua ez da onartua ez baita osatua",
+      "8": "Dokumentua ez da onartua ezin irakurria baita",
+      "7": "Dokumentua ez da onartua, datuak ez baitira erabiltzailearen araberakoak",
+      "6": "Dokumentua ez da onartua izan, honen mota ez baita araberakoa",
+      "5": "Dokumentua ez da onartua izan, epemugaz kanpo baita",
+      "4": "Dokumentua ez da onartua izan fitxategia hutsa baita",
+      "3": "Dokumentua ez da onartua izan faltsutua izan baita",
+      "2": "Dokumentua ez da onartua izan, adina ez baituzu betea",
+      "1": "Zure datu pertsonalak aldatu dira, zure nortasuna berriz egiazta ezazu",
+      "0": "Dokumentu ez onartua"
     },
-    "fileInput": {
-        "tooltip": "Dokumentua jpg, jpeg, png edo pdf formatuan izan behar da eta ez du 6MB gainditu behar",
-        "error": "Dokumentuak ez ditu 6MB gainditu behar",
-        "label": "Nortasun agiri eguneratua"
-    },
-    "text": "<p>Eguneratua den nortasun agiri bati oinarritua den nortasun egiaztapena (nortasun agiriaren aitzinaldea eta gibelaldea, pasaportea, gidabaimena) legezko betebehar bat da diruaren eskuratzeko. Betebehar hori egina da diru zuritzeen kontra borrokatzeko.</p><p>Ordainketarentzat beharrezkoa den nortasun egiaztapena egiten da, zure profilean sartuak diren izen-deiturak, zure nortasun agirian sartuak direnekin konparatuz. Ondorioz, segurta zaitez informazio zuzenak sartu dituzula zure profilean.</p><p>Nortasun agiri dokumentu baten egiazkotzeko baldintzak irakur ditzakezu gure partaidearen loturan <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
-    "title": "3. Nortasunaren egiaztatzea"
+    "outdated": "Epemugaz kanpoko dokumentua",
+    "validated": "Nortasuna egiaztatua izan da",
+    "pending": "Dokumentua egiaztatzen ari da"
+  },
+  "fileInput": {
+    "tooltip": "Dokumentua jpg, jpeg, png edo pdf formatuan izan behar da eta ez du 6MB gainditu behar",
+    "error": "Dokumentuak ez ditu 6MB gainditu behar",
+    "label": "Nortasun agiri eguneratua"
+  },
+  "text": "<p>Eguneratua den nortasun agiri bati oinarritua den nortasun egiaztapena (nortasun agiriaren aitzinaldea eta gibelaldea, pasaportea, gidabaimena) legezko betebehar bat da diruaren eskuratzeko. Betebehar hori egina da diru zuritzeen kontra borrokatzeko.</p><p>Ordainketarentzat beharrezkoa den nortasun egiaztapena egiten da, zure profilean sartuak diren izen-deiturak, zure nortasun agirian sartuak direnekin konparatuz. Ondorioz, segurta zaitez informazio zuzenak sartu dituzula zure profilean.</p>",
+  "title": "3. Nortasunaren egiaztatzea"
 }

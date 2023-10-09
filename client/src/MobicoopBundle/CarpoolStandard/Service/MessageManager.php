@@ -60,4 +60,11 @@ class MessageManager
 
         return $response->getValue();
     }
+
+    public function getMessages(string $idBooking)
+    {
+        $response = $this->dataProvider->getSpecialCollection('messages', ['idBooking' => $idBooking]);
+
+        return $response->getValue()->getMember();
+    }
 }

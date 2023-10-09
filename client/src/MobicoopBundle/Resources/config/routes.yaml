@@ -434,6 +434,14 @@ user_message_complete_thread:
     nl: /user/messages/{idMessage}/thread
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageCompleteThread
 
+user_message_booking_complete_thread:
+  path:
+    fr: /utilisateur/messages/booking/{idBooking}/fil
+    en: /user/messages/booking/{idBooking}/thread
+    nl: /user/messages/booking/{idBooking}/thread
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageBookingCompleteThread
+
+
 user_message_actions_infos:
   methods: [POST]
   path:
@@ -441,6 +449,14 @@ user_message_actions_infos:
     en: /user/messages/actions/infos
     nl: /user/messages/actions/infos
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsInfos
+
+user_message_booking_actions_infos:
+  methods: [POST]
+  path:
+    fr: /utilisateur/messages/actions/infos/booking
+    en: /user/messages/actions/infos/booking
+    nl: /user/messages/actions/infos/booking
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesBookingActionsInfos
 
 user_message_carpool_selected:
   path:
@@ -487,6 +503,15 @@ user_message_update_ask:
     en: /user/messages/updateAsk
     nl: /user/messages/updateAsk
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageUpdateAsk
+
+# update an Booking from messages
+user_message_update_booking:
+  methods: [POST]
+  path:
+    fr: /utilisateur/messages/updateBooking
+    en: /user/messages/updateBooking
+    nl: /user/messages/updateBooking
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageUpdateBooking
 
 # Connection by facebook (POST)
 user_facebook_connect:
@@ -1986,14 +2011,35 @@ assistive.devices:
     fr: /aides-a-la-mobilite
     en: /aides-a-la-mobilite
     nl: /aides-a-la-mobilite
-  controller: Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\AssistiveController::assistiveDevices
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::assistiveDevices
 
 assistives.sso-activation:
   path:
     fr: /aides-a-la-mobilite/sso-activation
     en: /aides-a-la-mobilite/sso-activation
     nl: /aides-a-la-mobilite/sso-activation
-  controller: Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\AssistiveController::ssoActivation
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::ssoActivation
+
+incentive.list:
+  path:
+    fr: /liste-des-aides
+    en: /liste-des-aides
+    nl: /liste-des-aides
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::incentives
+
+incentives.xmlHttpRequest:
+  path:
+    fr: /incentives
+    en: /incentives
+    nl: /incentives
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::getIncentiveAsXMLRequest
+
+incentive.details:
+  path:
+    fr: /details-de-l-aide/{incentive_id}
+    en: /details-de-l-aide/{incentive_id}
+    nl: /details-de-l-aide/{incentive_id}
+  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\AssistiveController::incentive
 
 ###############
 # carpool standard routes #

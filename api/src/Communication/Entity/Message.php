@@ -40,7 +40,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  * A message sent from a user to other users.
  *
  * @ORM\Entity()
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -74,6 +76,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          }
  *      }
  * )
+ *
  * @ApiFilter(OrderFilter::class, properties={"id", "title", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})
  */
@@ -83,12 +86,19 @@ class Message
     public const TYPE_CARPOOL = 'Carpool';
     public const TYPE_SOLIDARY = 'Solidary';
 
+    public const SYSTEM_ASK_POSTED = 'Demande de covoiturage';
+    public const SYSTEM_ASK_ACCEPTED = 'Acceptation de la demande';
+    public const SYSTEM_ASK_DECLINED = 'Refus de la demande';
+
     /**
      * @var int the id of this message
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"read","threads","thread","sendMessage"})
      */
     private $id;
@@ -97,6 +107,7 @@ class Message
      * @var string the title of the message
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"read","write","threads","thread"})
      */
     private $title;
@@ -105,6 +116,7 @@ class Message
      * @var string the text of the message
      *
      * @ORM\Column(type="text")
+     *
      * @Groups({"read","write","threads","thread"})
      */
     private $text;
@@ -113,7 +125,9 @@ class Message
      * @var User the creator of the message
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="messages")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"read","write","threads","thread"})
      */
     private $user;
@@ -122,7 +136,9 @@ class Message
      * @var null|User the user who send the message in the name of the creator
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     *
      * @Groups({"read","write","threads","thread"})
      */
     private $userDelegate;
@@ -131,7 +147,9 @@ class Message
      * @var null|AskHistory the ask history item if the message is related to an ask
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="message")
+     *
      * @Groups({"read","write","threads","thread"})
+     *
      * @MaxDepth(1)
      */
     private $askHistory;
@@ -140,7 +158,9 @@ class Message
      * @var null|SolidaryAskHistory the solidary ask history item if the message is related to an ask
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAskHistory", mappedBy="message")
+     *
      * @Groups({"read","write","threads","thread"})
+     *
      * @MaxDepth(1)
      */
     private $solidaryAskHistory;
@@ -184,8 +204,11 @@ class Message
      * @var null|Message the original message if the message is a reply to another message
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="messages")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","write","sendMessage"})
+     *
      * @MaxDepth(1)
      */
     private $message;
@@ -194,8 +217,11 @@ class Message
      * @var ArrayCollection the recipients linked with the message
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="message", cascade={"persist"})
+     *
      * @ORM\OrderBy({"id" = "ASC"})
+     *
      * @Groups({"read","write","threads","thread"})
+     *
      * @MaxDepth(1)
      */
     private $recipients;
@@ -204,8 +230,11 @@ class Message
      * @var ArrayCollection the messages linked with the message
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="message", cascade={"persist"})
+     *
      * @ORM\OrderBy({"createdDate" = "ASC"})
+     *
      * @Groups({"thread"})
+     *
      * @MaxDepth(1)
      */
     private $messages;
@@ -221,6 +250,7 @@ class Message
      * @var null|Message The last message of a thread
      *
      * @Groups({"read","threads","sendMessage"})
+     *
      * @MaxDepth(1)
      */
     private $lastMessage;
@@ -229,6 +259,7 @@ class Message
      * @var \DateTimeInterface creation date of the message
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"read","threads","thread"})
      */
     private $createdDate;
@@ -237,9 +268,19 @@ class Message
      * @var \DateTimeInterface updated date of the message
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","threads","thread"})
      */
     private $updatedDate;
+
+    /**
+     * @var null|bool indicate if the message is a message system
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     *
+     * @Groups({"read","threads","thread"})
+     */
+    private $messageSystem;
 
     public function __construct()
     {
@@ -526,6 +567,22 @@ class Message
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function isMessageSystem(): ?bool
+    {
+        if (!isset($this->messageSystem)) {
+            return false;
+        }
+
+        return $this->messageSystem;
+    }
+
+    public function setMessageSystem(?bool $isMessageSystem): self
+    {
+        $this->messageSystem = $isMessageSystem;
 
         return $this;
     }

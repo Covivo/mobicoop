@@ -1,17 +1,26 @@
 {
-    "blockUrl": "/user/block",
-    "block": "Blokatu",
-    "blocked": "Blokatua",
-    "userDelete": "Erabiltzailea desinskribatua da",
-    "priceTooltip": "Prezio indikatiboa",
-    "price": "Prezioa",
-    "seatsAvailable": "Libre diren lekuak",
-    "distanceTooltip": "Egina izan den autokidetzaren distantzia, gidariaren itzulingurua kontuan hartuz",
-    "distance": "Distantzia",
-    "regular": {
-        "ask": "Autokidetza erregular bat proposatu"
-    },
-    "urlGetAdAsk": "/utilisateur/messages/actions/infos",
-    "roundTrip": "Joan-etorri bidaia",
-    "notLinkedToACarpool": "Solasaldi hari hau ez da autokidetza bati lotua"
+  "blockUrl": "/user/block",
+  "block": "Blokatu",
+  "blocked": "Blokatua",
+  "userDelete": "Erabiltzailea desinskribatua da",
+  "priceTooltip": "Prezio indikatiboa",
+  "price": "Prezioa",
+  "seatsAvailable": "Libre diren lekuak",
+  "distanceTooltip": "Egina izan den autokidetzaren distantzia, gidariaren itzulingurua kontuan hartuz",
+  "distance": "Distantzia",
+  "regular": {
+    "ask": "Autokidetza erregular bat proposatu"
+  },
+  "urlGetAdAsk": "/utilisateur/messages/actions/infos",
+  "urlGetBooking": "/utilisateur/messages/actions/infos/booking",
+  "roundTrip": "Joan-etorri bidaia",
+  "notLinkedToACarpool": "Solasaldi hari hau ez da autokidetza bati lotua",
+  "at": "à",
+  "Mon": "Lun",
+  "Tue": "Mar",
+  "Wed": "Mer",
+  "Thu": "Jeu",
+  "Fri": "Ven",
+  "Sat": "Sam",
+  "Sun": "Dim"
 }

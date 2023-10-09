@@ -243,6 +243,7 @@ class User implements ResourceInterface, \JsonSerializable
         return
         [
             'id' => $this->getId(),
+            'externalId' => $this->getExternalId(),
             'operator' => $this->getOperator(),
             'alias' => $this->getAlias(),
             'firstName' => $this->getFirstName(),

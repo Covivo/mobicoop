@@ -39,6 +39,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Ressource\Ad;
+use App\Communication\Service\InternalMessageManager;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\WeekItem;
 use App\Payment\Exception\PaymentException;
@@ -73,6 +74,7 @@ class AskManager
     private $paymentActiveDate;
     private $blockManager;
     private $actionRepository;
+    private $internalMessageManager;
 
     /**
      * Constructor.
@@ -89,7 +91,8 @@ class AskManager
         CarpoolProofRepository $carpoolProofRepository,
         BlockManager $blockManager,
         ActionRepository $actionRepository,
-        string $paymentActive
+        string $paymentActive,
+        InternalMessageManager $internalMessageManager
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityManager = $entityManager;
@@ -107,6 +110,7 @@ class AskManager
         }
         $this->blockManager = $blockManager;
         $this->actionRepository = $actionRepository;
+        $this->internalMessageManager = $internalMessageManager;
     }
 
     /**
@@ -484,6 +488,9 @@ class AskManager
 
         $ad->setAskId($ask->getId());
 
+        // we create a message system
+        $this->internalMessageManager->postAskRelatedMessageSystem($ask);
+
         return $ad;
     }
 
@@ -722,6 +729,9 @@ class AskManager
             $event = new AskRefusedEvent($ad);
             $this->eventDispatcher->dispatch(AskRefusedEvent::NAME, $event);
         }
+
+        // we create a message system
+        $this->internalMessageManager->postAskRelatedMessageSystem($ask);
 
         return $ad;
     }

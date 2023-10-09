@@ -241,7 +241,6 @@ import moment from "moment";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 
-
 export default {
   i18n: {
     messages: {
@@ -345,7 +344,7 @@ export default {
       showDate:true,
       showTime:false,
       time: this.initOutwardTime,
-      dateTime: this.initOutwardDate ? this.initOutwardDate+' '+this.initOutwardTime : null,
+      dateTime: this.initOutwardDate+' '+this.initOutwardTime,
       regular: this.initRegular,
       role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : 3),
       passenger: this.initRole == 2 ? true : (this.initRole == 3 || (this.initRole == null && !this.solidaryExclusiveAd) ? true : false),
@@ -369,14 +368,10 @@ export default {
   computed: {
     computedDateFormat() {
       if (this.dateTimePicker) {
-        return this.dateTime ? moment(this.dateTime).format(this.$t("fullDateTime"))
-          : null;
+        return this.dateTime ? moment(this.dateTime, this.$t('defaultDatetime')).format(this.$t("fullDateTime")) : null;
       } else {
-        return this.date
-          ? moment(this.date).format(this.$t("fullDate"))
-          : null;
+        return this.date ? moment(this.date, this.$t('defaultDate')).format(this.$t("fullDate")) : null;
       }
-
     },
     checkOutwardDate() {
       if (this.outwardDateClicked && !this.regular && !this.date && !this.punctualDateOptional) {

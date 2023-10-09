@@ -6,6 +6,7 @@
     },
     "urlSend": "/utilisateur/messages/envoyer",
     "urlUpdateAsk": "/utilisateur/messages/updateAsk",
+    "urlUpdateBooking": "/utilisateur/messages/updateBooking",
     "headersCategories": {
         "titleCarpool": "Covoiturage",
         "titleLive": "Direct",

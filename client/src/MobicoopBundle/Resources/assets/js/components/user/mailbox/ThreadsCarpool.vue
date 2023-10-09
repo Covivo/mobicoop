@@ -3,6 +3,7 @@
     <thread-carpool
       v-for="(message, index) in messages"
       :key="index"
+      :booking-infos="message.idBooking ? message.carpoolInfos : null"
       :avatar="message.avatarsRecipient"
       :blocker-id="message.blockerId"
       :criteria="message.carpoolInfos.criteria"
@@ -11,6 +12,7 @@
       :given-name="message.givenName"
       :id-ask-selected="idAskSelected"
       :id-ask="message.idAsk"
+      :id-booking="message.idBooking"
       :id-message="message.idMessage"
       :id-recipient="message.idRecipient"
       :origin="message.carpoolInfos.origin"
@@ -19,6 +21,7 @@
       :unread-messages="message.unreadMessages"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
+      @toggleSelectedBooking="emitToggleBooking"
     />
     <v-skeleton-loader
       ref="skeleton"
@@ -69,6 +72,10 @@ export default {
       type: Number,
       default: null
     },
+    idBookingToSelect:{
+      type: String,
+      default: null
+    },
     refreshThreads: {
       type: Boolean,
       default: false
@@ -83,12 +90,16 @@ export default {
       type: 'list-item-avatar-three-line',
       types: [],
       SkeletonHidden: false,
-      idAskSelected: this.idAskToSelect
+      idAskSelected: this.idAskToSelect,
+      idBookingSelected: this.idBookingToSelect
     }
   },
   watch: {
     idAskToSelect() {
       this.idAskToSelect ? this.refreshSelected(this.idAskToSelect) : '';
+    },
+    idBookingToSelect() {
+      this.idBookingToSelect ? this.refreshSelectedBooking(this.idBookingToSelect) : '';
     },
     refreshThreads(){
       (this.refreshThreads) ? this.getThreads(this.idMessageToSelect) : '';
@@ -107,9 +118,22 @@ export default {
     emitToggle(data){
       this.$emit("toggleSelected",data);
     },
+    emitToggleBooking(data){
+      this.$emit("toggleSelectedBooking",data);
+    },
     refreshSelected(idAsk){
       this.messages.forEach((item, index) => {
         if(item.idAsk === idAsk){
+          this.$set(item, 'selected', true);
+        }
+        else{
+          this.$set(item, 'selected', false);
+        }
+      })
+    },
+    refreshSelectedBooking(idBooking){
+      this.messages.forEach((item, index) => {
+        if(item.idBooking === idBooking){
           this.$set(item, 'selected', true);
         }
         else{
@@ -128,7 +152,7 @@ export default {
           }
           // I'm pushing the new "virtual" thread
           if(this.newThread){
-            response.data.threads.push({
+            response.data.threads.unshift({
               date: (this.newThread.date) ? this.newThread.date : moment().format(),
               time: (this.newThread.time) ? this.newThread.time : moment().format(),
               shortFamilyName:this.newThread.shortFamilyName,

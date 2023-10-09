@@ -8,7 +8,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Document d'identité rejeté.</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:22px;" text-align="center" ><b>Document d'identité rejeté.</b></p>
                     </td>
                 </tr>
             </table>
@@ -22,16 +22,16 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour, </p>
-                        <p style="font-size:11px;">Notre prestataire de paiement MANGOPAY a refusé votre document d'identité pour la raison suivante :</p>
-                        <p style="font-size:11px;"><strong>{{ "reason#{reasonId}" |trans }}</strong></p>
-                        <p style="font-size:11px;">Nous vous rappelons les éléments suivants :</p>
+                        <p style="font-size:13px; margin-bottom:16px;">Bonjour, </p>
+                        <p style="font-size:13px;">Notre prestataire de paiement MANGOPAY a refusé votre document d'identité pour la raison suivante :</p>
+                        <p style="font-size:13px;"><strong>{{ "reason#{reasonId}" |trans }}</strong></p>
+                        <p style="font-size:13px;">Nous vous rappelons les éléments suivants :</p>
                         <ul>
-                            <li style="font-size:11px; text-align: justify;">les pièces d’identité reçues doivent être de bonne qualité visuelle, sans flash ni reflet apparent, et avec une bande MRZ complètement lisible.</li>
-                            <li style="font-size:11px; text-align: justify;">Le recto et verso de votre pièce doivent être sur un même fichier.</li>
-                            <li style="font-size:11px; text-align: justify;">Enfin, votre prénom et nom sur mobicoop.fr doivent être les mêmes que sur la pièce d'identité.</li>
+                            <li style="font-size:13px; text-align: justify;">les pièces d’identité reçues doivent être de bonne qualité visuelle, sans flash ni reflet apparent, et avec une bande MRZ complètement lisible.</li>
+                            <li style="font-size:13px; text-align: justify;">Le recto et verso de votre pièce doivent être sur un même fichier.</li>
+                            <li style="font-size:13px; text-align: justify;">Enfin, votre prénom et nom sur <a href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_URL')}}</a> doivent être les mêmes que sur la pièce d'identité.</li>
                         </ul>
-                        <p style="font-size:11px;">Pour en savoir plus sur les conditions de validation de la pièce d'identité, vous pouvez vous référer <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr" title="">ici</a>.</p>
+                        <p style="font-size:13px;">Pour en savoir plus sur les conditions de validation de la pièce d'identité, vous pouvez vous référer <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr" title="">ici</a>.</p>
                     </td>
                 </tr>
             </table>
@@ -50,7 +50,7 @@
                         <p> </p>
                     </td>
                     <td align="center" style="width:100%;">
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Rezo Mobicoop</b></p>
+                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Mobicoop</b></p>
                     </td>
                 </tr>
             </table>

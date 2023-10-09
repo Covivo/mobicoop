@@ -52,6 +52,7 @@ use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Icon;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Import\Entity\Redirect;
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Entity\Incentive;
 use Mobicoop\Bundle\MobicoopBundle\Journey\Entity\Journey;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassCarpool;
@@ -392,6 +393,9 @@ class Deserializer
                 return $this->deserializeEecEligibility($data);
 
                 break;
+
+            case Incentive::class:
+                return $this->deserializeIncentive($data);
 
             default:
                 break;
@@ -1247,10 +1251,10 @@ class Deserializer
     {
         $csMessage = new CsMessage();
         if (isset($data['from'])) {
-            $csMessage->setFrom($this->deserializeCsUser($data['driver']));
+            $csMessage->setFrom($this->deserializeCsUser($data['from']));
         }
         if (isset($data['to'])) {
-            $csMessage->setTo($this->deserializeCsUser($data['passenger']));
+            $csMessage->setTo($this->deserializeCsUser($data['to']));
         }
 
         return $this->autoSet($csMessage, $data);
@@ -1284,6 +1288,13 @@ class Deserializer
         $eecEligibility = new EecEligibility();
 
         return $this->autoset($eecEligibility, $data);
+    }
+
+    private function deserializeIncentive($data)
+    {
+        $incentive = new Incentive();
+
+        return $this->autoSet($incentive, $data);
     }
 
     private function autoSet($object, $data)

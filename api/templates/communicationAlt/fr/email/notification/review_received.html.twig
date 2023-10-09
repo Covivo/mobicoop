@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Nouvel avis.</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:22px;" text-align="center" ><b>Nouvel avis.</b></p>
                     </td>
                 </tr>
             </table>
@@ -21,8 +21,8 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Vous avez reçu un avis de la part de {{ context.givenName }} {{ context.shortFamilyName }} en lien avec vos derniers covoiturages.</p>
-                        <p style="font-size:11px; text-align: justify;">Vous pouvez consulter cet avis en vous rendant dans <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/avis/avis-recus">votre profil.<a></p>
+                        <p style="font-size:13px; text-align: justify;">Vous avez reçu un avis de la part de {{ context.givenName }} {{ context.shortFamilyName }} en lien avec vos derniers covoiturages.</p>
+                        <p style="font-size:13px; text-align: justify;">Vous pouvez consulter cet avis en vous rendant dans <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/avis/avis-recus">votre profil.<a></p>
                     </td>
                 </tr>
             </table>

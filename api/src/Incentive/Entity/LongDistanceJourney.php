@@ -116,7 +116,7 @@ class LongDistanceJourney
      *
      * @var null|CarpoolItem
      *
-     * @ORM\OneToOne(targetEntity=CarpoolItem::class)
+     * @ORM\ManyToOne(targetEntity=CarpoolItem::class)
      *
      * @ORM\JoinColumn(nullable=true)
      */
@@ -431,14 +431,12 @@ class LongDistanceJourney
      * - The associated payment is successful and the transaction ID is not null
      * - The associated proof is type C, validated by the RPC.
      */
-    public function isCompliant(): bool
+    public function isEECCompliant(): bool
     {
         return
             !is_null($this->getCarpoolPayment())
-            && !is_null($this->getCarpoolPayment()->getTransactionId())
-            && CarpoolPayment::STATUS_SUCCESS === $this->getCarpoolPayment()->getStatus()
+            && $this->getCarpoolPayment()->isEECCompliant()
             && !is_null($this->getCarpoolProof())
-            && CarpoolProof::STATUS_VALIDATED === $this->getCarpoolProof()->getstatus()
-            && CarpoolProof::TYPE_HIGH === $this->getCarpoolProof()->getType();
+            && $this->getCarpoolProof()->isEECCompliant();
     }
 }

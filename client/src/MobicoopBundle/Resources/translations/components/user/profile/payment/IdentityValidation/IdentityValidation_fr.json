@@ -1,29 +1,29 @@
 {
-    "title": "3. Vérification d'identité",
-    "text": "<p>La vérification d'identité sur la base d'un document d'identité à jour (carte d'identité recto-verso, passeport, permis de conduire) est une obligation légale pour recevoir des paiements.Cette obligation est motivée par la lutte contre le blanchiment.</p><p>La vérification d'identité nécessaire au paiement se fait par comparaison entre les prénom et nom renseignés dans votre profil, et ceux sur votre document d'identité. Veillez donc à avoir des informations justes dans votre profil.</p><p>Vous pouvez lire les conditions de validation d'un document d'identité chez notre partenaire <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
-    "fileInput": {
-        "label" : "Document d'identité à jour",
-        "error": "Taille du document non valide",
-        "tooltip": "Le document doit être au format jpg, jpeg, png ou pdf. Le taille du document doit être supérieure à 32Ko et inférieure à 6Mo"
-    },
-    "send": "Envoyer",
-    "status": {
-        "pending": "Document en cours de validation",
-        "validated": "Identité vérifiée",
-        "outdated": "Document expiré",
-        "refused": {
-            "0" : "Document refusé",
-            "1" : "Vos données personnelles ont changé veuillez valider à nouveau votre identité",
-            "2" : "Document refusé car vous devez être majeur",
-            "3" : "Document refusé car il fait l'objet d'une suspicion de falsification",
-            "4" : "Document refusé car le fichier est vide",
-            "5" : "Document refusé car le document a expiré",
-            "6" : "Document refusé car type de document non accepté",
-            "7" : "Document refusé car les données ne correspondent pas à celles de l'utilisateur",
-            "8" : "Document refusé car illisible",
-            "9" : "Document refusé car incomplet",
-            "10": "Document refusé (raison non donnée)"
-        }
-    },
-    "sendUrl": "/utilisateur/document-validation-identite/envoyer"
+  "title": "3. Vérification d'identité",
+  "text": "<p>La vérification d'identité sur la base d'un document d'identité à jour (carte d'identité recto-verso, passeport, permis de conduire) est une obligation légale pour recevoir des paiements.Cette obligation est motivée par la lutte contre le blanchiment.</p><p>La vérification d'identité nécessaire au paiement se fait par comparaison entre les prénom et nom renseignés dans votre profil, et ceux sur votre document d'identité. Veillez donc à avoir des informations justes dans votre profil.</p>",
+  "fileInput": {
+    "label": "Document d'identité à jour",
+    "error": "Taille du document non valide",
+    "tooltip": "Le document doit être au format jpg, jpeg, png ou pdf. Le taille du document doit être supérieure à 32Ko et inférieure à 6Mo"
+  },
+  "send": "Envoyer",
+  "status": {
+    "pending": "Document en cours de validation",
+    "validated": "Identité vérifiée",
+    "outdated": "Document expiré",
+    "refused": {
+      "0": "Document refusé",
+      "1": "Vos données personnelles ont changé veuillez valider à nouveau votre identité",
+      "2": "Document refusé car vous devez être majeur",
+      "3": "Document refusé car il fait l'objet d'une suspicion de falsification",
+      "4": "Document refusé car le fichier est vide",
+      "5": "Document refusé car le document a expiré",
+      "6": "Document refusé car type de document non accepté",
+      "7": "Document refusé car les données ne correspondent pas à celles de l'utilisateur",
+      "8": "Document refusé car illisible",
+      "9": "Document refusé car incomplet",
+      "10": "Document refusé (raison non donnée)"
+    }
+  },
+  "sendUrl": "/utilisateur/document-validation-identite/envoyer"
 }

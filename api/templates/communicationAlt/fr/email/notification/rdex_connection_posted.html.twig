@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Nouvelle demande de contact</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:22px;" text-align="center" ><b>Nouvelle demande de contact</b></p>
                     </td>
                 </tr>
             </table>
@@ -23,7 +23,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:13px; margin-bottom:16px;">Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -34,12 +34,12 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td>
-                        <p style="font-size:11px; text-align:justify;">Une personne inscrite sur <strong>{{ context.origin }}</strong> souhaite vous solliciter pour un covoiturage.</p>
+                        <p style="font-size:13px; text-align:justify;">Une personne inscrite sur <strong>{{ context.origin }}</strong> souhaite vous solliciter pour un covoiturage.</p>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <p style="font-size:11px; text-align:justify;">Ce message concerne votre trajet de <strong>{{ context.journeyOrigin }}</strong> à <strong>{{ context.journeyDestination }}</strong>{% if context.journeyDate != '' and context.journeyTime != '' %} prévu le {{ context.journeyDate }} à {{ context.journeyTime }}{% endif %}.</p>
+                        <p style="font-size:13px; text-align:justify;">Ce message concerne votre trajet de <strong>{{ context.journeyOrigin }}</strong> à <strong>{{ context.journeyDestination }}</strong>{% if context.journeyDate != '' and context.journeyTime != '' %} prévu le {{ context.journeyDate }} à {{ context.journeyTime }}{% endif %}.</p>
                     </td>
                 </tr>
             </table>
@@ -53,9 +53,9 @@
                         <p> </p>
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align:justify;"><strong>Son message :</strong></p>
+                        <p style="font-size:13px; text-align:justify;"><strong>Son message :</strong></p>
                         <hr />
-                        <p style="font-size:11px;">{{ context.text | nl2br }}</p>
+                        <p style="font-size:13px;">{{ context.text | nl2br }}</p>
                         <hr />
                     </td>
                     <td style="width:5px">
@@ -75,8 +75,8 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; text-align:justify;">Cette personne étant inscrite sur une autre plateforme de covoiturage, vous ne pouvez pas lui répondre via Rezo Mobicoop</p>
-                        <p style="font-size:11px; text-align:justify;">En revanche, vous pouvez utiliser les coordonnées qu'elle vous a, en principe, transmises dans son message pour la contacter directement.</p>
+                        <p style="font-size:13px; text-align:justify;">Cette personne étant inscrite sur une autre plateforme de covoiturage, vous ne pouvez pas lui répondre via Mobicoop</p>
+                        <p style="font-size:13px; text-align:justify;">En revanche, vous pouvez utiliser les coordonnées qu'elle vous a, en principe, transmises dans son message pour la contacter directement.</p>
                     </td>
                 </tr>
             </table>
@@ -87,7 +87,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">"A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">Rezo Mobicoop</a></p>
+                        <p style="font-size:13px; margin-bottom:16px; text-align: justify;">"A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">Mobicoop</a></p>
                     </td>
                 </tr>
             </table>

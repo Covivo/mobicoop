@@ -797,6 +797,10 @@ services:
           command: "app:incentive:subscription-timestamps",
         }
 
+  App\Incentive\Controller\IncentivesController:
+    tags:
+      - controller.service_arguments
+
   App\Carpool\Command\CarpoolProofSendHistory:
     tags:
       - { name: "console.command", command: "app:carpool:proof-send-history" }
@@ -830,6 +834,21 @@ services:
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
+
+  App\Incentive\Service\Manager\IncentiveManager:
+    arguments:
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $mobConnectParams:
+        api_uri: "%env(string:MOBCONNECT_API_URI)%"
+        credentials:
+          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
+          api_key: "%env(string:MOBCONNECT_API_KEY)%"
+          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
+          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
+        subscription_ids:
+          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
+          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
 
   App\Incentive\Service\Manager\JourneyManager:
     arguments:
@@ -1187,10 +1206,6 @@ services:
       $fileFolder: "%env(string:SOLIDARY_FILE_FOLDER)%"
 
   # User
-  App\User\Admin\Controller\DeleteUsers:
-    tags:
-      - controller.service_arguments
-
   App\User\Admin\Service\UserManager:
     arguments:
       $chat: "%env(int:CARPOOL_DEFAULT_CHAT)%"
@@ -1216,6 +1231,10 @@ services:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
   'App\User\Admin\DataProvider\UserCampaignAssociateCollectionDataProvider':
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+  
+  'App\User\Admin\DataProvider\UserDeleteCollectionDataProvider':
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
@@ -1257,6 +1276,7 @@ services:
       $passwordTokenValidity: "%env(int:PASSWORD_TOKEN_VALIDITY)%"
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
       $userMinAge: "%env(int:USER_MIN_AGE)%"
+      $carpoolStandardEnabled: "%env(bool:CARPOOL_STANDARD_ENABLED)%"
 
   App\User\Interoperability\Service\UserManager:
     arguments:

@@ -16,7 +16,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19px;" text-align="center" ><b>Vous avez une demande de covoiturage !</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:21px;" text-align="center" ><b>Vous avez une demande de covoiturage !</b></p>
                     </td>
                 </tr>
             </table>
@@ -31,8 +31,8 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> vous propose de covoiturer avec lui/elle !</p>
+                        <p style="font-size:13px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> vous propose de covoiturer avec lui/elle !</p>
                     </td>
                 </tr>
             </table>
@@ -50,7 +50,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                         <p style="font-size:11px;">Date de votre covoiturage: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].date|date("d/m/Y") }}</b></p>
+                         <p style="font-size:13px;">Date de votre covoiturage: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].date|date("d/m/Y") }}</b></p>
                     </td>
                 </tr>
                 <tr>
@@ -58,7 +58,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                         <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
+                         <p style="font-size:13px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
                     </td>
                 </tr>
             </table>
@@ -78,10 +78,10 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px;">{{outwardOrigin.time|date('H:i')}}</p>
+                        <p style="font-size:13px;">{{outwardOrigin.time|date('H:i')}}</p>
                     </td>
                     <td>
-                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ outwardOrigin.address.displayLabel[0] }}</b></p>
+                        <p style="font-size:13px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ outwardOrigin.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
                 <tr>
@@ -95,10 +95,10 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px;">{{outwardDestination.time|date('H:i')}}</p>
+                        <p style="font-size:13px;">{{outwardDestination.time|date('H:i')}}</p>
                     </td>
                     <td>
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
+                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
             </table>
@@ -114,7 +114,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                         <p style="font-size:11px;">Vos trajets réguliers: du <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].startDate|date("d/m/Y") }}</b> au <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].toDate|date("d/m/Y") }}</b></p>
+                         <p style="font-size:13px;">Vos trajets réguliers: du <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].startDate|date("d/m/Y") }}</b> au <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].toDate|date("d/m/Y") }}</b></p>
                     </td>
                 </tr>
                 <tr>
@@ -122,7 +122,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                         <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
+                         <p style="font-size:13px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
                     </td>
                 </tr>
             </table>
@@ -142,7 +142,7 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ outwardOrigin.address.displayLabel[0] }}</b></p>
+                        <p style="font-size:13px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ outwardOrigin.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
                 <tr>
@@ -156,7 +156,7 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
+                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
             </table>
@@ -176,7 +176,7 @@
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                             />
-                        {% else %} 
+                        {% else %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGrey.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -189,7 +189,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -202,7 +202,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -215,7 +215,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -228,7 +228,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -241,7 +241,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -254,7 +254,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -276,24 +276,24 @@
                             <table cellpadding="4" cellspacing="4" summary="" border="0">
                                 <tr>
                                     <td>
-                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Aller</b></p>
+                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:13px;"><b>Aller</b></p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
-                                            <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
+                                            <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                        {% else %}
+                                            <p style="font-size:13px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
-                                            <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
+                                            <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                        {% else %}
+                                            <p style="font-size:13px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -303,24 +303,24 @@
                             <table cellpadding="4" cellspacing="4" summary="" border="0">
                                 <tr>
                                     <td>
-                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Retour</b></p>
+                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:13px;"><b>Retour</b></p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
-                                            <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
+                                            <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                        {% else %}
+                                            <p style="font-size:13px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
-                                            <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
+                                            <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                        {% else %}
+                                            <p style="font-size:13px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -378,7 +378,7 @@
                         <p> </p>
                     </td>
                     <td align="left" style="text-align:center;" >
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}; font-size:15px;" >Comment bien préparer votre covoiturage ?</b></p>
+                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}; font-size:17px;" >Comment bien préparer votre covoiturage ?</b></p>
                     </td>
                 </tr>
             </table>
@@ -396,7 +396,7 @@
                         />
                     </td>
                     <td align="center" >
-                        <p style="font-size:11px; text-align: justify;">Acceptez ou refusez une sollicitation en cliquant sur les boutons en haut à droite de <a href="{{api_env('EMAILS_PLATFORM_URL')}}/points-relais" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">la page Message</a>. Sans cela, le covoiturage ne sera pas enregistré sur l’interface, vous ne bénéficierez pas de preuve de covoiturage, vous ne pourrez pas payer en ligne ou laisser un avis.</p>
+                        <p style="font-size:13px; text-align: justify;">Acceptez ou refusez une sollicitation en cliquant sur les boutons en haut à droite de <a href="{{api_env('EMAILS_PLATFORM_URL')}}/points-relais" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">la page Message</a>. Sans cela, le covoiturage ne sera pas enregistré sur l’interface, vous ne bénéficierez pas de preuve de covoiturage, vous ne pourrez pas payer en ligne ou laisser un avis.</p>
                     </td>
                 </tr>
             </table>
@@ -414,7 +414,7 @@
                         />
                     </td>
                     <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Veillez à bien définir votre point de prise en charge et de dépose avec votre covoitureur au préalable. Vous pouvez vous aider avec <a href="{{api_env('EMAILS_PLATFORM_URL')}}/points-relais" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">la carte des points relais.</a></p>
+                        <p style="font-size:13px; text-align: justify;"> Veillez à bien définir votre point de prise en charge et de dépose avec votre covoitureur au préalable. Vous pouvez vous aider avec <a href="{{api_env('EMAILS_PLATFORM_URL')}}/points-relais" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">la carte des points relais.</a></p>
                     </td>
                 </tr>
             </table>
@@ -433,7 +433,7 @@
                         />
                     </td>
                     <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Le paiement peut se faire de la main à la main le jour du covoiturage ou par carte bancaire depuis <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-covoiturages-acceptes" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Mes covoiturages acceptés</a> après le covoiturage. Mettez vous d’accord avec votre covoitureur sur la solution que vous préférez.  <a href="https://pro.mobicoop.fr/comment-regler-ses-covoiturages-sur-mobicoop/" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Suivre notre tutoriel.</a></p>
+                        <p style="font-size:13px; text-align: justify;"> Le paiement peut se faire de la main à la main le jour du covoiturage ou par carte bancaire depuis <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-covoiturages-acceptes" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Mes covoiturages acceptés</a> après le covoiturage. Mettez vous d’accord avec votre covoitureur sur la solution que vous préférez.  <a href="https://pro.mobicoop.fr/comment-regler-ses-covoiturages-sur-mobicoop/" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Suivre notre tutoriel.</a></p>
                     </td>
                 </tr>
                  {#attention  #}
@@ -451,7 +451,7 @@
                                     />
                                 </td>
                                 <td align="left" vertical-align:"top" >
-                                    <p style="font-size:11px; text-align: justify;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};"> Attention, des personnes mal intentionnées peuvent vous demander d’autres moyens de paiement, notamment via des cartes prépayées (Transcash), refusez ces pratiques frauduleuses et signalez-nous cet utilisateur.</b></p>
+                                    <p style="font-size:13px; text-align: justify;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};"> Attention, des personnes mal intentionnées peuvent vous demander d’autres moyens de paiement, notamment via des cartes prépayées (Transcash), refusez ces pratiques frauduleuses et signalez-nous cet utilisateur.</b></p>
                                 </td>
                             </tr>
                         </table>
