@@ -1457,6 +1457,13 @@ class User implements UserInterface, EquatableInterface
     private $facebookId;
 
     /**
+     * @var ArrayCollection The Sso accounts owned by this User
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\SsoAccount", mappedBy="user")
+     */
+    private $ssoAccounts;
+
+    /**
      * @var null|string External ID of the user for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -3419,6 +3426,34 @@ class User implements UserInterface, EquatableInterface
     public function setFacebookId(?string $facebookId): self
     {
         $this->facebookId = $facebookId;
+
+        return $this;
+    }
+
+    public function getSsoAccounts()
+    {
+        return $this->ssoAccounts->getValues();
+    }
+
+    public function addSsoAccount(SsoAccount $ssoAccount): self
+    {
+        if (!$this->ssoAccounts->contains($ssoAccount)) {
+            $this->ssoAccounts[] = $ssoAccount;
+            $ssoAccount->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSsoAccount(SsoAccount $ssoAccount): self
+    {
+        if ($this->ssoAccounts->contains($ssoAccount)) {
+            $this->ssoAccounts->removeElement($ssoAccount);
+            // set the owning side to null (unless already changed)
+            if ($ssoAccount->getUser() === $this) {
+                $ssoAccount->setUser(null);
+            }
+        }
 
         return $this;
     }
