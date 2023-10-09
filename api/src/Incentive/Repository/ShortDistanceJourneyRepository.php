@@ -8,12 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ShortDistanceJourneyRepository
 {
-    protected $_repository;
     protected $_entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->_repository = $entityManager->getRepository(ShortDistanceJourney::class);
         $this->_entityManager = $entityManager;
     }
 
@@ -22,8 +20,10 @@ class ShortDistanceJourneyRepository
         $qb = $this->_entityManager->createQueryBuilder('j');
 
         $qb
+            ->select('j')
+            ->from(ShortDistanceJourney::class, 'j')
             ->where('j.carpoolProof = :cp')
-            ->setParameter($carpoolProof, 'cp')
+            ->setParameter('cp', $carpoolProof)
         ;
 
         return $qb->getQuery()->getOneOrNullResult();

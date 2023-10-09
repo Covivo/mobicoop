@@ -280,13 +280,13 @@ abstract class MobConnectManager
 
         $user = self::DRIVER === $carpoolerType ? $carpoolItem->getCreditorUser() : $carpoolItem->getDebtorUser();
 
-        switch ($user) {
-            case $carpoolItem->getAsk()->getMatching()->getProposalOffer()->getUser():
+        switch ($user->getId()) {
+            case $carpoolItem->getAsk()->getMatching()->getProposalOffer()->getUser()->getId():
                 $proposal = $carpoolItem->getAsk()->getMatching()->getProposalOffer();
 
                 break;
 
-            case $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getUser():
+            case $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getUser()->getId():
                 $proposal = $carpoolItem->getAsk()->getMatching()->getProposalRequest();
 
                 break;
