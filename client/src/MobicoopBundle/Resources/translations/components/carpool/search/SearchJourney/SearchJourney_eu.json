@@ -49,5 +49,7 @@
     "origin": {
         "error": "Baitezpadakoa",
         "label": "Abiatze lekua"
-    }
+    },
+    "defaultDate": "YYYY-MM-DD",
+    "defaultDatetime": "YYYY-MM-DD HH:mm"
 }

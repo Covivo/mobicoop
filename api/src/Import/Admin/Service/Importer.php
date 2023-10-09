@@ -46,6 +46,8 @@ class Importer
     private const USER_ENTITY = 'User';
     private const RELAY_POINT_ENTITY = 'RelayPoint';
 
+    private const TIME_LIMIT = 4 * 60 * 60;
+
     /**
      * @var File
      */
@@ -78,6 +80,7 @@ class Importer
 
     public function importUsers(): Import
     {
+        set_time_limit(self::TIME_LIMIT);
         if (!$this->_validateFile()) {
             return $this->_buildImport(self::USER_ENTITY);
         }
@@ -91,6 +94,7 @@ class Importer
 
     public function importRelayPoints(): Import
     {
+        set_time_limit(self::TIME_LIMIT);
         if (!$this->_validateFile()) {
             return $this->_buildImport(self::USER_ENTITY);
         }

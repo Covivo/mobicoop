@@ -312,7 +312,6 @@ export default {
       this.time = search.time;
     },
     search: function () {
-      console.log(this.time);
       this.loadingSearch = true;
       let lParams = {
         origin: JSON.stringify(this.origin),

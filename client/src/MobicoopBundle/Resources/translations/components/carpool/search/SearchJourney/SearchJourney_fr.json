@@ -47,6 +47,8 @@
             "label": "Rechercher"
         }
     },
+    "defaultDate": "YYYY-MM-DD",
+    "defaultDatetime": "YYYY-MM-DD HH:mm",
     "fullDate": "ddd Do MMMM YYYY",
     "fullDateTime": "ddd Do MMMM YYYY à HH:mm",
     "ariaLabelOrgin":"Une adresse de départ est requise",
