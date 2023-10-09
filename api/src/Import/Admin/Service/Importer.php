@@ -46,7 +46,7 @@ class Importer
     private const USER_ENTITY = 'User';
     private const RELAY_POINT_ENTITY = 'RelayPoint';
 
-    private const TIME_LIMIT = 4 * 60 * 60;
+    private const TIME_LIMIT = 6 * 60 * 60;
 
     /**
      * @var File
