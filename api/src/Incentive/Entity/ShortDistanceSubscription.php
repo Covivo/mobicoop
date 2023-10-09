@@ -52,7 +52,7 @@ class ShortDistanceSubscription
     /**
      * @var ArrayCollection The short distance log associated with the user
      *
-     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", mappedBy="subscription", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", mappedBy="subscription", cascade={"persist"}, orphanRemoval=true)
      */
     private $shortDistanceJourneys;
 
