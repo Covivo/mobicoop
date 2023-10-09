@@ -1464,40 +1464,6 @@ class User implements UserInterface, EquatableInterface
     private $ssoAccounts;
 
     /**
-     * @var null|string External ID of the user for a SSO connection
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @Groups({"readUser", "patchSso"})
-     */
-    private $ssoId;
-
-    /**
-     * @var null|string External Provider for a SSO connection
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @Groups({"readUser", "patchSso"})
-     */
-    private $ssoProvider;
-
-    /**
-     * @var \DateTimeInterface Creation date of the user by Sso (attachment date if already existing)
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     *
-     * @Groups({"aRead","readUser"})
-     */
-    private $createdSsoDate;
-
-    /**
-     * @var null|bool true : the user has been created by sso (false mean no sso or only attached a previously existing account)
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $createdBySso;
-
-    /**
      * @var null|User admin that create the user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
@@ -3454,54 +3420,6 @@ class User implements UserInterface, EquatableInterface
                 $ssoAccount->setUser(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getSsoId(): ?string
-    {
-        return $this->ssoId;
-    }
-
-    public function setSsoId(?string $ssoId): self
-    {
-        $this->ssoId = $ssoId;
-
-        return $this;
-    }
-
-    public function getSsoProvider(): ?string
-    {
-        return $this->ssoProvider;
-    }
-
-    public function setSsoProvider(?string $ssoProvider): self
-    {
-        $this->ssoProvider = $ssoProvider;
-
-        return $this;
-    }
-
-    public function getCreatedSsoDate(): ?\DateTimeInterface
-    {
-        return $this->createdSsoDate;
-    }
-
-    public function setCreatedSsoDate(?\DateTimeInterface $createdSsoDate): self
-    {
-        $this->createdSsoDate = $createdSsoDate;
-
-        return $this;
-    }
-
-    public function isCreatedBySso(): ?bool
-    {
-        return (is_null($this->createdBySso)) ? false : $this->createdBySso;
-    }
-
-    public function setCreatedBySso(?bool $createdBySso): self
-    {
-        $this->createdBySso = $createdBySso;
 
         return $this;
     }
