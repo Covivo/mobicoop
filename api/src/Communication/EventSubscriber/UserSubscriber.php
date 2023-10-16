@@ -115,7 +115,7 @@ class UserSubscriber implements EventSubscriberInterface
 
     public function onUserRegistered(UserRegisteredEvent $event)
     {
-        if (!is_null($event->getUser()->getSsoId()) && '' !== $event->getUser()->getSsoId() && !$this->notificationSsoRegistration) {
+        if (!is_null($event->getUser()->getSsoAccounts()) && count($event->getUser()->getSsoAccounts()) > 0 && !$this->notificationSsoRegistration) {
             return;
         }
         $this->notificationManager->notifies(UserRegisteredEvent::NAME, $event->getUser());
