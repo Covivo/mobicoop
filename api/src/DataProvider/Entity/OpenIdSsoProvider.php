@@ -179,10 +179,10 @@ class OpenIdSsoProvider implements SsoProviderInterface
     {
         // Mock data for dev purpose
         $ssoUser = new SsoUser();
-        $ssoUser->setSub('6e3dc068-beeb-4dba-90e2-3025a7229889');
-        $ssoUser->setEmail('max.test@yopmail.com');
+        $ssoUser->setSub('4af2d545-23cb-49fe-8141-20fd89e4c21a');
+        $ssoUser->setEmail('max.sso@yopmail.com');
         $ssoUser->setFirstname('Max');
-        $ssoUser->setLastname('Test');
+        $ssoUser->setLastname('Sso');
         $ssoUser->setProvider('PassMobilite');
         $ssoUser->setGender(User::GENDER_MALE);
         $ssoUser->setBirthdate(null);

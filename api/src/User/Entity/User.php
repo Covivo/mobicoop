@@ -1908,6 +1908,7 @@ class User implements UserInterface, EquatableInterface
         $this->setAlreadyRegistered(false);
         $this->setMobileRegistration(null);
         $this->setExperienced(false);
+        $this->ssoAccounts = new ArrayCollection();
     }
 
     public function getId(): ?int

@@ -47,12 +47,12 @@ class LoginAuthenticator
             return;
         }
 
-        if (!is_null($user->getSsoProvider())) {
-            $logoutUrl = $this->ssoManager->getSsoLogoutUrl($user);
-            if ($logoutUrl) {
-                $data['logoutUrl'] = $this->ssoManager->getSsoLogoutUrl($user);
-            }
-        }
+        // if (!is_null($user->getSsoProvider())) {
+        //     $logoutUrl = $this->ssoManager->getSsoLogoutUrl($user);
+        //     if ($logoutUrl) {
+        //         $data['logoutUrl'] = $this->ssoManager->getSsoLogoutUrl($user);
+        //     }
+        // }
 
         $event->setData($data);
     }

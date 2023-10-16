@@ -1798,33 +1798,7 @@ class UserManager
                 throw new \LogicException('Autocreate/Autoattach account disable');
             }
 
-            // Create a new one
-            $user = new User();
-            $user->setSsoId($ssoUser->getSub());
-            $user->setSsoProvider($ssoUser->getProvider());
-            $user->setCreatedSsoDate(new \DateTime('now'));
-            $user->setGivenName($ssoUser->getFirstname());
-            $user->setFamilyName($ssoUser->getLastname());
-            $user->setEmail($ssoUser->getEmail());
-
-            // Gender
-            switch ($ssoUser->getGender()) {
-                case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);
-
-                    break;
-
-                case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);
-
-                    break;
-
-                default: $user->setGender(User::GENDER_OTHER);
-            }
-
-            if ('' != trim($ssoUser->getBirthdate())) {
-                $user->setBirthDate(\DateTime::createFromFormat('Y-m-d', $ssoUser->getBirthdate()));
-            }
-
-            $user = $this->registerUser($user, true, false, $ssoUser);
+            $user = $this->_createNewUserBySso($ssoUser);
         }
 
         $this->updateUserSsoProperties($user, $ssoUser);
@@ -2069,6 +2043,41 @@ class UserManager
     public function getUnreadMessageNumberForResponseInsertion(User $user): User
     {
         return $this->getUnreadMessageNumber($user);
+    }
+
+    private function _createNewUserBySso(SsoUser $ssoUser): User
+    {
+        // Create a new one
+        $user = new User();
+        $user->setGivenName($ssoUser->getFirstname());
+        $user->setFamilyName($ssoUser->getLastname());
+        $user->setEmail($ssoUser->getEmail());
+
+        $ssoAccount = new SsoAccount();
+        $ssoAccount->setSsoId($ssoUser->getSub());
+        $ssoAccount->setSsoProvider($ssoUser->getProvider());
+        $ssoAccount->setCreatedBySso(true);
+
+        $user->addSsoAccount($ssoAccount);
+
+        // Gender
+        switch ($ssoUser->getGender()) {
+            case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);
+
+                break;
+
+            case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);
+
+                break;
+
+            default: $user->setGender(User::GENDER_OTHER);
+        }
+
+        if ('' != trim($ssoUser->getBirthdate())) {
+            $user->setBirthDate(\DateTime::createFromFormat('Y-m-d', $ssoUser->getBirthdate()));
+        }
+
+        return $this->registerUser($user, true, false, $ssoUser);
     }
 
     /**
