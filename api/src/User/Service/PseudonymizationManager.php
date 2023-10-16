@@ -6,7 +6,7 @@ use App\User\Entity\User;
 
 class PseudonymizationManager
 {
-    private const DELETE_AVAILABLE_USER_FIELDS = ['birthDate', 'chat', 'chatFavorites', 'drivingLicenceNumber', 'emailToken', 'familyName', 'gamification', 'givenName', 'mobile', 'music', 'musicFavorites', 'newsSubscription', 'oldEmail', 'oldTelephone', 'postalAddress', 'proEmail', 'proName', 'smoke', 'ssoId', 'ssoProvider', 'telephone', 'unsubscribeToken'];
+    private const DELETE_AVAILABLE_USER_FIELDS = ['birthDate', 'chat', 'chatFavorites', 'drivingLicenceNumber', 'emailToken', 'familyName', 'gamification', 'givenName', 'mobile', 'music', 'musicFavorites', 'newsSubscription', 'oldEmail', 'oldTelephone', 'postalAddress', 'proEmail', 'proName', 'smoke', 'telephone', 'unsubscribeToken'];
     private const DELETE_AVAILABLE_MASS_PERSON_FIELDS = ['familyName', 'givenName'];
     private const PSEUDONYMISED_EMAIL_SUFFIX = '@mobicoop-anonymized.io';
 
@@ -15,9 +15,7 @@ class PseudonymizationManager
      */
     protected $_user;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public static function isUserPseudonymized(User $user): bool
     {
@@ -33,6 +31,7 @@ class PseudonymizationManager
         $this->_pseudonomyzedMassPerson();
 
         $this->_removeFromCommunities();
+        $this->_pseudonymizedSsoAccounts();
 
         return $this->_user;
     }
@@ -82,6 +81,13 @@ class PseudonymizationManager
     {
         foreach ($this->_user->getCommunities() as $community) {
             $this->_user->removeCommunity($community);
+        }
+    }
+
+    private function _pseudonymizedSsoAccounts()
+    {
+        foreach ($this->_user->getSsoAccounts() as $ssoAccount) {
+            $this->_user->removeSsoAccount($ssoAccount);
         }
     }
 }
