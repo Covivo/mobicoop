@@ -1459,7 +1459,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection The Sso accounts owned by this User
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\SsoAccount", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\SsoAccount", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      */
     private $ssoAccounts;
 

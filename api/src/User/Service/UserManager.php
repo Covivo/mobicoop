@@ -79,6 +79,7 @@ use App\User\Event\UserUpdatedSelfEvent;
 use App\User\Exception\UserException;
 use App\User\Exception\UserNotFoundException;
 use App\User\Exception\UserUnderAgeException;
+use App\User\Repository\SsoAccountRepository;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Repository\UserRepository;
 use App\User\Ressource\ProfileSummary;
@@ -133,6 +134,7 @@ class UserManager
     private $paymentProfileRepository;
     private $bookingManager;
     private $carpoolStandardEnabled;
+    private $ssoAccountRepository;
 
     // Default carpool settings
     private $chat;
@@ -205,7 +207,8 @@ class UserManager
         PseudonymizationManager $pseudonymizationManager,
         $userMinAge,
         BookingManager $bookingManager,
-        bool $carpoolStandardEnabled
+        bool $carpoolStandardEnabled,
+        SsoAccountRepository $ssoAccountRepository
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -251,6 +254,7 @@ class UserManager
         $this->userMinAge = $userMinAge;
         $this->bookingManager = $bookingManager;
         $this->carpoolStandardEnabled = $carpoolStandardEnabled;
+        $this->ssoAccountRepository = $ssoAccountRepository;
     }
 
     /**
@@ -1725,7 +1729,7 @@ class UserManager
         return implode($pass); // turn the array into a string
     }
 
-    public function updateUserSsoProperties(User $user, SsoUser $ssoUser, bool $eec = true): User
+    public function updateUserSsoProperties(User $user, SsoUser $ssoUser, bool $createdBySso = false): User
     {
         foreach ($user->getSsoAccounts() as $ssoAccount) {
             /**
@@ -1733,6 +1737,7 @@ class UserManager
              */
             if ($ssoAccount->getSsoProvider() == $ssoUser->getProvider()) {
                 $ssoAccount->setSsoId($ssoUser->getSub());
+                $ssoAccount->setCreatedBySso($createdBySso);
                 if (is_null($ssoAccount->getCreatedDate())) {
                     $ssoAccount->setCreatedDate(new \DateTime('now'));
                 }
@@ -1746,6 +1751,7 @@ class UserManager
         $newSsoAccount = new SsoAccount();
         $newSsoAccount->setSsoId($ssoUser->getSub());
         $newSsoAccount->setSsoProvider($ssoUser->getProvider());
+        $newSsoAccount->setCreatedBySso($createdBySso);
         $user->addSsoAccount($newSsoAccount);
 
         $this->entityManager->persist($user);
@@ -1771,7 +1777,8 @@ class UserManager
             if (!is_null($user)) {
                 // AutoCreate Autoattach disable. If the User isn't already attached to this SSO provider we reject it
                 if (!$ssoUser->hasAutoCreateAccount()) {
-                    if ($user->getSsoProvider() !== $ssoUser->getProvider()) {
+                    $providers = $this->ssoAccountRepository->getListOfSsoAccountOfAUser($user);
+                    if (!in_array($ssoUser->getProvider(), $providers)) {
                         if (!$ssoUser->hasAutoCreateAccount()) {
                             throw new \LogicException('Autocreate/Autoattach account disable');
                         }
