@@ -1746,7 +1746,8 @@ class UserManager
      */
     public function getUserFromSso(SsoUser $ssoUser): ?User
     {
-        $user = $this->userRepository->findOneBy(['ssoId' => $ssoUser->getSub(), 'ssoProvider' => $ssoUser->getProvider()]);
+        $user = $this->userRepository->findUserBySsoIdAndProvider($ssoUser->getSub(), $ssoUser->getProvider());
+
         if (is_null($user)) {
             // check if a user with this email already exists
             $user = $this->userRepository->findOneBy(['email' => $ssoUser->getEmail()]);
@@ -1994,7 +1995,7 @@ class UserManager
 
         // If the is a Ask linked, it's twice the economy (round trip)
         if (!is_null($ask->getAskLinked()) && !$export) {
-            $savedDistance = $savedDistance * 2;
+            $savedDistance *= 2;
         }
 
         return $this->geoTools->getCO2($savedDistance);

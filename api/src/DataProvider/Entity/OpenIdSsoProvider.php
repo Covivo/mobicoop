@@ -158,9 +158,6 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConnectFormUrl(): string
     {
         $url = $this->baseUri.''.str_replace('{CLIENT_ID}', $this->clientId, str_replace(
@@ -178,61 +175,59 @@ class OpenIdSsoProvider implements SsoProviderInterface
         return str_replace('{RESPONSE_TYPE}', $this->responseType, $url);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUserProfile(string $code): SsoUser
     {
         // Mock data for dev purpose
-        // $ssoUser = new SsoUser();
-        // $ssoUser->setSub('999');
-        // $ssoUser->setEmail('tenshikuroi18@yopmail.com');
-        // $ssoUser->setFirstname('Johnny');
-        // $ssoUser->setLastname('Sso');
-        // $ssoUser->setProvider('PassMobilite');
-        // $ssoUser->setGender(User::GENDER_MALE);
-        // $ssoUser->setBirthdate(null);
-        // $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
-
+        $ssoUser = new SsoUser();
+        $ssoUser->setSub('6e3dc068-beeb-4dba-90e2-3025a7229889');
+        $ssoUser->setEmail('max.test@yopmail.com');
+        $ssoUser->setFirstname('Max');
+        $ssoUser->setLastname('Test');
+        $ssoUser->setProvider('PassMobilite');
+        $ssoUser->setGender(User::GENDER_MALE);
+        $ssoUser->setBirthdate(null);
+        $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
         // return $ssoUser;
         // end mock data
 
-        if (self::RESPONSE_TYPE_ID_TOKEN_TOKEN == $this->responseType) {
-            $token = $code;
-        } else {
-            $token = $this->getToken($code);
-        }
+        // if (self::RESPONSE_TYPE_ID_TOKEN_TOKEN == $this->responseType) {
+        //     $token = $code;
+        // } else {
+        //     $token = $this->getToken($code);
+        // }
 
-        $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::USERINFOS_URL]);
-        $headers = [
-            'Authorization' => 'Bearer '.$token,
-        ];
+        // $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::USERINFOS_URL]);
+        // $headers = [
+        //     'Authorization' => 'Bearer '.$token,
+        // ];
 
-        $response = $dataProvider->getCollection(null, $headers);
+        // $response = $dataProvider->getCollection(null, $headers);
 
-        if (200 == $response->getCode()) {
-            $data = json_decode($response->getValue(), true);
-            $ssoUser = new SsoUser();
-            $ssoUser->setSub((isset($data['sub'])) ? $data['sub'] : null);
-            $ssoUser->setEmail((isset($data['email'])) ? $data['email'] : null);
-            $ssoUser->setFirstname((isset($data['first_name'])) ? $data['first_name'] : ((isset($data['given_name'])) ? $data['given_name'] : null));
-            $ssoUser->setLastname((isset($data['last_name'])) ? $data['last_name'] : ((isset($data['family_name'])) ? $data['family_name'] : null));
-            $ssoUser->setProvider($this->serviceName);
-            $ssoUser->setGender((isset($data['gender'])) ? $data['gender'] : User::GENDER_OTHER);
-            $ssoUser->setBirthdate((isset($data['birthdate'])) ? $data['birthdate'] : null);
-            $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
+        // if (200 == $response->getCode()) {
+        //     $data = json_decode($response->getValue(), true);
+        //     $ssoUser = new SsoUser();
+        //     $ssoUser->setSub((isset($data['sub'])) ? $data['sub'] : null);
+        //     $ssoUser->setEmail((isset($data['email'])) ? $data['email'] : null);
+        //     $ssoUser->setFirstname((isset($data['first_name'])) ? $data['first_name'] : ((isset($data['given_name'])) ? $data['given_name'] : null));
+        //     $ssoUser->setLastname((isset($data['last_name'])) ? $data['last_name'] : ((isset($data['family_name'])) ? $data['family_name'] : null));
+        //     $ssoUser->setProvider($this->serviceName);
+        //     $ssoUser->setGender((isset($data['gender'])) ? $data['gender'] : User::GENDER_OTHER);
+        //     $ssoUser->setBirthdate((isset($data['birthdate'])) ? $data['birthdate'] : null);
+        //     $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
 
-            if (
-                $this->autoCreateAccount
-                && (is_null($ssoUser->getFirstname())
-                || is_null($ssoUser->getLastname())
-                || is_null($ssoUser->getEmail()))
-            ) {
-                throw new \LogicException('Not enough infos about the User');
-            }
+        //     if (
+        //         $this->autoCreateAccount
+        //         && (is_null($ssoUser->getFirstname())
+        //         || is_null($ssoUser->getLastname())
+        //         || is_null($ssoUser->getEmail()))
+        //     ) {
+        //         throw new \LogicException('Not enough infos about the User');
+        //     }
 
-            return $ssoUser;
-        }
+        //     return $ssoUser;
+        // }
+
+        return $ssoUser;
 
         throw new \LogicException('Error getUserProfile');
     }

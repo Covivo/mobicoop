@@ -179,8 +179,6 @@ class UserRepository
 
     /**
      * Count the active users (with a connection in the last 6 months).
-     *
-     * @return int
      */
     public function countActiveUsers(): ?int
     {
@@ -198,8 +196,6 @@ class UserRepository
 
     /**
      * Count users.
-     *
-     * @return int
      */
     public function countUsers(): ?int
     {
@@ -559,5 +555,22 @@ class UserRepository
         $qb->setParameters($parameters);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findUserBySsoIdAndProvider(string $ssoId, string $ssoProvider)
+    {
+        $query = $this->repository->createQueryBuilder('u');
+
+        $query
+            ->join('u.ssoAccounts', 'ssoaccounts')
+            ->where('ssoaccounts.ssoId = :ssoId')
+            ->andWhere('ssoaccounts.ssoProvider = :ssoProvider')
+            ->setParameter('ssoId', $ssoId)
+            ->setParameter('ssoProvider', $ssoProvider)
+            ->orderBy('ssoaccounts.id', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 }
