@@ -606,10 +606,20 @@ export default {
       return (this.externalRdexJourneys || this.ptSearch) ? true : false;
     },
     displayOrigin(){
-      return (this.lOrigin) ? this.lOrigin.addressLocality :  "";
+      if(this.lOrigin.name){
+        return this.lOrigin.name;
+      }
+      else{
+        return (this.lOrigin) ? this.lOrigin.addressLocality :  "";
+      }
     },
     displayDestination(){
-      return (this.lDestination) ? this.lDestination.addressLocality : "";
+      if(this.lDestination.name){
+        return this.lDestination.name;
+      }
+      else{
+        return (this.lDestination) ? this.lDestination.addressLocality : "";
+      }
     }
   },
   watch:{
