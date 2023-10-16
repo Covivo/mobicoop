@@ -1775,23 +1775,7 @@ class UserManager
             // check if a user with this email already exists
             $user = $this->userRepository->findOneBy(['email' => $ssoUser->getEmail()]);
             if (!is_null($user)) {
-                // AutoCreate Autoattach disable. If the User isn't already attached to this SSO provider we reject it
-                if (!$ssoUser->hasAutoCreateAccount()) {
-                    $providers = $this->ssoAccountRepository->getListOfSsoAccountOfAUser($user);
-                    if (!in_array($ssoUser->getProvider(), $providers)) {
-                        if (!$ssoUser->hasAutoCreateAccount()) {
-                            throw new \LogicException('Autocreate/Autoattach account disable');
-                        }
-                    } else {
-                        $event = new SsoAuthenticationEvent($user, $ssoUser);
-                        $this->eventDispatcher->dispatch(SsoAuthenticationEvent::NAME, $event);
-
-                        return $user;
-                    }
-                }
-
-                // We update the user with ssoId and ssoProvider and return it
-                return $this->updateUserSsoProperties($user, $ssoUser);
+                return $this->_attachUserBySso($user, $ssoUser);
             }
 
             if (!$ssoUser->hasAutoCreateAccount()) {
@@ -2043,6 +2027,27 @@ class UserManager
     public function getUnreadMessageNumberForResponseInsertion(User $user): User
     {
         return $this->getUnreadMessageNumber($user);
+    }
+
+    private function _attachUserBySso(User $user, SsoUser $ssoUser): User
+    {
+        // AutoCreate Autoattach disable. If the User isn't already attached to this SSO provider we reject it
+        if (!$ssoUser->hasAutoCreateAccount()) {
+            $providers = $this->ssoAccountRepository->getListOfSsoAccountOfAUser($user);
+            if (!in_array($ssoUser->getProvider(), $providers)) {
+                if (!$ssoUser->hasAutoCreateAccount()) {
+                    throw new \LogicException('Autocreate/Autoattach account disable');
+                }
+            } else {
+                $event = new SsoAuthenticationEvent($user, $ssoUser);
+                $this->eventDispatcher->dispatch(SsoAuthenticationEvent::NAME, $event);
+
+                return $user;
+            }
+        }
+
+        // We update the user with ssoId and ssoProvider and return it
+        return $this->updateUserSsoProperties($user, $ssoUser);
     }
 
     private function _createNewUserBySso(SsoUser $ssoUser): User
