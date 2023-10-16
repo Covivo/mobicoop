@@ -60,6 +60,7 @@ use App\Solidary\Repository\SolidaryAskRepository;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\AuthenticationDelegation;
+use App\User\Entity\SsoAccount;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Entity\UserNotification;
@@ -1726,11 +1727,27 @@ class UserManager
 
     public function updateUserSsoProperties(User $user, SsoUser $ssoUser, bool $eec = true): User
     {
-        $user->setSsoId($ssoUser->getSub());
-        $user->setSsoProvider($ssoUser->getProvider());
-        if (is_null($user->getCreatedSsoDate())) {
-            $user->setCreatedSsoDate(new \DateTime('now'));
+        foreach ($user->getSsoAccounts() as $ssoAccount) {
+            /**
+             * @var ssoAccount $ssoAccount
+             */
+            if ($ssoAccount->getSsoProvider() == $ssoUser->getProvider()) {
+                $ssoAccount->setSsoId($ssoUser->getSub());
+                if (is_null($ssoAccount->getCreatedDate())) {
+                    $ssoAccount->setCreatedDate(new \DateTime('now'));
+                }
+                $this->entityManager->persist($ssoAccount);
+                $this->entityManager->flush();
+
+                return $user;
+            }
         }
+
+        $newSsoAccount = new SsoAccount();
+        $newSsoAccount->setSsoId($ssoUser->getSub());
+        $newSsoAccount->setSsoProvider($ssoUser->getProvider());
+        $user->addSsoAccount($newSsoAccount);
+
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 

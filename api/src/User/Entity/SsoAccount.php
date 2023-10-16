@@ -84,6 +84,8 @@ class SsoAccount
      * @var null|bool true : the user has been created by sso (false mean no sso or only attached a previously existing account)
      *
      * @ORM\Column(type="boolean")
+     *
+     * @Groups({"readSsoAccount"})
      */
     private $createdBySso;
 
@@ -92,7 +94,7 @@ class SsoAccount
      *
      * @ORM\Column(type="datetime")
      *
-     * @Groups({"readBlock"})
+     * @Groups({"readSsoAccount"})
      */
     private $createdDate;
 
