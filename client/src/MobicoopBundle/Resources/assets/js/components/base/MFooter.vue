@@ -97,6 +97,16 @@
               {{ $t('services.covievent.title') }}
             </a>
           </v-card-text>
+          <v-card-text class="my-0 py-1">
+            <a
+              :href="$t('services.services.link')"
+              style="text-decoration:none;"
+              class="white--text"
+              target="_blank"
+            >
+              {{ $t('services.services.title') }}
+            </a>
+          </v-card-text>
         </v-col>
         <!-- end first col -->
 

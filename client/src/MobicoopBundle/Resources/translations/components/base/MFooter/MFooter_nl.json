@@ -1,4 +1,96 @@
 {
+  "buttons": {
+    "contact": {
+      "route": "/contact",
+      "label": "Contact us"
+    }
+  },
+  "category": {
+    "cooperative": "La coopérative",
+    "tools": "Les outils",
+    "services": "Les services mobicoop",
+    "contacts": "Contacts",
+    "need": "Besoin d’une solution de covoiturage pour votre structure ?",
+    "download": "TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
+  },
+  "cooperative": {
+    "talkAboutUs": {
+      "title": "Qui sommes-nous ?",
+      "link": "https://pro.mobicoop.fr/cooperative/"
+    },
+    "joinUs": {
+      "title": "Devenir sociétaire",
+      "link": "https://lacampagne.mobicoop.fr/"
+    },
+    "toolbox": {
+      "title": "Boite à outils",
+      "link": "/boite-a-outils"
+    }
+  },
+  "services": {
+    "mobicoop": {
+      "title": "pro.mobicoop.fr",
+      "link": "https://pro.mobicoop.fr/"
+    },
+    "covievent": {
+      "title": "www.covievent.org",
+      "link": "https://www.covievent.org/"
+    },
+    "services": {
+      "title": "En savoir plus sur nos prestations",
+      "link": "https://pro.mobicoop.fr/cooperative/#contact"
+    },
+    "rezoPouce": {
+      "title": "Présentation du service Rezo Pouce",
+      "link": "/Rezo-Pouce"
+    }
+  },
+  "tools": {
+    "map": {
+      "title": "La carte des aires de covoiturage",
+      "link": "/points-relais"
+    },
+    "events": {
+      "title": "Les événements en covoiturage",
+      "link": "/covoiturages-evenements"
+    },
+    "faq": {
+      "title": "FAQ",
+      "link": "http://support.mobicoop.fr"
+    },
+    "cgu": {
+      "title": "CGU",
+      "link": "/cgu"
+    },
+    "dataPolicy": {
+      "title": "Protection des données",
+      "link": "/protection-donnees"
+    },
+    "cookies": {
+      "title": "Gestion des cookies",
+      "link": "#"
+    },
+    "carpoolIncentive": {
+      "title": "Prime Covoiturage",
+      "link": "/mobilite"
+    }
+  },
+  "contacts": {
+    "hotline": {
+      "title": "Centre d'aide",
+      "link": "http://support.mobicoop.fr"
+    },
+    "presse": {
+      "title": "Presse",
+      "link": "https://pro.mobicoop.fr/category/revue-de-presse/"
+    }
+  },
+  "need": {
+    "community": {
+      "title": "Créez une communauté sur mobicoop.fr !",
+      "link": "/covoiturage-communaute"
+    }
+  },
   "logo": "logo mobicoop permettant de revenir vers la page d'accueil",
   "logoIosAlt": "Télécharger dans l'App Store",
   "urlIosLogo": "/images/footer/IOS.svg",
@@ -17,89 +109,5 @@
   "urlTwitterLogo": "/images/footer/twitter.svg",
   "logoFramasphereAlt": "logo Framasphere permettant de se rendre sur la page framasphère de mobicoop",
   "urlFramasphere": "https://framasphere.org/tags/mobicoop",
-  "urlFramasphereLogo": "/images/footer/framasphere.svg",
-  "need": {
-    "community": {
-      "link": "/covoiturage-communaute",
-      "title": "Maak een community aan op mobicoop.fr!"
-    }
-  },
-  "contacts": {
-    "presse": {
-      "link": "https://pro.mobicoop.fr/category/revue-de-presse/",
-      "title": "Pers"
-    },
-    "hotline": {
-      "link": "http://support.mobicoop.fr",
-      "title": "Hotline"
-    }
-  },
-  "tools": {
-    "cookies": {
-      "link": "#",
-      "title": "Beheer van cookies"
-    },
-    "dataPolicy": {
-      "link": "/privacy",
-      "title": "Privacy"
-    },
-    "cgu": {
-      "link": "/agv",
-      "title": "AGV"
-    },
-    "faq": {
-      "link": "http://support.mobicoop.fr",
-      "title": "FAQ"
-    },
-    "events": {
-      "link": "/covoiturages-evenements",
-      "title": "Carpoolevenementen"
-    },
-    "map": {
-      "link": "/points-relais",
-      "title": "De kaart met carpoolparkings"
-    },
-    "carpoolIncentive": {
-      "title": "Prime Covoiturage",
-      "link": "/mobility-package"
-    }
-  },
-  "services": {
-    "covievent": {
-      "link": "https://www.covievent.org/",
-      "title": "www.covievent.org"
-    },
-    "mobicoop": {
-      "link": "https://pro.mobicoop.fr/",
-      "title": "pro.mobicoop.fr"
-    },
-    "rezoPouce": {
-      "title": "Présentation du service Rezo Pouce",
-      "link": "/Rezo-Pouce"
-    }
-  },
-  "cooperative": {
-    "joinUs": {
-      "link": "https://lacampagne.mobicoop.fr/",
-      "title": "Lid worden"
-    },
-    "talkAboutUs": {
-      "link": "https://pro.mobicoop.fr/cooperative/",
-      "title": "Wie zijn we?"
-    }
-  },
-  "category": {
-    "download": "DOWNLOAD DE MOBICOOP-APP",
-    "need": "Een carpooloplossing nodig voor uw structuur?",
-    "contacts": "Contacten",
-    "tools": "Hulpmiddelen",
-    "cooperative": "Coöperatie",
-    "services": "Mobicoop-diensten"
-  },
-  "buttons": {
-    "contact": {
-      "label": "Contact met ons opnemen",
-      "route": "/contact"
-    }
-  }
+  "urlFramasphereLogo": "/images/footer/framasphere.svg"
 }

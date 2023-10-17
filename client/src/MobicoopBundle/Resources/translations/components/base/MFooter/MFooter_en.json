@@ -6,21 +6,25 @@
     }
   },
   "category": {
-    "cooperative": "The cooperative",
-    "tools": "The tools",
-    "services": "Mobicoop services",
+    "cooperative": "La coopérative",
+    "tools": "Les outils",
+    "services": "Les services mobicoop",
     "contacts": "Contacts",
-    "need": "Need a carpooling solution for your organization?",
-    "download": "DOWNLOAD THE MOBICOOP APPLICATION"
+    "need": "Besoin d’une solution de covoiturage pour votre structure ?",
+    "download": "TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
   },
   "cooperative": {
     "talkAboutUs": {
-      "title": "Who are we?",
+      "title": "Qui sommes-nous ?",
       "link": "https://pro.mobicoop.fr/cooperative/"
     },
     "joinUs": {
-      "title": "Become a member",
+      "title": "Devenir sociétaire",
       "link": "https://lacampagne.mobicoop.fr/"
+    },
+    "toolbox": {
+      "title": "Boite à outils",
+      "link": "/boite-a-outils"
     }
   },
   "services": {
@@ -32,6 +36,10 @@
       "title": "www.covievent.org",
       "link": "https://www.covievent.org/"
     },
+    "services": {
+      "title": "En savoir plus sur nos prestations",
+      "link": "https://pro.mobicoop.fr/cooperative/#contact"
+    },
     "rezoPouce": {
       "title": "Présentation du service Rezo Pouce",
       "link": "/Rezo-Pouce"
@@ -39,48 +47,48 @@
   },
   "tools": {
     "map": {
-      "title": "The map of carpooling areas",
-      "link": "/relay-points"
+      "title": "La carte des aires de covoiturage",
+      "link": "/points-relais"
     },
     "events": {
-      "title": "The carpool events",
-      "link": "/carpools-events"
+      "title": "Les événements en covoiturage",
+      "link": "/covoiturages-evenements"
     },
     "faq": {
       "title": "FAQ",
       "link": "http://support.mobicoop.fr"
     },
     "cgu": {
-      "title": "GCU",
-      "link": "/gcu"
+      "title": "CGU",
+      "link": "/cgu"
     },
     "dataPolicy": {
-      "title": "Data protection policy",
-      "link": "/data-policy"
+      "title": "Protection des données",
+      "link": "/protection-donnees"
     },
     "cookies": {
-      "title": "Cookie management",
+      "title": "Gestion des cookies",
       "link": "#"
     },
     "carpoolIncentive": {
       "title": "Prime Covoiturage",
-      "link": "/mobility-package"
+      "link": "/mobilite"
     }
   },
   "contacts": {
     "hotline": {
-      "title": "Hotline",
+      "title": "Centre d'aide",
       "link": "http://support.mobicoop.fr"
     },
     "presse": {
-      "title": "Press",
+      "title": "Presse",
       "link": "https://pro.mobicoop.fr/category/revue-de-presse/"
     }
   },
   "need": {
     "community": {
-      "title": "Create a community on mobicoop.fr!",
-      "link": "/carpool-community"
+      "title": "Créez une communauté sur mobicoop.fr !",
+      "link": "/covoiturage-communaute"
     }
   },
   "logo": "logo mobicoop permettant de revenir vers la page d'accueil",
