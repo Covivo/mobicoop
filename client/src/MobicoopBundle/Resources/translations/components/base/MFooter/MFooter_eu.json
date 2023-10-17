@@ -1,96 +1,4 @@
 {
-  "buttons": {
-    "contact": {
-      "route": "/contact",
-      "label": "Contact us"
-    }
-  },
-  "category": {
-    "cooperative": "La coopérative",
-    "tools": "Les outils",
-    "services": "Les services mobicoop",
-    "contacts": "Contacts",
-    "need": "Besoin d’une solution de covoiturage pour votre structure ?",
-    "download": "TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
-  },
-  "cooperative": {
-    "talkAboutUs": {
-      "title": "Qui sommes-nous ?",
-      "link": "https://pro.mobicoop.fr/cooperative/"
-    },
-    "joinUs": {
-      "title": "Devenir sociétaire",
-      "link": "https://lacampagne.mobicoop.fr/"
-    },
-    "toolbox": {
-      "title": "Boite à outils",
-      "link": "/boite-a-outils"
-    }
-  },
-  "services": {
-    "mobicoop": {
-      "title": "pro.mobicoop.fr",
-      "link": "https://pro.mobicoop.fr/"
-    },
-    "covievent": {
-      "title": "www.covievent.org",
-      "link": "https://www.covievent.org/"
-    },
-    "services": {
-      "title": "En savoir plus sur nos prestations",
-      "link": "https://pro.mobicoop.fr/cooperative/#contact"
-    },
-    "rezoPouce": {
-      "title": "Présentation du service Rezo Pouce",
-      "link": "/Rezo-Pouce"
-    }
-  },
-  "tools": {
-    "map": {
-      "title": "La carte des aires de covoiturage",
-      "link": "/points-relais"
-    },
-    "events": {
-      "title": "Les événements en covoiturage",
-      "link": "/covoiturages-evenements"
-    },
-    "faq": {
-      "title": "FAQ",
-      "link": "http://support.mobicoop.fr"
-    },
-    "cgu": {
-      "title": "CGU",
-      "link": "/cgu"
-    },
-    "dataPolicy": {
-      "title": "Protection des données",
-      "link": "/protection-donnees"
-    },
-    "cookies": {
-      "title": "Gestion des cookies",
-      "link": "#"
-    },
-    "carpoolIncentive": {
-      "title": "Prime Covoiturage",
-      "link": "/mobilite"
-    }
-  },
-  "contacts": {
-    "hotline": {
-      "title": "Centre d'aide",
-      "link": "http://support.mobicoop.fr"
-    },
-    "presse": {
-      "title": "Presse",
-      "link": "https://pro.mobicoop.fr/category/revue-de-presse/"
-    }
-  },
-  "need": {
-    "community": {
-      "title": "Créez une communauté sur mobicoop.fr !",
-      "link": "/covoiturage-communaute"
-    }
-  },
   "logo": "logo mobicoop permettant de revenir vers la page d'accueil",
   "logoIosAlt": "Télécharger dans l'App Store",
   "urlIosLogo": "/images/footer/IOS.svg",
@@ -109,5 +17,93 @@
   "urlTwitterLogo": "/images/footer/twitter.svg",
   "logoFramasphereAlt": "logo Framasphere permettant de se rendre sur la page framasphère de mobicoop",
   "urlFramasphere": "https://framasphere.org/tags/mobicoop",
-  "urlFramasphereLogo": "/images/footer/framasphere.svg"
+  "urlFramasphereLogo": "/images/footer/framasphere.svg",
+  "need": {
+    "community": {
+      "link": "autokidetza-komunitatea",
+      "title": "Komunitate bat sor ezazu mobicoop.fr-en!"
+    }
+  },
+  "contacts": {
+    "presse": {
+      "link": "https://pro.mobicoop.fr/category/revue-de-presse/",
+      "title": "Prentsa"
+    },
+    "hotline": {
+      "link": "http://support.mobicoop.fr",
+      "title": "Centre d'aide"
+    }
+  },
+  "tools": {
+    "cookies": {
+      "link": "#",
+      "title": "Cookies-en kudeaketa"
+    },
+    "dataPolicy": {
+      "link": "/protection-donnees",
+      "title": "Datuen babesa"
+    },
+    "cgu": {
+      "link": "/cgu",
+      "title": "Erabilera Baldintza Orokorrak"
+    },
+    "faq": {
+      "link": "http://support.mobicoop.fr",
+      "title": "FAQ"
+    },
+    "events": {
+      "link": "/covoiturages-evenements",
+      "title": "Autokidetza-ekitaldiak"
+    },
+    "map": {
+      "link": "/points-relais",
+      "title": "Autokidetza eremuen mapa"
+    },
+    "carpoolIncentive": {
+      "title": "Prime Covoiturage",
+      "link": "/mobility-package"
+    }
+  },
+  "services": {
+    "covievent": {
+      "link": "https://www.covievent.org/",
+      "title": "www.covievent.org"
+    },
+    "mobicoop": {
+      "link": "https://pro.mobicoop.fr/",
+      "title": "pro.mobicoop.fr"
+    },
+    "services": {
+      "title": "En savoir plus sur nos prestations",
+      "link": "https://pro.mobicoop.fr/cooperative/#contact"
+    },
+    "rezoPouce": {
+      "title": "Présentation du service Rezo Pouce",
+      "link": "/Rezo-Pouce"
+    }
+  },
+  "cooperative": {
+    "joinUs": {
+      "link": "https://lacampagne.mobicoop.fr/",
+      "title": "Bazkide izan"
+    },
+    "talkAboutUs": {
+      "link": "https://pro.mobicoop.fr/cooperative/",
+      "title": "Nor ote gira?"
+    }
+  },
+  "category": {
+    "download": "MOBICOOP APLIKAZIOA TELEKARGA EZAZU",
+    "need": "Zure egiturarentzat autokidetza aterabide bat beharra duzu?",
+    "contacts": "Harremanak",
+    "services": "Mobicoop zerbitzuak",
+    "tools": "Tresnak",
+    "cooperative": "Kooperatiba"
+  },
+  "buttons": {
+    "contact": {
+      "label": "Gurekin harremanetan jarri",
+      "route": "/contact"
+    }
+  }
 }

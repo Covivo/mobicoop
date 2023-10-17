@@ -6,25 +6,21 @@
     }
   },
   "category": {
-    "cooperative": "La coopérative",
-    "tools": "Les outils",
-    "services": "Les services mobicoop",
+    "cooperative": "The cooperative",
+    "tools": "The tools",
+    "services": "Mobicoop services",
     "contacts": "Contacts",
-    "need": "Besoin d’une solution de covoiturage pour votre structure ?",
-    "download": "TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
+    "need": "Need a carpooling solution for your organization?",
+    "download": "DOWNLOAD THE MOBICOOP APPLICATION"
   },
   "cooperative": {
     "talkAboutUs": {
-      "title": "Qui sommes-nous ?",
+      "title": "Who are we?",
       "link": "https://pro.mobicoop.fr/cooperative/"
     },
     "joinUs": {
-      "title": "Devenir sociétaire",
+      "title": "Become a member",
       "link": "https://lacampagne.mobicoop.fr/"
-    },
-    "toolbox": {
-      "title": "Boite à outils",
-      "link": "/boite-a-outils"
     }
   },
   "services": {
@@ -47,32 +43,32 @@
   },
   "tools": {
     "map": {
-      "title": "La carte des aires de covoiturage",
-      "link": "/points-relais"
+      "title": "The map of carpooling areas",
+      "link": "/relay-points"
     },
     "events": {
-      "title": "Les événements en covoiturage",
-      "link": "/covoiturages-evenements"
+      "title": "The carpool events",
+      "link": "/carpools-events"
     },
     "faq": {
       "title": "FAQ",
       "link": "http://support.mobicoop.fr"
     },
     "cgu": {
-      "title": "CGU",
-      "link": "/cgu"
+      "title": "GCU",
+      "link": "/gcu"
     },
     "dataPolicy": {
-      "title": "Protection des données",
-      "link": "/protection-donnees"
+      "title": "Data protection policy",
+      "link": "/data-policy"
     },
     "cookies": {
-      "title": "Gestion des cookies",
+      "title": "Cookie management",
       "link": "#"
     },
     "carpoolIncentive": {
       "title": "Prime Covoiturage",
-      "link": "/mobilite"
+      "link": "/mobility-package"
     }
   },
   "contacts": {
@@ -81,14 +77,14 @@
       "link": "http://support.mobicoop.fr"
     },
     "presse": {
-      "title": "Presse",
+      "title": "Press",
       "link": "https://pro.mobicoop.fr/category/revue-de-presse/"
     }
   },
   "need": {
     "community": {
-      "title": "Créez une communauté sur mobicoop.fr !",
-      "link": "/covoiturage-communaute"
+      "title": "Create a community on mobicoop.fr!",
+      "link": "/carpool-community"
     }
   },
   "logo": "logo mobicoop permettant de revenir vers la page d'accueil",
