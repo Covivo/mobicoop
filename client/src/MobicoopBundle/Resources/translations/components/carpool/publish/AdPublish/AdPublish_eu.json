@@ -15,7 +15,8 @@
             }
         },
         "title": "Zure iragarkia aldatu",
-        "unavailable": "Iragarki hau ezin duzu aldatu.",
+        "unavailable": "Vous ne pouvez pas modifier cette annonce.",
+        "informativeMessage": "La modification de votre annonce entrainera l'annulation des covoiturages liés à cette denière.",
         "error": "Akats bat gertatu da zure iragarkia aldatzerakoan.",
         "success": "Zure iragarkia aldatua izan da."
     },
