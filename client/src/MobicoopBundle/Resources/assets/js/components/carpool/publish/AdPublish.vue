@@ -120,6 +120,19 @@
         </v-alert>
       </v-col>
     </v-row>
+    <v-row
+      v-if="isUpdate && hasAsks"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        xl="8"
+      >
+        <v-alert type="info">
+          <p>{{ $t("update.informativeMessage") }}</p>
+        </v-alert>
+      </v-col>
+    </v-row>
     <!-- Stepper -->
     <v-row
       justify="center"
