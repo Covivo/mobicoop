@@ -450,4 +450,12 @@ class CarpoolPayment
             self::STATUS_SUCCESS === $this->getStatus() && !is_null($this->getTransactionId())
             && $this->hasAtLeastAProofEECCompliant();
     }
+
+    /**
+     * Checks if the payment complies with the CEE standard for diplay purpose.
+     */
+    public function isEECCompliantForDisplay(): bool
+    {
+        return self::STATUS_SUCCESS === $this->getStatus() && !is_null($this->getTransactionId());
+    }
 }
