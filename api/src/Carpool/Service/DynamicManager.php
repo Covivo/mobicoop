@@ -312,6 +312,11 @@ class DynamicManager
             $dynamic->getProposal()->setFinished(true);
             $dynamic->getProposal()->setActive(false);
             $dynamic->setFinished(true);
+            // persist the updates
+            $this->entityManager->persist($dynamic->getProposal());
+            $this->entityManager->flush();
+
+            return $dynamic;
         }
 
         // last point check
