@@ -21,7 +21,8 @@
         },
         "success": "Your proposal has been changed successfully.",
         "error": "An error occurred while changing your proposal.",
-        "unavailable": "You cannot change this proposal."
+        "unavailable": "Vous ne pouvez pas modifier cette annonce.",
+        "informativeMessage": "La modification de votre annonce entrainera l'annulation des covoiturages liés à cette denière."
     },
     "stepper": {
         "header": {
@@ -116,5 +117,4 @@
         "messageTitle": "Vous avez converti votre recherche en ce début d'annonce.",
         "message": "Complétez et publiez-la, pour être alerté des prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet."
     }
-
 }
