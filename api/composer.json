@@ -62,7 +62,9 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
-        "symfony/maker-bundle": "^1.7"
+        "phpunit/phpunit": "^8.5",
+        "symfony/maker-bundle": "^1.7",
+        "symfony/phpunit-bridge": "^6.3"
     },
     "config": {
         "preferred-install": {
