@@ -368,6 +368,10 @@ $RECYCLE.BIN/
 /public/export/carpool/*
 /public/maintenance.enable
 
+# Public Tests coverage
+/public/test-coverage
+/public/test-coverage/*
+
 # Public Transport
 /config/publicTransport/providers.json
 

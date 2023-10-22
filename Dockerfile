@@ -24,7 +24,7 @@ RUN apt-get -qq update && \
   echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
   apt-get -y -qq install software-properties-common &&\
   apt-add-repository "deb http://archive.canonical.com/ubuntu $(lsb_release -sc) partner" && \
-  apt-add-repository ppa:malteworld/ppa && apt-get -qq update 
+  apt-add-repository ppa:malteworld/ppa && apt-get -qq update
 
 RUN apt-get install -y \
   sudo \
@@ -33,7 +33,7 @@ RUN apt-get install -y \
   autogen \
   git \
   fonts-powerline \
-  vim \ 
+  vim \
   nano \
   language-pack-en-base \
   wget \
@@ -50,7 +50,7 @@ RUN apt-get install -y \
   nasm \
   libjpeg-dev \
   libpng-dev \
-  libpng16-16 \ 
+  libpng16-16 \
   unzip \
   xvfb \
   libxss1 \
@@ -142,7 +142,8 @@ RUN apt-get install -y \
   php7.2-bcmath \
   php7.2-xsl \
   php7.2-zip \
-  php7.2-fpm 
+  php7.2-fpm \
+  php7.2-xdebug
 
 RUN command -v php
 
@@ -165,7 +166,7 @@ RUN npm install npm@6.9.0 -g
 RUN command -v node
 RUN command -v npm
 
-RUN npm install -g wait-on 
+RUN npm install -g wait-on
 RUN npm install -g yarn
 
 # Request-dispatcher
