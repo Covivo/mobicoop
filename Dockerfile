@@ -145,6 +145,8 @@ RUN apt-get install -y \
   php7.2-fpm \
   php7.2-xdebug
 
+RUN echo "xdebug.mode=coverage,debug,develop" >> /etc/php/7.2/cli/conf.d/20-xdebug.ini
+
 RUN command -v php
 
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
