@@ -26,6 +26,8 @@ namespace App\Import\Admin\Service;
 use App\Community\Admin\Service\CommunityManager;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
+use App\Event\Entity\Event;
+use App\Event\Service\EventManager;
 use App\RelayPoint\Admin\Service\RelayPointManager;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Admin\Service\UserManager;
@@ -41,13 +43,15 @@ class ImportManager
     private $_relayPointManager;
     private $_communityManager;
     private $_entityManager;
+    private $_eventManager;
 
-    public function __construct(UserManager $userManager, RelayPointManager $relayPointManager, CommunityManager $communityManager, EntityManagerInterface $entityManager)
+    public function __construct(UserManager $userManager, RelayPointManager $relayPointManager, CommunityManager $communityManager, EntityManagerInterface $entityManager, EventManager $eventManager)
     {
         $this->_userManager = $userManager;
         $this->_relayPointManager = $relayPointManager;
         $this->_communityManager = $communityManager;
         $this->_entityManager = $entityManager;
+        $this->_eventManager = $eventManager;
     }
 
     public function addUser(User $user): User
@@ -108,5 +112,34 @@ class ImportManager
 
         $this->_entityManager->persist($communityUser);
         $this->_entityManager->flush();
+    }
+
+    public function addEvent(Event $event): ?Event
+    {
+        return $this->_eventManager->createEvent($event);
+    }
+
+    public function updateEvent(Event $event): ?Event
+    {
+        $this->_entityManager->persist($event);
+        $this->_entityManager->flush();
+
+        return $event;
+    }
+
+    public function deleteEvent(Event $event)
+    {
+        $this->_entityManager->remove($event);
+        $this->_entityManager->flush();
+    }
+
+    public function getEventsByCommunity(int $communityId)
+    {
+        return $this->_eventManager->getEventsByCommunity($communityId);
+    }
+
+    public function getEventByExternalId(int $externalId)
+    {
+        return $this->_eventManager->getEventByExternalId($externalId);
     }
 }

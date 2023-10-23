@@ -231,4 +231,14 @@ class EventManager
             $this->entityManager->flush();
         }
     }
+
+    public function getEventsByCommunity(int $communityId)
+    {
+        return $this->eventRepository->getEventsByCommunity($communityId);
+    }
+
+    public function getEventByExternalId(int $externalId)
+    {
+        return $this->eventRepository->findOneBy(['external_Id' => $externalId]);
+    }
 }

@@ -119,4 +119,15 @@ class EventRepository
             ->andWhere('e.externalId is NULL')
         ;
     }
+
+    /**
+     *Get events from a community.
+     */
+    public function getEventsByCommunity(int $communityId)
+    {
+        return $this->repository->createQueryBuilder('e')
+            ->where('e.community_id = :communityId')
+            ->setParameter('communityId', $communityId)
+            ->getQuery()->getResult();
+    }
 }

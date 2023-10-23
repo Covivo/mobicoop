@@ -26,8 +26,10 @@ namespace App\Import\Admin\Service;
 use App\Import\Admin\Interfaces\LineImportValidatorInterface;
 use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\Import\Admin\Resource\Import;
+use App\Import\Admin\Service\LineValidator\EventLineImportValidator;
 use App\Import\Admin\Service\LineValidator\RelayPointLineImportValidator;
 use App\Import\Admin\Service\LineValidator\UserLineImportValidator;
+use App\Import\Admin\Service\Populator\EventImportPopulator;
 use App\Import\Admin\Service\Populator\RelayPointImportPopulator;
 use App\Import\Admin\Service\Populator\UserImportPopulator;
 use App\User\Entity\User;
@@ -45,6 +47,7 @@ class Importer
 
     private const USER_ENTITY = 'User';
     private const RELAY_POINT_ENTITY = 'RelayPoint';
+    private const EVENT = 'Event';
 
     private const TIME_LIMIT = 6 * 60 * 60;
 
@@ -62,13 +65,14 @@ class Importer
     private $_messages;
 
     private $_manager;
+    private $_pointSearcher;
 
     /**
      * @var User
      */
     private $_requester;
 
-    public function __construct(File $file, string $filename, object $manager = null, User $requester = null)
+    public function __construct(File $file, string $filename, object $manager = null, User $requester = null, $pointSearcher = null)
     {
         $this->_file = $file;
         $this->_filename = $filename;
@@ -76,6 +80,7 @@ class Importer
         $this->_errors = [];
         $this->_messages = [];
         $this->_requester = $requester;
+        $this->_pointSearcher = $pointSearcher;
     }
 
     public function importUsers(): Import
@@ -104,6 +109,20 @@ class Importer
         }
 
         return $this->_buildImport(self::RELAY_POINT_ENTITY);
+    }
+
+    public function importEvents(): Import
+    {
+        set_time_limit(self::TIME_LIMIT);
+        if (!$this->_validateFile()) {
+            return $this->_buildImport(self::EVENT);
+        }
+        $this->_validateLines(new EventLineImportValidator());
+        if (0 == count($this->_errors)) {
+            $this->_populateTable(new EventImportPopulator($this->_manager, $this->_pointSearcher));
+        }
+
+        return $this->_buildImport(self::EVENT);
     }
 
     private function _validateFile(): bool
