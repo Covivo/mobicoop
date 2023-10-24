@@ -25,7 +25,6 @@ namespace App\Import\Admin\Service\Populator;
 
 use App\Event\Entity\Event;
 use App\Geography\Entity\Address;
-use App\Geography\Service\PointSearcher;
 use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\Import\Admin\Service\ImportManager;
 
@@ -55,11 +54,10 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
     private $_messages;
     private $_pointSearcher;
 
-    public function __construct(ImportManager $importManager, PointSearcher $pointSearcher)
+    public function __construct(ImportManager $importManager)
     {
         $this->_importManager = $importManager;
         $this->_messages = [];
-        $this->_pointSearcher = $pointSearcher;
     }
 
     public function getEntity(): string
@@ -96,25 +94,24 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
         $event->setName($line[self::NAME]);
         $event->setDescription($line[self::DESCRIPTION]);
         if ('' !== $line[self::FROM_TIME] && '' !== $line[self::TO_TIME]) {
-            $event->setUseTime(true);
-            $event->setFromDate(\DateTime::createFromFormat('Y-m-d', $line[self::FROM_DATE].' '.$line[self::FROM_TIME]));
-            $event->setToDate(\DateTime::createFromFormat('Y-m-d', $line[self::TO_DATE].' '.$line[self::TO_TIME]));
+            $event->setUseTime(1);
+            $event->setFromDate(new \DateTime($line[self::FROM_DATE].' '.$line[self::FROM_TIME]));
+            $event->setToDate(new \DateTime($line[self::TO_DATE].' '.$line[self::TO_TIME]));
         } else {
-            $event->setFromDate(\DateTime::createFromFormat('Y-m-d', $line[self::FROM_DATE]));
-            $event->setToDate(\DateTime::createFromFormat('Y-m-d', $line[self::TO_DATE]));
+            $event->setUseTime(0);
+            $event->setFromDate(new \DateTime($line[self::FROM_DATE]));
+            $event->setToDate(new \DateTime($line[self::TO_DATE]));
         }
 
         $event->setCommunity($this->_importManager->getCommunity($line[self::COMMUNITY_ID]));
 
         $event->setCreatedDate(new \DateTime('now'));
+        $event->setStatus(1);
+        $event->setPrivate(0);
 
-        if ($foundAddresses = $this->_pointSearcher->reverse($line[self::LONGITUDE], $line[self::LATITUDE])) {
-            $address = $foundAddresses[0];
-        } else {
-            $address = new Address();
-            $address->setLatitude((float) $line[self::LATITUDE]);
-            $address->setLongitude((float) $line[self::LONGITUDE]);
-        }
+        $address = new Address();
+        $address->setLatitude((float) $line[self::LATITUDE]);
+        $address->setLongitude((float) $line[self::LONGITUDE]);
 
         $event->setAddress($address);
 
