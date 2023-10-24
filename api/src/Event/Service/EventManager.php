@@ -239,6 +239,6 @@ class EventManager
 
     public function getEventByExternalId(int $externalId)
     {
-        return $this->eventRepository->findOneBy(['external_Id' => $externalId]);
+        return $this->eventRepository->findOneBy(['externalId' => $externalId]);
     }
 }

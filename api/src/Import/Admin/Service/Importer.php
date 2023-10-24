@@ -72,7 +72,7 @@ class Importer
      */
     private $_requester;
 
-    public function __construct(File $file, string $filename, object $manager = null, User $requester = null, $pointSearcher = null)
+    public function __construct(File $file, string $filename, object $manager = null, User $requester = null)
     {
         $this->_file = $file;
         $this->_filename = $filename;
@@ -80,7 +80,6 @@ class Importer
         $this->_errors = [];
         $this->_messages = [];
         $this->_requester = $requester;
-        $this->_pointSearcher = $pointSearcher;
     }
 
     public function importUsers(): Import
@@ -119,7 +118,7 @@ class Importer
         }
         $this->_validateLines(new EventLineImportValidator());
         if (0 == count($this->_errors)) {
-            $this->_populateTable(new EventImportPopulator($this->_manager, $this->_pointSearcher));
+            $this->_populateTable(new EventImportPopulator($this->_manager));
         }
 
         return $this->_buildImport(self::EVENT);

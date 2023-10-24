@@ -25,6 +25,7 @@ namespace App\Import\Admin\Resource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Import\Admin\Controller\ImportEventsAction;
 use App\Import\Admin\Controller\ImportRelayPointAction;
 use App\Import\Admin\Controller\ImportUsersAction;
 use Doctrine\ORM\Mapping as ORM;
@@ -70,6 +71,13 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
+ *          },
+ *          "ADMIN_post_events"={
+ *              "path"="/admin/imports/events",
+ *              "method"="POST",
+ *              "controller"=ImportEventsAction::class,
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "deserialize"=false
  *          },
  *      },
  *      itemOperations={

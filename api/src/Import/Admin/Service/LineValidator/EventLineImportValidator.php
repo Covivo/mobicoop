@@ -46,14 +46,14 @@ class EventLineImportValidator extends LineImportValidator implements LineImport
             'App\Import\Admin\Service\Validator\DateValidator',
         ],
         3 => [
-            'App\Import\Admin\Service\Validator\TimeValidator',
+            'App\Import\Admin\Service\Validator\EmptyOrTimeValidator',
         ],
         4 => [
             'App\Import\Admin\Service\Validator\NotEmptyValidator',
             'App\Import\Admin\Service\Validator\DateValidator',
         ],
         5 => [
-            'App\Import\Admin\Service\Validator\TimeValidator',
+            'App\Import\Admin\Service\Validator\EmptyOrTimeValidator',
         ],
         6 => [
             'App\Import\Admin\Service\Validator\NotEmptyValidator',
@@ -70,7 +70,7 @@ class EventLineImportValidator extends LineImportValidator implements LineImport
         ],
         9 => [
             'App\Import\Admin\Service\Validator\NotEmptyValidator',
-            'App\Import\Admin\Service\Validator\intValidator',
+            'App\Import\Admin\Service\Validator\IntValidator',
         ],
     ];
 

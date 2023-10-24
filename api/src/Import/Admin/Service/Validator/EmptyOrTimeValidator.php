@@ -28,13 +28,17 @@ use App\Import\Admin\Interfaces\FieldValidatorInterface;
 /**
  * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
  */
-class DateValidator implements FieldValidatorInterface
+class EmptyOrTimeValidator implements FieldValidatorInterface
 {
-    private const FORMAT = 'Y-m-d';
+    private const FORMAT = 'H:i';
     private const FORMAT_ERROR_MESSAGE = 'HH:ii';
 
     public function validate($value): bool
     {
+        if (0 == strlen(trim($value)) || '' == trim($value)) {
+            return true;
+        }
+
         if (\DateTime::createFromFormat(self::FORMAT, $value)) {
             return true;
         }
