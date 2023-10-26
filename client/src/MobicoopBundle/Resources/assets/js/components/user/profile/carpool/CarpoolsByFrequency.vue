@@ -97,15 +97,24 @@ export default {
     setPunctualCarpools() {
       this.punctualCarpools = [...this.carpools]
         .filter(carpool => 1 === carpool.frequency)
-        .sort((a, b) => new Date(`${a.outwardDate} ${a.passengers.outwardTime}`) - new Date(`${b.outwardDate} ${b.outwardTime}`));
+        .sort((a, b) => this.sortPunctualCarpools(a, b))
 
       if (this.chronologicalSorted) {
-        this.punctualCarpools.reverse();
+        this.punctualCarpools.reverse()
       }
     },
     setRegularCarpools() {
       this.regularCarpools = [...this.carpools]
         .filter(carpool => 2 === carpool.frequency);
+    },
+    getStartAdDate(ad) {
+      return new Date(`${ad.driver.fromDate ? ad.driver.fromDate : ad.outwardDate} ${ad.driver.pickUpTime ? ad.driver.pickUpTime : ad.outwardTime}`)
+    },
+    sortPunctualCarpools(a, b) {
+      const date_A = this.getAdDate(a)
+      const date_B = this.getAdDate(b)
+
+      return date_A - date_B
     }
   }
 }

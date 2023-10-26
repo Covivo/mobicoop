@@ -30,6 +30,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\AskRepository;
 use App\DataProvider\Ressource\Hook;
+use App\DataProvider\Ressource\MangoPayHook;
 use App\Geography\Entity\Address;
 use App\Incentive\Service\Validation\JourneyValidation;
 use App\Payment\Entity\CarpoolItem;
@@ -650,7 +651,7 @@ class PaymentManager
             if (Criteria::FREQUENCY_PUNCTUAL == $carpoolItem->getAsk()->getCriteria()->getFrequency() && CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT == $carpoolItem->getDebtorStatus()) {
                 $event = new ConfirmDirectPaymentEvent($carpoolItem, $user);
                 $this->eventDispatcher->dispatch(ConfirmDirectPaymentEvent::NAME, $event);
-                // case regular
+            // case regular
             } elseif (Criteria::FREQUENCY_REGULAR == $carpoolItem->getAsk()->getCriteria()->getFrequency() && CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT == $carpoolItem->getDebtorStatus()) {
                 // We send only one email for the all week
                 if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
@@ -702,7 +703,7 @@ class PaymentManager
                     // Unpaid has been declared
                     $carpoolItem->setUnpaidDate(new \DateTime('now'));
 
-                    // Unpaid doesn't change the status
+                // Unpaid doesn't change the status
                     // $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
                 } elseif (PaymentItem::DAY_CARPOOLED == $item['status']) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
@@ -774,7 +775,7 @@ class PaymentManager
                 if (Criteria::FREQUENCY_PUNCTUAL == $carpoolItem->getAsk()->getCriteria()->getFrequency() && $carpoolItem->getUnpaidDate()) {
                     $event = new SignalDeptEvent($carpoolItem, $user);
                     $this->eventDispatcher->dispatch(SignalDeptEvent::NAME, $event);
-                    // case regular
+                // case regular
                 } elseif (Criteria::FREQUENCY_REGULAR == $carpoolItem->getAsk()->getCriteria()->getFrequency() && $carpoolItem->getUnpaidDate()) {
                     // We send only one email for the all week
                     if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
@@ -1296,7 +1297,19 @@ class PaymentManager
         if (is_null($carpoolPayment)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
         }
-        $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
+
+        switch ($hook->getEventType()) {
+            case MangoPayHook::PAYIN_SUCCEEDED:
+                $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
+
+                break;
+
+            case MangoPayHook::PAYIN_FAILED:
+                $carpoolPayment->setStatus(CarpoolPayment::STATUS_FAILURE);
+
+                break;
+        }
+
         $this->entityManager->persist($carpoolPayment);
         $this->entityManager->flush();
     }

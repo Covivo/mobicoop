@@ -911,7 +911,7 @@ class ShortDistanceSubscription
     {
         if (!is_null($commitmentProofJourney)) {
             if (!$this->getJourneys()->contains($commitmentProofJourney)) {
-                $this->addShortDistanceJourney($this->getCommitmentProofJourney());
+                $this->addShortDistanceJourney($commitmentProofJourney);
             }
         } else {
             $this->removeJourney($this->getCommitmentProofJourney());

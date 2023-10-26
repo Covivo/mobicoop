@@ -439,4 +439,14 @@ class LongDistanceJourney
             && !is_null($this->getCarpoolProof())
             && $this->getCarpoolProof()->isEECCompliant();
     }
+
+    /**
+     * Returns if the journey is EEC compliant only on display purpose.
+     */
+    public function isEECCompliantForDisplay(): bool
+    {
+        return
+            !is_null($this->getCarpoolPayment())
+            && $this->getCarpoolPayment()->isEECCompliantForDisplay();
+    }
 }

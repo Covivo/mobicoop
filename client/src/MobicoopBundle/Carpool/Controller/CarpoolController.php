@@ -120,6 +120,44 @@ class CarpoolController extends AbstractController
         $this->carpoolStandardMessagingEnabled = $carpoolStandardMessagingEnabled;
     }
 
+    private function __originDisplay(array $waypoint)
+    {
+        if (isset($waypoint[0]['name']) && '' !== trim($waypoint[0]['name'])) {
+            return $waypoint[0]['name'];
+        }
+
+        return $waypoint[0]['addressLocality'];
+    }
+
+    private function __destinationDisplay(array $waypoint)
+    {
+        if (isset($waypoint[count($waypoint) - 1]['name']) && '' !== trim($waypoint[count($waypoint) - 1]['name'])) {
+            return $waypoint[count($waypoint) - 1]['name'];
+        }
+
+        return $waypoint[count($waypoint) - 1]['addressLocality'];
+    }
+
+    private function __originDisplayFromObject($origin)
+    {
+        if (isset($origin->name) && '' !== $origin->name) {
+            return $origin->name;
+        }
+        if (isset($origin->addressLocality) && '' !== $origin->addressLocality) {
+            return $origin->addressLocality;
+        }
+    }
+
+    private function __destinationDisplayFromObject($destination)
+    {
+        if (isset($destination->name) && '' !== $destination->name) {
+            return $destination->name;
+        }
+        if (isset($destination->addressLocality) && '' !== $destination->addressLocality) {
+            return $destination->addressLocality;
+        }
+    }
+
     /**
      * Create a carpooling ad.
      */
@@ -363,8 +401,9 @@ class CarpoolController extends AbstractController
     public function carpoolAdResults($id, AdManager $adManager)
     {
         $ad = $adManager->getAd($id);
-        $origin = $ad->getOutwardWaypoints()[0]['addressLocality'];
-        $destination = $ad->getOutwardWaypoints()[count($ad->getOutwardWaypoints()) - 1]['addressLocality'];
+
+        $origin = $this->__originDisplay($ad->getOutwardWaypoints());
+        $destination = $this->__destinationDisplay($ad->getOutwardWaypoints());
 
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'proposalId' => $id,
@@ -393,8 +432,9 @@ class CarpoolController extends AbstractController
         // we need to claim the source proposal, as it should be anonymous
         if ($adManager->claimAd($id)) {
             $ad = $adManager->getAd($id);
-            $origin = $ad->getOutwardWaypoints()[0]['addressLocality'];
-            $destination = $ad->getOutwardWaypoints()[count($ad->getOutwardWaypoints()) - 1]['addressLocality'];
+
+            $origin = $this->__originDisplay($ad->getOutwardWaypoints());
+            $destination = $this->__destinationDisplay($ad->getOutwardWaypoints());
 
             return $this->render('@Mobicoop/carpool/results.html.twig', [
                 'proposalId' => $id,
@@ -411,6 +451,7 @@ class CarpoolController extends AbstractController
                 'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
             ]);
         }
+
         // for now if the claim fails we redirect to home !
         return $this->redirectToRoute('home');
     }
@@ -431,8 +472,8 @@ class CarpoolController extends AbstractController
             }
         }
         if ($ad = $adManager->getAd($id, $filters)) {
-            $origin = $ad->getOutwardWaypoints()[0];
-            $destination = $ad->getOutwardWaypoints()[count($ad->getOutwardWaypoints()) - 1];
+            $origin = $this->__originDisplay($ad->getOutwardWaypoints());
+            $destination = $this->__destinationDisplay($ad->getOutwardWaypoints());
 
             // $this->denyAccessUnlessGranted('results_ad', $ad);
             return $this->json([
@@ -477,13 +518,8 @@ class CarpoolController extends AbstractController
     {
         $origin = json_decode($request->request->get('origin'));
         $destination = json_decode($request->request->get('destination'));
-        $originTitle = $destinationTitle = '';
-        if (isset($origin->addressLocality) && '' !== $origin->addressLocality) {
-            $originTitle = $origin->addressLocality;
-        }
-        if (isset($destination->addressLocality) && '' !== $destination->addressLocality) {
-            $destinationTitle = $destination->addressLocality;
-        }
+        $originTitle = $this->__originDisplayFromObject($origin);
+        $destinationTitle = $this->__destinationDisplayFromObject($destination);
 
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'origin' => $request->request->get('origin'),
@@ -520,13 +556,8 @@ class CarpoolController extends AbstractController
     {
         $origin = json_decode($request->request->get('origin'));
         $destination = json_decode($request->request->get('destination'));
-        $originTitle = $destinationTitle = '';
-        if (isset($origin->addressLocality) && '' !== $origin->addressLocality) {
-            $originTitle = $origin->addressLocality;
-        }
-        if (isset($destination->addressLocality) && '' !== $destination->addressLocality) {
-            $destinationTitle = $destination->addressLocality;
-        }
+        $originTitle = $this->__originDisplayFromObject($origin);
+        $destinationTitle = $this->__destinationDisplayFromObject($destination);
 
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             // todo: use if we can keep the proposal (request or offer) if we delete the matched one - cf CarpoolSubscriber
