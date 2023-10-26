@@ -26,9 +26,11 @@ namespace App\User\Interoperability\Service;
 use App\App\Entity\App;
 use App\Community\Entity\CommunityUser;
 use App\Community\Repository\CommunityRepository;
+use App\User\Entity\SsoAccount;
 use App\User\Entity\User as UserEntity;
 use App\User\Interoperability\Ressource\DetachSso;
 use App\User\Interoperability\Ressource\User;
+use App\User\Repository\SsoAccountRepository;
 use App\User\Service\UserManager as UserEntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
@@ -45,19 +47,22 @@ class UserManager
     private $entityManager;
     private $notificationSsoRegistration;
     private $communityRepository;
+    private $ssoAccountRepository;
+    private $_currentExternalId;
 
     /**
      * @var DetachSso
      */
     private $detachSso;
 
-    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager, bool $notificationSsoRegistration, CommunityRepository $communityRepository)
+    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager, bool $notificationSsoRegistration, CommunityRepository $communityRepository, SsoAccountRepository $ssoAccountRepository)
     {
         $this->userEntityManager = $userEntityManager;
         $this->security = $security;
         $this->entityManager = $entityManager;
         $this->notificationSsoRegistration = $notificationSsoRegistration;
         $this->communityRepository = $communityRepository;
+        $this->ssoAccountRepository = $ssoAccountRepository;
     }
 
     /**
@@ -72,7 +77,7 @@ class UserManager
         $userEntity = $this->userEntityManager->getUser($id);
         $user = null;
         if ($userEntity) {
-            $user = $this->buildUserFromUserEntity($userEntity);
+            $user = $this->_buildUserFromUserEntity($userEntity);
         }
 
         return $user;
@@ -87,6 +92,7 @@ class UserManager
      */
     public function registerUser(User $user): User
     {
+        $this->_currentExternalId = $user->getExternalId();
         $userEntity = $this->userEntityManager->getUserByEmail($user->getEmail());
         if (!is_null($userEntity)) {
             // TO DO
@@ -103,18 +109,13 @@ class UserManager
             $user->setPreviouslyExisting(true);
         } else {
             // New User
-            $userEntity = $this->buildUserEntityFromUser($user);
-            $userEntity->setCreatedSsoDate(new \DateTime('now'));
-            if (!$this->notificationSsoRegistration) {
-                $userEntity->setValidatedDate(new \DateTime('now'));
-            }
-            $userEntity->setCreatedBySso(true);
+            $userEntity = $this->_buildNewUserEntityFromUser($user);
             $userEntity = $this->userEntityManager->registerUser($userEntity);
-            $user = $this->buildUserFromUserEntity($userEntity);
+            $user = $this->_buildUserFromUserEntity($userEntity);
             $user->setPreviouslyExisting(false);
         }
 
-        return $this->buildUserFromUserEntity($userEntity);
+        return $this->_buildUserFromUserEntity($userEntity);
     }
 
     /**
@@ -171,7 +172,7 @@ class UserManager
             }
         }
 
-        return $this->buildUserFromUserEntity($userEntity);
+        return $this->_buildUserFromUserEntity($userEntity);
     }
 
     /**
@@ -248,7 +249,7 @@ class UserManager
      *
      * @return User The interoperability User
      */
-    private function buildUserFromUserEntity(UserEntity $userEntity): User
+    private function _buildUserFromUserEntity(UserEntity $userEntity): User
     {
         $user = new User($userEntity->getId());
         $user->setGivenName($userEntity->getGivenName());
@@ -258,14 +259,37 @@ class UserManager
         $user->setBirthDate($userEntity->getBirthDate());
         $user->setTelephone($userEntity->getTelephone());
         $user->setNewsSubscription($userEntity->hasNewsSubscription());
-        $user->setExternalId($userEntity->getSsoId());
+
+        if (!is_null($this->_currentExternalId)) {
+            $user->setExternalId($this->_currentExternalId);
+        }
 
         $user->setPreviouslyExisting(false);
-        if ($userEntity->getCreatedDate() < $userEntity->getCreatedSsoDate()) {
+        $ssoAccount = $this->_getSsoAccount();
+        if (!is_null($ssoAccount) && ($userEntity->getCreatedDate() < $ssoAccount->getCreatedDate())) {
             $user->setPreviouslyExisting(true);
         }
 
         return $user;
+    }
+
+    private function _getSsoAccount(): ?SsoAccount
+    {
+        if (is_null($this->_currentExternalId)) {
+            return null;
+        }
+
+        if (!$this->security->getUser() instanceof App) {
+            return null;
+        }
+
+        $ssoAccounts = $this->ssoAccountRepository->findBy(['ssoProvider' => $this->security->getUser()->getName(), 'ssoId' => (string) $this->_currentExternalId]);
+
+        if (is_null($ssoAccounts) || 0 == count($ssoAccounts)) {
+            return null;
+        }
+
+        return $ssoAccounts[0];
     }
 
     /**
@@ -275,7 +299,7 @@ class UserManager
      *
      * @return UserEntity The classic User Entity
      */
-    private function buildUserEntityFromUser(User $user): UserEntity
+    private function _buildNewUserEntityFromUser(User $user): UserEntity
     {
         $userEntity = new UserEntity();
         $userEntity->setId($user->getId());
@@ -287,12 +311,22 @@ class UserManager
         $userEntity->setTelephone($user->getTelephone());
         $userEntity->setPassword($user->getPassword());
         $userEntity->setNewsSubscription($user->hasNewsSubscription());
-        if ($this->security->getUser() instanceof App) {
-            $userEntity->setAppDelegate($this->security->getUser());
-            $userEntity->setSsoProvider($this->security->getUser()->getName());
-        }
-        $userEntity->setSsoId($user->getExternalId());
         $userEntity->setCommunityId($user->getCommunityId());
+
+        $ssoAccount = new SsoAccount();
+
+        if ($this->security->getUser() instanceof App) {
+            $ssoAccount->setAppDelegate($this->security->getUser());
+            $ssoAccount->setSsoProvider($this->security->getUser()->getName());
+        }
+
+        $ssoAccount->setSsoId($user->getExternalId());
+        $ssoAccount->setCreatedBySso(true);
+        $userEntity->addSsoAccount($ssoAccount);
+
+        if (!$this->notificationSsoRegistration) {
+            $userEntity->setValidatedDate(new \DateTime('now'));
+        }
 
         return $userEntity;
     }
