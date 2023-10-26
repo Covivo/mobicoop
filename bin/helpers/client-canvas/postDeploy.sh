@@ -78,6 +78,12 @@ php bin/console doctrine:migrations:migrate --env=${VERSION_MIGRATE} -n
 # Crontab update
 python3 ${ROOT}/mobicoop-platform/scripts/updateCrontab.py --env=${VERSION_MIGRATE}
 
+# clear cache
+cd ${ROOT}/mobicoop-platform/api;
+php bin/console cache:clear --env=$VERSION_MIGRATE;
+cd ${ROOT};
+php bin/console cache:clear --env=$VERSION_MIGRATE;
+
 # External Cgu Mango
 EXTERNAL_CGU_DIRECTORY=${ROOT}/public/externalCgu
 [ -d "${EXTERNAL_CGU_DIRECTORY}" ] || mkdir -p "${EXTERNAL_CGU_DIRECTORY}"
