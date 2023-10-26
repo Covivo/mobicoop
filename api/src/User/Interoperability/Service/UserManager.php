@@ -111,8 +111,8 @@ class UserManager
             // New User
             $userEntity = $this->_buildNewUserEntityFromUser($user);
             $userEntity = $this->userEntityManager->registerUser($userEntity);
-            $user = $this->_buildUserFromUserEntity($userEntity);
-            $user->setPreviouslyExisting(false);
+
+            return $this->_buildUserFromUserEntity($userEntity);
         }
 
         return $this->_buildUserFromUserEntity($userEntity);
@@ -265,9 +265,16 @@ class UserManager
         }
 
         $user->setPreviouslyExisting(false);
-        $ssoAccount = $this->_getSsoAccount();
-        if (!is_null($ssoAccount) && ($userEntity->getCreatedDate() < $ssoAccount->getCreatedDate())) {
-            $user->setPreviouslyExisting(true);
+
+        if (!is_null($this->_currentExternalId) && $this->security->getUser() instanceof App) {
+            foreach ($userEntity->getSsoAccounts() as $ssoAccount) {
+                if ($ssoAccount->getSsoId() == $this->_currentExternalId
+                    && $ssoAccount->getSsoProvider() == $this->security->getUser()->getName()
+                    && !$ssoAccount->isCreatedBySso()
+                ) {
+                    $user->setPreviouslyExisting(true);
+                }
+            }
         }
 
         return $user;
