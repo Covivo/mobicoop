@@ -1477,19 +1477,6 @@ class User implements UserInterface, EquatableInterface
     private $userDelegate;
 
     /**
-     * @var null|App app that create the user
-     *
-     * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
-     *
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     *
-     * @Groups({"readUser","write"})
-     *
-     * @MaxDepth(1)
-     */
-    private $appDelegate;
-
-    /**
      * @var null|ArrayCollection the carpool proofs of the user as a driver
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="driver")
@@ -3433,18 +3420,6 @@ class User implements UserInterface, EquatableInterface
     public function setUserDelegate(?User $userDelegate): self
     {
         $this->userDelegate = $userDelegate;
-
-        return $this;
-    }
-
-    public function getAppDelegate(): ?App
-    {
-        return $this->appDelegate;
-    }
-
-    public function setAppDelegate(?App $appDelegate): self
-    {
-        $this->appDelegate = $appDelegate;
 
         return $this;
     }

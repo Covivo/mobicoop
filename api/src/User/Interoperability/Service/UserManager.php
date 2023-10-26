@@ -89,6 +89,10 @@ class UserManager
     {
         $userEntity = $this->userEntityManager->getUserByEmail($user->getEmail());
         if (!is_null($userEntity)) {
+            // TO DO
+            echo 'pas new';
+
+            exit;
             if (!is_null($userEntity->getSsoId())) {
                 throw new \LogicException('This user is already attached to an Sso provider');
             }

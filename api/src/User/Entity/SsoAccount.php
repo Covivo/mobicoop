@@ -24,8 +24,10 @@
 namespace App\User\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\App\Entity\App;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * An SSo Account owned by a User.
@@ -79,6 +81,19 @@ class SsoAccount
      * @Groups({"readSsoAccount"})
      */
     private $ssoProvider;
+
+    /**
+     * @var null|App app that create the user
+     *
+     * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
+     *
+     * @ORM\JoinColumn(onDelete="SET NULL")
+     *
+     * @Groups({"readUser","write"})
+     *
+     * @MaxDepth(1)
+     */
+    private $appDelegate;
 
     /**
      * @var null|bool true : the user has been created by sso (false mean no sso or only attached a previously existing account)
@@ -135,6 +150,18 @@ class SsoAccount
     public function setSsoProvider(?string $ssoProvider): self
     {
         $this->ssoProvider = $ssoProvider;
+
+        return $this;
+    }
+
+    public function getAppDelegate(): ?App
+    {
+        return $this->appDelegate;
+    }
+
+    public function setAppDelegate(?App $appDelegate): self
+    {
+        $this->appDelegate = $appDelegate;
 
         return $this;
     }
