@@ -30,7 +30,6 @@ use App\User\Entity\SsoAccount;
 use App\User\Entity\User as UserEntity;
 use App\User\Interoperability\Ressource\DetachSso;
 use App\User\Interoperability\Ressource\User;
-use App\User\Repository\SsoAccountRepository;
 use App\User\Service\UserManager as UserEntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
@@ -47,7 +46,6 @@ class UserManager
     private $entityManager;
     private $notificationSsoRegistration;
     private $communityRepository;
-    private $ssoAccountRepository;
     private $_currentExternalId;
 
     /**
@@ -55,14 +53,13 @@ class UserManager
      */
     private $detachSso;
 
-    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager, bool $notificationSsoRegistration, CommunityRepository $communityRepository, SsoAccountRepository $ssoAccountRepository)
+    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager, bool $notificationSsoRegistration, CommunityRepository $communityRepository)
     {
         $this->userEntityManager = $userEntityManager;
         $this->security = $security;
         $this->entityManager = $entityManager;
         $this->notificationSsoRegistration = $notificationSsoRegistration;
         $this->communityRepository = $communityRepository;
-        $this->ssoAccountRepository = $ssoAccountRepository;
     }
 
     /**
@@ -107,13 +104,12 @@ class UserManager
             $user->setId($userEntity->getId());
             $user = $this->updateUser($user, true);
             $user->setPreviouslyExisting(true);
-        } else {
-            // New User
-            $userEntity = $this->_buildNewUserEntityFromUser($user);
-            $userEntity = $this->userEntityManager->registerUser($userEntity);
 
             return $this->_buildUserFromUserEntity($userEntity);
         }
+        // New User
+        $userEntity = $this->_buildNewUserEntityFromUser($user);
+        $userEntity = $this->userEntityManager->registerUser($userEntity);
 
         return $this->_buildUserFromUserEntity($userEntity);
     }
@@ -278,25 +274,6 @@ class UserManager
         }
 
         return $user;
-    }
-
-    private function _getSsoAccount(): ?SsoAccount
-    {
-        if (is_null($this->_currentExternalId)) {
-            return null;
-        }
-
-        if (!$this->security->getUser() instanceof App) {
-            return null;
-        }
-
-        $ssoAccounts = $this->ssoAccountRepository->findBy(['ssoProvider' => $this->security->getUser()->getName(), 'ssoId' => (string) $this->_currentExternalId]);
-
-        if (is_null($ssoAccounts) || 0 == count($ssoAccounts)) {
-            return null;
-        }
-
-        return $ssoAccounts[0];
     }
 
     /**
