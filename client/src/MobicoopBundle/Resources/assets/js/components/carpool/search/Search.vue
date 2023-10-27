@@ -45,7 +45,36 @@
       <v-col
         :cols="fullSize ? 12 : 6"
       >
-        <v-row>
+        <div
+          v-if="fullSize"
+          class="d-flex flex-row justify-space-around"
+        >
+          <v-btn
+            v-if="!hidePublish"
+            :class="colorButton+' '+textColorButton"
+            outlined
+            rounded
+            :loading="loadingPublish"
+            :aria-label="$t('buttons.publish.label')"
+            @click="publish"
+          >
+            {{ $t('buttons.publish.label') }}
+          </v-btn>
+
+          <v-btn
+            :disabled="searchUnavailable || disableSearch"
+            :loading="loadingSearch"
+            :class="searchButtonClass"
+            rounded
+            min-width="150px"
+            tabindex="0"
+            :aria-label="$t('buttons.search.label')"
+            @click="search"
+          >
+            {{ $t('buttons.search.label') }}
+          </v-btn>
+        </div>
+        <v-row v-else>
           <v-col
             cols="12"
             md="6"
@@ -84,26 +113,26 @@
         </v-row>
       </v-col>
     </v-row>
-  </v-container>
-  <v-row v-else-if="horizontal">
-    <v-col
+    <v-row v-else-if="horizontal">
+      <v-col
 
-      cols="12"
-    >
-      <search-journey-horizontal
-        :geo-search-url="geoSearchUrl"
-        :user="user"
-        :init-regular="dataRegular"
-        :punctual-date-optional="punctualDateOptional"
-        :elevation="horizontalElevation"
-        :geo-complete-results-order="geoCompleteResultsOrder"
-        :geo-complete-palette="geoCompletePalette"
-        :geo-complete-chip="geoCompleteChip"
-        @change="searchChanged"
-        @search="search"
-      />
-    </v-col>
-  </v-row>
+        cols="12"
+      >
+        <search-journey-horizontal
+          :geo-search-url="geoSearchUrl"
+          :user="user"
+          :init-regular="dataRegular"
+          :punctual-date-optional="punctualDateOptional"
+          :elevation="horizontalElevation"
+          :geo-complete-results-order="geoCompleteResultsOrder"
+          :geo-complete-palette="geoCompletePalette"
+          :geo-complete-chip="geoCompleteChip"
+          @change="searchChanged"
+          @search="search"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

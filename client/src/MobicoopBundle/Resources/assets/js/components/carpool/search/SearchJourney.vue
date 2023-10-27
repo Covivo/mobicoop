@@ -136,7 +136,7 @@
         </v-col>
         <v-col
           cols="1"
-          class="ma-2"
+          class="ma-2 d-flex flex-row align-start"
         >
           <v-switch
             id="switch"
@@ -144,16 +144,11 @@
             role="switch"
             inset
             hide-details
-            class="mt-0"
+            class="mt-0 mr-5 mb-5"
             :aria-label="$t('switch.aria-label')"
             :color="switchColor"
             @change="switched"
           />
-        </v-col>
-        <v-col
-          cols="1"
-          align="left"
-        >
           <v-tooltip
             color="info"
             right
