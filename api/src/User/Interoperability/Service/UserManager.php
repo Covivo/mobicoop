@@ -192,9 +192,6 @@ class UserManager
 
         if (!is_null($ssoAccountToDetach)) {
             if ($ssoAccountToDetach->isCreatedBySso()) {
-                echo 'detachSsoCreatedUser';
-
-                exit;
                 $this->detachSsoCreatedUser();
             } else {
                 $this->detachPreviouslyExistingUser($ssoAccountToDetach);
