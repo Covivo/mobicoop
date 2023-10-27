@@ -23,6 +23,7 @@
 
 namespace App\User\Repository;
 
+use App\App\Entity\App;
 use App\Community\Entity\Community;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryVolunteer;
@@ -557,7 +558,7 @@ class UserRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findUserBySsoIdAndProvider(string $ssoId, string $ssoProvider)
+    public function findUserBySsoIdAndProvider(string $ssoId, string $ssoProvider): ?User
     {
         $query = $this->repository->createQueryBuilder('u');
 
@@ -567,6 +568,23 @@ class UserRepository
             ->andWhere('ssoaccounts.ssoProvider = :ssoProvider')
             ->setParameter('ssoId', $ssoId)
             ->setParameter('ssoProvider', $ssoProvider)
+            ->orderBy('ssoaccounts.id', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
+    }
+
+    public function findUserBySsoIdAndAppDelegate(string $ssoId, App $appDelegate): ?User
+    {
+        $query = $this->repository->createQueryBuilder('u');
+
+        $query
+            ->join('u.ssoAccounts', 'ssoaccounts')
+            ->where('ssoaccounts.ssoId = :ssoId')
+            ->andWhere('ssoaccounts.appDelegate = :appDelegate')
+            ->setParameter('ssoId', $ssoId)
+            ->setParameter('appDelegate', $appDelegate)
             ->orderBy('ssoaccounts.id', 'DESC')
             ->setMaxResults(1)
         ;

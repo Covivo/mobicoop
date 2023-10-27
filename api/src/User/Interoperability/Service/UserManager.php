@@ -180,10 +180,27 @@ class UserManager
         $this->detachSso = $detachSso;
         $this->setDetachSsoUser($detachSso);
 
-        if ($detachSso->getUser()->isCreatedBySso()) {
-            $this->detachSsoCreatedUser();
+        $ssoAccountToDetach = null;
+        foreach ($detachSso->getUser()->getSsoAccounts() as $ssoAccount) {
+            if ($ssoAccount->getAppDelegate()->getId() == $this->security->getUser()->getId()
+            && $ssoAccount->getSsoId() == $detachSso->getUuid()) {
+                $ssoAccountToDetach = $ssoAccount;
+
+                break;
+            }
+        }
+
+        if (!is_null($ssoAccountToDetach)) {
+            if ($ssoAccountToDetach->isCreatedBySso()) {
+                echo 'detachSsoCreatedUser';
+
+                exit;
+                $this->detachSsoCreatedUser();
+            } else {
+                $this->detachPreviouslyExistingUser($ssoAccountToDetach);
+            }
         } else {
-            $this->detachPreviouslyExistingUser();
+            throw new \LogicException('Uknown Sso Account. Can\'t detach');
         }
 
         return $this->detachSso;
@@ -212,7 +229,7 @@ class UserManager
         if (!is_null($detachSso->getUserId())) {
             $userEntity = $this->userEntityManager->getUser($detachSso->getUserId());
         } elseif (!is_null($detachSso->getUuid())) {
-            $userEntity = $this->userEntityManager->getUserBySsoId($detachSso->getUuid());
+            $userEntity = $this->userEntityManager->getUserBySsoIdAndAppDelegate($detachSso->getUuid(), $this->security->getUser());
         } else {
             throw new \LogicException('Uuid or userId must be filled');
         }
@@ -220,7 +237,7 @@ class UserManager
         if ($userEntity) {
             $this->detachSso->setUser($userEntity);
             $this->detachSso->setUserId($userEntity->getId());
-            $this->detachSso->setUuid($userEntity->getSsoId());
+            $this->detachSso->setUuid($detachSso->getUuid());
         } else {
             throw new \LogicException('Unknown User');
         }
@@ -228,15 +245,13 @@ class UserManager
 
     /**
      * Detach a previously existing user (not created by SSO). We keep the User and erase the SSO data.
+     *
+     * @param SsoAccount $ssoAccount Sso Account to detach
      */
-    private function detachPreviouslyExistingUser()
+    private function detachPreviouslyExistingUser(SsoAccount $ssoAccount)
     {
         $userEntity = $this->detachSso->getUser();
-        $userEntity->setSsoId(null);
-        $userEntity->setSsoProvider(null);
-        $userEntity->setCreatedSSoDate(null);
-        $userEntity->setAppDelegate(null);
-        $userEntity->setCreatedBySso(null);
+        $userEntity->removeSsoAccount($ssoAccount);
         $this->entityManager->persist($userEntity);
         $this->entityManager->flush();
         $this->detachSso->setPreviouslyExisting(true);

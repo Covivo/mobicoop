@@ -25,6 +25,7 @@ namespace App\User\Service;
 
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\App\Entity\App;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
@@ -1793,9 +1794,9 @@ class UserManager
     /**
      * Get a User by it's SsoId.
      */
-    public function getUserBySsoId(string $ssoId): ?User
+    public function getUserBySsoIdAndAppDelegate(string $ssoId, App $appDelegate): ?User
     {
-        if ($user = $this->userRepository->findOneBy(['ssoId' => $ssoId])) {
+        if ($user = $this->userRepository->findUserBySsoIdAndAppDelegate($ssoId, $appDelegate)) {
             return $user;
         }
 
