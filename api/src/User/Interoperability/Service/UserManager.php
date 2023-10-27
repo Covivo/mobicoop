@@ -150,7 +150,7 @@ class UserManager
                 }
 
                 $ssoAccount->setSsoId($user->getExternalId());
-                $ssoAccount->setCreatedBySso(true);
+                $ssoAccount->setCreatedBySso(false);
                 $userEntity->addSsoAccount($ssoAccount);
             }
 
