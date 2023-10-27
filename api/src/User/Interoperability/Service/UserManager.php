@@ -285,6 +285,15 @@ class UserManager
                     $user->setPreviouslyExisting(true);
                 }
             }
+        } elseif ($this->security->getUser() instanceof App) {
+            foreach ($userEntity->getSsoAccounts() as $ssoAccount) {
+                if ($ssoAccount->getAppDelegate()->getId() == $this->security->getUser()->getId()
+                    && $ssoAccount->getSsoProvider() == $this->security->getUser()->getName()
+                    && !$ssoAccount->isCreatedBySso()
+                ) {
+                    $user->setPreviouslyExisting(true);
+                }
+            }
         }
 
         return $user;
