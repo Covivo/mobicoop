@@ -30,7 +30,7 @@ final class Version20231009140000 extends AbstractMigration
                 sso_id,
                 sso_provider,
                 IF (created_by_sso is null or created_by_sso = '', 0, created_by_sso) as created_by_sso,
-                IF (created_sso_date is null or created_sso_date = '', NOW(), created_sso_date) as created_date
+                IF (created_sso_date is null, NOW(), created_sso_date) as created_date
             FROM
                 `user`
             where
