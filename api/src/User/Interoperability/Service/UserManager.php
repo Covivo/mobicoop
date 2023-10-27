@@ -92,12 +92,8 @@ class UserManager
         $this->_currentExternalId = $user->getExternalId();
         $userEntity = $this->userEntityManager->getUserByEmail($user->getEmail());
         if (!is_null($userEntity)) {
-            // TO DO
-            echo 'pas new';
-
-            exit;
-            if (!is_null($userEntity->getSsoId())) {
-                throw new \LogicException('This user is already attached to an Sso provider');
+            if ($this->_checkAlreadyAttached($userEntity)) {
+                throw new \LogicException('This user is already attached to this provider');
             }
 
             // Existing User, it pretty much an update with attach specified (for app and createdSsoDate)
@@ -105,7 +101,7 @@ class UserManager
             $user = $this->updateUser($user, true);
             $user->setPreviouslyExisting(true);
 
-            return $this->_buildUserFromUserEntity($userEntity);
+            return $user;
         }
         // New User
         $userEntity = $this->_buildNewUserEntityFromUser($user);
@@ -144,15 +140,18 @@ class UserManager
                 $userEntity->setTelephone($user->getTelephone());
             }
             $userEntity->setNewsSubscription($user->hasNewsSubscription());
-            $userEntity->setSsoId($user->getExternalId());
 
             if ($attach) {
+                $ssoAccount = new SsoAccount();
+
                 if ($this->security->getUser() instanceof App) {
-                    $userEntity->setAppDelegate($this->security->getUser());
-                    $userEntity->setSsoProvider($this->security->getUser()->getName());
+                    $ssoAccount->setAppDelegate($this->security->getUser());
+                    $ssoAccount->setSsoProvider($this->security->getUser()->getName());
                 }
-                $userEntity->setCreatedSsoDate(new \DateTime('now'));
-                $userEntity->setCreatedBySso(false);
+
+                $ssoAccount->setSsoId($user->getExternalId());
+                $ssoAccount->setCreatedBySso(true);
+                $userEntity->addSsoAccount($ssoAccount);
             }
 
             $this->entityManager->persist($userEntity);
@@ -188,6 +187,21 @@ class UserManager
         }
 
         return $this->detachSso;
+    }
+
+    private function _checkAlreadyAttached($userEntity)
+    {
+        if ($this->security->getUser() instanceof App) {
+            foreach ($userEntity->getSsoAccounts() as $ssoAccount) {
+                if ($ssoAccount->getSsoId() == $this->_currentExternalId
+                    && $ssoAccount->getSsoProvider() == $this->security->getUser()->getName()
+                ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
