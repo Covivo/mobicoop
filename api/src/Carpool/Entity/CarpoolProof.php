@@ -55,6 +55,7 @@ class CarpoolProof
     public const STATUS_EXPIRED = 9;                // proof sent too late to the carpool register
     public const STATUS_CANCELED_BY_OPERATOR = 10;  // proof canceled by the operator
     public const STATUS_UNDER_CHECKING = 11;        // proof under review by the carpool register
+    public const STATUS_UNKNOWN = 12;               // status unknown by the RPC (proof exists but... unknown)
 
     public const ACTOR_DRIVER = 1;
     public const ACTOR_PASSENGER = 2;
@@ -613,6 +614,10 @@ class CarpoolProof
         $carpoolProofId = $this->getId();
 
         $filteredCarpoolItems = array_values(array_filter($this->getAsk()->getCarpoolItems(), function (CarpoolItem $carpoolItem) use ($carpoolProofId) {
+            if (is_null($carpoolItem->getCarpoolProof())) {
+                return null;
+            }
+
             return $carpoolProofId === $carpoolItem->getCarpoolProof()->getId();
         }));
 

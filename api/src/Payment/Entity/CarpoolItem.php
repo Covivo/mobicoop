@@ -734,9 +734,9 @@ class CarpoolItem
      */
     public function getSuccessfullPayment(): ?CarpoolPayment
     {
-        $successFulPayment = array_filter($this->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) {
+        $successFulPayment = array_values(array_filter($this->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) {
             return $carpoolPayment->isEECCompliant();
-        });
+        }));
 
         return !empty($successFulPayment) ? $successFulPayment[0] : null;
     }

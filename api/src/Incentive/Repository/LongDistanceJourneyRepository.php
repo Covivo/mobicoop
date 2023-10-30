@@ -28,6 +28,8 @@ class LongDistanceJourneyRepository
         $qb = $this->_entityManager->createQueryBuilder('j');
 
         $qb
+            ->select('j')
+            ->from(LongDistanceJourney::class, 'j')
             ->where('j.carpoolItem = :ci')
             ->orWhere('j.initialProposal = :p')
             ->setParameters([

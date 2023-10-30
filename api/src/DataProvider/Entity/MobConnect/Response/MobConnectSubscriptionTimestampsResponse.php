@@ -236,6 +236,7 @@ class MobConnectSubscriptionTimestampsResponse extends MobConnectResponse
                         return
                             !is_null($specificFields)
                             && !property_exists($specificFields, SpecificFields::JOURNEY_ID)
+                            && !property_exists($specificFields, SpecificFields::JOURNEY_PUBLISH_DATE)
                             && !property_exists($specificFields, SpecificFields::JOURNEY_START_DATE)
                             && !property_exists($specificFields, SpecificFields::HONOR_CERTIFICATE);
 
@@ -243,14 +244,20 @@ class MobConnectSubscriptionTimestampsResponse extends MobConnectResponse
                         return
                             !is_null($specificFields)
                             && property_exists($specificFields, SpecificFields::JOURNEY_ID)
-                            && property_exists($specificFields, SpecificFields::JOURNEY_START_DATE)
+                            && (
+                                property_exists($specificFields, SpecificFields::JOURNEY_PUBLISH_DATE)
+                                || property_exists($specificFields, SpecificFields::JOURNEY_START_DATE)
+                            )
                             && !property_exists($specificFields, SpecificFields::HONOR_CERTIFICATE);
 
                     case self::TYPE_HONOR_CERTIFICATE:
                         return
                             !is_null($specificFields)
                             && property_exists($specificFields, SpecificFields::JOURNEY_ID)
-                            && property_exists($specificFields, SpecificFields::JOURNEY_START_DATE)
+                            && (
+                                property_exists($specificFields, SpecificFields::JOURNEY_PUBLISH_DATE)
+                                || property_exists($specificFields, SpecificFields::JOURNEY_START_DATE)
+                            )
                             && property_exists($specificFields, SpecificFields::HONOR_CERTIFICATE);
 
                     default:

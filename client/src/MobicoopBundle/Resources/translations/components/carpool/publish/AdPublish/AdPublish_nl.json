@@ -86,8 +86,9 @@
         }
     },
     "update": {
-        "unavailable": "U kunt deze advertentie niet wijzigen.",
-        "error": "Er heeft zich een fout voorgedaan bij het wijzigen van uw advertentie.",
+      "unavailable": "Vous ne pouvez pas modifier cette annonce.",
+      "informativeMessage": "La modification de votre annonce entrainera l'annulation des covoiturages liés à cette denière.",
+      "error": "Er heeft zich een fout voorgedaan bij het wijzigen van uw advertentie.",
         "success": "Uw advertentie werd met succes gewijzigd.",
         "popup": {
             "minor_update_asks": {

@@ -250,7 +250,22 @@ class JourneyManager extends MobConnectManager
 
             case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distanceTraveled && $this->isJourneyPaid($carpoolProof):
                 // Use case for a long distance journey where payment has been made
-                $this->_subscriptionConfirmationForLDJourney($carpoolProof->getCarpoolItem());
+
+                if (is_null($this->_currentCarpoolItem)) {
+                    $this->_currentCarpoolItem = $carpoolProof->getCarpoolItem();
+                    if (is_null($this->_currentCarpoolItem)) {
+                        return;
+                    }
+                }
+
+                if (is_null($this->_currentCarpoolPayment)) {
+                    $this->_currentCarpoolPayment = $this->_currentCarpoolItem->getSuccessfullPayment();
+                    if (is_null($this->_currentCarpoolPayment)) {
+                        return;
+                    }
+                }
+
+                $this->_subscriptionConfirmationForLDJourney();
 
                 return;
         }
@@ -358,16 +373,18 @@ class JourneyManager extends MobConnectManager
 
             case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distanceTraveled && $journey instanceof LongDistanceJourney:
                 // Use case for long distance journey
-                $this->_invalidateJourney($this->getDriver()->getLongDistanceSubscription(), $journey);
+                $this->_currentSubscription = $this->getDriver()->getLongDistanceSubscription();
 
-                return;
+                break;
 
             case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS > $distanceTraveled && $journey instanceof ShortDistanceJourney:
                 // Use case for short distance journey
-                $this->_invalidateJourney($this->getDriver()->getShortDistanceSubscription(), $journey);
+                $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
 
-                return;
+                break;
         }
+
+        $this->_invalidateJourney($journey);
     }
 
     /**
@@ -377,7 +394,10 @@ class JourneyManager extends MobConnectManager
      */
     private function _getEECJourneyFromCarpoolProof(CarpoolProof $carpoolProof)
     {
-        $journey = $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal($carpoolProof->getCarpoolItem(), $this->getDriverPassengerProposalForCarpoolItem($carpoolProof->getCarpoolItem(), self::DRIVER));
+        $journey = $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal(
+            $carpoolProof->getCarpoolItem(),
+            $this->getDriverPassengerProposalForCarpoolItem($carpoolProof->getCarpoolItem(), self::DRIVER)
+        );
 
         if (is_null($journey)) {
             $journey = $this->_shortDistanceJourneyRepository->findOneByCarpoolProof($carpoolProof);
@@ -416,12 +436,14 @@ class JourneyManager extends MobConnectManager
         // Use case where there is not yet a LD journey associated with the carpoolitem
         if (is_null($journey)) {
             if ($this->_currentCarpoolProof->isEECCompliant()) {
+                // Processes for journeys that are not the commitment journey
                 $this->_addLDJourneyToSubscription();
             }
 
             return;
         }
 
+        // Process for commitment journey
         switch (true) {
             case $this->_currentCarpoolProof->isStatusPending(): return;
 
@@ -520,6 +542,7 @@ class JourneyManager extends MobConnectManager
 
         $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
         $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
+
         $this->_currentSubscription->setExpirationDate($this->getExpirationDate());
 
         $this->_currentSubscription->getCommitmentProofJourney()->updateJourney(
@@ -541,7 +564,7 @@ class JourneyManager extends MobConnectManager
 
         $this->_removeMobJourneyReference();
 
-        $this->_currentSubscription->reset();
+        $this->_currentSubscription = $this->_currentSubscription->reset();
 
         // If there are other journeys associated with the subscription, then we declare the 1st one as the commitment journey
         if (!empty($this->_currentSubscription->getJourneys())) {

@@ -31,7 +31,7 @@
     },
     "hotline": {
       "link": "http://support.mobicoop.fr",
-      "title": "Hotline"
+      "title": "Centre d'aide"
     }
   },
   "tools": {
@@ -72,6 +72,10 @@
     "mobicoop": {
       "link": "https://pro.mobicoop.fr/",
       "title": "pro.mobicoop.fr"
+    },
+    "services": {
+      "title": "En savoir plus sur nos prestations",
+      "link": "https://pro.mobicoop.fr/cooperative/#contact"
     },
     "rezoPouce": {
       "title": "Présentation du service Rezo Pouce",
