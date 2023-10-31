@@ -31,10 +31,14 @@ use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
 use App\Geography\Service\AddressManager;
 use App\Geography\Service\GeoTools;
+use App\Import\Admin\Resource\Import;
+use App\Import\Admin\Service\Importer;
+use App\Import\Admin\Service\ImportManager;
+use App\Utility\Entity\FtpDownloader;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Event manager.
@@ -48,6 +52,8 @@ class EventManager
 {
     public const EVENT_PROVIDER_APIDAE = 'apidae';
     public const EVENT_PROVIDER_TOURINSOFT = 'tourinsoft';
+    public const EVENT_PROVIDER_FILE_TYPE = 'file';
+    public const EVENT_PROVIDER_API_TYPE = 'API';
     public const APP_ID = 1;
     private $eventRepository;
     private $dispatcher;
@@ -56,6 +62,18 @@ class EventManager
     private $provider;
     private $appRepository;
     private $addressManager;
+    private $eventProviderType;
+    private $eventProvider;
+    private $eventProviderApiKey;
+    private $eventProviderProjectId;
+    private $eventProviderSelectionId;
+    private $eventProviderServerUrl;
+    private $importManager;
+    private $_ftpDownloader;
+    private $eventRemoteFilePath;
+    private $eventLocalFilePath;
+    private $eventFtpLogin;
+    private $eventFtpPassword;
 
     /**
      * Constructor.
@@ -67,11 +85,17 @@ class EventManager
         GeoTools $geoTools,
         AppRepository $appRepository,
         AddressManager $addressManager,
+        ImportManager $importManager,
         string $eventProvider,
+        string $eventProviderType,
         string $eventProviderApiKey,
         string $eventProviderProjectId,
         string $eventProviderSelectionId,
-        string $eventProviderServerUrl
+        string $eventProviderServerUrl,
+        string $eventRemoteFilePath,
+        string $eventLocalFilePath,
+        string $eventFtpLogin,
+        string $eventFtpPassword,
     ) {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
@@ -83,6 +107,14 @@ class EventManager
         $this->eventProviderSelectionId = $eventProviderSelectionId;
         $this->appRepository = $appRepository;
         $this->addressManager = $addressManager;
+        $this->eventProviderType = $eventProviderType;
+        $this->importManager = $importManager;
+        $this->_ftpDownloader = null;
+        $this->eventProviderServerUrl = $eventProviderServerUrl;
+        $this->eventRemoteFilePath = $eventRemoteFilePath;
+        $this->eventLocalFilePath = $eventLocalFilePath;
+        $this->eventFtpLogin = $eventFtpLogin;
+        $this->eventFtpPassword = $eventFtpPassword;
 
         switch ($eventProvider) {
             case self::EVENT_PROVIDER_APIDAE:
@@ -91,7 +123,7 @@ class EventManager
                 break;
 
             case self::EVENT_PROVIDER_TOURINSOFT:
-                $this->provider = new TourinsoftProvider($eventProviderServerUrl);
+                $this->provider = new TourinsoftProvider($this->eventProviderServerUrl);
 
                 break;
         }
@@ -107,7 +139,7 @@ class EventManager
     public function createEvent(Event $event)
     {
         if (is_null($event->getUser()) && is_null($event->getApp())) {
-            throw new Exception('User or App are mandatory', 1);
+            throw new \Exception('User or App are mandatory', 1);
         }
         $this->entityManager->persist($event);
         $this->entityManager->flush();
@@ -194,6 +226,21 @@ class EventManager
      */
     public function importEvents()
     {
+        switch ($this->eventProviderType) {
+            case self::EVENT_PROVIDER_API_TYPE:
+                $this->importEventsFromApi();
+
+                break;
+
+            case self::EVENT_PROVIDER_FILE_TYPE:
+                $this->importEventsFromFile();
+
+                break;
+        }
+    }
+
+    public function importEventsFromApi()
+    {
         $eventsToImport = $this->provider->getEvents();
 
         foreach ($eventsToImport as $eventToImport) {
@@ -225,11 +272,27 @@ class EventManager
                 $event->setApp($this->appRepository->find(self::APP_ID));
             }
             if (is_null($event->getUser()) && is_null($event->getApp())) {
-                throw new Exception('User or App are mandatory', 1);
+                throw new \Exception('User or App are mandatory', 1);
             }
             $this->entityManager->persist($event);
             $this->entityManager->flush();
         }
+    }
+
+    public function importEventsFromFile()
+    {
+        $this->_ftpDownloader = new FtpDownloader(
+            $this->eventProviderServerUrl,
+            $this->eventFtpLogin,
+            $this->eventFtpPassword,
+            $this->eventRemoteFilePath,
+            $this->eventLocalFilePath
+        );
+        $this->_ftpDownloader->download();
+
+        $importer = new Importer(new File($this->eventLocalFilePath), 'lala', $this->importManager, null);
+
+        return $importer->importEvents();
     }
 
     public function getEventsByCommunity(int $communityId)

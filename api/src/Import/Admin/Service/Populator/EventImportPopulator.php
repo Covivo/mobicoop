@@ -23,6 +23,7 @@
 
 namespace App\Import\Admin\Service\Populator;
 
+use App\App\Repository\AppRepository;
 use App\Event\Entity\Event;
 use App\Geography\Entity\Address;
 use App\Import\Admin\Interfaces\PopulatorInterface;
@@ -49,15 +50,17 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists and will be ignored';
     private const MESSAGE_ALREADY_EXISTS_WILL_BE_UPDATED = 'already exists and will be updated';
+    private const APP_ID = 1;
 
+    private $appRepository;
     private $_importManager;
     private $_messages;
-    private $_pointSearcher;
 
-    public function __construct(ImportManager $importManager)
+    public function __construct(ImportManager $importManager, AppRepository $appRepository)
     {
         $this->_importManager = $importManager;
         $this->_messages = [];
+        $this->appRepository = $appRepository;
     }
 
     public function getEntity(): string
@@ -108,6 +111,7 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
         $event->setCreatedDate(new \DateTime('now'));
         $event->setStatus(1);
         $event->setPrivate(0);
+        $event->setApp($this->appRepository->find(self::APP_ID));
 
         $address = new Address();
         $address->setLatitude((float) $line[self::LATITUDE]);
