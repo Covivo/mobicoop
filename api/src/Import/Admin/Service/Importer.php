@@ -123,7 +123,7 @@ class Importer
         $this->_messages = array_merge($this->_messages, $messages);
     }
 
-    private function _validateLines(LineImportValidatorInterface $usersImportValidator)
+    private function _validateLines(LineImportValidatorInterface $lineImportValidator)
     {
         $openedFile = fopen($this->_file, 'r');
 
@@ -131,7 +131,7 @@ class Importer
         while (!feof($openedFile)) {
             $line = fgetcsv($openedFile, 0, ';');
             if ($line) {
-                $this->_errors = array_merge($this->_errors, $usersImportValidator->validate($line, $numLine));
+                $this->_errors = array_merge($this->_errors, $lineImportValidator->validate($line, $numLine));
             }
             ++$numLine;
         }
