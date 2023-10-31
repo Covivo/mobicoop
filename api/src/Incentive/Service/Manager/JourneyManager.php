@@ -210,7 +210,7 @@ class JourneyManager extends MobConnectManager
     {
         $this->_currentCarpoolPayment = $carpoolPayment;
 
-        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$this->_currentCarpoolPayment->getId());
+        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID '.$this->_currentCarpoolPayment->getId());
 
         /**
          * @var CarpoolItem[]
