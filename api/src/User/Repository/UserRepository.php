@@ -232,8 +232,8 @@ class UserRepository
 
         $query = $this->repository->createQueryBuilder('u')
             ->select('u')
-            ->where('u.createdDate = :yesterday')
-            ->setParameter('yesterday', $yesterday)
+            ->where('u.createdDate LIKE :yesterday')
+            ->setParameter('yesterday', $yesterday.'%')
         ;
 
         return $query->getQuery()->getResult();
