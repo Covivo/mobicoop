@@ -19,29 +19,29 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
-use App\User\Entity\PushToken;
 
 /**
- *  Check that the requester is the owner of the related Push Token
+ *  Check that the requester is the owner of the related Push Token.
  */
 class InteroperabilityUserCreator implements AuthRuleInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function execute($requester, $item, $params)
     {
         if (!isset($params['user'])) {
             return false;
         }
-        
-        if (!is_null($params['user']->getAppDelegate())) {
-            return $params['user']->getAppDelegate()->getId() == $requester->getId();
+
+        if (is_array($params['user']->getSsoAccounts())) {
+            foreach ($params['user']->getSsoAccounts() as $ssoAccount) {
+                if ($ssoAccount->getAppDelegate()->getId() == $requester->getId()) {
+                    return true;
+                }
+            }
         }
 
         return false;

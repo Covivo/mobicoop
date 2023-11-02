@@ -200,14 +200,18 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
 
     /**
      * Check if the User has been created by Sso.
-     *
-     * @param User $user
      */
     private function checkUserForSso(): bool
     {
         $this->logger->info('Check User '.$this->getConsumptionUser()->getId());
 
-        return !is_null($this->getConsumptionUser()->getSsoId()) && !is_null($this->getConsumptionUser()->getAppDelegate()) && $this->getConsumptionUser()->getAppDelegate()->getId() === $this->appId;
+        foreach ($this->getConsumptionUser()->getSsoAccounts() as $account) {
+            if (!is_null($account->getSsoId()) && !is_null($account->getAppDelegate()) && $account->getAppDelegate()->getId() == $this->appId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

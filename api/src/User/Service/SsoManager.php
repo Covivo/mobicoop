@@ -145,12 +145,14 @@ class SsoManager
     /**
      * Get the logout route of a User.
      */
-    public function getSsoLogoutUrl(User $user): ?string
+    public function getSsoLogoutUrl(User $user, string $ssoProvider): ?string
     {
-        foreach ($this->logoutSso() as $logOutUrls) {
-            foreach ($logOutUrls as $provider => $logOutUrl) {
-                if ($provider == $user->getSsoProvider()) {
-                    return $logOutUrl;
+        foreach ($user->getSsoAccounts() as $ssoAccount) {
+            if ($ssoAccount->getSsoProvider() == $ssoProvider) {
+                foreach ($this->logoutSso() as $logOutUrls) {
+                    foreach ($logOutUrls as $provider => $logOutUrl) {
+                        return $logOutUrl;
+                    }
                 }
             }
         }
