@@ -57,13 +57,11 @@ class InciteToPublishFirstAdCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         foreach (self::RELAUNCH_DELAYS as $delay) {
-            $usersIds = $this->userRepository->findUserWithNoAdSinceXDays($delay);
+            $users = $this->userRepository->findUserWithNoAdSinceXDays($delay);
 
-            if (count($usersIds) > 0) {
-                foreach ($usersIds as $userId) {
-                    $event = new IncitateToPublishFirstAdEvent($this->userRepository->find(intval($userId['id'])));
-                    $this->eventDispatcher->dispatch(IncitateToPublishFirstAdEvent::NAME, $event);
-                }
+            foreach ($users as $user) {
+                $event = new IncitateToPublishFirstAdEvent($user);
+                $this->eventDispatcher->dispatch(IncitateToPublishFirstAdEvent::NAME, $event);
             }
         }
 
