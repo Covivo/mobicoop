@@ -368,6 +368,10 @@ $RECYCLE.BIN/
 /public/export/carpool/*
 /public/maintenance.enable
 
+# Public Tests coverage
+/public/test-coverage
+/public/test-coverage/*
+
 # Public Transport
 /config/publicTransport/providers.json
 
@@ -386,3 +390,13 @@ $RECYCLE.BIN/
 
 # Csv Export
 /config/csvExport/*.json
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> symfony/phpunit-bridge ###
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
