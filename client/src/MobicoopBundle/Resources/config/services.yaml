@@ -92,6 +92,7 @@ services:
       $createFromFront: "%env(bool:COMMUNITIES_CREATE_FROM_FRONT)%"
       $communityUserDirectMessage: "%env(bool:COMMUNITY_USER_DIRECT_MESSAGE)%"
       $defaultNbCommunitiesPerPage: "%env(int:COMMUNITY_DEFAULT_NB_COMMUNITIES_PER_PAGE)%"
+      $communityWidget: "%env(bool:COMMUNITY_WIDGET)%"
   Mobicoop\Bundle\MobicoopBundle\Community\Service\:
     resource: "@MobicoopBundle/Community/Service/*"
   Mobicoop\Bundle\MobicoopBundle\Community\Security\:

@@ -82,6 +82,7 @@ class ArticleController extends AbstractController
     public const MOREABOUT_ALT = 43;
     public const MOREABOUT_ALT_2 = 44;
     public const MOREABOUT_ALT_3 = 45;
+    public const REZO_POUCE = 46;
 
     /**
      * Display of the project page.
@@ -424,6 +425,11 @@ class ArticleController extends AbstractController
     public function showDefi(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::DEFI));
+    }
+
+    public function showRezoPouce(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::REZO_POUCE));
     }
 
     /**

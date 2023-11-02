@@ -179,8 +179,6 @@ class UserRepository
 
     /**
      * Count the active users (with a connection in the last 6 months).
-     *
-     * @return int
      */
     public function countActiveUsers(): ?int
     {
@@ -198,8 +196,6 @@ class UserRepository
 
     /**
      * Count users.
-     *
-     * @return int
      */
     public function countUsers(): ?int
     {
@@ -235,8 +231,8 @@ class UserRepository
 
         $query = $this->repository->createQueryBuilder('u')
             ->select('u')
-            ->where('u.createdDate = :yesterday')
-            ->setParameter('yesterday', $yesterday)
+            ->where('u.createdDate LIKE :yesterday')
+            ->setParameter('yesterday', $yesterday.'%')
         ;
 
         return $query->getQuery()->getResult();

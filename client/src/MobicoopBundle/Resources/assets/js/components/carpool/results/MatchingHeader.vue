@@ -103,12 +103,14 @@ export default {
     },
     computedOrigin() {
       return {
+        name: this.origin.name,
         streetAddress: this.origin.streetAddress,
         addressLocality: this.origin.addressLocality
       }
     },
     computedDestination() {
       return {
+        name: this.destination.name,
         streetAddress: this.destination.streetAddress,
         addressLocality: this.destination.addressLocality
       }

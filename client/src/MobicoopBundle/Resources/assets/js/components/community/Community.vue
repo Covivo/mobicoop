@@ -194,6 +194,7 @@
 
               <!-- widget -->
               <v-btn
+                v-if="communityWidget"
                 class="mt-5"
                 color="primary"
                 rounded
@@ -505,6 +506,10 @@ export default {
       default: false
     },
     dateTimePicker: {
+      type: Boolean,
+      default: false
+    },
+    communityWidget: {
       type: Boolean,
       default: false
     },

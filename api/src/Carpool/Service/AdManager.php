@@ -932,7 +932,10 @@ class AdManager
     {
         $proposal = $this->proposalManager->get($id);
 
-        return $this->makeAd($proposal, $proposal->getUser()->getId());
+        // get asks if proposal has asks
+        $asks = $this->getAssociatedAsks($proposal);
+
+        return $this->makeAd($proposal, $proposal->getUser()->getId(), count($asks) > 0, null, null, $asks);
     }
 
     /**
@@ -1052,10 +1055,11 @@ class AdManager
      * @param bool     $hasAsks   - if the ad has ask we do not return results since we return the ask with the ad
      * @param Ad       $askLinked - the linked ask if proposal is private and get the correct data for Ad (like time and day checks)
      * @param Matching $matching  - the corresponding Matching
+     * @param mixed    $asks
      *
      * @return Ad
      */
-    public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null)
+    public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null, $asks = [])
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
@@ -1076,6 +1080,7 @@ class AdManager
         $ad->setComment($proposal->getComment());
         $ad->setPriceKm(strval(floatval($proposal->getCriteria()->getPriceKm())));
         $ad->setCommunities($proposal->getCommunities());
+        $ad->setAsks($asks);
 
         if ($matching && $matching->getProposalOffer()->getCriteria()->getFromTime()) {
             $date = $matching->getProposalOffer()->getCriteria()->getFromDate();
@@ -1648,10 +1653,7 @@ class AdManager
      * Returns an ad and its results matching the parameters.
      * Used for RDEX export.
      *
-     * @param string $external  The external client
-     * @param string $frequency
-     * @param array  $days
-     * @param array  $outward
+     * @param string $external The external client
      *
      * @return Ad|RdexError
      */
@@ -1868,8 +1870,7 @@ class AdManager
                 if (in_array($ad->getProposalId(), $temp) && Criteria::FREQUENCY_REGULAR === $ad->getFrequency()) {
                     //  If yes we continue
                     continue;
-                }
-                // If not we add it to the ads array
+                }                // If not we add it to the ads array
 
                 // If payement is active we determine the general payments status of the Ad taking account of all the sub ads
                 // If one sub ad is UNPAID, the general Ad is UNPAID
@@ -1896,6 +1897,7 @@ class AdManager
                 $ads[] = $ad;
             }
         }
+
         // We return the ads array with only the ads with accepted asks associated
         return $ads;
     }
@@ -2319,6 +2321,48 @@ class AdManager
         $mapsAd->setCarpoolerLastName($proposal->getUser()->getShortFamilyName());
 
         return $mapsAd;
+    }
+
+    public function getAssociatedAsks(Proposal $proposal)
+    {
+        $userId = $proposal->getUser()->getId();
+        $askAds = [];
+
+        /** @var Matching $matching */
+        foreach ($proposal->getMatchingRequests() as $matching) {
+            // We check if the matching have an ask
+            /** @var Ask $ask */
+            foreach ($matching->getAsks() as $ask) {
+                // We check if the ask is accepted if yes we put the ask in the tab
+                if (Ask::STATUS_ACCEPTED_AS_DRIVER === $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER === $ask->getStatus()) {
+                    // this ask is the ask with data we want to fill the Ad
+                    if ($ask->getUser()->getId() && $ask->getUser()->getId() === $userId) {
+                        $askAd = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId, $matching->getProposalOffer());
+                    } else {
+                        $askAd = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
+                    }
+                    $askAds[] = $askAd;
+                }
+            }
+        }
+        // We check for each proposal if he have matching
+        foreach ($proposal->getMatchingOffers() as $matching) {
+            // We check if the matching have an ask
+            foreach ($matching->getAsks() as $ask) {
+                // We check if the ask is accepted if yes we put the ask in the tab
+                if (Ask::STATUS_ACCEPTED_AS_DRIVER === $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER === $ask->getStatus()) {
+                    // this ask is the ask with data we want to fill the Ad
+                    if ($ask->getUser()->getId() && $ask->getUser()->getId() === $userId) {
+                        $askAd = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId, $matching->getProposalRequest());
+                    } else {
+                        $askAd = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
+                    }
+                    $askAds[] = $askAd;
+                }
+            }
+        }
+
+        return $askAds;
     }
 
     /**
