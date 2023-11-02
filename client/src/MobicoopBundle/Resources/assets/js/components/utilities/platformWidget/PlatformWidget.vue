@@ -50,6 +50,7 @@
             :is-widget="true"
             :date-time-picker="dateTimePicker"
             :default-outward-date="defaultOutwardDate"
+            :full-size="true"
           />
         </v-col>
       </v-row>
