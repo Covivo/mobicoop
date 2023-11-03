@@ -12,18 +12,26 @@ use PHPUnit\Framework\TestCase;
 class CarpoolProofTest extends TestCase
 {
     /**
+     * @var CarpoolProof
+     */
+    private $_carpoolProof;
+
+    public function setUp(): void
+    {
+        $this->_carpoolProof = new CarpoolProof();
+    }
+
+    /**
      * @test
      *
      * @dataProvider dataForEECCompliance
      */
     public function isEECCompliant(int $status, string $type, bool $expectedResponse)
     {
-        $carpoolProof = new CarpoolProof();
+        $this->_carpoolProof->setStatus($status);
+        $this->_carpoolProof->setType($type);
 
-        $carpoolProof->setStatus($status);
-        $carpoolProof->setType($type);
-
-        $this->assertSame($expectedResponse, $carpoolProof->isEECCompliant());
+        $this->assertSame($expectedResponse, $this->_carpoolProof->isEECCompliant());
     }
 
     /**
@@ -33,12 +41,10 @@ class CarpoolProofTest extends TestCase
      */
     public function isCarpoolProofDowngraded(int $status, string $type, bool $expectedResponse)
     {
-        $carpoolProof = new CarpoolProof();
+        $this->_carpoolProof->setStatus($status);
+        $this->_carpoolProof->setType($type);
 
-        $carpoolProof->setStatus($status);
-        $carpoolProof->setType($type);
-
-        $this->assertSame($expectedResponse, $carpoolProof->isCarpoolProofDowngraded());
+        $this->assertSame($expectedResponse, $this->_carpoolProof->isCarpoolProofDowngraded());
     }
 
     public function dataForEECCompliance()
