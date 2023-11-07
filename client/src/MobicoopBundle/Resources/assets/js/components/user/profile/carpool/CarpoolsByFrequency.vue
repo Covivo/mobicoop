@@ -111,8 +111,8 @@ export default {
       return new Date(`${ad.driver.fromDate ? ad.driver.fromDate : ad.outwardDate} ${ad.driver.pickUpTime ? ad.driver.pickUpTime : ad.outwardTime}`)
     },
     sortPunctualCarpools(a, b) {
-      const date_A = this.getAdDate(a)
-      const date_B = this.getAdDate(b)
+      const date_A = this.getStartAdDate(a)
+      const date_B = this.getStartAdDate(b)
 
       return date_A - date_B
     }
