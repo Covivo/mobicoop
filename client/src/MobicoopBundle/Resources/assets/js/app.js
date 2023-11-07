@@ -24,10 +24,13 @@ if (window.location.href.indexOf("localhost") >= 0){
 Sentry.init({
   Vue,
   dsn: "https://757990e3434043f8895ffa6f320a838f@sentry.mobicoop.io/3",
+  initialScope: {
+    tags: { "instance": "mobicoop" },
+  },
   integrations: [
     new Sentry.BrowserTracing({
       // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
-      tracePropagationTargets: ["localhost:8081"],
+      tracePropagationTargets: [],
     }),
   ],
   // Set tracesSampleRate to 1.0 to capture 100%
