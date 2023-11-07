@@ -2,6 +2,8 @@ sentry:
   dsn: "%env(string:SENTRY_DSN)%"
   options:
     environment: "%env(string:APP_ENV)%"
+    tags:
+      instance: "%env(string:SENTRY_INSTANCE)%"
 
 #    If you are using Monolog, you also need this additional configuration to log the errors correctly:
 #    https://docs.sentry.io/platforms/php/guides/symfony/#monolog-integration
