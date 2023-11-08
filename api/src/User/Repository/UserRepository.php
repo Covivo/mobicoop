@@ -23,6 +23,7 @@
 
 namespace App\User\Repository;
 
+use App\App\Entity\App;
 use App\Community\Entity\Community;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryVolunteer;
@@ -179,8 +180,6 @@ class UserRepository
 
     /**
      * Count the active users (with a connection in the last 6 months).
-     *
-     * @return int
      */
     public function countActiveUsers(): ?int
     {
@@ -198,8 +197,6 @@ class UserRepository
 
     /**
      * Count users.
-     *
-     * @return int
      */
     public function countUsers(): ?int
     {
@@ -235,8 +232,8 @@ class UserRepository
 
         $query = $this->repository->createQueryBuilder('u')
             ->select('u')
-            ->where('u.createdDate = :yesterday')
-            ->setParameter('yesterday', $yesterday)
+            ->where('u.createdDate LIKE :yesterday')
+            ->setParameter('yesterday', $yesterday.'%')
         ;
 
         return $query->getQuery()->getResult();
@@ -559,5 +556,39 @@ class UserRepository
         $qb->setParameters($parameters);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findUserBySsoIdAndProvider(string $ssoId, string $ssoProvider): ?User
+    {
+        $query = $this->repository->createQueryBuilder('u');
+
+        $query
+            ->join('u.ssoAccounts', 'ssoaccounts')
+            ->where('ssoaccounts.ssoId = :ssoId')
+            ->andWhere('ssoaccounts.ssoProvider = :ssoProvider')
+            ->setParameter('ssoId', $ssoId)
+            ->setParameter('ssoProvider', $ssoProvider)
+            ->orderBy('ssoaccounts.id', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
+    }
+
+    public function findUserBySsoIdAndAppDelegate(string $ssoId, App $appDelegate): ?User
+    {
+        $query = $this->repository->createQueryBuilder('u');
+
+        $query
+            ->join('u.ssoAccounts', 'ssoaccounts')
+            ->where('ssoaccounts.ssoId = :ssoId')
+            ->andWhere('ssoaccounts.appDelegate = :appDelegate')
+            ->setParameter('ssoId', $ssoId)
+            ->setParameter('appDelegate', $appDelegate)
+            ->orderBy('ssoaccounts.id', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

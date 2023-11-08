@@ -1457,38 +1457,11 @@ class User implements UserInterface, EquatableInterface
     private $facebookId;
 
     /**
-     * @var null|string External ID of the user for a SSO connection
+     * @var ArrayCollection The Sso accounts owned by this User
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @Groups({"readUser", "patchSso"})
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\SsoAccount", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      */
-    private $ssoId;
-
-    /**
-     * @var null|string External Provider for a SSO connection
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @Groups({"readUser", "patchSso"})
-     */
-    private $ssoProvider;
-
-    /**
-     * @var \DateTimeInterface Creation date of the user by Sso (attachment date if already existing)
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     *
-     * @Groups({"aRead","readUser"})
-     */
-    private $createdSsoDate;
-
-    /**
-     * @var null|bool true : the user has been created by sso (false mean no sso or only attached a previously existing account)
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $createdBySso;
+    private $ssoAccounts;
 
     /**
      * @var null|User admin that create the user
@@ -1502,19 +1475,6 @@ class User implements UserInterface, EquatableInterface
      * @MaxDepth(1)
      */
     private $userDelegate;
-
-    /**
-     * @var null|App app that create the user
-     *
-     * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
-     *
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     *
-     * @Groups({"readUser","write"})
-     *
-     * @MaxDepth(1)
-     */
-    private $appDelegate;
 
     /**
      * @var null|ArrayCollection the carpool proofs of the user as a driver
@@ -1935,6 +1895,7 @@ class User implements UserInterface, EquatableInterface
         $this->setAlreadyRegistered(false);
         $this->setMobileRegistration(null);
         $this->setExperienced(false);
+        $this->ssoAccounts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -3423,50 +3384,30 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getSsoId(): ?string
+    public function getSsoAccounts()
     {
-        return $this->ssoId;
+        return $this->ssoAccounts->getValues();
     }
 
-    public function setSsoId(?string $ssoId): self
+    public function addSsoAccount(SsoAccount $ssoAccount): self
     {
-        $this->ssoId = $ssoId;
+        if (!$this->ssoAccounts->contains($ssoAccount)) {
+            $this->ssoAccounts[] = $ssoAccount;
+            $ssoAccount->setUser($this);
+        }
 
         return $this;
     }
 
-    public function getSsoProvider(): ?string
+    public function removeSsoAccount(SsoAccount $ssoAccount): self
     {
-        return $this->ssoProvider;
-    }
-
-    public function setSsoProvider(?string $ssoProvider): self
-    {
-        $this->ssoProvider = $ssoProvider;
-
-        return $this;
-    }
-
-    public function getCreatedSsoDate(): ?\DateTimeInterface
-    {
-        return $this->createdSsoDate;
-    }
-
-    public function setCreatedSsoDate(?\DateTimeInterface $createdSsoDate): self
-    {
-        $this->createdSsoDate = $createdSsoDate;
-
-        return $this;
-    }
-
-    public function isCreatedBySso(): ?bool
-    {
-        return (is_null($this->createdBySso)) ? false : $this->createdBySso;
-    }
-
-    public function setCreatedBySso(?bool $createdBySso): self
-    {
-        $this->createdBySso = $createdBySso;
+        if ($this->ssoAccounts->contains($ssoAccount)) {
+            $this->ssoAccounts->removeElement($ssoAccount);
+            // set the owning side to null (unless already changed)
+            if ($ssoAccount->getUser() === $this) {
+                $ssoAccount->setUser(null);
+            }
+        }
 
         return $this;
     }
@@ -3479,18 +3420,6 @@ class User implements UserInterface, EquatableInterface
     public function setUserDelegate(?User $userDelegate): self
     {
         $this->userDelegate = $userDelegate;
-
-        return $this;
-    }
-
-    public function getAppDelegate(): ?App
-    {
-        return $this->appDelegate;
-    }
-
-    public function setAppDelegate(?App $appDelegate): self
-    {
-        $this->appDelegate = $appDelegate;
 
         return $this;
     }

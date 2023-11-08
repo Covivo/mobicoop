@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,29 +21,26 @@
  *    LICENSE
  */
 
-namespace App\Auth\Rule;
+namespace App\Import\Admin\Service\Validator;
 
-use App\Auth\Interfaces\AuthRuleInterface;
+use App\Import\Admin\Interfaces\FieldValidatorInterface;
 
 /**
- *  Check that the requester is the owner of the related Push Token.
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class InteroperabilityUserCreator implements AuthRuleInterface
+class EmptyOrDescriptionValidator implements FieldValidatorInterface
 {
-    public function execute($requester, $item, $params)
+    public function validate($value): bool
     {
-        if (!isset($params['user'])) {
-            return false;
+        if (0 == strlen(trim($value)) || '' == trim($value)) {
+            return true;
         }
 
-        if (is_array($params['user']->getSsoAccounts())) {
-            foreach ($params['user']->getSsoAccounts() as $ssoAccount) {
-                if ($ssoAccount->getAppDelegate()->getId() == $requester->getId()) {
-                    return true;
-                }
-            }
-        }
+        return is_string($value) && strlen($value) <= 255;
+    }
 
-        return false;
+    public function errorMessage($value): string
+    {
+        return $value.' can only be empty or a string value of a 255 length maximum';
     }
 }

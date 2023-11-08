@@ -711,6 +711,11 @@ class ProofManager
                         $proof->setStatus(CarpoolProof::STATUS_UNDER_CHECKING);
 
                         break;
+
+                    case 'unknown':
+                        $proof->setStatus(CarpoolProof::STATUS_UNKNOWN);
+
+                        break;
                 }
                 ++$nbChecked;
             } else {

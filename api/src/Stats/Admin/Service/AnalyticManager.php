@@ -36,23 +36,24 @@ class AnalyticManager
 {
     private const ROLE_ADMIN = 'ROLE_ADMIN';
     private const ROLE_COMMUNITY_MANAGER_PUBLIC = 'ROLE_COMMUNITY_MANAGER_PUBLIC';
-    private $paramId;
-    private $territoryIdParam;
-    private $communityIdParam;
-    private $darkTheme;
-    private $uri;
-    private $organization;
-    private $database;
-    private $secret;
-    private $dashboards;
-    private $authManager;
-    private $communityRepository;
-    private $tokenStorage;
+    private $_paramType;
+    private $_paramPeriodicity;
+    private $_territoryIdParam;
+    private $_communityIdParam;
+    private $_darkTheme;
+    private $_uri;
+    private $_organization;
+    private $_database;
+    private $_secret;
+    private $_dashboards;
+    private $_authManager;
+    private $_communityRepository;
+    private $_tokenStorage;
 
-    private $defaultCommunityId;
-    private $defaultTerritoryId;
-    private $forceDefaultCommunityId;
-    private $forceDefaultTerritoryId;
+    private $_defaultCommunityId;
+    private $_defaultTerritoryId;
+    private $_forceDefaultCommunityId;
+    private $_forceDefaultTerritoryId;
 
     public function __construct(
         RequestStack $requestStack,
@@ -61,24 +62,25 @@ class AnalyticManager
         TokenStorageInterface $tokenStorage,
         array $params
     ) {
-        $this->uri = $params['url'];
-        $this->organization = $params['organization'];
-        $this->database = $params['database'];
-        $this->secret = $params['secret'];
-        $this->dashboards = $params['dashboards'];
-        $this->authManager = $authManager;
+        $this->_uri = $params['url'];
+        $this->_organization = $params['organization'];
+        $this->_database = $params['database'];
+        $this->_secret = $params['secret'];
+        $this->_dashboards = $params['dashboards'];
+        $this->_authManager = $authManager;
 
         $request = $requestStack->getCurrentRequest();
-        $this->paramId = $request->get('id');
+        $this->_paramType = $request->get('id');
+        $this->_paramPeriodicity = $request->query->get('periodicity', null);
         $communityIdParam = $request->query->get('communityId', null);
-        $this->communityIdParam = is_null($communityIdParam) ? null : intval($communityIdParam);
+        $this->_communityIdParam = is_null($communityIdParam) ? null : intval($communityIdParam);
         $territoryIdParam = $request->query->get('territoryId', null);
-        $this->territoryIdParam = is_null($territoryIdParam) ? null : intval($territoryIdParam);
-        $this->forceDefaultCommunityId = $request->query->get('forceDefaultCommunityId', null);
-        $this->forceDefaultTerritoryId = $request->query->get('forceDefaultTerritoryId', null);
-        $this->darkTheme = $request->query->get('darkTheme', false);
-        $this->communityRepository = $communityRepository;
-        $this->tokenStorage = $tokenStorage;
+        $this->_territoryIdParam = is_null($territoryIdParam) ? null : intval($territoryIdParam);
+        $this->_forceDefaultCommunityId = $request->query->get('forceDefaultCommunityId', null);
+        $this->_forceDefaultTerritoryId = $request->query->get('forceDefaultTerritoryId', null);
+        $this->_darkTheme = $request->query->get('darkTheme', false);
+        $this->_communityRepository = $communityRepository;
+        $this->_tokenStorage = $tokenStorage;
     }
 
     public function getAnalytics(): array
@@ -86,13 +88,16 @@ class AnalyticManager
         return [];
     }
 
-    public function getAnalytic(int $id): Analytic
+    public function getAnalytic(string $type): Analytic
     {
-        $analytic = new Analytic();
-        $analytic->setId($id);
-        $dashboard = $this->getDashboard();
+        $this->_validParamsRequest();
 
-        list($territories, $community) = $this->defineFilters($analytic);
+        $analytic = new Analytic();
+        $analytic->setType($type);
+        $analytic->setPeriodicity($this->_paramPeriodicity);
+        $dashboard = $this->_getDashboard();
+
+        list($territories, $community) = $this->_defineFilters($analytic);
 
         if (null == $community) {
             throw new \LogicException('Community should not be null. This code should not be reached!');
@@ -102,192 +107,208 @@ class AnalyticManager
         }
 
         $payload = [
-            'resource' => ['dashboard' => $dashboard['dashboardId']],
+            'resource' => ['dashboard' => $dashboard['visualDashboardId']],
             'params' => [
                 'idterritoryoperational' => $territories,
                 'idcommunityoperational' => $community,
-                'organization' => $this->organization,
+                'organization' => $this->_organization,
             ],
         ];
 
-        $url = $this->uri.$this->build_jwt_token($payload).'#bordered=false&titled=false';
-        if ($this->darkTheme) {
+        $url = $this->_uri.$this->_build_jwt_token($payload).'#bordered=false&titled=false';
+        if ($this->_darkTheme) {
             $url .= '&theme=night';
         }
 
         $analytic->setUrl($url);
-        $analytic->setCommunityId($this->defaultCommunityId);
-        $analytic->setTerritoryId($this->defaultTerritoryId);
-        $analytic->setForceDefaultCommunityId($this->forceDefaultCommunityId);
-        $analytic->setForceDefaultTerritoryId($this->forceDefaultTerritoryId);
+        $analytic->setCommunityId($this->_defaultCommunityId);
+        $analytic->setTerritoryId($this->_defaultTerritoryId);
+        $analytic->setForceDefaultCommunityId($this->_forceDefaultCommunityId);
+        $analytic->setForceDefaultTerritoryId($this->_forceDefaultTerritoryId);
 
         return $analytic;
     }
 
-    private function defineFilters($analytic): array
+    private function _validParamsRequest()
     {
-        $territories = [$this->getOperationalValue(null)];
-        $community = $this->getOperationalValue(null);
+        if (!in_array($this->_paramType, Analytic::AUTHORIZED_TYPES)) {
+            throw new \LogicException('Analytic type is not a valid type must be in '.json_encode(Analytic::AUTHORIZED_TYPES));
+        }
+        if (!in_array($this->_paramPeriodicity, Analytic::AUTHORIZED_PERIODICITY)) {
+            throw new \LogicException('Analytic periodicity is not a valid type must be in '.json_encode(Analytic::AUTHORIZED_PERIODICITY));
+        }
+    }
 
-        if ($this->authManager->isAuthorized(self::ROLE_ADMIN)) {
-            return $this->defineFiltersForAdmin();
+    private function _defineFilters($analytic): array
+    {
+        $territories = [$this->_getOperationalValue(null)];
+        $community = $this->_getOperationalValue(null);
+
+        if ($this->_authManager->isAuthorized(self::ROLE_ADMIN)) {
+            return $this->_defineFiltersForAdmin();
         }
 
-        if ($this->authManager->isAuthorized(self::ROLE_COMMUNITY_MANAGER_PUBLIC)) {
-            return $this->defineFiltersForCommunityModerator();
+        if ($this->_authManager->isAuthorized(self::ROLE_COMMUNITY_MANAGER_PUBLIC)) {
+            return $this->_defineFiltersForCommunityModerator();
         }
 
         return [$territories, $community];
     }
 
-    private function defineFiltersForAdmin(): array
+    private function _defineFiltersForAdmin(): array
     {
-        $community = $this->getOperationalValue(null);
+        $community = $this->_getOperationalValue(null);
 
-        $territories = $this->treatTerritoryParams();
-        $community = $this->treatCommunityParamsWithoutCheck();
+        $territories = $this->_treatTerritoryParams();
+        $community = $this->_treatCommunityParamsWithoutCheck();
 
         return [$territories, $community];
     }
 
-    private function treatTerritoryParams(): array
+    private function _treatTerritoryParams(): array
     {
-        $dashboard = $this->getDashboard();
-        if (!$this->territoryIdParam && !$this->forceDefaultTerritoryId) {
-            $territories = $this->getTerritoriesFromAuthItem($dashboard['auth_item']);
+        $dashboard = $this->_getDashboard();
+        if (!$this->_territoryIdParam && !$this->_forceDefaultTerritoryId) {
+            $territories = $this->_getTerritoriesFromAuthItem($dashboard['auth_item']);
         } else {
-            if (!$this->forceDefaultTerritoryId) {
-                $territories = [$this->getOperationalValue($this->territoryIdParam)];
-                $this->defaultTerritoryId = $this->territoryIdParam;
+            if (!$this->_forceDefaultTerritoryId) {
+                $territories = [$this->_getOperationalValue($this->_territoryIdParam)];
+                $this->_defaultTerritoryId = $this->_territoryIdParam;
             } else {
-                $territories = $this->getTerritoriesFromAuthItem($dashboard['auth_item']);
+                $territories = $this->_getTerritoriesFromAuthItem($dashboard['auth_item']);
             }
         }
 
         return $territories;
     }
 
-    private function treatCommunityParams(): ?string
+    private function _treatCommunityParams(): ?string
     {
-        $community = $this->getOperationalValue($this->defaultCommunityId);
-        if ($this->communityIdParam && !$this->forceDefaultCommunityId) {
-            $community = $this->getOperationalValue($this->communityIdParam);
-            $this->defaultCommunityId = $this->communityIdParam;
+        $community = $this->_getOperationalValue($this->_defaultCommunityId);
+        if ($this->_communityIdParam && !$this->_forceDefaultCommunityId) {
+            $community = $this->_getOperationalValue($this->_communityIdParam);
+            $this->_defaultCommunityId = $this->_communityIdParam;
         }
 
         return $community;
     }
 
-    private function treatCommunityParamsWithoutCheck(): ?string
+    private function _treatCommunityParamsWithoutCheck(): ?string
     {
-        return $this->treatCommunityParams();
+        return $this->_treatCommunityParams();
     }
 
-    private function treatCommunityParamsWithCheckIfAuthorized(): ?string
+    private function _treatCommunityParamsWithCheckIfAuthorized(): ?string
     {
-        $community = $this->treatCommunityParams();
+        $community = $this->_treatCommunityParams();
 
-        if (!$this->canGetCommunity()) {
+        if (!$this->_canGetCommunity()) {
             throw new \LogicException('Can get data for this Community. You need to be its referer or a moderator.');
         }
 
         return $community;
     }
 
-    private function canGetCommunity(): bool
+    private function _canGetCommunity(): bool
     {
-        if (!$communityEntity = $this->communityRepository->find($this->defaultCommunityId)) {
+        if (!$communityEntity = $this->_communityRepository->find($this->_defaultCommunityId)) {
             throw new \LogicException('Unknown Community');
         }
-        $user = $this->tokenStorage->getToken()->getUser();
-        if ($communityEntity->getUser()->getId() == $user->getId() || $this->communityRepository->isModerator($communityEntity, $user)) {
+        $user = $this->_tokenStorage->getToken()->getUser();
+        if ($communityEntity->getUser()->getId() == $user->getId() || $this->_communityRepository->isModerator($communityEntity, $user)) {
             return true;
         }
 
         return false;
     }
 
-    private function defineFiltersForCommunityModerator(): array
+    private function _defineFiltersForCommunityModerator(): array
     {
-        $community = $this->getOperationalValue(null);
+        $community = $this->_getOperationalValue(null);
 
-        if ($this->forceDefaultCommunityId) {
-            $this->getDefaultCommunityId();
-            $community = $this->getOperationalValue($this->defaultCommunityId);
-        } elseif ($this->communityIdParam && !$this->forceDefaultCommunityId) {
-            $community = $this->treatCommunityParamsWithCheckIfAuthorized();
+        if ($this->_forceDefaultCommunityId) {
+            $this->_getDefaultCommunityId();
+            $community = $this->_getOperationalValue($this->_defaultCommunityId);
+        } elseif ($this->_communityIdParam && !$this->_forceDefaultCommunityId) {
+            $community = $this->_treatCommunityParamsWithCheckIfAuthorized();
         }
 
-        $territories = $this->treatTerritoryParams();
+        $territories = $this->_treatTerritoryParams();
 
         return [$territories, $community];
     }
 
-    private function getDashboard(): ?array
+    private function _getDashboard(): ?array
     {
-        foreach ($this->dashboards as $dashboard) {
-            if ($dashboard['paramId'] == $this->paramId) {
-                return $dashboard;
+        foreach ($this->_dashboards as $typeDashboard) {
+            if (isset($typeDashboard[$this->_paramType])) {
+                foreach ($typeDashboard[$this->_paramType] as $dashboard) {
+                    if ($dashboard['periodicity'] == $this->_paramPeriodicity) {
+                        return $dashboard;
+                    }
+                }
+
+                break;
             }
         }
 
         throw new ResourceNotFoundException('Unknown dashboard');
     }
 
-    private function getDefaultCommunityId(): void
+    private function _getDefaultCommunityId(): void
     {
-        $this->defaultCommunityId = null;
-        $communityIds = $this->communityRepository->findCommunitiesForRefererOrModerator($this->tokenStorage->getToken()->getUser());
+        $this->_defaultCommunityId = null;
+        $communityIds = $this->_communityRepository->findCommunitiesForRefererOrModerator($this->_tokenStorage->getToken()->getUser());
         if (is_array($communityIds) && count($communityIds) > 0) {
-            $this->defaultCommunityId = $communityIds[0]['id'];
+            $this->_defaultCommunityId = $communityIds[0]['id'];
         }
     }
 
-    private function getOperationalValue(?int $id): string
+    private function _getOperationalValue(?int $id): string
     {
         if (null === $id) {
-            return $this->database;
+            return $this->_database;
         }
 
-        return $this->database.'_'.strval($id);
+        return $this->_database.'_'.strval($id);
     }
 
-    private function getTerritoriesFromAuthItem(string $auth_item): array
+    private function _getTerritoriesFromAuthItem(string $auth_item): array
     {
-        $territories = $this->authManager->getTerritoryListForItem($auth_item);
+        $territories = $this->_authManager->getTerritoryListForItem($auth_item);
 
         if (0 == count($territories)) {
-            return [$this->getOperationalValue(null)];
+            return [$this->_getOperationalValue(null)];
         }
 
         foreach ($territories as $key => $territory) {
-            if (null == $this->defaultTerritoryId) {
-                $this->defaultTerritoryId = $territories[$key];
+            if (null == $this->_defaultTerritoryId) {
+                $this->_defaultTerritoryId = $territories[$key];
             }
-            $territories[$key] = $this->getOperationalValue($territories[$key]);
+            $territories[$key] = $this->_getOperationalValue($territories[$key]);
         }
 
         return $territories;
     }
 
-    private function build_jwt_token($payload): string
+    private function _build_jwt_token($payload): string
     {
         // build the headers
         $headers = ['alg' => 'HS256', 'typ' => 'JWT'];
-        $headers_encoded = self::base64url_encode(json_encode($headers));
+        $headers_encoded = self::_base64url_encode(json_encode($headers));
 
         // build the payload
-        $payload_encoded = self::base64url_encode(json_encode($payload));
+        $payload_encoded = self::_base64url_encode(json_encode($payload));
 
         // build the signature
-        $signature = hash_hmac('sha256', "{$headers_encoded}.{$payload_encoded}", $this->secret, true);
-        $signature_encoded = self::base64url_encode($signature);
+        $signature = hash_hmac('sha256', "{$headers_encoded}.{$payload_encoded}", $this->_secret, true);
+        $signature_encoded = self::_base64url_encode($signature);
 
         // build and return the token
         return "{$headers_encoded}.{$payload_encoded}.{$signature_encoded}";
     }
 
-    private function base64url_encode($data)
+    private function _base64url_encode($data)
     {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }

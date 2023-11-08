@@ -210,7 +210,7 @@ class JourneyManager extends MobConnectManager
     {
         $this->_currentCarpoolPayment = $carpoolPayment;
 
-        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID'.$this->_currentCarpoolPayment->getId());
+        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID '.$this->_currentCarpoolPayment->getId());
 
         /**
          * @var CarpoolItem[]
@@ -250,7 +250,22 @@ class JourneyManager extends MobConnectManager
 
             case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distanceTraveled && $this->isJourneyPaid($carpoolProof):
                 // Use case for a long distance journey where payment has been made
-                $this->_subscriptionConfirmationForLDJourney($carpoolProof->getCarpoolItem());
+
+                if (is_null($this->_currentCarpoolItem)) {
+                    $this->_currentCarpoolItem = $carpoolProof->getCarpoolItem();
+                    if (is_null($this->_currentCarpoolItem)) {
+                        return;
+                    }
+                }
+
+                if (is_null($this->_currentCarpoolPayment)) {
+                    $this->_currentCarpoolPayment = $this->_currentCarpoolItem->getSuccessfullPayment();
+                    if (is_null($this->_currentCarpoolPayment)) {
+                        return;
+                    }
+                }
+
+                $this->_subscriptionConfirmationForLDJourney();
 
                 return;
         }
