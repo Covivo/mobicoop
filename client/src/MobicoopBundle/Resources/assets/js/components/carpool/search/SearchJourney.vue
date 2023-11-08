@@ -339,7 +339,7 @@ export default {
       showDate:true,
       showTime:false,
       time: this.initOutwardTime,
-      dateTime: this.initOutwardDate+' '+this.initOutwardTime,
+      dateTime: (this.initOutwardDate && this.initOutwardTime) ? this.initOutwardDate+' '+this.initOutwardTime : null,
       regular: this.initRegular,
       role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : 3),
       passenger: this.initRole == 2 ? true : (this.initRole == 3 || (this.initRole == null && !this.solidaryExclusiveAd) ? true : false),
@@ -486,7 +486,7 @@ export default {
     },
     formatDate() {
       if (this.dateTimePicker) {
-        this.dateTime = this.date+' '+this.time;
+        this.dateTime = (this.date && this.time) ? this.date+' '+this.time : null;
       }
     }
   }
