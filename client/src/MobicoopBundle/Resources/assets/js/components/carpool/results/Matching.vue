@@ -606,19 +606,25 @@ export default {
       return (this.externalRdexJourneys || this.ptSearch) ? true : false;
     },
     displayOrigin(){
-      if(this.lOrigin.name){
+      if(this.lOrigin && this.lOrigin.name){
         return this.lOrigin.name;
       }
-      else{
-        return (this.lOrigin) ? this.lOrigin.addressLocality :  "";
+      else if(this.lOrigin && this.lOrigin.addressLocality)
+      {
+        return this.lOrigin.addressLocality;
+      } else {
+        return (this.lOrigin) ? this.lOrigin : "";
       }
     },
     displayDestination(){
-      if(this.lDestination.name){
+      if(this.lDestination && this.lDestination.name){
         return this.lDestination.name;
       }
-      else{
-        return (this.lDestination) ? this.lDestination.addressLocality : "";
+      else if(this.lDestination && this.lDestination.addressLocality)
+      {
+        return this.lDestination.addressLocality;
+      } else {
+        return (this.lDestination) ? this.lDestination : "";
       }
     }
   },
