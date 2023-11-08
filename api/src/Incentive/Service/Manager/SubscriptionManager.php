@@ -120,12 +120,15 @@ class SubscriptionManager extends MobConnectManager
         ) {
             $postResponse = $this->postSubscription();
 
-            $longDistanceSubscription = new LongDistanceSubscription($this->getDriver(), $postResponse);
-            $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
+            if (!$this->hasRequestErrorReturned($postResponse)) {
+                $longDistanceSubscription = new LongDistanceSubscription($this->getDriver(), $postResponse);
+                $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
-            $longDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($longDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
+                $longDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($longDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
 
-            $this->_em->persist($longDistanceSubscription);
+                $this->_em->persist($longDistanceSubscription);
+            }
+
         }
 
         if (
@@ -134,12 +137,14 @@ class SubscriptionManager extends MobConnectManager
         ) {
             $postResponse = $this->postSubscription(false);
 
-            $shortDistanceSubscription = new ShortDistanceSubscription($this->getDriver(), $postResponse);
-            $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
+            if (!$this->hasRequestErrorReturned($postResponse)) {
+                $shortDistanceSubscription = new ShortDistanceSubscription($this->getDriver(), $postResponse);
+                $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
-            $shortDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($shortDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
+                $shortDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($shortDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
 
-            $this->_em->persist($shortDistanceSubscription);
+                $this->_em->persist($shortDistanceSubscription);
+            }
         }
 
         $this->_em->flush();
@@ -323,6 +328,11 @@ class SubscriptionManager extends MobConnectManager
         $this->_driver = $subscription->getUser();
 
         $verifyResponse = $this->executeRequestVerifySubscription($subscription->getSubscriptionId());
+
+        if ($this->hasRequestErrorReturned($verifyResponse)) {
+            return $verifyResponse;
+        }
+
         $subscription->addLog($verifyResponse, Log::TYPE_VERIFY);
 
         $subscription->setStatus(
