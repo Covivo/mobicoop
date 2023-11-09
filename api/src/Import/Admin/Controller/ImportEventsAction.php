@@ -80,7 +80,7 @@ final class ImportEventsAction
 
         $importer = new Importer(new File(self::LOCAL_FILE_PATH), self::FILE_NAME, $this->_importManager, null, $this->_appRepository);
         $importer->importEvents();
-
+        $importer->deleteEvents();
         $errors = $importer->getErrors();
         if (count($errors) > 0) {
             foreach ($errors as $error) {

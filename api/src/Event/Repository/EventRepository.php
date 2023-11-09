@@ -134,4 +134,11 @@ class EventRepository
             ->getQuery()->getResult()
         ;
     }
+
+    public function getEventsWithAnExternalId(): QueryBuilder
+    {
+        return $this->repository->createQueryBuilder('e')
+            ->where('e.externalId IS NOT NULL')
+        ;
+    }
 }

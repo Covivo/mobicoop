@@ -142,4 +142,9 @@ class ImportManager
     {
         return $this->_eventManager->getEventByExternalId($externalId);
     }
+
+    public function getAllEvents()
+    {
+        return $this->_eventManager->getEventsWithAnExternalId();
+    }
 }

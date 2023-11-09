@@ -23,9 +23,11 @@
 
 namespace App\Import\Admin\Service;
 
+use App\Import\Admin\Interfaces\DeletorInterface;
 use App\Import\Admin\Interfaces\LineImportValidatorInterface;
 use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\Import\Admin\Resource\Import;
+use App\Import\Admin\Service\Deletor\EventImportDeletor;
 use App\Import\Admin\Service\LineValidator\EventLineImportValidator;
 use App\Import\Admin\Service\LineValidator\RelayPointLineImportValidator;
 use App\Import\Admin\Service\LineValidator\UserLineImportValidator;
@@ -37,6 +39,7 @@ use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
  */
 class Importer
 {
@@ -47,7 +50,7 @@ class Importer
 
     private const USER_ENTITY = 'User';
     private const RELAY_POINT_ENTITY = 'RelayPoint';
-    private const EVENT = 'Event';
+    private const EVENT_ENTITY = 'Event';
 
     private const TIME_LIMIT = 6 * 60 * 60;
 
@@ -115,14 +118,26 @@ class Importer
     {
         set_time_limit(self::TIME_LIMIT);
         if (!$this->_validateFile()) {
-            return $this->_buildImport(self::EVENT);
+            return $this->_buildImport(self::EVENT_ENTITY);
         }
         $this->_validateLines(new EventLineImportValidator());
         if (0 == count($this->_errors)) {
             $this->_populateTable(new EventImportPopulator($this->_manager, $this->_repository));
         }
 
-        return $this->_buildImport(self::EVENT);
+        return $this->_buildImport(self::EVENT_ENTITY);
+    }
+
+    public function deleteEvents()
+    {
+        set_time_limit(self::TIME_LIMIT);
+        if (!$this->_validateFile()) {
+            return $this->_buildImport(self::EVENT_ENTITY);
+        }
+        $this->_validateLines(new EventLineImportValidator());
+        if (0 == count($this->_errors)) {
+            $this->_deleteTable(new EventImportDeletor($this->_manager, $this->_repository));
+        }
     }
 
     public function getErrors()
@@ -144,6 +159,12 @@ class Importer
     private function _populateTable(PopulatorInterface $populator)
     {
         $messages = $populator->populate($this->_file);
+        $this->_messages = array_merge($this->_messages, $messages);
+    }
+
+    private function _deleteTable(DeletorInterface $deletor)
+    {
+        $messages = $deletor->delete($this->_file);
         $this->_messages = array_merge($this->_messages, $messages);
     }
 
