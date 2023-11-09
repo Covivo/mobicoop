@@ -545,19 +545,16 @@ services:
       $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
   App\Event\Service\EventManager:
     arguments:
-      $eventProviderType: "%env(string:EVENT_PROVIDER_TYPE)%"
       $eventProvider: "%env(resolve:EVENT_PROVIDER)%"
       $eventProviderApiKey: "%env(resolve:EVENT_PROVIDER_API_KEY)%"
       $eventProviderProjectId: "%env(resolve:EVENT_PROVIDER_PROJECT_ID)%"
       $eventProviderSelectionId: "%env(resolve:EVENT_PROVIDER_SELECTION_ID)%"
       $eventProviderServerUrl: "%env(string:EVENT_PROVIDER_SERVER_URL)%"
-      $eventRemoteFilePath: "%env(string:EVENT_REMOTE_FILE_PATH)%"
-      $eventLocalFilePath: "%env(string:EVENT_LOCAL_FILE_PATH)%"
-      $eventFtpLogin: "%env(string:EVENT_FTP_LOGIN)%"
-      $eventFtpPassword: "%env(string:EVENT_FTP_PASWORD)%"
   App\Event\Command\EventImportCommand:
     arguments:
+      $eventProviderType: "%env(string:EVENT_PROVIDER_TYPE)%"
       $eventImportEnabled: "%env(bool:EVENT_IMPORT_ENABLED)%"
+  
   App\Event\Admin\DataProvider\EventCollectionDataProvider:
     arguments:
       $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
@@ -768,6 +765,13 @@ services:
   App\Import\Service\FakeManager:
     tags:
       - { name: monolog.logger, channel: faker }
+
+  App\Import\Admin\Controller\ImportEventsAction:
+    arguments:  
+      $eventProviderServerIP: "%env(string:EVENT_PROVIDER_SERVER_IP)%"
+      $eventRemoteFilePath: "%env(string:EVENT_REMOTE_FILE_PATH)%"
+      $eventFtpLogin: "%env(string:EVENT_FTP_LOGIN)%"
+      $eventFtpPassword: "%env(string:EVENT_FTP_PASWORD)%"    
 
   # INCENTIVE
   App\Incentive\Command\ProofValidationCommand:

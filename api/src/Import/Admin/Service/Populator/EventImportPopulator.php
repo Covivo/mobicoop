@@ -52,7 +52,7 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
     private const MESSAGE_ALREADY_EXISTS_WILL_BE_UPDATED = 'already exists and will be updated';
     private const APP_ID = 1;
 
-    private $appRepository;
+    private $_appRepository;
     private $_importManager;
     private $_messages;
 
@@ -60,7 +60,7 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
     {
         $this->_importManager = $importManager;
         $this->_messages = [];
-        $this->appRepository = $appRepository;
+        $this->_appRepository = $appRepository;
     }
 
     public function getEntity(): string
@@ -87,7 +87,6 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
 
             return;
         }
-
         $this->_addEvent($line);
     }
 
@@ -111,7 +110,7 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
         $event->setCreatedDate(new \DateTime('now'));
         $event->setStatus(1);
         $event->setPrivate(0);
-        $event->setApp($this->appRepository->find(self::APP_ID));
+        $event->setApp($this->_appRepository->find(self::APP_ID));
 
         $address = new Address();
         $address->setLatitude((float) $line[self::LATITUDE]);

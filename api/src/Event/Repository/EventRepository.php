@@ -34,6 +34,7 @@ class EventRepository
      * @var EntityRepository
      */
     private $repository;
+    private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -78,7 +79,8 @@ class EventRepository
         return $this->repository->createQueryBuilder('e')
             ->where('e.user = :userId')
             ->setParameter('userId', $userId)
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
     }
 
     public function getEvents(): QueryBuilder
@@ -105,7 +107,8 @@ class EventRepository
         return $this->repository->createQueryBuilder('e')
             ->where('e.externalSource is NULL')
             ->andWhere('e.externalId is NULL')
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
     }
 
     /**
@@ -128,6 +131,7 @@ class EventRepository
         return $this->repository->createQueryBuilder('e')
             ->where('e.community_id = :communityId')
             ->setParameter('communityId', $communityId)
-            ->getQuery()->getResult();
+            ->getQuery()->getResult()
+        ;
     }
 }
