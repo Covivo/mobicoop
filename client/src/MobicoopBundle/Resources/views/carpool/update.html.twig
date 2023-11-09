@@ -24,6 +24,7 @@
             {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
             :seat-number = "{{ seatNumber }}"
             :community-ids="{{ communityIds | json_encode }}"
+            :default-digital-clock="{{ defaultDigitalClock ? 'true' : 'false' }}"
     />
 
 {% endblock %}

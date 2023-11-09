@@ -52,7 +52,9 @@
         <v-col
           cols="4"
         >
+          <span v-if="defaultDigitalClock">Mon horloge numérique</span>
           <v-menu
+            v-else
             ref="menuOutwardTime"
             v-model="menuOutwardTime"
             :close-on-content-click="false"
@@ -167,7 +169,9 @@
         <v-col
           cols="4"
         >
+          <span v-if="defaultDigitalClock">Mon horloge numérique</span>
           <v-menu
+            v-else
             ref="menuReturnTime"
             v-model="menuReturnTime"
             :close-on-content-click="false"
@@ -539,6 +543,10 @@ export default {
     defaultTimePrecision: {
       type: Number,
       default: null
+    },
+    defaultDigitalClock: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

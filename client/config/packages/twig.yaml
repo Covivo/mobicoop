@@ -60,3 +60,4 @@ twig:
         specificSsoServices: '%env(json:SPECIFIC_SSO_SERVICES)%'
         dateTimePicker: '%env(bool:DATE_TIME_PICKER)%'
         displayCee: '%env(bool:CEE_DISPLAY)%'
+        defaultDigitalClock: '%env(bool:DEFAULT_DIGITAL_CLOCK)%'

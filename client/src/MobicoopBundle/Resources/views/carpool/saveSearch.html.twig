@@ -21,5 +21,6 @@
         :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
         :geo-complete-palette="{{geoCompletePalette|json_encode}}"
         {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+        :default-digital-clock="{{ defaultDigitalClock ? 'true' : 'false' }}"
     />
 {% endblock %}
