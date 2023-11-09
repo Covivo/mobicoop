@@ -182,9 +182,10 @@ class DataProvider
                 $options[RequestOptions::AUTH] = $auth;
             }
 
-            // var_dump($body);
-            // var_dump($options);
-            // var_dump($this->resource);
+            var_dump($body);
+            $options = null;
+            var_dump($options);
+            var_dump($this->resource);
 
             // exit;
 

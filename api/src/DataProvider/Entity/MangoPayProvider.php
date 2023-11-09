@@ -25,6 +25,7 @@ namespace App\DataProvider\Entity;
 
 use App\DataProvider\Ressource\Hook;
 use App\DataProvider\Ressource\MangoPayHook;
+use App\DataProvider\Service\CurlDataProvider;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolItem;
@@ -54,6 +55,9 @@ class MangoPayProvider implements PaymentProviderInterface
     public const LANDING_AFTER_PAYMENT_MOBILE = '#/carpools/payment/paye';
     public const LANDING_AFTER_PAYMENT_MOBILE_SITE = '#/carpools/payment/paye';
     public const VERSION = 'V2.01';
+    public const ACCESS_TOKEN_EXPIRATION_SECURITY_MARGIN_IN_SECONDS = 10;
+
+    public const AUTH_TOKEN = 'oauth/token';
 
     public const COLLECTION_BANK_ACCOUNTS = 'bankaccounts';
     public const COLLECTION_WALLETS = 'wallets';
@@ -90,13 +94,20 @@ class MangoPayProvider implements PaymentProviderInterface
     public const RESULT_TYPE_PAYOUT = 'PAYOUT';
 
     private $user;
+    private $clientId;
+    private $apikey;
     private $serverUrl;
+    private $serverUrlNoClientId;
     private $authChain;
     private $currency;
     private $paymentProfileRepository;
     private $validationDocsPath;
     private $baseUri;
     private $baseMobileUri;
+    private $curlDataProvider;
+    private $access_token;
+    private $accessTokenExpireIn;
+    private $startTime;
 
     public function __construct(
         ?User $user,
@@ -110,14 +121,21 @@ class MangoPayProvider implements PaymentProviderInterface
         PaymentProfileRepository $paymentProfileRepository
     ) {
         ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
+        $this->serverUrlNoClientId = $this->serverUrl;
         $this->user = $user;
-        $this->authChain = 'Basic '.base64_encode($clientId.':'.$apikey);
+        $this->clientId = $clientId;
+        $this->apikey = $apikey;
         $this->serverUrl .= self::VERSION.'/'.$clientId.'/';
+        $this->serverUrlNoClientId .= self::VERSION.'/';
         $this->currency = $currency;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->validationDocsPath = $validationDocsPath;
         $this->baseUri = $baseUri;
         $this->baseMobileUri = $baseMobileUri;
+        $this->curlDataProvider = new CurlDataProvider();
+        $this->access_token = null;
+        $this->accessTokenExpireIn = null;
+        $this->startTime = new \DateTime('now');
     }
 
     private function __treatReturn(User $debtor, array $creditor, string $result): PaymentResult
@@ -156,6 +174,8 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function getBankAccounts(PaymentProfile $paymentProfile, bool $onlyActive = true)
     {
+        $this->_auth();
+
         $dataProvider = new DataProvider($this->serverUrl.'users/'.$paymentProfile->getIdentifier().'/', self::COLLECTION_BANK_ACCOUNTS);
         $getParams = [
             'per_page' => 100,
@@ -225,6 +245,7 @@ class MangoPayProvider implements PaymentProviderInterface
             throw new PaymentException(PaymentException::NO_IDENTIFIER);
         }
 
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl.'users/'.$identifier.'/', self::COLLECTION_BANK_ACCOUNTS.'/iban');
         $headers = [
             'Authorization' => $this->authChain,
@@ -261,6 +282,7 @@ class MangoPayProvider implements PaymentProviderInterface
             throw new PaymentException(PaymentException::NO_IDENTIFIER);
         }
 
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl.'users/'.$identifier.'/', self::COLLECTION_BANK_ACCOUNTS.'/'.$bankAccount->getId());
         $headers = [
             'Authorization' => $this->authChain,
@@ -284,6 +306,8 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function getWallets(PaymentProfile $paymentProfile)
     {
+        $this->_auth();
+
         $wallets = [new Wallet()];
 
         $dataProvider = new DataProvider($this->serverUrl.'users/'.$paymentProfile->getIdentifier().'/', self::COLLECTION_WALLETS);
@@ -313,6 +337,8 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function addWallet(Wallet $wallet): Wallet
     {
+        $this->_auth();
+
         // Build the body
         $body['Description'] = $wallet->getDescription();
         $body['Currency'] = $wallet->getCurrency();
@@ -403,6 +429,7 @@ class MangoPayProvider implements PaymentProviderInterface
         $body['TermsAndConditionsAccepted'] = true;
         $body['UserCategory'] = 'OWNER';
 
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl.'users/', self::ITEM_USER_NATURAL);
         $headers = [
             'Authorization' => $this->authChain,
@@ -445,6 +472,7 @@ class MangoPayProvider implements PaymentProviderInterface
 
         $body['KYCLevel'] = 'LIGHT';
 
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl.'users/', self::ITEM_USER_NATURAL.'/'.$identifier);
         $headers = [
             'Authorization' => $this->authChain,
@@ -465,6 +493,8 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function getUser(int $identifier)
     {
+        $this->_auth();
+
         $dataProvider = new DataProvider($this->serverUrl.'users/'.$identifier);
         $headers = [
             'Authorization' => $this->authChain,
@@ -527,6 +557,7 @@ class MangoPayProvider implements PaymentProviderInterface
             'Culture' => self::LANGUAGE,
         ];
 
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl, self::ITEM_PAYIN);
         $headers = [
             'Authorization' => $this->authChain,
@@ -647,6 +678,7 @@ class MangoPayProvider implements PaymentProviderInterface
             'Tag' => $tag,
         ];
 
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl, self::ITEM_TRANSFERS);
         $headers = [
             'Authorization' => $this->authChain,
@@ -680,6 +712,7 @@ class MangoPayProvider implements PaymentProviderInterface
             'BankWireRef' => $reference,
         ];
 
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl, self::ITEM_PAYOUT);
         $headers = [
             'Authorization' => $this->authChain,
@@ -747,6 +780,8 @@ class MangoPayProvider implements PaymentProviderInterface
             'Type' => self::VALIDATION_DOC_TYPE,
             'Tag' => 'Automatic',
         ];
+
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl, $urlPost);
         $response = $dataProvider->postCollection($body, $headers);
         if (200 == $response->getCode()) {
@@ -858,6 +893,7 @@ class MangoPayProvider implements PaymentProviderInterface
 
     public function getDocument($validationDocumentId)
     {
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl.'kyc/documents/'.$validationDocumentId.'/');
         $headers = [
             'Authorization' => $this->authChain,
@@ -929,6 +965,7 @@ class MangoPayProvider implements PaymentProviderInterface
 
     public function getKycDocument(int $kycDocumentId)
     {
+        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl.'kyc/documents/'.$kycDocumentId.'/');
         $headers = [
             'Authorization' => $this->authChain,
@@ -944,6 +981,41 @@ class MangoPayProvider implements PaymentProviderInterface
             }
         } else {
             throw new PaymentException(PaymentException::ERROR_DOC);
+        }
+    }
+
+    private function _refreshToken()
+    {
+        $this->curlDataProvider->setUrl($this->serverUrlNoClientId.''.self::AUTH_TOKEN);
+        $headers = [
+            'Authorization: Basic '.base64_encode($this->clientId.':'.$this->apikey),
+        ];
+        $response = $this->curlDataProvider->post($headers, '{}');
+        if (200 == $response->getCode()) {
+            $data = json_decode($response->getValue(), true);
+            if (isset($data['access_token'], $data['token_type'], $data['expires_in'])) {
+                $this->access_token = $data['access_token'];
+                $this->accessTokenExpireIn = $data['expires_in'];
+                $this->authChain = 'Bearer '.$this->access_token;
+            }
+        } else {
+            throw new PaymentException(PaymentException::ERROR_GETTING_ACCESS_TOKEN);
+        }
+    }
+
+    private function _auth()
+    {
+        if (is_null($this->access_token)) {
+            $this->_refreshToken();
+
+            return;
+        }
+
+        $currentTime = new \DateTime('now');
+        $diff = $currentTime->getTimestamp() - $this->startTime->getTimestamp();
+
+        if ($diff >= $this->accessTokenExpireIn - self::ACCESS_TOKEN_EXPIRATION_SECURITY_MARGIN_IN_SECONDS) {
+            $this->_refreshToken();
         }
     }
 }
