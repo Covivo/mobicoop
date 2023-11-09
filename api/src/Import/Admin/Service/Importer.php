@@ -125,6 +125,11 @@ class Importer
         return $this->_buildImport(self::EVENT);
     }
 
+    public function getErrors()
+    {
+        return $this->_errors;
+    }
+
     private function _validateFile(): bool
     {
         if (!in_array($this->_file->getMimeType(), self::MIME_TYPES)) {

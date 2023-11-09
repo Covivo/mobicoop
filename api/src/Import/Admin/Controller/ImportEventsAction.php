@@ -27,6 +27,7 @@ use App\App\Repository\AppRepository;
 use App\Import\Admin\Service\Importer;
 use App\Import\Admin\Service\ImportManager;
 use App\Utility\Entity\FtpDownloader;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
@@ -36,12 +37,13 @@ final class ImportEventsAction
 {
     private const LOCAL_FILE_PATH = __DIR__.'/../../../../public/import/Event/eventSdis.csv';
     private const FILE_NAME = 'eventsToImport.csv';
-    private $eventProviderServerIP;
-    private $importManager;
+    private $_eventProviderServerIP;
+    private $_importManager;
     private $_ftpDownloader;
-    private $eventRemoteFilePath;
-    private $eventFtpLogin;
-    private $eventFtpPassword;
+    private $_eventRemoteFilePath;
+    private $_eventFtpLogin;
+    private $_eventFtpPassword;
+    private $_logger;
 
     /**
      * Constructor.
@@ -49,33 +51,45 @@ final class ImportEventsAction
     public function __construct(
         ImportManager $importManager,
         AppRepository $appRepository,
+        LoggerInterface $logger,
         string $eventProviderServerIP,
         string $eventRemoteFilePath,
         string $eventFtpLogin,
         string $eventFtpPassword
     ) {
-        $this->importManager = $importManager;
-        $this->appRepository = $appRepository;
+        $this->_importManager = $importManager;
+        $this->_appRepository = $appRepository;
         $this->_ftpDownloader = null;
-        $this->eventProviderServerIP = $eventProviderServerIP;
-        $this->eventRemoteFilePath = $eventRemoteFilePath;
-        $this->eventFtpLogin = $eventFtpLogin;
-        $this->eventFtpPassword = $eventFtpPassword;
+        $this->_eventProviderServerIP = $eventProviderServerIP;
+        $this->_eventRemoteFilePath = $eventRemoteFilePath;
+        $this->_eventFtpLogin = $eventFtpLogin;
+        $this->_eventFtpPassword = $eventFtpPassword;
+        $this->_logger = $logger;
     }
 
     public function importEventsFromFile()
     {
         $this->_ftpDownloader = new FtpDownloader(
-            $this->eventProviderServerIP,
-            $this->eventFtpLogin,
-            $this->eventFtpPassword,
-            $this->eventRemoteFilePath,
+            $this->_eventProviderServerIP,
+            $this->_eventFtpLogin,
+            $this->_eventFtpPassword,
+            $this->_eventRemoteFilePath,
             self::LOCAL_FILE_PATH
         );
         $this->_ftpDownloader->download();
 
-        $importer = new Importer(new File(self::LOCAL_FILE_PATH), self::FILE_NAME, $this->importManager, null, $this->appRepository);
+        $importer = new Importer(new File(self::LOCAL_FILE_PATH), self::FILE_NAME, $this->_importManager, null, $this->_appRepository);
+        $importer->importEvents();
 
-        return $importer->importEvents();
+        $errors = $importer->getErrors();
+        if (count($errors) > 0) {
+            foreach ($errors as $error) {
+                $this->_logger->info('ImportEventsAction : '.$error.' '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }
