@@ -122,8 +122,6 @@ class MobConnectAuth
 
     /**
      * Get the user subscription ID.
-     *
-     * @return int
      */
     public function getId(): ?int
     {
@@ -226,6 +224,11 @@ class MobConnectAuth
     public function getRefreshTokenExpiresDate(): \DateTime
     {
         return $this->refreshTokenExpiresDate;
+    }
+
+    public function hasAuthenticationExpired(): bool
+    {
+        return $this->getRefreshTokenExpiresDate() < new \DateTime('now');
     }
 
     /**

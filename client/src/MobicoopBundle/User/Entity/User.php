@@ -533,6 +533,8 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $bankingIdentityStatus = false;
 
+    private $hasAccessToMobAPI = false;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1075,9 +1077,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this->email;
     }
 
-    public function eraseCredentials()
-    {
-    }
+    public function eraseCredentials() {}
 
     public function isEqualTo(UserInterface $user)
     {
@@ -1566,6 +1566,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'identityStatus' => $this->getIdentityStatus(),
             'verifiedIdentity' => $this->getVerifiedIdentity(),
             'bankingIdentityStatus' => $this->getBankingIdentityStatus(),
+            'hasAccessToMobAPI' => $this->hasAccessToMobAPI(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
@@ -1646,6 +1647,26 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setHitchHikePassenger(?bool $isHitchHikePassenger): self
     {
         $this->hitchHikePassenger = $isHitchHikePassenger;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of hasAccessToMobAPI.
+     */
+    public function hasAccessToMobAPI(): bool
+    {
+        return $this->hasAccessToMobAPI;
+    }
+
+    /**
+     * Set the value of hasAccessToMobAPI.
+     *
+     * @param mixed $hasAccessToMobAPI
+     */
+    public function setHasAccessToMobAPI(bool $hasAccessToMobAPI): self
+    {
+        $this->hasAccessToMobAPI = $hasAccessToMobAPI;
 
         return $this;
     }
