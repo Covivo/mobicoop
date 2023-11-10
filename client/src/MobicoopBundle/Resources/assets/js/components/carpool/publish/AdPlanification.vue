@@ -52,7 +52,16 @@
         <v-col
           cols="4"
         >
-          <span v-if="defaultDigitalClock">Mon horloge numérique</span>
+          <!-- Digital clock -->
+          <v-text-field
+            v-if="defaultDigitalClock"
+            v-model="outwardTime"
+            :label="$t('outwardTime.label')"
+            prepend-icon="mdi-clock-time-eight-outline"
+            type="time"
+            @change="changeTime()"
+          />
+          <!-- Needle clock -->
           <v-menu
             v-else
             ref="menuOutwardTime"
@@ -169,7 +178,17 @@
         <v-col
           cols="4"
         >
-          <span v-if="defaultDigitalClock">Mon horloge numérique</span>
+          <!-- Digital clock -->
+          <v-text-field
+            v-if="defaultDigitalClock"
+            v-model="returnTime"
+            :label="$t('returnTime.label')"
+            :min="minReturnTime"
+            prepend-icon="mdi-clock-time-eight-outline"
+            type="time"
+            @change="checkDateReturn($event)"
+          />
+          <!-- Needle clock -->
           <v-menu
             v-else
             ref="menuReturnTime"
@@ -658,12 +677,16 @@ export default {
       this.change();
     },
     changeTime() {
-      this.$refs.menuOutwardTime.save(this.outwardTime);
+      if (typeof this.$refs.menuOutwardTime !== 'undefined') {
+        this.$refs.menuOutwardTime.save(this.outwardTime);
+      }
       this.change();
     },
     checkDateReturn(e){
       this.returnTrip = !!e;
-      this.$refs.menuReturnTime.save(this.returnTime);
+      if (typeof this.$refs.menuReturnTime != 'undefined') {
+        this.$refs.menuReturnTime.save(this.returnTime);
+      }
       this.change();
     },
     clearOtherFields(){
