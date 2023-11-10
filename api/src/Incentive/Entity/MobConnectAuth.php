@@ -87,7 +87,7 @@ class MobConnectAuth
     public function __construct(User $user, SsoUser $ssoUser)
     {
         $this->setUser($user);
-        $this->setAuthorizationCode($user->getSsoId());
+        $this->setAuthorizationCode($user->getMobConnectSsoAccount()->getSsoId());
         $this->setAccessToken($ssoUser->getAccessToken());
         $this->setAccessTokenExpiresDate($ssoUser->getAccessTokenExpiresDuration());
         $this->setRefreshToken($ssoUser->getRefreshToken());
@@ -122,8 +122,6 @@ class MobConnectAuth
 
     /**
      * Get the user subscription ID.
-     *
-     * @return int
      */
     public function getId(): ?int
     {

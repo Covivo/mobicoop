@@ -29,12 +29,14 @@ class AuthManager extends MobConnectManager
 
     private function __createAuth(User $user, SsoUser $ssoUser)
     {
-        $mobConnectAuth = new MobConnectAuth($user, $ssoUser);
+        if (!is_null($user->getMobConnectSsoAccount())) {
+            $mobConnectAuth = new MobConnectAuth($user, $ssoUser);
 
-        $this->_user->setMobConnectAuth($mobConnectAuth);
+            $this->_user->setMobConnectAuth($mobConnectAuth);
 
-        $this->_em->persist($mobConnectAuth);
-        $this->_em->flush();
+            $this->_em->persist($mobConnectAuth);
+            $this->_em->flush();
+        }
     }
 
     private function __updateAuth(SsoUser $ssoUser)

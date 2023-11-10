@@ -4128,4 +4128,13 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->paymentProfiles;
     }
+
+    public function getMobConnectSsoAccount(): ?SsoAccount
+    {
+        $results = array_values(array_filter($this->getSsoAccounts(), function ($ssoAccount) {
+            return 'mobConnect' === $ssoAccount->getSsoProvider();
+        }));
+
+        return !empty($results) ? $results[0] : null;
+    }
 }
