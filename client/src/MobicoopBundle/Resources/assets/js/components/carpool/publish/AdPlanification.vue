@@ -325,7 +325,19 @@
               <v-col
                 cols="5"
               >
+                <!-- Digital clock -->
+                <v-text-field
+                  v-if="defaultDigitalClock"
+                  v-model="item.outwardTime"
+                  :label="$t('regularOutwardTime.label')"
+                  class="ml-3"
+                  prepend-icon="mdi-clock-time-eight-outline"
+                  type="time"
+                  @change="change"
+                />
+                <!-- Needle clock -->
                 <v-menu
+                  v-else
                   v-model="item.menuOutwardTime"
                   :close-on-content-click="false"
                   transition="scale-transition"
@@ -390,7 +402,18 @@
               <v-col
                 cols="5"
               >
+                <!-- Digital clock -->
+                <v-text-field
+                  v-if="defaultDigitalClock"
+                  v-model="item.returnTime"
+                  :label="$t('regularReturnTime.label')"
+                  prepend-icon="mdi-clock-time-eight-outline"
+                  type="time"
+                  @change="change"
+                />
+                <!-- Needle clock -->
                 <v-menu
+                  v-else
                   v-model="item.menuReturnTime"
                   :close-on-content-click="false"
                   transition="scale-transition"
