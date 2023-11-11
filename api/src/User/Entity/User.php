@@ -104,6 +104,7 @@ use App\User\Filter\WaypointTerritoryFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -4129,12 +4130,23 @@ class User implements UserInterface, EquatableInterface
         return $this->paymentProfiles;
     }
 
-    public function getMobConnectSsoAccount(): ?SsoAccount
+    public function isAssociatedWithSsoAccount(string $provider): bool
     {
-        $results = array_values(array_filter($this->getSsoAccounts(), function ($ssoAccount) {
-            return 'mobConnect' === $ssoAccount->getSsoProvider();
-        }));
+        $filteredProviders = array_filter($this->getSsoAccounts(), function ($ssoAccount) use ($provider) {
+            return $provider === $ssoAccount->getSsoProvider();
+        });
 
-        return !empty($results) ? $results[0] : null;
+        return !empty($filteredProviders);
+    }
+
+    public function getSsoAccount(string $provider): SsoAccount
+    {
+        if (!$this->isAssociatedWithSsoAccount($provider)) {
+            throw new BadRequestHttpException('The user is not associated with the requested provider');
+        }
+
+        return array_filter($this->getSsoAccounts(), function ($ssoAccount) use ($provider) {
+            return $provider === $ssoAccount->getSsoProvider();
+        })[0];
     }
 }
