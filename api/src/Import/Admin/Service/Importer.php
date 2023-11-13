@@ -70,12 +70,14 @@ class Importer
     private $_manager;
     private $_repository;
 
+    private $_eventProvider;
+
     /**
      * @var User
      */
     private $_requester;
 
-    public function __construct(File $file, string $filename, object $manager = null, User $requester = null, object $repository = null)
+    public function __construct(File $file, string $filename, object $manager = null, User $requester = null, object $repository = null, string $eventProvider = null)
     {
         $this->_file = $file;
         $this->_filename = $filename;
@@ -84,6 +86,7 @@ class Importer
         $this->_messages = [];
         $this->_requester = $requester;
         $this->_repository = $repository;
+        $this->_eventProvider = $eventProvider;
     }
 
     public function importUsers(): Import
@@ -122,7 +125,7 @@ class Importer
         }
         $this->_validateLines(new EventLineImportValidator());
         if (0 == count($this->_errors)) {
-            $this->_populateTable(new EventImportPopulator($this->_manager, $this->_repository));
+            $this->_populateTable(new EventImportPopulator($this->_manager, $this->_repository, $this->_eventProvider));
         }
 
         return $this->_buildImport(self::EVENT_ENTITY);

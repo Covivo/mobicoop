@@ -44,6 +44,7 @@ final class ImportEventsAction
     private $_eventFtpLogin;
     private $_eventFtpPassword;
     private $_logger;
+    private $_eventProvider;
 
     /**
      * Constructor.
@@ -55,7 +56,8 @@ final class ImportEventsAction
         string $eventProviderServerIP,
         string $eventRemoteFilePath,
         string $eventFtpLogin,
-        string $eventFtpPassword
+        string $eventFtpPassword,
+        string $eventProvider
     ) {
         $this->_importManager = $importManager;
         $this->_appRepository = $appRepository;
@@ -65,6 +67,7 @@ final class ImportEventsAction
         $this->_eventFtpLogin = $eventFtpLogin;
         $this->_eventFtpPassword = $eventFtpPassword;
         $this->_logger = $logger;
+        $this->_eventProvider = $eventProvider;
     }
 
     public function importEventsFromFile()
@@ -78,7 +81,7 @@ final class ImportEventsAction
         );
         $this->_ftpDownloader->download();
 
-        $importer = new Importer(new File(self::LOCAL_FILE_PATH), self::FILE_NAME, $this->_importManager, null, $this->_appRepository);
+        $importer = new Importer(new File(self::LOCAL_FILE_PATH), self::FILE_NAME, $this->_importManager, null, $this->_appRepository, $this->_eventProvider);
         $importer->importEvents();
         $importer->deleteEvents();
         $errors = $importer->getErrors();

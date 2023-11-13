@@ -55,12 +55,14 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
     private $_appRepository;
     private $_importManager;
     private $_messages;
+    private $_eventProvider;
 
-    public function __construct(ImportManager $importManager, AppRepository $appRepository)
+    public function __construct(ImportManager $importManager, AppRepository $appRepository, ?string $eventProvider)
     {
         $this->_importManager = $importManager;
         $this->_messages = [];
         $this->_appRepository = $appRepository;
+        $this->_eventProvider = $eventProvider;
     }
 
     public function getEntity(): string
@@ -93,6 +95,7 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
     private function _fillEvent(Event $event, array $line): ?Event
     {
         $event->setExternalId($line[self::EXTERNAL_ID]);
+        $event->setExternalSource($this->_eventProvider);
         $event->setName($line[self::NAME]);
         $event->setDescription($line[self::DESCRIPTION]);
         if ('' !== $line[self::FROM_TIME] && '' !== $line[self::TO_TIME]) {

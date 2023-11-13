@@ -771,7 +771,8 @@ services:
       $eventProviderServerIP: "%env(string:EVENT_PROVIDER_SERVER_IP)%"
       $eventRemoteFilePath: "%env(string:EVENT_REMOTE_FILE_PATH)%"
       $eventFtpLogin: "%env(string:EVENT_FTP_LOGIN)%"
-      $eventFtpPassword: "%env(string:EVENT_FTP_PASWORD)%"    
+      $eventFtpPassword: "%env(string:EVENT_FTP_PASWORD)%" 
+      $eventProvider: "%env(string:EVENT_PROVIDER)%"
 
   # INCENTIVE
   App\Incentive\Command\ProofValidationCommand:
