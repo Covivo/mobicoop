@@ -35,7 +35,7 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 final class ImportEventsAction
 {
-    private const LOCAL_FILE_PATH = __DIR__.'/../../../../public/import/Event/eventSdis.csv';
+    private const LOCAL_FILE_PATH = __DIR__.'/../../../../public/import/Event/eventsToImport.csv';
     private const FILE_NAME = 'eventsToImport.csv';
     private $_eventProviderServerIP;
     private $_importManager;
