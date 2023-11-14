@@ -133,6 +133,7 @@ class AskManager
         // todo : check if an ask already exists for the match and the proposals
 
         $this->entityManager->persist($ask);
+
         // dispatch en event
         // $event = new AskPostedEvent($ask);
         // $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
@@ -489,7 +490,9 @@ class AskManager
         $ad->setAskId($ask->getId());
 
         // we create a message system
-        $this->internalMessageManager->postAskRelatedMessageSystem($ask);
+        if ($ad->getAskStatus() > Ask::STATUS_INITIATED) {
+            $this->internalMessageManager->postAskRelatedMessageSystem($ask);
+        }
 
         return $ad;
     }
