@@ -115,11 +115,13 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
         $event->setPrivate(0);
         $event->setApp($this->_appRepository->find(self::APP_ID));
 
-        $address = new Address();
-        $address->setLatitude((float) $line[self::LATITUDE]);
-        $address->setLongitude((float) $line[self::LONGITUDE]);
+        if (is_null($event->getId()) || (!is_null($event->getAddress()) && ((float) $event->getAddress()->getLatitude() !== (float) $line[self::LATITUDE]) && ((float) $event->getAddress()->getLongitude() !== (float) $line[self::LONGITUDE]))) {
+            $address = new Address();
+            $address->setLatitude((float) $line[self::LATITUDE]);
+            $address->setLongitude((float) $line[self::LONGITUDE]);
 
-        $event->setAddress($address);
+            $event->setAddress($address);
+        }
 
         return $event;
     }
@@ -158,7 +160,7 @@ class EventImportPopulator extends ImportPopulator implements PopulatorInterface
             return;
         }
 
-        if (!$relaypoint = $this->_fillEvent($event, $line)) {
+        if (!$event = $this->_fillEvent($event, $line)) {
             return;
         }
 
