@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Entity;
 
+use App\DataProvider\Entity\MobConnect\OpenIdSsoProvider;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
@@ -87,7 +88,7 @@ class MobConnectAuth
     public function __construct(User $user, SsoUser $ssoUser)
     {
         $this->setUser($user);
-        $this->setAuthorizationCode($user->getSsoId());
+        $this->setAuthorizationCode($user->getSsoAccount(OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT)->getSsoId());
         $this->setAccessToken($ssoUser->getAccessToken());
         $this->setAccessTokenExpiresDate($ssoUser->getAccessTokenExpiresDuration());
         $this->setRefreshToken($ssoUser->getRefreshToken());
@@ -122,8 +123,6 @@ class MobConnectAuth
 
     /**
      * Get the user subscription ID.
-     *
-     * @return int
      */
     public function getId(): ?int
     {
