@@ -285,13 +285,9 @@ class CarpoolProofGouvProvider implements ProviderInterface
         return $dataProvider->getItem([], $headers);
     }
 
-    public function getCollection(string $class, string $apikey, array $params)
-    {
-    }
+    public function getCollection(string $class, string $apikey, array $params) {}
 
-    public function getItem(string $class, string $apikey, array $params)
-    {
-    }
+    public function getItem(string $class, string $apikey, array $params) {}
 
     public function deserialize(string $class, array $data)
     {
