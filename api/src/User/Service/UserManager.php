@@ -1423,12 +1423,8 @@ class UserManager
      *
      * @param mixed $isScammer
      */
-    public function deleteUser(User $user, $isScammer)
+    public function deleteUser(User $user, $isScammer = false)
     {
-        var_dump(!$isScammer);
-        var_dump($isScammer);
-
-        exit;
         if (!$isScammer) {
             // We check if the user have ads.
             // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
