@@ -128,7 +128,6 @@ class SubscriptionManager extends MobConnectManager
 
                 $this->_em->persist($longDistanceSubscription);
             }
-
         }
 
         if (
@@ -177,6 +176,9 @@ class SubscriptionManager extends MobConnectManager
         $this->_subscriptions = new CeeSubscriptions($this->_driver->getId());
 
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
+        if (!is_null($shortDistanceSubscription)) {
+            $this->_subscriptions->setShortDistanceSubscription($shortDistanceSubscription);
+        }
 
         if (!is_null($shortDistanceSubscription)) {
             $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getCompliantJourneys());
@@ -185,6 +187,9 @@ class SubscriptionManager extends MobConnectManager
         }
 
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
+        if (!is_null($longDistanceSubscription)) {
+            $this->_subscriptions->setLongDistanceSubscription($longDistanceSubscription);
+        }
 
         if (!is_null($longDistanceSubscription)) {
             $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getCompliantJourneys());

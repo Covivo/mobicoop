@@ -11,6 +11,7 @@ use App\Incentive\Service\Manager\SubscriptionManager;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
@@ -19,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\HasLifecycleCallbacks
  */
-class LongDistanceSubscription
+class LongDistanceSubscription extends Subscription
 {
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/long-distance-subscription/honour-certificate/';
@@ -44,6 +45,8 @@ class LongDistanceSubscription
      * @ORM\Id
      *
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Groups({"readSubscription"})
      */
     private $id;
 
@@ -60,6 +63,8 @@ class LongDistanceSubscription
      * @var ArrayCollection The long distance log associated with the user
      *
      * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\LongDistanceJourney", mappedBy="subscription", cascade={"persist"}, orphanRemoval=true)
+     *
+     * @Groups({"readSubscription"})
      */
     private $longDistanceJourneys;
 
@@ -67,6 +72,8 @@ class LongDistanceSubscription
      * @var string the ID of the mobConnect subscription
      *
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"readSubscription"})
      */
     private $subscriptionId;
 
@@ -74,6 +81,8 @@ class LongDistanceSubscription
      * @var string the subscription status
      *
      * @ORM\Column(type="string", length=10, nullable=true)
+     *
+     * @Groups({"readSubscription"})
      */
     private $status;
 
@@ -81,6 +90,8 @@ class LongDistanceSubscription
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"readSubscription"})
      */
     private $verificationDate;
 
@@ -88,6 +99,8 @@ class LongDistanceSubscription
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"readSubscription"})
      */
     private $expirationDate;
 
@@ -123,6 +136,8 @@ class LongDistanceSubscription
      * @var string the driving licence number of the user
      *
      * @ORM\Column(type="string", length=15)
+     *
+     * @Groups({"readSubscription"})
      */
     private $drivingLicenceNumber;
 
@@ -151,6 +166,8 @@ class LongDistanceSubscription
      * @var string the telephone number of the user
      *
      * @ORM\Column(type="string", length=255, unique=true)
+     *
+     * @Groups({"readSubscription"})
      */
     private $telephone;
 
@@ -158,6 +175,8 @@ class LongDistanceSubscription
      * @var string the email of the user
      *
      * @ORM\Column(type="string", length=255, unique=true)
+     *
+     * @Groups({"readSubscription"})
      */
     private $email;
 
@@ -165,6 +184,8 @@ class LongDistanceSubscription
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     *
+     * @Groups({"readSubscription"})
      */
     private $createdAt;
 
@@ -172,6 +193,8 @@ class LongDistanceSubscription
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     *
+     * @Groups({"readSubscription"})
      */
     private $updatedAt;
 
@@ -181,6 +204,8 @@ class LongDistanceSubscription
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceJourney")
      *
      * @ORM\JoinColumn(nullable=true)
+     *
+     * @Groups({"readSubscription"})
      */
     private $commitmentProofJourney;
 
@@ -199,6 +224,8 @@ class LongDistanceSubscription
      * @var int
      *
      * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
+     *
+     * @Groups({"readSubscription"})
      */
     private $bonusStatus = SubscriptionManager::BONUS_STATUS_PENDING;
 
@@ -266,6 +293,27 @@ class LongDistanceSubscription
     private $incentiveProofTimestampSigningTime;
 
     /**
+     * @var bool
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $hasIncentiveToken = false;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $hasCommitToken = false;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $hasHonorCertificateToken = false;
+
+    /**
      * The moBconnet HTTP request log.
      *
      * @var ArrayCollection
@@ -273,6 +321,24 @@ class LongDistanceSubscription
      * @ORM\OneToMany(targetEntity=LongDistanceSubscriptionLog::class, mappedBy="subscription", cascade={"persist"})
      */
     private $logs;
+
+    /**
+     * The subscription version.
+     *
+     * @var string
+     *
+     * @ORM\Column(
+     *      type="string",
+     *      length=50,
+     *      nullable=true,
+     *      options={
+     *          "comment": "The subscription version. Could be CoupPouceCEE2023 or CEEStandardMobicoop"
+     *      }
+     * )
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $version;
 
     public function __construct(User $user, MobConnectSubscriptionResponse $mobConnectSubscriptionResponse)
     {
@@ -359,12 +425,17 @@ class LongDistanceSubscription
         return $this;
     }
 
+    public function getLongDistanceJourneys()
+    {
+        return $this->longDistanceJourneys;
+    }
+
     /**
      * Return all journeys.
      */
     public function getJourneys()
     {
-        return $this->longDistanceJourneys;
+        return $this->getLongDistanceJourneys();
     }
 
     public function getJourneysNumber(): int
@@ -752,130 +823,6 @@ class LongDistanceSubscription
     public function setCommitmentProofDate(?\DateTimeInterface $commitmentProofDate): self
     {
         $this->commitmentProofDate = $commitmentProofDate;
-
-        return $this;
-    }
-
-    /**
-     * Get the long distance EEC commitment proof timestamp token.
-     */
-    public function getCommitmentProofTimestampToken(): ?string
-    {
-        return $this->commitmentProofTimestampToken;
-    }
-
-    /**
-     * Set the long distance EEC commitment proof timestamp token.
-     *
-     * @param string $commitmentProofTimestampToken the long distance EEC commitment proof timestamp token
-     */
-    public function setCommitmentProofTimestampToken(?string $commitmentProofTimestampToken): self
-    {
-        $this->commitmentProofTimestampToken = $commitmentProofTimestampToken;
-
-        return $this;
-    }
-
-    /**
-     * Get the long distance EEC commitment proof timestamp signing time.
-     *
-     * @return \DateTimeInterface
-     */
-    public function getCommitmentProofTimestampSigningTime(): ?\DateTime
-    {
-        return $this->commitmentProofTimestampSigningTime;
-    }
-
-    /**
-     * Set the long distance EEC commitment proof timestamp signing time.
-     *
-     * @param \DateTimeInterface $commitmentProofTimestampSigningTime the long distance EEC commitment proof timestamp signing time
-     */
-    public function setCommitmentProofTimestampSigningTime(?\DateTimeInterface $commitmentProofTimestampSigningTime): self
-    {
-        $this->commitmentProofTimestampSigningTime = $commitmentProofTimestampSigningTime;
-
-        return $this;
-    }
-
-    /**
-     * Get the long distance EEC honor certificate proof timestamp token.
-     */
-    public function getHonorCertificateProofTimestampToken(): ?string
-    {
-        return $this->honorCertificateProofTimestampToken;
-    }
-
-    /**
-     * Set the long distance EEC honor certificate proof timestamp token.
-     *
-     * @param string $honorCertificateProofTimestampToken the long distance EEC honor certificate proof timestamp token
-     */
-    public function setHonorCertificateProofTimestampToken(?string $honorCertificateProofTimestampToken): self
-    {
-        $this->honorCertificateProofTimestampToken = $honorCertificateProofTimestampToken;
-
-        return $this;
-    }
-
-    /**
-     * Get the long distance EEC honor certificate proof timestamp signing time.
-     */
-    public function getHonorCertificateProofTimestampSigningTime(): ?\DateTime
-    {
-        return $this->honorCertificateProofTimestampSigningTime;
-    }
-
-    /**
-     * Set the long distance EEC honor certificate proof timestamp signing time.
-     *
-     * @param \DateTimeInterface $honorCertificateProofTimestampSigningTime the long distance EEC honor certificate proof timestamp signing time
-     */
-    public function setHonorCertificateProofTimestampSigningTime(?\DateTimeInterface $honorCertificateProofTimestampSigningTime): self
-    {
-        $this->honorCertificateProofTimestampSigningTime = $honorCertificateProofTimestampSigningTime;
-
-        return $this;
-    }
-
-    /**
-     * Get the long distance EEC incentive proof timestamp token.
-     */
-    public function getIncentiveProofTimestampToken(): ?string
-    {
-        return $this->incentiveProofTimestampToken;
-    }
-
-    /**
-     * Set the long distance EEC incentive proof timestamp token.
-     *
-     * @param string $incentiveProofTimestampToken the long distance EEC incentive proof timestamp token
-     */
-    public function setIncentiveProofTimestampToken(string $incentiveProofTimestampToken): self
-    {
-        $this->incentiveProofTimestampToken = $incentiveProofTimestampToken;
-
-        return $this;
-    }
-
-    /**
-     * Get the long distance EEC incentive proof timestamp signing time.
-     *
-     * @return \DateTimeInterface
-     */
-    public function getIncentiveProofTimestampSigningTime(): ?\DateTime
-    {
-        return $this->incentiveProofTimestampSigningTime;
-    }
-
-    /**
-     * Set the long distance EEC incentive proof timestamp signing time.
-     *
-     * @param \DateTimeInterface $incentiveProofTimestampSigningTime the long distance EEC incentive proof timestamp signing time
-     */
-    public function setIncentiveProofTimestampSigningTime(\DateTimeInterface $incentiveProofTimestampSigningTime): self
-    {
-        $this->incentiveProofTimestampSigningTime = $incentiveProofTimestampSigningTime;
 
         return $this;
     }
