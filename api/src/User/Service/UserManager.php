@@ -1420,33 +1420,41 @@ class UserManager
 
     /**
      * Delete the user.
+     *
+     * @param mixed $isScammer
      */
-    public function deleteUser(User $user)
+    public function deleteUser(User $user, $isScammer)
     {
-        // We check if the user have ads.
-        // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
-        foreach ($user->getProposals() as $proposal) {
-            if ($proposal->isPrivate()) {
-                continue;
-            }
-            foreach ($proposal->getMatchingRequests() as $matching) {
-                foreach ($matching->getAsks() as $ask) {
-                    // todo : find why class of $ask can be a proxy of Ask class
-                    if (Ask::class !== get_class($ask)) {
-                        continue;
-                    }
-                    $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
+        var_dump(!$isScammer);
+        var_dump($isScammer);
+
+        exit;
+        if (!$isScammer) {
+            // We check if the user have ads.
+            // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
+            foreach ($user->getProposals() as $proposal) {
+                if ($proposal->isPrivate()) {
+                    continue;
                 }
-            }
-            foreach ($proposal->getMatchingOffers() as $matching) {
-                foreach ($matching->getAsks() as $ask) {
-                    // todo : find why class of $ask can be a proxy of Ask class
-                    if (Ask::class !== get_class($ask)) {
-                        continue;
+                foreach ($proposal->getMatchingRequests() as $matching) {
+                    foreach ($matching->getAsks() as $ask) {
+                        // todo : find why class of $ask can be a proxy of Ask class
+                        if (Ask::class !== get_class($ask)) {
+                            continue;
+                        }
+                        $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
+                        $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                     }
-                    $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                }
+                foreach ($proposal->getMatchingOffers() as $matching) {
+                    foreach ($matching->getAsks() as $ask) {
+                        // todo : find why class of $ask can be a proxy of Ask class
+                        if (Ask::class !== get_class($ask)) {
+                            continue;
+                        }
+                        $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
+                        $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                    }
                 }
             }
         }

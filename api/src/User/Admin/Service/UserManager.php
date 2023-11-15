@@ -543,11 +543,12 @@ class UserManager
     /**
      * Delete a user.
      *
-     * @param User $user The user to delete
+     * @param User  $user      The user to delete
+     * @param mixed $isScammer
      */
-    public function deleteUser(User $user)
+    public function deleteUser(User $user, $isScammer = false)
     {
-        $this->userManager->deleteUser($user);
+        $this->userManager->deleteUser($user, $isScammer);
 
         return $user;
     }
