@@ -5,7 +5,6 @@ namespace App\Incentive\Service\Manager;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
@@ -175,6 +174,8 @@ class JourneyManager extends MobConnectManager
 
         $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
+        $subscription->setVersion();
+
         $this->_em->flush();
 
         return $journey;
@@ -218,6 +219,8 @@ class JourneyManager extends MobConnectManager
         $subscription->setCommitmentProofDate(new \DateTime());
 
         $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
+
+        $subscription->setVersion();
 
         $this->_em->flush();
 
@@ -369,6 +372,8 @@ class JourneyManager extends MobConnectManager
         if (self::SHORT_DISTANCE_TRIP_THRESHOLD === $shortDistanceJourneysNumber) {
             $subscription->setBonusStatus(self::BONUS_STATUS_PENDING);
         }
+
+        $subscription->setVersion();
 
         $this->_em->flush();
     }
@@ -550,6 +555,8 @@ class JourneyManager extends MobConnectManager
             $this->getCarpoolersNumber($this->_currentCarpoolItem->getAsk()),
             $this->getAddressesLocality($this->_currentCarpoolItem)
         );
+
+        $subscription->setVersion();
 
         $this->_em->flush();
     }

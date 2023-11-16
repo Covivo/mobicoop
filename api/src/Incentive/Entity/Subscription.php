@@ -2,26 +2,85 @@
 
 namespace App\Incentive\Entity;
 
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
+
 abstract class Subscription
 {
-    public const INCENTIVE_2023 = 'CoupPouceCEE2023';
-    public const iNCENTIVE_MOBICOOP_2024 = 'CEEStandardMobicoop';
+    private const ACTIVE_YEAR_PATTERN = '/^202[3-7]{1}$/';
 
-    private const ALLOWED_VERSION = [
-        self::INCENTIVE_2023,
-        self::iNCENTIVE_MOBICOOP_2024,
-    ];
+    protected $createdAt;
 
-    private $incentiveProofTimestampToken;
-    private $incentiveProofTimestampSigningTime;
+    protected $longDistanceJourneys;
+    protected $shortDistanceJourneys;
 
-    private $commitmentProofTimestampToken;
-    private $commitmentProofTimestampSigningTime;
+    protected $commitmentProofJourney;
+    protected $commitmentProofDate;
 
-    private $honorCertificateProofTimestampToken;
-    private $honorCertificateProofTimestampSigningTime;
+    protected $incentiveProofTimestampToken;
+    protected $incentiveProofTimestampSigningTime;
 
-    private $version;
+    protected $commitmentProofTimestampToken;
+    protected $commitmentProofTimestampSigningTime;
+
+    protected $honorCertificateProofTimestampToken;
+    protected $honorCertificateProofTimestampSigningTime;
+
+    protected $version;
+    protected $versionStatus;
+
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $date): self
+    {
+        $this->createdAt = $date;
+
+        return $this;
+    }
+
+    /**
+     * Return all journeys.
+     */
+    public function getJourneys()
+    {
+        switch (true) {
+            case $this instanceof LongDistanceJourney: return $this->getLongDistanceJourneys();
+
+            case $this instanceof ShortDistanceJourney: return $this->getShortDistanceJourneys();
+
+            default: return [];
+        }
+    }
+
+    public function getLongDistanceJourneys()
+    {
+        return $this->longDistanceJourneys;
+    }
+
+    public function getShortDistanceJourneys()
+    {
+        return $this->shortDistanceJourneys;
+    }
+
+    public function getCommitmentProofJourney()
+    {
+        return $this->commitmentProofJourney;
+    }
+
+    public function getCommitmentProofDate(): ?\DateTime
+    {
+        return $this->commitmentProofDate;
+    }
+
+    /**
+     * TODO - Tester la fonction.
+     */
+    public function isCommitted(): bool
+    {
+        return !is_null($this->getCommitmentProofJourney());
+    }
 
     /**
      * Get the long distance EEC incentive proof timestamp token.
@@ -177,17 +236,77 @@ abstract class Subscription
 
     /**
      * Set the subscription version.
-     *
-     * @param string $version the subscription version
+     * TODO - Tester la fonction.
      */
-    public function setVersion(string $version): self
+    public function setVersion(): self
     {
-        if (!in_array($version, self::ALLOWED_VERSION)) {
-            throw new \LogicException('The version you want to assign is not allowed');
+        if (is_null($this->getVersion()) || SubscriptionVersion::INCENTIVE_MOBICOOP_2024 !== $this->getVersion()) {
+            $version = new SubscriptionVersion($this);
+
+            $this->version = $version->getVersion();
+            $this->setVersionStatus($version->getVersionStatus());
         }
 
-        $this->version = $version;
+        return $this;
+    }
+
+    public function getVersionStatus(): ?int
+    {
+        return $this->versionStatus;
+    }
+
+    public function setVersionStatus($versionStatus): self
+    {
+        $this->versionStatus = $versionStatus;
 
         return $this;
+    }
+
+    /**
+     * TODO - Tester la fonction.
+     */
+    public function getSubscriptionYear(): string
+    {
+        return $this->getCreatedAt()->format('Y');
+    }
+
+    /**
+     * TODO - Tester la fonction.
+     */
+    public function isSubscriptionYearGivenYear(string $year): bool
+    {
+        $this->checkYearPattern($year);
+
+        return $year === $this->getSubscriptionYear();
+    }
+
+    /**
+     * TODO - Tester la fonction.
+     */
+    public function getCommitmentYear(): ?string
+    {
+        return !is_null($this->getCommitmentproofDate())
+            ? $this->getCommitmentProofDate()->format('Y')
+            : null;
+    }
+
+    /**
+     * TODO - Tester la fonction.
+     */
+    public function isCommittedYearGivenYear(string $year): bool
+    {
+        $this->checkYearPattern($year);
+
+        return $year === $this->getCommitmentYear();
+    }
+
+    /**
+     * TODO - Tester la fonction.
+     */
+    private function checkYearPattern(string $year): void
+    {
+        if (!preg_match(self::ACTIVE_YEAR_PATTERN, $year)) {
+            throw new InternalErrorException('The year passed as parameter is not valid');
+        }
     }
 }

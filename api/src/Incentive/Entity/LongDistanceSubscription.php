@@ -38,6 +38,133 @@ class LongDistanceSubscription extends Subscription
     public const BONUS_STATUS_OK = 2;
 
     /**
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $createdAt;
+
+    /**
+     * @var ArrayCollection The long distance log associated with the user
+     *
+     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\LongDistanceJourney", mappedBy="subscription", cascade={"persist"}, orphanRemoval=true)
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $longDistanceJourneys;
+
+    /**
+     * @var LongDistanceJourney
+     *
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceJourney")
+     *
+     * @ORM\JoinColumn(nullable=true)
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $commitmentProofJourney;
+
+    /**
+     * The long distance ECC commitment proof date.
+     *
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance ECC commitment proof date"})
+     */
+    protected $commitmentProofDate;
+
+    /**
+     * The long distance EEC incentive proof timestamp token.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp"})
+     */
+    protected $incentiveProofTimestampToken;
+
+    /**
+     * The long distance EEC incentive proof timestamp signing time.
+     *
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp signing time"})
+     */
+    protected $incentiveProofTimestampSigningTime;
+
+    /**
+     * The long distance EEC commitment proof timestamp token.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance ECC commitment proof timestamp"})
+     */
+    protected $commitmentProofTimestampToken;
+
+    /**
+     * The long distance EEC commitment proof timestamp signing time.
+     *
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC commitment proof timestamp signing time"})
+     */
+    protected $commitmentProofTimestampSigningTime;
+
+    /**
+     * The long distance EEC honor certificate proof timestamp token.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp"})
+     */
+    protected $honorCertificateProofTimestampToken;
+
+    /**
+     * The long distance EEC honor certificate proof timestamp signing time.
+     *
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp signing time"})
+     */
+    protected $honorCertificateProofTimestampSigningTime;
+
+    /**
+     * The subscription version.
+     *
+     * @var string
+     *
+     * @ORM\Column(
+     *      type="string",
+     *      length=50,
+     *      nullable=true,
+     *      options={
+     *          "comment": "The subscription version. Could be CoupPouceCEE2023 or CEEStandardMobicoop"
+     *      }
+     * )
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $version;
+
+    /**
+     * The subscription version status.
+     *
+     * @var int
+     *
+     * @ORM\Column(
+     *      type="smallint",
+     *      nullable=true,
+     *      options={
+     *          "comment": "The subscription version status."
+     *      }
+     * )
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $versionStatus;
+
+    /**
      * @var int The user subscription ID
      *
      * @ORM\Column(name="id", type="integer")
@@ -58,15 +185,6 @@ class LongDistanceSubscription extends Subscription
      * @ORM\JoinColumn(onDelete="SET NULL", unique=true)
      */
     private $user;
-
-    /**
-     * @var ArrayCollection The long distance log associated with the user
-     *
-     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\LongDistanceJourney", mappedBy="subscription", cascade={"persist"}, orphanRemoval=true)
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $longDistanceJourneys;
 
     /**
      * @var string the ID of the mobConnect subscription
@@ -187,27 +305,7 @@ class LongDistanceSubscription extends Subscription
      *
      * @Groups({"readSubscription"})
      */
-    private $createdAt;
-
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
-     *
-     * @Groups({"readSubscription"})
-     */
     private $updatedAt;
-
-    /**
-     * @var LongDistanceJourney
-     *
-     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceJourney")
-     *
-     * @ORM\JoinColumn(nullable=true)
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $commitmentProofJourney;
 
     /**
      * The autogenerated honour certificate.
@@ -228,69 +326,6 @@ class LongDistanceSubscription extends Subscription
      * @Groups({"readSubscription"})
      */
     private $bonusStatus = SubscriptionManager::BONUS_STATUS_PENDING;
-
-    /**
-     * The long distance ECC commitment proof date.
-     *
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance ECC commitment proof date"})
-     */
-    private $commitmentProofDate;
-
-    /**
-     * The long distance EEC commitment proof timestamp token.
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance ECC commitment proof timestamp"})
-     */
-    private $commitmentProofTimestampToken;
-
-    /**
-     * The long distance EEC commitment proof timestamp signing time.
-     *
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC commitment proof timestamp signing time"})
-     */
-    private $commitmentProofTimestampSigningTime;
-
-    /**
-     * The long distance EEC honor certificate proof timestamp token.
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp"})
-     */
-    private $honorCertificateProofTimestampToken;
-
-    /**
-     * The long distance EEC honor certificate proof timestamp signing time.
-     *
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp signing time"})
-     */
-    private $honorCertificateProofTimestampSigningTime;
-
-    /**
-     * The long distance EEC incentive proof timestamp token.
-     *
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp"})
-     */
-    private $incentiveProofTimestampToken;
-
-    /**
-     * The long distance EEC incentive proof timestamp signing time.
-     *
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp signing time"})
-     */
-    private $incentiveProofTimestampSigningTime;
 
     /**
      * @var bool
@@ -321,24 +356,6 @@ class LongDistanceSubscription extends Subscription
      * @ORM\OneToMany(targetEntity=LongDistanceSubscriptionLog::class, mappedBy="subscription", cascade={"persist"})
      */
     private $logs;
-
-    /**
-     * The subscription version.
-     *
-     * @var string
-     *
-     * @ORM\Column(
-     *      type="string",
-     *      length=50,
-     *      nullable=true,
-     *      options={
-     *          "comment": "The subscription version. Could be CoupPouceCEE2023 or CEEStandardMobicoop"
-     *      }
-     * )
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $version;
 
     public function __construct(User $user, MobConnectSubscriptionResponse $mobConnectSubscriptionResponse)
     {
@@ -425,22 +442,9 @@ class LongDistanceSubscription extends Subscription
         return $this;
     }
 
-    public function getLongDistanceJourneys()
-    {
-        return $this->longDistanceJourneys;
-    }
-
-    /**
-     * Return all journeys.
-     */
-    public function getJourneys()
-    {
-        return $this->getLongDistanceJourneys();
-    }
-
     public function getJourneysNumber(): int
     {
-        return count($this->getJourneys()->toArray());
+        return is_array($this->getJourneys()) ? count($this->getJourneys()) : count($this->getJourneys()->toArray());
     }
 
     /**
@@ -448,9 +452,13 @@ class LongDistanceSubscription extends Subscription
      */
     public function getCompliantJourneys(): array
     {
-        return array_values(array_filter($this->getJourneys()->toArray(), function (LongDistanceJourney $journey) {
-            return $journey->isEECCompliantForDisplay();
-        }));
+        return is_array($this->getJourneys())
+            ? array_values(array_filter($this->getJourneys(), function (LongDistanceJourney $journey) {
+                return $journey->isEECCompliantForDisplay();
+            }))
+            : array_values(array_filter($this->getJourneys()->toArray(), function (LongDistanceJourney $journey) {
+                return $journey->isEECCompliantForDisplay();
+            }));
     }
 
     /**
@@ -659,14 +667,6 @@ class LongDistanceSubscription extends Subscription
     }
 
     /**
-     * Get the value of createdAt.
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
      * Get the value of updatedAt.
      */
     public function getUpdatedAt(): \DateTime
@@ -808,16 +808,6 @@ class LongDistanceSubscription extends Subscription
     }
 
     /**
-     * Get the value of commitmentProofDate.
-     *
-     * @return \DateTimeInterface
-     */
-    public function getCommitmentProofDate(): ?\DateTime
-    {
-        return $this->commitmentProofDate;
-    }
-
-    /**
      * Set the value of commitmentProofDate.
      */
     public function setCommitmentProofDate(?\DateTimeInterface $commitmentProofDate): self
@@ -871,7 +861,20 @@ class LongDistanceSubscription extends Subscription
     public function setCommitmentProofJourney(?LongDistanceJourney $commitmentProofJourney): self
     {
         if (!is_null($commitmentProofJourney)) {
-            if (!$this->getJourneys()->contains($commitmentProofJourney)) {
+            if (is_array($this->getJourneys())) {
+                $filteredJourneys = array_filter($this->getJourneys(), function ($journey) use ($commitmentProofJourney) {
+                    return $journey->getId() === $commitmentProofJourney->getId();
+                });
+
+                if (!empty($filteredJourneys)) {
+                    $this->addLongDistanceJourney($commitmentProofJourney);
+                }
+            }
+
+            if (
+                !is_array($this->getJourneys())
+                && !$this->getJourneys()->contains($commitmentProofJourney)
+            ) {
                 $this->addLongDistanceJourney($commitmentProofJourney);
             }
         } else {
