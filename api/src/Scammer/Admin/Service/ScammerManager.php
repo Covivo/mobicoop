@@ -74,15 +74,16 @@ class ScammerManager
 
         $scammerReported = $this->userRepository->findOneBy(['email' => $scammer->getEmail()]);
 
-        $scammerVictims = $this->getScammerVictims($scammerReported);
+        // $scammerVictims = $this->getScammerVictims($scammerReported);
 
-        if (count($scammerVictims) > 0) {
-            //  we dispatch the event associated
-            $event = new ScammerAddedEvent($scammer, $scammerVictims);
-            $this->eventDispatcher->dispatch($event, ScammerAddedEvent::NAME);
-        }
+        // if (count($scammerVictims) > 0) {
+        //     //  we dispatch the event associated
+        //     $event = new ScammerAddedEvent($scammer, $scammerVictims);
+        //     $this->eventDispatcher->dispatch($event, ScammerAddedEvent::NAME);
+        // }
+
         // we delete the user reported
-        $this->userManager->deleteUser($scammerReported);
+        $this->userManager->deleteUser($scammerReported, true);
 
         return $scammer;
     }
