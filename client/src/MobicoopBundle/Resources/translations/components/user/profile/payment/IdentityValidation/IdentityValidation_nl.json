@@ -24,6 +24,6 @@
     "error": "Het document mag niet groter zijn dan 6 MB",
     "label": "Geldig identiteitsdocument"
   },
-  "text": "<p>De identiteitscontrole op basis van een identiteitsdocument (identiteitskaart recto-verso, paspoort, rijbewijs) is een wettelijke verplichting om betalingen te ontvangen. Deze verplichting is ingegeven door de strijd tegen het witwassen van geld.</p><p>De voor de betaling vereiste identiteitscontrole gebeurt door vergelijking van de in uw profiel ingevoerde voor- en achternaam met die op uw identiteitsbewijs. Zorg er dus voor dat de gegevens in uw profiel correct zijn.</p>",
+  "text": "<p>De identiteitscontrole op basis van een identiteitsdocument (identiteitskaart recto-verso, paspoort, rijbewijs) is een wettelijke verplichting om betalingen te ontvangen. Deze verplichting is ingegeven door de strijd tegen het witwassen van geld.</p><p>De voor de betaling vereiste identiteitscontrole gebeurt door vergelijking van de in uw profiel ingevoerde voor- en achternaam met die op uw identiteitsbewijs. Zorg er dus voor dat de gegevens in uw profiel correct zijn.</p><p>U kunt de voorwaarden voor validatie van een identiteitsdocument bij onze partner <a target='_blank' href='https://mangopay.com/docs/concepts/users/verification/document-process'>hier</a> lezen.</p>",
   "title": "3. Identiteitscontrole"
 }

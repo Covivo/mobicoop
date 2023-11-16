@@ -209,20 +209,21 @@ class UserRepository
 
     public function findUserWithNoAdSinceXDays(int $nbOfDays = null): ?array
     {
-        $now = (new \DateTime('now'));
+        $now = new \DateTime('now');
         $createdDate = $now->modify('- '.$nbOfDays.' days')->format('Y-m-d');
 
-        $stmt = $this->entityManager->getConnection()->prepare(
-            "SELECT u.id
-            FROM user u
-            LEFT JOIN proposal p on p.user_id = u.id and p.private=0
-            WHERE DATE(u.created_date) = '".$createdDate."'
-            GROUP BY u.id
-            HAVING COUNT(p.id) = 0"
-        );
-        $stmt->execute();
+        $qb = $this->repository->createQueryBuilder('u');
 
-        return $stmt->fetchAll();
+        $qb
+            ->select('u')
+            ->leftJoin('u.proposals', 'p', 'WITH', 'p.private = 0')
+            ->where('u.createdDate LIKE :createdDate')
+            ->groupBy('u.id')
+            ->having('count(p.id) = 0')
+            ->setParameter('createdDate', $createdDate.'%')
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findNewlyRegisteredUsers(): ?array

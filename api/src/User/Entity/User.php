@@ -104,6 +104,7 @@ use App\User\Filter\WaypointTerritoryFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -4144,5 +4145,25 @@ class User implements UserInterface, EquatableInterface
         $this->hasAccessToMobAPI = !is_null($this->getMobConnectAuth()) && !$this->mobConnectAuth->hasAuthenticationExpired();
 
         return $this->hasAccessToMobAPI;
+    }
+
+    public function isAssociatedWithSsoAccount(string $provider): bool
+    {
+        $filteredProviders = array_filter($this->getSsoAccounts(), function ($ssoAccount) use ($provider) {
+            return $provider === $ssoAccount->getSsoProvider();
+        });
+
+        return !empty($filteredProviders);
+    }
+
+    public function getSsoAccount(string $provider): SsoAccount
+    {
+        if (!$this->isAssociatedWithSsoAccount($provider)) {
+            throw new BadRequestHttpException('The user is not associated with the requested provider');
+        }
+
+        return array_filter($this->getSsoAccounts(), function ($ssoAccount) use ($provider) {
+            return $provider === $ssoAccount->getSsoProvider();
+        })[0];
     }
 }

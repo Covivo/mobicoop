@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2022, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,27 +21,26 @@
  *    LICENSE
  */
 
-declare(strict_types=1);
+namespace App\Carpool\Command;
 
-namespace App\Command\Command;
-
-use App\User\Event\IncitateToPublishFirstAdEvent;
-use App\User\Repository\UserRepository;
+use App\Carpool\Service\ProofManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class InciteToPublishFirstAdCommand extends Command
+/**
+ * Manualy send carpool proofs in Pending status
+ * This command sends the carpool proofs for the given period.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class CarpoolProofManualSendCommand extends Command
 {
-    public const RELAUNCH_DELAYS = [7, 20];
-    private $userRepository;
-    private $eventDispatcher;
+    private $_proofManager;
 
-    public function __construct(UserRepository $userRepository, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ProofManager $proofManager)
     {
-        $this->userRepository = $userRepository;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->_proofManager = $proofManager;
 
         parent::__construct();
     }
@@ -49,22 +48,14 @@ class InciteToPublishFirstAdCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:commands:incite-to-publish-first-ad')
-            ->setDescription('InciteToPublishFirstAdCommand')
+            ->setName('app:carpool:manual-send')
+            ->setDescription('Manually send carpool proof (by default in PENDING status).')
+            ->setHelp('Manually send carpool proof (by default in PENDING status).')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        foreach (self::RELAUNCH_DELAYS as $delay) {
-            $users = $this->userRepository->findUserWithNoAdSinceXDays($delay);
-
-            foreach ($users as $user) {
-                $event = new IncitateToPublishFirstAdEvent($user);
-                $this->eventDispatcher->dispatch(IncitateToPublishFirstAdEvent::NAME, $event);
-            }
-        }
-
-        return 0;
+        return $this->_proofManager->manualSendCarpoolProof();
     }
 }
