@@ -227,6 +227,11 @@ class MobConnectAuth
         return $this->refreshTokenExpiresDate;
     }
 
+    public function hasAuthenticationExpired(): bool
+    {
+        return $this->getRefreshTokenExpiresDate() < new \DateTime('now');
+    }
+
     /**
      * Set the value of refreshTokenExpiresDate.
      */

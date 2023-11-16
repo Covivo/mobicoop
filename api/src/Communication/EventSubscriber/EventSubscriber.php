@@ -18,23 +18,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 use App\Communication\Service\NotificationManager;
 use App\Event\Event\EventCreatedEvent;
-use App\Action\Event\ActionEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Action\Repository\ActionRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EventSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
     private $eventDispatcher;
     private $actionRepository;
-
 
     public function __construct(NotificationManager $notificationManager, EventDispatcherInterface $eventDispatcher, ActionRepository $actionRepository)
     {
@@ -46,18 +45,20 @@ class EventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            EventCreatedEvent::NAME => 'onEventCreated'
+            EventCreatedEvent::NAME => 'onEventCreated',
         ];
     }
 
     public function onEventCreated(EventCreatedEvent $event)
     {
-        $this->notificationManager->notifies(EventCreatedEvent::NAME, $event->getEvent()->getUser(), $event->getEvent());
+        if (!is_null($event->getEvent()->getUser())) {
+            $this->notificationManager->notifies(EventCreatedEvent::NAME, $event->getEvent()->getUser(), $event->getEvent());
 
-        //  we dispatch the gamification event associated
-        $action = $this->actionRepository->findOneBy(['name'=>'event_created']);
-        $actionEvent = new ActionEvent($action, $event->getEvent()->getUser());
-        $actionEvent->setEvent($event->getEvent());
-        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+            //  we dispatch the gamification event associated
+            $action = $this->actionRepository->findOneBy(['name' => 'event_created']);
+            $actionEvent = new ActionEvent($action, $event->getEvent()->getUser());
+            $actionEvent->setEvent($event->getEvent());
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
     }
 }

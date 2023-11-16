@@ -1851,6 +1851,13 @@ class User implements UserInterface, EquatableInterface
      */
     private $bankingIdentityStatus = false;
 
+    /**
+     * @var bool
+     *
+     * @Groups({"readUser", "results"})
+     */
+    private $hasAccessToMobAPI = false;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -4128,6 +4135,16 @@ class User implements UserInterface, EquatableInterface
     public function getPaymentProfiles()
     {
         return $this->paymentProfiles;
+    }
+
+    /**
+     * Get the value of hasAccessToMobAPI.
+     */
+    public function getHasAccessToMobAPI(): bool
+    {
+        $this->hasAccessToMobAPI = !is_null($this->getMobConnectAuth()) && !$this->mobConnectAuth->hasAuthenticationExpired();
+
+        return $this->hasAccessToMobAPI;
     }
 
     public function isAssociatedWithSsoAccount(string $provider): bool

@@ -259,6 +259,7 @@
                 :init-schedule="initSchedule"
                 :route="route"
                 :staggered-schedules-allowed="staggeredSchedulesAllowed"
+                :default-digital-clock="defaultDigitalClock"
                 @change="planificationChanged"
               />
             </v-stepper-content>
@@ -907,6 +908,10 @@ export default {
       default: true
     },
     staggeredSchedulesAllowed: {
+      type: Boolean,
+      default: false
+    },
+    defaultDigitalClock: {
       type: Boolean,
       default: false
     }

@@ -24,6 +24,9 @@ namespace App\User\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Carpool\Entity\Proposal;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -33,6 +36,16 @@ use Doctrine\ORM\QueryBuilder;
  */
 final class ProposalValidFilter extends AbstractContextAwareFilter
 {
+    /**
+     * @var EntityRepository
+     */
+    private $_proposalRepository;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->_proposalRepository = $entityManager->getRepository(Proposal::class);
+    }
+
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -67,10 +80,19 @@ final class ProposalValidFilter extends AbstractContextAwareFilter
             $value = substr($value, strrpos($value, '/') + 1);
         }
 
+        $usersWithALeastOneProposal = $this->_proposalRepository->createQueryBuilder('p')
+            ->select('distinct(u.id)')
+            ->join('p.user', 'u')
+            ->where('p.private = 0')
+            ->getQuery()
+            ->getResult()
+        ;
+        $mergedUsersWithALeastOneProposal = call_user_func_array('array_merge', $usersWithALeastOneProposal);
+
         $queryBuilder
             ->leftJoin('u.proposals', 'p2')
             ->leftJoin('p2.criteria', 'c')
-            ->andWhere("(c.frequency = 2 AND c.toDate <= '{$value}') OR (c.frequency = 1 AND c.fromDate <= '{$value}') OR (p2.id IS null)")
+            ->andWhere("COALESCE(c.toDate,c.fromDate) <= '{$value}' OR ".$queryBuilder->expr()->notIn('u.id', $mergedUsersWithALeastOneProposal))
         ;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Incentive\Service\Manager;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
@@ -138,7 +139,7 @@ class JourneyManager extends MobConnectManager
     /**
      * Step 9 - Long distance journey.
      */
-    public function declareFirstLongDistanceJourney(Proposal $proposal)
+    public function declareFirstLongDistanceJourney(Proposal $proposal): ?LongDistanceJourney
     {
         $this->setDriver($proposal->getUser());
 
@@ -147,9 +148,18 @@ class JourneyManager extends MobConnectManager
             SpecificFields::JOURNEY_PUBLISH_DATE => $proposal->getCreatedDate()->format(self::DATE_FORMAT),
         ];
 
-        $patchResponse = $this->patchSubscription($this->getDriverLongSubscriptionId(), $params);
-
         $subscription = $this->getDriver()->getLongDistanceSubscription();
+
+        if (is_null($subscription)) {
+            return null;
+        }
+
+        $patchResponse = $this->patchSubscription($subscription->getSubscriptionId(), $params);
+
+        if ($this->hasRequestErrorReturned($patchResponse)) {
+            return null;
+        }
+
         $subscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
 
         $log = 204 === $patchResponse->getCode()
@@ -166,12 +176,14 @@ class JourneyManager extends MobConnectManager
         $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
         $this->_em->flush();
+
+        return $journey;
     }
 
     /**
      * Step 9 - Short distance journey.
      */
-    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof): ShortDistanceJourney
+    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof): ?ShortDistanceJourney
     {
         $this->setDriver($carpoolProof->getDriver());
 
@@ -180,9 +192,18 @@ class JourneyManager extends MobConnectManager
             SpecificFields::JOURNEY_START_DATE => $carpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
         ];
 
-        $patchResponse = $this->patchSubscription($this->getDriver()->getShortDistanceSubscription()->getSubscriptionId(), $params);
-
         $subscription = $this->getDriver()->getShortDistanceSubscription();
+
+        if (is_null($subscription)) {
+            return null;
+        }
+
+        $patchResponse = $this->patchSubscription($subscription->getSubscriptionId(), $params);
+
+        if ($this->hasRequestErrorReturned($patchResponse)) {
+            return null;
+        }
+
         $subscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
 
         $log = 204 === $patchResponse->getCode()
@@ -308,7 +329,13 @@ class JourneyManager extends MobConnectManager
             ];
 
             $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');
+
             $patchResponse = $this->patchSubscription($this->getDriverShortSubscriptionId(), $params);
+
+            if ($this->hasRequestErrorReturned($patchResponse)) {
+                return;
+            }
+
             $subscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
 
             $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
@@ -539,6 +566,10 @@ class JourneyManager extends MobConnectManager
                 SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate(),
             ]
         );
+
+        if ($this->hasRequestErrorReturned($patchResponse)) {
+            return;
+        }
 
         $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
         $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);

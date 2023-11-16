@@ -8,6 +8,8 @@ use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\IncentiveResponse;
 use App\DataProvider\Entity\MobConnect\Response\IncentivesResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
@@ -148,6 +150,16 @@ abstract class MobConnectManager
         }
 
         return $this;
+    }
+
+    protected function hasRequestErrorReturned(MobConnectResponseInterface $response): bool {
+        $result = in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
+
+        if (true === $result) {
+            $this->_loggerService->log('The mobConnect request returned an error: '.$response->getContent(), 'error', true);
+        }
+
+        return $result;
     }
 
     protected function isValidParameters(): bool
