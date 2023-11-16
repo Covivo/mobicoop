@@ -52,7 +52,18 @@
         <v-col
           cols="4"
         >
+          <!-- Digital clock -->
+          <v-text-field
+            v-if="defaultDigitalClock"
+            v-model="outwardTime"
+            :label="$t('outwardTime.label')"
+            prepend-icon="mdi-clock-time-eight-outline"
+            type="time"
+            @change="changeTime()"
+          />
+          <!-- Needle clock -->
           <v-menu
+            v-else
             ref="menuOutwardTime"
             v-model="menuOutwardTime"
             :close-on-content-click="false"
@@ -167,7 +178,19 @@
         <v-col
           cols="4"
         >
+          <!-- Digital clock -->
+          <v-text-field
+            v-if="defaultDigitalClock"
+            v-model="returnTime"
+            :label="$t('returnTime.label')"
+            :min="minReturnTime"
+            prepend-icon="mdi-clock-time-eight-outline"
+            type="time"
+            @change="checkDateReturn($event)"
+          />
+          <!-- Needle clock -->
           <v-menu
+            v-else
             ref="menuReturnTime"
             v-model="menuReturnTime"
             :close-on-content-click="false"
@@ -302,7 +325,19 @@
               <v-col
                 cols="5"
               >
+                <!-- Digital clock -->
+                <v-text-field
+                  v-if="defaultDigitalClock"
+                  v-model="item.outwardTime"
+                  :label="$t('regularOutwardTime.label')"
+                  class="ml-3"
+                  prepend-icon="mdi-clock-time-eight-outline"
+                  type="time"
+                  @change="change"
+                />
+                <!-- Needle clock -->
                 <v-menu
+                  v-else
                   v-model="item.menuOutwardTime"
                   :close-on-content-click="false"
                   transition="scale-transition"
@@ -367,7 +402,18 @@
               <v-col
                 cols="5"
               >
+                <!-- Digital clock -->
+                <v-text-field
+                  v-if="defaultDigitalClock"
+                  v-model="item.returnTime"
+                  :label="$t('regularReturnTime.label')"
+                  prepend-icon="mdi-clock-time-eight-outline"
+                  type="time"
+                  @change="change"
+                />
+                <!-- Needle clock -->
                 <v-menu
+                  v-else
                   v-model="item.menuReturnTime"
                   :close-on-content-click="false"
                   transition="scale-transition"
@@ -539,6 +585,10 @@ export default {
     defaultTimePrecision: {
       type: Number,
       default: null
+    },
+    defaultDigitalClock: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -650,12 +700,16 @@ export default {
       this.change();
     },
     changeTime() {
-      this.$refs.menuOutwardTime.save(this.outwardTime);
+      if (typeof this.$refs.menuOutwardTime !== 'undefined') {
+        this.$refs.menuOutwardTime.save(this.outwardTime);
+      }
       this.change();
     },
     checkDateReturn(e){
       this.returnTrip = !!e;
-      this.$refs.menuReturnTime.save(this.returnTime);
+      if (typeof this.$refs.menuReturnTime != 'undefined') {
+        this.$refs.menuReturnTime.save(this.returnTime);
+      }
       this.change();
     },
     clearOtherFields(){
