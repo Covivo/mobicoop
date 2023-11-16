@@ -23,11 +23,15 @@
 
 namespace App\Import\Admin\Service;
 
+use App\Import\Admin\Interfaces\DeletorInterface;
 use App\Import\Admin\Interfaces\LineImportValidatorInterface;
 use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\Import\Admin\Resource\Import;
+use App\Import\Admin\Service\Deletor\EventImportDeletor;
+use App\Import\Admin\Service\LineValidator\EventLineImportValidator;
 use App\Import\Admin\Service\LineValidator\RelayPointLineImportValidator;
 use App\Import\Admin\Service\LineValidator\UserLineImportValidator;
+use App\Import\Admin\Service\Populator\EventImportPopulator;
 use App\Import\Admin\Service\Populator\RelayPointImportPopulator;
 use App\Import\Admin\Service\Populator\UserImportPopulator;
 use App\User\Entity\User;
@@ -35,6 +39,7 @@ use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
  */
 class Importer
 {
@@ -45,6 +50,7 @@ class Importer
 
     private const USER_ENTITY = 'User';
     private const RELAY_POINT_ENTITY = 'RelayPoint';
+    private const EVENT_ENTITY = 'Event';
 
     private const TIME_LIMIT = 6 * 60 * 60;
 
@@ -62,13 +68,16 @@ class Importer
     private $_messages;
 
     private $_manager;
+    private $_repository;
+
+    private $_eventProvider;
 
     /**
      * @var User
      */
     private $_requester;
 
-    public function __construct(File $file, string $filename, object $manager = null, User $requester = null)
+    public function __construct(File $file, string $filename, object $manager = null, User $requester = null, object $repository = null, string $eventProvider = null)
     {
         $this->_file = $file;
         $this->_filename = $filename;
@@ -76,6 +85,8 @@ class Importer
         $this->_errors = [];
         $this->_messages = [];
         $this->_requester = $requester;
+        $this->_repository = $repository;
+        $this->_eventProvider = $eventProvider;
     }
 
     public function importUsers(): Import
@@ -106,6 +117,37 @@ class Importer
         return $this->_buildImport(self::RELAY_POINT_ENTITY);
     }
 
+    public function importEvents(): Import
+    {
+        set_time_limit(self::TIME_LIMIT);
+        if (!$this->_validateFile()) {
+            return $this->_buildImport(self::EVENT_ENTITY);
+        }
+        $this->_validateLines(new EventLineImportValidator());
+        if (0 == count($this->_errors)) {
+            $this->_populateTable(new EventImportPopulator($this->_manager, $this->_repository, $this->_eventProvider));
+        }
+
+        return $this->_buildImport(self::EVENT_ENTITY);
+    }
+
+    public function deleteEvents()
+    {
+        set_time_limit(self::TIME_LIMIT);
+        if (!$this->_validateFile()) {
+            return $this->_buildImport(self::EVENT_ENTITY);
+        }
+        $this->_validateLines(new EventLineImportValidator());
+        if (0 == count($this->_errors)) {
+            $this->_deleteTable(new EventImportDeletor($this->_manager, $this->_repository));
+        }
+    }
+
+    public function getErrors()
+    {
+        return $this->_errors;
+    }
+
     private function _validateFile(): bool
     {
         if (!in_array($this->_file->getMimeType(), self::MIME_TYPES)) {
@@ -120,6 +162,12 @@ class Importer
     private function _populateTable(PopulatorInterface $populator)
     {
         $messages = $populator->populate($this->_file);
+        $this->_messages = array_merge($this->_messages, $messages);
+    }
+
+    private function _deleteTable(DeletorInterface $deletor)
+    {
+        $messages = $deletor->delete($this->_file);
         $this->_messages = array_merge($this->_messages, $messages);
     }
 
