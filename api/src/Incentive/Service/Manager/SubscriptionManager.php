@@ -13,6 +13,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Entity\Subscription;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\CeeSubscriptions;
@@ -128,7 +129,6 @@ class SubscriptionManager extends MobConnectManager
 
                 $this->_em->persist($longDistanceSubscription);
             }
-
         }
 
         if (
@@ -177,21 +177,28 @@ class SubscriptionManager extends MobConnectManager
         $this->_subscriptions = new CeeSubscriptions($this->_driver->getId());
 
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
-
         if (!is_null($shortDistanceSubscription)) {
+            $shortDistanceSubscription->setVersion();
+            $this->_subscriptions->setShortDistanceSubscription($shortDistanceSubscription);
+
             $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getCompliantJourneys());
+
             $this->_subscriptions->setShortDistanceSubscriptions($shortDistanceSubscriptions);
             $this->_subscriptions->setShortDistanceExpirationDate($shortDistanceSubscription->getExpirationDate());
         }
 
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
-
         if (!is_null($longDistanceSubscription)) {
+            $longDistanceSubscription->setVersion();
+            $this->_subscriptions->setLongDistanceSubscription($longDistanceSubscription);
+
             $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getCompliantJourneys());
 
             $this->_subscriptions->setLongDistanceSubscriptions($longDistanceSubscriptions);
             $this->_subscriptions->setLongDistanceExpirationDate($longDistanceSubscription->getExpirationDate());
         }
+
+        $this->_em->flush();
 
         $this->_computeShortDistance();
 

@@ -14,9 +14,16 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\HasLifecycleCallbacks
  */
-class ShortDistanceJourney
+class ShortDistanceJourney extends Journey
 {
     public const RPC_NUMBER_STATUS = 'OK';
+
+    /**
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     */
+    protected $createdAt;
 
     /**
      * @var int The cee ID
@@ -96,13 +103,6 @@ class ShortDistanceJourney
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $endDate;
-
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
-     */
-    private $createdAt;
 
     /**
      * @var \DateTimeInterface

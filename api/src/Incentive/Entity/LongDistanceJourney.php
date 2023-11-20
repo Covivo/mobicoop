@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
@@ -17,8 +18,15 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\HasLifecycleCallbacks
  */
-class LongDistanceJourney
+class LongDistanceJourney extends Journey
 {
+    /**
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     */
+    protected $createdAt;
+
     /**
      * @var int The cee ID
      *
@@ -76,13 +84,6 @@ class LongDistanceJourney
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $endDate;
-
-    /**
-     * @var \DateTimeInterface
-     *
-     * @ORM\Column(type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
-     */
-    private $createdAt;
 
     /**
      * @var \DateTimeInterface
@@ -402,6 +403,20 @@ class LongDistanceJourney
         $this->initialProposal = $initialProposal;
 
         return $this;
+    }
+
+    public function getMatching(): ?Matching
+    {
+        if (is_null($this->getCarpoolItem())) {
+            // Cas des trajets sans carpoolItems. Il faut passer par le proposal
+            return null;                                                    // The journey was not carpooled
+        }
+
+        if (!is_null($this->getCarpoolItem())) {
+            return $this->getCarpoolItem()->getAsk()->getMatching();        // The journey was carpooled
+        }
+
+        return null;                                                        // There was no connection for this trip
     }
 
     public function isCommitmentJourney(): ?bool
