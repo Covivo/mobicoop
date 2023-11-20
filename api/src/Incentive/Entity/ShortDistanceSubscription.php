@@ -75,6 +75,8 @@ class ShortDistanceSubscription extends Subscription
      * @var string
      *
      * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $incentiveProofTimestampToken;
 
@@ -84,6 +86,8 @@ class ShortDistanceSubscription extends Subscription
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp signing time"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $incentiveProofTimestampSigningTime;
 
@@ -93,6 +97,8 @@ class ShortDistanceSubscription extends Subscription
      * @var null|string
      *
      * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance ECC commitment proof timestamp"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $commitmentProofTimestampToken;
 
@@ -102,6 +108,8 @@ class ShortDistanceSubscription extends Subscription
      * @var null|\DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC commitment proof timestamp signing time"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $commitmentProofTimestampSigningTime;
 
@@ -111,6 +119,8 @@ class ShortDistanceSubscription extends Subscription
      * @var string
      *
      * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $honorCertificateProofTimestampToken;
 
@@ -120,6 +130,8 @@ class ShortDistanceSubscription extends Subscription
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp signing time"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $honorCertificateProofTimestampSigningTime;
 
@@ -167,7 +179,7 @@ class ShortDistanceSubscription extends Subscription
      *
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"readSubscription"})
+     * @Groups({"readSubscription", "eec-timestamps"})
      */
     private $id;
 

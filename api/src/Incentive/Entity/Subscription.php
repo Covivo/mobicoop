@@ -6,6 +6,9 @@ use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
 abstract class Subscription
 {
+    public const TYPE_LONG = 'long';
+    public const TYPE_SHORT = 'short';
+
     private const ACTIVE_YEAR_PATTERN = '/^202[3-7]{1}$/';
 
     protected $createdAt;

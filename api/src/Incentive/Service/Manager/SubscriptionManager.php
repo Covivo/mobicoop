@@ -377,6 +377,20 @@ class SubscriptionManager extends MobConnectManager
         $this->_em->flush();
     }
 
+    public function updateTimestampTokens(User $user): User
+    {
+        $this->setDriver($user);
+
+        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
+            $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($this->getDriver()->getLongDistanceSubscription(), Log::TYPE_TOKEN_UPDATE);
+        }
+        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
+            $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($this->getDriver()->getShortDistanceSubscription(), Log::TYPE_TOKEN_UPDATE);
+        }
+
+        return $this->getDriver();
+    }
+
     public function getSubscription(string $subscriptionId): MobConnectSubscriptionResponse
     {
         return $this->getMobSubscription($subscriptionId);
