@@ -2,11 +2,11 @@
 
 namespace App\Incentive\Command;
 
-use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Service\Manager\JourneyManager;
+use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class SubscriptionCommitCommand extends Command
+class SubscriptionUpdateCommand extends Command
 {
     /**
      * @var EntityManagerInterface
@@ -43,12 +43,12 @@ class SubscriptionCommitCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:incentive:subscription-commit')
-            ->setDescription('Commit manually a subscription.')
-            ->setHelp('From a Proposal or a CarpoolProof, manually commit a subscription.')
+            ->setName('app:incentive:subscription-update')
+            ->setDescription('Update manually a subscription.')
+            ->setHelp('From a CarpoolPayment or a CarpoolProof, manually update a subscription.')
             ->addArgument('type', InputArgument::REQUIRED, 'The subscription type')
             ->addArgument('subscription_id', InputArgument::REQUIRED, 'The subscription ID')
-            ->addArgument('journey_id', InputArgument::REQUIRED, 'Depending on the case, the ID of the Proposal or the CarpoolProof')
+            ->addArgument('journey_id', InputArgument::REQUIRED, 'Depending on the case, the ID of the CarpoolPayment or the CarpoolProof')
         ;
     }
 
@@ -63,13 +63,13 @@ class SubscriptionCommitCommand extends Command
         }
 
         Subscription::TYPE_LONG === $subscriptionType
-            ? $this->_commitLDSubscription()
-            : $this->_commitSDSubscription();
+            ? $this->_updateLDSubscription()
+            : $this->_updateSDSubscription();
 
         $output->writeln('The incentive has been updated');
     }
 
-    private function _commitLDSubscription()
+    private function _updateLDSubscription()
     {
         $subscription = $this->_em->getRepository(LongDistanceSubscription::class)->find($this->_currentInput->getArgument('subscription_id'));
 
@@ -77,20 +77,16 @@ class SubscriptionCommitCommand extends Command
             throw new NotFoundHttpException('The subscription was not found');
         }
 
-        $initialProposal = $this->_em->getRepository(Proposal::class)->find($this->_currentInput->getArgument('journey_id'));
+        $carpoolPayment = $this->_em->getRepository(CarpoolPayment::class)->find($this->_currentInput->getArgument('journey_id'));
 
-        if (is_null($initialProposal)) {
-            throw new NotFoundHttpException('The journey (Proposal) was not found');
+        if (is_null($carpoolPayment)) {
+            throw new NotFoundHttpException('The payment was not found');
         }
 
-        $subscription->reset();
-
-        $this->_em->flush();
-
-        $this->_journeyManager->declareFirstLongDistanceJourney($initialProposal);
+        $this->_journeyManager->receivingElectronicPayment($carpoolPayment);
     }
 
-    private function _commitSDSubscription()
+    private function _updateSDSubscription()
     {
         $subscription = $this->_em->getRepository(ShortDistanceSubscription::class)->find($this->_currentInput->getArgument('subscription_id'));
 
@@ -101,13 +97,9 @@ class SubscriptionCommitCommand extends Command
         $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_currentInput->getArgument('journey_id'));
 
         if (is_null($carpoolProof)) {
-            throw new NotFoundHttpException('The journey (CarpoolProof) was not found');
+            throw new NotFoundHttpException('The proof was not found');
         }
 
-        $subscription->reset();
-
-        $this->_em->flush();
-
-        $this->_journeyManager->declareFirstShortDistanceJourney($carpoolProof);
+        $this->_journeyManager->validationOfProof($carpoolProof);
     }
 }

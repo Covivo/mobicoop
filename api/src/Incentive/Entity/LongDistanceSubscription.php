@@ -7,6 +7,7 @@ use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\Incentive\Controller\LdSubscriptionCommit;
+use App\Incentive\Controller\LdSubscriptionUpdate;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\Log\LongDistanceSubscriptionLog;
 use App\Incentive\Service\Manager\SubscriptionManager;
@@ -37,6 +38,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "method"="PUT",
  *              "path"="/eec/ld-subscription/{id}/commit",
  *              "controller"=LdSubscriptionCommit::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false}
+ *          },
+ *          "update"={
+ *              "method"="PUT",
+ *              "path"="/eec/ld-subscription/{id}/update",
+ *              "controller"=LdSubscriptionUpdate::class,
  *              "security"="is_granted('admin_eec',object)",
  *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false}
  *          }

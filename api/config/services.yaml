@@ -800,6 +800,10 @@ services:
     tags:
       - { name: "console.command", command: "app:incentive:subscription-commit"}
 
+  App\Incentive\Command\SubscriptionUpdateCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-update"}
+
   App\Incentive\Command\UpdateTokenCommand:
     tags:
       - { name: "console.command", command: "app:incentive:subscription-tokens"}
@@ -827,7 +831,15 @@ services:
     tags:
       - controller.service_arguments
 
+  App\Incentive\Controller\LdSubscriptionUpdate:
+    tags:
+      - controller.service_arguments
+
   App\Incentive\Controller\SdSubscriptionCommit:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\SdSubscriptionUpdate:
     tags:
       - controller.service_arguments
 
