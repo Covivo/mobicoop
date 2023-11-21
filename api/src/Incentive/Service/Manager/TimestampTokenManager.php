@@ -64,6 +64,35 @@ class TimestampTokenManager extends MobConnectManager
     }
 
     /**
+     * Updates all subscription tokens.
+     *
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     *
+     * @return LongDistanceSubscription|ShortDistanceSubscription
+     */
+    public function setSubscriptionTimestampTokens($subscription)
+    {
+        if (is_null($subscription)) {
+            return;
+        }
+
+        $this->_setCurrentSubscription($subscription);
+
+        // We get the tokens
+        $this->_setCurrentTimestampTokensResponse();
+
+        $this->_setSubscriptionTimestampToken(self::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
+        $this->_setSubscriptionTimestampToken(self::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
+        $this->_setSubscriptionTimestampToken(self::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
+
+        $this->_resetAll();
+
+        return $this->_currentSubscription;
+    }
+
+    /**
+     * Updates one of a subscription tokens.
+     *
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      *
      * @return LongDistanceSubscription|ShortDistanceSubscription
