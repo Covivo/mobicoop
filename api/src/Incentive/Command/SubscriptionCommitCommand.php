@@ -9,8 +9,8 @@ use App\Incentive\Entity\Subscription;
 use App\Incentive\Service\Manager\JourneyManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -46,9 +46,10 @@ class SubscriptionCommitCommand extends Command
             ->setName('app:incentive:subscription-commit')
             ->setDescription('Commit manually a subscription.')
             ->setHelp('From a Proposal or a CarpoolProof, manually commit a subscription.')
-            ->addArgument('type', InputArgument::REQUIRED, 'The subscription type')
-            ->addArgument('subscription_id', InputArgument::REQUIRED, 'The subscription ID')
-            ->addArgument('journey_id', InputArgument::REQUIRED, 'Depending on the case, the ID of the Proposal or the CarpoolProof')
+            ->addOption('type', null, InputOption::VALUE_REQUIRED, 'The subscription type')
+            ->addOption('subscriptionId', null, InputOption::VALUE_REQUIRED, 'The subscription ID')
+            ->addOption('journeyId', null, InputOption::VALUE_REQUIRED, 'Depending on the case, the ID of the Proposal or the CarpoolProof')
+            ->addOption('pushOnly', null, InputOption::VALUE_OPTIONAL, 'Indicates whether the trip should be saved in BDD or only pushed to mB')
         ;
     }
 
@@ -56,7 +57,7 @@ class SubscriptionCommitCommand extends Command
     {
         $this->_currentInput = $input;
 
-        $subscriptionType = $this->_currentInput->getArgument('type');
+        $subscriptionType = $this->_currentInput->getOption('type');
 
         if (!Subscription::isTypeAllowed($subscriptionType)) {
             throw new BadRequestHttpException('The value for the type parameter is invalid. Please choose one of the values among: '.join(', ', Subscription::ALLOWED_TYPE));
@@ -71,13 +72,13 @@ class SubscriptionCommitCommand extends Command
 
     private function _commitLDSubscription()
     {
-        $subscription = $this->_em->getRepository(LongDistanceSubscription::class)->find($this->_currentInput->getArgument('subscription_id'));
+        $subscription = $this->_em->getRepository(LongDistanceSubscription::class)->find($this->_currentInput->getOption('subscriptionId'));
 
         if (is_null($subscription)) {
             throw new NotFoundHttpException('The subscription was not found');
         }
 
-        $initialProposal = $this->_em->getRepository(Proposal::class)->find($this->_currentInput->getArgument('journey_id'));
+        $initialProposal = $this->_em->getRepository(Proposal::class)->find($this->_currentInput->getOption('journeyId'));
 
         if (is_null($initialProposal)) {
             throw new NotFoundHttpException('The journey (Proposal) was not found');
@@ -87,18 +88,18 @@ class SubscriptionCommitCommand extends Command
 
         $this->_em->flush();
 
-        $this->_journeyManager->declareFirstLongDistanceJourney($initialProposal);
+        $this->_journeyManager->declareFirstLongDistanceJourney($initialProposal, boolval($this->_currentInput->getOption('pushOnly')));
     }
 
     private function _commitSDSubscription()
     {
-        $subscription = $this->_em->getRepository(ShortDistanceSubscription::class)->find($this->_currentInput->getArgument('subscription_id'));
+        $subscription = $this->_em->getRepository(ShortDistanceSubscription::class)->find($this->_currentInput->getOption('subscriptionId'));
 
         if (is_null($subscription)) {
             throw new NotFoundHttpException('The subscription was not found');
         }
 
-        $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_currentInput->getArgument('journey_id'));
+        $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_currentInput->getOption('journeyId'));
 
         if (is_null($carpoolProof)) {
             throw new NotFoundHttpException('The journey (CarpoolProof) was not found');
@@ -108,6 +109,6 @@ class SubscriptionCommitCommand extends Command
 
         $this->_em->flush();
 
-        $this->_journeyManager->declareFirstShortDistanceJourney($carpoolProof);
+        $this->_journeyManager->declareFirstShortDistanceJourney($carpoolProof, boolval($this->_currentInput->getOption('pushOnly')));
     }
 }

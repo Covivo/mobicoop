@@ -138,7 +138,7 @@ class JourneyManager extends MobConnectManager
     /**
      * Step 9 - Long distance journey.
      */
-    public function declareFirstLongDistanceJourney(Proposal $proposal): ?LongDistanceJourney
+    public function declareFirstLongDistanceJourney(Proposal $proposal, bool $pushOnly = false): ?LongDistanceJourney
     {
         $this->setDriver($proposal->getUser());
 
@@ -167,12 +167,18 @@ class JourneyManager extends MobConnectManager
 
         $this->_loggerService->log($log);
 
+        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
+
+        if ($pushOnly) {
+            $this->_em->flush();
+
+            return null;
+        }
+
         $journey = new LongDistanceJourney($proposal);
 
         $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
-
-        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
         $this->_em->flush();
 
@@ -186,7 +192,7 @@ class JourneyManager extends MobConnectManager
     /**
      * Step 9 - Short distance journey.
      */
-    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof): ?ShortDistanceJourney
+    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof, bool $pushOnly = false): ?ShortDistanceJourney
     {
         $this->setDriver($carpoolProof->getDriver());
 
@@ -215,12 +221,18 @@ class JourneyManager extends MobConnectManager
 
         $this->_loggerService->log($log);
 
+        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
+
+        if ($pushOnly) {
+            $this->_em->flush();
+
+            return null;
+        }
+
         $journey = new ShortDistanceJourney($carpoolProof);
 
         $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
-
-        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
         $this->_em->flush();
 
@@ -560,7 +572,7 @@ class JourneyManager extends MobConnectManager
             $this->getAddressesLocality($this->_currentCarpoolItem)
         );
 
-        $subscription->setVersion();
+        ${$this}->_currentSubscription->setVersion();
 
         $this->_em->flush();
     }

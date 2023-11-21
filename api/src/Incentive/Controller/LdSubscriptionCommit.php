@@ -42,6 +42,8 @@ class LdSubscriptionCommit
          */
         $initialProposal = $this->_em->getRepository(Proposal::class)->find($this->_request->get('initial_proposal'));
 
+        $pushOnly = boolval($this->_request->get('push_only'));
+
         if (is_null($initialProposal)) {
             throw new NotFoundHttpException('The requested journey (Proposal) was not found');
         }
@@ -54,7 +56,7 @@ class LdSubscriptionCommit
 
         $this->_em->flush();
 
-        $this->_journeyManager->declareFirstLongDistanceJourney($initialProposal);
+        $this->_journeyManager->declareFirstLongDistanceJourney($initialProposal, $pushOnly);
 
         return $subscription;
     }
