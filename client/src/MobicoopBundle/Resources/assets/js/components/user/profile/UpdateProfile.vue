@@ -463,7 +463,6 @@
               :palette="geoCompletePalette"
               :chip="geoCompleteChip"
               :show-name="false"
-              :restrict="['locality']"
               :label="$t('homeTown.label')"
               :address="homeAddress"
               @address-selected="homeAddressSelected"
