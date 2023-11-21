@@ -2,9 +2,11 @@
 
 namespace App\Incentive\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\Incentive\Controller\LdSubscriptionCommit;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\Log\LongDistanceSubscriptionLog;
 use App\Incentive\Service\Manager\SubscriptionManager;
@@ -19,6 +21,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="mobconnect__long_distance_subscription")
  *
  * @ORM\HasLifecycleCallbacks
+ *
+ * @ApiResource(
+ *      attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readSubscription"}, "enable_max_depth"=true},
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "method"="GET",
+ *              "path"="/eec/ld-subscription/{id}",
+ *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false}
+ *          },
+ *          "commit"={
+ *              "method"="PUT",
+ *              "path"="/eec/ld-subscription/{id}/commit",
+ *              "controller"=LdSubscriptionCommit::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false}
+ *          }
+ *      }
+ * )
  */
 class LongDistanceSubscription extends Subscription
 {
@@ -58,7 +81,7 @@ class LongDistanceSubscription extends Subscription
     /**
      * @var LongDistanceJourney
      *
-     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceJourney")
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceJourney", cascade={"persist"}, orphanRemoval=true)
      *
      * @ORM\JoinColumn(nullable=true)
      *

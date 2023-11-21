@@ -796,6 +796,10 @@ services:
           command: "app:incentive:subscription-verify",
         }
 
+  App\Incentive\Command\SubscriptionCommitCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-commit"}
+
   App\Incentive\Command\UpdateTokenCommand:
     tags:
       - { name: "console.command", command: "app:incentive:subscription-tokens"}
@@ -816,6 +820,14 @@ services:
       - controller.service_arguments
 
   App\Incentive\Controller\EECTimestamps:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\LdSubscriptionCommit:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\SdSubscriptionCommit:
     tags:
       - controller.service_arguments
 

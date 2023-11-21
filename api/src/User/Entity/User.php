@@ -545,7 +545,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "method"="GET",
  *              "path"="/users/{id}/eec-timestamps",
  *              "controller"=EECTimestamps::class,
- *              "security"="is_granted('admin_user_update',object)",
+ *              "security"="is_granted('admin_eec',object)",
  *              "normalization_context"={"groups"={"eec-timestamps"}, "skip_null_values"=false},
  *          },
  *          "patchSso"={

@@ -2,9 +2,11 @@
 
 namespace App\Incentive\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\Incentive\Controller\SdSubscriptionCommit;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\Log\ShortDistanceSubscriptionLog;
 use App\Incentive\Service\Manager\SubscriptionManager;
@@ -19,6 +21,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="mobconnect__short_distance_subscription")
  *
  * @ORM\HasLifecycleCallbacks
+ *
+ * @ApiResource(
+ *      attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readSubscription"}, "enable_max_depth"=true},
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "method"="GET",
+ *              "path"="/eec/sd-subscription/{id}",
+ *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false}
+ *          },
+ *          "commit"={
+ *              "method"="PUT",
+ *              "path"="/eec/sd-subscription/{id}/commit",
+ *              "controller"=SdSubscriptionCommit::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false}
+ *          }
+ *      }
+ * )
  */
 class ShortDistanceSubscription extends Subscription
 {
@@ -50,7 +73,7 @@ class ShortDistanceSubscription extends Subscription
     /**
      * @var null|ShortDistanceJourney
      *
-     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceJourney")
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", cascade={"persist"}, orphanRemoval=true)
      *
      * @ORM\JoinColumn(nullable=true)
      *

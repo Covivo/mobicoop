@@ -174,6 +174,8 @@ class JourneyManager extends MobConnectManager
 
         $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 
+        $this->_em->flush();
+
         $subscription->setVersion();
 
         $this->_em->flush();
@@ -219,6 +221,8 @@ class JourneyManager extends MobConnectManager
         $subscription->setCommitmentProofDate(new \DateTime());
 
         $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
+
+        $this->_em->flush();
 
         $subscription->setVersion();
 

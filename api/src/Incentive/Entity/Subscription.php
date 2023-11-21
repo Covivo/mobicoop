@@ -9,6 +9,8 @@ abstract class Subscription
     public const TYPE_LONG = 'long';
     public const TYPE_SHORT = 'short';
 
+    public const ALLOWED_TYPE = [self::TYPE_LONG, self::TYPE_SHORT];
+
     private const ACTIVE_YEAR_PATTERN = '/^202[3-7]{1}$/';
 
     protected $createdAt;
@@ -30,6 +32,11 @@ abstract class Subscription
 
     protected $version;
     protected $versionStatus;
+
+    public static function isTypeAllowed(string $subscriptionType): bool
+    {
+        return in_array($subscriptionType, self::ALLOWED_TYPE);
+    }
 
     public function getCreatedAt(): \DateTime
     {
