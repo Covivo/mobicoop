@@ -44,11 +44,11 @@ class SubscriptionCommitCommand extends Command
     {
         $this
             ->setName('app:incentive:subscription-commit')
-            ->setDescription('Returns the subscription tokens.')
-            ->setHelp('Returns the subscription tokens and if requested, obtain them before from moB.')
-            ->addArgument('type', InputArgument::REQUIRED, 'The id of the user')
-            ->addArgument('subscription_id', InputArgument::REQUIRED, 'Specifies whether missing tokens should be obtained')
-            ->addArgument('journey_id', InputArgument::REQUIRED, 'Specifies whether missing tokens should be obtained')
+            ->setDescription('Commit manually a subscription.')
+            ->setHelp('From a Proposal or a CarpoolProof, manually initiate a subscription.')
+            ->addArgument('type', InputArgument::REQUIRED, 'The subscription type')
+            ->addArgument('subscription_id', InputArgument::REQUIRED, 'The subscription ID')
+            ->addArgument('journey_id', InputArgument::REQUIRED, 'Depending on the case, the ID of the Proposal or the CarpoolProof')
         ;
     }
 
