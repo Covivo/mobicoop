@@ -42,6 +42,8 @@ class SdSubscriptionCommit
          */
         $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_request->get('carpool_proof'));
 
+        $pushOnly = boolval($this->_request->get('push_only'));
+
         if (is_null($carpoolProof)) {
             throw new NotFoundHttpException('The requested journey (CarpoolProof) was not found');
         }
@@ -54,7 +56,7 @@ class SdSubscriptionCommit
 
         $this->_em->flush();
 
-        $this->_journeyManager->declareFirstShortDistanceJourney($carpoolProof);
+        $this->_journeyManager->declareFirstShortDistanceJourney($carpoolProof, $pushOnly);
 
         return $subscription;
     }

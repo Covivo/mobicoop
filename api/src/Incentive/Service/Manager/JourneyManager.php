@@ -54,6 +54,8 @@ class JourneyManager extends MobConnectManager
      */
     private $_journeyValidation;
 
+    private $_pushOnlyMode = false;
+
     public function __construct(
         CarpoolProofRepository $carpoolProofRepository,
         CarpoolItemRepository $carpoolItemRepository,
@@ -246,9 +248,10 @@ class JourneyManager extends MobConnectManager
     /**
      * Step 17 - Electronic payment is validated for a long distance journey. All carpooling compliant with the CEE standard will be processed.
      */
-    public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
+    public function receivingElectronicPayment(CarpoolPayment $carpoolPayment, bool $pushOnly = false)
     {
         $this->_currentCarpoolPayment = $carpoolPayment;
+        $this->_pushOnlyMode = $pushOnly;
 
         $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID '.$this->_currentCarpoolPayment->getId());
 
@@ -269,8 +272,10 @@ class JourneyManager extends MobConnectManager
     /**
      * Step 17 - Validation of proof for a short distance journey,.
      */
-    public function validationOfProof(CarpoolProof $carpoolProof)
+    public function validationOfProof(CarpoolProof $carpoolProof, bool $pushOnly = false)
     {
+        $this->_pushOnlyMode = $pushOnly;
+
         $this->setDriver($carpoolProof->getDriver());
 
         $distanceTraveled = $this->getDistanceTraveled($carpoolProof);
@@ -369,7 +374,8 @@ class JourneyManager extends MobConnectManager
             //    - The journey is a C type
             //    - The journey origin and/or destination is the reference country
             if (
-                self::SHORT_DISTANCE_TRIP_THRESHOLD <= $shortDistanceJourneysNumber
+                $this->_pushOnlyMode
+                || self::SHORT_DISTANCE_TRIP_THRESHOLD <= $shortDistanceJourneysNumber
                 || is_null($carpoolProof->getAsk())
                 || is_null($carpoolProof->getAsk()->getMatching())
                 || $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
@@ -482,7 +488,7 @@ class JourneyManager extends MobConnectManager
         );
 
         // Use case where there is not yet a LD journey associated with the carpoolitem
-        if (is_null($journey)) {
+        if (is_null($journey) && !$this->_pushOnlyMode) {
             if ($this->_currentCarpoolProof->isEECCompliant()) {
                 // Processes for journeys that are not the commitment journey
                 $this->_addLDJourneyToSubscription();

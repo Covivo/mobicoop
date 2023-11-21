@@ -42,11 +42,13 @@ class LdSubscriptionUpdate
          */
         $carpoolPayment = $this->_em->getRepository(CarpoolPayment::class)->find($this->_request->get('carpool_payment'));
 
+        $pushOnly = boolval($this->_request->get('push_only'));
+
         if (is_null($carpoolPayment)) {
             throw new NotFoundHttpException('The requested payment was not found');
         }
 
-        $this->_journeyManager->receivingElectronicPayment($carpoolPayment);
+        $this->_journeyManager->receivingElectronicPayment($carpoolPayment, $pushOnly);
 
         return $subscription;
     }

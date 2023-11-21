@@ -42,11 +42,13 @@ class SdSubscriptionUpdate
          */
         $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_request->get('carpool_proof'));
 
+        $pushOnly = boolval($this->_request->get('push_only'));
+
         if (is_null($carpoolProof)) {
             throw new NotFoundHttpException('The requested proof was not found');
         }
 
-        $this->_journeyManager->validationOfProof($carpoolProof);
+        $this->_journeyManager->validationOfProof($carpoolProof, $pushOnly);
 
         return $subscription;
     }

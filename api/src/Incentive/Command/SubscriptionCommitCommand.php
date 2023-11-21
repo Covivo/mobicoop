@@ -49,7 +49,7 @@ class SubscriptionCommitCommand extends Command
             ->addOption('type', null, InputOption::VALUE_REQUIRED, 'The subscription type')
             ->addOption('subscriptionId', null, InputOption::VALUE_REQUIRED, 'The subscription ID')
             ->addOption('journeyId', null, InputOption::VALUE_REQUIRED, 'Depending on the case, the ID of the Proposal or the CarpoolProof')
-            ->addOption('pushOnly', null, InputOption::VALUE_OPTIONAL, 'Indicates whether the trip should be saved in BDD or only pushed to mB')
+            ->addOption('pushOnly', null, InputOption::VALUE_OPTIONAL, 'Indicates whether the trip should be saved in BDD or only pushed to moB')
         ;
     }
 
