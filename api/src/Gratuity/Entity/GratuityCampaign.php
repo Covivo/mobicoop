@@ -27,9 +27,7 @@ use App\Geography\Entity\Territory;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -54,8 +52,6 @@ class GratuityCampaign
      *
      * @ORM\Column(type="integer")
      *
-     * @Groups({"readGratuity", "writeGratuity"})
-     *
      * @MaxDepth(1)
      */
     private $id;
@@ -66,8 +62,6 @@ class GratuityCampaign
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="gratuityCampaigns")
      *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     *
-     * @Groups({"readGratuity", "writeGratuity"})
      */
     private $user;
 
@@ -75,30 +69,20 @@ class GratuityCampaign
      * @var null|ArrayCollection the territories of this campaign (can be null, it means that this campaign apply everywhere)
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
-     *
-     * @Groups({"readGratuity", "writeGratuity"})
      */
     private $territories;
 
     /**
      * @var string Campaign's name. Mostly used for intern managment
      *
-     * @Assert\NotBlank
-     *
      * @ORM\Column(type="string", length=255)
-     *
-     * @Groups({"readGratuity", "writeGratuity"})
      */
     private $name;
 
     /**
      * @var string Campaign's template. Related to a twig file
      *
-     * @Assert\NotBlank
-     *
      * @ORM\Column(type="string", length=255)
-     *
-     * @Groups({"readGratuity", "writeGratuity"})
      */
     private $template;
 
@@ -106,30 +90,20 @@ class GratuityCampaign
      * @var string Campaign's status
      *
      * @ORM\Column(type="integer", length=255)
-     *
-     * @Groups({"readGratuity", "writeGratuity"})
      */
     private $status;
 
     /**
      * @var \DateTimeInterface Campaign's start date
      *
-     * @Assert\NotBlank
-     *
      * @ORM\Column(type="datetime")
-     *
-     * @Groups({"readGratuity", "writeGratuity"})
      */
     private $startDate;
 
     /**
      * @var \DateTimeInterface Campaign's end date
      *
-     * @Assert\NotBlank
-     *
      * @ORM\Column(type="datetime")
-     *
-     * @Groups({"readGratuity", "writeGratuity"})
      */
     private $endDate;
 
@@ -137,8 +111,6 @@ class GratuityCampaign
      * @var \DateTimeInterface creation date of the user
      *
      * @ORM\Column(type="datetime")
-     *
-     * @Groups({"readGratuity"})
      */
     private $createdDate;
 
@@ -146,8 +118,6 @@ class GratuityCampaign
      * @var \DateTimeInterface validation date of the user
      *
      * @ORM\Column(type="datetime", nullable=true)
-     *
-     * @Groups({"readGratuity"})
      */
     private $updatedDate;
 
