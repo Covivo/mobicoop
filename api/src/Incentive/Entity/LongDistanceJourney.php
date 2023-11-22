@@ -142,6 +142,7 @@ class LongDistanceJourney extends Journey
         if (!is_null($proposal)) {
             $this->setInitialProposal($proposal);
         }
+        $this->createdAt = new \DateTime('now');
     }
 
     /**
@@ -149,7 +150,7 @@ class LongDistanceJourney extends Journey
      */
     public function prePersist()
     {
-        $this->createdAt = new \DateTime('now');
+        $this->updatedAt = new \DateTime('now');
     }
 
     /**

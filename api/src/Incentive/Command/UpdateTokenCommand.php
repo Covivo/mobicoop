@@ -6,8 +6,8 @@ use App\Incentive\Service\Manager\SubscriptionManager;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -37,8 +37,8 @@ class UpdateTokenCommand extends Command
             ->setName('app:incentive:subscription-tokens')
             ->setDescription('Returns the subscription tokens.')
             ->setHelp('Returns the subscription tokens and if requested, obtain them before from moB.')
-            ->addArgument('userId', InputArgument::REQUIRED, 'The id of the user')
-            ->addArgument('update', InputArgument::OPTIONAL, 'Specifies whether missing tokens should be obtained')
+            ->addOption('user', null, InputOption::VALUE_REQUIRED, 'The id of the user')
+            ->addOption('update', null, InputOption::VALUE_NONE, 'Specifies whether missing tokens should be obtained')
         ;
     }
 
@@ -47,13 +47,13 @@ class UpdateTokenCommand extends Command
         /**
          * @var User
          */
-        $user = $this->_em->getRepository(User::class)->find($input->getArgument('userId'));
+        $user = $this->_em->getRepository(User::class)->find($input->getOption('user'));
 
         if (is_null($user)) {
             throw new NotFoundHttpException('The requested user was not found');
         }
 
-        if (boolval($input->getArgument('update'))) {
+        if ($input->getOption('update')) {
             $user = $this->_subscriptionManager->updateTimestampTokens($user);
         }
 

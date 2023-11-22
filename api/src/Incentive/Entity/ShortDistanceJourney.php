@@ -134,6 +134,7 @@ class ShortDistanceJourney extends Journey
     public function __construct(CarpoolProof $carpoolProof)
     {
         $this->setCarpoolProof($carpoolProof);
+        $this->createdAt = new \DateTime('now');
     }
 
     /**
@@ -141,7 +142,7 @@ class ShortDistanceJourney extends Journey
      */
     public function prePersist()
     {
-        $this->createdAt = new \DateTime('now');
+        $this->updatedAt = new \DateTime('now');
     }
 
     /**

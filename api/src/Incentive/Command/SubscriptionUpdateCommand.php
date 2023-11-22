@@ -8,30 +8,14 @@ use App\Incentive\Entity\Subscription;
 use App\Incentive\Service\Manager\JourneyManager;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class SubscriptionUpdateCommand extends Command
+class SubscriptionUpdateCommand extends EecCommand
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $_em;
-
-    /**
-     * @var JourneyManager
-     */
-    private $_journeyManager;
-
-    /**
-     * @var InputInterface
-     */
-    private $_currentInput;
-
     public function __construct(EntityManagerInterface $em, JourneyManager $journeyManager)
     {
         $this->_em = $em;
@@ -47,9 +31,9 @@ class SubscriptionUpdateCommand extends Command
             ->setDescription('Update manually a subscription.')
             ->setHelp('From a CarpoolPayment or a CarpoolProof, manually update a subscription.')
             ->addOption('type', null, InputOption::VALUE_REQUIRED, 'The subscription type')
-            ->addOption('subscriptionId', null, InputOption::VALUE_REQUIRED, 'The subscription ID')
-            ->addOption('journeyId', null, InputOption::VALUE_REQUIRED, 'Depending on the case, the ID of the CarpoolPayment or the CarpoolProof')
-            ->addOption('pushOnly', null, InputOption::VALUE_OPTIONAL, 'Indicates whether the trip should be saved in BDD or only pushed to moB')
+            ->addOption('subscription', null, InputOption::VALUE_REQUIRED, 'The subscription ID')
+            ->addOption('journey', null, InputOption::VALUE_REQUIRED, 'Depending on the case, the ID of the CarpoolPayment or the CarpoolProof')
+            ->addOption('pushOnly', null, InputOption::VALUE_NONE, 'Indicates whether the trip should be saved in BDD or only pushed to moB')
         ;
     }
 
@@ -72,35 +56,35 @@ class SubscriptionUpdateCommand extends Command
 
     private function _updateLDSubscription()
     {
-        $subscription = $this->_em->getRepository(LongDistanceSubscription::class)->find($this->_currentInput->getOption('subscriptionId'));
+        $this->_currentSubscription = $this->_em->getRepository(LongDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
 
-        if (is_null($subscription)) {
+        if (is_null($this->_currentSubscription)) {
             throw new NotFoundHttpException('The subscription was not found');
         }
 
-        $carpoolPayment = $this->_em->getRepository(CarpoolPayment::class)->find($this->_currentInput->getOption('journeyId'));
+        $carpoolPayment = $this->_em->getRepository(CarpoolPayment::class)->find($this->_currentInput->getOption('journey'));
 
-        if (is_null($carpoolPayment)) {
-            throw new NotFoundHttpException('The payment was not found');
-        }
+        $this->checkCarpoolPayment($carpoolPayment);
 
-        $this->_journeyManager->receivingElectronicPayment($carpoolPayment, boolval($this->_currentInput->getOption('pushOnly')));
+        $this->_journeyManager->receivingElectronicPayment($carpoolPayment, $this->_currentInput->getOption('pushOnly'));
     }
 
     private function _updateSDSubscription()
     {
-        $subscription = $this->_em->getRepository(ShortDistanceSubscription::class)->find($this->_currentInput->getOption('subscriptionId'));
+        $this->_currentSubscription = $this->_em->getRepository(ShortDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
 
-        if (is_null($subscription)) {
+        if (is_null($this->_currentSubscription)) {
             throw new NotFoundHttpException('The subscription was not found');
         }
 
-        $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_currentInput->getOption('journeyId'));
+        $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_currentInput->getOption('journey'));
 
-        if (is_null($carpoolProof)) {
-            throw new NotFoundHttpException('The proof was not found');
+        $this->checkCarpoolProof($carpoolProof);
+
+        if ($this->_currentSubscription->getUser()->getId() !== $carpoolProof->getDriver()->getId()) {
+            throw new BadRequestHttpException('The user associated with the incentive is not the one associated with the CarpoolProof');
         }
 
-        $this->_journeyManager->validationOfProof($carpoolProof, boolval($this->_currentInput->getOption('pushOnly')));
+        $this->_journeyManager->validationOfProof($carpoolProof, $this->_currentInput->getOption('pushOnly'));
     }
 }

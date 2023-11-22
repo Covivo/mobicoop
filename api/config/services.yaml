@@ -775,26 +775,15 @@ services:
       $eventProvider: "%env(string:EVENT_PROVIDER)%"
 
   # INCENTIVE
-  App\Incentive\Command\ProofValidationCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:proof-validate",
-        }
+
 
   App\Incentive\Command\SubscriptionsVerificationCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscriptions-verification",
-        }
+      - { name: "console.command", command: "app:incentive:subscriptions-verification" }
 
   App\Incentive\Command\SubscriptionVerificationCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-verify",
-        }
+      - { name: "console.command", command: "app:incentive:subscription-verify" }
 
   App\Incentive\Command\SubscriptionCommitCommand:
     tags:

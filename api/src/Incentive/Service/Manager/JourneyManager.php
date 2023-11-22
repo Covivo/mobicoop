@@ -182,8 +182,6 @@ class JourneyManager extends MobConnectManager
         $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
 
-        $this->_em->flush();
-
         $subscription->setVersion();
 
         $this->_em->flush();
@@ -235,8 +233,6 @@ class JourneyManager extends MobConnectManager
 
         $subscription->setCommitmentProofJourney($journey);
         $subscription->setCommitmentProofDate(new \DateTime());
-
-        $this->_em->flush();
 
         $subscription->setVersion();
 
