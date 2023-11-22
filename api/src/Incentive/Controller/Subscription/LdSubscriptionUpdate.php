@@ -1,38 +1,19 @@
 <?php
 
-namespace App\Incentive\Controller;
+namespace App\Incentive\Controller\Subscription;
 
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Service\Manager\JourneyManager;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class LdSubscriptionUpdate
+class LdSubscriptionUpdate extends SubscriptionUpdate
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $_em;
-
-    /**
-     * @var Request
-     */
-    private $_request;
-
-    /**
-     * @var JourneyManager
-     */
-    private $_journeyManager;
-
     public function __construct(RequestStack $requestStack, EntityManagerInterface $em, JourneyManager $journeyManager)
     {
-        $this->_request = $requestStack->getCurrentRequest();
-        $this->_em = $em;
-
-        $this->_journeyManager = $journeyManager;
+        parent::__construct($requestStack, $em, $journeyManager);
     }
 
     public function __invoke(LongDistanceSubscription $subscription)

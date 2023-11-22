@@ -150,6 +150,18 @@ class SubscriptionManager extends MobConnectManager
         $this->_em->flush();
     }
 
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     *
+     * @return LongDistanceSubscription|ShortDistanceSubscription
+     */
+    public function getMobConnectSubscription($subscription)
+    {
+        $this->setDriver($subscription->getUser());
+
+        return $subscription->setMoBSubscription(json_encode($this->getMobSubscription($subscription->getSubscriptionid())->getContent()));
+    }
+
     public function getUserEECEligibility(User $user): EecEligibility
     {
         $this->setDriver($user);

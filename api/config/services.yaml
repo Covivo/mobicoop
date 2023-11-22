@@ -817,19 +817,28 @@ services:
     tags:
       - controller.service_arguments
 
-  App\Incentive\Controller\LdSubscriptionCommit:
+  App\Incentive\Controller\Subscription\LdSubscriptionCommit:
+    tags:
+      - controller.service_arguments  
+  
+  App\Incentive\Controller\Subscription\LdSubscriptionGet:
     tags:
       - controller.service_arguments
 
-  App\Incentive\Controller\LdSubscriptionUpdate:
+
+  App\Incentive\Controller\Subscription\LdSubscriptionUpdate:
     tags:
       - controller.service_arguments
 
-  App\Incentive\Controller\SdSubscriptionCommit:
+  App\Incentive\Controller\Subscription\SdSubscriptionCommit:
     tags:
       - controller.service_arguments
 
-  App\Incentive\Controller\SdSubscriptionUpdate:
+  App\Incentive\Controller\Subscription\SdSubscriptionGet:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\SdSubscriptionUpdate:
     tags:
       - controller.service_arguments
 

@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 abstract class Subscription
 {
@@ -32,6 +33,13 @@ abstract class Subscription
 
     protected $version;
     protected $versionStatus;
+
+    /**
+     * The mobConnect Subscription data.
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $moBSubscription;
 
     public static function isTypeAllowed(string $subscriptionType): bool
     {
@@ -308,6 +316,26 @@ abstract class Subscription
         $this->checkYearPattern($year);
 
         return $year === $this->getCommitmentYear();
+    }
+
+    /**
+     * Get the mobConnect Subscription data.
+     */
+    public function getMoBSubscription()
+    {
+        return $this->moBSubscription;
+    }
+
+    /**
+     * Set the mobConnect Subscription data.
+     *
+     * @param mixed $moBSubscription
+     */
+    public function setMoBSubscription($moBSubscription): self
+    {
+        $this->moBSubscription = $moBSubscription;
+
+        return $this;
     }
 
     /**
