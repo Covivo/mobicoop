@@ -814,10 +814,11 @@ services:
 
   App\Incentive\Command\SubscriptionTimestampsCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-timestamps",
-        }
+      - { name: "console.command", command: "app:incentive:subscription-timestamps" }
+      
+  App\Incentive\Command\SubscriptionTimestampsTokenCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-mobTimestampsToken" }
 
   App\Incentive\Controller\IncentivesController:
     tags:
@@ -840,6 +841,10 @@ services:
       - controller.service_arguments
 
   App\Incentive\Controller\SdSubscriptionUpdate:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\TimestampController:
     tags:
       - controller.service_arguments
 

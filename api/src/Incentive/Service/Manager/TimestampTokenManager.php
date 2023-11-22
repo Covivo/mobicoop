@@ -63,6 +63,13 @@ class TimestampTokenManager extends MobConnectManager
         parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
     }
 
+    public function getMobTimestampToken($subscription)
+    {
+        $this->setDriver($subscription->getUser());
+
+        return $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+    }
+
     /**
      * Updates all subscription tokens.
      *
