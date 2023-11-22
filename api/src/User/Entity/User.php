@@ -1866,6 +1866,17 @@ class User implements UserInterface, EquatableInterface
      */
     private $gratuityCampaigns;
 
+    /**
+     * @var null|bool Gratuity preferences.
+     *                0 = no gratuity
+     *                1 = accept gratuity
+     *
+     * @ORM\Column(type="boolean", options={"default" : 1}, nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $gratuity;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1913,6 +1924,7 @@ class User implements UserInterface, EquatableInterface
         $this->setExperienced(false);
         $this->ssoAccounts = new ArrayCollection();
         $this->gratuityCampaigns = new ArrayCollection();
+        $this->gratuity = true;
     }
 
     public function getId(): ?int
@@ -4195,6 +4207,18 @@ class User implements UserInterface, EquatableInterface
         if ($this->gratuityCampaigns->contains($gratuityCampaign)) {
             $this->gratuityCampaigns->removeElement($gratuityCampaign);
         }
+
+        return $this;
+    }
+
+    public function hasGratuity(): ?bool
+    {
+        return $this->gratuity;
+    }
+
+    public function setGratuity(?bool $gratuity): self
+    {
+        $this->gratuity = $gratuity;
 
         return $this;
     }
