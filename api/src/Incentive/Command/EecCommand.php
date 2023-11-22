@@ -6,8 +6,11 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Service\Manager\JourneyManager;
 use App\Payment\Entity\CarpoolPayment;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -33,8 +36,11 @@ abstract class EecCommand extends Command
      */
     protected $_journeyManager;
 
-    public function __construct()
+    public function __construct(EntityManagerInterface $em, JourneyManager $journeyManager)
     {
+        $this->_em = $em;
+        $this->_journeyManager = $journeyManager;
+
         parent::__construct();
     }
 
@@ -57,22 +63,31 @@ abstract class EecCommand extends Command
     protected function checkCarpoolProof(CarpoolProof $carpoolProof)
     {
         if (is_null($carpoolProof)) {
-            throw new NotFoundHttpException('The journey (CarpoolProof) was not found');
+            $this->throwException(Response::HTTP_NOT_FOUND, 'The journey (CarpoolProof) was not found');
         }
 
         if ($this->_currentSubscription->getUser()->getId() !== $carpoolProof->getDriver()->getId()) {
-            throw new BadRequestHttpException('The user associated with the incentive is not the one associated with the CarpoolProof');
+            $this->throwException(Response::HTTP_BAD_REQUEST, 'The user associated with the incentive is not the one associated with the CarpoolProof');
         }
     }
 
     protected function checkProposal(Proposal $proposal)
     {
         if (is_null($proposal)) {
-            throw new NotFoundHttpException('The journey (Proposal) was not found');
+            $this->throwException(Response::HTTP_NOT_FOUND, 'The journey (Proposal) was not found');
         }
 
         if ($this->_currentSubscription->getUser()->getId() !== $proposal->getUser()->getId()) {
-            throw new BadRequestHttpException('The user associated with the incentive is not the one associated with the Proposal');
+            $this->throwException(Response::HTTP_BAD_REQUEST, 'The user associated with the incentive is not the one associated with the Proposal');
+        }
+    }
+
+    protected function throwException(int $exception, string $msg = null)
+    {
+        switch ($exception) {
+            case Response::HTTP_NOT_FOUND: throw new NotFoundHttpException($msg);
+
+            case Response::HTTP_BAD_REQUEST: throw new BadRequestHttpException($msg);
         }
     }
 }

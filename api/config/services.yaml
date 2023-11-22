@@ -785,6 +785,10 @@ services:
     tags:
       - { name: "console.command", command: "app:incentive:subscription-verify" }
 
+  App\Incentive\Command\ProofInvalidateCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:proof-invalidate"}
+
   App\Incentive\Command\SubscriptionCommitCommand:
     tags:
       - { name: "console.command", command: "app:incentive:subscription-commit"}

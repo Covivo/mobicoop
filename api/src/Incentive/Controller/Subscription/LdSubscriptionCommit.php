@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class LdSubscriptionCommit extends \SubscriptionCommit
+class LdSubscriptionCommit extends SubscriptionCommit
 {
     public function __construct(RequestStack $requestStack, EntityManagerInterface $em, JourneyManager $journeyManager)
     {

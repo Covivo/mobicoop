@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Incentive\Controller\Subscription;
+
 use App\Incentive\Service\Manager\JourneyManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;

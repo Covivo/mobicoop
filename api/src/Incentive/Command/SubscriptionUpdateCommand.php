@@ -18,10 +18,7 @@ class SubscriptionUpdateCommand extends EecCommand
 {
     public function __construct(EntityManagerInterface $em, JourneyManager $journeyManager)
     {
-        $this->_em = $em;
-        $this->_journeyManager = $journeyManager;
-
-        parent::__construct();
+        parent::__construct($em, $journeyManager);
     }
 
     protected function configure()
