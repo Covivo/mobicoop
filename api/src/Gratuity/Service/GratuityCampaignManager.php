@@ -25,6 +25,7 @@ namespace App\Gratuity\Service;
 
 use App\Geography\Repository\TerritoryRepository;
 use App\Gratuity\Entity\GratuityCampaign as EntityGratuityCampaign;
+use App\Gratuity\Repository\GratuityCampaignRepository;
 use App\Gratuity\Resource\GratuityCampaign;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
@@ -36,13 +37,19 @@ class GratuityCampaignManager
 {
     private $_entityManager;
     private $_territoryRepository;
+    private $_gratuityCampaignRepository;
 
     private $_user;
 
-    public function __construct(EntityManagerInterface $entityManager, Security $security, TerritoryRepository $territoryRepository)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        Security $security,
+        TerritoryRepository $territoryRepository,
+        GratuityCampaignRepository $gratuityCampaignRepository
+    ) {
         $this->_entityManager = $entityManager;
         $this->_territoryRepository = $territoryRepository;
+        $this->_gratuityCampaignRepository = $gratuityCampaignRepository;
         $this->_user = $security->getToken()->getUser();
     }
 
@@ -56,6 +63,30 @@ class GratuityCampaignManager
         $this->_entityManager->flush();
 
         return $this->_buildGratuityCampaignFromEntity($entity);
+    }
+
+    public function getGratuityCampaign(int $gratuityCampaignId): ?GratuityCampaign
+    {
+        if ($entity = $this->_gratuityCampaignRepository->find($gratuityCampaignId)) {
+            return $this->_buildGratuityCampaignFromEntity($entity);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return GratuityCampaign[]
+     */
+    public function getGratuityCampaigns(): ?array
+    {
+        $campaigns = [];
+        if ($entities = $this->_gratuityCampaignRepository->findAll()) {
+            foreach ($entities as $entity) {
+                $campaigns[] = $this->_buildGratuityCampaignFromEntity($entity);
+            }
+        }
+
+        return $campaigns;
     }
 
     private function _buildEntityGratuityCampaign(GratuityCampaign $gratuityCampaign): EntityGratuityCampaign

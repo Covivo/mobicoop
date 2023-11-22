@@ -25,19 +25,18 @@ namespace App\Gratuity\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Gratuity\Resource\GratuityCampaign;
-use App\User\Entity\User;
-use Symfony\Component\Security\Core\Security;
+use App\Gratuity\Service\GratuityCampaignManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class GratuityCampaignCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $security;
+    private $_gratuityCampaignManager;
 
-    public function __construct(Security $security)
+    public function __construct(GratuityCampaignManager $gratuityCampaignManager)
     {
-        $this->security = $security;
+        $this->_gratuityCampaignManager = $gratuityCampaignManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -47,8 +46,6 @@ final class GratuityCampaignCollectionDataProvider implements CollectionDataProv
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        if (!$this->security->getUser() instanceof User) {
-            throw new \LogicException('Only a User can get its board');
-        }
+        return $this->_gratuityCampaignManager->getGratuityCampaigns();
     }
 }

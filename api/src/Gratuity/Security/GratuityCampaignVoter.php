@@ -26,6 +26,7 @@ namespace App\Gratuity\Security;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
 use App\Gratuity\Entity\GratuityCampaign;
+use App\Gratuity\Resource\GratuityCampaign as ResourceGratuityCampaign;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -86,7 +87,7 @@ class GratuityCampaignVoter extends Voter
         return $this->authManager->isAuthorized(self::GRATUITY_CAMPAIGN_CREATE);
     }
 
-    private function canRead(GratuityCampaign $gratuityCampaign)
+    private function canRead(ResourceGratuityCampaign $gratuityCampaign)
     {
         return $this->authManager->isAuthorized(self::GRATUITY_CAMPAIGN_READ, ['gratuityCampaign' => $gratuityCampaign]);
     }

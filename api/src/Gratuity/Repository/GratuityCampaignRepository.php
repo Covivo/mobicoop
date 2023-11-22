@@ -21,32 +21,47 @@
  *    LICENSE
  */
 
-namespace App\Gratuity\DataProvider;
+namespace App\Gratuity\Repository;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Gratuity\Resource\GratuityCampaign;
-use App\Gratuity\Service\GratuityCampaignManager;
+use App\Gratuity\Entity\GratuityCampaign;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class GratuityCampaignItemDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
+class GratuityCampaignRepository
 {
-    private $_gratuityCampaignManager;
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
 
-    public function __construct(GratuityCampaignManager $gratuityCampaignManager)
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->_gratuityCampaignManager = $gratuityCampaignManager;
+        $this->entityManager = $entityManager;
+        $this->repository = $entityManager->getRepository(GratuityCampaign::class);
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function find(int $id): ?GratuityCampaign
     {
-        return GratuityCampaign::class === $resourceClass && 'get' === $operationName;
+        return $this->repository->find($id);
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function findAll(): ?array
     {
-        return $this->_gratuityCampaignManager->getGratuityCampaign($id);
+        return $this->repository->findAll();
+    }
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?GratuityCampaign
+    {
+        return $this->repository->findOneBy($criteria);
     }
 }
