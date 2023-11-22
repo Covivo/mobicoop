@@ -42,6 +42,7 @@ services:
     arguments:
       $badgeImageUri: "%env(string:GAMIFICATION_BADGE_IMAGE_URI)%"
       $gamificationActive: "%env(bool:GAMIFICATION_ACTIVE)%"
+      $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
     decorates: "api_platform.jsonld.normalizer.item"
 
   # EVENT LISTENERS

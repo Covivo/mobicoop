@@ -24,13 +24,13 @@ namespace App\Serializer;
 
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
+use App\Community\Entity\CommunityUser;
 use App\Gamification\Entity\GamificationNotifier;
 use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
 use App\Gamification\Repository\RewardRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\User\Entity\User;
-use App\Community\Entity\CommunityUser;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -60,6 +60,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     private $currentRewardStep;
 
+    private $gratuityActive;
+
     public function __construct(
         NormalizerInterface $decorated,
         GamificationNotifier $gamificationNotifier,
@@ -69,10 +71,11 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         Security $security,
         EntityManagerInterface $entityManager,
         string $badgeImageUri,
-        string $gamificationActive,
+        bool $gamificationActive,
         LoggerInterface $logger,
         RequestStack $request,
-        UserManager $userManager
+        UserManager $userManager,
+        bool $gratuityActive
     ) {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
@@ -90,6 +93,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->logger = $logger;
         $this->request = $request->getCurrentRequest();
         $this->userManager = $userManager;
+        $this->gratuityActive = $gratuityActive;
     }
 
     public function getCurrentRewardStep(): RewardStep
@@ -117,11 +121,11 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
         // add adType to User in admin
 
-        if (isset($context['collection_operation_name']) && 'ADMIN_get' === $context['collection_operation_name'] && ($object instanceof User || $object instanceof CommunityUser )) {
-            if ($object instanceof User){
-                $user = $data["id"];
+        if (isset($context['collection_operation_name']) && 'ADMIN_get' === $context['collection_operation_name'] && ($object instanceof User || $object instanceof CommunityUser)) {
+            if ($object instanceof User) {
+                $user = $data['id'];
             } else {
-                $user = $data["userId"];
+                $user = $data['userId'];
             }
             $nbDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($user, Ad::ROLE_DRIVER);
             $nbPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($user, Ad::ROLE_PASSENGER);
@@ -134,7 +138,11 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             } else {
                 $data['adType'] = User::AD_NONE;
             }
+
             return $data;
+        }
+        if (true == $this->gratuityActive && $object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
+            echo 'gratuity!!!!';
         }
         // We check if there is some gamificationNotifications entities in waiting for the current User
         if (true == $this->gamificationActive && $object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
