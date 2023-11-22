@@ -24,18 +24,18 @@ namespace App\Gratuity\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Gratuity\Resource\GratuityCampaign;
-use Symfony\Component\Security\Core\Security;
+use App\Gratuity\Service\GratuityCampaignManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class GratuityCampaignDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $security;
+    private $_gratuityCampaignManager;
 
-    public function __construct(Security $security)
+    public function __construct(GratuityCampaignManager $gratuityCampaignManager)
     {
-        $this->security = $security;
+        $this->_gratuityCampaignManager = $gratuityCampaignManager;
     }
 
     public function supports($data, array $context = []): bool
@@ -45,7 +45,7 @@ final class GratuityCampaignDataPersister implements ContextAwareDataPersisterIn
 
     public function persist($data, array $context = [])
     {
-        return $data;
+        return $this->_gratuityCampaignManager->createGratuityCampaign($data);
     }
 
     public function remove($data, array $context = [])

@@ -68,9 +68,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class GratuityCampaign
 {
-    public const STATUS_INACTIVE = 0;
-    public const STATUS_ACTIVE = 1;
-
     public const DEFAULT_ID = 999999999999;
 
     /**
@@ -196,6 +193,13 @@ class GratuityCampaign
     public function setTerritories(?array $territories): self
     {
         $this->territories = $territories;
+
+        return $this;
+    }
+
+    public function pushTerritory(?int $territory): self
+    {
+        $this->territories[] = $territory;
 
         return $this;
     }
