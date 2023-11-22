@@ -61,6 +61,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     private $currentRewardStep;
 
     private $gratuityActive;
+    private $gratuityNotificationNormalizer;
 
     public function __construct(
         NormalizerInterface $decorated,
@@ -75,7 +76,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         LoggerInterface $logger,
         RequestStack $request,
         UserManager $userManager,
-        bool $gratuityActive
+        bool $gratuityActive,
+        GratuityNotificationNormalizer $gratuityNotificationNormalizer
     ) {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
@@ -94,6 +96,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->request = $request->getCurrentRequest();
         $this->userManager = $userManager;
         $this->gratuityActive = $gratuityActive;
+        $this->gratuityNotificationNormalizer = $gratuityNotificationNormalizer;
     }
 
     public function getCurrentRewardStep(): RewardStep
@@ -142,7 +145,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             return $data;
         }
         if (true == $this->gratuityActive && $object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
-            echo 'gratuity!!!!';
+            $this->gratuityNotificationNormalizer->setUser($this->security->getUser());
+            $this->gratuityNotificationNormalizer->normalize();
         }
         // We check if there is some gamificationNotifications entities in waiting for the current User
         if (true == $this->gamificationActive && $object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
