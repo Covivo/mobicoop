@@ -108,6 +108,15 @@ class GratuityCampaign
     private $endDate;
 
     /**
+     * @var null|ArrayCollection The notifications sent for this campaign
+     *
+     * @ORM\OneToMany(targetEntity="\App\Gratuity\Entity\GratuityNotification", mappedBy="gratuityCampaign", cascade={"persist"})
+     *
+     * @MaxDepth(1)
+     */
+    private $notifications;
+
+    /**
      * @var \DateTimeInterface creation date of the user
      *
      * @ORM\Column(type="datetime")
@@ -128,6 +137,7 @@ class GratuityCampaign
             $this->id = $id;
         }
         $this->territories = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -172,6 +182,29 @@ class GratuityCampaign
     {
         if ($this->territories->contains($territory)) {
             $this->territories->removeElement($territory);
+        }
+
+        return $this;
+    }
+
+    public function getGratuityNotifications()
+    {
+        return $this->notifications->getValues();
+    }
+
+    public function addGratuityNotification(GratuityNotification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications[] = $notification;
+        }
+
+        return $this;
+    }
+
+    public function removeGratuityNotification(GratuityNotification $notification): self
+    {
+        if ($this->notifications->contains($notification)) {
+            $this->notifications->removeElement($notification);
         }
 
         return $this;
