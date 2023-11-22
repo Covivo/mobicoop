@@ -21,12 +21,11 @@
  *    LICENSE
  */
 
-namespace App\Gratuity\Entity;
+namespace App\Gratuity\Resource;
 
-use App\Geography\Entity\Territory;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,9 +33,38 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
- * @ORM\Entity
- *
- * @ORM\HasLifecycleCallbacks
+ * @ApiResource(
+ *     attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readGratuity"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeGratuity"}}
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *              "security"="is_granted('gratuity_list',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Get the Gratuity Campaigns list of the instance",
+ *                  "tags"={"Gratuity"}
+ *               }
+ *           },
+ *           "post"={
+ *             "security_post_denormalize"="is_granted('gratuity_create',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Create a Gratuity Campaign",
+ *                  "tags"={"Gratuity"}
+ *              }
+ *           },
+ *       },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('gratuity_read',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Get a Gratuity Campaign",
+ *                  "tags"={"Gratuity"}
+ *              }
+ *          }
+ *      }
+ * )
  */
 class GratuityCampaign
 {
@@ -48,11 +76,7 @@ class GratuityCampaign
     /**
      * @var int The Campaign's id
      *
-     * @ORM\Id
-     *
-     * @ORM\GeneratedValue
-     *
-     * @ORM\Column(type="integer")
+     * @ApiProperty(identifier=true)
      *
      * @Groups({"readGratuity", "writeGratuity"})
      *
@@ -63,18 +87,12 @@ class GratuityCampaign
     /**
      * @var User The User who created the Campaign
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="gratuityCampaigns")
-     *
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     *
      * @Groups({"readGratuity", "writeGratuity"})
      */
     private $user;
 
     /**
-     * @var null|ArrayCollection the territories of this campaign (can be null, it means that this campaign apply everywhere)
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     * @var null|array the territories of this campaign (can be null or empty, it means that this campaign apply everywhere)
      *
      * @Groups({"readGratuity", "writeGratuity"})
      */
@@ -85,8 +103,6 @@ class GratuityCampaign
      *
      * @Assert\NotBlank
      *
-     * @ORM\Column(type="string", length=255)
-     *
      * @Groups({"readGratuity", "writeGratuity"})
      */
     private $name;
@@ -96,16 +112,12 @@ class GratuityCampaign
      *
      * @Assert\NotBlank
      *
-     * @ORM\Column(type="string", length=255)
-     *
      * @Groups({"readGratuity", "writeGratuity"})
      */
     private $template;
 
     /**
      * @var string Campaign's status
-     *
-     * @ORM\Column(type="integer", length=255)
      *
      * @Groups({"readGratuity", "writeGratuity"})
      */
@@ -116,8 +128,6 @@ class GratuityCampaign
      *
      * @Assert\NotBlank
      *
-     * @ORM\Column(type="datetime")
-     *
      * @Groups({"readGratuity", "writeGratuity"})
      */
     private $startDate;
@@ -127,8 +137,6 @@ class GratuityCampaign
      *
      * @Assert\NotBlank
      *
-     * @ORM\Column(type="datetime")
-     *
      * @Groups({"readGratuity", "writeGratuity"})
      */
     private $endDate;
@@ -136,16 +144,12 @@ class GratuityCampaign
     /**
      * @var \DateTimeInterface creation date of the user
      *
-     * @ORM\Column(type="datetime")
-     *
      * @Groups({"readGratuity"})
      */
     private $createdDate;
 
     /**
      * @var \DateTimeInterface validation date of the user
-     *
-     * @ORM\Column(type="datetime", nullable=true)
      *
      * @Groups({"readGratuity"})
      */
@@ -157,7 +161,7 @@ class GratuityCampaign
         if ($id) {
             $this->id = $id;
         }
-        $this->territories = new ArrayCollection();
+        $this->territories = [];
     }
 
     public function getId(): ?int
@@ -186,23 +190,12 @@ class GratuityCampaign
 
     public function getTerritories()
     {
-        return $this->territories->getValues();
+        return $this->territories;
     }
 
-    public function addTerritory(Territory $territory): self
+    public function setTerritories(?array $territories): self
     {
-        if (!$this->territories->contains($territory)) {
-            $this->territories[] = $territory;
-        }
-
-        return $this;
-    }
-
-    public function removeTerritory(Territory $territory): self
-    {
-        if ($this->territories->contains($territory)) {
-            $this->territories->removeElement($territory);
-        }
+        $this->territories = $territories;
 
         return $this;
     }
@@ -289,27 +282,5 @@ class GratuityCampaign
         $this->updatedDate = $updatedDate;
 
         return $this;
-    }
-
-    // DOCTRINE EVENTS
-
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \DateTime());
-    }
-
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
-    {
-        $this->setUpdatedDate(new \DateTime());
     }
 }
