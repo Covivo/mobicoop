@@ -34,8 +34,6 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Gamification : A Badge that can be won/achieved by a User.
- *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  * @ORM\Entity
@@ -52,16 +50,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get"={
  *              "security"="is_granted('gratuity_list',object)",
  *              "swagger_context" = {
- *                  "summary"="Get the badges list of the instance",
+ *                  "summary"="Get the Gratuity Campaigns list of the instance",
  *                  "tags"={"Gratuity"}
  *               }
- *           }
- *      },
+ *           },
+ *           "post"={
+ *             "security_post_denormalize"="is_granted('gratuity_create',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Create a Gratuity Campaign",
+ *                  "tags"={"Gratuity"}
+ *              }
+ *           },
+ *       },
  *      itemOperations={
  *          "get"={
  *              "security"="is_granted('gratuity_read',object)",
  *              "swagger_context" = {
- *                  "summary"="Get a Badge",
+ *                  "summary"="Get a Gratuity Campaign",
  *                  "tags"={"Gratuity"}
  *              }
  *          }
