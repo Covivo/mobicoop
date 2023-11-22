@@ -22,6 +22,7 @@
 
 namespace App\Serializer;
 
+use App\Gratuity\Repository\GratuityCampaignRepository;
 use App\User\Entity\User;
 
 /**
@@ -29,7 +30,14 @@ use App\User\Entity\User;
  */
 class GratuityNotificationNormalizer
 {
+    private $_gratuityCampaignRepository;
     private $_user;
+    private $_data;
+
+    public function __construct(GratuityCampaignRepository $gratuityCampaignRepository)
+    {
+        $this->_gratuityCampaignRepository = $gratuityCampaignRepository;
+    }
 
     public function setUser(User $user): self
     {
@@ -38,8 +46,29 @@ class GratuityNotificationNormalizer
         return $this;
     }
 
-    public function normalize()
+    public function normalize(array $data): array
     {
-        echo 'normalize';
+        if (!$this->_user->hasGratuity()) {
+            return $data;
+        }
+
+        $this->_data = $data;
+        $this->_setPendingGamificationNotification();
+
+        return $this->_data;
+    }
+
+    private function _setPendingGamificationNotification()
+    {
+        $pendingNotifications = $this->_getPendingGamificationNotification();
+        if (count($pendingNotifications) > 0) {
+            echo 'yo';
+            $this->_data['gratuityNotifications'] = $this->_getPendingGamificationNotification();
+        }
+    }
+
+    private function _getPendingGamificationNotification()
+    {
+        return $this->_gratuityCampaignRepository->findPendingForUser($this->_user);
     }
 }

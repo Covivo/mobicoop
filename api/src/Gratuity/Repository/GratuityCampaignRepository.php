@@ -24,6 +24,8 @@
 namespace App\Gratuity\Repository;
 
 use App\Gratuity\Entity\GratuityCampaign;
+use App\Gratuity\Entity\GratuityNotification;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -35,33 +37,57 @@ class GratuityCampaignRepository
     /**
      * @var EntityRepository
      */
-    private $repository;
+    private $_repository;
 
-    private $entityManager;
+    private $_entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(GratuityCampaign::class);
+        $this->_entityManager = $entityManager;
+        $this->_repository = $entityManager->getRepository(GratuityCampaign::class);
     }
 
     public function find(int $id): ?GratuityCampaign
     {
-        return $this->repository->find($id);
+        return $this->_repository->find($id);
     }
 
     public function findAll(): ?array
     {
-        return $this->repository->findAll();
+        return $this->_repository->findAll();
     }
 
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
-        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+        return $this->_repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
     public function findOneBy(array $criteria): ?GratuityCampaign
     {
-        return $this->repository->findOneBy($criteria);
+        return $this->_repository->findOneBy($criteria);
+    }
+
+    public function findPendingForUser(User $user): array
+    {
+        $gratuityNotificationRepository = $this->_entityManager->getRepository(GratuityNotification::class);
+        $gratuityNotificationsAlreadySeen = $gratuityNotificationRepository->createQueryBuilder('gn')
+            ->select('distinct(gc.id)')
+            ->join('gn.gratuityCampaign', 'gc')
+            ->where('gn.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+        ;
+        $mergedGratuityNotificationsAlreadySeen = [];
+        if (count($gratuityNotificationsAlreadySeen) > 0) {
+            $mergedGratuityNotificationsAlreadySeen = call_user_func_array('array_merge', $gratuityNotificationsAlreadySeen);
+        }
+
+        $query = $this->_repository->createQueryBuilder('gc');
+        if (count($mergedGratuityNotificationsAlreadySeen) > 0) {
+            $query->where($query->expr()->notIn('gc.id', $mergedGratuityNotificationsAlreadySeen));
+        }
+
+        return $query->getQuery()->getResult();
     }
 }

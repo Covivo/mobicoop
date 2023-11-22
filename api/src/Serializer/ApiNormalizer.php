@@ -146,7 +146,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         }
         if (true == $this->gratuityActive && $object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
             $this->gratuityNotificationNormalizer->setUser($this->security->getUser());
-            $this->gratuityNotificationNormalizer->normalize();
+            $data = $this->gratuityNotificationNormalizer->normalize($data);
         }
         // We check if there is some gamificationNotifications entities in waiting for the current User
         if (true == $this->gamificationActive && $object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
