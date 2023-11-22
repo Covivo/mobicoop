@@ -62,8 +62,13 @@ class GratuityNotificationNormalizer
     {
         $pendingNotifications = $this->_getPendingGamificationNotification();
         if (count($pendingNotifications) > 0) {
-            echo 'yo';
-            $this->_data['gratuityNotifications'] = $this->_getPendingGamificationNotification();
+            $this->_data['gratuityNotifications'] = [];
+            foreach ($pendingNotifications as $pendingNotification) {
+                $notification = [];
+                $notification['name'] = $pendingNotification->getName();
+                $notification['template'] = $pendingNotification->getTemplate();
+                $this->_data['gratuityNotifications'][] = $notification;
+            }
         }
     }
 
