@@ -84,6 +84,7 @@ class GratuityCampaignRepository
         $query = $this->_repository->createQueryBuilder('gc')
             ->where('gc.startDate <= :today')
             ->andWhere('gc.endDate >= :today')
+            ->andWhere('gc.status = :active')
         ;
         if (count($mergedGratuityNotificationsAlreadySeen) > 0) {
             $query->andWhere($query->expr()->notIn('gc.id', $mergedGratuityNotificationsAlreadySeen));
@@ -95,6 +96,7 @@ class GratuityCampaignRepository
         }
 
         $query->setParameter('today', $today->format('Y-m-d H:i:s'));
+        $query->setParameter('active', GratuityCampaign::STATUS_ACTIVE);
 
         return $query->getQuery()->getResult();
     }
