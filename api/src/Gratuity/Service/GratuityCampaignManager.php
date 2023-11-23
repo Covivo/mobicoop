@@ -29,6 +29,7 @@ use App\Gratuity\Entity\GratuityNotification;
 use App\Gratuity\Repository\GratuityCampaignNotificationRepository;
 use App\Gratuity\Repository\GratuityCampaignRepository;
 use App\Gratuity\Resource\GratuityCampaign;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -42,24 +43,34 @@ class GratuityCampaignManager
     private $_gratuityCampaignRepository;
     private $_gratuityCampaignNotificationRepository;
 
+    /**
+     * @var User
+     */
     private $_user;
+    private $_gratuityCampaignActive;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         Security $security,
         TerritoryRepository $territoryRepository,
         GratuityCampaignRepository $gratuityCampaignRepository,
-        GratuityCampaignNotificationRepository $gratuityCampaignNotificationRepository
+        GratuityCampaignNotificationRepository $gratuityCampaignNotificationRepository,
+        bool $gratuityCampaignActive
     ) {
         $this->_entityManager = $entityManager;
         $this->_territoryRepository = $territoryRepository;
         $this->_gratuityCampaignRepository = $gratuityCampaignRepository;
         $this->_gratuityCampaignNotificationRepository = $gratuityCampaignNotificationRepository;
         $this->_user = $security->getToken()->getUser();
+        $this->_gratuityCampaignActive = $gratuityCampaignActive;
     }
 
     public function createGratuityCampaign(GratuityCampaign $gratuityCampaign): ?GratuityCampaign
     {
+        if (!$this->_isGratuityActive()) {
+            return null;
+        }
+
         $entity = $this->_buildEntityGratuityCampaign($gratuityCampaign);
         $entity->setUser($this->_user);
         $entity->setStatus(EntityGratuityCampaign::STATUS_ACTIVE);
@@ -72,6 +83,10 @@ class GratuityCampaignManager
 
     public function getGratuityCampaign(int $gratuityCampaignId): ?GratuityCampaign
     {
+        if (!$this->_isGratuityActive()) {
+            return null;
+        }
+
         if ($entity = $this->_gratuityCampaignRepository->find($gratuityCampaignId)) {
             return $this->_buildGratuityCampaignFromEntity($entity);
         }
@@ -84,6 +99,10 @@ class GratuityCampaignManager
      */
     public function getGratuityCampaigns(): ?array
     {
+        if (!$this->_isGratuityActive()) {
+            return null;
+        }
+
         $campaigns = [];
         if ($entities = $this->_gratuityCampaignRepository->findAll()) {
             foreach ($entities as $entity) {
@@ -94,8 +113,12 @@ class GratuityCampaignManager
         return $campaigns;
     }
 
-    public function tagAsNotified(int $campaignId)
+    public function tagAsNotified(int $campaignId): ?GratuityCampaign
     {
+        if (!$this->_isGratuityActive()) {
+            return null;
+        }
+
         if ($entity = $this->_gratuityCampaignRepository->find($campaignId)) {
             if (!$this->_checkAlreadyTaggedAsNotified($entity)) {
                 $notification = new GratuityNotification();
@@ -114,6 +137,11 @@ class GratuityCampaignManager
         }
 
         return null;
+    }
+
+    private function _isGratuityActive()
+    {
+        return $this->_user->hasGratuity() && $this->_gratuityCampaignActive;
     }
 
     private function _checkAlreadyTaggedAsNotified(EntityGratuityCampaign $gratuityCampaign): bool
