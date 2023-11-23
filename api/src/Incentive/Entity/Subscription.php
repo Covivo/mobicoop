@@ -37,7 +37,7 @@ abstract class Subscription
     /**
      * The mobConnect Subscription data.
      *
-     * @Groups({"readSubscription"})
+     * @Groups({"readAdminSubscription"})
      */
     private $moBSubscription;
 

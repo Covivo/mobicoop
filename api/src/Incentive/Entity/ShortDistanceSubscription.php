@@ -27,7 +27,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSubscription"}, "enable_max_depth"=true},
+ *          "normalization_context"={
+ *              "groups"={"readSubscription","readAdminSubscription"},
+ *              "enable_max_depth"=true
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -35,21 +38,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "path"="/eec/sd-subscriptions/{id}",
  *              "controller": SdSubscriptionGet::class,
  *              "security"="is_granted('admin_eec',object)",
- *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false}
+ *              "normalization_context"={"groups"={"readSubscription", "readAdminSubscription"}, "skip_null_values"=false}
  *          },
  *          "commit"={
  *              "method"="PUT",
  *              "path"="/eec/sd-subscriptions/{id}/commit",
  *              "controller"=SdSubscriptionCommit::class,
  *              "security"="is_granted('admin_eec',object)",
- *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false}
+ *              "normalization_context"={"groups"={"readSubscription", "readAdminSubscription"}, "skip_null_values"=false}
  *          },
  *          "update"={
  *              "method"="PUT",
  *              "path"="/eec/sd-subscriptions/{id}/update",
  *              "controller"=SdSubscriptionUpdate::class,
  *              "security"="is_granted('admin_eec',object)",
- *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false}
+ *              "normalization_context"={"groups"={"readSubscription", "readAdminSubscription"}, "skip_null_values"=false}
  *          }
  *      }
  * )

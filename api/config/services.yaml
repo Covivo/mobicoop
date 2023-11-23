@@ -846,6 +846,10 @@ services:
     tags:
       - controller.service_arguments
 
+  App\Incentive\Controller\Subscription\UserSubscriptions:
+    tags:
+      - controller.service_arguments
+
   App\Incentive\Controller\TimestampController:
     tags:
       - controller.service_arguments

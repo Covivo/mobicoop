@@ -189,6 +189,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_subscriptions = new CeeSubscriptions($this->_driver->getId());
 
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
+
         if (!is_null($shortDistanceSubscription)) {
             $shortDistanceSubscription->setVersion();
             $this->_subscriptions->setShortDistanceSubscription($shortDistanceSubscription);
@@ -214,7 +215,7 @@ class SubscriptionManager extends MobConnectManager
 
         $this->_computeShortDistance();
 
-        return [$this->_subscriptions];
+        return $this->_subscriptions;
     }
 
     /**
