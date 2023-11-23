@@ -72,15 +72,14 @@ class GratuityCampaignRepository
 
     public function findPendingForUser(User $user): array
     {
-        if (is_null($user->getHomeAddress())) {
+        $today = new \DateTime('now');
+
+        $territories = $this->_getTerritoriesUser($user);
+        if (0 == count($territories)) {
             return [];
         }
 
-        $today = new \DateTime('now');
-
         $mergedGratuityNotificationsAlreadySeen = $this->_getAlreadySeenGratuityNotificationForUser($user);
-
-        $territories = $this->_getHomeAddressTerritoriesForUser($user);
 
         $query = $this->_repository->createQueryBuilder('gc')
             ->where('gc.startDate <= :today')
@@ -98,6 +97,15 @@ class GratuityCampaignRepository
         $query->setParameter('today', $today->format('Y-m-d H:i:s'));
 
         return $query->getQuery()->getResult();
+    }
+
+    private function _getTerritoriesUser(User $user)
+    {
+        $territories = [];
+
+        $homeAddressTerritories = $this->_getHomeAddressTerritoriesForUser($user);
+
+        return array_unique(array_merge($territories, $homeAddressTerritories));
     }
 
     private function _getHomeAddressTerritoriesForUser(User $user)
