@@ -151,6 +151,22 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * Set, for a user the mobConnect subscription data.
+     */
+    public function getUserMobConnectSubscription(User $user): User
+    {
+        if (!is_null($user->getLongDistanceSubscription())) {
+            $user->setLongDistanceSubscription($this->getMobConnectSubscription($user->getLongDistanceSubscription()));
+        }
+
+        if (!is_null($user->getShortDistanceSubscription())) {
+            $user->setShortDistanceSubscription($this->getMobConnectSubscription($user->getShortDistanceSubscription()));
+        }
+
+        return $user;
+    }
+
+    /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      *
      * @return LongDistanceSubscription|ShortDistanceSubscription

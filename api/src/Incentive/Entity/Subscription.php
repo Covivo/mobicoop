@@ -35,6 +35,36 @@ abstract class Subscription
     protected $versionStatus;
 
     /**
+     * Journeys which have not been added to the subscription and which could be (compliant with the CEE standard).
+     *
+     * @var array
+     *
+     * @Groups({"readAdminSubscription"})
+     */
+    protected $additionalJourneys = [];
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $hasIncentiveToken = false;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $hasCommitToken = false;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $hasHonorCertificateToken = false;
+
+    /**
      * The mobConnect Subscription data.
      *
      * @Groups({"readAdminSubscription"})
@@ -334,6 +364,24 @@ abstract class Subscription
     public function setMoBSubscription($moBSubscription): self
     {
         $this->moBSubscription = $moBSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Get undocumented variable.
+     */
+    public function getAdditionalJourneys(): array
+    {
+        return $this->additionalJourneys;
+    }
+
+    /**
+     * Set undocumented variable.
+     */
+    public function setAdditionalJourneys(array $additionalJourneys): self
+    {
+        $this->additionalJourneys = $additionalJourneys;
 
         return $this;
     }

@@ -437,6 +437,25 @@ class JourneyManager extends MobConnectManager
         $this->_invalidateJourney($journey);
     }
 
+    public function getAdditionalJourneys(User $user): User
+    {
+        $this->setDriver($user);
+
+        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
+            $this->getDriver()->getLongDistanceSubscription()->setAdditionalJourneys(
+                $this->_carpoolItemRepository->findUserEECEligibleItem($this->getDriver())
+            );
+        }
+
+        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
+            $this->getDriver()->getShortDistanceSubscription()->setAdditionalJourneys(
+                $this->_carpoolProofRepository->findUserCEEEligibleProof($this->getDriver())
+            );
+        }
+
+        return $this->getDriver();
+    }
+
     /**
      * Returns the CEE journey if the proof of carpooling matches it.
      *

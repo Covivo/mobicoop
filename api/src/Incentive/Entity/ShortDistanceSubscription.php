@@ -371,27 +371,6 @@ class ShortDistanceSubscription extends Subscription
     private $bonusStatus = SubscriptionManager::BONUS_STATUS_PENDING;
 
     /**
-     * @var bool
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $hasIncentiveToken = false;
-
-    /**
-     * @var bool
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $hasCommitToken = false;
-
-    /**
-     * @var bool
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $hasHonorCertificateToken = false;
-
-    /**
      * The moBconnet HTTP request log.
      *
      * @var ArrayCollection
