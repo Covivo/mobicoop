@@ -107,7 +107,10 @@ class GratuityCampaignManager
                 $this->_entityManager->flush();
             }
 
-            return $this->_buildGratuityCampaignFromEntity($entity);
+            $gratuityCampaign = $this->_buildGratuityCampaignFromEntity($entity);
+            $gratuityCampaign->setNotifiedForThisUser(true);
+
+            return $gratuityCampaign;
         }
 
         return null;
