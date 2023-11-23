@@ -23,6 +23,7 @@
 
 namespace App\Gratuity\Repository;
 
+use App\Geography\Repository\TerritoryRepository;
 use App\Gratuity\Entity\GratuityCampaign;
 use App\Gratuity\Entity\GratuityNotification;
 use App\User\Entity\User;
@@ -40,11 +41,13 @@ class GratuityCampaignRepository
     private $_repository;
 
     private $_entityManager;
+    private $_territoryRepository;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository)
     {
         $this->_entityManager = $entityManager;
         $this->_repository = $entityManager->getRepository(GratuityCampaign::class);
+        $this->_territoryRepository = $territoryRepository;
     }
 
     public function find(int $id): ?GratuityCampaign
@@ -69,6 +72,49 @@ class GratuityCampaignRepository
 
     public function findPendingForUser(User $user): array
     {
+        if (is_null($user->getHomeAddress())) {
+            return [];
+        }
+
+        $today = new \DateTime('now');
+
+        $mergedGratuityNotificationsAlreadySeen = $this->_getAlreadySeenGratuityNotificationForUser($user);
+
+        $territories = $this->_getHomeAddressTerritoriesForUser($user);
+
+        $query = $this->_repository->createQueryBuilder('gc')
+            ->where('gc.startDate <= :today')
+            ->andWhere('gc.endDate >= :today')
+        ;
+        if (count($mergedGratuityNotificationsAlreadySeen) > 0) {
+            $query->andWhere($query->expr()->notIn('gc.id', $mergedGratuityNotificationsAlreadySeen));
+        }
+        if (count($territories) > 0) {
+            $query->leftJoin('gc.territories', 'gct')
+                ->andWhere('gct.id is null OR '.$query->expr()->in('gct.id', $territories))
+            ;
+        }
+
+        $query->setParameter('today', $today->format('Y-m-d H:i:s'));
+
+        return $query->getQuery()->getResult();
+    }
+
+    private function _getHomeAddressTerritoriesForUser(User $user)
+    {
+        $territories = [];
+        $homeAddress = $user->getHomeAddress();
+        if (!is_null($homeAddress)) {
+            foreach ($homeAddress->getTerritories() as $territory) {
+                $territories[] = $territory->getId();
+            }
+        }
+
+        return $territories;
+    }
+
+    private function _getAlreadySeenGratuityNotificationForUser(User $user)
+    {
         $today = new \DateTime('now');
 
         $gratuityNotificationRepository = $this->_entityManager->getRepository(GratuityNotification::class);
@@ -88,16 +134,6 @@ class GratuityCampaignRepository
             $mergedGratuityNotificationsAlreadySeen = call_user_func_array('array_merge', $gratuityNotificationsAlreadySeen);
         }
 
-        $query = $this->_repository->createQueryBuilder('gc')
-            ->where('gc.startDate <= :today')
-            ->andWhere('gc.endDate >= :today')
-        ;
-        if (count($mergedGratuityNotificationsAlreadySeen) > 0) {
-            $query->andWhere($query->expr()->notIn('gc.id', $mergedGratuityNotificationsAlreadySeen));
-        }
-
-        $query->setParameter('today', $today->format('Y-m-d H:i:s'));
-
-        return $query->getQuery()->getResult();
+        return $mergedGratuityNotificationsAlreadySeen;
     }
 }
