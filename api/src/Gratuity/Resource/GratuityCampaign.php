@@ -62,6 +62,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "summary"="Get a Gratuity Campaign",
  *                  "tags"={"Gratuity"}
  *              }
+ *          },
+ *          "tagAsNotified"={
+ *              "method"="GET",
+ *              "path"="/gratuity_campaigns/{id}/tagAsNotified",
+ *              "security"="is_granted('gratuity_read',object)",
+ *              "normalization_context"={"groups"={"readGratuity"}},
+ *              "swagger_context" = {
+ *                  "summary"="Tag a Gratuity Campaign as notified to the User",
+ *                  "tags"={"Gratuity"}
+ *              }
  *          }
  *      }
  * )

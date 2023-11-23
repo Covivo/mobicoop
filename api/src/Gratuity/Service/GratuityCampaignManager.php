@@ -89,6 +89,15 @@ class GratuityCampaignManager
         return $campaigns;
     }
 
+    public function tagAsNotified(int $campaignId)
+    {
+        if ($entity = $this->_gratuityCampaignRepository->find($campaignId)) {
+            return $this->_buildGratuityCampaignFromEntity($entity);
+        }
+
+        return null;
+    }
+
     private function _buildEntityGratuityCampaign(GratuityCampaign $gratuityCampaign): EntityGratuityCampaign
     {
         $entity = new EntityGratuityCampaign();
