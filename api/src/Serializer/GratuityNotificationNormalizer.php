@@ -58,16 +58,23 @@ class GratuityNotificationNormalizer
         return $this->_data;
     }
 
+    private function _isEligible(): bool
+    {
+        return true;
+    }
+
     private function _setPendingGamificationNotification()
     {
         $pendingNotifications = $this->_getPendingGamificationNotification();
         if (count($pendingNotifications) > 0) {
             $this->_data['gratuityNotifications'] = [];
             foreach ($pendingNotifications as $pendingNotification) {
-                $notification = [];
-                $notification['name'] = $pendingNotification->getName();
-                $notification['template'] = $pendingNotification->getTemplate();
-                $this->_data['gratuityNotifications'][] = $notification;
+                if ($this->_isEligible()) {
+                    $notification = [];
+                    $notification['name'] = $pendingNotification->getName();
+                    $notification['template'] = $pendingNotification->getTemplate();
+                    $this->_data['gratuityNotifications'][] = $notification;
+                }
             }
         }
     }

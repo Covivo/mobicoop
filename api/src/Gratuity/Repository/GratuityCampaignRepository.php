@@ -69,12 +69,17 @@ class GratuityCampaignRepository
 
     public function findPendingForUser(User $user): array
     {
+        $today = new \DateTime('now');
+
         $gratuityNotificationRepository = $this->_entityManager->getRepository(GratuityNotification::class);
         $gratuityNotificationsAlreadySeen = $gratuityNotificationRepository->createQueryBuilder('gn')
             ->select('distinct(gc.id)')
             ->join('gn.gratuityCampaign', 'gc')
             ->where('gn.user = :user')
+            ->andWhere('gc.startDate <= :today')
+            ->andWhere('gc.endDate >= :today')
             ->setParameter('user', $user)
+            ->setParameter('today', $today->format('Y-m-d H:i:s'))
             ->getQuery()
             ->getResult()
         ;
@@ -83,10 +88,15 @@ class GratuityCampaignRepository
             $mergedGratuityNotificationsAlreadySeen = call_user_func_array('array_merge', $gratuityNotificationsAlreadySeen);
         }
 
-        $query = $this->_repository->createQueryBuilder('gc');
+        $query = $this->_repository->createQueryBuilder('gc')
+            ->where('gc.startDate <= :today')
+            ->andWhere('gc.endDate >= :today')
+        ;
         if (count($mergedGratuityNotificationsAlreadySeen) > 0) {
-            $query->where($query->expr()->notIn('gc.id', $mergedGratuityNotificationsAlreadySeen));
+            $query->andWhere($query->expr()->notIn('gc.id', $mergedGratuityNotificationsAlreadySeen));
         }
+
+        $query->setParameter('today', $today->format('Y-m-d H:i:s'));
 
         return $query->getQuery()->getResult();
     }
