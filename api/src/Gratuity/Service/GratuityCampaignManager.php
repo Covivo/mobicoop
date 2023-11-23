@@ -25,6 +25,8 @@ namespace App\Gratuity\Service;
 
 use App\Geography\Repository\TerritoryRepository;
 use App\Gratuity\Entity\GratuityCampaign as EntityGratuityCampaign;
+use App\Gratuity\Entity\GratuityNotification;
+use App\Gratuity\Repository\GratuityCampaignNotificationRepository;
 use App\Gratuity\Repository\GratuityCampaignRepository;
 use App\Gratuity\Resource\GratuityCampaign;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,6 +40,7 @@ class GratuityCampaignManager
     private $_entityManager;
     private $_territoryRepository;
     private $_gratuityCampaignRepository;
+    private $_gratuityCampaignNotificationRepository;
 
     private $_user;
 
@@ -45,11 +48,13 @@ class GratuityCampaignManager
         EntityManagerInterface $entityManager,
         Security $security,
         TerritoryRepository $territoryRepository,
-        GratuityCampaignRepository $gratuityCampaignRepository
+        GratuityCampaignRepository $gratuityCampaignRepository,
+        GratuityCampaignNotificationRepository $gratuityCampaignNotificationRepository
     ) {
         $this->_entityManager = $entityManager;
         $this->_territoryRepository = $territoryRepository;
         $this->_gratuityCampaignRepository = $gratuityCampaignRepository;
+        $this->_gratuityCampaignNotificationRepository = $gratuityCampaignNotificationRepository;
         $this->_user = $security->getToken()->getUser();
     }
 
@@ -92,15 +97,31 @@ class GratuityCampaignManager
     public function tagAsNotified(int $campaignId)
     {
         if ($entity = $this->_gratuityCampaignRepository->find($campaignId)) {
+            if (!$this->_checkAlreadyTaggedAsNotified($entity)) {
+                $notification = new GratuityNotification();
+                $notification->setUser($this->_user);
+                $notification->setGratuityCampaign($entity);
+                $entity->addGratuityNotification($notification);
+
+                $this->_entityManager->persist($entity);
+                $this->_entityManager->flush();
+            }
+
             return $this->_buildGratuityCampaignFromEntity($entity);
         }
 
         return null;
     }
 
+    private function _checkAlreadyTaggedAsNotified(EntityGratuityCampaign $gratuityCampaign): bool
+    {
+        return 0 < count($this->_gratuityCampaignNotificationRepository->findBy(['user' => $this->_user, 'gratuityCampaign' => $gratuityCampaign]));
+    }
+
     private function _buildEntityGratuityCampaign(GratuityCampaign $gratuityCampaign): EntityGratuityCampaign
     {
         $entity = new EntityGratuityCampaign();
+        $entity->setId($gratuityCampaign->getId());
         $entity->setName($gratuityCampaign->getName());
         $entity->setUser($gratuityCampaign->getUser());
         $entity->setTemplate($gratuityCampaign->getTemplate());
@@ -120,6 +141,7 @@ class GratuityCampaignManager
     private function _buildGratuityCampaignFromEntity(EntityGratuityCampaign $entity): GratuityCampaign
     {
         $gratuityCampaign = new GratuityCampaign();
+        $gratuityCampaign->setId($entity->getId());
         $gratuityCampaign->setName($entity->getName());
         $gratuityCampaign->setUser($entity->getUser());
         $gratuityCampaign->setTemplate($entity->getTemplate());

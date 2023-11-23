@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readGratuity"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readGratuity", "readGratuityNotified"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeGratuity"}}
  *     },
  *     collectionOperations={
@@ -67,7 +67,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "method"="GET",
  *              "path"="/gratuity_campaigns/{id}/tagAsNotified",
  *              "security"="is_granted('gratuity_read',object)",
- *              "normalization_context"={"groups"={"readGratuity"}},
+ *              "normalization_context"={"groups"={"readGratuityNotified"}},
  *              "swagger_context" = {
  *                  "summary"="Tag a Gratuity Campaign as notified to the User",
  *                  "tags"={"Gratuity"}
@@ -85,7 +85,7 @@ class GratuityCampaign
      *
      * @ApiProperty(identifier=true)
      *
-     * @Groups({"readGratuity", "writeGratuity"})
+     * @Groups({"readGratuity", "writeGratuity", "readGratuityNotified"})
      *
      * @MaxDepth(1)
      */
@@ -161,6 +161,13 @@ class GratuityCampaign
      * @Groups({"readGratuity"})
      */
     private $updatedDate;
+
+    /**
+     * @var bool true if this Campaign has been notified to the User making the call
+     *
+     * @Groups({"readGratuityNotified"})
+     */
+    private $notifiedForThisUser;
 
     public function __construct($id = null)
     {
@@ -294,6 +301,18 @@ class GratuityCampaign
     public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function isNotifiedForThisUser(): ?bool
+    {
+        return $this->notifiedForThisUser;
+    }
+
+    public function setNotifiedForThisUser(?bool $updatedDate): self
+    {
+        $this->notifiedForThisUser = $updatedDate;
 
         return $this;
     }
