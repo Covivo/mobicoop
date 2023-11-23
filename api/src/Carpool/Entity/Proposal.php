@@ -48,7 +48,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910).
  *
  * @ORM\Entity()
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -75,6 +77,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})
  * @ApiFilter(BooleanFilter::class, properties={"private"})
  * @ApiFilter(DateFilter::class, properties={"criteria.fromDate"})
@@ -91,8 +94,11 @@ class Proposal
      * @var int the id of this proposal
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"read","results","threads","thread"})
      */
     private $id;
@@ -101,7 +107,9 @@ class Proposal
      * @var int the proposal type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"read","results","write","threads","thread"})
      */
     private $type;
@@ -110,6 +118,7 @@ class Proposal
      * @var string a comment about the proposal
      *
      * @ORM\Column(type="text", nullable=true)
+     *
      * @Groups({"read","write","results","threads","thread"})
      */
     private $comment;
@@ -119,6 +128,7 @@ class Proposal
      *           An exposed proposal is a search proposal that can be publicly visible via an url link.
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $exposed;
@@ -127,6 +137,7 @@ class Proposal
      * @var null|string external ID : used to mask the real id for external requests
      *
      * @ORM\Column(type="string", length=20, nullable=true)
+     *
      * @Groups({"read","write","results","threads","thread"})
      */
     private $externalId;
@@ -135,6 +146,7 @@ class Proposal
      * @var bool proposal well suited for SEO optimization
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $seo;
@@ -144,6 +156,7 @@ class Proposal
      *           A dynamic proposal is a real-time proposal : used for dynamic carpooling.
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $dynamic;
@@ -155,6 +168,7 @@ class Proposal
      *           An inactive ad can still be updated, to keep the positions till the destination.
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $active;
@@ -165,6 +179,7 @@ class Proposal
      *           An ad is set to finished when it is manually stopped, or when the destination is reached.
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $finished;
@@ -174,6 +189,7 @@ class Proposal
      *           A private proposal can't be the found in the result of a search.
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $private;
@@ -183,6 +199,7 @@ class Proposal
      *           A paused proposal can't be the found in the result of a search, and can be unpaused at any moment.
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write","thread"})
      */
     private $paused;
@@ -199,6 +216,7 @@ class Proposal
      * @var \DateTimeInterface creation date of the proposal
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"read","threads","thread"})
      */
     private $createdDate;
@@ -207,6 +225,7 @@ class Proposal
      * @var \DateTimeInterface updated date of the proposal
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","threads","thread"})
      */
     private $updatedDate;
@@ -215,8 +234,11 @@ class Proposal
      * @var null|Proposal linked proposal for a round trip (return or outward journey)
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","results","write"})
+     *
      * @MaxDepth(1)
      */
     private $proposalLinked;
@@ -226,8 +248,11 @@ class Proposal
      *                Can be null for an anonymous search.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","results","write"})
+     *
      * @MaxDepth(1)
      */
     private $user;
@@ -236,8 +261,11 @@ class Proposal
      * @var null|User user that create the proposal for another user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposalsDelegate")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $userDelegate;
@@ -246,8 +274,11 @@ class Proposal
      * @var null|App app that create the user
      *
      * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"readUser","write"})
+     *
      * @MaxDepth(1)
      */
     private $appDelegate;
@@ -256,9 +287,13 @@ class Proposal
      * @var ArrayCollection the waypoints of the proposal
      *
      * @Assert\NotBlank
+     *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist"})
+     *
      * @ORM\OrderBy({"position" = "ASC"})
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $waypoints;
@@ -267,7 +302,9 @@ class Proposal
      * @var null|ArrayCollection the travel modes accepted if the proposal is a request
      *
      * @ORM\ManyToMany(targetEntity="\App\Travel\Entity\TravelMode")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $travelModes;
@@ -276,7 +313,9 @@ class Proposal
      * @var null|ArrayCollection the communities related to the proposal
      *
      * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community", inversedBy="proposals")
+     *
      * @Groups({"read","results","write"})
+     *
      * @MaxDepth(1)
      */
     private $communities;
@@ -285,7 +324,9 @@ class Proposal
      * @var null|ArrayCollection the matchings of the proposal (if proposal is a request)
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist"})
+     *
      * @Groups({"read","results"})
+     *
      * @MaxDepth(1)
      */
     private $matchingOffers;
@@ -294,7 +335,9 @@ class Proposal
      * @var null|ArrayCollection the matching of the proposal (if proposal is an offer)
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist"})
+     *
      * @Groups({"read","results"})
+     *
      * @MaxDepth(1)
      */
     private $matchingRequests;
@@ -308,9 +351,13 @@ class Proposal
      *               But it is not acceptable as a criteria can be related with other entities (ask and matching) so we would have multiple nullable foreign keys.
      *
      * @Assert\NotBlank
+     *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist"})
+     *
      * @ORM\JoinColumn(nullable=true)
+     *
      * @Groups({"read","results","write","thread"})
+     *
      * @MaxDepth(1)
      */
     private $criteria;
@@ -319,7 +366,9 @@ class Proposal
      * @var ArrayCollection the individual stops of the proposal
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist"})
+     *
      * @ORM\OrderBy({"position" = "ASC"})
+     *
      * @Groups({"read"})
      */
     private $individualStops;
@@ -328,7 +377,9 @@ class Proposal
      * @var null|ArrayCollection the notifications sent for the proposal
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="proposal", cascade={"persist"})
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $notifieds;
@@ -337,6 +388,7 @@ class Proposal
      * @var null|Matching the matching of the linked proposal (used for regular return trips)
      *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $matchingLinked;
@@ -345,6 +397,7 @@ class Proposal
      * @var null|Ask the ask of the linked proposal (used for regular return trips)
      *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $askLinked;
@@ -361,8 +414,11 @@ class Proposal
      * @var Event related for the proposal
      *
      * @ORM\ManyToOne(targetEntity="App\Event\Entity\Event", inversedBy="proposals")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $event;
@@ -371,6 +427,7 @@ class Proposal
      * @var ArrayCollection the last position given for dynamic carpooling (OneToMany instead of OneToOne for performance reasons => should be 'position' but handled as an ArrayCollection)
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist"})
+     *
      * @Groups({"read","results","write","thread"})
      */
     private $positions;
@@ -379,6 +436,7 @@ class Proposal
      * @var string The external origin of this proposal (i.e. for an RDEX request we store the public api key)
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $external;
@@ -387,8 +445,11 @@ class Proposal
      * @var Subject A Proposal can be linked to a specific Subject
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="proposals")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @MaxDepth(1)
+     *
      * @Groups({"read","write"})
      */
     private $subject;

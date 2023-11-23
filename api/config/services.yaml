@@ -775,26 +775,31 @@ services:
       $eventProvider: "%env(string:EVENT_PROVIDER)%"
 
   # INCENTIVE
-  App\Incentive\Command\ProofValidationCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:proof-validate",
-        }
+
 
   App\Incentive\Command\SubscriptionsVerificationCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscriptions-verification",
-        }
+      - { name: "console.command", command: "app:incentive:subscriptions-verification" }
 
   App\Incentive\Command\SubscriptionVerificationCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-verify",
-        }
+      - { name: "console.command", command: "app:incentive:subscription-verify" }
+
+  App\Incentive\Command\ProofInvalidateCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:proof-invalidate"}
+
+  App\Incentive\Command\SubscriptionCommitCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-commit"}
+
+  App\Incentive\Command\SubscriptionUpdateCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-update"}
+
+  App\Incentive\Command\UpdateTokenCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-tokens"}
 
   App\Incentive\Command\JourneyRecoveryCommand:
     tags:
@@ -802,12 +807,50 @@ services:
 
   App\Incentive\Command\SubscriptionTimestampsCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-timestamps",
-        }
+      - { name: "console.command", command: "app:incentive:subscription-timestamps" }
+      
+  App\Incentive\Command\SubscriptionTimestampsTokenCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-mobTimestampsToken" }
 
   App\Incentive\Controller\IncentivesController:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\EECTimestamps:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\LdSubscriptionCommit:
+    tags:
+      - controller.service_arguments  
+  
+  App\Incentive\Controller\Subscription\LdSubscriptionGet:
+    tags:
+      - controller.service_arguments
+
+
+  App\Incentive\Controller\Subscription\LdSubscriptionUpdate:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\SdSubscriptionCommit:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\SdSubscriptionGet:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\SdSubscriptionUpdate:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\UserSubscriptions:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\TimestampController:
     tags:
       - controller.service_arguments
 

@@ -13,6 +13,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Entity\Subscription;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\CeeSubscriptions;
@@ -128,7 +129,6 @@ class SubscriptionManager extends MobConnectManager
 
                 $this->_em->persist($longDistanceSubscription);
             }
-
         }
 
         if (
@@ -148,6 +148,34 @@ class SubscriptionManager extends MobConnectManager
         }
 
         $this->_em->flush();
+    }
+
+    /**
+     * Set, for a user the mobConnect subscription data.
+     */
+    public function getUserMobConnectSubscription(User $user): User
+    {
+        if (!is_null($user->getLongDistanceSubscription())) {
+            $user->setLongDistanceSubscription($this->getMobConnectSubscription($user->getLongDistanceSubscription()));
+        }
+
+        if (!is_null($user->getShortDistanceSubscription())) {
+            $user->setShortDistanceSubscription($this->getMobConnectSubscription($user->getShortDistanceSubscription()));
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     *
+     * @return LongDistanceSubscription|ShortDistanceSubscription
+     */
+    public function getMobConnectSubscription($subscription)
+    {
+        $this->setDriver($subscription->getUser());
+
+        return $subscription->setMoBSubscription(json_encode($this->getMobSubscription($subscription->getSubscriptionid())->getContent()));
     }
 
     public function getUserEECEligibility(User $user): EecEligibility
@@ -179,23 +207,31 @@ class SubscriptionManager extends MobConnectManager
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
 
         if (!is_null($shortDistanceSubscription)) {
+            $shortDistanceSubscription->setVersion();
+            $this->_subscriptions->setShortDistanceSubscription($shortDistanceSubscription);
+
             $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getCompliantJourneys());
+
             $this->_subscriptions->setShortDistanceSubscriptions($shortDistanceSubscriptions);
             $this->_subscriptions->setShortDistanceExpirationDate($shortDistanceSubscription->getExpirationDate());
         }
 
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
-
         if (!is_null($longDistanceSubscription)) {
+            $longDistanceSubscription->setVersion();
+            $this->_subscriptions->setLongDistanceSubscription($longDistanceSubscription);
+
             $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getCompliantJourneys());
 
             $this->_subscriptions->setLongDistanceSubscriptions($longDistanceSubscriptions);
             $this->_subscriptions->setLongDistanceExpirationDate($longDistanceSubscription->getExpirationDate());
         }
 
+        $this->_em->flush();
+
         $this->_computeShortDistance();
 
-        return [$this->_subscriptions];
+        return $this->_subscriptions;
     }
 
     /**
@@ -368,6 +404,20 @@ class SubscriptionManager extends MobConnectManager
         }
 
         $this->_em->flush();
+    }
+
+    public function updateTimestampTokens(User $user): User
+    {
+        $this->setDriver($user);
+
+        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
+            $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getLongDistanceSubscription());
+        }
+        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
+            $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getShortDistanceSubscription());
+        }
+
+        return $this->getDriver();
     }
 
     public function getSubscription(string $subscriptionId): MobConnectSubscriptionResponse

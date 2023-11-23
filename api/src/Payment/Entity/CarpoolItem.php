@@ -70,7 +70,7 @@ class CarpoolItem
      *
      * @ORM\Column(type="integer")
      *
-     * @Groups({"readExport"})
+     * @Groups({"readExport", "readSubscription"})
      *
      * @MaxDepth(1)
      */
