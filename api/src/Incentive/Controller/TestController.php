@@ -2,13 +2,14 @@
 
 namespace App\Incentive\Controller;
 
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Service\Manager\JourneyManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Incentive\Service\Validation\JourneyValidation;
-use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -57,11 +58,11 @@ class TestController extends AbstractController
     }
 
     /**
-     * @Route("/{carpoolPayment}")
+     * @Route("/{subscription}")
      */
-    public function test(CarpoolPayment $carpoolPayment)
+    public function test(ShortDistanceSubscription $subscription)
     {
-        $this->_journeyManager->receivingElectronicPayment($carpoolPayment);
+        return new JsonResponse($subscription);
 
         return new Response('Ok');
     }
