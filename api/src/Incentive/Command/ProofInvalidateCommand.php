@@ -20,10 +20,10 @@ class ProofInvalidateCommand extends EecCommand
     protected function configure()
     {
         $this
-            ->setName('app:incentive:subscription-commit')
-            ->setDescription('Commit manually a subscription.')
-            ->setHelp('From a Proposal or a CarpoolProof, manually commit a subscription.')
-            ->addOption('proof', null, InputOption::VALUE_REQUIRED, 'The subscription type')
+            ->setName('app:incentive:proof-invalidate')
+            ->setDescription('Invalidate manually a proof.')
+            ->setHelp('From its CarpoolProof ID, manually reset a subscription.')
+            ->addOption('proof', null, InputOption::VALUE_REQUIRED, 'The CarpoolProof ID')
         ;
     }
 
