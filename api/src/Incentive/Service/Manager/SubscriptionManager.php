@@ -231,7 +231,7 @@ class SubscriptionManager extends MobConnectManager
 
         $this->_computeShortDistance();
 
-        return $this->_subscriptions;
+        return [$this->_subscriptions];
     }
 
     /**
