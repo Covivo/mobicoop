@@ -1,62 +1,76 @@
 {
-    "items": [
+  "items": [
+    {
+      "key": "smoke",
+      "title": "Regarding smoking in the car...",
+      "radios": [
         {
-            "key": "smoke",
-            "title": "Regarding smoking in the car...",
-            "radios": [
-                {
-                    "label": "I don't smoke",
-                    "value": 0
-                },
-                {
-                    "label": "I do not smoke in the car",
-                    "value": 1
-                },
-                {
-                    "label": "I am a smoker",
-                    "value": 2
-                }
-            ]
+          "label": "I don't smoke",
+          "value": 0
         },
         {
-            "key": "music",
-            "title": "Regarding music in the car...",
-            "radios": [
-                {
-                    "label": "I prefer to ride without background sound",
-                    "value": 0
-                },
-                {
-                    "label": "I listen to the radio or music",
-                    "value": 1
-                }
-            ],
-            "favorite": {
-                "label": "Favorite radio stations and/or music"
-            }
+          "label": "I do not smoke in the car",
+          "value": 1
         },
         {
-            "key": "chat",
-            "title": "As far as chatting in the car is concerned...",
-            "radios": [
-                {
-                    "label": "I am not talkative",
-                    "value": 0
-                },
-                {
-                    "label": "I chat",
-                    "value": 1
-                }
-            ],
-            "favorite": {
-                "label": "Preferred topics"
-            }
+          "label": "I am a smoker",
+          "value": 2
         }
-    ],
-    "button": {
-        "label": "Save",
-        "route": "/user/preferences-carpooling/change"
+      ]
     },
-    "success": "Carpooling preferences successfully updated!",
-    "error": "An error has occurred."
+    {
+      "key": "music",
+      "title": "Regarding music in the car...",
+      "radios": [
+        {
+          "label": "I prefer to ride without background sound",
+          "value": 0
+        },
+        {
+          "label": "I listen to the radio or music",
+          "value": 1
+        }
+      ],
+      "favorite": {
+        "label": "Favorite radio stations and/or music"
+      }
+    },
+    {
+      "key": "chat",
+      "title": "As far as chatting in the car is concerned...",
+      "radios": [
+        {
+          "label": "I am not talkative",
+          "value": 0
+        },
+        {
+          "label": "I chat",
+          "value": 1
+        }
+      ],
+      "favorite": {
+        "label": "Preferred topics"
+      }
+    },
+    {
+      "key": "gratuity",
+      "title": "Regarding gratuity campaigns...",
+      "radios": [
+        {
+          "label": "I don't want to be informed",
+          "value": 0
+        },
+        {
+          "label": "I wish to be informed",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "button": {
+    "label": "Save",
+    "route": "/user/preferences-carpooling/change"
+  },
+  "success": "Carpooling preferences successfully updated!",
+  "error": "An error has occurred."
 }

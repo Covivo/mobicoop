@@ -115,7 +115,7 @@ export default {
       form: {
         smoke: {
           // returned value is integer
-          value: this.user && this.user.smoke !== null ? this.user.smoke : null 
+          value: this.user && this.user.smoke !== null ? this.user.smoke : null
         },
         music: {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value
@@ -126,6 +126,10 @@ export default {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value
           value: !this.user || this.user.chat === null ? null : this.user.chat ? 1 : 0,
           favorite: this.user && this.user.chatFavorites && this.user.chatFavorites.length > 0 ? this.user.chatFavorites : ""
+        },
+        gratuity: {
+          // returned value from bundle is boolean, so we have to check null, true or false to show correct value
+          value: !this.user || this.user.gratuity === null ? null : this.user.gratuity ? 1 : 0
         }
       }
     }
@@ -141,6 +145,7 @@ export default {
         musicFavorites: this.form.music.favorite,
         chat: this.form.chat.value,
         chatFavorites: this.form.chat.favorite,
+        gratuity: this.form.gratuity.value,
       })
         .then(function (response) {
           if (response.data && response.data.message) {

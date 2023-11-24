@@ -1,59 +1,73 @@
 {
-    "items": [
+  "items": [
+    {
+      "key": "kouření",
+      "title": "Pokud jde o kouření v autě...",
+      "radios": [
         {
-            "key": "kouření",
-            "title": "Pokud jde o kouření v autě...",
-            "radios": [
-                {
-                    "label": "Nekouřím"
-                },
-                {
-                    "label": "V autě nekouřím",
-                    "value": 1
-                },
-                {
-                    "value": 2,
-                    "label": "Kouřím"
-                }
-            ]
+          "label": "Nekouřím"
         },
         {
-            "title": "Pokud jde o hudbu v autě...",
-            "radios": [
-                {
-                    "label": "Raději řídím bez hudby na pozadí"
-                },
-                {
-                    "label": "Poslouchám rádio nebo hudbu",
-                    "value": 1
-                }
-            ],
-            "favorite": {
-                "label": "Oblíbené rozhlasové stanice a/nebo hudba"
-            },
-            "key": "hudba"
+          "label": "V autě nekouřím",
+          "value": 1
         },
         {
-            "key": "hovor",
-            "title": "Co se týče povídání v autě...",
-            "radios": [
-                {
-                    "label": "Nejsem mluvka"
-                },
-                {
-                    "label": "Povídám si",
-                    "value": 1
-                }
-            ],
-            "favorite": {
-                "label": "Oblíbená témata"
-            }
+          "value": 2,
+          "label": "Kouřím"
         }
-    ],
-    "button": {
-        "label": "Registrace",
-        "route": "/utilisateur/preferences-covoiturage/modifier"
+      ]
     },
-    "error": "Došlo k chybě.",
-    "success": "Předvolby spolujízdy úspěšně aktualizovány!"
+    {
+      "title": "Pokud jde o hudbu v autě...",
+      "radios": [
+        {
+          "label": "Raději řídím bez hudby na pozadí"
+        },
+        {
+          "label": "Poslouchám rádio nebo hudbu",
+          "value": 1
+        }
+      ],
+      "favorite": {
+        "label": "Oblíbené rozhlasové stanice a/nebo hudba"
+      },
+      "key": "hudba"
+    },
+    {
+      "key": "hovor",
+      "title": "Co se týče povídání v autě...",
+      "radios": [
+        {
+          "label": "Nejsem mluvka"
+        },
+        {
+          "label": "Povídám si",
+          "value": 1
+        }
+      ],
+      "favorite": {
+        "label": "Oblíbená témata"
+      }
+    },
+    {
+      "key": "gratuity",
+      "title": "Regarding gratuity campaigns...",
+      "radios": [
+        {
+          "label": "I don't want to be informed",
+          "value": 0
+        },
+        {
+          "label": "I wish to be informed",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "button": {
+    "label": "Registrace",
+    "route": "/utilisateur/preferences-covoiturage/modifier"
+  },
+  "error": "Došlo k chybě.",
+  "success": "Předvolby spolujízdy úspěšně aktualizovány!"
 }

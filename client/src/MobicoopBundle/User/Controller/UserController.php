@@ -553,6 +553,7 @@ class UserController extends AbstractController
                     if ($image = $imageManager->createImage($image)) {
                         return new JsonResponse($image);
                     }
+
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
@@ -1287,6 +1288,7 @@ class UserController extends AbstractController
             $user->setMusicFavorites($data['musicFavorites']);
             $user->setChat($data['chat']);
             $user->setChatFavorites($data['chatFavorites']);
+            $user->setGratuity($data['gratuity']);
 
             if ($response = $userManager->updateUser($user)) {
                 $reponseofmanager = $this->handleManagerReturnValue($response);

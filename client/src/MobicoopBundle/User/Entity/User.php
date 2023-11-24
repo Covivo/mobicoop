@@ -535,6 +535,35 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     private $hasAccessToMobAPI = false;
 
+    /**
+     * @var null|array a user may have many user notification preferences
+     */
+    private $userNotifications;
+
+    /**
+     * @var null|ArrayCollection the asks made by this user
+     */
+    private $asks;
+
+    /**
+     * @var null|ArrayCollection the asks made for this user
+     */
+    private $asksRelated;
+
+    /**
+     * @var null|int Number of unread messages for this user
+     */
+    private $unreadMessageNumber;
+
+    /**
+     * @var null|bool Gratuity preferences.
+     *                0 = no gratuity
+     *                1 = accept gratuity
+     *
+     * @Groups({"post","put"})
+     */
+    private $gratuity;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1511,74 +1540,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
-    // If you want more info from user you just have to add it to the jsonSerialize function
-    public function jsonSerialize()
-    {
-        $userSerialized = [
-            'id' => $this->getId(),
-            'givenName' => $this->getGivenName(),
-            'familyName' => $this->getFamilyName(),
-            'shortFamilyName' => $this->getShortFamilyName(),
-            'gender' => $this->getGender(),
-            'status' => $this->getStatus(),
-            'email' => $this->getEmail(),
-            'telephone' => $this->getTelephone(),
-            'token' => $this->getToken(),
-            'birthYear' => $this->getBirthYear(),
-            'birthDate' => $this->getBirthDate(),
-            'age' => $this->getAge(),
-            'homeAddress' => $this->getHomeAddress(),
-            'images' => $this->getImages(),
-            'avatars' => $this->getAvatars(),
-            'smoke' => $this->getSmoke(),
-            'chat' => $this->hasChat(),
-            'chatFavorites' => $this->getChatFavorites(),
-            'music' => $this->hasMusic(),
-            'musicFavorites' => $this->getMusicFavorites(),
-            'gamification' => $this->hasGamification(),
-            'newsSubscription' => $this->hasNewsSubscription(),
-            'phoneDisplay' => $this->getPhoneDisplay(),
-            'drivingLicenceNumber' => $this->getDrivingLicenceNumber(),
-            'phoneValidatedDate' => $this->getPhoneValidatedDate(),
-            'phoneToken' => $this->getPhoneToken(),
-            'unsubscribeMessage' => $this->getUnsubscribeMessage(),
-            'communityId' => $this->getCommunityId(),
-            'bankAccounts' => $this->getBankAccounts(),
-            'carpoolExport' => $this->getCarpoolExport(),
-            'canReceiveReview' => $this->getCanReceiveReview(),
-            'userReviewsActive' => $this->isUserReviewsActive(),
-            'experienced' => $this->isExperienced(),
-            'validatedDate' => $this->getValidatedDate(),
-            'unreadCarpoolMessageNumber' => $this->getUnreadCarpoolMessageNumber(),
-            'unreadDirectMessageNumber' => $this->getUnreadDirectMessageNumber(),
-            'unreadSolidaryMessageNumber' => $this->getUnreadSolidaryMessageNumber(),
-            'savedCo2' => $this->getSavedCo2(),
-            'language' => $this->getLanguage(),
-            'gamificationNotifications' => $this->getGamificationNotifications(),
-            'numberOfBadges' => $this->getNumberOfBadges(),
-            'verifiedIdentity' => $this->getVerifiedIdentity(),
-            'postalAddress' => $this->getPostalAddress(),
-            'ssoId' => $this->getSsoId(),
-            'ssoProvider' => $this->getSsoProvider(),
-            'longDistanceSubscription' => $this->getLongDistanceSubscription(),
-            'shortDistanceSubscription' => $this->getShortDistanceSubscription(),
-            'eecStatus' => $this->getEecStatus(),
-            'identityStatus' => $this->getIdentityStatus(),
-            'verifiedIdentity' => $this->getVerifiedIdentity(),
-            'bankingIdentityStatus' => $this->getBankingIdentityStatus(),
-            'hasAccessToMobAPI' => $this->hasAccessToMobAPI(),
-        ];
-
-        if (!is_null($this->getIsCommunityReferrer())) {
-            $userSerialized['isCommunityReferrer'] = $this->getIsCommunityReferrer();
-        }
-        if (!is_null($this->getIsCommunityModerator())) {
-            $userSerialized['isCommunityModerator'] = $this->getIsCommunityModerator();
-        }
-
-        return $userSerialized;
-    }
-
     /**
      * Get the value of identityStatus.
      *
@@ -1669,5 +1630,134 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         $this->hasAccessToMobAPI = $hasAccessToMobAPI;
 
         return $this;
+    }
+
+    public function getUserNotifications(): ?array
+    {
+        return $this->userNotifications;
+    }
+
+    public function setUserNotifications(?array $userNotifications)
+    {
+        $this->userNotifications = $userNotifications;
+
+        return $this;
+    }
+
+    public function getAsks(): ?array
+    {
+        return $this->asks;
+    }
+
+    public function setAsks(?array $asks)
+    {
+        $this->asks = $asks;
+
+        return $this;
+    }
+
+    public function getAsksRelated(): ?array
+    {
+        return $this->asksRelated;
+    }
+
+    public function setAsksRelated(?array $asksRelated)
+    {
+        $this->asksRelated = $asksRelated;
+
+        return $this;
+    }
+
+    public function getUnreadMessageNumber(): ?int
+    {
+        return $this->unreadMessageNumber;
+    }
+
+    public function setUnreadMessageNumber(?int $unreadMessageNumber): self
+    {
+        $this->unreadMessageNumber = $unreadMessageNumber;
+
+        return $this;
+    }
+
+    public function hasGratuity(): ?bool
+    {
+        return $this->gratuity;
+    }
+
+    public function setGratuity(?bool $gratuity): self
+    {
+        $this->gratuity = $gratuity;
+
+        return $this;
+    }
+
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        $userSerialized = [
+            'id' => $this->getId(),
+            'givenName' => $this->getGivenName(),
+            'familyName' => $this->getFamilyName(),
+            'shortFamilyName' => $this->getShortFamilyName(),
+            'gender' => $this->getGender(),
+            'status' => $this->getStatus(),
+            'email' => $this->getEmail(),
+            'telephone' => $this->getTelephone(),
+            'token' => $this->getToken(),
+            'birthYear' => $this->getBirthYear(),
+            'birthDate' => $this->getBirthDate(),
+            'age' => $this->getAge(),
+            'homeAddress' => $this->getHomeAddress(),
+            'images' => $this->getImages(),
+            'avatars' => $this->getAvatars(),
+            'smoke' => $this->getSmoke(),
+            'chat' => $this->hasChat(),
+            'chatFavorites' => $this->getChatFavorites(),
+            'music' => $this->hasMusic(),
+            'musicFavorites' => $this->getMusicFavorites(),
+            'gamification' => $this->hasGamification(),
+            'newsSubscription' => $this->hasNewsSubscription(),
+            'phoneDisplay' => $this->getPhoneDisplay(),
+            'drivingLicenceNumber' => $this->getDrivingLicenceNumber(),
+            'phoneValidatedDate' => $this->getPhoneValidatedDate(),
+            'phoneToken' => $this->getPhoneToken(),
+            'unsubscribeMessage' => $this->getUnsubscribeMessage(),
+            'communityId' => $this->getCommunityId(),
+            'bankAccounts' => $this->getBankAccounts(),
+            'carpoolExport' => $this->getCarpoolExport(),
+            'canReceiveReview' => $this->getCanReceiveReview(),
+            'userReviewsActive' => $this->isUserReviewsActive(),
+            'experienced' => $this->isExperienced(),
+            'validatedDate' => $this->getValidatedDate(),
+            'unreadCarpoolMessageNumber' => $this->getUnreadCarpoolMessageNumber(),
+            'unreadDirectMessageNumber' => $this->getUnreadDirectMessageNumber(),
+            'unreadSolidaryMessageNumber' => $this->getUnreadSolidaryMessageNumber(),
+            'savedCo2' => $this->getSavedCo2(),
+            'language' => $this->getLanguage(),
+            'gamificationNotifications' => $this->getGamificationNotifications(),
+            'numberOfBadges' => $this->getNumberOfBadges(),
+            'verifiedIdentity' => $this->getVerifiedIdentity(),
+            'postalAddress' => $this->getPostalAddress(),
+            'ssoId' => $this->getSsoId(),
+            'ssoProvider' => $this->getSsoProvider(),
+            'longDistanceSubscription' => $this->getLongDistanceSubscription(),
+            'shortDistanceSubscription' => $this->getShortDistanceSubscription(),
+            'eecStatus' => $this->getEecStatus(),
+            'identityStatus' => $this->getIdentityStatus(),
+            'verifiedIdentity' => $this->getVerifiedIdentity(),
+            'bankingIdentityStatus' => $this->getBankingIdentityStatus(),
+            'hasAccessToMobAPI' => $this->hasAccessToMobAPI(),
+            'gratuity' => $this->hasGratuity(),
+        ];
+
+        if (!is_null($this->getIsCommunityReferrer())) {
+            $userSerialized['isCommunityReferrer'] = $this->getIsCommunityReferrer();
+        }
+        if (!is_null($this->getIsCommunityModerator())) {
+            $userSerialized['isCommunityModerator'] = $this->getIsCommunityModerator();
+        }
+
+        return $userSerialized;
     }
 }
