@@ -32,6 +32,7 @@
         cols="4"
       >
         <v-card
+          v-if="$data['form'][item.key]['show']"
           :height="cardHeight"
           class="pa-2"
           flat
@@ -115,24 +116,35 @@ export default {
       form: {
         smoke: {
           // returned value is integer
+          show: true,
           value: this.user && this.user.smoke !== null ? this.user.smoke : null
         },
         music: {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value
+          show: true,
           value: !this.user || this.user.music === null ? null : this.user.music ? 1 : 0,
           favorite: this.user && this.user.musicFavorites && this.user.musicFavorites.length > 0 ? this.user.musicFavorites : ""
         },
         chat: {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value
+          show: true,
           value: !this.user || this.user.chat === null ? null : this.user.chat ? 1 : 0,
           favorite: this.user && this.user.chatFavorites && this.user.chatFavorites.length > 0 ? this.user.chatFavorites : ""
         },
         gratuity: {
-          // returned value from bundle is boolean, so we have to check null, true or false to show correct value
+          show: false,
           value: !this.user || this.user.gratuity === null ? null : this.user.gratuity ? 1 : 0
         }
       }
     }
+  },
+  computed:{
+    gratuityActive(){
+      return this.$store.getters['grt/isActive'];
+    }
+  },
+  mounted(){
+    this.optionalFormValues()
   },
   methods: {
     updateCarpoolSettings() {
@@ -176,8 +188,13 @@ export default {
         type: "success",
         message: ""
       }
+    },
+    optionalFormValues() {
+      if(this.gratuityActive){
+        this.form.gratuity.show = true;
+      }
     }
-  }
+  },
 }
 </script>
 
