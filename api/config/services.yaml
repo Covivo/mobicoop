@@ -721,6 +721,10 @@ services:
     tags:
       - { name: monolog.logger, channel: gratuity }
 
+  App\Gratuity\EventSubscriber\LogSubscriber:
+    arguments:
+      $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
+
   App\Stats\Admin\Service\AnalyticManager:
     arguments:
       $params: "%env(json:file:resolve:ANALYTICS_PARAMETERS)%"

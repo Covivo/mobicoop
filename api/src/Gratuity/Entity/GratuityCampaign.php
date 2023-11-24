@@ -23,6 +23,7 @@
 
 namespace App\Gratuity\Entity;
 
+use App\Action\Entity\Log;
 use App\Geography\Entity\Territory;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -115,6 +116,13 @@ class GratuityCampaign
      * @MaxDepth(1)
      */
     private $notifications;
+
+    /**
+     * @var ArrayCollection the logs linked with the Campaign
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="gratuityCampaign")
+     */
+    private $logs;
 
     /**
      * @var \DateTimeInterface creation date of the user
@@ -266,6 +274,34 @@ class GratuityCampaign
     public function setEndDate(?\DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setGratuityCampaign($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getGratuityCampaign() === $this) {
+                $log->setGratuityCampaign(null);
+            }
+        }
 
         return $this;
     }
