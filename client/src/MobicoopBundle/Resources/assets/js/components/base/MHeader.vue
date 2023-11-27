@@ -338,6 +338,7 @@
       </v-menu>
     </v-toolbar>
     <GamificationNotifications :user-gamification-notifications="(user && user.gamificationNotifications) ? user.gamificationNotifications : null" />
+    <GratuityNotifications :user-gratuity-notifications="(user && user.gratuityNotifications) ? user.gratuityNotifications : null" />
   </div>
 </template>
 
@@ -351,6 +352,7 @@ import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
 import MMessageBtn from "@components/base/MMessageBtn.vue";
 import GamificationNotifications from "@components/utilities/gamification/GamificationNotifications";
+import GratuityNotifications from "@components/utilities/gratuity/GratuityNotifications";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -372,7 +374,8 @@ export default {
     MHeaderCommunities,
     MHeaderLanguage,
     MMessageBtn,
-    GamificationNotifications
+    GamificationNotifications,
+    GratuityNotifications
   },
   props: {
     user: {

@@ -564,6 +564,11 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $gratuity;
 
+    /**
+     * @var array
+     */
+    private $gratuityNotifications;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1692,6 +1697,16 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getGratuityNotifications(): ?array
+    {
+        return $this->gratuityNotifications;
+    }
+
+    public function setGratuityNotifications(array $gratuityNotifications)
+    {
+        $this->gratuityNotifications = $gratuityNotifications;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1749,6 +1764,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'bankingIdentityStatus' => $this->getBankingIdentityStatus(),
             'hasAccessToMobAPI' => $this->hasAccessToMobAPI(),
             'gratuity' => $this->hasGratuity(),
+            'gratuityNotifications' => $this->getGratuityNotifications(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

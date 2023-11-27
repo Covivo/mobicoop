@@ -71,6 +71,7 @@ class GratuityNotificationNormalizer
             foreach ($pendingNotifications as $pendingNotification) {
                 if ($this->_isEligible()) {
                     $notification = [];
+                    $notification['id'] = $pendingNotification->getId();
                     $notification['name'] = $pendingNotification->getName();
                     $notification['template'] = $pendingNotification->getTemplate();
                     $this->_data['gratuityNotifications'][] = $notification;
