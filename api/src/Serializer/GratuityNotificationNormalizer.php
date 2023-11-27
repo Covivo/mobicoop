@@ -23,6 +23,7 @@
 namespace App\Serializer;
 
 use App\Gratuity\Repository\GratuityCampaignRepository;
+use App\Serializer\Service\GratuityTemplateFormatter;
 use App\User\Entity\User;
 
 /**
@@ -65,22 +66,24 @@ class GratuityNotificationNormalizer
 
     private function _setPendingGamificationNotification()
     {
-        $pendingNotifications = $this->_getPendingGamificationNotification();
-        if (count($pendingNotifications) > 0) {
+        $pendingCampaigns = $this->_getPendingGamificationCampaign();
+        if (count($pendingCampaigns) > 0) {
+            $formatter = new GratuityTemplateFormatter();
             $this->_data['gratuityNotifications'] = [];
-            foreach ($pendingNotifications as $pendingNotification) {
+            foreach ($pendingCampaigns as $pendingCampaign) {
+                $pendingCampaign = $formatter->format($pendingCampaign);
                 if ($this->_isEligible()) {
                     $notification = [];
-                    $notification['id'] = $pendingNotification->getId();
-                    $notification['name'] = $pendingNotification->getName();
-                    $notification['template'] = $pendingNotification->getTemplate();
+                    $notification['id'] = $pendingCampaign->getId();
+                    $notification['name'] = $pendingCampaign->getName();
+                    $notification['template'] = $pendingCampaign->getTemplate();
                     $this->_data['gratuityNotifications'][] = $notification;
                 }
             }
         }
     }
 
-    private function _getPendingGamificationNotification()
+    private function _getPendingGamificationCampaign()
     {
         return $this->_gratuityCampaignRepository->findPendingForUser($this->_user);
     }
