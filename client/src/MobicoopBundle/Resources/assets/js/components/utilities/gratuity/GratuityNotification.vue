@@ -16,9 +16,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-actions>
-        <v-card-text>
-          {{ template }}
-        </v-card-text>
+        <v-card-text v-html="template" />
       </v-card>
     </v-dialog>
   </div>
@@ -27,7 +25,7 @@
 export default {
   props:{
     userGratuityNotification:{
-      type: Array,
+      type: Object,
       default: null
     }
   },

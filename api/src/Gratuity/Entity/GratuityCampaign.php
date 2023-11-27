@@ -83,7 +83,7 @@ class GratuityCampaign
     /**
      * @var string Campaign's template. Related to a twig file
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      */
     private $template;
 
