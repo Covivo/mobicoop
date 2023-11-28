@@ -10,11 +10,11 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @coversDefaultClass
  */
-class SdSubscriptionCommitTest extends IncentiveWebClient
+class LdSubscriptionCommitTest extends IncentiveWebClient
 {
     public const SUBSCRIPTION_TAG = 'subscription_id';
     public const CARPOOL_PROOF_TAG = 'carpool_proof_id';
-    public const ENDPOINT = '/eec/sd-subscriptions/{subscription_id}/commit?carpool_proof={}';
+    public const ENDPOINT = '/eec/ld-subscriptions/{subscription_id}/commit?carpool_proof={}';
 
     private const EXISTANT_SUBSCRIPTION_ID = 6;
     private const NON_EXISTANT_SUBSCRIPTION_ID = 12;
