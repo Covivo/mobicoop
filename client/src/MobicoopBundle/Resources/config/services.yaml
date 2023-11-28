@@ -71,6 +71,8 @@ services:
       $carpoolSettingsDisplay: "%env(bool:CARPOOL_SETTINGS_DISPLAY)%"
       $carpoolStandardBookingEnabled: "%env(bool:CARPOOL_STANDARD_BOOKING_ENABLED)%"
       $carpoolStandardMessagingEnabled: "%env(bool:CARPOOL_STANDARD_MESSAGING_ENABLED)%"
+      $specificTerms: "%env(bool:CARPOOL_SPECIFIC_TERMS)%"
+
   Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
     resource: "@MobicoopBundle/Carpool/Service/*"
   Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
@@ -257,6 +259,7 @@ services:
       $signInSsoOriented: "%env(bool:SIGNIN_SSO_ORIENTED)%"
       $ceeDisplay: "%env(bool:CEE_DISPLAY)%"
       $gendersList: "%env(json:SIGNUP_GENDERS_LIST)%"
+      $specificTerms: "env(bool:SIGNUP_SPECIFIC_TERMS)"
     tags: ["controller.service_arguments"]
   Mobicoop\Bundle\MobicoopBundle\User\Service\:
     resource: "@MobicoopBundle/User/Service/*"
