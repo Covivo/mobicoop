@@ -593,7 +593,7 @@ class JourneyManager extends MobConnectManager
             $this->getAddressesLocality($this->_currentCarpoolItem)
         );
 
-        ${$this}->_currentSubscription->setVersion();
+        $this->_currentSubscription->setVersion();
 
         $this->_em->flush();
     }
