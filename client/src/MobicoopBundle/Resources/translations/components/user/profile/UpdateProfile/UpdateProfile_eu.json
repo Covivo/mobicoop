@@ -7,6 +7,9 @@
     "tooltip": "Zerbitzuen berriak, e-mezuak dira zerbitzuaren garapenaren berri emateko eta autokidetza praktika hobetzeko helburu dutenak. Adibidez, plataformaren edo zure komunitate bateko erreferente baten e-mezuen eguneraketak. Informazio horiek plataformaren eguneraketak izan daitezke. E-mezu horien bidez ez da iragarkirik eginen.",
     "label": "Zerbitzuaren aktualitateak {platform} (Argibide baliagarriak autokidetza egiteko, eta zerbitzu berriak edo funtzionalitate berriak)"
   },
+  "gratuity": {
+    "label": "Gratuity programme"
+  },
   "route": {
     "supprimer": "/utilisateur/profil/supprimer",
     "update": "/utilisateur/profil/modifier"
