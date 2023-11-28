@@ -10,13 +10,14 @@ use App\Tests\Incentive\IncentiveWebClient;
 class EecEligibilityCollectionDataProviderTest extends IncentiveWebClient
 {
     public const ENDPOINT = '/my_eec_eligibility';
+    private const PROVIDER_METHOD = self::METHOD_GET;
 
     /**
      * @test
      */
     public function dataProviderUnauthorized()
     {
-        parent::requestUnauthorized(self::ENDPOINT);
+        parent::requestUnauthorized(self::PROVIDER_METHOD, self::ENDPOINT);
     }
 
     /**
@@ -24,7 +25,7 @@ class EecEligibilityCollectionDataProviderTest extends IncentiveWebClient
      */
     public function dataProviderAuthorized()
     {
-        parent::requestToken(self::ENDPOINT);
+        parent::requestToken(self::PROVIDER_METHOD, self::ENDPOINT);
 
         $this->assertInstanceOf('stdClass', $this->_response);
 

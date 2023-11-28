@@ -12,13 +12,14 @@ use App\Tests\Incentive\IncentiveWebClient;
 class CeeSubscriptionsCollectionDataProviderTest extends IncentiveWebClient
 {
     public const ENDPOINT = '/my_cee_subscriptions';
+    private const PROVIDER_METHOD = self::METHOD_GET;
 
     /**
      * @test
      */
     public function dataProviderUnauthorized()
     {
-        parent::requestUnauthorized(self::ENDPOINT);
+        parent::requestUnauthorized(self::PROVIDER_METHOD, self::ENDPOINT);
     }
 
     /**
@@ -26,7 +27,7 @@ class CeeSubscriptionsCollectionDataProviderTest extends IncentiveWebClient
      */
     public function dataProviderAuthorized()
     {
-        parent::requestToken(self::ENDPOINT);
+        parent::requestToken(self::PROVIDER_METHOD, self::ENDPOINT);
 
         $this->assertIsArray($this->_response);
         $this->assertInstanceOf('stdClass', $this->_response[0]);

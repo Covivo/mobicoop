@@ -13,27 +13,34 @@ use Symfony\Component\HttpFoundation\Response;
 class EECTimestampsTest extends IncentiveWebClient
 {
     public const ENDPOINT = '/users/{user_id}/eec-timestamps';
+    private const CONTROLLER_METHOD = self::METHOD_GET;
 
     private const USER_ID = 12;
 
     /**
      * test.
      */
-    public function dataProviderUnauthorized()
+    public function ControllerUnauthorized()
     {
-        parent::requestUnauthorized($this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]));
+        parent::requestUnauthorized(self::CONTROLLER_METHOD, $this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]));
     }
 
     /**
      * @test
      */
-    public function dataProvider()
+    public function controllerUnallowedUser()
     {
-        parent::requestToken($this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]), self::USER);
+        parent::requestToken(self::CONTROLLER_METHOD, $this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]), self::USER);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+    }
 
-        parent::requestToken($this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]), self::ADMIN_USER);
+    /**
+     * @test
+     */
+    public function controllerSuccess()
+    {
+        parent::requestToken(self::CONTROLLER_METHOD, $this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]), self::ADMIN_USER);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
 

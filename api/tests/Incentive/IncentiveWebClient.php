@@ -22,6 +22,13 @@ abstract class IncentiveWebClient extends WebTestCase
         'pwd' => 'Umberto123',
     ];
 
+    protected const METHOD_GET = 'GET';
+    protected const METHOD_POST = 'POST';
+    protected const METHOD_PUT = 'PUT';
+
+    private const DEFAULT_OPENING_TAG = '{';
+    private const DEFAULT_CLOSING_TAG = '}';
+
     protected $_client;
 
     protected $_response;
@@ -43,7 +50,7 @@ abstract class IncentiveWebClient extends WebTestCase
      */
     protected function createAuthenticatedClient($username = 'user', $password = 'password')
     {
-        $this->_client = static::createClient();
+        $this->_client = $this->createBaseClient();
         $this->_client->request(
             'POST',
             '/login',
@@ -67,22 +74,22 @@ abstract class IncentiveWebClient extends WebTestCase
         return $this->_client;
     }
 
-    protected function requestUnauthorized(string $endpoint)
+    protected function requestUnauthorized(string $method = self::METHOD_GET, string $endpoint)
     {
         $this->createBaseClient();
-        $this->_client->request('GET', $endpoint);
+        $this->_client->request($method, $endpoint);
 
         $this->setResponse();
 
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
-    protected function requestToken(string $endpoint, array $user = null)
+    protected function requestToken(string $method = self::METHOD_GET, string $endpoint, array $user = null)
     {
         $user = !is_null($user) ? $user : self::ADMIN_USER;
 
         $this->_client = $this->createAuthenticatedClient($user['username'], $user['pwd']);
-        $this->_client->request('GET', $endpoint, ['Authorization']);
+        $this->_client->request($method, $endpoint, ['Authorization']);
 
         $this->setResponse();
     }
@@ -97,7 +104,7 @@ abstract class IncentiveWebClient extends WebTestCase
     protected function setEndpointParameters(string $endpoint, array $params): string
     {
         foreach ($params as $key => $value) {
-            $key = '{'.$key.'}';
+            $key = self::DEFAULT_OPENING_TAG.$key.self::DEFAULT_CLOSING_TAG;
             $endpoint = str_replace($key, $value, $endpoint);
         }
 
