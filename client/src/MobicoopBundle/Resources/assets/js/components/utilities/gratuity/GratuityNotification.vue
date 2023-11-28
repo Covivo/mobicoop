@@ -22,7 +22,17 @@
   </div>
 </template>
 <script>
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/gratuity/GratuityNotifications/";
 export default {
+  i18n: {
+    messages: {
+      'en': messages_en,
+      'nl': messages_nl,
+      'fr': messages_fr,
+      'eu':messages_eu
+    },
+  },
   props:{
     userGratuityNotification:{
       type: Object,
@@ -42,6 +52,14 @@ export default {
   methods:{
     close(){
       this.dialog = false;
+      this.tagAsNotified()
+    },
+    tagAsNotified(){
+      // We tag these rewardSteps as notified
+      maxios
+        .post(this.$t('routeTagAsNotified'), {id:this.userGratuityNotification.id})
+        .then(res => {
+        })
     }
   }
 }

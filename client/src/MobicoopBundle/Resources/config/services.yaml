@@ -168,6 +168,13 @@ services:
   Mobicoop\Bundle\MobicoopBundle\Gamification\Service\:
     resource: "@MobicoopBundle/Gamification/Service/*"
 
+  #Gratuity
+  Mobicoop\Bundle\MobicoopBundle\Gratuity\Controller\:
+    resource: "@MobicoopBundle/Gratuity/Controller/*"
+    tags: ["controller.service_arguments"]
+  Mobicoop\Bundle\MobicoopBundle\Gratuity\Service\:
+    resource: "@MobicoopBundle/Gratuity/Service/*"
+
   # Geography
   Mobicoop\Bundle\MobicoopBundle\Geography\Controller\:
     resource: "@MobicoopBundle/Geography/Controller/*"

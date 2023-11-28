@@ -441,7 +441,6 @@ user_message_booking_complete_thread:
     nl: /user/messages/booking/{idBooking}/thread
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageBookingCompleteThread
 
-
 user_message_actions_infos:
   methods: [POST]
   path:
@@ -483,7 +482,7 @@ send_external_message:
     fr: /utilisateur/messages/externe/envoyer
     en: /user/messages/external/send
     nl: /user/messages/external/send
-  controller: Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\MessageController::sendExternalMessage  
+  controller: Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\MessageController::sendExternalMessage
 
 # get a message thread
 user_message_thread:
@@ -1945,6 +1944,19 @@ gamification_tag_reward_as_notified:
     en: /gamification/tagRewardAsNotified
     nl: /gamification/tagRewardAsNotified
   controller: Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\GamificationController::tagRewardAsNotified
+
+#######################
+# Gratuity routes #
+#######################
+
+# Tag the given gratuity campaign as notified
+gratuity_campaign_as_notified:
+  methods: [POST]
+  path:
+    fr: /gratuity/tagGratuityCampaignAsNotified
+    en: /gratuity/tagGratuityCampaignAsNotified
+    nl: /gratuity/tagGratuityCampaignAsNotified
+  controller: Mobicoop\Bundle\MobicoopBundle\Gratuity\Controller\GratuityController::tagGratuityCampaignAsNotified
 
 #######################
 # Incentive routes #
