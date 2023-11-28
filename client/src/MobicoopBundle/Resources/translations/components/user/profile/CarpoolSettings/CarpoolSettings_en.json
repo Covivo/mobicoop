@@ -51,20 +51,6 @@
       "favorite": {
         "label": "Preferred topics"
       }
-    },
-    {
-      "key": "gratuity",
-      "title": "Regarding gratuity campaigns...",
-      "radios": [
-        {
-          "label": "I don't want to be informed",
-          "value": 0
-        },
-        {
-          "label": "I wish to be informed",
-          "value": 1
-        }
-      ]
     }
   ],
   "button": {

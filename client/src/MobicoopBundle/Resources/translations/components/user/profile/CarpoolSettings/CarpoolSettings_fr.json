@@ -51,20 +51,6 @@
       "favorite": {
         "label": "Sujets préférés"
       }
-    },
-    {
-      "key": "gratuity",
-      "title": "En ce qui concerne les campagnes de gratification...",
-      "radios": [
-        {
-          "label": "Je ne souhaite pas être informé",
-          "value": 0
-        },
-        {
-          "label": "Je souhaite être informé",
-          "value": 1
-        }
-      ]
     }
   ],
   "button": {

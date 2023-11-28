@@ -130,21 +130,9 @@ export default {
           show: true,
           value: !this.user || this.user.chat === null ? null : this.user.chat ? 1 : 0,
           favorite: this.user && this.user.chatFavorites && this.user.chatFavorites.length > 0 ? this.user.chatFavorites : ""
-        },
-        gratuity: {
-          show: false,
-          value: !this.user || this.user.gratuity === null ? null : this.user.gratuity ? 1 : 0
         }
       }
     }
-  },
-  computed:{
-    gratuityActive(){
-      return this.$store.getters['grt/isActive'];
-    }
-  },
-  mounted(){
-    this.optionalFormValues()
   },
   methods: {
     updateCarpoolSettings() {
@@ -156,8 +144,7 @@ export default {
         music: this.form.music.value,
         musicFavorites: this.form.music.favorite,
         chat: this.form.chat.value,
-        chatFavorites: this.form.chat.favorite,
-        gratuity: this.form.gratuity.value,
+        chatFavorites: this.form.chat.favorite
       })
         .then(function (response) {
           if (response.data && response.data.message) {
@@ -187,11 +174,6 @@ export default {
       this.alert = {
         type: "success",
         message: ""
-      }
-    },
-    optionalFormValues() {
-      if(this.gratuityActive){
-        this.form.gratuity.show = true;
       }
     }
   },
