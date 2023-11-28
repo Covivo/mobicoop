@@ -523,7 +523,7 @@ class JourneyManager extends MobConnectManager
                 return;
         }
 
-        $this->_loggerService->log('Step 17 - Processing the carpoolItem ID'.$this->_currentCarpoolItem->getId().'with normal process');
+        $this->_loggerService->log('Step 17 - Processing the carpoolItem ID '.$this->_currentCarpoolItem->getId().'with normal process');
 
         if ($this->_currentSubscription->isCommitmentJourney($journey)) {
             $this->_updateSubscriptionForCommitmentJourney();
