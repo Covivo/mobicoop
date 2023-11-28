@@ -23,6 +23,8 @@
 
 namespace App\Import\Admin\Service\Populator;
 
+use App\Geography\Entity\Address;
+use App\Geography\Service\PointSearcher;
 use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\Import\Admin\Service\ImportManager;
 use App\User\Entity\User;
@@ -41,6 +43,9 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
     private const BIRTHDATE = 4;
     private const PHONE_NUMBER = 5;
     private const COMMUNITY_ID = 6;
+    private const POSTAL_CODE = 7;
+    private const ADDRESS_LOCALITY = 8;
+    private const CONSENT = 9;
 
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists';
@@ -59,12 +64,18 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
      */
     private $_requester;
 
-    public function __construct(ImportManager $importManager, User $requester)
+    /**
+     * @var PointSearcher
+     */
+    private $_pointSearcher;
+
+    public function __construct(ImportManager $importManager, User $requester, ?PointSearcher $pointSearcher)
     {
         $this->_importManager = $importManager;
         $this->_messages = [];
         $this->_requester = $requester;
         $this->_user = null;
+        $this->_pointSearcher = $pointSearcher;
     }
 
     public function getEntity(): string
@@ -103,6 +114,8 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         $this->_user->setTelephone($line[self::PHONE_NUMBER]);
         $this->_user->setUserDelegate($this->_requester);
         $this->_user->setImportedDate(new \DateTime('now'));
+        $this->_user->setNewsSubscription($line[self::CONSENT]);
+        $this->_user->setHomeAddress($this->_treatLocality($line[self::POSTAL_CODE].' '.$line[self::ADDRESS_LOCALITY]));
 
         try {
             $this->_user = $this->_importManager->addUser($this->_user);
@@ -138,6 +151,24 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         if ($community = $this->_importManager->getCommunity($line[self::COMMUNITY_ID])) {
             $this->_importManager->signUpUserInACommunity($community, $this->_user);
         }
+    }
+
+    private function _treatLocality(string $searchedLocality): ?Address
+    {
+        if (empty(trim($searchedLocality))) {
+            return null;
+        }
+
+        $results = $this->_pointSearcher->geocode($searchedLocality);
+
+        if (!empty($results)) {
+            $homeAddress = new Address();
+            $homeAddress->setFromPoint($results[0]);
+
+            return $homeAddress;
+        }
+
+        return null;
     }
 
     private function _checkUserAlreadyExists(string $email): bool

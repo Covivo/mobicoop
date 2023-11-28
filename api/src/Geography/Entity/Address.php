@@ -30,6 +30,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Carpool\Entity\Waypoint;
 use App\Community\Entity\Community;
 use App\Event\Entity\Event;
+use App\Geography\Ressource\Point as RessourcePoint;
 use App\Image\Entity\Icon;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
@@ -1116,6 +1117,22 @@ class Address implements \JsonSerializable
         }
 
         return $updated;
+    }
+
+    public function setFromPoint(RessourcePoint $point): self
+    {
+        $this->setStreetAddress($point->getStreetName());
+        $this->setPostalCode($point->getPostalCode());
+        $this->setAddressLocality($point->getLocality());
+        $this->setAddressCountry($point->getCountry());
+        $this->setCountryCode($point->getCountryCode());
+        $this->setLatitude($point->getLat());
+        $this->setLongitude($point->getLon());
+        $this->setRegion($point->getRegion());
+        $this->setMacroRegion($point->getMacroRegion());
+        $this->setGeoJson($this->setAutoGeoJson());
+
+        return $this;
     }
 
     public function jsonSerialize()
