@@ -157,10 +157,6 @@ class JourneyManager extends MobConnectManager
 
         $patchResponse = $this->patchSubscription($subscription->getSubscriptionId(), $params);
 
-        if ($this->hasRequestErrorReturned($patchResponse)) {
-            return null;
-        }
-
         $subscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
 
         $log = 204 === $patchResponse->getCode()
@@ -168,6 +164,10 @@ class JourneyManager extends MobConnectManager
             : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$proposal->getId();
 
         $this->_loggerService->log($log);
+
+        if ($this->hasRequestErrorReturned($patchResponse)) {
+            return null;
+        }
 
         $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
 

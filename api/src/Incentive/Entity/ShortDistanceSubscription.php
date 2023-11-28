@@ -877,7 +877,7 @@ class ShortDistanceSubscription extends Subscription
                     return $journey->getId() === $commitmentProofJourney->getId();
                 });
 
-                if (!empty($filteredJourneys)) {
+                if (empty($filteredJourneys)) {
                     $this->addShortDistanceJourney($commitmentProofJourney);
                 }
             }

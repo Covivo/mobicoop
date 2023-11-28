@@ -894,7 +894,7 @@ class LongDistanceSubscription extends Subscription
                     return $journey->getId() === $commitmentProofJourney->getId();
                 });
 
-                if (!empty($filteredJourneys)) {
+                if (empty($filteredJourneys)) {
                     $this->addLongDistanceJourney($commitmentProofJourney);
                 }
             }
