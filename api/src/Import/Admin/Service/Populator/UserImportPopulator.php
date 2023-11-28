@@ -163,7 +163,7 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
 
         if (!empty($results)) {
             $homeAddress = new Address();
-            $homeAddress->setFromPoint($results[0]);
+            $homeAddress->createFromPoint($results[0]);
 
             return $homeAddress;
         }

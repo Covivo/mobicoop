@@ -1119,7 +1119,7 @@ class Address implements \JsonSerializable
         return $updated;
     }
 
-    public function setFromPoint(RessourcePoint $point): self
+    public function createFromPoint(RessourcePoint $point): self
     {
         $this->setStreetAddress($point->getStreetName());
         $this->setPostalCode($point->getPostalCode());

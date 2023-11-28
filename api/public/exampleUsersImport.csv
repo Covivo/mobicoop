@@ -5,3 +5,4 @@ indications about data formating:
 gender: 1=female, 2=male, 3=nc
 birthDate: YYYY-MM-DD
 communityId : empty or int number refering to an EXISTING Community
+consent: 0=false, 1=true
