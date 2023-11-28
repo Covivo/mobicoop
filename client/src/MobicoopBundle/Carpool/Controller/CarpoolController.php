@@ -75,6 +75,7 @@ class CarpoolController extends AbstractController
     private $carpoolSettingsDisplay;
     private $carpoolStandardBookingEnabled;
     private $carpoolStandardMessagingEnabled;
+    private $specificTerms;
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
@@ -96,7 +97,8 @@ class CarpoolController extends AbstractController
         bool $birthdateDisplay,
         bool $carpoolSettingsDisplay,
         bool $carpoolStandardBookingEnabled,
-        bool $carpoolStandardMessagingEnabled
+        bool $carpoolStandardMessagingEnabled,
+        bool $specificTerms
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -118,6 +120,7 @@ class CarpoolController extends AbstractController
         $this->carpoolSettingsDisplay = $carpoolSettingsDisplay;
         $this->carpoolStandardBookingEnabled = $carpoolStandardBookingEnabled;
         $this->carpoolStandardMessagingEnabled = $carpoolStandardMessagingEnabled;
+        $this->specificTerms = $specificTerms;
     }
 
     private function __originDisplay(array $waypoint)
@@ -196,6 +199,7 @@ class CarpoolController extends AbstractController
             'seatNumber' => $this->seatNumber,
             'defaultSeatNumber' => $this->defaultSeatNumber,
             'contentPassenger' => $this->contentPassenger,
+            'specificTerms' => $this->specificTerms,
         ]);
     }
 
@@ -290,6 +294,7 @@ class CarpoolController extends AbstractController
             'seatNumber' => $this->seatNumber,
             'defaultSeatNumber' => $this->defaultSeatNumber,
             'contentPassenger' => $this->contentPassenger,
+            'specificTerms' => $this->specificTerms,
         ]);
     }
 
@@ -316,6 +321,7 @@ class CarpoolController extends AbstractController
                 'seatNumber' => $this->seatNumber,
                 'defaultSeatNumber' => $this->defaultSeatNumber,
                 'contentPassenger' => $this->contentPassenger,
+                'specificTerms' => $this->specificTerms,
             ]
         );
     }
@@ -366,6 +372,7 @@ class CarpoolController extends AbstractController
                 'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
                 'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
                 'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
+                'specificTerms' => $this->specificTerms,
             ]
         );
     }

@@ -96,6 +96,10 @@
     "text": "Je confirme être âgé d'au moins 18 ans",
     "required": "Requis"
   },
+  "specificTerms": {
+    "text": "J’ai pris connaissance et signé la charte du service \"Les Pros-voitureurs\".",
+    "required": "Requis"
+  },
   "communities": {
     "label": "Rejoindre une communauté",
     "route": "/utilisateur/inscription/liste-des-communautes"

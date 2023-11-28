@@ -98,6 +98,7 @@ class UserController extends AbstractController
     private $signInSsoOriented;
     private $ceeDisplay;
     private $gendersList;
+    private $specificTerms;
 
     /**
      * Constructor.
@@ -140,7 +141,8 @@ class UserController extends AbstractController
         bool $carpoolSettingsDisplay,
         bool $signInSsoOriented,
         bool $ceeDisplay,
-        array $gendersList
+        array $gendersList,
+        bool $specificTerms
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -170,6 +172,7 @@ class UserController extends AbstractController
         $this->signInSsoOriented = $signInSsoOriented;
         $this->ceeDisplay = $ceeDisplay;
         $this->gendersList = $gendersList;
+        $this->specificTerms = $specificTerms;
     }
 
     private function __parsePostParams(string $response): array
@@ -352,6 +355,7 @@ class UserController extends AbstractController
             'birthDateDisplay' => $this->birthDateDisplay,
             'communityId' => $communityId,
             'gendersList' => $this->gendersList,
+            'specificTerms' => $this->specificTerms,
         ]);
     }
 
@@ -553,6 +557,7 @@ class UserController extends AbstractController
                     if ($image = $imageManager->createImage($image)) {
                         return new JsonResponse($image);
                     }
+
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
