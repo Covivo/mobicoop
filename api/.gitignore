@@ -372,9 +372,6 @@ $RECYCLE.BIN/
 /public/test-coverage
 /public/test-coverage/*
 
-# Public EEC export files
-/public/eec/tokens/*
-
 # Public Transport
 /config/publicTransport/providers.json
 

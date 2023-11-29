@@ -34,6 +34,8 @@ class SdSubscriptionCommit extends SubscriptionCommit
             throw new BadRequestHttpException('A journey can initiate a subscription only if the user associated with the subscription is the one who posted the trip');
         }
 
+        $this->_em->remove($subscription->getCommitmentProofJourney());
+
         $subscription->reset();
 
         $this->_em->flush();
