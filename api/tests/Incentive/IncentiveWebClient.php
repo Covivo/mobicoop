@@ -12,16 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class IncentiveWebClient extends WebTestCase
 {
-    protected const ADMIN_USER = [
-        'username' => 'corentin.keroual@mobicoop.org',
-        'pwd' => 'Corentin123',
-    ];
-
-    protected const USER = [
-        'username' => 'umberto.picaldi@mobicoop.org',
-        'pwd' => 'Umberto123',
-    ];
-
     protected const METHOD_GET = 'GET';
     protected const METHOD_POST = 'POST';
     protected const METHOD_PUT = 'PUT';
@@ -29,9 +19,18 @@ abstract class IncentiveWebClient extends WebTestCase
     private const DEFAULT_OPENING_TAG = '{';
     private const DEFAULT_CLOSING_TAG = '}';
 
+    protected $_adminUser;
+    protected $_user;
+
     protected $_client;
 
     protected $_response;
+
+    protected function setUsers(): void
+    {
+        $this->_adminUser = json_decode($_ENV['TEST_ADMIN_USER']);
+        $this->_user = json_decode($_ENV['TEST_USER']);
+    }
 
     protected function createBaseClient()
     {
@@ -43,12 +42,9 @@ abstract class IncentiveWebClient extends WebTestCase
     /**
      * Create a client with a default Authorization header.
      *
-     * @param string $username
-     * @param string $password
-     *
      * @return \Symfony\Bundle\FrameworkBundle\Client
      */
-    protected function createAuthenticatedClient($username = 'user', $password = 'password')
+    protected function createAuthenticatedClient(string $username = 'user', string $password = 'password')
     {
         $this->_client = $this->createBaseClient();
         $this->_client->request(
@@ -84,11 +80,11 @@ abstract class IncentiveWebClient extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
-    protected function requestToken(string $method = self::METHOD_GET, string $endpoint, array $user = null)
+    protected function requestToken(string $method = self::METHOD_GET, string $endpoint, $user = null)
     {
-        $user = !is_null($user) ? $user : self::ADMIN_USER;
+        $user = !is_null($user) ? $user : $this->_adminUser;
 
-        $this->_client = $this->createAuthenticatedClient($user['username'], $user['pwd']);
+        $this->_client = $this->createAuthenticatedClient($user->username, $user->pwd);
         $this->_client->request($method, $endpoint, ['Authorization']);
 
         $this->setResponse();

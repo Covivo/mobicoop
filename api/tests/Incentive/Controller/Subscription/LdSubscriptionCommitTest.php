@@ -20,6 +20,11 @@ class LdSubscriptionCommitTest extends IncentiveWebClient
     private const NON_EXISTANT_SUBSCRIPTION_ID = 12;
     private const VALID_CARPOOL_PROOF_ID = 1;
 
+    protected function setUp(): void
+    {
+        parent::setUsers();
+    }
+
     /**
      * @test
      */
@@ -33,7 +38,7 @@ class LdSubscriptionCommitTest extends IncentiveWebClient
      */
     public function controllerUnallowedUser()
     {
-        parent::requestToken(self::METHOD_PUT, $this->setEndpointParameters(self::ENDPOINT, [self::SUBSCRIPTION_TAG => self::EXISTANT_SUBSCRIPTION_ID]), self::USER);
+        parent::requestToken(self::METHOD_PUT, $this->setEndpointParameters(self::ENDPOINT, [self::SUBSCRIPTION_TAG => self::EXISTANT_SUBSCRIPTION_ID]), $this->_user);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }

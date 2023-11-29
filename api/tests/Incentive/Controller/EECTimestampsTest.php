@@ -17,6 +17,11 @@ class EECTimestampsTest extends IncentiveWebClient
 
     private const USER_ID = 12;
 
+    protected function setUp(): void
+    {
+        parent::setUsers();
+    }
+
     /**
      * test.
      */
@@ -30,7 +35,7 @@ class EECTimestampsTest extends IncentiveWebClient
      */
     public function controllerUnallowedUser()
     {
-        parent::requestToken(self::CONTROLLER_METHOD, $this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]), self::USER);
+        parent::requestToken(self::CONTROLLER_METHOD, $this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]), $this->_user);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
@@ -40,7 +45,7 @@ class EECTimestampsTest extends IncentiveWebClient
      */
     public function controllerSuccess()
     {
-        parent::requestToken(self::CONTROLLER_METHOD, $this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]), self::ADMIN_USER);
+        parent::requestToken(self::CONTROLLER_METHOD, $this->setEndpointParameters(self::ENDPOINT, ['user_id' => self::USER_ID]), $this->_adminUser);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
 

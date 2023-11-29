@@ -12,6 +12,11 @@ class EecEligibilityCollectionDataProviderTest extends IncentiveWebClient
     public const ENDPOINT = '/my_eec_eligibility';
     private const PROVIDER_METHOD = self::METHOD_GET;
 
+    protected function setUp(): void
+    {
+        parent::setUsers();
+    }
+
     /**
      * @test
      */

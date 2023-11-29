@@ -14,6 +14,11 @@ class CeeSubscriptionsCollectionDataProviderTest extends IncentiveWebClient
     public const ENDPOINT = '/my_cee_subscriptions';
     private const PROVIDER_METHOD = self::METHOD_GET;
 
+    protected function setUp(): void
+    {
+        parent::setUsers();
+    }
+
     /**
      * @test
      */
