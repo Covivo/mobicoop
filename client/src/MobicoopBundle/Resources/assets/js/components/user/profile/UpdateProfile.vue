@@ -254,6 +254,14 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
+
+            <v-switch
+              v-if="gratuityActive"
+              v-model="gratuitySubscription"
+              :label="$t('gratuity.label', {platform:platform})"
+              inset
+              color="secondary"
+            />
           </v-row>
 
           <v-row
@@ -840,7 +848,8 @@ export default {
       emailChanged: false,
       dialogEmail: false,
       ssoConnection: null,
-      drivingLicenceNumberValid: true
+      drivingLicenceNumberValid: true,
+      gratuitySubscription: this.user && this.user.gratuity !== null ? this.user.gratuity : null
     };
   },
   computed : {
@@ -878,6 +887,9 @@ export default {
         return this.gendersList.includes(parseInt(genderItem.value));
       });
     },
+    gratuityActive(){
+      return this.$store.getters['grt/isActive'];
+    }
   },
   watch: {
     menu (val) {
@@ -969,6 +981,7 @@ export default {
       updateUser.append("birthDay", this.birthDay);
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
+      updateUser.append("gratuitySubscription", this.gratuitySubscription);
       updateUser.append("phoneDisplay", this.phoneDisplay.value);
       updateUser.append("drivingLicenceNumber", this.drivingLicenceNumber);
 

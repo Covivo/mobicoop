@@ -39,6 +39,9 @@
     },
     "tooltip": "The news of the service are emails that used only to keep you informed of the changes to the service and promote your practice of carpooling. Such as updates to the platform or emails from the referent of a community to which you belong. This information may concern updates to the platform. No commercial solicitation is made via these emails."
   },
+  "gratuity": {
+    "label": "Gratuity programme"
+  },
   "email": {
     "label": "Email",
     "errors": {

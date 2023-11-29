@@ -541,6 +541,7 @@ class UserController extends AbstractController
             $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription('true' === $data->get('newsSubscription') ? true : false);
+            $user->setGratuity('true' === $data->get('gratuitySubscription') ? true : false);
             $user->setDrivingLicenceNumber('' !== trim($data->get('drivingLicenceNumber')) ? $data->get('drivingLicenceNumber') : null);
 
             if ($user = $userManager->updateUser($user)) {
@@ -1292,6 +1293,7 @@ class UserController extends AbstractController
             $user->setMusicFavorites($data['musicFavorites']);
             $user->setChat($data['chat']);
             $user->setChatFavorites($data['chatFavorites']);
+            $user->setGratuity($data['gratuity']);
 
             if ($response = $userManager->updateUser($user)) {
                 $reponseofmanager = $this->handleManagerReturnValue($response);

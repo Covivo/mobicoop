@@ -50,6 +50,11 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/gamification.log"
       channels: [gamification]
+    gratuity:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/gratuity.log"
+      channels: [gratuity]
     geography:
       type: stream
       level: debug
@@ -117,6 +122,7 @@ monolog:
           "!csvMaker",
           "!faker",
           "!gamification",
+          "!gratuity",
           "!geography",
           "!geomatcher",
           "!georouter",
@@ -146,6 +152,7 @@ monolog:
           "!csvMaker",
           "!faker",
           "!gamification",
+          "!gratuity",
           "!geography",
           "!geomatcher",
           "!georouter",

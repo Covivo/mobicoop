@@ -42,6 +42,7 @@ services:
     arguments:
       $badgeImageUri: "%env(string:GAMIFICATION_BADGE_IMAGE_URI)%"
       $gamificationActive: "%env(bool:GAMIFICATION_ACTIVE)%"
+      $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
     decorates: "api_platform.jsonld.normalizer.item"
 
   # EVENT LISTENERS
@@ -554,7 +555,7 @@ services:
     arguments:
       $eventProviderType: "%env(string:EVENT_PROVIDER_TYPE)%"
       $eventImportEnabled: "%env(bool:EVENT_IMPORT_ENABLED)%"
-  
+
   App\Event\Admin\DataProvider\EventCollectionDataProvider:
     arguments:
       $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
@@ -709,6 +710,21 @@ services:
     tags:
       - { name: monolog.logger, channel: geography }
 
+  # Gratuity
+  App\Gratuity:
+    tags:
+      - { name: monolog.logger, channel: gratuity }
+
+  App\Gratuity\Service\GratuityCampaignManager:
+    arguments:
+      $gratuityCampaignActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
+    tags:
+      - { name: monolog.logger, channel: gratuity }
+
+  App\Gratuity\EventSubscriber\LogSubscriber:
+    arguments:
+      $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
+
   App\Stats\Admin\Service\AnalyticManager:
     arguments:
       $params: "%env(json:file:resolve:ANALYTICS_PARAMETERS)%"
@@ -767,20 +783,17 @@ services:
       - { name: monolog.logger, channel: faker }
 
   App\Import\Admin\Controller\ImportEventsAction:
-    arguments:  
+    arguments:
       $eventProviderServerIP: "%env(string:EVENT_PROVIDER_SERVER_IP)%"
       $eventRemoteFilePath: "%env(string:EVENT_REMOTE_FILE_PATH)%"
       $eventFtpLogin: "%env(string:EVENT_FTP_LOGIN)%"
-      $eventFtpPassword: "%env(string:EVENT_FTP_PASWORD)%" 
+      $eventFtpPassword: "%env(string:EVENT_FTP_PASWORD)%"
       $eventProvider: "%env(string:EVENT_PROVIDER)%"
 
   # INCENTIVE
   App\Incentive\Command\ProofValidationCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:proof-validate",
-        }
+      - { name: "console.command", command: "app:incentive:proof-validate" }
 
   App\Incentive\Command\SubscriptionsVerificationCommand:
     tags:
@@ -1243,7 +1256,7 @@ services:
   'App\User\Admin\DataProvider\UserCampaignAssociateCollectionDataProvider':
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-  
+
   'App\User\Admin\DataProvider\UserDeleteCollectionDataProvider':
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
