@@ -27,7 +27,6 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Item data provider for User me.
@@ -43,10 +42,9 @@ final class UserMeCollectionDataProvider implements CollectionDataProviderInterf
      */
     private $_request;
 
-    public function __construct(UserManager $userManager, RequestStack $requestStack)
+    public function __construct(UserManager $userManager)
     {
         $this->userManager = $userManager;
-        $this->_request = $requestStack->getCurrentRequest();
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -57,12 +55,6 @@ final class UserMeCollectionDataProvider implements CollectionDataProviderInterf
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): array
     {
         if ($user = $this->userManager->getMe()) {
-            $delegateAuthentication = boolval($this->_request->get('delegate-authentication'));
-
-            if (!$delegateAuthentication) {
-                $this->userManager->updateActivity($user);
-            }
-
             return [$user];
         }
 

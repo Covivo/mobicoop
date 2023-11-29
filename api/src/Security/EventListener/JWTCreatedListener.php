@@ -83,6 +83,7 @@ class JWTCreatedListener
                 // Delegate authentication use case
                 case !is_null($user) && !is_null($this->security->getUser()) && $user->getId() != $this->security->getUser()->getId():
                     $this->userManager->createAuthenticationDelegation($this->security->getUser(), $user);
+                    $payload['delegateAuth'] = true;
 
                     break;
 
