@@ -32,6 +32,7 @@ use App\User\Entity\User;
 use CrEOF\Spatial\PHP\Types\Geometry\LineString;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -77,6 +78,8 @@ class CarpoolProof
      * @ORM\GeneratedValue
      *
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"readSubscription"})
      */
     private $id;
 

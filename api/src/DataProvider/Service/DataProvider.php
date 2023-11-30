@@ -79,8 +79,14 @@ class DataProvider
      */
     public function getItem(array $params, array $headers = null): Response
     {
+        $uri = $this->resource;
+
+        if (!empty($params)) {
+            $uri .= '?'.http_build_query($params);
+        }
+
         try {
-            $clientResponse = $this->client->get($this->resource.'?'.http_build_query($params), ['headers' => $headers]);
+            $clientResponse = $this->client->get($uri, ['headers' => $headers]);
 
             return new Response($clientResponse->getStatusCode(), $clientResponse->getBody()->getContents());
         } catch (TransferException $e) {

@@ -2,9 +2,13 @@
 
 namespace App\Incentive\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\Incentive\Controller\Subscription\LdSubscriptionCommit;
+use App\Incentive\Controller\Subscription\LdSubscriptionGet;
+use App\Incentive\Controller\Subscription\LdSubscriptionUpdate;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\Log\LongDistanceSubscriptionLog;
 use App\Incentive\Service\Manager\SubscriptionManager;
@@ -19,6 +23,39 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="mobconnect__long_distance_subscription")
  *
  * @ORM\HasLifecycleCallbacks
+ *
+ * @ApiResource(
+ *      attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={
+ *              "groups"={"readSubscription","readAdminSubscription"},
+ *              "enable_max_depth"=true
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "method"="GET",
+ *              "path"="/eec/ld-subscriptions/{id}",
+ *              "controller": LdSubscriptionGet::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"readSubscription", "readAdminSubscription"}, "skip_null_values"=false}
+ *          },
+ *          "commit"={
+ *              "method"="PUT",
+ *              "path"="/eec/ld-subscriptions/{id}/commit",
+ *              "controller"=LdSubscriptionCommit::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"readSubscription", "readAdminSubscription"}, "skip_null_values"=false}
+ *          },
+ *          "update"={
+ *              "method"="PUT",
+ *              "path"="/eec/ld-subscriptions/{id}/update",
+ *              "controller"=LdSubscriptionUpdate::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"readSubscription", "readAdminSubscription"}, "skip_null_values"=false}
+ *          }
+ *      }
+ * )
  */
 class LongDistanceSubscription extends Subscription
 {
@@ -58,7 +95,7 @@ class LongDistanceSubscription extends Subscription
     /**
      * @var LongDistanceJourney
      *
-     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceJourney")
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceJourney", cascade={"persist"}, orphanRemoval=true)
      *
      * @ORM\JoinColumn(nullable=true)
      *
@@ -81,6 +118,8 @@ class LongDistanceSubscription extends Subscription
      * @var string
      *
      * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $incentiveProofTimestampToken;
 
@@ -90,6 +129,8 @@ class LongDistanceSubscription extends Subscription
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC incentive proof timestamp signing time"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $incentiveProofTimestampSigningTime;
 
@@ -99,6 +140,8 @@ class LongDistanceSubscription extends Subscription
      * @var string
      *
      * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance ECC commitment proof timestamp"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $commitmentProofTimestampToken;
 
@@ -108,6 +151,8 @@ class LongDistanceSubscription extends Subscription
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC commitment proof timestamp signing time"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $commitmentProofTimestampSigningTime;
 
@@ -117,6 +162,8 @@ class LongDistanceSubscription extends Subscription
      * @var string
      *
      * @ORM\Column(type="text", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $honorCertificateProofTimestampToken;
 
@@ -126,6 +173,8 @@ class LongDistanceSubscription extends Subscription
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance EEC honor certificate proof timestamp signing time"})
+     *
+     * @Groups({"eec-timestamps"})
      */
     protected $honorCertificateProofTimestampSigningTime;
 
@@ -173,7 +222,7 @@ class LongDistanceSubscription extends Subscription
      *
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"readSubscription"})
+     * @Groups({"readSubscription","eec-timestamps"})
      */
     private $id;
 
@@ -326,27 +375,6 @@ class LongDistanceSubscription extends Subscription
      * @Groups({"readSubscription"})
      */
     private $bonusStatus = SubscriptionManager::BONUS_STATUS_PENDING;
-
-    /**
-     * @var bool
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $hasIncentiveToken = false;
-
-    /**
-     * @var bool
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $hasCommitToken = false;
-
-    /**
-     * @var bool
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $hasHonorCertificateToken = false;
 
     /**
      * The moBconnet HTTP request log.
@@ -866,7 +894,7 @@ class LongDistanceSubscription extends Subscription
                     return $journey->getId() === $commitmentProofJourney->getId();
                 });
 
-                if (!empty($filteredJourneys)) {
+                if (empty($filteredJourneys)) {
                     $this->addLongDistanceJourney($commitmentProofJourney);
                 }
             }

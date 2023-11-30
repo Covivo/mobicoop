@@ -150,6 +150,34 @@ class SubscriptionManager extends MobConnectManager
         $this->_em->flush();
     }
 
+    /**
+     * Set, for a user the mobConnect subscription data.
+     */
+    public function getUserMobConnectSubscription(User $user): User
+    {
+        if (!is_null($user->getLongDistanceSubscription())) {
+            $user->setLongDistanceSubscription($this->getMobConnectSubscription($user->getLongDistanceSubscription()));
+        }
+
+        if (!is_null($user->getShortDistanceSubscription())) {
+            $user->setShortDistanceSubscription($this->getMobConnectSubscription($user->getShortDistanceSubscription()));
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     *
+     * @return LongDistanceSubscription|ShortDistanceSubscription
+     */
+    public function getMobConnectSubscription($subscription)
+    {
+        $this->setDriver($subscription->getUser());
+
+        return $subscription->setMoBSubscription(json_encode($this->getMobSubscription($subscription->getSubscriptionid())->getContent()));
+    }
+
     public function getUserEECEligibility(User $user): EecEligibility
     {
         $this->setDriver($user);
@@ -177,6 +205,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_subscriptions = new CeeSubscriptions($this->_driver->getId());
 
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
+
         if (!is_null($shortDistanceSubscription)) {
             $shortDistanceSubscription->setVersion();
             $this->_subscriptions->setShortDistanceSubscription($shortDistanceSubscription);
@@ -375,6 +404,20 @@ class SubscriptionManager extends MobConnectManager
         }
 
         $this->_em->flush();
+    }
+
+    public function updateTimestampTokens(User $user): User
+    {
+        $this->setDriver($user);
+
+        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
+            $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getLongDistanceSubscription());
+        }
+        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
+            $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getShortDistanceSubscription());
+        }
+
+        return $this->getDriver();
     }
 
     public function getSubscription(string $subscriptionId): MobConnectSubscriptionResponse

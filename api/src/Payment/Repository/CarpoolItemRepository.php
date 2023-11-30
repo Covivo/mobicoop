@@ -274,7 +274,7 @@ class CarpoolItemRepository
 
         $allreadyAdded = array_map(function ($journey) {
             return $journey->getCarpoolItem();
-        }, $subscription->getJourneys()->toArray());
+        }, $subscription->getJourneys());
 
         $parameters = [
             'country' => Validation::REFERENCE_COUNTRY,
