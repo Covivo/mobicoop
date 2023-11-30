@@ -70,7 +70,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
- *          },
+ *          }
  *      },
  *      itemOperations={
  *          "get"={

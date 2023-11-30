@@ -24,6 +24,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
     private $refreshTokenManager;
     private $params;
     private $ssoManager;
+    private $_ssoProvider;
 
     public function __construct(EntityManagerInterface $em, JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager, ParameterBagInterface $params, SsoManager $ssoManager)
     {
@@ -58,6 +59,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
         ) {
             $credentials['ssoId'] = $decodeRequest->ssoId;
             $credentials['ssoProvider'] = $decodeRequest->ssoProvider;
+            $this->_ssoProvider = $decodeRequest->ssoProvider;
             $credentials['baseSiteUri'] = $decodeRequest->baseSiteUri;
         } else {
             return false;
@@ -115,12 +117,10 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
             'refreshToken' => $refreshToken->getRefreshToken(),
         ];
 
-        if (!is_null($user->getSsoProvider())) {
-            $logoutUrl = $this->ssoManager->getSsoLogoutUrl($user);
+        if ('' !== $this->_ssoProvider) {
+            $logoutUrl = $this->ssoManager->getSsoLogoutUrl($user, $this->_ssoProvider);
             if ($logoutUrl) {
-                $response = [
-                    'logoutUrl' => (!is_null($user->getSsoProvider())) ? $this->ssoManager->getSsoLogoutUrl($user) : null,
-                ];
+                $response['logoutUrl'] = (count($user->getSsoAccounts()) > 0) ? $logoutUrl : null;
             }
         }
 

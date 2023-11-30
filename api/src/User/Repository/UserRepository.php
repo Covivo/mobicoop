@@ -23,6 +23,7 @@
 
 namespace App\User\Repository;
 
+use App\App\Entity\App;
 use App\Community\Entity\Community;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryVolunteer;
@@ -208,20 +209,21 @@ class UserRepository
 
     public function findUserWithNoAdSinceXDays(int $nbOfDays = null): ?array
     {
-        $now = (new \DateTime('now'));
+        $now = new \DateTime('now');
         $createdDate = $now->modify('- '.$nbOfDays.' days')->format('Y-m-d');
 
-        $stmt = $this->entityManager->getConnection()->prepare(
-            "SELECT u.id
-            FROM user u
-            LEFT JOIN proposal p on p.user_id = u.id and p.private=0
-            WHERE DATE(u.created_date) = '".$createdDate."'
-            GROUP BY u.id
-            HAVING COUNT(p.id) = 0"
-        );
-        $stmt->execute();
+        $qb = $this->repository->createQueryBuilder('u');
 
-        return $stmt->fetchAll();
+        $qb
+            ->select('u')
+            ->leftJoin('u.proposals', 'p', 'WITH', 'p.private = 0')
+            ->where('u.createdDate LIKE :createdDate')
+            ->groupBy('u.id')
+            ->having('count(p.id) = 0')
+            ->setParameter('createdDate', $createdDate.'%')
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findNewlyRegisteredUsers(): ?array
@@ -555,5 +557,39 @@ class UserRepository
         $qb->setParameters($parameters);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findUserBySsoIdAndProvider(string $ssoId, string $ssoProvider): ?User
+    {
+        $query = $this->repository->createQueryBuilder('u');
+
+        $query
+            ->join('u.ssoAccounts', 'ssoaccounts')
+            ->where('ssoaccounts.ssoId = :ssoId')
+            ->andWhere('ssoaccounts.ssoProvider = :ssoProvider')
+            ->setParameter('ssoId', $ssoId)
+            ->setParameter('ssoProvider', $ssoProvider)
+            ->orderBy('ssoaccounts.id', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
+    }
+
+    public function findUserBySsoIdAndAppDelegate(string $ssoId, App $appDelegate): ?User
+    {
+        $query = $this->repository->createQueryBuilder('u');
+
+        $query
+            ->join('u.ssoAccounts', 'ssoaccounts')
+            ->where('ssoaccounts.ssoId = :ssoId')
+            ->andWhere('ssoaccounts.appDelegate = :appDelegate')
+            ->setParameter('ssoId', $ssoId)
+            ->setParameter('appDelegate', $appDelegate)
+            ->orderBy('ssoaccounts.id', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

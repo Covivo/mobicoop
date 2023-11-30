@@ -163,6 +163,7 @@ class User
      * @var int The id of this User
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"readUser","writeUser"})
      */
     private $id;
@@ -171,6 +172,7 @@ class User
      * @var null|string the first name of the user
      *
      * @Assert\NotBlank
+     *
      * @Groups({"readUser","writeUser"})
      */
     private $givenName;
@@ -179,6 +181,7 @@ class User
      * @var null|string the family name of the user
      *
      * @Assert\NotBlank
+     *
      * @Groups({"readUser","writeUser"})
      */
     private $familyName;
@@ -187,6 +190,7 @@ class User
      * @var string the email of the user
      *
      * @Assert\Email()
+     *
      * @Groups({"readUser","writeUser"})
      */
     private $email;
@@ -216,6 +220,7 @@ class User
      * @var null|int The gender of the user (1=female, 2=male, 3=nc)
      *
      * @Assert\NotBlank
+     *
      * @Groups({"readUser","writeUser"})
      */
     private $gender;
@@ -228,7 +233,7 @@ class User
     private $newsSubscription;
 
     /**
-     * @var int The external id of this User
+     * @var string The external id of this User
      *
      * @Groups({"readUser","writeUser"})
      */

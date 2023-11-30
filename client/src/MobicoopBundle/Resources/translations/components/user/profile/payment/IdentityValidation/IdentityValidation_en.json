@@ -1,6 +1,6 @@
 {
   "title": "3. Identity verification",
-  "text": "<p>The verification of identity on the basis of an updated identity document (ID card, passport, driver's license) is a legal obligation to receive payments. This obligation is motivated by the fight against money laundering. </p><p>The verification of identity required for payment is done by comparing the first and last name entered in your profile and those on your identity document. Please make sure that you have the correct information in your profile. </p>",
+  "text": "<p>The verification of identity on the basis of an updated identity document (ID card, passport, driver's license) is a legal obligation to receive payments. This obligation is motivated by the fight against money laundering. </p><p>The verification of identity required for payment is done by comparing the first and last name entered in your profile and those on your identity document. Please make sure that you have the correct information in your profile.</p><p>You can read the conditions of validation of an identity document from our partner <a target='_blank' href='https://mangopay.com/docs/concepts/users/verification/document-process'>here</a>.</p>",
   "fileInput": {
     "label": "Up-to-date identity document",
     "error": "The document must not be larger than 6 MB",

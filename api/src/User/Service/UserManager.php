@@ -25,6 +25,7 @@ namespace App\User\Service;
 
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\App\Entity\App;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
@@ -60,6 +61,7 @@ use App\Solidary\Repository\SolidaryAskRepository;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\AuthenticationDelegation;
+use App\User\Entity\SsoAccount;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Entity\UserNotification;
@@ -78,6 +80,7 @@ use App\User\Event\UserUpdatedSelfEvent;
 use App\User\Exception\UserException;
 use App\User\Exception\UserNotFoundException;
 use App\User\Exception\UserUnderAgeException;
+use App\User\Repository\SsoAccountRepository;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Repository\UserRepository;
 use App\User\Ressource\ProfileSummary;
@@ -132,6 +135,7 @@ class UserManager
     private $paymentProfileRepository;
     private $bookingManager;
     private $carpoolStandardEnabled;
+    private $ssoAccountRepository;
 
     // Default carpool settings
     private $chat;
@@ -204,7 +208,8 @@ class UserManager
         PseudonymizationManager $pseudonymizationManager,
         $userMinAge,
         BookingManager $bookingManager,
-        bool $carpoolStandardEnabled
+        bool $carpoolStandardEnabled,
+        SsoAccountRepository $ssoAccountRepository
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -250,6 +255,7 @@ class UserManager
         $this->userMinAge = $userMinAge;
         $this->bookingManager = $bookingManager;
         $this->carpoolStandardEnabled = $carpoolStandardEnabled;
+        $this->ssoAccountRepository = $ssoAccountRepository;
     }
 
     /**
@@ -1414,33 +1420,37 @@ class UserManager
 
     /**
      * Delete the user.
+     *
+     * @param mixed $isScammer
      */
-    public function deleteUser(User $user)
+    public function deleteUser(User $user, $isScammer = false)
     {
-        // We check if the user have ads.
-        // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
-        foreach ($user->getProposals() as $proposal) {
-            if ($proposal->isPrivate()) {
-                continue;
-            }
-            foreach ($proposal->getMatchingRequests() as $matching) {
-                foreach ($matching->getAsks() as $ask) {
-                    // todo : find why class of $ask can be a proxy of Ask class
-                    if (Ask::class !== get_class($ask)) {
-                        continue;
-                    }
-                    $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
+        if (!$isScammer) {
+            // We check if the user have ads.
+            // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
+            foreach ($user->getProposals() as $proposal) {
+                if ($proposal->isPrivate()) {
+                    continue;
                 }
-            }
-            foreach ($proposal->getMatchingOffers() as $matching) {
-                foreach ($matching->getAsks() as $ask) {
-                    // todo : find why class of $ask can be a proxy of Ask class
-                    if (Ask::class !== get_class($ask)) {
-                        continue;
+                foreach ($proposal->getMatchingRequests() as $matching) {
+                    foreach ($matching->getAsks() as $ask) {
+                        // todo : find why class of $ask can be a proxy of Ask class
+                        if (Ask::class !== get_class($ask)) {
+                            continue;
+                        }
+                        $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
+                        $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                     }
-                    $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                }
+                foreach ($proposal->getMatchingOffers() as $matching) {
+                    foreach ($matching->getAsks() as $ask) {
+                        // todo : find why class of $ask can be a proxy of Ask class
+                        if (Ask::class !== get_class($ask)) {
+                            continue;
+                        }
+                        $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
+                        $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                    }
                 }
             }
         }
@@ -1724,13 +1734,31 @@ class UserManager
         return implode($pass); // turn the array into a string
     }
 
-    public function updateUserSsoProperties(User $user, SsoUser $ssoUser, bool $eec = true): User
+    public function updateUserSsoProperties(User $user, SsoUser $ssoUser, bool $createdBySso = false): User
     {
-        $user->setSsoId($ssoUser->getSub());
-        $user->setSsoProvider($ssoUser->getProvider());
-        if (is_null($user->getCreatedSsoDate())) {
-            $user->setCreatedSsoDate(new \DateTime('now'));
+        foreach ($user->getSsoAccounts() as $ssoAccount) {
+            /**
+             * @var ssoAccount $ssoAccount
+             */
+            if ($ssoAccount->getSsoProvider() == $ssoUser->getProvider()) {
+                $ssoAccount->setSsoId($ssoUser->getSub());
+                $ssoAccount->setCreatedBySso($createdBySso);
+                if (is_null($ssoAccount->getCreatedDate())) {
+                    $ssoAccount->setCreatedDate(new \DateTime('now'));
+                }
+                $this->entityManager->persist($ssoAccount);
+                $this->entityManager->flush();
+
+                return $user;
+            }
         }
+
+        $newSsoAccount = new SsoAccount();
+        $newSsoAccount->setSsoId($ssoUser->getSub());
+        $newSsoAccount->setSsoProvider($ssoUser->getProvider());
+        $newSsoAccount->setCreatedBySso($createdBySso);
+        $user->addSsoAccount($newSsoAccount);
+
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
@@ -1746,60 +1774,20 @@ class UserManager
      */
     public function getUserFromSso(SsoUser $ssoUser): ?User
     {
-        $user = $this->userRepository->findOneBy(['ssoId' => $ssoUser->getSub(), 'ssoProvider' => $ssoUser->getProvider()]);
+        $user = $this->userRepository->findUserBySsoIdAndProvider($ssoUser->getSub(), $ssoUser->getProvider());
+
         if (is_null($user)) {
             // check if a user with this email already exists
             $user = $this->userRepository->findOneBy(['email' => $ssoUser->getEmail()]);
             if (!is_null($user)) {
-                // AutoCreate Autoattach disable. If the User isn't already attached to this SSO provider we reject it
-                if (!$ssoUser->hasAutoCreateAccount()) {
-                    if ($user->getSsoProvider() !== $ssoUser->getProvider()) {
-                        if (!$ssoUser->hasAutoCreateAccount()) {
-                            throw new \LogicException('Autocreate/Autoattach account disable');
-                        }
-                    } else {
-                        $event = new SsoAuthenticationEvent($user, $ssoUser);
-                        $this->eventDispatcher->dispatch(SsoAuthenticationEvent::NAME, $event);
-
-                        return $user;
-                    }
-                }
-
-                // We update the user with ssoId and ssoProvider and return it
-                return $this->updateUserSsoProperties($user, $ssoUser);
+                return $this->_attachUserBySso($user, $ssoUser);
             }
 
             if (!$ssoUser->hasAutoCreateAccount()) {
                 throw new \LogicException('Autocreate/Autoattach account disable');
             }
 
-            // Create a new one
-            $user = new User();
-            $user->setSsoId($ssoUser->getSub());
-            $user->setSsoProvider($ssoUser->getProvider());
-            $user->setCreatedSsoDate(new \DateTime('now'));
-            $user->setGivenName($ssoUser->getFirstname());
-            $user->setFamilyName($ssoUser->getLastname());
-            $user->setEmail($ssoUser->getEmail());
-
-            // Gender
-            switch ($ssoUser->getGender()) {
-                case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);
-
-                    break;
-
-                case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);
-
-                    break;
-
-                default: $user->setGender(User::GENDER_OTHER);
-            }
-
-            if ('' != trim($ssoUser->getBirthdate())) {
-                $user->setBirthDate(\DateTime::createFromFormat('Y-m-d', $ssoUser->getBirthdate()));
-            }
-
-            $user = $this->registerUser($user, true, false, $ssoUser);
+            $user = $this->_createNewUserBySso($ssoUser);
         }
 
         $this->updateUserSsoProperties($user, $ssoUser);
@@ -1810,9 +1798,9 @@ class UserManager
     /**
      * Get a User by it's SsoId.
      */
-    public function getUserBySsoId(string $ssoId): ?User
+    public function getUserBySsoIdAndAppDelegate(string $ssoId, App $appDelegate): ?User
     {
-        if ($user = $this->userRepository->findOneBy(['ssoId' => $ssoId])) {
+        if ($user = $this->userRepository->findUserBySsoIdAndAppDelegate($ssoId, $appDelegate)) {
             return $user;
         }
 
@@ -1994,7 +1982,7 @@ class UserManager
 
         // If the is a Ask linked, it's twice the economy (round trip)
         if (!is_null($ask->getAskLinked()) && !$export) {
-            $savedDistance = $savedDistance * 2;
+            $savedDistance *= 2;
         }
 
         return $this->geoTools->getCO2($savedDistance);
@@ -2044,6 +2032,62 @@ class UserManager
     public function getUnreadMessageNumberForResponseInsertion(User $user): User
     {
         return $this->getUnreadMessageNumber($user);
+    }
+
+    private function _attachUserBySso(User $user, SsoUser $ssoUser): User
+    {
+        // AutoCreate Autoattach disable. If the User isn't already attached to this SSO provider we reject it
+        if (!$ssoUser->hasAutoCreateAccount()) {
+            $providers = $this->ssoAccountRepository->getListOfSsoAccountOfAUser($user);
+            if (!in_array($ssoUser->getProvider(), $providers)) {
+                if (!$ssoUser->hasAutoCreateAccount()) {
+                    throw new \LogicException('Autocreate/Autoattach account disable');
+                }
+            } else {
+                $event = new SsoAuthenticationEvent($user, $ssoUser);
+                $this->eventDispatcher->dispatch(SsoAuthenticationEvent::NAME, $event);
+
+                return $user;
+            }
+        }
+
+        // We update the user with ssoId and ssoProvider and return it
+        return $this->updateUserSsoProperties($user, $ssoUser);
+    }
+
+    private function _createNewUserBySso(SsoUser $ssoUser): User
+    {
+        // Create a new one
+        $user = new User();
+        $user->setGivenName($ssoUser->getFirstname());
+        $user->setFamilyName($ssoUser->getLastname());
+        $user->setEmail($ssoUser->getEmail());
+
+        $ssoAccount = new SsoAccount();
+        $ssoAccount->setSsoId($ssoUser->getSub());
+        $ssoAccount->setSsoProvider($ssoUser->getProvider());
+        $ssoAccount->setCreatedBySso(true);
+
+        $user->addSsoAccount($ssoAccount);
+
+        // Gender
+        switch ($ssoUser->getGender()) {
+            case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);
+
+                break;
+
+            case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);
+
+                break;
+
+            default: $user->setGender(User::GENDER_OTHER);
+        }
+
+        if ('' != trim($ssoUser->getBirthdate())) {
+            $user->setBirthDate(\DateTime::createFromFormat('Y-m-d', $ssoUser->getBirthdate()));
+        }
+
+        return $this->registerUser($user, true, false, $ssoUser);
     }
 
     /**

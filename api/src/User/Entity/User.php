@@ -52,6 +52,8 @@ use App\Geography\Entity\Address;
 use App\I18n\Entity\Language;
 use App\Image\Entity\Image;
 use App\Import\Entity\UserImport;
+use App\Incentive\Controller\EECTimestamps;
+use App\Incentive\Controller\Subscription\UserSubscriptions;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\MobConnectAuth;
 use App\Incentive\Entity\ShortDistanceSubscription;
@@ -104,6 +106,7 @@ use App\User\Filter\WaypointTerritoryFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -126,7 +129,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"patchSso", "readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true","skip_null_values"="false"},
+ *          "normalization_context"={"groups"={"patchSso", "readUser","mass","readSolidary","userStructure", "readExport","carpoolExport","eec-timestamps", "readSubscription", "readAdminSubscription"}, "enable_max_depth"="true","skip_null_values"="false"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -539,6 +542,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Users"}
  *              }
  *          },
+ *          "get_user_eec_subscriptions"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/eec/subscriptions",
+ *              "controller"=UserSubscriptions::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"readSubscription", "readAdminSubscription"}, "skip_null_values"=false},
+ *          },
+ *          "get_eec_timestamps"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/eec-timestamps",
+ *              "controller"=EECTimestamps::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"eec-timestamps"}, "skip_null_values"=false},
+ *          },
  *          "patchSso"={
  *              "method"="PATCH",
  *              "path"="/users/{id}/updateSso",
@@ -713,7 +730,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="integer")
      *
-     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso"})
+     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso","eec-timestamps"})
      *
      * @ApiProperty(identifier=true)
      */
@@ -1457,38 +1474,11 @@ class User implements UserInterface, EquatableInterface
     private $facebookId;
 
     /**
-     * @var null|string External ID of the user for a SSO connection
+     * @var ArrayCollection The Sso accounts owned by this User
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @Groups({"readUser", "patchSso"})
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\SsoAccount", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      */
-    private $ssoId;
-
-    /**
-     * @var null|string External Provider for a SSO connection
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @Groups({"readUser", "patchSso"})
-     */
-    private $ssoProvider;
-
-    /**
-     * @var \DateTimeInterface Creation date of the user by Sso (attachment date if already existing)
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     *
-     * @Groups({"aRead","readUser"})
-     */
-    private $createdSsoDate;
-
-    /**
-     * @var null|bool true : the user has been created by sso (false mean no sso or only attached a previously existing account)
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $createdBySso;
+    private $ssoAccounts;
 
     /**
      * @var null|User admin that create the user
@@ -1502,19 +1492,6 @@ class User implements UserInterface, EquatableInterface
      * @MaxDepth(1)
      */
     private $userDelegate;
-
-    /**
-     * @var null|App app that create the user
-     *
-     * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
-     *
-     * @ORM\JoinColumn(onDelete="SET NULL")
-     *
-     * @Groups({"readUser","write"})
-     *
-     * @MaxDepth(1)
-     */
-    private $appDelegate;
 
     /**
      * @var null|ArrayCollection the carpool proofs of the user as a driver
@@ -1833,19 +1810,21 @@ class User implements UserInterface, EquatableInterface
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", mappedBy="user")
      *
-     * @Groups({"patchSso", "readUser"})
+     * @Groups({"patchSso", "readUser", "eec-timestamps", "readSubscription", "readAdminSubscription"})
      */
     private $longDistanceSubscription;
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", mappedBy="user")
      *
-     * @Groups({"patchSso", "readUser"})
+     * @Groups({"patchSso", "readUser", "eec-timestamps", "readSubscription", "readAdminSubscription"})
      */
     private $shortDistanceSubscription;
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\MobConnectAuth", mappedBy="user", cascade={"remove"})
+     *
+     * @Groups({"readAdminSubscription"})
      */
     private $mobConnectAuth;
 
@@ -1889,6 +1868,13 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser", "results"})
      */
     private $bankingIdentityStatus = false;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readUser", "results"})
+     */
+    private $hasAccessToMobAPI = false;
 
     public function __construct($status = null)
     {
@@ -1935,6 +1921,7 @@ class User implements UserInterface, EquatableInterface
         $this->setAlreadyRegistered(false);
         $this->setMobileRegistration(null);
         $this->setExperienced(false);
+        $this->ssoAccounts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -3423,50 +3410,30 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getSsoId(): ?string
+    public function getSsoAccounts()
     {
-        return $this->ssoId;
+        return $this->ssoAccounts->getValues();
     }
 
-    public function setSsoId(?string $ssoId): self
+    public function addSsoAccount(SsoAccount $ssoAccount): self
     {
-        $this->ssoId = $ssoId;
+        if (!$this->ssoAccounts->contains($ssoAccount)) {
+            $this->ssoAccounts[] = $ssoAccount;
+            $ssoAccount->setUser($this);
+        }
 
         return $this;
     }
 
-    public function getSsoProvider(): ?string
+    public function removeSsoAccount(SsoAccount $ssoAccount): self
     {
-        return $this->ssoProvider;
-    }
-
-    public function setSsoProvider(?string $ssoProvider): self
-    {
-        $this->ssoProvider = $ssoProvider;
-
-        return $this;
-    }
-
-    public function getCreatedSsoDate(): ?\DateTimeInterface
-    {
-        return $this->createdSsoDate;
-    }
-
-    public function setCreatedSsoDate(?\DateTimeInterface $createdSsoDate): self
-    {
-        $this->createdSsoDate = $createdSsoDate;
-
-        return $this;
-    }
-
-    public function isCreatedBySso(): ?bool
-    {
-        return (is_null($this->createdBySso)) ? false : $this->createdBySso;
-    }
-
-    public function setCreatedBySso(?bool $createdBySso): self
-    {
-        $this->createdBySso = $createdBySso;
+        if ($this->ssoAccounts->contains($ssoAccount)) {
+            $this->ssoAccounts->removeElement($ssoAccount);
+            // set the owning side to null (unless already changed)
+            if ($ssoAccount->getUser() === $this) {
+                $ssoAccount->setUser(null);
+            }
+        }
 
         return $this;
     }
@@ -3479,18 +3446,6 @@ class User implements UserInterface, EquatableInterface
     public function setUserDelegate(?User $userDelegate): self
     {
         $this->userDelegate = $userDelegate;
-
-        return $this;
-    }
-
-    public function getAppDelegate(): ?App
-    {
-        return $this->appDelegate;
-    }
-
-    public function setAppDelegate(?App $appDelegate): self
-    {
-        $this->appDelegate = $appDelegate;
 
         return $this;
     }
@@ -4198,5 +4153,35 @@ class User implements UserInterface, EquatableInterface
     public function getPaymentProfiles()
     {
         return $this->paymentProfiles;
+    }
+
+    /**
+     * Get the value of hasAccessToMobAPI.
+     */
+    public function getHasAccessToMobAPI(): bool
+    {
+        $this->hasAccessToMobAPI = !is_null($this->getMobConnectAuth()) && !$this->mobConnectAuth->hasAuthenticationExpired();
+
+        return $this->hasAccessToMobAPI;
+    }
+
+    public function isAssociatedWithSsoAccount(string $provider): bool
+    {
+        $filteredProviders = array_filter($this->getSsoAccounts(), function ($ssoAccount) use ($provider) {
+            return $provider === $ssoAccount->getSsoProvider();
+        });
+
+        return !empty($filteredProviders);
+    }
+
+    public function getSsoAccount(string $provider): SsoAccount
+    {
+        if (!$this->isAssociatedWithSsoAccount($provider)) {
+            throw new BadRequestHttpException('The user is not associated with the requested provider');
+        }
+
+        return array_filter($this->getSsoAccounts(), function ($ssoAccount) use ($provider) {
+            return $provider === $ssoAccount->getSsoProvider();
+        })[0];
     }
 }

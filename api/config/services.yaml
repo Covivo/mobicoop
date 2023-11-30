@@ -552,7 +552,9 @@ services:
       $eventProviderServerUrl: "%env(string:EVENT_PROVIDER_SERVER_URL)%"
   App\Event\Command\EventImportCommand:
     arguments:
+      $eventProviderType: "%env(string:EVENT_PROVIDER_TYPE)%"
       $eventImportEnabled: "%env(bool:EVENT_IMPORT_ENABLED)%"
+  
   App\Event\Admin\DataProvider\EventCollectionDataProvider:
     arguments:
       $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
@@ -764,27 +766,40 @@ services:
     tags:
       - { name: monolog.logger, channel: faker }
 
+  App\Import\Admin\Controller\ImportEventsAction:
+    arguments:  
+      $eventProviderServerIP: "%env(string:EVENT_PROVIDER_SERVER_IP)%"
+      $eventRemoteFilePath: "%env(string:EVENT_REMOTE_FILE_PATH)%"
+      $eventFtpLogin: "%env(string:EVENT_FTP_LOGIN)%"
+      $eventFtpPassword: "%env(string:EVENT_FTP_PASWORD)%" 
+      $eventProvider: "%env(string:EVENT_PROVIDER)%"
+
   # INCENTIVE
-  App\Incentive\Command\ProofValidationCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:proof-validate",
-        }
+
 
   App\Incentive\Command\SubscriptionsVerificationCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscriptions-verification",
-        }
+      - { name: "console.command", command: "app:incentive:subscriptions-verification" }
 
   App\Incentive\Command\SubscriptionVerificationCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-verify",
-        }
+      - { name: "console.command", command: "app:incentive:subscription-verify" }
+
+  App\Incentive\Command\ProofInvalidateCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:proof-invalidate"}
+
+  App\Incentive\Command\SubscriptionCommitCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-commit"}
+
+  App\Incentive\Command\SubscriptionUpdateCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-update"}
+
+  App\Incentive\Command\UpdateTokenCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-tokens"}
 
   App\Incentive\Command\JourneyRecoveryCommand:
     tags:
@@ -792,12 +807,50 @@ services:
 
   App\Incentive\Command\SubscriptionTimestampsCommand:
     tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-timestamps",
-        }
+      - { name: "console.command", command: "app:incentive:subscription-timestamps" }
+      
+  App\Incentive\Command\SubscriptionTimestampsTokenCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:subscription-mobTimestampsToken" }
 
   App\Incentive\Controller\IncentivesController:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\EECTimestamps:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\LdSubscriptionCommit:
+    tags:
+      - controller.service_arguments  
+  
+  App\Incentive\Controller\Subscription\LdSubscriptionGet:
+    tags:
+      - controller.service_arguments
+
+
+  App\Incentive\Controller\Subscription\LdSubscriptionUpdate:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\SdSubscriptionCommit:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\SdSubscriptionGet:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\SdSubscriptionUpdate:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\Subscription\UserSubscriptions:
+    tags:
+      - controller.service_arguments
+
+  App\Incentive\Controller\TimestampController:
     tags:
       - controller.service_arguments
 

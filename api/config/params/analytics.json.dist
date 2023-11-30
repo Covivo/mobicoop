@@ -1,13 +1,27 @@
 {
-  "url": "",
-  "secret": "",
-  "organization": "Organization name like in the param file of the ETL",
-  "database": "database name if the instance",
-  "dashboards":[
-    {
-      "paramId":1,
-      "dashboardId":35,
-      "auth_item":"the_right_to_read"
-    }
-  ]
+    "url": "",
+    "secret": "",
+    "organization": "Organization name like in the param file of the ETL",
+    "database": "database name if the instance",
+    "dashboards": [
+        {
+            "type": [
+                {
+                    "periodicity": "daily",
+                    "visualDashboardId": 35,
+                    "auth_item": "the_right_to_read"
+                },
+                {
+                    "periodicity": "monthly",
+                    "visualDashboardId": 35,
+                    "auth_item": "the_right_to_read"
+                },
+                {
+                    "periodicity": "yearly",
+                    "visualDashboardId": 35,
+                    "auth_item": "the_right_to_read"
+                }
+            ]
+        }
+    ]
 }

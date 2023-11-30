@@ -23,6 +23,7 @@
 
 namespace App\Import\Admin\Service\Populator;
 
+use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
 use App\Import\Admin\Interfaces\PopulatorInterface;
 use App\Import\Admin\Service\ImportManager;
@@ -49,15 +50,20 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private const PRIVATE = 9;
     private const EXTERNAL_ID = 10;
     private const EXTERNAL_AUTHOR = 11;
+    private const COMMUNITY_ID = 12;
+    private const DESCRIPTION = 13;
+    private const FULL_DESCRIPTION = 14;
 
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists and will be ignored';
     private const MESSAGE_ALREADY_EXISTS_WILL_BE_UPDATED = 'already exists and will be updated';
     private const RELAYPOINT_TYPE_UNKNOWN = 'RelayPointType unknown for';
+    private const UNKNOWN_COMMUNITY = 'community is unknown';
 
     private $_importManager;
     private $_messages;
     private $_existingRelayPointId;
+    private $_currentCommunity;
 
     /**
      * @var User
@@ -90,6 +96,10 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
 
     protected function _addEntity(array $line)
     {
+        if (!$this->_checkCommunity($line)) {
+            return;
+        }
+
         if (!$this->_canAddRelayPoint($line)) {
             $this->_updateRelayPoint($line);
 
@@ -148,6 +158,8 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         $relaypoint->setFree((bool) $line[self::FREE]);
         $relaypoint->setOfficial((bool) $line[self::OFFICIAL]);
         $relaypoint->setPrivate((bool) $line[self::PRIVATE]);
+        $relaypoint->setDescription('' == $line[self::DESCRIPTION] ? null : $line[self::DESCRIPTION]);
+        $relaypoint->setFullDescription('' == $line[self::FULL_DESCRIPTION] ? null : $line[self::FULL_DESCRIPTION]);
         $relaypoint->setStatus(RelayPoint::STATUS_ACTIVE);
 
         if ('' !== trim($line[self::EXTERNAL_ID])) {
@@ -165,6 +177,10 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         $address->setLongitude((float) $line[self::LONGITUDE]);
 
         $relaypoint->setAddress($address);
+
+        if (!is_null($this->_currentCommunity) && $this->_currentCommunity instanceof Community) {
+            $relaypoint->setCommunity($this->_currentCommunity);
+        }
 
         return $relaypoint;
     }
@@ -230,5 +246,19 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         }
 
         return true;
+    }
+
+    private function _checkCommunity(array $line): bool
+    {
+        if ('' === trim($line[self::COMMUNITY_ID])) {
+            return true;
+        }
+        if ($this->_currentCommunity = $this->_importManager->getCommunity($line[self::COMMUNITY_ID])) {
+            return true;
+        }
+
+        $this->addMessage($line[self::COMMUNITY_ID].' '.self::UNKNOWN_COMMUNITY);
+
+        return false;
     }
 }

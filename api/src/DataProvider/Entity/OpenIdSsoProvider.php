@@ -158,9 +158,6 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConnectFormUrl(): string
     {
         $url = $this->baseUri.''.str_replace('{CLIENT_ID}', $this->clientId, str_replace(
@@ -178,22 +175,18 @@ class OpenIdSsoProvider implements SsoProviderInterface
         return str_replace('{RESPONSE_TYPE}', $this->responseType, $url);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUserProfile(string $code): SsoUser
     {
         // Mock data for dev purpose
         // $ssoUser = new SsoUser();
-        // $ssoUser->setSub('999');
-        // $ssoUser->setEmail('tenshikuroi18@yopmail.com');
-        // $ssoUser->setFirstname('Johnny');
+        // $ssoUser->setSub('4af2d545-23cb-49fe-8141-20fd89e4c21a');
+        // $ssoUser->setEmail('max.sso@yopmail.com');
+        // $ssoUser->setFirstname('Max');
         // $ssoUser->setLastname('Sso');
         // $ssoUser->setProvider('PassMobilite');
         // $ssoUser->setGender(User::GENDER_MALE);
         // $ssoUser->setBirthdate(null);
         // $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
-
         // return $ssoUser;
         // end mock data
 

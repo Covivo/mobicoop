@@ -33,7 +33,6 @@ use App\Geography\Service\AddressManager;
 use App\Geography\Service\GeoTools;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -56,6 +55,11 @@ class EventManager
     private $provider;
     private $appRepository;
     private $addressManager;
+    private $eventProvider;
+    private $eventProviderApiKey;
+    private $eventProviderProjectId;
+    private $eventProviderSelectionId;
+    private $eventProviderServerUrl;
 
     /**
      * Constructor.
@@ -81,6 +85,7 @@ class EventManager
         $this->eventProviderApiKey = $eventProviderApiKey;
         $this->eventProviderProjectId = $eventProviderProjectId;
         $this->eventProviderSelectionId = $eventProviderSelectionId;
+        $this->eventProviderServerUrl = $eventProviderServerUrl;
         $this->appRepository = $appRepository;
         $this->addressManager = $addressManager;
 
@@ -91,7 +96,7 @@ class EventManager
                 break;
 
             case self::EVENT_PROVIDER_TOURINSOFT:
-                $this->provider = new TourinsoftProvider($eventProviderServerUrl);
+                $this->provider = new TourinsoftProvider($this->eventProviderServerUrl);
 
                 break;
         }
@@ -107,7 +112,7 @@ class EventManager
     public function createEvent(Event $event)
     {
         if (is_null($event->getUser()) && is_null($event->getApp())) {
-            throw new Exception('User or App are mandatory', 1);
+            throw new \Exception('User or App are mandatory', 1);
         }
         $this->entityManager->persist($event);
         $this->entityManager->flush();
@@ -225,10 +230,25 @@ class EventManager
                 $event->setApp($this->appRepository->find(self::APP_ID));
             }
             if (is_null($event->getUser()) && is_null($event->getApp())) {
-                throw new Exception('User or App are mandatory', 1);
+                throw new \Exception('User or App are mandatory', 1);
             }
             $this->entityManager->persist($event);
             $this->entityManager->flush();
         }
+    }
+
+    public function getEventsByCommunity(int $communityId)
+    {
+        return $this->eventRepository->getEventsByCommunity($communityId);
+    }
+
+    public function getEventByExternalId(int $externalId)
+    {
+        return $this->eventRepository->findOneBy(['externalId' => $externalId]);
+    }
+
+    public function getEventsWithAnExternalId()
+    {
+        return $this->eventRepository->getEventsWithAnExternalId();
     }
 }

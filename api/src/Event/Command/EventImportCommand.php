@@ -19,11 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Command;
 
 use App\Event\Service\EventManager;
+use App\Import\Admin\Controller\ImportEventsAction;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -33,36 +34,54 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-
 class EventImportCommand extends Command
 {
+    public const EVENT_PROVIDER_FILE_TYPE = 'file';
+    public const EVENT_PROVIDER_API_TYPE = 'API';
     private $eventManager;
     private $eventImportEnabled;
-    
-    public function __construct(EventManager $eventManager, Bool $eventImportEnabled)
+    private $eventProviderType;
+    private $_importEventsAction;
+
+    public function __construct(EventManager $eventManager, bool $eventImportEnabled, string $eventProviderType, ImportEventsAction $importEventsAction)
     {
         $this->eventManager = $eventManager;
         $this->eventImportEnabled = $eventImportEnabled;
+        $this->eventProviderType = $eventProviderType;
+        $this->_importEventsAction = $importEventsAction;
 
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this
-        ->setName('app:events:import')
-        ->setDescription('Import events from provider')
-        ->setHelp('Create events from external provider')
+            ->setName('app:events:import')
+            ->setDescription('Import events from provider')
+            ->setHelp('Create events from external provider')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->eventImportEnabled == false) {
+        if (false == $this->eventImportEnabled) {
             return 0;
         }
-        
-        $this->eventManager->importEvents();
-        return 0;
+
+        switch ($this->eventProviderType) {
+            case self::EVENT_PROVIDER_API_TYPE:
+                $this->eventManager->importEvents();
+
+                return 0;
+
+                break;
+
+            case self::EVENT_PROVIDER_FILE_TYPE:
+                $this->_importEventsAction->importEventsFromFile();
+
+                return 0;
+
+                break;
+        }
     }
 }

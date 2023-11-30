@@ -47,12 +47,16 @@ class LoginAuthenticator
             return;
         }
 
-        if (!is_null($user->getSsoProvider())) {
-            $logoutUrl = $this->ssoManager->getSsoLogoutUrl($user);
-            if ($logoutUrl) {
-                $data['logoutUrl'] = $this->ssoManager->getSsoLogoutUrl($user);
-            }
-        }
+        // Why is it there ? This LoginAuthenticator doesn't really care of sso logout url right ?
+        // If it's mandatory, how to choose the right url ? Only the first provider because we just say so ?
+        // Until an anwser I disable this.
+
+        // if (!is_null($user->getSsoProvider())) {
+        //     $logoutUrl = $this->ssoManager->getSsoLogoutUrl($user);
+        //     if ($logoutUrl) {
+        //         $data['logoutUrl'] = $this->ssoManager->getSsoLogoutUrl($user);
+        //     }
+        // }
 
         $event->setData($data);
     }

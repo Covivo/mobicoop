@@ -12,6 +12,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * A User Cee subscriptions.
  *
  * @ApiResource(
+ *      attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readSubscription"}, "enable_max_depth"=true},
+ *      },
  *      collectionOperations={
  *          "get"={
  *              "path"="/my_cee_subscriptions",
@@ -49,14 +53,28 @@ class CeeSubscriptions
     private $id;
 
     /**
-     * @var ShortDistanceSubscription Short distance subscription
+     * @var null|ShortDistanceSubscription Short distance subscription
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $shortDistanceSubscription;
+
+    /**
+     * @var array Short distance subscription
      *
      * @Groups({"readSubscription"})
      */
     private $shortDistanceSubscriptions;
 
     /**
-     * @var LongDistanceSubscription Long distance subscriptions
+     * @var null|LongDistanceSubscription Long distance subscriptions
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $longDistanceSubscription;
+
+    /**
+     * @var array Long distance subscriptions
      *
      * @Groups({"readSubscription"})
      */
@@ -123,8 +141,7 @@ class CeeSubscriptions
     /**
      * Set short distance subscription.
      *
-     * @param ShortDistanceSubscription $shortDistanceSubscription  Short distance subscription
-     * @param mixed                     $shortDistanceSubscriptions
+     * @param mixed $shortDistanceSubscriptions
      *
      * @return self
      */
@@ -148,8 +165,7 @@ class CeeSubscriptions
     /**
      * Set long distance subscriptions.
      *
-     * @param LongDistanceSubscription $longDistanceSubscription  Long distance subscriptions
-     * @param mixed                    $longDistanceSubscriptions
+     * @param mixed $longDistanceSubscriptions
      *
      * @return self
      */
@@ -216,8 +232,6 @@ class CeeSubscriptions
 
     /**
      * Get the value of shortDistanceExpirationDate.
-     *
-     * @return \DateTime
      */
     public function getShortDistanceExpirationDate(): ?\DateTime
     {
@@ -230,6 +244,46 @@ class CeeSubscriptions
     public function setShortDistanceExpirationDate(?\DateTime $shortDistanceExpirationDate): self
     {
         $this->shortDistanceExpirationDate = $shortDistanceExpirationDate;
+
+        return $this;
+    }
+
+    /**
+     * Get short distance subscription.
+     */
+    public function getShortDistanceSubscription(): ?ShortDistanceSubscription
+    {
+        return $this->shortDistanceSubscription;
+    }
+
+    /**
+     * Set short distance subscription.
+     *
+     * @param ShortDistanceSubscription $shortDistanceSubscription Short distance subscription
+     */
+    public function setShortDistanceSubscription(ShortDistanceSubscription $shortDistanceSubscription): self
+    {
+        $this->shortDistanceSubscription = $shortDistanceSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Get long distance subscriptions.
+     */
+    public function getLongDistanceSubscription(): ?LongDistanceSubscription
+    {
+        return $this->longDistanceSubscription;
+    }
+
+    /**
+     * Set long distance subscriptions.
+     *
+     * @param LongDistanceSubscription $longDistanceSubscription Long distance subscriptions
+     */
+    public function setLongDistanceSubscription(LongDistanceSubscription $longDistanceSubscription): self
+    {
+        $this->longDistanceSubscription = $longDistanceSubscription;
 
         return $this;
     }

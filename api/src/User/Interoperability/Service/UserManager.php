@@ -26,6 +26,7 @@ namespace App\User\Interoperability\Service;
 use App\App\Entity\App;
 use App\Community\Entity\CommunityUser;
 use App\Community\Repository\CommunityRepository;
+use App\User\Entity\SsoAccount;
 use App\User\Entity\User as UserEntity;
 use App\User\Interoperability\Ressource\DetachSso;
 use App\User\Interoperability\Ressource\User;
@@ -45,6 +46,7 @@ class UserManager
     private $entityManager;
     private $notificationSsoRegistration;
     private $communityRepository;
+    private $_currentExternalId;
 
     /**
      * @var DetachSso
@@ -72,7 +74,7 @@ class UserManager
         $userEntity = $this->userEntityManager->getUser($id);
         $user = null;
         if ($userEntity) {
-            $user = $this->buildUserFromUserEntity($userEntity);
+            $user = $this->_buildUserFromUserEntity($userEntity);
         }
 
         return $user;
@@ -87,30 +89,25 @@ class UserManager
      */
     public function registerUser(User $user): User
     {
+        $this->_currentExternalId = $user->getExternalId();
         $userEntity = $this->userEntityManager->getUserByEmail($user->getEmail());
         if (!is_null($userEntity)) {
-            if (!is_null($userEntity->getSsoId())) {
-                throw new \LogicException('This user is already attached to an Sso provider');
+            if ($this->_checkAlreadyAttached($userEntity)) {
+                throw new \LogicException('This user is already attached to this provider');
             }
 
             // Existing User, it pretty much an update with attach specified (for app and createdSsoDate)
             $user->setId($userEntity->getId());
             $user = $this->updateUser($user, true);
             $user->setPreviouslyExisting(true);
-        } else {
-            // New User
-            $userEntity = $this->buildUserEntityFromUser($user);
-            $userEntity->setCreatedSsoDate(new \DateTime('now'));
-            if (!$this->notificationSsoRegistration) {
-                $userEntity->setValidatedDate(new \DateTime('now'));
-            }
-            $userEntity->setCreatedBySso(true);
-            $userEntity = $this->userEntityManager->registerUser($userEntity);
-            $user = $this->buildUserFromUserEntity($userEntity);
-            $user->setPreviouslyExisting(false);
-        }
 
-        return $this->buildUserFromUserEntity($userEntity);
+            return $user;
+        }
+        // New User
+        $userEntity = $this->_buildNewUserEntityFromUser($user);
+        $userEntity = $this->userEntityManager->registerUser($userEntity);
+
+        return $this->_buildUserFromUserEntity($userEntity);
     }
 
     /**
@@ -143,15 +140,18 @@ class UserManager
                 $userEntity->setTelephone($user->getTelephone());
             }
             $userEntity->setNewsSubscription($user->hasNewsSubscription());
-            $userEntity->setSsoId($user->getExternalId());
 
             if ($attach) {
+                $ssoAccount = new SsoAccount();
+
                 if ($this->security->getUser() instanceof App) {
-                    $userEntity->setAppDelegate($this->security->getUser());
-                    $userEntity->setSsoProvider($this->security->getUser()->getName());
+                    $ssoAccount->setAppDelegate($this->security->getUser());
+                    $ssoAccount->setSsoProvider($this->security->getUser()->getName());
                 }
-                $userEntity->setCreatedSsoDate(new \DateTime('now'));
-                $userEntity->setCreatedBySso(false);
+
+                $ssoAccount->setSsoId($user->getExternalId());
+                $ssoAccount->setCreatedBySso(false);
+                $userEntity->addSsoAccount($ssoAccount);
             }
 
             $this->entityManager->persist($userEntity);
@@ -167,7 +167,7 @@ class UserManager
             }
         }
 
-        return $this->buildUserFromUserEntity($userEntity);
+        return $this->_buildUserFromUserEntity($userEntity);
     }
 
     /**
@@ -180,13 +180,42 @@ class UserManager
         $this->detachSso = $detachSso;
         $this->setDetachSsoUser($detachSso);
 
-        if ($detachSso->getUser()->isCreatedBySso()) {
-            $this->detachSsoCreatedUser();
+        $ssoAccountToDetach = null;
+        foreach ($detachSso->getUser()->getSsoAccounts() as $ssoAccount) {
+            if ($ssoAccount->getAppDelegate()->getId() == $this->security->getUser()->getId()
+            && $ssoAccount->getSsoId() == $detachSso->getUuid()) {
+                $ssoAccountToDetach = $ssoAccount;
+
+                break;
+            }
+        }
+
+        if (!is_null($ssoAccountToDetach)) {
+            if ($ssoAccountToDetach->isCreatedBySso()) {
+                $this->detachSsoCreatedUser();
+            } else {
+                $this->detachPreviouslyExistingUser($ssoAccountToDetach);
+            }
         } else {
-            $this->detachPreviouslyExistingUser();
+            throw new \LogicException('Uknown Sso Account. Can\'t detach');
         }
 
         return $this->detachSso;
+    }
+
+    private function _checkAlreadyAttached($userEntity)
+    {
+        if ($this->security->getUser() instanceof App) {
+            foreach ($userEntity->getSsoAccounts() as $ssoAccount) {
+                if ($ssoAccount->getSsoId() == $this->_currentExternalId
+                    && $ssoAccount->getSsoProvider() == $this->security->getUser()->getName()
+                ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -197,7 +226,7 @@ class UserManager
         if (!is_null($detachSso->getUserId())) {
             $userEntity = $this->userEntityManager->getUser($detachSso->getUserId());
         } elseif (!is_null($detachSso->getUuid())) {
-            $userEntity = $this->userEntityManager->getUserBySsoId($detachSso->getUuid());
+            $userEntity = $this->userEntityManager->getUserBySsoIdAndAppDelegate($detachSso->getUuid(), $this->security->getUser());
         } else {
             throw new \LogicException('Uuid or userId must be filled');
         }
@@ -205,7 +234,7 @@ class UserManager
         if ($userEntity) {
             $this->detachSso->setUser($userEntity);
             $this->detachSso->setUserId($userEntity->getId());
-            $this->detachSso->setUuid($userEntity->getSsoId());
+            $this->detachSso->setUuid($detachSso->getUuid());
         } else {
             throw new \LogicException('Unknown User');
         }
@@ -213,15 +242,13 @@ class UserManager
 
     /**
      * Detach a previously existing user (not created by SSO). We keep the User and erase the SSO data.
+     *
+     * @param SsoAccount $ssoAccount Sso Account to detach
      */
-    private function detachPreviouslyExistingUser()
+    private function detachPreviouslyExistingUser(SsoAccount $ssoAccount)
     {
         $userEntity = $this->detachSso->getUser();
-        $userEntity->setSsoId(null);
-        $userEntity->setSsoProvider(null);
-        $userEntity->setCreatedSSoDate(null);
-        $userEntity->setAppDelegate(null);
-        $userEntity->setCreatedBySso(null);
+        $userEntity->removeSsoAccount($ssoAccount);
         $this->entityManager->persist($userEntity);
         $this->entityManager->flush();
         $this->detachSso->setPreviouslyExisting(true);
@@ -244,7 +271,7 @@ class UserManager
      *
      * @return User The interoperability User
      */
-    private function buildUserFromUserEntity(UserEntity $userEntity): User
+    private function _buildUserFromUserEntity(UserEntity $userEntity): User
     {
         $user = new User($userEntity->getId());
         $user->setGivenName($userEntity->getGivenName());
@@ -254,11 +281,31 @@ class UserManager
         $user->setBirthDate($userEntity->getBirthDate());
         $user->setTelephone($userEntity->getTelephone());
         $user->setNewsSubscription($userEntity->hasNewsSubscription());
-        $user->setExternalId($userEntity->getSsoId());
+
+        if (!is_null($this->_currentExternalId)) {
+            $user->setExternalId($this->_currentExternalId);
+        }
 
         $user->setPreviouslyExisting(false);
-        if ($userEntity->getCreatedDate() < $userEntity->getCreatedSsoDate()) {
-            $user->setPreviouslyExisting(true);
+
+        if (!is_null($this->_currentExternalId) && $this->security->getUser() instanceof App) {
+            foreach ($userEntity->getSsoAccounts() as $ssoAccount) {
+                if ($ssoAccount->getSsoId() == $this->_currentExternalId
+                    && $ssoAccount->getSsoProvider() == $this->security->getUser()->getName()
+                    && !$ssoAccount->isCreatedBySso()
+                ) {
+                    $user->setPreviouslyExisting(true);
+                }
+            }
+        } elseif ($this->security->getUser() instanceof App) {
+            foreach ($userEntity->getSsoAccounts() as $ssoAccount) {
+                if ($ssoAccount->getAppDelegate()->getId() == $this->security->getUser()->getId()
+                    && $ssoAccount->getSsoProvider() == $this->security->getUser()->getName()
+                    && !$ssoAccount->isCreatedBySso()
+                ) {
+                    $user->setPreviouslyExisting(true);
+                }
+            }
         }
 
         return $user;
@@ -271,7 +318,7 @@ class UserManager
      *
      * @return UserEntity The classic User Entity
      */
-    private function buildUserEntityFromUser(User $user): UserEntity
+    private function _buildNewUserEntityFromUser(User $user): UserEntity
     {
         $userEntity = new UserEntity();
         $userEntity->setId($user->getId());
@@ -283,12 +330,22 @@ class UserManager
         $userEntity->setTelephone($user->getTelephone());
         $userEntity->setPassword($user->getPassword());
         $userEntity->setNewsSubscription($user->hasNewsSubscription());
-        if ($this->security->getUser() instanceof App) {
-            $userEntity->setAppDelegate($this->security->getUser());
-            $userEntity->setSsoProvider($this->security->getUser()->getName());
-        }
-        $userEntity->setSsoId($user->getExternalId());
         $userEntity->setCommunityId($user->getCommunityId());
+
+        $ssoAccount = new SsoAccount();
+
+        if ($this->security->getUser() instanceof App) {
+            $ssoAccount->setAppDelegate($this->security->getUser());
+            $ssoAccount->setSsoProvider($this->security->getUser()->getName());
+        }
+
+        $ssoAccount->setSsoId($user->getExternalId());
+        $ssoAccount->setCreatedBySso(true);
+        $userEntity->addSsoAccount($ssoAccount);
+
+        if (!$this->notificationSsoRegistration) {
+            $userEntity->setValidatedDate(new \DateTime('now'));
+        }
 
         return $userEntity;
     }

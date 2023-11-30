@@ -2,9 +2,11 @@
 
 namespace App\Incentive\Entity;
 
+use App\DataProvider\Entity\MobConnect\OpenIdSsoProvider;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Mob Connect user authentication.
@@ -25,6 +27,8 @@ class MobConnectAuth
      * @ORM\Id
      *
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Groups({"readAdminSubscription"})
      */
     private $id;
 
@@ -39,6 +43,8 @@ class MobConnectAuth
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Groups({"readAdminSubscription"})
      */
     private $accessToken;
 
@@ -46,6 +52,8 @@ class MobConnectAuth
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"readAdminSubscription"})
      */
     private $accessTokenExpiresDate;
 
@@ -60,6 +68,8 @@ class MobConnectAuth
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
+     *
+     * @Groups({"readAdminSubscription"})
      */
     private $refreshToken;
 
@@ -67,6 +77,8 @@ class MobConnectAuth
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"readAdminSubscription"})
      */
     private $refreshTokenExpiresDate;
 
@@ -87,7 +99,7 @@ class MobConnectAuth
     public function __construct(User $user, SsoUser $ssoUser)
     {
         $this->setUser($user);
-        $this->setAuthorizationCode($user->getSsoId());
+        $this->setAuthorizationCode($user->getSsoAccount(OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT)->getSsoId());
         $this->setAccessToken($ssoUser->getAccessToken());
         $this->setAccessTokenExpiresDate($ssoUser->getAccessTokenExpiresDuration());
         $this->setRefreshToken($ssoUser->getRefreshToken());
@@ -122,8 +134,6 @@ class MobConnectAuth
 
     /**
      * Get the user subscription ID.
-     *
-     * @return int
      */
     public function getId(): ?int
     {
@@ -226,6 +236,11 @@ class MobConnectAuth
     public function getRefreshTokenExpiresDate(): \DateTime
     {
         return $this->refreshTokenExpiresDate;
+    }
+
+    public function hasAuthenticationExpired(): bool
+    {
+        return $this->getRefreshTokenExpiresDate() < new \DateTime('now');
     }
 
     /**

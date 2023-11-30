@@ -132,8 +132,7 @@ export default {
     },
     isMobActivated: function() {
       return this.isUserAuthenticated
-        && this.user.ssoId
-        && this.user.ssoProvider === this.assistiveSsoProvider;
+        && this.user.hasAccessToMobAPI;
     }
   },
   mounted() {

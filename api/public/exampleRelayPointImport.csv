@@ -1,2 +1,6 @@
-name;type;latitude;longitude;number of places;number of places for disabled;secured;free;official;private;externalId;externalAuthor
-Point relais trop cool;1;48.69395065307617;6.1790642738342285;154;10;1;1;1;0;XXX-XXX;Source of the point
+name;type;latitude;longitude;number of places;number of places for disabled;secured;free;official;private;externalId;externalAuthor;communityId;description;full_description
+Point relais trop cool;1;48.69395065307617;6.1790642738342285;154;10;1;1;1;0;XXX-XXX;Source of the point;1;short desc;full description
+
+indications about data formating:
+communityId : empty or int number refering to an EXISTING Community
+private : if the relaypoint is linked to a community, you can put this field at true to hide the relaypoint for non members

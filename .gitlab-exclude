@@ -131,6 +131,7 @@
 /api/public/upload/masscommunication/images/versions/*.jpeg
 /api/public/upload/masscommunication/images/versions/*.png
 /api/public/upload/csvExport/*.*
+/api/public/eec/tokens/*.json
 /client/.env.dev.local
 /client/.env.test.local
 /client/.env.prod.local
