@@ -402,6 +402,9 @@ class JourneyManager extends MobConnectManager
      */
     public function invalidationOfProof(CarpoolProof $carpoolProof): void
     {
+        if (is_null($carpoolProof->getCarpoolItem())) {
+            return;
+        }
         // Rechercher avant traitement si la preuve est associée à une souscription CEE
         $journey = $this->_getEECJourneyFromCarpoolProof($carpoolProof);
 
@@ -435,6 +438,7 @@ class JourneyManager extends MobConnectManager
         }
 
         $this->_invalidateJourney($journey);
+        $this->_em->refresh($carpoolProof);
     }
 
     public function getAdditionalJourneys(User $user): User
