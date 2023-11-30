@@ -320,7 +320,7 @@ class JourneyManager extends MobConnectManager
             return;
         }
 
-        $shortDistanceJourneysNumber = count($subscription->getJourneys()->toArray());
+        $shortDistanceJourneysNumber = count($subscription->getJourneys());
 
         $commitmentJourney = $subscription->getCommitmentProofJourney();
 
