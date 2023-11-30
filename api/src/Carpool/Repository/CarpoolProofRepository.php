@@ -271,7 +271,7 @@ class CarpoolProofRepository
     {
         $allreadyAdded = array_map(function ($journey) {
             return $journey->getCarpoolProof();
-        }, $user->getShortDistanceSubscription()->getJourneys()->toArray());
+        }, $user->getShortDistanceSubscription()->getJourneys());
 
         $parameters = [
             'country' => Validation::REFERENCE_COUNTRY,

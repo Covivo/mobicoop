@@ -60,7 +60,7 @@ class CeeSubscriptions
     private $shortDistanceSubscription;
 
     /**
-     * @var ShortDistanceSubscription Short distance subscription
+     * @var array Short distance subscription
      *
      * @Groups({"readSubscription"})
      */
@@ -74,7 +74,7 @@ class CeeSubscriptions
     private $longDistanceSubscription;
 
     /**
-     * @var LongDistanceSubscription Long distance subscriptions
+     * @var array Long distance subscriptions
      *
      * @Groups({"readSubscription"})
      */

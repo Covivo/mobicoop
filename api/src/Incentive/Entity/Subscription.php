@@ -3,9 +3,15 @@
 namespace App\Incentive\Entity;
 
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 abstract class Subscription
 {
+    public const TYPE_LONG = 'long';
+    public const TYPE_SHORT = 'short';
+
+    public const ALLOWED_TYPE = [self::TYPE_LONG, self::TYPE_SHORT];
+
     private const ACTIVE_YEAR_PATTERN = '/^202[3-7]{1}$/';
 
     protected $createdAt;
@@ -27,6 +33,48 @@ abstract class Subscription
 
     protected $version;
     protected $versionStatus;
+
+    /**
+     * Journeys which have not been added to the subscription and which could be (compliant with the CEE standard).
+     *
+     * @var array
+     *
+     * @Groups({"readAdminSubscription"})
+     */
+    protected $additionalJourneys = [];
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $hasIncentiveToken = false;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $hasCommitToken = false;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $hasHonorCertificateToken = false;
+
+    /**
+     * The mobConnect Subscription data.
+     *
+     * @Groups({"readAdminSubscription"})
+     */
+    private $moBSubscription;
+
+    public static function isTypeAllowed(string $subscriptionType): bool
+    {
+        return in_array($subscriptionType, self::ALLOWED_TYPE);
+    }
 
     public function getCreatedAt(): \DateTime
     {
@@ -298,6 +346,44 @@ abstract class Subscription
         $this->checkYearPattern($year);
 
         return $year === $this->getCommitmentYear();
+    }
+
+    /**
+     * Get the mobConnect Subscription data.
+     */
+    public function getMoBSubscription()
+    {
+        return $this->moBSubscription;
+    }
+
+    /**
+     * Set the mobConnect Subscription data.
+     *
+     * @param mixed $moBSubscription
+     */
+    public function setMoBSubscription($moBSubscription): self
+    {
+        $this->moBSubscription = $moBSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Get undocumented variable.
+     */
+    public function getAdditionalJourneys(): array
+    {
+        return $this->additionalJourneys;
+    }
+
+    /**
+     * Set undocumented variable.
+     */
+    public function setAdditionalJourneys(array $additionalJourneys): self
+    {
+        $this->additionalJourneys = $additionalJourneys;
+
+        return $this;
     }
 
     /**

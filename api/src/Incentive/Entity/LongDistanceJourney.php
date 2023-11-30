@@ -8,6 +8,7 @@ use App\Carpool\Entity\Proposal;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A long distance journey.
@@ -35,6 +36,8 @@ class LongDistanceJourney extends Journey
      * @ORM\Id
      *
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Groups({"readSubscription"})
      */
     private $id;
 
@@ -139,6 +142,7 @@ class LongDistanceJourney extends Journey
         if (!is_null($proposal)) {
             $this->setInitialProposal($proposal);
         }
+        $this->createdAt = new \DateTime('now');
     }
 
     /**
@@ -146,7 +150,7 @@ class LongDistanceJourney extends Journey
      */
     public function prePersist()
     {
-        $this->createdAt = new \DateTime('now');
+        $this->updatedAt = new \DateTime('now');
     }
 
     /**

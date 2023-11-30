@@ -53,6 +53,8 @@ use App\Gratuity\Entity\GratuityCampaign;
 use App\I18n\Entity\Language;
 use App\Image\Entity\Image;
 use App\Import\Entity\UserImport;
+use App\Incentive\Controller\EECTimestamps;
+use App\Incentive\Controller\Subscription\UserSubscriptions;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\MobConnectAuth;
 use App\Incentive\Entity\ShortDistanceSubscription;
@@ -128,7 +130,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"patchSso", "readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true","skip_null_values"="false"},
+ *          "normalization_context"={"groups"={"patchSso", "readUser","mass","readSolidary","userStructure", "readExport","carpoolExport","eec-timestamps", "readSubscription", "readAdminSubscription"}, "enable_max_depth"="true","skip_null_values"="false"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -541,6 +543,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Users"}
  *              }
  *          },
+ *          "get_user_eec_subscriptions"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/eec/subscriptions",
+ *              "controller"=UserSubscriptions::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"readSubscription", "readAdminSubscription"}, "skip_null_values"=false},
+ *          },
+ *          "get_eec_timestamps"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/eec-timestamps",
+ *              "controller"=EECTimestamps::class,
+ *              "security"="is_granted('admin_eec',object)",
+ *              "normalization_context"={"groups"={"eec-timestamps"}, "skip_null_values"=false},
+ *          },
  *          "patchSso"={
  *              "method"="PATCH",
  *              "path"="/users/{id}/updateSso",
@@ -715,7 +731,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="integer")
      *
-     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso"})
+     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso","eec-timestamps"})
      *
      * @ApiProperty(identifier=true)
      */
@@ -1795,19 +1811,21 @@ class User implements UserInterface, EquatableInterface
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", mappedBy="user")
      *
-     * @Groups({"patchSso", "readUser"})
+     * @Groups({"patchSso", "readUser", "eec-timestamps", "readSubscription", "readAdminSubscription"})
      */
     private $longDistanceSubscription;
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", mappedBy="user")
      *
-     * @Groups({"patchSso", "readUser"})
+     * @Groups({"patchSso", "readUser", "eec-timestamps", "readSubscription", "readAdminSubscription"})
      */
     private $shortDistanceSubscription;
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\MobConnectAuth", mappedBy="user", cascade={"remove"})
+     *
+     * @Groups({"readAdminSubscription"})
      */
     private $mobConnectAuth;
 
