@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Command;
 
+use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
