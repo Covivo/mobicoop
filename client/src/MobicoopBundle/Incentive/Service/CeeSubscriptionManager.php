@@ -44,7 +44,7 @@ class CeeSubscriptionManager
         $response = $this->dataProvider->simpleGet('my_cee_subscriptions');
 
         if (!is_null($response->getValue()) && is_array($response->getValue())) {
-            return $response->getValue()[0];
+            return $response->getValue();
         }
 
         return [];
