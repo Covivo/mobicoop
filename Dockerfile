@@ -159,6 +159,7 @@ RUN mv composer.phar /usr/local/bin/composer && \
 RUN command -v composer
 
 RUN composer global require hirak/prestissimo
+RUN composer require phpunit/phpunit ^8.5
 
 # Node.js
 RUN curl -sL https://deb.nodesource.com/setup_11.x -o nodesource_setup.sh
