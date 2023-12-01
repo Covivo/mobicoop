@@ -19,6 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={
  *          "get"={
  *              "path"="/my_cee_subscriptions",
+ *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false},
  *              "swagger_context" = {
  *                  "tags"={"Subscription"}
  *              }
