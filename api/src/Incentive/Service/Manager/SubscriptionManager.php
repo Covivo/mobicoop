@@ -417,6 +417,8 @@ class SubscriptionManager extends MobConnectManager
             $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getShortDistanceSubscription());
         }
 
+        $this->_em->flush();
+
         return $this->getDriver();
     }
 
