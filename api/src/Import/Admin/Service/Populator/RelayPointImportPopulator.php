@@ -96,6 +96,9 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
 
     protected function _addEntity(array $line)
     {
+        $this->_existingRelayPointId = null;
+        $this->_currentCommunity = null;
+
         if (!$this->_checkCommunity($line)) {
             return;
         }
