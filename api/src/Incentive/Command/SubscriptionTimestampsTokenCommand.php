@@ -63,7 +63,7 @@ class SubscriptionTimestampsTokenCommand extends Command
         }
 
         // Obtenir la souscription
-        $this->_currentSubscription = Subscription::TYPE_LONG
+        $this->_currentSubscription = Subscription::TYPE_LONG === $type
             ? $this->_em->getRepository(LongDistanceSubscription::class)->find($input->getOption('subscription'))
             : $this->_em->getRepository(ShortDistanceSubscription::class)->find($input->getOption('subscription'));
 
