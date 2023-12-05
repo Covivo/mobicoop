@@ -560,6 +560,10 @@ services:
     arguments:
       $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
 
+  App\EventSubscriber\RequestSubscriber:
+    tags:
+      - { name: "kernel.event_subscriber" }
+
   # External Connection
   App\ExternalJourney\Service\ExternalConnectionManager:
     arguments:
