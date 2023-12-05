@@ -1,4 +1,4 @@
 {
-    "label": "Messages",
-    "route": "/utilisateur/messages"
+  "label": "Berichten",
+  "route": "/utilisateur/messages"
 }
