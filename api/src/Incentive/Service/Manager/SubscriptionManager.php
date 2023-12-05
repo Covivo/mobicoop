@@ -47,11 +47,6 @@ class SubscriptionManager extends MobConnectManager
     private $_journeyManager;
 
     /**
-     * @var TimestampTokenManager
-     */
-    private $_timestampTokenManager;
-
-    /**
      * @var CarpoolProofRepository
      */
     private $_carpoolProofRepository;
