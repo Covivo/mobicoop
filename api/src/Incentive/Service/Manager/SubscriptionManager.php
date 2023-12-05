@@ -47,11 +47,6 @@ class SubscriptionManager extends MobConnectManager
     private $_journeyManager;
 
     /**
-     * @var TimestampTokenManager
-     */
-    private $_timestampTokenManager;
-
-    /**
      * @var CarpoolProofRepository
      */
     private $_carpoolProofRepository;
@@ -416,6 +411,8 @@ class SubscriptionManager extends MobConnectManager
         if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
             $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getShortDistanceSubscription());
         }
+
+        $this->_em->flush();
 
         return $this->getDriver();
     }
