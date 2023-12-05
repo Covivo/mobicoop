@@ -134,6 +134,7 @@ class GratuityCampaignRepository
             ->where('gn.user = :user')
             ->andWhere('gc.startDate <= :today')
             ->andWhere('gc.endDate >= :today')
+            ->andWhere('gn.notifiedDate is not null')
             ->setParameter('user', $user)
             ->setParameter('today', $today->format('Y-m-d H:i:s'))
             ->getQuery()
