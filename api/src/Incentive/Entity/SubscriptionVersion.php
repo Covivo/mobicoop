@@ -128,12 +128,12 @@ class SubscriptionVersion
         return !$this->isDateBeforeDeadline($date);
     }
 
-    public function isDateBeforePublishedDeadline(\DateTime $date): bool
+    public function isDateBeforePublishedDeadline(\DateTimeInterface $date): bool
     {
         return $date < $this->_publicationDeadline;
     }
 
-    public function isDateAfterPublishedDeadline(\DateTime $date): bool
+    public function isDateAfterPublishedDeadline(\DateTimeInterface $date): bool
     {
         return !$this->isDateBeforePublishedDeadline($date);
     }
