@@ -937,6 +937,13 @@ services:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+  
+  App\Incentive\Service\Manager\InstanceManager:
+    arguments:
+      $subscriptionKeys:
+        ld: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+        sd: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
+      $eecServiceExpirationDate: "%env(string:EEC_SERVICE_EXPIRATION_DATE)%"
 
   App\Incentive\Service\Manager\JourneyManager:
     arguments:
