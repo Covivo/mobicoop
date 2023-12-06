@@ -113,17 +113,17 @@ class SubscriptionVersion
         return $this->_versionStatus;
     }
 
-    public function isDateComing(\DateTime $date): bool
+    public function isDateComing(\DateTimeInterface $date): bool
     {
         return $this->_today < $date;
     }
 
-    public function isDateBeforeDeadline(\DateTime $date): bool
+    public function isDateBeforeDeadline(\DateTimeInterface $date): bool
     {
         return $date < $this->_deadline;
     }
 
-    public function isDateAfterDeadline(\DateTime $date): bool
+    public function isDateAfterDeadline(\DateTimeInterface $date): bool
     {
         return !$this->isDateBeforeDeadline($date);
     }
