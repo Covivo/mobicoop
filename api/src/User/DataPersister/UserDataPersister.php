@@ -57,7 +57,6 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         } elseif (isset($context['collection_operation_name']) && 'userRegistration' == $context['collection_operation_name']) {
             $data = $this->userManager->registerUser($data);
         } elseif (isset($context['item_operation_name']) && 'put' == $context['item_operation_name']) {
-            $data->setOldHomeAddress($data->getHomeAddress());
             $data = $this->userManager->updateUser($data);
         } elseif (isset($context['item_operation_name']) && 'updateLanguage' == $context['item_operation_name']) {
             $data = $this->userManager->updateLanguage($data);
