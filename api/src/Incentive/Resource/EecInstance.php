@@ -61,6 +61,23 @@ class EecInstance
      */
     private $expirationDate;
 
+    /**
+     * @var null|string
+     */
+    private $ldSubscriptionsKey;
+
+    /**
+     * @var null|string
+     */
+    private $sdSubscriptionsKey;
+
+    public function __construct(array $subscriptionKeys, string $expirationDate)
+    {
+        $this->setSdSubscriptionsKeys($subscriptionKeys);
+        $this->setExpirationDate($expirationDate);
+        $this->setAvailable($this->_isServiceOpened());
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -97,10 +114,81 @@ class EecInstance
     /**
      * Set the value of expirationDate.
      */
-    public function setExpirationDate(?\DateTimeInterface $expirationDate): self
+    public function setExpirationDate(?string $expirationDate): self
     {
-        $this->expirationDate = $expirationDate;
+        if (!empty($expirationDate)) {
+            $this->expirationDate = new \DateTime($expirationDate.' 23:59:59');
+        }
 
         return $this;
+    }
+
+    /**
+     * Get the value of ldSubscriptionsKey.
+     */
+    public function getLdSubscriptionsKey(): ?string
+    {
+        return $this->ldSubscriptionsKey;
+    }
+
+    /**
+     * Set the value of ldSubscriptionsKey.
+     */
+    public function setLdSubscriptionsKey(string $ldSubscriptionsKey): self
+    {
+        $this->ldSubscriptionsKey = $ldSubscriptionsKey;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sdSubscriptionsKey.
+     */
+    public function getSdSubscriptionsKey(): ?string
+    {
+        return $this->sdSubscriptionsKey;
+    }
+
+    /**
+     * Set the value of sdSubscriptionsKey.
+     */
+    public function setSdSubscriptionsKey(string $sdSubscriptionsKey): self
+    {
+        $this->sdSubscriptionsKey = $sdSubscriptionsKey;
+
+        return $this;
+    }
+
+    public function setSdSubscriptionsKeys(array $subscriptionKeys): self
+    {
+        if (!empty($subscriptionKeys['ld'])) {
+            $this->setLdSubscriptionsKey($subscriptionKeys['ld']);
+        }
+
+        if (!empty($subscriptionKeys['sd'])) {
+            $this->setSdSubscriptionsKey($subscriptionKeys['sd']);
+        }
+
+        return $this;
+    }
+
+    public function areSubscriptionKeysAvailable(): bool
+    {
+        return !is_null($this->ldSubscriptionsKey) && !is_null($this->sdSubscriptionsKey);
+    }
+
+    private function _isServiceOpened(): bool
+    {
+        if (is_null($this->expirationDate) && $this->areSubscriptionKeysAvailable()) {
+            return true;
+        }
+
+        if (!is_null($this->expirationDate) && $this->areSubscriptionKeysAvailable()) {
+            $now = new \DateTime('now');
+
+            return $now < $this->expirationDate;
+        }
+
+        return false;
     }
 }
