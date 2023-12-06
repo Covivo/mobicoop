@@ -725,6 +725,10 @@ services:
     arguments:
       $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
 
+  App\Gratuity\EventSubscriber\ActionSubscriber:
+    arguments:
+      $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
+
   App\Stats\Admin\Service\AnalyticManager:
     arguments:
       $params: "%env(json:file:resolve:ANALYTICS_PARAMETERS)%"

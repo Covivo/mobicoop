@@ -19,20 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
- namespace App\Geography\DataPersister;
+namespace App\Geography\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Geography\Entity\Address;
 use App\Geography\Service\AddressManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 
 final class AddressPostDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $AddressManager;
-    
+    private $addressManager;
+
     public function __construct(AddressManager $addressManager)
     {
         $this->addressManager = $addressManager;
@@ -40,7 +38,7 @@ final class AddressPostDataPersister implements ContextAwareDataPersisterInterfa
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Address && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
+        return $data instanceof Address && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])

@@ -1748,6 +1748,13 @@ class User implements UserInterface, EquatableInterface
     private $homeAddress;
 
     /**
+     * @var Address The user home address
+     *
+     * @Groups({"readUser", "write"})
+     */
+    private $oldHomeAddress;
+
+    /**
      * @var null|array The user roles
      *
      * @Groups({"aRead","aWrite"})
@@ -3862,6 +3869,18 @@ class User implements UserInterface, EquatableInterface
     public function setHomeAddress(?Address $homeAddress): self
     {
         $this->homeAddress = $homeAddress;
+
+        return $this;
+    }
+
+    public function getOldHomeAddress(): ?Address
+    {
+        return $this->oldHomeAddress;
+    }
+
+    public function setOldHomeAddress(?Address $oldHomeAddress): self
+    {
+        $this->oldHomeAddress = $oldHomeAddress;
 
         return $this;
     }

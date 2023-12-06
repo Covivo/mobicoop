@@ -72,12 +72,17 @@ class GratuityCampaignRepository
 
     public function findPendingForUser(User $user): array
     {
-        $today = new \DateTime('now');
-
         $territories = $this->_getTerritoriesUser($user);
         if (0 == count($territories)) {
             return [];
         }
+
+        return $this->findPendingForUserWithTerritories($user, $territories);
+    }
+
+    public function findPendingForUserWithTerritories(User $user, array $territories): array
+    {
+        $today = new \DateTime('now');
 
         $mergedGratuityNotificationsAlreadySeen = $this->_getAlreadySeenGratuityNotificationForUser($user);
 
