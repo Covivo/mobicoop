@@ -24,7 +24,9 @@
 namespace App\Gratuity\EventSubscriber;
 
 use App\Action\Event\ActionEvent;
+use App\Carpool\Event\ProposalPostedEvent;
 use App\Gratuity\Service\GratuityCampaignActionManager;
+use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -50,8 +52,19 @@ class ActionSubscriber implements EventSubscriberInterface
 
     public function onActionEvent(ActionEvent $event)
     {
-        if ($this->_gratuityActive && 'user_home_address_updated' == $event->getAction()->getName()) {
-            $this->_gratuityCampaignActionManager->handleAction($event->getUser());
+        if ($this->_gratuityActive) {
+            switch ($event->getAction()->getName()) {
+                case 'user_home_address_updated':
+                case UserRegisteredEvent::NAME:
+                    $this->_gratuityCampaignActionManager->handleHomeAddressUpdatedAction($event->getUser());
+
+                    break;
+
+                case ProposalPostedEvent::NAME:
+                    $this->_gratuityCampaignActionManager->handleCarpoolAdPostedAction($event->getUser(), $event->getProposal());
+
+                    break;
+            }
         }
     }
 }

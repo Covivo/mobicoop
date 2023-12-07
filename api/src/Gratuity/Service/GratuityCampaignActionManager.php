@@ -23,6 +23,7 @@
 
 namespace App\Gratuity\Service;
 
+use App\Carpool\Entity\Proposal;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\TerritoryRepository;
 use App\Gratuity\Entity\GratuityCampaign;
@@ -51,7 +52,7 @@ class GratuityCampaignActionManager
         $this->_entityManager = $entityManager;
     }
 
-    public function handleAction(User $user)
+    public function handleHomeAddressUpdatedAction(User $user)
     {
         $this->_user = $user;
         $territories = $this->_findTerritoriesIdOfAddress($this->_user->getHomeAddress());
@@ -59,6 +60,11 @@ class GratuityCampaignActionManager
         if (count($campaigns) > 0) {
             $this->_createGratuityNotifications($campaigns);
         }
+    }
+
+    public function handleCarpoolAdPostedAction(User $user, Proposal $proposal)
+    {
+        // Handle ad posted action
     }
 
     private function _findTerritoriesIdOfAddress(Address $homeAddress): ?array
