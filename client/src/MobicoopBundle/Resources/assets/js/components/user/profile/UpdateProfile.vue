@@ -516,7 +516,7 @@
 
     <!-- EEC form -->
     <EECIncentiveStatus
-      v-if="ceeDisplay"
+      v-if="isEecblockDisplayed"
       :id="$t('eec-incentive')"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
@@ -765,8 +765,11 @@ export default {
     gendersList: {
       type: Array,
       default: () => []
-    }
-
+    },
+    eecInstance: {              // The EEC service status for the instance
+      type: Object,
+      default: () => ({})
+    },
   },
   data() {
     return {
@@ -889,6 +892,18 @@ export default {
     },
     gratuityActive(){
       return this.$store.getters['grt/isActive'];
+    },
+    isEecblockDisplayed() {
+      return (
+        this.ceeDisplay
+        && (
+          this.eecInstance.available
+          || (
+            !this.eecInstance.available
+            && (this.user.longDistanceSubscription || this.user.shortDistanceSubscription)
+          )
+        )
+      );
     }
   },
   watch: {
