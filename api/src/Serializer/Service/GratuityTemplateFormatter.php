@@ -33,10 +33,12 @@ class GratuityTemplateFormatter
     private const RULES_FOLDER = __DIR__.'/Rules';
     private const RULES_NAMESPACE = 'App\\Serializer\\Service\\Rules\\';
     private $_rules;
+    private $_customReplacements = [];
 
-    public function __construct()
+    public function __construct(string $baseUri)
     {
         $this->_rules = [];
+        $this->_customReplacements['baseUri'] = $baseUri;
         $this->_autoloadRules();
     }
 
@@ -61,10 +63,21 @@ class GratuityTemplateFormatter
                 $getter = 'get'.ucfirst($matche);
                 $formattedField = $rule->format($gratuityCampaign->{$getter}());
                 $template = str_replace('{'.$matche.'}', $formattedField, $template);
+            } else {
+                $template = $this->_customReplacement($matche, $template);
             }
         }
 
         return $gratuityCampaign->setTemplate($template);
+    }
+
+    private function _customReplacement(string $matche, string $template): string
+    {
+        if (isset($this->_customReplacements[$matche])) {
+            return str_replace('{'.$matche.'}', $this->_customReplacements[$matche], $template);
+        }
+
+        return $template;
     }
 
     private function _autoloadRules()
