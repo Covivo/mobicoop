@@ -316,6 +316,10 @@ export default {
     displayCee: {
       type: Boolean,
       default: false
+    },
+    eecInstance: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {

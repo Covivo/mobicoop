@@ -7,7 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * An EEC instance.
+ * An EEC instance. This resource gives general informations for the EEC service and the current instance.
  *
  * @ApiResource(
  *      attributes={
@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "path"="/eec/eec_instance",
+ *              "path"="/eec/instance",
  *              "normalization_context"={"groups"={"readEecInstance"}, "skip_null_values"=true},
  *              "swagger_context" = {
  *                  "tags"={"Subscription"}
