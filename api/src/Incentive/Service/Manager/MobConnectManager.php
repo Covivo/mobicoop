@@ -105,6 +105,11 @@ abstract class MobConnectManager
     protected $_currentSubscription;
 
     /**
+     * @var InstanceManager
+     */
+    protected $_instanceManager;
+
+    /**
      * @var MobConnectApiProvider
      */
     private $_apiProvider;
@@ -152,7 +157,8 @@ abstract class MobConnectManager
         return $this;
     }
 
-    protected function hasRequestErrorReturned(MobConnectResponseInterface $response): bool {
+    protected function hasRequestErrorReturned(MobConnectResponseInterface $response): bool
+    {
         $result = in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
 
         if (true === $result) {

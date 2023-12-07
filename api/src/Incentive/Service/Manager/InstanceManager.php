@@ -30,4 +30,9 @@ class InstanceManager
     {
         return $this->_currentEecInstance;
     }
+
+    public function isEecServiceAvailable(): bool
+    {
+        return $this->getEecInstance()->isAvailable();
+    }
 }

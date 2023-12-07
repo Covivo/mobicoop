@@ -82,6 +82,7 @@ class SubscriptionManager extends MobConnectManager
         UserValidation $userValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
+        InstanceManager $instanceManager,
         JourneyManager $journeyManager,
         TimestampTokenManager $timestampTokenManager,
         CarpoolProofRepository $carpoolProofRepository,
@@ -93,6 +94,7 @@ class SubscriptionManager extends MobConnectManager
     ) {
         parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
+        $this->_instanceManager = $instanceManager;
         $this->_journeyManager = $journeyManager;
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
@@ -109,7 +111,7 @@ class SubscriptionManager extends MobConnectManager
      */
     public function createSubscriptions(User $user)
     {
-        if (!$this->isValidParameters()) {
+        if (!$this->isValidParameters() || !$this->_instanceManager->isEecServiceAvailable()) {
             return;
         }
 
