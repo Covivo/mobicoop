@@ -120,14 +120,11 @@ class GratuityCampaignManager
         }
 
         if ($entity = $this->_gratuityCampaignRepository->find($campaignId)) {
-            if (!$this->_checkAlreadyTaggedAsNotified($entity)) {
-                $notification = new GratuityNotification();
-                $notification->setUser($this->_user);
-                $notification->setGratuityCampaign($entity);
-                $entity->addGratuityNotification($notification);
-
-                $this->_entityManager->persist($entity);
-                $this->_entityManager->flush();
+            $notifications = $this->_getExistingNotification($entity);
+            if (count($notifications) > 0) {
+                $this->_tagExistingNotificationAsSeen($notifications[0]);
+            } else {
+                $this->_tagNewExistingNotificationAsSeen($entity);
             }
 
             $gratuityCampaign = $this->_buildGratuityCampaignFromEntity($entity);
@@ -144,9 +141,28 @@ class GratuityCampaignManager
         return $this->_user->hasGratuity() && $this->_gratuityCampaignActive;
     }
 
-    private function _checkAlreadyTaggedAsNotified(EntityGratuityCampaign $gratuityCampaign): bool
+    private function _tagNewExistingNotificationAsSeen(EntityGratuityCampaign $gratuityCampaign)
     {
-        return 0 < count($this->_gratuityCampaignNotificationRepository->findBy(['user' => $this->_user, 'gratuityCampaign' => $gratuityCampaign]));
+        $notification = new GratuityNotification();
+        $notification->setUser($this->_user);
+        $notification->setGratuityCampaign($gratuityCampaign);
+        $notification->setNotifiedDate(new \DateTime('now'));
+        $gratuityCampaign->addGratuityNotification($notification);
+
+        $this->_entityManager->persist($gratuityCampaign);
+        $this->_entityManager->flush();
+    }
+
+    private function _tagExistingNotificationAsSeen(GratuityNotification $notification)
+    {
+        $notification->setNotifiedDate(new \DateTime('now'));
+        $this->_entityManager->persist($notification);
+        $this->_entityManager->flush();
+    }
+
+    private function _getExistingNotification(EntityGratuityCampaign $gratuityCampaign): array
+    {
+        return $this->_gratuityCampaignNotificationRepository->findBy(['user' => $this->_user, 'gratuityCampaign' => $gratuityCampaign]);
     }
 
     private function _buildEntityGratuityCampaign(GratuityCampaign $gratuityCampaign): EntityGratuityCampaign
