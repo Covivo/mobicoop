@@ -24,6 +24,7 @@
 namespace App\Gratuity\Repository;
 
 use App\Gratuity\Entity\GratuityNotification;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -60,5 +61,16 @@ class GratuityCampaignNotificationRepository
     public function findOneBy(array $criteria): ?GratuityNotification
     {
         return $this->_repository->findOneBy($criteria);
+    }
+
+    public function findPendingForUser(User $user): array
+    {
+        $query = $this->_repository->createQueryBuilder('gn')
+            ->where('gn.user = :user')
+            ->andWhere('gn.notifiedDate is null')
+            ->setParameter('user', $user)
+        ;
+
+        return $query->getQuery()->getResult();
     }
 }

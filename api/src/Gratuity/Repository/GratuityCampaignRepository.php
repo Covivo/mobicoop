@@ -42,12 +42,14 @@ class GratuityCampaignRepository
 
     private $_entityManager;
     private $_territoryRepository;
+    private $_gratuityCampaignNotificationRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository)
+    public function __construct(EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, GratuityCampaignNotificationRepository $gratuityCampaignNotificationRepository)
     {
         $this->_entityManager = $entityManager;
         $this->_repository = $entityManager->getRepository(GratuityCampaign::class);
         $this->_territoryRepository = $territoryRepository;
+        $this->_gratuityCampaignNotificationRepository = $gratuityCampaignNotificationRepository;
     }
 
     public function find(int $id): ?GratuityCampaign
@@ -74,7 +76,7 @@ class GratuityCampaignRepository
     {
         $territories = $this->_getTerritoriesUser($user);
         if (0 == count($territories)) {
-            return [];
+            return $this->_findPendingForUserWithoutTerritories($user);
         }
 
         return $this->findPendingForUserWithTerritories($user, $territories);
@@ -102,6 +104,18 @@ class GratuityCampaignRepository
 
         $query->setParameter('today', $today->format('Y-m-d H:i:s'));
         $query->setParameter('active', GratuityCampaign::STATUS_ACTIVE);
+
+        return $query->getQuery()->getResult();
+    }
+
+    private function _findPendingForUserWithoutTerritories(User $user): array
+    {
+        $query = $this->_repository->createQueryBuilder('gc')
+            ->join('gc.notifications', 'gcn')
+            ->where('gcn.user = :user')
+            ->andWhere('gcn.notifiedDate is null')
+            ->setParameter('user', $user)
+        ;
 
         return $query->getQuery()->getResult();
     }
