@@ -22,7 +22,7 @@ class EecManager
     /**
      * Returns the instance EEC service status.
      */
-    public function getEecInstance(): EecInstance
+    public function getEecInstance()
     {
         $this->_dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->_dataProvider->getCollection([]);

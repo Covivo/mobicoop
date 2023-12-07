@@ -177,7 +177,10 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <m-dialog v-if="displayCee" />
+    <m-dialog
+      v-if="displayCee"
+      :eec-instance="eecInstance"
+    />
     <!-- end homeBottom -->
   </v-container>
 </template>
