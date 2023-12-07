@@ -55,8 +55,8 @@
     </v-card>
     <div v-else>
       <EECIncentiveFollowUp
-        :long-distance-subscriptions="longDistanceSubscriptions"
-        :short-distance-subscriptions="shortDistanceSubscriptions"
+        :long-distance-journeys="longDistanceJourneys"
+        :short-distance-journeys="shortDistanceJourneys"
         :long-distance-subscription-expiration-date="longDistanceSubscriptionExpirationDate"
         :short-distance-subscription-expiration-date="shortDistanceSubscriptionExpirationDate"
         :pending-proofs="pendingProofs"
@@ -91,11 +91,11 @@ export default {
     EECIncentiveFollowUp
   },
   props: {
-    longDistanceSubscriptions:{
+    longDistanceJourneys:{
       type: Array,
       default: null
     },
-    shortDistanceSubscriptions:{
+    shortDistanceJourneys:{
       type: Array,
       default: null
     },

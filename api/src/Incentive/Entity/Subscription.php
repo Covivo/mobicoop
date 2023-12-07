@@ -65,6 +65,13 @@ abstract class Subscription
     protected $hasHonorCertificateToken = false;
 
     /**
+     * @var array
+     *
+     * @Groups({"readSubscription"}).
+     */
+    protected $journeys;
+
+    /**
      * The mobConnect Subscription data.
      *
      * @Groups({"readAdminSubscription"})

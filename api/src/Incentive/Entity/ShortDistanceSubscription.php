@@ -79,8 +79,6 @@ class ShortDistanceSubscription extends Subscription
      * @var ArrayCollection The short distance log associated with the user
      *
      * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", mappedBy="subscription", cascade={"persist"}, orphanRemoval=true)
-     *
-     * @Groups({"readSubscription"})
      */
     protected $shortDistanceJourneys;
 
