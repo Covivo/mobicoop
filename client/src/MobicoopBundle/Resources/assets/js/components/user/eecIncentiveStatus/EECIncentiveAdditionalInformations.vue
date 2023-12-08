@@ -55,12 +55,17 @@
     </v-card>
     <div v-else>
       <EECIncentiveFollowUp
-        :long-distance-subscriptions="longDistanceSubscriptions"
-        :short-distance-subscriptions="shortDistanceSubscriptions"
-        :long-distance-subscription-expiration-date="longDistanceSubscriptionExpirationDate"
-        :short-distance-subscription-expiration-date="shortDistanceSubscriptionExpirationDate"
+        v-if="is2023"
+        :long-distance-subscriptions="eecSubscriptions.longDistanceSubscriptions"
+        :short-distance-subscriptions="eecSubscriptions.shortDistanceSubscriptions"
+        :long-distance-subscription-expiration-date="eecSubscriptions.longDistanceSubscriptionExpirationDate"
+        :short-distance-subscription-expiration-date="eecSubscriptions.shortDistanceSubscriptionExpirationDate"
         :pending-proofs="pendingProofs"
         :refused-proofs="refusedProofs"
+      />
+      <EECIncentiveFollowUpTab
+        v-else
+        :eec-subscriptions="eecSubscriptions"
       />
     </div>
   </div>
@@ -70,6 +75,7 @@
 import { merge } from "lodash";
 import maxios from "@utils/maxios";
 import EECIncentiveFollowUp from '@components/user/eecIncentiveStatus/EECIncentiveFollowUp';
+import EECIncentiveFollowUpTab from '@components/user/eecIncentiveStatus/EECIncentiveFollowUpTab';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
 
@@ -88,32 +94,13 @@ export default {
     }
   },
   components:{
-    EECIncentiveFollowUp
+    EECIncentiveFollowUp,
+    EECIncentiveFollowUpTab,
   },
   props: {
-    longDistanceSubscriptions:{
-      type: Array,
-      default: null
-    },
-    shortDistanceSubscriptions:{
-      type: Array,
-      default: null
-    },
-    longDistanceSubscriptionExpirationDate: {
-      type: String,
-      default: null
-    },
-    shortDistanceSubscriptionExpirationDate: {
-      type: String,
-      default: null
-    },
-    pendingProofs:{
-      type: Number,
-      default: 0
-    },
-    refusedProofs:{
-      type: Number,
-      default: 0
+    eecSubscriptions: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
@@ -123,6 +110,11 @@ export default {
     }
   },
   computed:{
+    is2023() {
+      const now = new Date();
+
+      return 2023 === now.getFullYear();
+    },
     hasBankCoordinates(){
       if(!this.bankCoordinates || this.bankCoordinates.status == 0){
         return false;

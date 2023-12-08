@@ -61,6 +61,36 @@
       "refused": "Preuves de covoiturage refusées"
     }
   },
+  "followupTab": {
+    "subtitle": "Suivi des primes",
+    "ld-tab": {
+      "title": "Longue distance"
+    },
+    "sd-tab": {
+      "title": "Courte distance"
+    },
+    "proofs": {
+      "pending": "Preuves de covoiturage en cours de validation",
+      "refused": "Preuves de covoiturage refusées"
+    },
+    "subscriptions": {
+      "progress": "{nb}/{max} trajets",
+      "LD": {
+        "intro": "<span class=\"font-weight-bold\">Votre premier trajet de 80 km ou plus a été réalisé en 2023&nbsp;?</span> Vous bénéficierez d’une prime de 100€ si vos preuves de covoiturage sont validées par le Registre de Preuve de Covoiturage et s’ils sont payés numériquement.",
+        "expiredText": "La période légale de 3 mois pour compléter vos trajets longue distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant."
+      },
+      "SD": {
+        "intro": "<span class=\"font-weight-bold\">Votre premier trajet de moins de 80 km a été réalisé en 2023&nbsp;?</span> Vous bénéficierez d’une prime de 100€ si vos preuves de covoiturage sont validées par le Registre de Preuve de Covoiturage.",
+        "expiredText": "La période légale de 3 mois pour compléter vos trajets courte distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant."
+      }
+    },
+    "buttons": {
+      "publish": {
+        "text": "Publier une annonce",
+        "href": "/covoiturage/publierannonce"
+      }
+    }
+  },
   "EEC-provider": "Esso SAF",
   "EEC-provider-siren": "Esso SAF (SIREN: 542 010 053)",
   "EEC-platform": "Rezo Mobicoop",

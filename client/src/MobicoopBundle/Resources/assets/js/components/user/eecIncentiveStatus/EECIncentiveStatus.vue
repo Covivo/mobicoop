@@ -30,12 +30,7 @@
       />
       <EECIncentiveAdditionalInformations
         v-else
-        :long-distance-subscriptions="subscriptions.longDistanceSubscriptions"
-        :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
-        :long-distance-subscription-expiration-date="subscriptions.longDistanceExpirationDate"
-        :short-distance-subscription-expiration-date="subscriptions.shortDistanceExpirationDate"
-        :pending-proofs="subscriptions.nbPendingProofs"
-        :refused-proofs="subscriptions.nbRejectedProofs"
+        :eec-subscriptions="subscriptions"
         @changeTab="changeTab"
       />
     </div>
@@ -100,7 +95,7 @@ export default {
   },
   data() {
     return {
-      subscriptions:null,
+      subscriptions: null,
       loading: false,
       snackbar: {
         color: 'error',
