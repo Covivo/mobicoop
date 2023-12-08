@@ -7,8 +7,8 @@ export const regular = 2;
 export const punctual = 1;
 
 // EEC service constants
-export const eec_version_2023 = 'CoupPouceCEE2023';
-export const eec_version_2024 = 'CEEStandardMobicoop';
+export const eec_standard_version = 'CoupPouceCEE2023';
+export const eec_improved_version = 'CEEStandardMobicoop';
 
 export const eec_type_long = 'LD';
 export const eec_type_long_journeys_max = 3;

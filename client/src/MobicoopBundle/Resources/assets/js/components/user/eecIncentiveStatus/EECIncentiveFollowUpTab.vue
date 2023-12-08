@@ -30,15 +30,15 @@
           class="transparent-background"
         >
           <v-tab-item>
-            <EECIncentive2023SubscriptionFollowUp
-              v-if="isEec2023Version('SD')"
+            <EECFollowUpStandardIncentive
+              v-if="isStandardVersion('SD')"
               type="SD"
               :subscription="eecSubscriptions.shortDistanceSubscription"
               :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
               :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
               :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
             />
-            <EECIncentive2024SubscriptionFollowUp
+            <EECFollowUpImprovedIncentive
               v-else
               type="SD"
               :subscription="eecSubscriptions.shortDistanceSubscription"
@@ -48,15 +48,15 @@
             />
           </v-tab-item>
           <v-tab-item>
-            <EECIncentive2023SubscriptionFollowUp
-              v-if="isEec2023Version('LD')"
+            <EECFollowUpStandardIncentive
+              v-if="isStandardVersion('LD')"
               type="LD"
               :subscription="eecSubscriptions.longDistanceSubscription"
               :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
               :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
               :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
             />
-            <EECIncentive2024SubscriptionFollowUp
+            <EECFollowUpImprovedIncentive
               v-else
               type="LD"
               :subscription="eecSubscriptions.longDistanceSubscription"
@@ -74,10 +74,10 @@
 <script>
 import { merge } from "lodash";
 
-import EECIncentive2023SubscriptionFollowUp from '@components/user/eecIncentiveStatus/EECIncentive2023SubscriptionFollowUp';
-import EECIncentive2024SubscriptionFollowUp from '@components/user/eecIncentiveStatus/EECIncentive2024SubscriptionFollowUp';
+import EECFollowUpStandardIncentive from '@components/user/eecIncentiveStatus/EECFollowUpStandardIncentive';
+import EECFollowUpImprovedIncentive from '@components/user/eecIncentiveStatus/EECFollowUpImprovedIncentive';
 
-import { eec_version_2023 } from "@utils/constants";
+import { eec_standard_version } from "@utils/constants";
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
@@ -91,8 +91,8 @@ let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   components: {
-    EECIncentive2023SubscriptionFollowUp,
-    EECIncentive2024SubscriptionFollowUp,
+    EECFollowUpStandardIncentive,
+    EECFollowUpImprovedIncentive
   },
   i18n: {
     messages: {
@@ -121,12 +121,12 @@ export default {
     }
   },
   methods:{
-    isEec2023Version(type) {
+    isStandardVersion(type) {
       if (this.eecSubscriptions && this.eecSubscriptions.longDistanceSubscription && this.eecSubscriptions.shortDistanceSubscription) {
         switch (type) {
-        case 'LD': return eec_version_2023 === this.eecSubscriptions.longDistanceSubscription.version;
+        case 'LD': return eec_standard_version === this.eecSubscriptions.longDistanceSubscription.version;
 
-        case 'SD': return eec_version_2023 === this.eecSubscriptions.shortDistanceSubscription.version;
+        case 'SD': return eec_standard_version === this.eecSubscriptions.shortDistanceSubscription.version;
         }
       }
 
