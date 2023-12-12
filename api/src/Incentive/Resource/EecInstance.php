@@ -62,6 +62,20 @@ class EecInstance
     private $expirationDate;
 
     /**
+     * @var null|\DateTimeInterface
+     *
+     * @Groups({"readEecInstance"})
+     */
+    private $ldExpirationDate;
+
+    /**
+     * @var null|\DateTimeInterface
+     *
+     * @Groups({"readEecInstance"})
+     */
+    private $sdExpirationDate;
+
+    /**
      * @var null|string
      */
     private $ldSubscriptionsKey;
@@ -71,10 +85,19 @@ class EecInstance
      */
     private $sdSubscriptionsKey;
 
-    public function __construct(array $subscriptionKeys, string $expirationDate)
+    /**
+     * @var array
+     */
+    private $configuration;
+
+    public function __construct(array $subscriptionKeys, array $instanceConfiguration)
     {
+        $this->configuration = $instanceConfiguration;
+
         $this->setSdSubscriptionsKeys($subscriptionKeys);
-        $this->setExpirationDate($expirationDate);
+        $this->setExpirationDate();
+        $this->setLdExpirationDate();
+        $this->setSdExpirationDate();
         $this->setAvailable($this->_isServiceOpened());
     }
 
@@ -91,6 +114,16 @@ class EecInstance
     public function isAvailable()
     {
         return $this->getAvailable();
+    }
+
+    public function isLdSubscriptionAvailable(): bool
+    {
+        return !$this->isDateExpired($this->ldExpirationDate);
+    }
+
+    public function isSdSubscriptionAvailable(): bool
+    {
+        return !$this->isDateExpired($this->sdExpirationDate);
     }
 
     /**
@@ -114,11 +147,45 @@ class EecInstance
     /**
      * Set the value of expirationDate.
      */
-    public function setExpirationDate(?string $expirationDate): self
+    public function setExpirationDate(): self
     {
-        if (!empty($expirationDate)) {
-            $this->expirationDate = new \DateTime($expirationDate.' 23:59:59');
-        }
+        $this->expirationDate = $this->getDate($this->configuration['expirationDate']);
+
+        return $this;
+    }
+
+    /**
+     * Get the value of ldExpirationDate.
+     */
+    public function getLdExpirationDate(): ?\DateTimeInterface
+    {
+        return $this->ldExpirationDate;
+    }
+
+    /**
+     * Set the value of ldExpirationDate.
+     */
+    public function setLdExpirationDate(): self
+    {
+        $this->ldExpirationDate = $this->getDate($this->configuration['subscriptions']['ld']['expirationDate']);
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sdExpirationDate.
+     */
+    public function getSdExpirationDate(): ?\DateTimeInterface
+    {
+        return $this->sdExpirationDate;
+    }
+
+    /**
+     * Set the value of sdExpirationDate.
+     */
+    public function setSdExpirationDate(): self
+    {
+        $this->sdExpirationDate = $this->getDate($this->configuration['subscriptions']['sd']['expirationDate']);
 
         return $this;
     }
@@ -165,8 +232,16 @@ class EecInstance
             $this->setLdSubscriptionsKey($subscriptionKeys['ld']);
         }
 
+        if (!empty($this->configuration['subscriptions']['ld']['key'])) {
+            $this->setLdSubscriptionsKey($this->configuration['subscriptions']['ld']['key']);
+        }
+
         if (!empty($subscriptionKeys['sd'])) {
             $this->setSdSubscriptionsKey($subscriptionKeys['sd']);
+        }
+
+        if (!empty($this->configuration['subscriptions']['sd']['key'])) {
+            $this->setLdSubscriptionsKey($this->configuration['subscriptions']['sd']['key']);
         }
 
         return $this;
@@ -177,16 +252,57 @@ class EecInstance
         return !is_null($this->ldSubscriptionsKey) && !is_null($this->sdSubscriptionsKey);
     }
 
+    private function getDate(?string $date): ?\DateTime
+    {
+        return !empty($date)
+            ? new \DateTime($date.' 23:59:59') : null;
+    }
+
+    private function isDateExpired(?\DateTimeInterface $date): bool
+    {
+        if (is_null($date)) {
+            return false;
+        }
+
+        $now = new \DateTime('now');
+
+        return $now > $date;
+    }
+
     private function _isServiceOpened(): bool
     {
-        if (is_null($this->expirationDate) && $this->areSubscriptionKeysAvailable()) {
+        if (
+            is_null($this->expirationDate)
+            && is_null($this->ldExpirationDate)
+            && is_null($this->sdExpirationDate)
+            && $this->areSubscriptionKeysAvailable()
+        ) {
             return true;
         }
 
-        if (!is_null($this->expirationDate) && $this->areSubscriptionKeysAvailable()) {
-            $now = new \DateTime('now');
+        if (
+            $this->areSubscriptionKeysAvailable()
+            && (
+                !is_null($this->expirationDate)
+                || (!is_null($this->ldExpirationDate) && !is_null($this->sdExpirationDate))
+                || (!is_null($this->ldExpirationDate) && is_null($this->sdExpirationDate))
+                || (is_null($this->ldExpirationDate) && !is_null($this->sdExpirationDate))
+            )
+        ) {
+            if (!is_null($this->expirationDate)) {
+                return $this->isDateExpired($this->expirationDate);
+            }
 
-            return $now < $this->expirationDate;
+            if (!is_null($this->ldExpirationDate) && !is_null($this->sdExpirationDate)) {
+                return $this->isDateExpired($this->ldExpirationDate) || $this->isDateExpired($this->sdExpirationDate);
+            }
+
+            if (
+                !is_null($this->ldExpirationDate) && is_null($this->sdExpirationDate)
+                || (is_null($this->ldExpirationDate) && !is_null($this->sdExpirationDate))
+            ) {
+                return true;
+            }
         }
 
         return false;

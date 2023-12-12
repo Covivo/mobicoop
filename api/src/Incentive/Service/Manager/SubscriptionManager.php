@@ -114,8 +114,9 @@ class SubscriptionManager extends MobConnectManager
         $this->setDriver($user);
 
         if (
-            is_null($this->getDriver()->getLongDistanceSubscription())
-            && $this->isDriverAccountReadyForSubscription(LongDistanceSubscription::SUBSCRIPTION_TYPE)
+            $this->_instanceManager->isLdSubscriptionAvailable()                                        // The service is available
+            && is_null($this->getDriver()->getLongDistanceSubscription())                               // Subscription does not yet exist
+            && $this->isDriverAccountReadyForSubscription(LongDistanceSubscription::SUBSCRIPTION_TYPE)  // There is no incompatibility with the user account
         ) {
             $postResponse = $this->postSubscription();
 
@@ -130,8 +131,9 @@ class SubscriptionManager extends MobConnectManager
         }
 
         if (
-            is_null($this->getDriver()->getShortDistanceSubscription())
-            && $this->isDriverAccountReadyForSubscription(ShortDistanceSubscription::SUBSCRIPTION_TYPE)
+            $this->_instanceManager->isSdSubscriptionAvailable()                                        // The service is available
+            && is_null($this->getDriver()->getShortDistanceSubscription())                              // Subscription does not yet exist
+            && $this->isDriverAccountReadyForSubscription(ShortDistanceSubscription::SUBSCRIPTION_TYPE) // There is no incompatibility with the user account
         ) {
             $postResponse = $this->postSubscription(false);
 

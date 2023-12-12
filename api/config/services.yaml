@@ -943,7 +943,7 @@ services:
       $subscriptionKeys:
         ld: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
         sd: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
-      $eecServiceExpirationDate: "%env(string:EEC_SERVICE_EXPIRATION_DATE)%"
+      $eecServiveConfiguration: "%env(json:file:resolve:EEC_SERVICE)%"
 
   App\Incentive\Service\Manager\JourneyManager:
     arguments:

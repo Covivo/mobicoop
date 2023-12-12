@@ -108,6 +108,7 @@ class Progression
         ) || (
             $this->_subscription instanceof ShortDistanceSubscription
             && $this->isRegistrationFinalized()
+            && !is_null($this->_subscription->getCarpoolRegistered())
         )
             ? $this->_subscription->getCarpoolRegistered() && $this->_subscription->hasCommitToken() : null;
     }

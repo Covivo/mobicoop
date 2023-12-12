@@ -21,9 +21,9 @@ class InstanceManager
      */
     private $_currentEecInstance;
 
-    public function __construct(array $subscriptionKeys, string $eecServiceExpirationDate)
+    public function __construct(array $subscriptionKeys, $eecServiveConfiguration)
     {
-        $this->_currentEecInstance = new EecInstance($subscriptionKeys, $eecServiceExpirationDate);
+        $this->_currentEecInstance = new EecInstance($subscriptionKeys, $eecServiveConfiguration);
     }
 
     public function getEecInstance(): EecInstance
@@ -34,5 +34,15 @@ class InstanceManager
     public function isEecServiceAvailable(): bool
     {
         return $this->getEecInstance()->isAvailable();
+    }
+
+    public function isLdSubscriptionAvailable(): bool
+    {
+        return $this->_currentEecInstance->isLdSubscriptionAvailable();
+    }
+
+    public function isSdSubscriptionAvailable(): bool
+    {
+        return $this->_currentEecInstance->isSdSubscriptionAvailable();
     }
 }

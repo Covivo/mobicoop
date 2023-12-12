@@ -60,8 +60,8 @@
         :short-distance-subscriptions="eecSubscriptions.shortDistanceSubscriptions"
         :long-distance-subscription-expiration-date="eecSubscriptions.longDistanceSubscriptionExpirationDate"
         :short-distance-subscription-expiration-date="eecSubscriptions.shortDistanceSubscriptionExpirationDate"
-        :pending-proofs="pendingProofs"
-        :refused-proofs="refusedProofs"
+        :pending-proofs="eecSubscriptions.pendingProofs"
+        :refused-proofs="eecSubscriptions.refusedProofs"
       />
       <EECIncentiveFollowUpTab
         v-else
