@@ -62,6 +62,8 @@ class ShortDistanceSubscription extends Subscription
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/short-distance-subscription/honour-certificate/';
 
+    public const TRIP_THRESHOLD = 10;
+
     public const VALIDITY_PERIOD = 3;               // Period expressed in months
 
     public const SUBSCRIPTION_TYPE = 'short';

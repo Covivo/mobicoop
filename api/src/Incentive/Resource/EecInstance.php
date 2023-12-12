@@ -290,11 +290,11 @@ class EecInstance
             )
         ) {
             if (!is_null($this->expirationDate)) {
-                return $this->isDateExpired($this->expirationDate);
+                return !$this->isDateExpired($this->expirationDate);
             }
 
             if (!is_null($this->ldExpirationDate) && !is_null($this->sdExpirationDate)) {
-                return $this->isDateExpired($this->ldExpirationDate) || $this->isDateExpired($this->sdExpirationDate);
+                return !$this->isDateExpired($this->ldExpirationDate) && !$this->isDateExpired($this->sdExpirationDate);
             }
 
             if (

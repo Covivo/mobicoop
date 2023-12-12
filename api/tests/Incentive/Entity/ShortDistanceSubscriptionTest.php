@@ -40,11 +40,11 @@ class ShortDistanceSubscriptionTest extends TestCase
         $this->_subscription->setCreatedAt(new \DateTime('2023-11-14'));
         $this->_subscription->setVersion();
 
-        $this->assertIsString($this->_subscription->getVersion());
+        $this->assertIsInt($this->_subscription->getVersion());
 
         $this->_subscription->setCreatedAt(new \DateTime('2023-01-02'));
         $this->_subscription->setVersion();
-        $this->assertIsString($this->_subscription->getVersion());
+        $this->assertIsInt($this->_subscription->getVersion());
 
         // Tester les versions
     }

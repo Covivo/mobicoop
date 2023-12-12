@@ -28,11 +28,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class MobConnectManager
 {
-    public const LONG_DISTANCE_TRIP_THRESHOLD = 3;
-    public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
-
-    public const SUBSCRIPTION_EXPIRATION_DELAY = 3;     // Expressed in months
-
     /**
      * Period, expressed in months, preceding the subscription request during which the user must not have made a trip.
      *
@@ -252,11 +247,11 @@ abstract class MobConnectManager
     /**
      * Sets subscription expiration date.
      */
-    protected function getExpirationDate(): \DateTime
+    protected function getExpirationDate(int $delay): \DateTime
     {
         $now = new \DateTime('now');
 
-        return $now->add(new \DateInterval('P'.self::SUBSCRIPTION_EXPIRATION_DELAY.'M'));
+        return $now->add(new \DateInterval('P'.$delay.'M'));
     }
 
     protected function executeRequestVerifySubscription(string $subscriptionId)

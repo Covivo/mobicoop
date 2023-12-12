@@ -9,6 +9,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
@@ -361,7 +362,7 @@ class JourneyManager extends MobConnectManager
 
             $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
-            $subscription->setExpirationDate($this->getExpirationDate());
+            $subscription->setExpirationDate($this->getExpirationDate($subscription->getValidityPeriod()));
 
             $commitmentJourney = $this->_updateShortDistanceJourney($commitmentJourney, $carpoolProof);
         } else {
@@ -372,7 +373,7 @@ class JourneyManager extends MobConnectManager
             //    - The journey origin and/or destination is the reference country
             if (
                 $this->_pushOnlyMode
-                || self::SHORT_DISTANCE_TRIP_THRESHOLD <= $shortDistanceJourneysNumber
+                || ShortDistanceSubscription::TRIP_THRESHOLD <= $shortDistanceJourneysNumber
                 || is_null($carpoolProof->getAsk())
                 || is_null($carpoolProof->getAsk()->getMatching())
                 || $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
@@ -388,7 +389,7 @@ class JourneyManager extends MobConnectManager
             $subscription->addShortDistanceJourney($journey);
         }
 
-        if (self::SHORT_DISTANCE_TRIP_THRESHOLD === $shortDistanceJourneysNumber) {
+        if (ShortDistanceSubscription::TRIP_THRESHOLD === $shortDistanceJourneysNumber) {
             $subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
         }
 
@@ -583,7 +584,7 @@ class JourneyManager extends MobConnectManager
 
     private function _addLDJourneyToSubscription()
     {
-        if (self::LONG_DISTANCE_TRIP_THRESHOLD <= $this->_currentSubscription->getJourneysNumber()) {
+        if (LongDistanceSubscription::TRIP_THRESHOLD <= $this->_currentSubscription->getJourneysNumber()) {
             return;
         }
 
@@ -623,7 +624,7 @@ class JourneyManager extends MobConnectManager
         $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
         $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
-        $this->_currentSubscription->setExpirationDate($this->getExpirationDate());
+        $this->_currentSubscription->setExpirationDate($this->getExpirationDate($this->_currentSubscription->getValidityPeriod()));
 
         $this->_currentSubscription->getCommitmentProofJourney()->updateJourney(
             $this->_currentCarpoolItem,
