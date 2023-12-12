@@ -101,9 +101,9 @@ abstract class Subscription
     public function getJourneys()
     {
         switch (true) {
-            case $this instanceof LongDistanceJourney: return $this->getLongDistanceJourneys();
+            case $this instanceof LongDistanceSubscription: return $this->getLongDistanceJourneys();
 
-            case $this instanceof ShortDistanceJourney: return $this->getShortDistanceJourneys();
+            case $this instanceof ShortDistanceSubscription: return $this->getShortDistanceJourneys();
 
             default: return [];
         }

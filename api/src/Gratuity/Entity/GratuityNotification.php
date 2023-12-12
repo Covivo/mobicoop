@@ -70,7 +70,14 @@ class GratuityNotification
     private $gratuityCampaign;
 
     /**
-     * @var \DateTimeInterface creation date of the Notification
+     * @var \DateTimeInterface Date when this Notification has been tagged as notified
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $notifiedDate;
+
+    /**
+     * @var \DateTimeInterface Creation date of the Notification
      *
      * @ORM\Column(type="datetime")
      */
@@ -116,6 +123,18 @@ class GratuityNotification
     public function setGratuityCampaign(?GratuityCampaign $gratuityCampaign): self
     {
         $this->gratuityCampaign = $gratuityCampaign;
+
+        return $this;
+    }
+
+    public function getNotifiedDate(): ?\DateTimeInterface
+    {
+        return $this->notifiedDate;
+    }
+
+    public function setNotifiedDate(?\DateTimeInterface $notifiedDate): self
+    {
+        $this->notifiedDate = $notifiedDate;
 
         return $this;
     }

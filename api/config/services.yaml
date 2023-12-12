@@ -45,6 +45,10 @@ services:
       $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
     decorates: "api_platform.jsonld.normalizer.item"
 
+  'App\Serializer\GratuityNotificationNormalizer':
+    arguments:
+      $baseUri: "%env(string:BASE_URI)%"
+
   # EVENT LISTENERS
 
   'App\EventListener\DeserializeListener':
@@ -560,6 +564,10 @@ services:
     arguments:
       $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
 
+  App\EventSubscriber\RequestSubscriber:
+    tags:
+      - { name: "kernel.event_subscriber" }
+
   # External Connection
   App\ExternalJourney\Service\ExternalConnectionManager:
     arguments:
@@ -722,6 +730,10 @@ services:
       - { name: monolog.logger, channel: gratuity }
 
   App\Gratuity\EventSubscriber\LogSubscriber:
+    arguments:
+      $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
+
+  App\Gratuity\EventSubscriber\ActionSubscriber:
     arguments:
       $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
 

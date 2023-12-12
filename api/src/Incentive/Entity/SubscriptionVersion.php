@@ -113,27 +113,27 @@ class SubscriptionVersion
         return $this->_versionStatus;
     }
 
-    public function isDateComing(\DateTime $date): bool
+    public function isDateComing(\DateTimeInterface $date): bool
     {
         return $this->_today < $date;
     }
 
-    public function isDateBeforeDeadline(\DateTime $date): bool
+    public function isDateBeforeDeadline(\DateTimeInterface $date): bool
     {
         return $date < $this->_deadline;
     }
 
-    public function isDateAfterDeadline(\DateTime $date): bool
+    public function isDateAfterDeadline(\DateTimeInterface $date): bool
     {
         return !$this->isDateBeforeDeadline($date);
     }
 
-    public function isDateBeforePublishedDeadline(\DateTime $date): bool
+    public function isDateBeforePublishedDeadline(\DateTimeInterface $date): bool
     {
         return $date < $this->_publicationDeadline;
     }
 
-    public function isDateAfterPublishedDeadline(\DateTime $date): bool
+    public function isDateAfterPublishedDeadline(\DateTimeInterface $date): bool
     {
         return !$this->isDateBeforePublishedDeadline($date);
     }
@@ -191,9 +191,11 @@ class SubscriptionVersion
                     if (                                        // 1.1. First journey validated in 2023
                         $this->_currentCommitmentJourney->isEECCompliant()
                         && !is_null($this->_currentCommitmentJourney->getCarpoolPayment())
+                        && !is_null($this->_currentCommitmentJourney->getCarpoolPayment()->getTransactionDate())
                         && $this->isDateBeforeDeadline($this->_currentCommitmentJourney->getCarpoolPayment()->getTransactionDate())
                         && !is_null($this->_currentCommitmentJourney->getCarpoolItem())
                         && !is_null($this->_currentCommitmentJourney->getCarpoolItem()->getCarpoolProof())
+                        && !is_null($this->_currentCommitmentJourney->getCarpoolItem()->getCarpoolProof()->getUpdatedDate())
                         && $this->isDateBeforeDeadline($this->_currentCommitmentJourney->getCarpoolItem()->getCarpoolProof()->getUpdatedDate())
                     ) {
                         $this->_version = self::INCENTIVE_2023;
@@ -227,6 +229,7 @@ class SubscriptionVersion
                     if (
                         $this->_currentCommitmentJourney->isEECCompliant()
                         && !is_null($this->_currentCommitmentJourney->getCarpoolProof())
+                        && !is_null($this->_currentCommitmentJourney->getCarpoolProof()->getUpdatedDate())
                         && $this->isDateBeforeDeadline($this->_currentCommitmentJourney->getCarpoolProof()->getUpdatedDate())
                     ) {
                         $this->_version = self::INCENTIVE_2023;
