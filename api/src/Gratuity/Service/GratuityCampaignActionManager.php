@@ -23,10 +23,12 @@
 
 namespace App\Gratuity\Service;
 
+use App\Carpool\Entity\Proposal;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\TerritoryRepository;
 use App\Gratuity\Entity\GratuityCampaign;
 use App\Gratuity\Entity\GratuityNotification;
+use App\Gratuity\Repository\GratuityCampaignNotificationRepository;
 use App\Gratuity\Repository\GratuityCampaignRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,25 +41,52 @@ class GratuityCampaignActionManager
     private $_entityManager;
     private $_territoryRepository;
     private $_gratuityCampaignRepository;
+    private $_gratuityNotificationRepository;
+
+    /**
+     * @var User
+     */
     private $_user;
+
+    /**
+     * @var array
+     */
+    private $_index_user_gratuity_campaigns_ids;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         TerritoryRepository $territoryRepository,
-        GratuityCampaignRepository $gratuityCampaignRepository
+        GratuityCampaignRepository $gratuityCampaignRepository,
+        GratuityCampaignNotificationRepository $gratuityNotificationRepository
     ) {
         $this->_territoryRepository = $territoryRepository;
         $this->_gratuityCampaignRepository = $gratuityCampaignRepository;
+        $this->_gratuityNotificationRepository = $gratuityNotificationRepository;
         $this->_entityManager = $entityManager;
     }
 
-    public function handleAction(User $user)
+    public function handleHomeAddressUpdatedAction(User $user)
     {
         $this->_user = $user;
+        $this->_indexUserGratuityNotifications();
         $territories = $this->_findTerritoriesIdOfAddress($this->_user->getHomeAddress());
         $campaigns = $this->_gratuityCampaignRepository->findPendingForUserWithTerritories($this->_user, $territories);
         if (count($campaigns) > 0) {
             $this->_createGratuityNotifications($campaigns);
+        }
+    }
+
+    public function handleCarpoolAdPostedAction(User $user, Proposal $proposal)
+    {
+        // Handle ad posted action
+    }
+
+    private function _indexUserGratuityNotifications()
+    {
+        $this->_index_user_gratuity_campaigns_ids = [];
+        $notifications = $this->_gratuityNotificationRepository->findBy(['user' => $this->_user]);
+        foreach ($notifications as $notification) {
+            $this->_index_user_gratuity_campaigns_ids[] = $notification->getGratuityCampaign()->getId();
         }
     }
 
@@ -74,14 +103,18 @@ class GratuityCampaignActionManager
 
     private function _createGratuityNotification(GratuityCampaign $gratuityCampaign)
     {
-        $gratuityCampaignNotification = new GratuityNotification();
-        $gratuityCampaignNotification->setUser($this->_user);
-        $gratuityCampaignNotification->setGratuityCampaign($gratuityCampaign);
-        $this->_entityManager->persist($gratuityCampaignNotification);
+        if (!in_array($gratuityCampaign->getId(), $this->_index_user_gratuity_campaigns_ids)) {
+            $gratuityCampaignNotification = new GratuityNotification();
+            $gratuityCampaignNotification->setUser($this->_user);
+            $gratuityCampaignNotification->setGratuityCampaign($gratuityCampaign);
+            $this->_entityManager->persist($gratuityCampaignNotification);
+            $this->_index_user_gratuity_campaigns_ids[] = $gratuityCampaign->getId();
+        }
     }
 
     private function _createGratuityNotifications(array $campaigns)
     {
+        // $this->_user_gratuity_notifications = $this->_gratuityNotificationRepository->findBy(['user' => $this->_user]);
         foreach ($campaigns as $campaign) {
             $this->_createGratuityNotification($campaign);
         }

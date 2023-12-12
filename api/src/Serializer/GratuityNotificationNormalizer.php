@@ -34,10 +34,12 @@ class GratuityNotificationNormalizer
     private $_gratuityCampaignRepository;
     private $_user;
     private $_data;
+    private $_baseUri;
 
-    public function __construct(GratuityCampaignRepository $gratuityCampaignRepository)
+    public function __construct(GratuityCampaignRepository $gratuityCampaignRepository, string $baseUri)
     {
         $this->_gratuityCampaignRepository = $gratuityCampaignRepository;
+        $this->_baseUri = $baseUri;
     }
 
     public function setUser(User $user): self
@@ -68,7 +70,7 @@ class GratuityNotificationNormalizer
     {
         $pendingCampaigns = $this->_getPendingGamificationCampaign();
         if (count($pendingCampaigns) > 0) {
-            $formatter = new GratuityTemplateFormatter();
+            $formatter = new GratuityTemplateFormatter($this->_baseUri);
             $this->_data['gratuityNotifications'] = [];
             foreach ($pendingCampaigns as $pendingCampaign) {
                 $pendingCampaign = $formatter->format($pendingCampaign);

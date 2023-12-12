@@ -45,6 +45,10 @@ services:
       $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
     decorates: "api_platform.jsonld.normalizer.item"
 
+  'App\Serializer\GratuityNotificationNormalizer':
+    arguments:
+      $baseUri: "%env(string:BASE_URI)%"
+
   # EVENT LISTENERS
 
   'App\EventListener\DeserializeListener':
