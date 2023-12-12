@@ -124,9 +124,11 @@ export default {
     isStandardVersion(type) {
       if (this.eecSubscriptions && this.eecSubscriptions.longDistanceSubscription && this.eecSubscriptions.shortDistanceSubscription) {
         switch (type) {
-        case 'LD': return eec_standard_version === this.eecSubscriptions.longDistanceSubscription.version;
+        case 'LD':
+          return eec_standard_version === this.eecSubscriptions.longDistanceSubscription.version;
 
-        case 'SD': return eec_standard_version === this.eecSubscriptions.shortDistanceSubscription.version;
+        case 'SD':
+          return eec_standard_version === this.eecSubscriptions.shortDistanceSubscription.version;
         }
       }
 

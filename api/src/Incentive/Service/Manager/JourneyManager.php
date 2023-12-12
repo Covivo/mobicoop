@@ -9,6 +9,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
+use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\ShortDistanceJourneyRepository;
@@ -388,7 +389,7 @@ class JourneyManager extends MobConnectManager
         }
 
         if (self::SHORT_DISTANCE_TRIP_THRESHOLD === $shortDistanceJourneysNumber) {
-            $subscription->setBonusStatus(self::BONUS_STATUS_PENDING);
+            $subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
         }
 
         $subscription->setVersion();

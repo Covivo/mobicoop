@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Entity;
 
+use App\Incentive\Entity\Subscription\Progression;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -11,6 +12,10 @@ abstract class Subscription
     public const TYPE_SHORT = 'short';
 
     public const ALLOWED_TYPE = [self::TYPE_LONG, self::TYPE_SHORT];
+
+    public const BONUS_STATUS_PENDING = 0;
+    public const BONUS_STATUS_NO = 1;
+    public const BONUS_STATUS_OK = 2;
 
     private const ACTIVE_YEAR_PATTERN = '/^202[3-7]{1}$/';
 
@@ -32,7 +37,6 @@ abstract class Subscription
     protected $honorCertificateProofTimestampSigningTime;
 
     protected $version;
-    protected $versionStatus;
 
     /**
      * Journeys which have not been added to the subscription and which could be (compliant with the CEE standard).
@@ -63,6 +67,13 @@ abstract class Subscription
      * @Groups({"readSubscription"})
      */
     protected $hasHonorCertificateToken = false;
+
+    /**
+     * @var Progression
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $progression;
 
     /**
      * The mobConnect Subscription data.
@@ -178,12 +189,25 @@ abstract class Subscription
         return $this->honorCertificateProofTimestampSigningTime;
     }
 
+    public function getHasIncentiveToken(): bool
+    {
+        return !is_null($this->getIncentiveProofTimestampToken());
+    }
+
     /**
      * Get the value of hasIncentiveToken.
      */
     public function hasIncentiveToken(): bool
     {
-        return !is_null($this->getIncentiveProofTimestampToken());
+        return $this->getHasIncentiveToken();
+    }
+
+    /**
+     * Get the value of hasCommitToken.
+     */
+    public function getHasCommitToken(): bool
+    {
+        return !is_null($this->getCommitmentProofTimestampToken());
     }
 
     /**
@@ -191,7 +215,15 @@ abstract class Subscription
      */
     public function hasCommitToken(): bool
     {
-        return !is_null($this->getCommitmentProofTimestampToken());
+        return $this->getHasCommitToken();
+    }
+
+    /**
+     * Get the value of hasHonorCertificateToken.
+     */
+    public function getHasHonorCertificateToken(): bool
+    {
+        return !is_null($this->getHonorCertificateProofTimestampToken());
     }
 
     /**
@@ -199,13 +231,13 @@ abstract class Subscription
      */
     public function hasHonorCertificateToken(): bool
     {
-        return !is_null($this->getHonorCertificateProofTimestampToken());
+        return $this->getHasHonorCertificateToken();
     }
 
     /**
      * Get the subscription version.
      */
-    public function getVersion(): ?string
+    public function getVersion(): ?int
     {
         return $this->version;
     }
@@ -288,24 +320,11 @@ abstract class Subscription
      */
     public function setVersion(): self
     {
-        if (is_null($this->getVersion()) || SubscriptionVersion::INCENTIVE_MOBICOOP_2024 !== $this->getVersion()) {
+        if (is_null($this->getVersion()) || SubscriptionVersion::EEC_VERSION_IMPROVED !== $this->getVersion()) {
             $version = new SubscriptionVersion($this);
 
             $this->version = $version->getVersion();
-            $this->setVersionStatus($version->getVersionStatus());
         }
-
-        return $this;
-    }
-
-    public function getVersionStatus(): ?int
-    {
-        return $this->versionStatus;
-    }
-
-    public function setVersionStatus($versionStatus): self
-    {
-        $this->versionStatus = $versionStatus;
 
         return $this;
     }
@@ -384,6 +403,14 @@ abstract class Subscription
         $this->additionalJourneys = $additionalJourneys;
 
         return $this;
+    }
+
+    /**
+     * Get the value of progression.
+     */
+    public function getProgression(): Progression
+    {
+        return new Progression($this);
     }
 
     /**

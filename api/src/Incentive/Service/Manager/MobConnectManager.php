@@ -28,10 +28,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class MobConnectManager
 {
-    public const BONUS_STATUS_PENDING = 0;
-    public const BONUS_STATUS_NO = 1;
-    public const BONUS_STATUS_OK = 2;
-
     public const LONG_DISTANCE_TRIP_THRESHOLD = 3;
     public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
 

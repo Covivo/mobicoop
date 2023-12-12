@@ -54,7 +54,7 @@
             />
           </v-row>
           <!-- The panel actions -->
-          <v-row v-if="panel.error">
+          <v-row v-if="panel.success()">
             <v-col
               v-for="(action,j) in panel.actions.success"
               :key="j"
@@ -78,7 +78,7 @@
   </v-container>
 </template>
 <script>
-import { merge } from "lodash";
+import { isNull, merge } from "lodash";
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
@@ -128,10 +128,12 @@ export default {
         subscribe: {
           title: this.$t('improvedIncentive.panels.subscribe.title'),
           error() {
-            return !_this.subscription;
+            return !_this.subscription && _this.subscription.progression
+              && !isNull(_this.subscription.progression.registrationFinalized) && true != _this.subscription.progression.registrationFinalized;
           },
           success() {
-            return _this.subscription;
+            return _this.subscription && _this.subscription.progression
+              && true === _this.subscription.progression.registrationFinalized;
           },
           texts: {
             default: this.$t('improvedIncentive.panels.subscribe.texts.default'),
@@ -146,22 +148,18 @@ export default {
                 href: this.$t('improvedIncentive.panels.subscribe.actions.success[0].href')
               }
             ],
-            error: [
-              {
-                active: false,
-                title: this.$t('improvedIncentive.panels.subscribe.actions.error[0].title'),
-                href: this.$t('improvedIncentive.panels.subscribe.actions.error[0].href')
-              }
-            ]
+            error: []
           }
         },
         publish: {
           title: this.$t('improvedIncentive.panels.publish.title'),
           error() {
-            return _this.subscription.adPublished && false === _this.subscription.adPublished
+            return _this.subscription && _this.subscription.progression
+              && !isNull(_this.subscription.progression.firstCarpoolPublished) && false === _this.subscription.progression.firstCarpoolPublished;
           },
           success() {
-            return _this.subscription.adPublished && true === _this.subscription.adPublished;
+            return _this.subscription && _this.subscription.progression
+              && true === _this.subscription.progression.firstCarpoolPublished;
           },
           texts: {
             default: this.$t('improvedIncentive.panels.publish.texts.default'),
@@ -188,10 +186,12 @@ export default {
         carpool: {
           title: this.$t('improvedIncentive.panels.carpool.title'),
           error() {
-            return _this.subscription.carpoolRegistered && false === _this.subscription.carpoolRegistered;
+            return _this.subscription && _this.subscription.progression
+              && !isNull(_this.subscription.progression.carpoolRegistered) && false === _this.subscription.progression.carpoolRegistered;
           },
           success() {
-            return _this.subscription.carpoolRegistered && true === _this.subscription.carpoolRegistered;
+            return _this.subscription && _this.subscription.progression
+              && true === _this.subscription.progression.carpoolRegistered;
           },
           texts: {
             default: this.$t('improvedIncentive.panels.carpool.texts.default'),
@@ -222,10 +222,12 @@ export default {
         payAndValidate: {
           title: this.$t('improvedIncentive.panels.payAndValidate.title'),
           error() {
-            return _this.subscription.paymentProofValidated && false === _this.subscription.paymentProofValidated;
+            return _this.subscription && _this.subscription.progression
+              && !isNull(_this.subscription.progression.carpoolPayedAndValidated) && false === _this.subscription.progression.carpoolPayedAndValidated;
           },
           success() {
-            return _this.subscription.paymentProofValidated && true === _this.subscription.paymentProofValidated;
+            return _this.subscription && _this.subscription.progression
+              && true === _this.subscription.progression.carpoolPayedAndValidated;
           },
           texts: {
             default: this.$t('improvedIncentive.panels.payAndValidate.texts.default'),
@@ -246,10 +248,12 @@ export default {
         validate: {
           title: this.$t('improvedIncentive.panels.validate.title'),
           error() {
-            return _this.subscription.proofValidated && false === _this.subscription.proofValidated;
+            return _this.subscription && _this.subscription.progression
+              && !isNull(_this.subscription.progression.carpoolValidated) && false === _this.subscription.progression.carpoolValidated;
           },
           success() {
-            return _this.subscription.proofValidated && true === _this.subscription.proofValidated;
+            return _this.subscription && _this.subscription.progression
+              && true === _this.subscription.progression.carpoolValidated;
           },
           texts: {
             default: this.$t('improvedIncentive.panels.validate.texts.default'),
@@ -267,13 +271,15 @@ export default {
             ]
           }
         },
-        receive: {
+        bonified: {
           title: this.$t('improvedIncentive.panels.receive.title'),
           error() {
-            return _this.subscription.payed && false === _this.subscription.payed;
+            return _this.subscription && _this.subscription.progression
+              && !isNull(_this.subscription.progression.subscriptionBonified) && false === _this.subscription.progression.subscriptionBonified;
           },
           success() {
-            return _this.subscription.payed && true === _this.subscription.payed;
+            return _this.subscription && _this.subscription.progression
+              && true === _this.subscription.progression.subscriptionBonified;
           },
           texts: {
             default: this.$t('improvedIncentive.panels.receive.texts.default'),
@@ -296,13 +302,13 @@ export default {
           this.panels.publish,
           this.panels.carpool,
           this.panels.payAndValidate,
-          this.panels.receive
+          this.panels.bonified
         ]
         : [
           this.panels.subscribe,
           this.panels.carpool,
           this.panels.validate,
-          this.panels.receive
+          this.panels.bonified
         ]
       ;
     },

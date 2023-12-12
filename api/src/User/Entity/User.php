@@ -2364,6 +2364,13 @@ class User implements UserInterface, EquatableInterface
         return $this->phoneValidatedDate;
     }
 
+    public function isPhoneValidated(): bool
+    {
+        return
+            !is_null($this->getTelephone())
+            && !is_null($this->getPhoneValidatedDate());
+    }
+
     public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): ?self
     {
         $this->phoneValidatedDate = $phoneValidatedDate;

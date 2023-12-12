@@ -76,7 +76,7 @@
     "subscriptions": {
       "progress": "{nb}/{max} trajets",
       "LD": {
-        "intro": "<span class=\"font-weight-bold\">Votre premier trajet de 80 km ou plus a été réalisé en 2023&nbsp;?</span> Vous bénéficierez d’une prime de 100€ si vos preuves de covoiturage sont validées par le Registre de Preuve de Covoiturage et s’ils sont payés numériquement.",
+        "intro": "<span class=\"font-weight-bold\">Votre première annonce de trajet de plus de 80 km a été publiée en 2023&nbsp;?</span> Vous pourrez bénéficier d’une prime jusque 100€ si avant le 31 janvier votre premier trajet est payé en ligne et validé par le Registre de Preuve de Covoiturage.",
         "expiredText": "La période légale de 3 mois pour compléter vos trajets longue distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant."
       },
       "SD": {
@@ -94,7 +94,7 @@
   "improvedIncentive": {
     "panels": {
       "carpool": {
-        "title": "Covoiturer un trajet",
+        "title": "Réaliser un trajet",
         "texts": {
           "default": "Vous devez réaliser un covoiturage avec un passager. Pour qu’il soit pris en compte pour la prime, il devra être certifié par une preuve de covoiturage&bnsp;:<ol><li>Numéros de téléphone validés pour  le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Identités bancaires (RIB + pièce d’identité en cours de validité) données par le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Points de départ et d'arrivée certifiés par le conducteur <span class=\"font-weight-bold\">ET</span> le passager avec la géolocalisation activée.</li></ol>",
           "success": "Votre covoiturage a bien été enregistré. Afin de recevoir votre prime, assurez-vous d’avoir bien renseigné votre numéro de téléphone, votre pièce d’identité et votre RIB.<br /><span class=\"font-weight-bold\">Attention</span> : votre passager doit également renseigner son numéro de téléphone, sa pièce d’identité et son RIB.",
@@ -108,11 +108,11 @@
             },
             {
               "title": "Certifier un covoiturage",
-              "href": ""
+              "href": "/"
             },
             {
               "title": "Nous contacter",
-              "href": ""
+              "href": "/contact"
             }
           ]
         }
@@ -180,7 +180,7 @@
         }
       },
       "validate": {
-        "title": "Valider paiement et preuve",
+        "title": "Valider sa preuve",
         "texts": {
           "default": "Une fois votre trajet effectué, votre preuve de covoiturage a été automatiquement envoyé au Registre de Preuve de Covoiturage pour validation. Votre prime vous sera reversée une fois cette preuve validée.",
           "success": "Bravo, la preuve du covoiturage a bien été réalisée&nbsp;!<br />Elle a été envoyée au Registre de Preuve de Covoiturage, où elle est cours de validation.",

@@ -57,7 +57,7 @@ final class SubscriptionVersionTest extends TestCase
     {
         // Dates
         $this->_now = new \DateTime('now');
-        $this->_deadlineDate = new \DateTime(SubscriptionVersion::INCENTIVE_2023_DEADLINE);
+        $this->_deadlineDate = new \DateTime(SubscriptionVersion::EEC_VERSION_STANDARD_DEADLINE);
 
         $this->_publishedDeadlineDate = clone $this->_deadlineDate;
         $this->_publishedDeadlineDate = $this->_publishedDeadlineDate->add(new \DateInterval('P1M'));
@@ -209,15 +209,6 @@ final class SubscriptionVersionTest extends TestCase
     {
         $this->removeCommitmentJourney();
         $this->assertIsString($this->_subscriptionVersion->getVersion());
-    }
-
-    /**
-     * @test
-     */
-    public function getVersionStatus()
-    {
-        $this->removeCommitmentJourney();
-        $this->assertIsInt($this->_subscriptionVersion->getVersionStatus());
     }
 
     public function build() {}

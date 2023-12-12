@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Carpool\Entity\Ask;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
@@ -69,10 +70,6 @@ class LongDistanceSubscription extends Subscription
     public const SUBSCRIPTION_TYPE = 'long';
 
     public const TRIP_THRESHOLD = 3;
-
-    public const BONUS_STATUS_PENDING = 0;
-    public const BONUS_STATUS_NO = 1;
-    public const BONUS_STATUS_OK = 2;
 
     /**
      * @var \DateTimeInterface
@@ -181,37 +178,16 @@ class LongDistanceSubscription extends Subscription
     /**
      * The subscription version.
      *
-     * @var string
+     * @var int
      *
      * @ORM\Column(
-     *      type="string",
-     *      length=50,
-     *      nullable=true,
-     *      options={
-     *          "comment": "The subscription version. Could be CoupPouceCEE2023 or CEEStandardMobicoop"
-     *      }
+     *      type="smallint",
+     *      nullable=true
      * )
      *
      * @Groups({"readSubscription"})
      */
     protected $version;
-
-    /**
-     * The subscription version status.
-     *
-     * @var int
-     *
-     * @ORM\Column(
-     *      type="smallint",
-     *      nullable=true,
-     *      options={
-     *          "comment": "The subscription version status."
-     *      }
-     * )
-     *
-     * @Groups({"readSubscription"})
-     */
-    protected $versionStatus;
 
     /**
      * @var int The user subscription ID
@@ -374,7 +350,7 @@ class LongDistanceSubscription extends Subscription
      *
      * @Groups({"readSubscription"})
      */
-    private $bonusStatus = SubscriptionManager::BONUS_STATUS_PENDING;
+    private $bonusStatus = self::BONUS_STATUS_PENDING;
 
     /**
      * The moBconnet HTTP request log.
@@ -973,5 +949,95 @@ class LongDistanceSubscription extends Subscription
         $this->setVerificationDate(null);
 
         return $this;
+    }
+
+    /**
+     * Get indicates if the 1st carpooling has been published.
+     */
+    public function getFirstCarpoolPublished(): ?bool
+    {
+        return
+            is_null($this->getCommitmentProofJourney())
+            ? null
+            : !is_null($this->getCommitmentProofJourney()) && $this->hasCommitToken();
+    }
+
+    /**
+     * Get indicates if the 1st carpooling has been published.
+     */
+    public function isFirstCarpoolPublished(): ?bool
+    {
+        return $this->getFirstCarpoolPublished();
+    }
+
+    /**
+     * Returns if the 1st carpooling is observed.
+     * We determine if there is at least one carpooling request made and that it has already taken place:
+     * - If there is none we will not return anything,
+     * - If there was any, we will determine if there is at least one proof of carpooling present and that the latter is awaiting validation by the RPC:
+     *   - If yes we return true,
+     *   - If not we return false.
+     */
+    public function getCarpoolRegistered(): ?bool
+    {
+        if (
+            is_null($this->getCommitmentProofJourney())                                 // The subscription has not yet been validated
+            || (                                                                        // The subscription has been validated but there is no carpoolProof
+                !is_null($this->getCommitmentProofJourney())
+                && is_null($this->getCommitmentProofJourney()->getInitialProposal())
+                && is_null($this->getCommitmentProofJourney()->getInitialProposal()->getMatchingOffers())
+                && empty($this->getCommitmentProofJourney()->getInitialProposal()->getMatchingOffers())
+            )
+        ) {
+            return null;
+        }
+
+        $asks = [];
+        $carpoolProofs = [];
+
+        foreach ($this->getCommitmentProofJourney()->getInitialProposal()->getMatchingOffers() as $key => $matching) {
+            $passenger = !is_null($matching->getProposalRequest()) && !is_null($matching->getProposalRequest()->getUser())
+                ? $matching->getProposalRequest()->getUser() : null;
+
+            if (is_null($passenger)) {
+                continue;
+            }
+
+            foreach ($matching->getAsks() as $key => $ask) {
+                if (
+                    (
+                        Ask::STATUS_ACCEPTED_AS_DRIVER === $ask->getStatus()
+                        || Ask::STATUS_ACCEPTED_AS_PASSENGER === $ask->getStatus()
+                    ) && (
+                        !is_null($ask->getCriteria())
+                        && $ask->getCriteria()->getFromDate() < new \DateTime('now')
+                    )
+                ) {
+                    array_push($asks, $ask);
+
+                    foreach ($ask->getCarpoolProofs() as $key => $carpoolProof) {
+                        if ($carpoolProof->isInProgressEecCompliant()) {
+                            array_push($carpoolProofs, $carpoolProof);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (empty($asks)) {
+            return null;
+        }
+
+        return !empty($carpoolProofs);
+    }
+
+    public function isCommitmentJourneyPayedAndValidated(): bool
+    {
+        return
+            !is_null($this->getCommitmentProofJourney())
+            && !is_null($this->getCommitmentProofJourney()->getCarpoolItem())
+            && !is_null($this->getCommitmentProofJourney()->getCarpoolItem()->getCarpoolProof())
+            && $this->getCommitmentProofJourney()->getCarpoolItem()->isEECompliant()
+            && $this->getCommitmentProofJourney()->getCarpoolItem()->getCarpoolProof()->isEECCompliant();
     }
 }

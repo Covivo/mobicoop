@@ -175,37 +175,16 @@ class ShortDistanceSubscription extends Subscription
     /**
      * The subscription version.
      *
-     * @var string
+     * @var int
      *
      * @ORM\Column(
-     *      type="string",
-     *      length=50,
-     *      nullable=true,
-     *      options={
-     *          "comment": "The subscription version. Could be CoupPouceCEE2023 or CEEStandardMobicoop"
-     *      }
+     *      type="smallint",
+     *      nullable=true
      * )
      *
      * @Groups({"readSubscription"})
      */
     protected $version;
-
-    /**
-     * The subscription version status.
-     *
-     * @var int
-     *
-     * @ORM\Column(
-     *      type="smallint",
-     *      nullable=true,
-     *      options={
-     *          "comment": "The subscription version status."
-     *      }
-     * )
-     *
-     * @Groups({"readSubscription"})
-     */
-    protected $versionStatus;
 
     /**
      * @var int The user subscription ID
@@ -368,7 +347,7 @@ class ShortDistanceSubscription extends Subscription
      *
      * @Groups({"readSubscription"})
      */
-    private $bonusStatus = SubscriptionManager::BONUS_STATUS_PENDING;
+    private $bonusStatus = self::BONUS_STATUS_PENDING;
 
     /**
      * The moBconnet HTTP request log.
@@ -956,5 +935,25 @@ class ShortDistanceSubscription extends Subscription
         $this->setVerificationDate(null);
 
         return $this;
+    }
+
+    /**
+     * Returns if the 1st carpooling is observed.
+     */
+    public function getCarpoolRegistered(): ?bool
+    {
+        return !is_null($this->getCommitmentProofJourney())
+            ? !is_null($this->getCommitmentProofJourney()->getCarpoolProof()) : null;
+    }
+
+    /**
+     * Get the value of proofValidated.
+     */
+    public function isCommitmentJourneyValidated(): bool
+    {
+        return
+            !is_null($this->getCommitmentProofJourney())
+            && !is_null($this->getCommitmentProofJourney()->getCarpoolProof())
+            && $this->getCommitmentProofJourney()->getCarpoolProof()->isEECCompliant();
     }
 }

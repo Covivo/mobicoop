@@ -727,7 +727,7 @@ class ProofManager
             if (CarpoolProof::STATUS_VALIDATED === $proof->getStatus()) {
                 $event = new CarpoolProofValidatedEvent($proof);
                 $this->eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
-            } elseif (in_array($proof->getStatus(), JourneyValidation::PROOF_ERROR_STATUS)) {
+            } elseif (in_array($proof->getStatus(), CarpoolProof::ERROR_STATUS)) {
                 $event = new CarpoolProofInvalidatedEvent($proof);
                 $this->eventDispatcher->dispatch(CarpoolProofInvalidatedEvent::NAME, $event);
             }

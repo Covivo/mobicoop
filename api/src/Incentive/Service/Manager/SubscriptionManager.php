@@ -28,10 +28,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
 {
-    public const BONUS_STATUS_PENDING = 0;
-    public const BONUS_STATUS_NO = 1;
-    public const BONUS_STATUS_OK = 2;
-
     public const STATUS_ERROR = 'ERROR';
     public const STATUS_REJECTED = 'REJETEE';
     public const STATUS_VALIDATED = 'VALIDEE';
@@ -379,10 +375,10 @@ class SubscriptionManager extends MobConnectManager
         );
 
         if (self::STATUS_VALIDATED === $subscription->getStatus()) {
-            $subscription->setBonusStatus(self::BONUS_STATUS_OK);
+            $subscription->setBonusStatus(Subscription::BONUS_STATUS_OK);
             $subscription->setStatus(self::STATUS_VALIDATED);
         } else {
-            $subscription->setBonusStatus(self::BONUS_STATUS_NO);
+            $subscription->setBonusStatus(Subscription::BONUS_STATUS_NO);
             $subscription->setStatus(self::STATUS_REJECTED);
         }
 
