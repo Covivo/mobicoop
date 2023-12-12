@@ -1,0 +1,78 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+{% set recipient = context.user %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Un nouveau membre souhaite rejoindre votre communauté !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.senderGivenName|capitalize}}  {{context.senderShortFamilyName|capitalize}} </b> a demandé à rejoindre la communauté <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Rendez-vous dans le module d'administration pour valider son adhésion : <a href="{{ api_env('URL_ADMIN') }}" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">en cliquant ici</a></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="right" style="width:100%;">
+                        <p style="font-size:11px;">Merci, l'équipe Rezo Mobicoop</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
+

@@ -1,0 +1,56 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Document d'identité validé</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
+                <tr>
+                    <td style="width:22px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour, </p>
+                        <p style="font-size:11px;">Votre document d’identité transmis a été vérifié et accepté.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Rezo Mobicoop</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}

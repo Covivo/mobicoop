@@ -1,0 +1,104 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+{% set recipient = context.user %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Votre demande d’adhésion à une communauté</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    {# intro #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Merci beaucoup pour l’intérêt que vous portez au covoiturage et à la plateforme {{api_env('EMAILS_PLATFORM_NAME')}}!</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Vous avez demandé une adhésion à la communauté « {{context.community.name}} » et cette dernière n’a pas pu être accepté. Vous n’y avez donc pas accès.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Cela n’entraine aucune restriction à votre utilisation du service et votre pratique du covoiturage : vous pouvez utiliser la totalité des fonctionnalités de la plateforme et vous mettre en relation avec tous ses utilisateurs en publiant une annonce.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
+                            style="border:0; height:26px; width:175; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt pour vos prochains trajets partagés !</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="right" style="width:100%;">
+                        <p style="font-size:11px;">L'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+{% endblock %}

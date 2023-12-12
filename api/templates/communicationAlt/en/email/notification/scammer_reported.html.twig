@@ -1,0 +1,59 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19.5px;" text-align="center" ><b>Attention fraudeur signalé !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour, </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Notre système a détecté que l'utilisateur <b>{{ context.scammer.givenName }} {{ context.scammer.familyName }}</b> ne respecte pas notre charte d'utilisation et propose à notre communauté des paiements par carte prépayée (exemple : Transcash). Nous interdisons ce type de paiement considéré comme frauduleux. Cet utilisateur a été supprimé de la plateforme et nous vous recommandons de ne pas répondre à ses messages si vous communiquez par d'autres canaux.</p>
+                        <p style="font-size:11px; text-align: justify;">Pour rappel, sur mobicoop.fr il existe 2 types de paiements principaux :</p>
+                        <ul>
+                            <li style="font-size:11px; text-align: justify;">Directement de la main à la main le jour du covoiturage. Nous vous invitons à déclarer par la suite le trajet comme “payé à la main” depuis la page “ Mes covoiturages acceptés ”;</li>
+                            <li style="font-size:11px; text-align: justify;">Par carte bancaire depuis la page “ Mes covoiturages acceptés ”. Pour cela vous devez compléter vos informations bancaires dans votre Profil.</li>
+                        </ul>
+                        <p style="font-size:11px; text-align: justify;">Il est possible de nous signaler un utilisateur douteux en cliquant sur le bouton Signaler accessible sur la messagerie en ligne de mobicoop.fr et sur le profil d'un utilisateur.</p>
+                        <p style="font-size:11px; text-align: justify;">Nous sommes désolés pour le désagrément et nous vous invitons à <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">publier une annonce</a></p>
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
