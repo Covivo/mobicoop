@@ -36,6 +36,7 @@ class AnalyticManager
 {
     private const ROLE_ADMIN = 'ROLE_ADMIN';
     private const ROLE_COMMUNITY_MANAGER_PUBLIC = 'ROLE_COMMUNITY_MANAGER_PUBLIC';
+
     private $_paramType;
     private $_paramPeriodicity;
     private $_territoryIdParam;
@@ -54,6 +55,7 @@ class AnalyticManager
     private $_defaultTerritoryId;
     private $_forceDefaultCommunityId;
     private $_forceDefaultTerritoryId;
+    private $_authorized_types;
 
     public function __construct(
         RequestStack $requestStack,
@@ -81,6 +83,7 @@ class AnalyticManager
         $this->_darkTheme = $request->query->get('darkTheme', false);
         $this->_communityRepository = $communityRepository;
         $this->_tokenStorage = $tokenStorage;
+        $this->_setAuthorizedTypes();
     }
 
     public function getAnalytics(): array
@@ -129,10 +132,18 @@ class AnalyticManager
         return $analytic;
     }
 
+    private function _setAuthorizedTypes()
+    {
+        $this->_authorized_types = [];
+        foreach ($this->_dashboards[0] as $type => $dashboard) {
+            $this->_authorized_types[] = $type;
+        }
+    }
+
     private function _validParamsRequest()
     {
-        if (!in_array($this->_paramType, Analytic::AUTHORIZED_TYPES)) {
-            throw new \LogicException('Analytic type is not a valid type must be in '.json_encode(Analytic::AUTHORIZED_TYPES));
+        if (!in_array($this->_paramType, $this->_authorized_types)) {
+            throw new \LogicException('Analytic type is not a valid type must be in '.json_encode($this->_authorized_types));
         }
         if (!in_array($this->_paramPeriodicity, Analytic::AUTHORIZED_PERIODICITY)) {
             throw new \LogicException('Analytic periodicity is not a valid type must be in '.json_encode(Analytic::AUTHORIZED_PERIODICITY));
