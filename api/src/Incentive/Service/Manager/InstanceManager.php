@@ -21,9 +21,9 @@ class InstanceManager
      */
     private $_currentEecInstance;
 
-    public function __construct(array $subscriptionKeys, $eecServiveConfiguration)
+    public function __construct($eecServiveConfiguration)
     {
-        $this->_currentEecInstance = new EecInstance($subscriptionKeys, $eecServiveConfiguration);
+        $this->_currentEecInstance = new EecInstance($eecServiveConfiguration);
     }
 
     public function getEecInstance(): EecInstance

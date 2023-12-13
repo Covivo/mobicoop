@@ -78,23 +78,23 @@ class EecInstance
     /**
      * @var null|string
      */
-    private $ldSubscriptionsKey;
+    private $ldKey;
 
     /**
      * @var null|string
      */
-    private $sdSubscriptionsKey;
+    private $sdKey;
 
     /**
      * @var array
      */
     private $configuration;
 
-    public function __construct(array $subscriptionKeys, array $instanceConfiguration)
+    public function __construct(array $instanceConfiguration)
     {
         $this->configuration = $instanceConfiguration;
 
-        $this->setSdSubscriptionsKeys($subscriptionKeys);
+        $this->setKeys();
         $this->setExpirationDate();
         $this->setLdExpirationDate();
         $this->setSdExpirationDate();
@@ -193,17 +193,17 @@ class EecInstance
     /**
      * Get the value of ldSubscriptionsKey.
      */
-    public function getLdSubscriptionsKey(): ?string
+    public function getLdKey(): ?string
     {
-        return $this->ldSubscriptionsKey;
+        return $this->ldKey;
     }
 
     /**
      * Set the value of ldSubscriptionsKey.
      */
-    public function setLdSubscriptionsKey(string $ldSubscriptionsKey): self
+    public function setLdKey(string $key): self
     {
-        $this->ldSubscriptionsKey = $ldSubscriptionsKey;
+        $this->ldKey = $key;
 
         return $this;
     }
@@ -211,45 +211,32 @@ class EecInstance
     /**
      * Get the value of sdSubscriptionsKey.
      */
-    public function getSdSubscriptionsKey(): ?string
+    public function getSdKey(): ?string
     {
-        return $this->sdSubscriptionsKey;
+        return $this->sdKey;
     }
 
     /**
      * Set the value of sdSubscriptionsKey.
      */
-    public function setSdSubscriptionsKey(string $sdSubscriptionsKey): self
+    public function setSdKey(string $key): self
     {
-        $this->sdSubscriptionsKey = $sdSubscriptionsKey;
+        $this->sdKey = $key;
 
         return $this;
     }
 
-    public function setSdSubscriptionsKeys(array $subscriptionKeys): self
+    public function setKeys(): self
     {
-        if (!empty($subscriptionKeys['ld'])) {
-            $this->setLdSubscriptionsKey($subscriptionKeys['ld']);
-        }
-
-        if (!empty($this->configuration['subscriptions']['ld']['key'])) {
-            $this->setLdSubscriptionsKey($this->configuration['subscriptions']['ld']['key']);
-        }
-
-        if (!empty($subscriptionKeys['sd'])) {
-            $this->setSdSubscriptionsKey($subscriptionKeys['sd']);
-        }
-
-        if (!empty($this->configuration['subscriptions']['sd']['key'])) {
-            $this->setLdSubscriptionsKey($this->configuration['subscriptions']['sd']['key']);
-        }
+        $this->setLdKey($this->configuration['subscriptions']['ld']['key']);
+        $this->setSdKey($this->configuration['subscriptions']['sd']['key']);
 
         return $this;
     }
 
     public function areSubscriptionKeysAvailable(): bool
     {
-        return !is_null($this->ldSubscriptionsKey) && !is_null($this->sdSubscriptionsKey);
+        return !is_null($this->ldKey) && !is_null($this->sdKey);
     }
 
     private function getDate(?string $date): ?\DateTime

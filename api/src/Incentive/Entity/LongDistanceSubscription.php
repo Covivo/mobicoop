@@ -12,6 +12,9 @@ use App\Incentive\Controller\Subscription\LdSubscriptionGet;
 use App\Incentive\Controller\Subscription\LdSubscriptionUpdate;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\Log\LongDistanceSubscriptionLog;
+use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
+use App\Incentive\Service\Definition\LdImproved;
+use App\Incentive\Service\Definition\LdStandard;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -65,11 +68,7 @@ class LongDistanceSubscription extends Subscription
 
     public const COMMITMENT_PREFIX = 'Proposal_';
 
-    public const VALIDITY_PERIOD = 3;               // Period expressed in months
-
     public const SUBSCRIPTION_TYPE = 'long';
-
-    public const TRIP_THRESHOLD = 3;
 
     /**
      * @var \DateTimeInterface
@@ -88,6 +87,20 @@ class LongDistanceSubscription extends Subscription
      * @Groups({"readSubscription"})
      */
     protected $longDistanceJourneys;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="smallint", options={"default": 3})
+     */
+    protected $maximumJourneysNumber;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="smallint", options={"default": 3})
+     */
+    protected $validityPeriodDuration;
 
     /**
      * @var LongDistanceJourney
@@ -361,8 +374,11 @@ class LongDistanceSubscription extends Subscription
      */
     private $logs;
 
-    public function __construct(User $user, MobConnectSubscriptionResponse $mobConnectSubscriptionResponse)
-    {
+    public function __construct(
+        User $user,
+        MobConnectSubscriptionResponse $mobConnectSubscriptionResponse,
+        SubscriptionDefinitionInterface $subscriptionDefinition
+    ) {
         $this->longDistanceJourneys = new ArrayCollection();
         $this->logs = new ArrayCollection();
 
@@ -377,6 +393,9 @@ class LongDistanceSubscription extends Subscription
         $this->setPostalCode();
         $this->setTelephone($user->getTelephone());
         $this->setEmail($user->getEmail());
+
+        $this->setMaximumJourneysNumber($subscriptionDefinition->getMaximumJourneysNumber());
+        $this->setValidityPeriodDuration($subscriptionDefinition->getValidityPeriodDuration());
     }
 
     /**
@@ -430,7 +449,7 @@ class LongDistanceSubscription extends Subscription
         $this->longDistanceJourneys[] = $longDistanceJourney;
         $longDistanceJourney->setSubscription($this);
 
-        if (self::TRIP_THRESHOLD === $this->getJourneysNumber()) {
+        if ($this->getMaximumJourneysNumber() === $this->getJourneysNumber()) {
             $this->setBonusStatus(self::BONUS_STATUS_PENDING);
         }
 
@@ -1039,5 +1058,13 @@ class LongDistanceSubscription extends Subscription
             && !is_null($this->getCommitmentProofJourney()->getCarpoolItem()->getCarpoolProof())
             && $this->getCommitmentProofJourney()->getCarpoolItem()->isEECompliant()
             && $this->getCommitmentProofJourney()->getCarpoolItem()->getCarpoolProof()->isEECCompliant();
+    }
+
+    public static function getAvailableDefinitions(): array
+    {
+        return [
+            LdStandard::class,
+            LdImproved::class,
+        ];
     }
 }

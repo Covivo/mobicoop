@@ -18,6 +18,7 @@ use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Resource\EecEligibility;
+use App\Incentive\Service\Definition\DefinitionSelector;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\SubscriptionValidation;
@@ -88,9 +89,8 @@ class SubscriptionManager extends MobConnectManager
         array $mobConnectParams,
         array $ssoServices
     ) {
-        parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
-        $this->_instanceManager = $instanceManager;
         $this->_journeyManager = $journeyManager;
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
@@ -121,7 +121,11 @@ class SubscriptionManager extends MobConnectManager
             $postResponse = $this->postSubscription();
 
             if (!$this->hasRequestErrorReturned($postResponse)) {
-                $longDistanceSubscription = new LongDistanceSubscription($this->getDriver(), $postResponse);
+                $longDistanceSubscription = new LongDistanceSubscription(
+                    $this->getDriver(),
+                    $postResponse,
+                    DefinitionSelector::getDefinition(LongDistanceSubscription::SUBSCRIPTION_TYPE)
+                );
                 $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
                 $longDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($longDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
@@ -138,7 +142,11 @@ class SubscriptionManager extends MobConnectManager
             $postResponse = $this->postSubscription(false);
 
             if (!$this->hasRequestErrorReturned($postResponse)) {
-                $shortDistanceSubscription = new ShortDistanceSubscription($this->getDriver(), $postResponse);
+                $shortDistanceSubscription = new ShortDistanceSubscription(
+                    $this->getDriver(),
+                    $postResponse,
+                    DefinitionSelector::getDefinition(ShortDistanceSubscription::SUBSCRIPTION_TYPE)
+                );
                 $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
                 $shortDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($shortDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);

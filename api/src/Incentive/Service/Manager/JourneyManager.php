@@ -9,7 +9,6 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
-use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
@@ -62,6 +61,7 @@ class JourneyManager extends MobConnectManager
         CarpoolProofRepository $carpoolProofRepository,
         CarpoolItemRepository $carpoolItemRepository,
         EntityManagerInterface $em,
+        InstanceManager $instanceManager,
         JourneyValidation $journeyValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
@@ -72,7 +72,7 @@ class JourneyManager extends MobConnectManager
         array $mobConnectParams,
         array $ssoServices
     ) {
-        parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
@@ -362,7 +362,7 @@ class JourneyManager extends MobConnectManager
 
             $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
-            $subscription->setExpirationDate($this->getExpirationDate($subscription->getValidityPeriod()));
+            $subscription->setExpirationDate($this->getExpirationDate($subscription->getValidityPeriodDuration()));
 
             $commitmentJourney = $this->_updateShortDistanceJourney($commitmentJourney, $carpoolProof);
         } else {
@@ -373,7 +373,7 @@ class JourneyManager extends MobConnectManager
             //    - The journey origin and/or destination is the reference country
             if (
                 $this->_pushOnlyMode
-                || ShortDistanceSubscription::TRIP_THRESHOLD <= $shortDistanceJourneysNumber
+                || $subscription->getMaximumJourneysNumber() <= $shortDistanceJourneysNumber
                 || is_null($carpoolProof->getAsk())
                 || is_null($carpoolProof->getAsk()->getMatching())
                 || $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
@@ -389,7 +389,7 @@ class JourneyManager extends MobConnectManager
             $subscription->addShortDistanceJourney($journey);
         }
 
-        if (ShortDistanceSubscription::TRIP_THRESHOLD === $shortDistanceJourneysNumber) {
+        if ($subscription->getMaximumJourneysNumber() === $shortDistanceJourneysNumber) {
             $subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
         }
 
@@ -584,7 +584,7 @@ class JourneyManager extends MobConnectManager
 
     private function _addLDJourneyToSubscription()
     {
-        if (LongDistanceSubscription::TRIP_THRESHOLD <= $this->_currentSubscription->getJourneysNumber()) {
+        if ($this->_currentSubscription->getMaximumJourneysNumber() <= $this->_currentSubscription->getJourneysNumber()) {
             return;
         }
 
@@ -624,7 +624,7 @@ class JourneyManager extends MobConnectManager
         $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
         $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
-        $this->_currentSubscription->setExpirationDate($this->getExpirationDate($this->_currentSubscription->getValidityPeriod()));
+        $this->_currentSubscription->setExpirationDate($this->getExpirationDate($this->_currentSubscription->getValidityPeriodDuration()));
 
         $this->_currentSubscription->getCommitmentProofJourney()->updateJourney(
             $this->_currentCarpoolItem,

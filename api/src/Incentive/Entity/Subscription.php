@@ -3,10 +3,11 @@
 namespace App\Incentive\Entity;
 
 use App\Incentive\Entity\Subscription\Progression;
+use App\Incentive\Interfaces\SubscriptionInterface;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-abstract class Subscription
+abstract class Subscription implements SubscriptionInterface
 {
     public const TYPE_LONG = 'long';
     public const TYPE_SHORT = 'short';
@@ -16,8 +17,6 @@ abstract class Subscription
     public const BONUS_STATUS_PENDING = 0;
     public const BONUS_STATUS_NO = 1;
     public const BONUS_STATUS_OK = 2;
-
-    public const VALIDITY_PERIOD = 3;
 
     private const ACTIVE_YEAR_PATTERN = '/^202[3-7]{1}$/';
 
@@ -48,6 +47,16 @@ abstract class Subscription
      * @Groups({"readAdminSubscription"})
      */
     protected $additionalJourneys = [];
+
+    /**
+     * @var int
+     */
+    protected $maximumJourneysNumber;
+
+    /**
+     * @var int
+     */
+    protected $validityPeriodDuration;
 
     /**
      * @var bool
@@ -415,9 +424,28 @@ abstract class Subscription
         return new Progression($this);
     }
 
-    public function getValidityPeriod(): int
+    public function getMaximumJourneysNumber(): int
     {
-        return static::VALIDITY_PERIOD;
+        return $this->maximumJourneysNumber;
+    }
+
+    public function setMaximumJourneysNumber(int $maximumJourneysNumber): self
+    {
+        $this->maximumJourneysNumber = $maximumJourneysNumber;
+
+        return $this;
+    }
+
+    public function getValidityPeriodDuration(): int
+    {
+        return $this->validityPeriodDuration;
+    }
+
+    public function setValidityPeriodDuration(int $validityPeriodDuration): self
+    {
+        $this->validityPeriodDuration = $validityPeriodDuration;
+
+        return $this;
     }
 
     /**

@@ -117,6 +117,7 @@ abstract class MobConnectManager
 
     public function __construct(
         EntityManagerInterface $em,
+        InstanceManager $instanceManager,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
         string $carpoolProofPrefix,
@@ -124,6 +125,9 @@ abstract class MobConnectManager
         array $ssoServices
     ) {
         $this->_em = $em;
+
+        $this->_instanceManager = $instanceManager;
+
         $this->_loggerService = $loggerService;
         $this->_honourCertificateService = $honourCertificateService;
 
@@ -179,15 +183,6 @@ abstract class MobConnectManager
                     && array_key_exists('client_id', $this->_mobConnectParams['credentials'])
                     && !empty($this->_mobConnectParams['credentials']['client_id'])
                     && array_key_exists('api_key', $this->_mobConnectParams['credentials'])
-                )
-                && (
-                    array_key_exists('subscription_ids', $this->_mobConnectParams)
-                    && is_array($this->_mobConnectParams['subscription_ids'])
-                    && !empty($this->_mobConnectParams['subscription_ids'])
-                    && array_key_exists('short_distance', $this->_mobConnectParams['subscription_ids'])
-                    && !empty($this->_mobConnectParams['subscription_ids']['short_distance'])
-                    && array_key_exists('long_distance', $this->_mobConnectParams['subscription_ids'])
-                    && !empty($this->_mobConnectParams['subscription_ids']['long_distance'])
                 )
             );
     }
@@ -263,7 +258,14 @@ abstract class MobConnectManager
 
     protected function setApiProvider()
     {
-        $this->_apiProvider = new MobConnectApiProvider($this->_em, new MobConnectApiParams($this->_mobConnectParams), $this->_loggerService, $this->_driver, $this->_ssoServices);
+        $this->_apiProvider = new MobConnectApiProvider(
+            $this->_em,
+            new MobConnectApiParams($this->_mobConnectParams),
+            $this->_loggerService,
+            $this->_driver,
+            $this->_ssoServices,
+            $this->_instanceManager->getEecInstance()
+        );
     }
 
     protected function getCarpoolersNumber(Ask $ask): int
