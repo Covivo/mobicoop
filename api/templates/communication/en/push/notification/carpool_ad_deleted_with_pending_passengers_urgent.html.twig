@@ -6,5 +6,5 @@
     {% set deleter = ask.user %}
 {% endif %}
 Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
-{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}} has cancelled his trip and will not be able to carpool with you between {{ context.origin.address.displayLabel[0] }} and {{ context.destination.address.displayLabel[0] }}. Find new carpools or post an ad on {{api_env('PUSH_PLATFORM_NAME')}}.
+{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}} has cancelled his trip and will not be able to carpool with you from {{ context.origin.address.displayLabel[0] }} to {{ context.destination.address.displayLabel[0] }}. Find new carpools or post an ad on {{api_env('PUSH_PLATFORM_NAME')}}.
 See you soon on {{api_env('PUSH_PLATFORM_NAME')}}

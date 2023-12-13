@@ -1,4 +1,4 @@
 Hello {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}.
-{{context.senderAlias|capitalize}} from the carpooling platform {{context.senderOperator}} offers a carpool from {{context.booking.passengerPickupAddress}} to {{context.booking.passengerDropAddress}} on {{context.booking.passengerPickupDate|date("d-m-Y à H:i","Europe/Paris")}}.
+{{context.senderAlias|capitalize}} from the carpooling platform {{context.senderOperator}} offers a carpool from {{context.booking.passengerPickupAddress}} to {{context.booking.passengerDropAddress}} on {{context.booking.passengerPickupDate|date("d-m-Y at H:i","Europe/Paris")}}.
 Find the proposal in "My Messages".
 
