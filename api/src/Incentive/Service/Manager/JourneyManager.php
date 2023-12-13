@@ -7,7 +7,6 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
-use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
@@ -25,11 +24,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class JourneyManager extends MobConnectManager
 {
-    /**
-     * @var TimestampTokenManager
-     */
-    protected $_timestampTokenManager;
-
     /**
      * @var CarpoolProofRepository
      */
@@ -54,8 +48,6 @@ class JourneyManager extends MobConnectManager
      * @var JourneyValidation
      */
     private $_journeyValidation;
-
-    private $_pushOnlyMode = false;
 
     public function __construct(
         CarpoolProofRepository $carpoolProofRepository,
@@ -144,26 +136,28 @@ class JourneyManager extends MobConnectManager
      */
     public function declareFirstLongDistanceJourney(Proposal $proposal, bool $pushOnly = false): ?LongDistanceJourney
     {
-        $this->setDriver($proposal->getUser());
+        $this->_pushOnlyMode = $pushOnly;
+        $this->_currentProposal = $proposal;
 
-        $params = [
-            SpecificFields::JOURNEY_ID => LongDistanceSubscription::COMMITMENT_PREFIX.$proposal->getId(),
-            SpecificFields::JOURNEY_PUBLISH_DATE => $proposal->getCreatedDate()->format(self::DATE_FORMAT),
-        ];
+        $this->setDriver($this->_currentProposal->getUser());
 
-        $subscription = $this->getDriver()->getLongDistanceSubscription();
+        $params = $this->getCommitmentRequestParams();
 
-        if (is_null($subscription)) {
+        $this->_currentSubscription = $this->getDriver()->getLongDistanceSubscription();
+
+        if (is_null($this->_currentSubscription)) {
             return null;
         }
 
-        $patchResponse = $this->patchSubscription($subscription->getSubscriptionId(), $params);
+        $this->_checkPushOnlyMode();
 
-        $subscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
+        $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
+
+        $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
 
         $log = 204 === $patchResponse->getCode()
-            ? 'The subscription '.$subscription->getId().' has been patch successfully with the proposal '.$proposal->getId()
-            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$proposal->getId();
+            ? 'The subscription '.$this->_currentSubscription->getId().' has been patch successfully with the proposal '.$this->_currentProposal->getId()
+            : 'The subscription '.$this->_currentSubscription->getId().' was not patch with the carpoolProof '.$this->_currentProposal->getId();
 
         $this->_loggerService->log($log);
 
@@ -171,24 +165,7 @@ class JourneyManager extends MobConnectManager
             return null;
         }
 
-        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
-
-        if ($pushOnly) {
-            $this->_em->flush();
-
-            return null;
-        }
-
-        $journey = new LongDistanceJourney($proposal);
-
-        $subscription->setCommitmentProofJourney($journey);
-        $subscription->setCommitmentProofDate(new \DateTime());
-
-        $subscription->setVersion();
-
-        $this->_em->flush();
-
-        return $journey;
+        return $this->_finalizesCommitment();
     }
 
     /**
@@ -196,51 +173,36 @@ class JourneyManager extends MobConnectManager
      */
     public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof, bool $pushOnly = false): ?ShortDistanceJourney
     {
-        $this->setDriver($carpoolProof->getDriver());
+        $this->_pushOnlyMode = $pushOnly;
+        $this->_currentCarpoolProof = $carpoolProof;
 
-        $params = [
-            SpecificFields::JOURNEY_ID => $this->getRPCOperatorId($carpoolProof->getId()),
-            SpecificFields::JOURNEY_START_DATE => $carpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
-        ];
+        $this->setDriver($this->_currentCarpoolProof->getDriver());
 
-        $subscription = $this->getDriver()->getShortDistanceSubscription();
+        $params = $this->getCommitmentRequestParams();
 
-        if (is_null($subscription)) {
+        $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
+
+        if (is_null($this->_currentSubscription)) {
             return null;
         }
 
-        $patchResponse = $this->patchSubscription($subscription->getSubscriptionId(), $params);
+        $this->_checkPushOnlyMode();
+
+        $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
+
+        $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
+
+        $log = 204 === $patchResponse->getCode()
+            ? 'The subscription '.$this->_currentSubscription->getId().' has been patch successfully with the carpoolProof '.$this->_currentCarpoolProof->getId()
+            : 'The subscription '.$this->_currentSubscription->getId().' was not patch with the carpoolProof '.$this->_currentCarpoolProof->getId();
+
+        $this->_loggerService->log($log);
 
         if ($this->hasRequestErrorReturned($patchResponse)) {
             return null;
         }
 
-        $subscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
-
-        $log = 204 === $patchResponse->getCode()
-            ? 'The subscription '.$subscription->getId().' has been patch successfully with the carpoolProof '.$carpoolProof->getId()
-            : 'The subscription '.$subscription->getId().' was not patch with the carpoolProof '.$carpoolProof->getId();
-
-        $this->_loggerService->log($log);
-
-        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
-
-        if ($pushOnly) {
-            $this->_em->flush();
-
-            return null;
-        }
-
-        $journey = new ShortDistanceJourney($carpoolProof);
-
-        $subscription->setCommitmentProofJourney($journey);
-        $subscription->setCommitmentProofDate(new \DateTime());
-
-        $subscription->setVersion();
-
-        $this->_em->flush();
-
-        return $journey;
+        return $this->_finalizesCommitment();
     }
 
     /**
@@ -322,7 +284,7 @@ class JourneyManager extends MobConnectManager
             return;
         }
 
-        $shortDistanceJourneysNumber = count($subscription->getJourneys()->toArray());
+        $shortDistanceJourneysNumber = count($subscription->getJourneys());
 
         $commitmentJourney = $subscription->getCommitmentProofJourney();
 

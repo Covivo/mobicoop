@@ -93,27 +93,27 @@ class SubscriptionVersion
         return $this->_version;
     }
 
-    public function isDateComing(\DateTime $date): bool
+    public function isDateComing(\DateTimeInterface $date): bool
     {
         return $this->_today < $date;
     }
 
-    public function isDateBeforeDeadline(\DateTime $date): bool
+    public function isDateBeforeDeadline(\DateTimeInterface $date): bool
     {
         return $date < $this->_deadline;
     }
 
-    public function isDateAfterDeadline(\DateTime $date): bool
+    public function isDateAfterDeadline(\DateTimeInterface $date): bool
     {
         return !$this->isDateBeforeDeadline($date);
     }
 
-    public function isDateBeforePublishedDeadline(\DateTime $date): bool
+    public function isDateBeforePublishedDeadline(\DateTimeInterface $date): bool
     {
         return $date < $this->_publicationDeadline;
     }
 
-    public function isDateAfterPublishedDeadline(\DateTime $date): bool
+    public function isDateAfterPublishedDeadline(\DateTimeInterface $date): bool
     {
         return !$this->isDateBeforePublishedDeadline($date);
     }

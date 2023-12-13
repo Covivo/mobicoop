@@ -63,9 +63,7 @@ class TerritoryRepository
     /**
      * Search a territory by its geoJson.
      */
-    public function findByGeoJson(array $geoJson)
-    {
-    }
+    public function findByGeoJson(array $geoJson) {}
 
     /**
      * Find territories for a direction.
@@ -117,7 +115,7 @@ class TerritoryRepository
     {
         $conn = $this->entityManager->getConnection();
 
-        // we get only structure's ids
+        // we get only territories's ids
         $sql = "SELECT t.id FROM territory t
         WHERE ST_INTERSECTS(t.geo_json_detail,ST_GEOMFROMTEXT('POINT({$longitude} {$latitude})'))=1
         ";

@@ -83,8 +83,6 @@ class LongDistanceSubscription extends Subscription
      * @var ArrayCollection The long distance log associated with the user
      *
      * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\LongDistanceJourney", mappedBy="subscription", cascade={"persist"}, orphanRemoval=true)
-     *
-     * @Groups({"readSubscription"})
      */
     protected $longDistanceJourneys;
 

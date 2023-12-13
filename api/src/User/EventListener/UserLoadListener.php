@@ -27,7 +27,6 @@ use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * User Event listener.
@@ -40,16 +39,13 @@ class UserLoadListener
     private $userManager;
     private $identityValidation;
 
-    private $_request;
-
-    public function __construct(UserManager $userManager, RequestStack $requestStack, $params)
+    public function __construct(UserManager $userManager, $params)
     {
         $this->avatarSizes = $params['avatarSizes'];
         $this->avatarDefaultFolder = $params['avatarDefaultFolder'];
         $this->userReviewActive = $params['userReview'];
         $this->userManager = $userManager;
         $this->identityValidation = $params['identityValidation'];
-        $this->_request = $requestStack->getCurrentRequest();
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -58,17 +54,6 @@ class UserLoadListener
         $user = $args->getEntity();
 
         if ($user instanceof User) {
-            $bearerToken = $this->_extractBearerToken($this->_request->headers->get('Authorization'));
-            if (!is_null($bearerToken)) {
-                $decodedBearerToken = $this->_jwtDecode($bearerToken);
-                if (
-                    !isset($decodedBearerToken['delegateAuth'])
-                    || isset($decodedBearerToken['delegateAuth']) && false === $decodedBearerToken['delegateAuth']
-                ) {
-                    $this->userManager->updateActivity($user);
-                }
-            }
-
             // keep the phone number in case of update
             $user->setOldTelephone($user->getTelephone());
             $user->setOldEmail($user->getEmail());
@@ -95,22 +80,5 @@ class UserLoadListener
                 $user->setVerifiedIdentity(IdentityProof::STATUS_ACCEPTED == $user->getIdentityStatus());
             }
         }
-    }
-
-    private function _jwtDecode(string $jwt)
-    {
-        $jwtParts = explode('.', $jwt);
-        $decodedPayload = base64_decode(str_replace(['-', '_'], ['+', '/'], $jwtParts[1]));
-
-        return json_decode($decodedPayload, true);
-    }
-
-    private function _extractBearerToken(?string $authChain): ?string
-    {
-        if (!is_null($authChain) && preg_match('/^Bearer\s+(.+)/i', $authChain, $matches)) {
-            return $matches[1];
-        }
-
-        return null;
     }
 }

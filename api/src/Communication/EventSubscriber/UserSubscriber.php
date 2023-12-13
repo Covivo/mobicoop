@@ -23,6 +23,8 @@
 
 namespace App\Communication\EventSubscriber;
 
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 use App\Communication\Entity\Notification;
 use App\Communication\Repository\NotifiedRepository;
 use App\Communication\Service\NotificationManager;
@@ -52,6 +54,7 @@ use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Event\UserUpdatedSelfEvent;
 use App\User\Service\UserManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UserSubscriber implements EventSubscriberInterface
@@ -64,12 +67,16 @@ class UserSubscriber implements EventSubscriberInterface
     private $rzpLogin;
     private $rzpPassword;
     private $notifiedRepository;
+    private $actionRepository;
+    private $eventDispatcher;
 
     public function __construct(
         NotificationManager $notificationManager,
         UserManager $userManager,
         AdminUserManager $adminUserManager,
         NotifiedRepository $notifiedRepository,
+        ActionRepository $actionRepository,
+        EventDispatcherInterface $eventDispatcher,
         bool $notificationSsoRegistration,
         string $rzpUri,
         string $rzpLogin,
@@ -83,6 +90,8 @@ class UserSubscriber implements EventSubscriberInterface
         $this->rzpLogin = $rzpLogin;
         $this->rzpPassword = $rzpPassword;
         $this->notifiedRepository = $notifiedRepository;
+        $this->actionRepository = $actionRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public static function getSubscribedEvents()
@@ -119,6 +128,10 @@ class UserSubscriber implements EventSubscriberInterface
             return;
         }
         $this->notificationManager->notifies(UserRegisteredEvent::NAME, $event->getUser());
+
+        $action = $this->actionRepository->findOneBy(['name' => UserRegisteredEvent::NAME]);
+        $actionEvent = new ActionEvent($action, $event->getUser());
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
     }
 
     public function onUserDelegateRegistered(UserDelegateRegisteredEvent $event)

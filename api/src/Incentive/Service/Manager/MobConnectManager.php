@@ -13,8 +13,11 @@ use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
+use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
@@ -24,6 +27,7 @@ use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class MobConnectManager
@@ -71,6 +75,11 @@ abstract class MobConnectManager
     protected $_carpoolProofPrefix;
 
     /**
+     * @var TimestampTokenManager
+     */
+    protected $_timestampTokenManager;
+
+    /**
      * @var UserValidation
      */
     protected $_userValidation;
@@ -91,6 +100,11 @@ abstract class MobConnectManager
     protected $_currentCarpoolProof;
 
     /**
+     * @var Proposal
+     */
+    protected $_currentProposal;
+
+    /**
      * @var null|LongDistanceSubscription|ShortDistanceSubscription
      */
     protected $_currentSubscription;
@@ -99,6 +113,11 @@ abstract class MobConnectManager
      * @var InstanceManager
      */
     protected $_instanceManager;
+
+    /**
+     * @var bool
+     */
+    protected $_pushOnlyMode = false;
 
     /**
      * @var MobConnectApiProvider
@@ -424,5 +443,54 @@ abstract class MobConnectManager
         $this->setApiProvider();
 
         return $this->_apiProvider->getIncentive($incentive_id);
+    }
+
+    protected function _checkPushOnlyMode(): bool
+    {
+        if (
+            true === $this->_pushOnlyMode
+            && is_null($this->_currentSubscription->getCommitmentProofJourney())
+        ) {
+            throw new BadRequestHttpException('The pushOnly option is only possible if the subscription has already been initiated');
+        }
+
+        return true;
+    }
+
+    protected function getCommitmentRequestParams(): array
+    {
+        return $this->_currentSubscription instanceof LongDistanceSubscription
+            ? [
+                SpecificFields::JOURNEY_ID => LongDistanceSubscription::COMMITMENT_PREFIX.$this->_currentProposal->getId(),
+                SpecificFields::JOURNEY_PUBLISH_DATE => $this->_currentProposal->getCreatedDate()->format(self::DATE_FORMAT),
+            ]
+            : [
+                SpecificFields::JOURNEY_ID => $this->getRPCOperatorId($this->_currentCarpoolProof->getId()),
+                SpecificFields::JOURNEY_START_DATE => $this->_currentCarpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
+            ];
+    }
+
+    protected function _finalizesCommitment()
+    {
+        $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
+
+        $journey = (
+            true === $this->_pushOnlyMode
+            ? $this->_currentSubscription->getCommitmentProofJourney()
+            : (
+                $this->_currentSubscription instanceof LongDistanceSubscription
+                ? new LongDistanceJourney($this->_currentProposal)
+                : new ShortDistanceJourney($this->_currentCarpoolProof)
+            )
+        );
+
+        $this->_currentSubscription->setCommitmentProofJourney($journey);
+        $this->_currentSubscription->setCommitmentProofDate(new \DateTime());
+
+        $this->_currentSubscription->setVersion();
+
+        $this->_em->flush();
+
+        return $journey;
     }
 }

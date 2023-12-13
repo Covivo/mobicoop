@@ -1347,8 +1347,8 @@ cookies:
 ToolBox:
   path:
     fr: /boite-a-outils
-    en: /toolBox
-    nl: /toolBox
+    en: /toolbox
+    nl: /toolbox
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox
 
 # display noName page

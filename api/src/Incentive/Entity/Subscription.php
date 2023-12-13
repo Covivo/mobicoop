@@ -87,6 +87,13 @@ abstract class Subscription implements SubscriptionInterface
     protected $progression;
 
     /**
+     * @var array
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $journeys;
+
+    /**
      * The mobConnect Subscription data.
      *
      * @Groups({"readAdminSubscription"})
@@ -116,9 +123,9 @@ abstract class Subscription implements SubscriptionInterface
     public function getJourneys()
     {
         switch (true) {
-            case $this instanceof LongDistanceJourney: return $this->getLongDistanceJourneys();
+            case $this instanceof LongDistanceSubscription: return $this->getLongDistanceJourneys();
 
-            case $this instanceof ShortDistanceJourney: return $this->getShortDistanceJourneys();
+            case $this instanceof ShortDistanceSubscription: return $this->getShortDistanceJourneys();
 
             default: return [];
         }

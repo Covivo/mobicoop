@@ -1880,7 +1880,9 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var null|ArrayCollection the gratuities created by this User
      *
-     * @ORM\OneToMany(targetEntity="\App\Gratuity\Entity\GratuityCampaign", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="\App\Gratuity\Entity\GratuityCampaign", mappedBy="user", cascade={"remove"})
+     *
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $gratuityCampaigns;
 

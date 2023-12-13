@@ -106,7 +106,7 @@ export default {
   },
   computed:{
     subscriptionInitiated(){
-      if(this.subscriptions && (this.subscriptions.longDistanceSubscriptions || this.subscriptions.shortDistanceSubscriptions)){
+      if(this.subscriptions && (this.subscriptions.longDistanceSubscription || this.subscriptions.shortDistanceSubscription)){
         return true;
       }
       return false;
@@ -134,14 +134,14 @@ export default {
     afterEECSubscriptionValidation() {
       if (this.isAfterEecSubscription) {
         switch (true) {
-        case null !== this.subscriptions.longDistanceSubscriptions && null !== this.subscriptions.shortDistanceSubscriptions:
+        case null !== this.subscriptions.longDistanceSubscription.journeys && null !== this.subscriptions.shortDistanceSubscription.journeys:
           this.snackbar.color = 'success';
           this.snackbar.text = this.$t('EEC-subscription-snackbar.success');
           break;
-        case null === this.subscriptions.longDistanceSubscriptions && null !== this.subscriptions.shortDistanceSubscriptions:
+        case null === this.subscriptions.longDistanceSubscription.journeys && null !== this.subscriptions.shortDistanceSubscription.journeys:
           this.snackbar.text = this.$t('EEC-subscription-snackbar.longDistanceFailed');
           break;
-        case null !== this.subscriptions.longDistanceSubscriptions && null === this.subscriptions.shortDistanceSubscriptions:
+        case null !== this.subscriptions.longDistanceSubscription.journeys && null === this.subscriptions.shortDistanceSubscription.journeys:
           this.snackbar.text = this.$t('EEC-subscription-snackbar.shortDistanceFailed');
           break;
         default:

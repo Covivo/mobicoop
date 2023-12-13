@@ -770,6 +770,7 @@ class MangoPayProvider implements PaymentProviderInterface
         // $fileContent = base64_encode(file_get_contents(self::VALIDATION_DOCUMENTS_PATH."".$validationDocument->getFileName()));
 
         // General header for all 3 requests
+        $this->_auth();
         $headers = [
             'Authorization' => $this->authChain,
         ];
@@ -781,7 +782,6 @@ class MangoPayProvider implements PaymentProviderInterface
             'Tag' => 'Automatic',
         ];
 
-        $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl, $urlPost);
         $response = $dataProvider->postCollection($body, $headers);
         if (200 == $response->getCode()) {

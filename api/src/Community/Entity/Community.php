@@ -631,6 +631,15 @@ class Community
      */
     private $userDelegate;
 
+    /**
+     * @var int The number of members to reach
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     *
+     * @Groups({"aRead", "awrite"})
+     */
+    private $target;
+
     public function __construct($id = null)
     {
         $this->id = $id;
@@ -1119,6 +1128,16 @@ class Community
         $this->userDelegate = $userDelegate;
 
         return $this;
+    }
+
+    public function getTarget(): ?int
+    {
+        return $this->target;
+    }
+
+    public function setTarget($target)
+    {
+        $this->target = $target;
     }
 
     // DOCTRINE EVENTS
