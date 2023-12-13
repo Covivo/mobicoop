@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace App\Geography\Service;
 
+use App\Geography\Ressource\Point;
+
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -39,15 +41,57 @@ class PointGeoFixer
 
     public function fix(array $points): array
     {
-        foreach ($points as $point) {
-            foreach ($this->_data as $fix) {
-                if ($fix['criteria']['lat'] == $point->getLat() && $fix['criteria']['lon'] == $point->getLon() && $fix['criteria']['locality'] == $point->getLocality()) {
-                    $point->setLat($fix['replacement']['lat']);
-                    $point->setLon($fix['replacement']['lon']);
-                }
-            }
+        foreach ($points as $key => $point) {
+            $points[$key] = $this->_treatPoint($point);
         }
 
         return $points;
+    }
+
+    private function _treatPoint(Point $point): Point
+    {
+        foreach ($this->_data as $fix) {
+            $point = $this->_applyFixToPoint($point, $fix);
+        }
+
+        return $point;
+    }
+
+    private function _applyFixToPoint(Point $point, array $fix): Point
+    {
+        if ($this->_checkCriteria($point, $fix)) {
+            $this->_replaceData($point, $fix);
+        }
+
+        return $point;
+    }
+
+    private function _replaceData(Point $point, array $fix): Point
+    {
+        foreach (array_keys($fix['replacement']) as $replacement) {
+            if (method_exists($point, 'set'.ucfirst($replacement))) {
+                $point->{'set'.ucfirst($replacement)}($fix['replacement'][$replacement]);
+            }
+        }
+
+        return $point;
+    }
+
+    private function _checkCriteria(Point $point, array $fix): bool
+    {
+        $replace = true;
+        foreach (array_keys($fix['criteria']) as $criteria) {
+            if (
+                method_exists($point, 'get'.ucfirst($criteria))
+                && method_exists($point, 'set'.ucfirst($criteria))
+                && $point->{'get'.$criteria}() == $fix['criteria'][$criteria]
+            ) {
+                $replace &= true;
+            } else {
+                $replace &= false;
+            }
+        }
+
+        return (bool) $replace;
     }
 }
