@@ -201,7 +201,7 @@ class EecInstance
     /**
      * Set the value of ldSubscriptionsKey.
      */
-    public function setLdKey(string $key): self
+    public function setLdKey(?string $key): self
     {
         $this->ldKey = $key;
 
@@ -219,7 +219,7 @@ class EecInstance
     /**
      * Set the value of sdSubscriptionsKey.
      */
-    public function setSdKey(string $key): self
+    public function setSdKey(?string $key): self
     {
         $this->sdKey = $key;
 
