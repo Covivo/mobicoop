@@ -7,12 +7,12 @@
 {% set returnOrigin = context.returnOrigin %}
 {% set returnDestination = context.returnDestination %}
 
-Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
 {% if ad.results[0].frequency == 1 %}
-Covoiturage confirmé avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} le {{ ad.results[0].date|date("d/m/Y") }} à {{outwardOrigin.time|date('H:i')}} de {{ outwardOrigin.address.displayLabel[0] }} à {{ outwardDestination.address.displayLabel[0] }}. Voir l'annonce sur {{api_env('SMS_PLATFORM_NAME')|raw}}.
-Vous pouvez la/le contacter par téléphone : {{sender.telephone}}
+Carpool confirmed with {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} on {{ ad.results[0].date|date("d/m/Y") }} at {{outwardOrigin.time|date('H:i')}} from {{ outwardOrigin.address.displayLabel[0] }} to {{ outwardDestination.address.displayLabel[0] }}. See the ad on {{api_env('SMS_PLATFORM_NAME')|raw}}.
+You can contact her/him by phone : {{sender.telephone}}
 {% else %}
-Covoiturage régulier confirmé avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} entre  {{ outwardOrigin.address.displayLabel[0] }} et {{ outwardDestination.address.displayLabel[0] }}. Voir l'annonce sur  {{api_env('SMS_PLATFORM_NAME')|raw}}.
-Vous pouvez la/le contacter par téléphone : {{sender.telephone}}
+Recurrent carpool confirmed with {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} from  {{ outwardOrigin.address.displayLabel[0] }} to {{ outwardDestination.address.displayLabel[0] }}. See the ad on  {{api_env('SMS_PLATFORM_NAME')|raw}}.
+You can contact her/him by phone : {{sender.telephone}}
 {% endif %}
-À bientôt sur {{api_env('SMS_PLATFORM_NAME')|raw}}
+See you soon on {{api_env('SMS_PLATFORM_NAME')|raw}}

@@ -6,13 +6,12 @@
 {% set outwardOrigin = context.origin %}
 {% set outwardDestination = context.destination %}
 
-Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
 
-Covoiturage annulé
+Cancelled carpool
 
-Votre covoiturage de {{ outwardOrigin.address.displayLabel[0] }} - {{ outwardDestination.address.displayLabel[0] }}
-avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} a été annulé car
-{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} a modifié son annonce.
+Your carpool : {{ outwardOrigin.address.displayLabel[0] }} - {{ outwardDestination.address.displayLabel[0] }}
+with {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} has been cancelled because
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} has modified his carpooling ad.
 
-
-À bientôt sur {{api_env('SMS_PLATFORM_NAME')|raw}}
+See you soon on {{api_env('SMS_PLATFORM_NAME')|raw}}.
