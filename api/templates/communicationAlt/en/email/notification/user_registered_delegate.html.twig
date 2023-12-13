@@ -23,7 +23,7 @@
 							<p></p>
 						</td>
 						<td align="left">
-							<p style="font-size:11px; margin-bottom:16px;">Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
+							<p style="font-size:11px; margin-bottom:16px;">Hello<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
 									{{context.user.givenName|capitalize}}
 									{{context.user.shortFamilyName|capitalize}}</b>
 							</p>
@@ -41,7 +41,7 @@
 							{% elseif context.user.passwordSendType == 1 %}
 								<p style="font-size:11px; text-align:justify">Votre mot de passe vous a été envoyé par SMS.</p>
 							{% endif %}
-							<p style="font-size:11px; text-align:justify">Lors de votre première connexion, après avoir cliqué sur le lien de vérification ci-dessus, vous aurez la possibilité de modifier votre mot de passe en allant sur votre profil. Dans la mesure où vous auriez oublié ce mot de passe, vous pourrez toujours le récupérer depuis l'écran "Connexion", en cliquant sur le lien "Mot de passe oublié".</p>
+							<p style="font-size:11px; text-align:justify">Lors de votre première connexion, après avoir cliqué sur le lien de vérification ci-dessus, vous aurez la possibilité de modifier votre mot de passe en allant sur votre profil. Dans la mesure où vous auriez oublié ce mot de passe, vous pourrez toujours le récupérer depuis l'écran "Connexion", by clicking sur le lien "Mot de passe oublié".</p>
 							<p style="font-size:11px; text-align:justify">Pour consulter les Conditions Générales d'Utilisation de
 								<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
 									{{api_env('EMAILS_PLATFORM_NAME')}}</b>, cliquez
@@ -65,7 +65,7 @@
 						</td>
 						<td align="center" style="width:100%;">
 							<p style="font-size:11px;">
-								<b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Rezo Mobicoop</b>
+								<b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">See you soon on Rezo Mobicoop</b>
 							</p>
 						</td>
 					</tr>

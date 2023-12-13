@@ -9,7 +9,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Un nouveau membre souhaite rejoindre votre communauté !</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>A new member wants to join your community !</b></p>
                     </td>
                 </tr>
             </table>
@@ -25,7 +25,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -36,7 +36,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.senderGivenName|capitalize}}  {{context.senderShortFamilyName|capitalize}} </b> a demandé à rejoindre la communauté <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b></p>
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.senderGivenName|capitalize}}  {{context.senderShortFamilyName|capitalize}} </b> has asked to join the <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b> community</p>
                     </td>
                 </tr>
             </table>
@@ -47,7 +47,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Rendez-vous dans le module d'administration pour valider son adhésion : <a href="{{ api_env('URL_ADMIN') }}" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">en cliquant ici</a></p>
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Go to the administration page to review his membership : <a href="{{ api_env('URL_ADMIN') }}" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">by clicking here</a></p>
                     </td>
                 </tr>
             </table>
@@ -61,7 +61,7 @@
                         <p> </p>
                     </td>
                     <td align="right" style="width:100%;">
-                        <p style="font-size:11px;">Merci, l'équipe Rezo Mobicoop</p>
+                        <p style="font-size:11px;">Thanks, the Rezo Mobicoop team</p>
                     </td>
                 </tr>
             </table>

@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Communauté {{context.community.name}} a bien été créée</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Communtity {{context.community.name}} created</b></p>
                     </td>
                 </tr>
             </table>
@@ -22,8 +22,8 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}},</p>
-                        <p style="font-size:11px;">La communauté <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">{{context.community.name}}</b> a été créée et vous êtes le/la référent(e).</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Hello {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px;">The community <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">{{context.community.name}}</b> has been created, and you're the referent.</p>
                     </td>
                 </tr>
             </table>
@@ -42,7 +42,7 @@
                         <p> </p>
                     </td>
                     <td align="center" style="width:100%;">
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Merci, l'équipe Rezo Mobicoop</b></p>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Thanks, the Rezo Mobicoop team</b></p>
                     </td>
                 </tr>
             </table>

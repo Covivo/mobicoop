@@ -9,9 +9,9 @@
                         {% if context.structure.logo != null %}
                             <img src="{{ api_env('STRUCTURE_LOGO_URI') }}{{ context.structure.logo.filename }}" alt="Logo {{ context.structure.name }}" />
                         {% endif %}
-                        <p>Bonjour,</p>
+                        <p>Hello,</p>
                         <p>{% if context.applicant != null %}<span style="font-weight: bold">{{ context.applicant.givenName }} {{ context.applicant.familyName }}</span>{% endif %} vient de déposer une demande solidaire. Cette personne a besoin de se déplacer dès le <span style="font-weight: bold">{{ context.journey.criteria.fromDate|date('d/m/Y') }}</span>.</p>
-                        <p>Cliquez ici pour consulter sa demande <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{api_env('URL_ADMIN')}}{{ context.adminUrl }}">{{api_env('URL_ADMIN')}}{{ context.adminUrl }}</a>.</p>
+                        <p>Click here pour consulter sa demande <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{api_env('URL_ADMIN')}}{{ context.adminUrl }}">{{api_env('URL_ADMIN')}}{{ context.adminUrl }}</a>.</p>
                         <p>Cordialement,</p>
                         <p style="font-weight: bold">{{ context.structure.name }}</p>
                         {% if context.structure.signature != null %}
@@ -27,7 +27,7 @@
             <table  style="width:100%;">
                 <tr style="text-align:left">
                     <td>
-                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                        <p>See you soon on <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
                     </td>
                 </tr>
             </table>

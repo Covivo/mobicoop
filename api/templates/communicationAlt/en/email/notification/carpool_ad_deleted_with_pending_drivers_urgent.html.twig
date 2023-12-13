@@ -21,7 +21,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Votre covoiturage est annulé</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Your carpool is cancelled</b></p>
                     </td>
                 </tr>
             </table>
@@ -36,8 +36,8 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
-                        <p style="font-size:11px;"><span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}}</span> a annulé son trajet et ne pourra pas covoiturer avec vous pour le trajet suivant :</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px;"><span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}}</span> has cancelled his trip and will not be able to carpool with you on the following trip :</p>
                     </td>
                 </tr>
             </table>
@@ -54,7 +54,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                         <p style="font-size:11px;">Date de votre covoiturage: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].date|date("d/m/Y") }}</b></p>
+                         <p style="font-size:11px;">Date of your carpool: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].date|date("d/m/Y") }}</b></p>
                     </td>
                 </tr>
                 <tr>
@@ -63,7 +63,7 @@
                     </td>
                     <td align="left">
                     {# to do get the price #}
-                         <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
+                         <p style="font-size:11px;">Price: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
                     </td>
                 </tr>
             </table>
@@ -121,7 +121,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                         <p style="font-size:11px;">Vos trajets réguliers: du <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].startDate|date("d/m/Y") }}</b> au <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].toDate|date("d/m/Y") }}</b></p>
+                         <p style="font-size:11px;">Your recurrent trips: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].startDate|date("d/m/Y") }}</b> to <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].toDate|date("d/m/Y") }}</b></p>
                     </td>
                 </tr>
                 <tr>
@@ -129,7 +129,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                         <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
+                         <p style="font-size:11px;">Price: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
                     </td>
                 </tr>
             </table>
@@ -283,24 +283,24 @@
                             <table cellpadding="4" cellspacing="4" summary="" border="0">
                                 <tr>
                                     <td>
-                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Aller</b></p>
+                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Outward</b></p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Not concerned</b></p>
                                         {% else %}
-                                            <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
+                                            <p style="font-size:11px;">Pick-up in <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Not concerned</b></p>
                                         {% else %}
-                                            <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
+                                            <p style="font-size:11px;">Drop-off in <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -310,24 +310,24 @@
                             <table cellpadding="4" cellspacing="4" summary="" border="0">
                                 <tr>
                                     <td>
-                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Retour</b></p>
+                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Return</b></p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Not concerned</b></p>
                                         {% else %}
-                                            <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
+                                            <p style="font-size:11px;">Pick-up in <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Not concerned</b></p>
                                         {% else %}
-                                            <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
+                                            <p style="font-size:11px;">Drop-off in <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -351,7 +351,7 @@
                        <p> </p>
                     </td>
                     <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Pas de panique, vous pouvez <a href="{{api_env('EMAILS_PLATFORM_URL')}}" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">rechercher un nouveau trajet</a> ou <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">publier une annonce</a> de covoiturage afin d’être alerté s’il y a de nouveaux trajets près de vous.</p>
+                        <p style="font-size:11px; text-align: justify;"> Don't panic, you can <a href="{{api_env('EMAILS_PLATFORM_URL')}}" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">search for a new carpool</a> or <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">post an ad</a> to be alerted if there are new carpools near you.</p>
                     </td>
                 </tr>
             </table>
@@ -365,7 +365,7 @@
                        <p> </p>
                     </td>
                     <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Rappel : Rezo Mobicoop ne prélève pas de paiement en amont, les paiement se font de la main à la main le jour du covoiturage ou par carte bancaire sur notre interface après le jour du covoiturage. <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">En savoir plus.</a></p>
+                        <p style="font-size:11px; text-align: justify;"> Reminder : Rezo Mobicoop does not charge upfront, payments are made hand to hand on the day of the carpool or by credit card on our interface after the day of the carpool. <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">More about.</a></p>
                     </td>
                 </tr>
             </table>

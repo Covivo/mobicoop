@@ -31,7 +31,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
                         <p style="font-size:11px;">Votre covoiturage régulier avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} expire dans une semaine.</p>
                     </td>
                 </tr>
@@ -53,7 +53,7 @@
                             style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
                         />
                     </td>
-                   
+
                     <td>
                         <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ outwardOrigin.address.displayLabel[0] }}</b></p>
                     </td>
@@ -68,7 +68,7 @@
                             style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
                         />
                     </td>
-                   
+
                     <td>
                         <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
                     </td>
@@ -90,7 +90,7 @@
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                             />
-                        {% else %} 
+                        {% else %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGrey.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -103,7 +103,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -116,7 +116,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -129,7 +129,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -142,7 +142,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -155,7 +155,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -168,7 +168,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -190,24 +190,24 @@
                             <table cellpadding="4" cellspacing="4" summary="" border="0">
                                 <tr>
                                     <td>
-                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Aller</b></p>
+                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Outward</b></p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
-                                            <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Not concerned</b></p>
+                                        {% else %}
+                                            <p style="font-size:11px;">Pick-up in <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
-                                            <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Not concerned</b></p>
+                                        {% else %}
+                                            <p style="font-size:11px;">Drop-off in <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -217,24 +217,24 @@
                             <table cellpadding="4" cellspacing="4" summary="" border="0">
                                 <tr>
                                     <td>
-                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Retour</b></p>
+                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;"><b>Return</b></p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
-                                            <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Not concerned</b></p>
+                                        {% else %}
+                                            <p style="font-size:11px;">Pick-up in <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
-                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
-                                            <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Not concerned</b></p>
+                                        {% else %}
+                                            <p style="font-size:11px;">Drop-off in <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -248,13 +248,13 @@
             </td>
         </tr>
     {% endfor %}
-{# Comment bien préparer votre covoiturage  #}
+{# How to prepare your carpool  #}
     <tr>
         <td style="height:15px">
             <p> </p>
         </td>
     </tr>
-    
+
     <tr>
         <td>
             <table cellpadding="2" cellspacing="2" summary="" border="0">
@@ -274,7 +274,7 @@
      <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td align="center">
@@ -295,13 +295,13 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
 
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td>
@@ -313,14 +313,14 @@
                     <td align="center" style="width:100%;">
                         <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Bon covoiturage sur {{api_env('EMAILS_PLATFORM_NAME')}}</b></p>
                     </td>
-                </tr>   
+                </tr>
             </table>
         </td>
     </tr>
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
 </table>
 {% endblock %}

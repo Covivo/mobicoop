@@ -11,7 +11,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Vous avez un nouveau message !</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>You've got a new message !</b></p>
                     </td>
                 </tr>
             </table>
@@ -27,7 +27,7 @@
             <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -38,7 +38,7 @@
             <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} vous a contacté le {{ sendingDate|date("d/m/Y") }}. Vous n’ avez pas encore répondu à son message. Pensez à le faire au plus vite, {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} attend votre retour pour organiser ses prochains trajets en covoiturage !</p>
+                        <p style="font-size:11px; margin-bottom:16px;">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} contacted you on {{ sendingDate|date("d/m/Y") }}. You have not yet replied to his message. Please do it as soon as possible, {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} awaits your reply to organize future carpooling trips !</p>
                     </td>
                 </tr>
             </table>
@@ -86,7 +86,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Ne répondez pas à cet e-mail directement, votre covoitureur ne recevra pas votre réponse. Si le message reçu est irrespectueux, inapproprié ou frauduleux, n’hésitez pas à nous <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/messages" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">signaler l’utilisateur. </a></p>
+                        <p style="font-size:11px; text-align: justify;"> Do not reply to this e-mail directly, your carpooler will not receive your reply. If the message received is disrespectful, inappropriate or fraudulent, do not hesitate <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/messages" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">to report the user</a> to us.</p>
                     </td>
                 </tr>
             </table>

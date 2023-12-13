@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Nouvelle demande de contact</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>New contact request</b></p>
                     </td>
                 </tr>
             </table>
@@ -23,7 +23,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Hello {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -87,7 +87,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">"A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">Rezo Mobicoop</a></p>
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">"See you soon on <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">Rezo Mobicoop</a></p>
                     </td>
                 </tr>
             </table>
