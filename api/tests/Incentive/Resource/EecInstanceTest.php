@@ -19,9 +19,6 @@ class EecInstanceTest extends TestCase
     public function getAvailableFalsy()
     {
         $eecInstance = new EecInstance([
-            'ld' => 'my_ld_key',
-            'sd' => 'my_sd_key',
-        ], [
             'expirationDate' => '2023-10-01',
             'mobConnect' => [
                 'client_id' => null,
@@ -45,9 +42,6 @@ class EecInstanceTest extends TestCase
         $this->assertFalse($eecInstance->isAvailable());
 
         $eecInstance = new EecInstance([
-            'ld' => 'my_ld_key',
-            'sd' => 'my_sd_key',
-        ], [
             'expirationDate' => null,
             'mobConnect' => [
                 'client_id' => null,
@@ -77,9 +71,6 @@ class EecInstanceTest extends TestCase
     public function getAvailableTruly()
     {
         $eecInstance = new EecInstance([
-            'ld' => 'my_ld_key',
-            'sd' => 'my_sd_key',
-        ], [
             'expirationDate' => null,
             'mobConnect' => [
                 'client_id' => null,
@@ -103,9 +94,6 @@ class EecInstanceTest extends TestCase
         $this->assertTrue($eecInstance->isAvailable());
 
         $eecInstance = new EecInstance([
-            'ld' => 'my_ld_key',
-            'sd' => 'my_sd_key',
-        ], [
             'expirationDate' => '2027-01-01',
             'mobConnect' => [
                 'client_id' => null,
@@ -129,9 +117,6 @@ class EecInstanceTest extends TestCase
         $this->assertTrue($eecInstance->isAvailable());
 
         $eecInstance = new EecInstance([
-            'ld' => 'my_ld_key',
-            'sd' => 'my_sd_key',
-        ], [
             'expirationDate' => null,
             'mobConnect' => [
                 'client_id' => null,
@@ -155,9 +140,6 @@ class EecInstanceTest extends TestCase
         $this->assertTrue($eecInstance->isAvailable());
 
         $eecInstance = new EecInstance([
-            'ld' => 'my_ld_key',
-            'sd' => 'my_sd_key',
-        ], [
             'expirationDate' => null,
             'mobConnect' => [
                 'client_id' => null,

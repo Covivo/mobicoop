@@ -2,9 +2,9 @@
 
 namespace App\Incentive\Entity;
 
+use App\Tests\Mocks\CEESubscriptionDefinitionMock;
 use App\Tests\Mocks\CEEUserMock;
 use App\Tests\Mocks\MobConnectSubscriptionResponseMock;
-use App\User\Entity\User;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,17 +19,13 @@ class ShortDistanceSubscriptionTest extends TestCase
      */
     private $_subscription;
 
-    /**
-     * @var User
-     */
-    private $_user;
-
     public function setUp(): void
     {
-        $this->_user = CEEUserMock::getUser();
+        $user = CEEUserMock::getUser();
+        $subscriptionDefinition = CEESubscriptionDefinitionMock::getSubscriptionDefinition(ShortDistanceSubscription::SUBSCRIPTION_TYPE);
         $mobConnectSubscriptionResponse = MobConnectSubscriptionResponseMock::getResponse();
 
-        $this->_subscription = new ShortDistanceSubscription($this->_user, $mobConnectSubscriptionResponse);
+        $this->_subscription = new ShortDistanceSubscription($user, $mobConnectSubscriptionResponse, $subscriptionDefinition);
     }
 
     /**
@@ -37,15 +33,7 @@ class ShortDistanceSubscriptionTest extends TestCase
      */
     public function setVersion()
     {
-        $this->_subscription->setCreatedAt(new \DateTime('2023-11-14'));
-        $this->_subscription->setVersion();
-
+        $this->_subscription->setVersion(0);
         $this->assertIsInt($this->_subscription->getVersion());
-
-        $this->_subscription->setCreatedAt(new \DateTime('2023-01-02'));
-        $this->_subscription->setVersion();
-        $this->assertIsInt($this->_subscription->getVersion());
-
-        // Tester les versions
     }
 }
