@@ -9,8 +9,8 @@
 
 Hello {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
 {% if ad.results[0].frequency == 1 %}
-{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} offers a carpool from {{ outwardOrigin.address.displayLabel[0] }} to {{ outwardDestination.address.displayLabel[0] }}. Acceptez ou refusez la demande dans 'Mes Messages' sur {{api_env('PUSH_PLATFORM_NAME')}}.
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} offers a carpool from {{ outwardOrigin.address.displayLabel[0] }} to {{ outwardDestination.address.displayLabel[0] }}. Accept or decline the request in 'My Messages' on {{api_env('PUSH_PLATFORM_NAME')}}.
 {% else %}
-{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} offers a carpool régulier de {{ outwardOrigin.address.displayLabel[0] }} à {{ outwardDestination.address.displayLabel[0] }}. Acceptez ou refusez la demande dans 'Mes Messages' sur {{api_env('PUSH_PLATFORM_NAME')}}.
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} offers a reccurent carpool from {{ outwardOrigin.address.displayLabel[0] }} to {{ outwardDestination.address.displayLabel[0] }}. Accept or decline the request in 'My Messages' on {{api_env('PUSH_PLATFORM_NAME')}}.
 {% endif %}
 See you soon on {{api_env('PUSH_PLATFORM_NAME')}}
