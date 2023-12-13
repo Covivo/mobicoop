@@ -47,6 +47,8 @@ class PointSearcher
     private $reverseProviders;
     private $tokenStorage;
 
+    private $_fixer;
+
     public function __construct(
         MobicoopGeocoder $mobicoopGeocoder,
         RelayPointRepository $relayPointRepository,
@@ -63,9 +65,11 @@ class PointSearcher
         string $prioritizeRegion = null,
         string $restrictCountry = null,
         array $exclusionTypes = [],
-        array $relayPointParams
+        array $relayPointParams,
+        array $fixerData
     ) {
         $this->tokenStorage = $tokenStorage;
+        $this->_fixer = new PointGeoFixer($fixerData);
         $user = $security->getUser();
         $userPointProvider = new UserPointProvider($addressRepository, $translator);
         if ($prioritizeCentroid) {
@@ -140,7 +144,7 @@ class PointSearcher
             $points = array_merge($points, $provider->search(str_replace(['"', "'"], ' ', $search), $user));
         }
 
-        return $points;
+        return $this->_fixer->fix($points);
     }
 
     public function reverse(float $lon, float $lat): array
