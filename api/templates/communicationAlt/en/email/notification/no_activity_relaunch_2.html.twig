@@ -1,0 +1,225 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>One more small step towards carpooling !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Hello {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    {# part 1 #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">It's been six months since we last saw you carpool on Mobicoop.fr. And yet, shared mobility is a key solution to tomorrow's challenges. For example, did you know that carpooling enables you to :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="center" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Save up to €2,000 a year.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Reduce your carbon footprint by 1.5 tonnes of CO2, equivalent to about 3 months of gas heating - not bad!</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Reduce traffic jams and the resulting bad moods !</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">By posting a new ad, you'll be alerted to carpools that may be of interest to you :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
+                            style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+
+
+{# part 2 #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">There are now more than 550,000 carpoolers on our platform. Your involvement counts, so don't hesitate to update your ads! But perhaps we're still short of carpoolers around you? Here are a few ways to develop shared mobility:</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="center" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"><b>Talk to your company about it.</b> The LOM law requires companies with more than 50 employees to implement solutions for commuting.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"><b>Use our</b>  <a href="https://cloud.mobicoop.org/index.php/s/MHxrrMN2gNaRB4t" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">toolbox</a>, in particular our posters and texts to communicate with your elected representatives or your entourage.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Carpool to your <b>private or public</b><a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}"> events!</a><b>Talk to event organizers around you.</b></p>
+                    </td>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Enjoy carpooling on Mobicoop.fr</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+
+</table>
+{% endblock %}

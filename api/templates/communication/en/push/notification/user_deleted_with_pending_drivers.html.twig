@@ -1,0 +1,11 @@
+{% set ask = context.ask %}
+{% set recipient = context.user %}
+{% if recipient.id == ask.user.id %}
+    {% set deleter = ask.userRelated %}
+{% else %}
+    {% set deleter = ask.user %}
+{% endif %}
+Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}}  has deleted his account and will not be able to carpool with you from {{ context.origin.address.displayLabel[0] }} to {{ context.destination.address.displayLabel[0] }}. Find new carpools or post an ad on  {{api_env('PUSH_PLATFORM_NAME')}}.
+See you soon on {{api_env('PUSH_PLATFORM_NAME')}}
+
