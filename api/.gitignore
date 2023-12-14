@@ -384,6 +384,7 @@ $RECYCLE.BIN/
 /config/params/analytics.json
 /config/params/commands.json
 /config/params/reminders.json
+/config/params/eecService.json
 
 # SSO Services
 /config/user/sso.json

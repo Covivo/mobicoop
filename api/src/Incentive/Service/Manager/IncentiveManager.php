@@ -16,13 +16,14 @@ class IncentiveManager extends MobConnectManager
     public function __construct(
         EntityManagerInterface $em,
         Security $security,
+        InstanceManager $instanceManager,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
         string $carpoolProofPrefix,
         array $mobConnectParams,
         array $ssoServices
     ) {
-        parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
         /**
          * @var User

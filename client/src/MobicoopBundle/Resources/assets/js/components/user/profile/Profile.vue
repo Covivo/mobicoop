@@ -91,6 +91,7 @@
                   :is-after-eec-subscription="isAfterEecSubscription"
                   :api-uri="apiUri"
                   :genders-list="gendersList"
+                  :eec-instance="eecInstance"
                   @changeTab="changeTab"
                   @updateUser="updateUser"
                 />
@@ -313,7 +314,11 @@ export default {
     gendersList: {
       type: Array,
       default: () => []
-    }
+    },
+    eecInstance: {              // The EEC service status for the instance
+      type: Object,
+      default: () => ({})
+    },
   },
   data(){
     return{

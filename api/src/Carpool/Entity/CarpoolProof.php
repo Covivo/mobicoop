@@ -70,6 +70,16 @@ class CarpoolProof
 
     public const MINIMUM_DISTANCE_GPS_FOR_TYPE_HIGH = 3000; // Minimum distance required between driver/passenger pickUp/dropOff in meters
 
+    public const ERROR_STATUS = [
+        self::STATUS_ERROR,
+        self::STATUS_CANCELED,
+        self::STATUS_ACQUISITION_ERROR,
+        self::STATUS_NORMALIZATION_ERROR,
+        self::STATUS_FRAUD_ERROR,
+        self::STATUS_EXPIRED,
+        self::STATUS_CANCELED_BY_OPERATOR,
+    ];
+
     /**
      * @var int the id of this proof
      *
@@ -692,5 +702,14 @@ class CarpoolProof
             && !is_null($this->getAsk()->getMatching())
             ? $this->getAsk()->getMatching()->getCommonDistance()
             : null;
+    }
+
+    public function isGeolocatedAddressesPresent(): bool
+    {
+        return
+            !is_null($this->getPickUpDriverAddress())
+            && !is_null($this->getPickUpPassengerAddress())
+            && !is_null($this->getDropOffDriverAddress())
+            && !is_null($this->getDropOffPassengerAddress());
     }
 }

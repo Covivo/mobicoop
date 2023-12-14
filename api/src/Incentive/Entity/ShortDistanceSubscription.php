@@ -11,6 +11,9 @@ use App\Incentive\Controller\Subscription\SdSubscriptionGet;
 use App\Incentive\Controller\Subscription\SdSubscriptionUpdate;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\Log\ShortDistanceSubscriptionLog;
+use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
+use App\Incentive\Service\Definition\SdImproved;
+use App\Incentive\Service\Definition\SdStandard;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -62,8 +65,6 @@ class ShortDistanceSubscription extends Subscription
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/short-distance-subscription/honour-certificate/';
 
-    public const VALIDITY_PERIOD = 3;               // Period expressed in months
-
     public const SUBSCRIPTION_TYPE = 'short';
 
     /**
@@ -79,10 +80,22 @@ class ShortDistanceSubscription extends Subscription
      * @var ArrayCollection The short distance log associated with the user
      *
      * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", mappedBy="subscription", cascade={"persist"}, orphanRemoval=true)
-     *
-     * @Groups({"readSubscription"})
      */
     protected $shortDistanceJourneys;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="smallint", options={"default": 10})
+     */
+    protected $maximumJourneysNumber;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="smallint", options={"default": 3})
+     */
+    protected $validityPeriodDuration;
 
     /**
      * @var null|ShortDistanceJourney
@@ -175,37 +188,13 @@ class ShortDistanceSubscription extends Subscription
     /**
      * The subscription version.
      *
-     * @var string
+     * @var int
      *
-     * @ORM\Column(
-     *      type="string",
-     *      length=50,
-     *      nullable=true,
-     *      options={
-     *          "comment": "The subscription version. Could be CoupPouceCEE2023 or CEEStandardMobicoop"
-     *      }
-     * )
+     * @ORM\Column(type="smallint")
      *
      * @Groups({"readSubscription"})
      */
     protected $version;
-
-    /**
-     * The subscription version status.
-     *
-     * @var int
-     *
-     * @ORM\Column(
-     *      type="smallint",
-     *      nullable=true,
-     *      options={
-     *          "comment": "The subscription version status."
-     *      }
-     * )
-     *
-     * @Groups({"readSubscription"})
-     */
-    protected $versionStatus;
 
     /**
      * @var int The user subscription ID
@@ -368,7 +357,7 @@ class ShortDistanceSubscription extends Subscription
      *
      * @Groups({"readSubscription"})
      */
-    private $bonusStatus = SubscriptionManager::BONUS_STATUS_PENDING;
+    private $bonusStatus = self::BONUS_STATUS_PENDING;
 
     /**
      * The moBconnet HTTP request log.
@@ -379,8 +368,11 @@ class ShortDistanceSubscription extends Subscription
      */
     private $logs;
 
-    public function __construct(User $user, MobConnectSubscriptionResponse $mobConnectSubscriptionResponse)
-    {
+    public function __construct(
+        User $user,
+        MobConnectSubscriptionResponse $mobConnectSubscriptionResponse,
+        SubscriptionDefinitionInterface $subscriptionDefinition
+    ) {
         $this->shortDistanceJourneys = new ArrayCollection();
         $this->logs = new ArrayCollection();
 
@@ -395,6 +387,10 @@ class ShortDistanceSubscription extends Subscription
         $this->setAddressLocality();
         $this->setTelephone($user->getTelephone());
         $this->setEmail($user->getEmail());
+
+        $this->setVersion($subscriptionDefinition->getVersion());
+        $this->setMaximumJourneysNumber($subscriptionDefinition->getMaximumJourneysNumber());
+        $this->setValidityPeriodDuration($subscriptionDefinition->getValidityPeriodDuration());
     }
 
     /**
@@ -956,5 +952,33 @@ class ShortDistanceSubscription extends Subscription
         $this->setVerificationDate(null);
 
         return $this;
+    }
+
+    /**
+     * Returns if the 1st carpooling is observed.
+     */
+    public function getCarpoolRegistered(): ?bool
+    {
+        return !is_null($this->getCommitmentProofJourney())
+            ? !is_null($this->getCommitmentProofJourney()->getCarpoolProof()) : null;
+    }
+
+    /**
+     * Get the value of proofValidated.
+     */
+    public function isCommitmentJourneyValidated(): bool
+    {
+        return
+            !is_null($this->getCommitmentProofJourney())
+            && !is_null($this->getCommitmentProofJourney()->getCarpoolProof())
+            && $this->getCommitmentProofJourney()->getCarpoolProof()->isEECCompliant();
+    }
+
+    public static function getAvailableDefinitions(): array
+    {
+        return [
+            SdStandard::class,
+            SdImproved::class,
+        ];
     }
 }

@@ -19,6 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={
  *          "get"={
  *              "path"="/my_cee_subscriptions",
+ *              "normalization_context"={"groups"={"readSubscription"}, "skip_null_values"=false},
  *              "swagger_context" = {
  *                  "tags"={"Subscription"}
  *              }
@@ -60,39 +61,11 @@ class CeeSubscriptions
     private $shortDistanceSubscription;
 
     /**
-     * @var array Short distance subscription
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $shortDistanceSubscriptions;
-
-    /**
      * @var null|LongDistanceSubscription Long distance subscriptions
      *
      * @Groups({"readSubscription"})
      */
     private $longDistanceSubscription;
-
-    /**
-     * @var array Long distance subscriptions
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $longDistanceSubscriptions;
-
-    /**
-     * @var \DateTime
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $longDistanceExpirationDate;
-
-    /**
-     * @var \DateTime
-     *
-     * @Groups({"readSubscription"})
-     */
-    private $shortDistanceExpirationDate;
 
     /**
      * @var int Nb pending class C proofs
@@ -128,54 +101,6 @@ class CeeSubscriptions
         return $this->id;
     }
 
-    /**
-     * Get short distance subscription.
-     *
-     * @return ShortDistanceSubscription
-     */
-    public function getShortDistanceSubscriptions()
-    {
-        return $this->shortDistanceSubscriptions;
-    }
-
-    /**
-     * Set short distance subscription.
-     *
-     * @param mixed $shortDistanceSubscriptions
-     *
-     * @return self
-     */
-    public function setShortDistanceSubscriptions(?array $shortDistanceSubscriptions)
-    {
-        $this->shortDistanceSubscriptions = $shortDistanceSubscriptions;
-
-        return $this;
-    }
-
-    /**
-     * Get long distance subscriptions.
-     *
-     * @return LongDistanceSubscription
-     */
-    public function getLongDistanceSubscriptions()
-    {
-        return $this->longDistanceSubscriptions;
-    }
-
-    /**
-     * Set long distance subscriptions.
-     *
-     * @param mixed $longDistanceSubscriptions
-     *
-     * @return self
-     */
-    public function setLongDistanceSubscriptions(?array $longDistanceSubscriptions)
-    {
-        $this->longDistanceSubscriptions = $longDistanceSubscriptions;
-
-        return $this;
-    }
-
     public function getNbPendingProofs(): ?int
     {
         return $this->nbPendingProofs;
@@ -208,42 +133,6 @@ class CeeSubscriptions
     public function setNbRejectedProofs(int $nbRejectedProofs): self
     {
         $this->nbRejectedProofs = $nbRejectedProofs;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of longDistanceExpirationDate.
-     */
-    public function getLongDistanceExpirationDate(): ?\DateTime
-    {
-        return $this->longDistanceExpirationDate;
-    }
-
-    /**
-     * Set the value of longDistanceExpirationDate.
-     */
-    public function setLongDistanceExpirationDate(?\DateTime $longDistanceExpirationDate): self
-    {
-        $this->longDistanceExpirationDate = $longDistanceExpirationDate;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of shortDistanceExpirationDate.
-     */
-    public function getShortDistanceExpirationDate(): ?\DateTime
-    {
-        return $this->shortDistanceExpirationDate;
-    }
-
-    /**
-     * Set the value of shortDistanceExpirationDate.
-     */
-    public function setShortDistanceExpirationDate(?\DateTime $shortDistanceExpirationDate): self
-    {
-        $this->shortDistanceExpirationDate = $shortDistanceExpirationDate;
 
         return $this;
     }

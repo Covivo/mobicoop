@@ -28,7 +28,14 @@
             <p class="mb-0 font-weight-bold">
               {{ $t('title') }}
             </p>
-            <p v-html="$t('text')" />
+            <p
+              v-if="isEecServiceOpened"
+              v-html="$t('text')"
+            />
+            <p
+              v-else
+              v-html="$t('close-text')"
+            />
           </v-col>
         </v-row>
       </v-card-text>
@@ -56,10 +63,21 @@ export default {
       'eu': MessagesMergedEu
     },
   },
+  props: {
+    eecInstance: {              // The EEC service status for the instance
+      type: Object,
+      default: () => ({})
+    },
+  },
   data() {
     return {
       carpoolingIncentiveDialog: true,
     };
+  },
+  computed: {
+    isEecServiceOpened() {
+      return this.eecInstance.available;
+    }
   }
 }
 </script>
@@ -69,6 +87,7 @@ export default {
   background-image: url("/images/pages/home/illus-CEE.png");
   background-position: center;
   background-size: cover;
+  min-height: 260px;
 }
 .carpool-incentive-dialog-text {
   overflow: hidden;

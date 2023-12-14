@@ -41,6 +41,7 @@ use Mobicoop\Bundle\MobicoopBundle\I18n\Service\LanguageManager;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\CeeSubscriptionManager;
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\EecManager;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
@@ -500,7 +501,7 @@ class UserController extends AbstractController
      * @param mixed $tabDefault
      * @param mixed $selectedTab
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault, $selectedTab)
+    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault, $selectedTab, EecManager $eecManager)
     {
         $user = $userManager->getLoggedUser();
 
@@ -611,6 +612,7 @@ class UserController extends AbstractController
             'tabDefault' => $tabDefault,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'gendersList' => $this->gendersList,
+            'eecInstance' => $eecManager->getEecInstance(),                         // The EEC service status for the instance
         ]);
     }
 

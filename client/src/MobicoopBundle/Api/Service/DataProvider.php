@@ -470,7 +470,7 @@ class DataProvider
         try {
             if (self::RETURN_JSON == $this->format) {
                 $headers = $this->getHeaders(['json']);
-                // var_dump($this->resource, ['query'=>$params, 'headers' => $headers]);die;
+                // var_dump($this->resource, ['query' => $params, 'headers' => $headers]); exit;
 
                 $clientResponse = $this->client->get($this->resource, ['query' => $params, 'headers' => $headers]);
             } else {
@@ -764,6 +764,7 @@ class DataProvider
                 }
             }
         }
+
         // var_dump($multipart);die;
         try {
             $headers = $this->getHeaders();

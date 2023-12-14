@@ -1,0 +1,104 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+{% set recipient = context.user %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Your community membership request</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    {# intro #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Many thanks for your interest in carpooling on our platform {{api_env('EMAILS_PLATFORM_NAME')}}!</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">You have applied for membership to the « {{context.community.name}} » community and your application has not been accepted. You therefore do not have access to the community.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">This does not restrict your use of the service or your carpooling: you can use all the features of the carpooling platform and connect with all its users by posting an ad.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
+                            style="border:0; height:26px; width:175; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">See you soon for your next carpool trips !</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="right" style="width:100%;">
+                        <p style="font-size:11px;">The{{api_env('EMAILS_PLATFORM_NAME')}} team</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+{% endblock %}

@@ -1,0 +1,491 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Welcome on Mobicoop !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Congratulations, you've just joined a community of 550,000 users who are helping to build shared, eco-friendly mobility ! Our service is <b>fee-free</b> and has been developed using <b>open-source software.</b> Mobicoop is a collective interest cooperative (SCIC) that aims to make shared mobility a <b>common good.</b> Find out more about our cooperative project, <a  style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};" href="https://pro.mobicoop.fr/cooperative/" >click here.</a></p>
+                        <p style="font-size:11px; text-align: justify;">To get off to a good start on this new adventure, it's important to understand the following principles :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:20px">
+            <p> </p>
+        </td>
+    </tr>
+
+    {#  point 1 #}
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/numbers/1.png"
+                            style="border:0; height:24px; width:26px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:13px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>A complete profile</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p> </p>
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Having a complete profile is important and, above all, it's nicer for the rest of the community ! Go to your account  <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/profil/mon-profil" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Profile page</a> : </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Add a picture.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Validate your email address if you haven't already done so.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Request a new code from your <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/profil/mon-profil" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Profile</a>page.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Validate your phone number.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Complete the Bank details section of your profile to be able to receive online payments.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="text-align:center; font-size:13px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Take on your first challenge !</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/profil/mon-profil" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/profile.png"
+                            style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:20px">
+            <p> </p>
+        </td>
+    </tr>
+
+    {#  point 2 #}
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/numbers/2.png"
+                            style="border:0; height:24px; width:26px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:13px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Post a carpool ad</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Post a carpool ad for all <span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">your needs</span> : regular or occasional trips, now or later. By posting an ad, you'll be alerted as soon as a new carpool matches your route..</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Choose your status : <span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">driver, passenger or not important.</span> By choosing "not important", you are indicating that you are flexible, that you can take your vehicle or not.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">You are free to set the price and route. Its always possible <span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">to modify, pause or delete your ad.</span></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="text-align:center; font-size:13px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Take on your second challenge !</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
+                            style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                    <td style="width:43px">
+                        <p> </p>
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:11px;">In doubt ? Find out how <a href="https://youtu.be/XETr5NoUnBs" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">to post an ad here.</a></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:20px">
+            <p> </p>
+        </td>
+    </tr>
+    {# point 3 #}
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/numbers/3.png"
+                            style="border:0; height:24px; width:26px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:13px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Pay your carpool</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p> </p>
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Good accounts make good friends. Mobicoop offers two forms of payment :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">From hand to hand, on carpool day.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"> By credit card from “My accepted carpools” page.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>
+                        <table cellpadding="2" cellspacing="2" summary="" border="0">
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                                <td align="right"  valign="top" >
+                                    <img
+                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/warning.png"
+                                        style="border:0; height:19px; width:22px; background-color:transparent; vertical-align:top;"
+                                    />
+                                </td>
+                                <td align="left" vertical-align:"top" >
+                                    <p style="font-size:11px; text-align: justify;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};"> Refuse any request for payment by prepaid card (e.g. Transcash), which we consider to be fraudulent. Mobicoop cannot be held responsible for any scam.</b></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td width="23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">To pay for one or more trips by credit card :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">You must have <b>validated a reservation on the interface.</b></a></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">You must <b>complete your bank details</b> from the <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mon-profil/identite-bancaire" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Profile page</a> to be able to receive online payments.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:12px; width:14px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Once you have carpooled, you can pay for your journey by credit card or declare that you have paid by hand.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:11px;"><b>Mobicoop takes no fees on your trips</b> but you can make a<a  style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};" href="{{ api_env('EMAILS_PLATFORM_URL') }}/donation" >donation</a> to support the project!</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="text-align:center; font-size:13px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Take on your third challenge !</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mon-profil/identite-bancaire" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/bankIdentity.png"
+                            style="border:0; height:26px; width:207px; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                    <td style="width:43px">
+                        <p> </p>
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:11px;">In doubt ? We explain all the  <a href="https://www.youtube.com/watch?v=QTz9YAHfFfs" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">payment process here.</a></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:20px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}

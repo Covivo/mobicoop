@@ -1,0 +1,10 @@
+{% set sender = context.object.sender %}
+{% set recipient = context.user %}
+{% set outwardOrigin = context.origin %}
+{% set outwardDestination = context.destination %}
+
+Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+
+Details of your carpool from {{outwardOrigin.address.displayLabel[0]}} to {{outwardDestination.address.displayLabel[0]}} have been changed by  {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} on {{api_env('SMS_PLATFORM_NAME')|raw}}.
+
+See you soon on {{api_env('SMS_PLATFORM_NAME')|raw}}

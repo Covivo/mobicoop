@@ -167,11 +167,11 @@ export default {
     }
   },
   props: {
-    longDistanceSubscriptions:{
+    longDistanceJourneys:{
       type: Array,
       default: null
     },
-    shortDistanceSubscriptions:{
+    shortDistanceJourneys:{
       type: Array,
       default: null
     },
@@ -199,8 +199,8 @@ export default {
   },
   computed:{
     shortDistanceProgress(){
-      if(this.shortDistanceSubscriptions){
-        return this.shortDistanceSubscriptions.length;
+      if(this.shortDistanceJourneys){
+        return this.shortDistanceJourneys.length;
       }
       return 0;
     },
@@ -208,8 +208,8 @@ export default {
       return 100 / SHORT_DISTANCE_NUMBER * this.shortDistanceProgress;
     },
     longDistanceProgress(){
-      if(this.longDistanceSubscriptions){
-        return this.longDistanceSubscriptions.length;
+      if(this.longDistanceJourneys){
+        return this.longDistanceJourneys.length;
       }
       return 0;
     },
