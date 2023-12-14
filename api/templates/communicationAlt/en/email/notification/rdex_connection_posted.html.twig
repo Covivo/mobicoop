@@ -34,12 +34,12 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td>
-                        <p style="font-size:11px; text-align:justify;">Une personne inscrite sur <strong>{{ context.origin }}</strong> souhaite vous solliciter pour un covoiturage.</p>
+                        <p style="font-size:11px; text-align:justify;">A person registered od <strong>{{ context.origin }}</strong> would like to carpool with you.</p>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <p style="font-size:11px; text-align:justify;">Ce message concerne votre trajet de <strong>{{ context.journeyOrigin }}</strong> à <strong>{{ context.journeyDestination }}</strong>{% if context.journeyDate != '' and context.journeyTime != '' %} prévu le {{ context.journeyDate }} à {{ context.journeyTime }}{% endif %}.</p>
+                        <p style="font-size:11px; text-align:justify;">This message concerns your trip from <strong>{{ context.journeyOrigin }}</strong> to <strong>{{ context.journeyDestination }}</strong>{% if context.journeyDate != '' and context.journeyTime != '' %} on {{ context.journeyDate }} at {{ context.journeyTime }}{% endif %}.</p>
                     </td>
                 </tr>
             </table>
@@ -53,7 +53,7 @@
                         <p> </p>
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align:justify;"><strong>Son message :</strong></p>
+                        <p style="font-size:11px; text-align:justify;"><strong>Her message :</strong></p>
                         <hr />
                         <p style="font-size:11px;">{{ context.text | nl2br }}</p>
                         <hr />
@@ -75,8 +75,8 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; text-align:justify;">Cette personne étant inscrite sur une autre plateforme de covoiturage, vous ne pouvez pas lui répondre via Rezo Mobicoop</p>
-                        <p style="font-size:11px; text-align:justify;">En revanche, vous pouvez utiliser les coordonnées qu'elle vous a, en principe, transmises dans son message pour la contacter directement.</p>
+                        <p style="font-size:11px; text-align:justify;">As this person is registered on another carpooling platform, you cannot reply via Mobicoop.</p>
+                        <p style="font-size:11px; text-align:justify;">On the other hand, you can use the contact details she has normally given you in her message to contact her directly.</p>
                     </td>
                 </tr>
             </table>
@@ -87,7 +87,7 @@
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">"See you soon on <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">Rezo Mobicoop</a></p>
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">"See you soon on <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">Mobicoop</a></p>
                     </td>
                 </tr>
             </table>

@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Un Usager a été signalé</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>A user has been reported</b></p>
                     </td>
                 </tr>
             </table>
@@ -21,9 +21,9 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Il s'agit de {{ context.user.givenName }}  {{ context.user.familyName }} {{ context.user.email }}</p>
-                        <p style="font-size:11px; text-align: justify;">L'email de l'usager ayant fait le signalement est {{ context.reporterEmail }}</p>
-                        <p style="font-size:11px; text-align: justify;">Les détails sur le signalement :</p>
+                        <p style="font-size:11px; text-align: justify;">It's about {{ context.user.givenName }}  {{ context.user.familyName }} {{ context.user.email }}</p>
+                        <p style="font-size:11px; text-align: justify;">The email address of the reporting user is {{ context.reporterEmail }}</p>
+                        <p style="font-size:11px; text-align: justify;">report details :</p>
                     </td>
                 </tr>
                 <tr>

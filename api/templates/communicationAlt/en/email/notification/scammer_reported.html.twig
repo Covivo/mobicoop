@@ -8,7 +8,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19.5px;" text-align="center" ><b>Attention fraudeur signalé !</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19.5px;" text-align="center" ><b>Warning: scammer reported !</b></p>
                     </td>
                 </tr>
             </table>
@@ -36,14 +36,14 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Notre système a détecté que l'utilisateur <b>{{ context.scammer.givenName }} {{ context.scammer.familyName }}</b> ne respecte pas notre charte d'utilisation et propose à notre communauté des paiements par carte prépayée (exemple : Transcash). Nous interdisons ce type de paiement considéré comme frauduleux. Cet utilisateur a été supprimé from the carppoling platform et nous vous recommandons de ne pas répondre à ses messages si vous communiquez par d'autres canaux.</p>
-                        <p style="font-size:11px; text-align: justify;">Pour Reminder, sur mobicoop.fr il existe 2 types de paiements principaux :</p>
+                        <p style="font-size:11px; text-align: justify;">Our system has detected that the user  <b>{{ context.scammer.givenName }} {{ context.scammer.familyName }}</b> does not respect our terms of use and offers our community prepaid card payments (example: Transcash). We prohibit this type of payment as it is considered fraudulent. This user has been removed from the carppoling platform and we recommend that you do not reply to his messages if you communicate via other channels.</p>
+                        <p style="font-size:11px; text-align: justify;">As a reminder, on mobicoop.fr there are two main types of payment :</p>
                         <ul>
-                            <li style="font-size:11px; text-align: justify;">Directement de la main à la main le jour du covoiturage. Nous vous invitons à déclarer par la suite le trajet comme “payé à la main” depuis la page “ My accepted carpools ”;</li>
-                            <li style="font-size:11px; text-align: justify;">Par carte bancaire depuis la page “ My accepted carpools ”. Pour cela vous devez compléter vos informations bancaires dans votre Profil.</li>
+                            <li style="font-size:11px; text-align: justify;">Directly from hand to hand on the day of the carpool. We invite you to declare the trip as "paid by hand" from the "My accepted carpools" page.;</li>
+                            <li style="font-size:11px; text-align: justify;">By credit card from the "My accepted carpools" page. To do so, please enter your bank details in your Profile</li>
                         </ul>
-                        <p style="font-size:11px; text-align: justify;">Il est possible de nous signaler un utilisateur douteux by clicking sur le bouton Signaler accessible sur la messagerie en ligne de mobicoop.fr et sur le profil d'un utilisateur.</p>
-                        <p style="font-size:11px; text-align: justify;">Nous sommes désolés pour le désagrément et nous vous invitons à <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">post an ad</a></p>
+                        <p style="font-size:11px; text-align: justify;">You can report suspicious users by clicking on the "Report" button on the mobicoop.fr online messaging system and on a user's profile.</p>
+                        <p style="font-size:11px; text-align: justify;">We apologize for the inconvenience and invite you to <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">post an ad</a></p>
 
                     </td>
                 </tr>

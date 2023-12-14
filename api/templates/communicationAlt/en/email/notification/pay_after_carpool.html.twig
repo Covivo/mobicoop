@@ -8,7 +8,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19.5px;" text-align="center" ><b>Avez-vous indemnisé votre covoitureur ?</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19.5px;" text-align="center" ><b>Have you paid your carpooler ?</b></p>
                     </td>
                 </tr>
             </table>
@@ -36,7 +36,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Votre covoiturage régulier, avec {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }} de {{context.origin}} à {{context.destination}} est terminé.</p>
+                        <p style="font-size:11px; text-align: justify;">Your regular carpooling, with {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }} from {{context.origin}} to {{context.destination}} is done.</p>
                     </td>
                 </tr>
             </table>
@@ -55,7 +55,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">N’oubliez pas de <b>marquer le trajet comme payé à la main</b> si vous avez déjà réglé le conducteur, ou de le <b>payer en ligne.</b></p>
+                        <p style="font-size:11px; text-align: justify;">Don't forget to<b>indicate the trip as paid by hand</b>if you have already paid the driver, or to <b>pay it online.</b></b></p>
                     </td>
                 </tr>
             </table>
@@ -95,7 +95,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Mobicoop est un <b>service sans commission</b>, but you can make make a donation to support the project depuis la page des paiements ou ici.</p>
+                        <p style="font-size:11px; text-align: justify;">Mobicoop is  <b>a fee-free service</b>, but you can make donation to support the project from the payments page or here.</p>
                     </td>
                 </tr>
             </table>
@@ -135,7 +135,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Vous pouvez aussi <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/avis" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">donner un avis</a> sur votre covoiturage passé. Celui-ci n’est pas obligatoire mais permet de rassurer des nouveaux usagers qui se lanceraient dans le covoiturage.</p>
+                        <p style="font-size:11px; text-align: justify;">You can also <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/avis" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">make a review</a> on a past carpool. This is not mandatory, but helps to reassure new carpoolers.</p>
                     </td>
                 </tr>
             </table>

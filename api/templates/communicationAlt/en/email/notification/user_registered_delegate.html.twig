@@ -8,7 +8,7 @@
 					<tr>
 						<td align="center">
 							<p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center">
-								<b>Votre inscription est validée !</b>
+								<b>Your registration is validated !</b>
 							</p>
 						</td>
 					</tr>
@@ -27,25 +27,24 @@
 									{{context.user.givenName|capitalize}}
 									{{context.user.shortFamilyName|capitalize}}</b>
 							</p>
-							<p style="font-size:11px; text-align:justify">Votre inscription au service
+							<p style="font-size:11px; text-align:justify">Your
 								<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
-									Rezo Mobicoop</b>
-								est bien prise en compte.</p>
-							<p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email  :
-								<a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">lien</a>.</p>
-							<pstyle="font-size:11px;text-align:justify">Ou utilisez le code de validation directement sur le site :
+									Mobicoop</b>registration has been completed.</p>
+							<p style="font-size:11px;">Please click on this link to confirm your email  :
+								<a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">link</a>.</p>
+							<pstyle="font-size:11px;text-align:justify">Or use the validation code directly on the site :
 								{{ context.user.emailToken }}</p>
 							{% if context.user.passwordSendType == 2 %}
-								<p style="font-size:11px; text-align:justify">Votre mot de passe est :
+								<p style="font-size:11px; text-align:justify">Your password is :
 									{{ context.user.clearPassword }}</p>
 							{% elseif context.user.passwordSendType == 1 %}
-								<p style="font-size:11px; text-align:justify">Votre mot de passe vous a été envoyé par SMS.</p>
+								<p style="font-size:11px; text-align:justify">Your password has been sent to you by SMS.</p>
 							{% endif %}
-							<p style="font-size:11px; text-align:justify">Lors de votre première connexion, après avoir cliqué sur le lien de vérification ci-dessus, vous aurez la possibilité de modifier votre mot de passe en allant sur votre profil. Dans la mesure où vous auriez oublié ce mot de passe, vous pourrez toujours le récupérer depuis l'écran "Connexion", by clicking sur le lien "Mot de passe oublié".</p>
-							<p style="font-size:11px; text-align:justify">Pour consulter les Conditions Générales d'Utilisation de
+							<p style="font-size:11px; text-align:justify">When you log in for the first time, after clicking on the verification link above, you will be able to change your password by going to your profile. If you have forgotten your password, you can always retrieve it from the "Login" screen, by clicking on the "Forgotten password" link.</p>
+							<p style="font-size:11px; text-align:justify">To consult
 								<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
-									{{api_env('EMAILS_PLATFORM_NAME')}}</b>, cliquez
-								<a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/cgu">ici</a>. Si vous refusez ces conditions, vous pouvez supprimer votre compte depuis votre profil.</p>
+									{{api_env('EMAILS_PLATFORM_NAME')}}</b>'s General Terms and Conditions of Use, click
+								<a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/cgu">here</a>. If you do not accept these conditions, you can delete your account from your profile.</p>
 						</td>
 					</tr>
 				</table>
@@ -65,7 +64,7 @@
 						</td>
 						<td align="center" style="width:100%;">
 							<p style="font-size:11px;">
-								<b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">See you soon on Rezo Mobicoop</b>
+								<b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">See you soon on Mobicoop</b>
 							</p>
 						</td>
 					</tr>

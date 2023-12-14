@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Un événement a été signalé</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>An event has been reported</b></p>
                     </td>
                 </tr>
             </table>
@@ -21,8 +21,8 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">L'utilisateur <b>{{ context.reporterEmail }}</b> a signalé l'événement : "<b>{{ context.eventName }}</b>"</p>
-                        <p style="font-size:11px; text-align: justify;">Les détails sur le signalement :</p>
+                        <p style="font-size:11px; text-align: justify;">The user <b>{{ context.reporterEmail }}</b> reported the event : "<b>{{ context.eventName }}</b>"</p>
+                        <p style="font-size:11px; text-align: justify;">Report details :</p>
                     </td>
                 </tr>
                 <tr>

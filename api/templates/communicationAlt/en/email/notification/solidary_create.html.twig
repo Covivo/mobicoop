@@ -10,9 +10,9 @@
                             <img src="{{ api_env('STRUCTURE_LOGO_URI') }}{{ context.structure.logo.filename }}" alt="Logo {{ context.structure.name }}" />
                         {% endif %}
                         <p>Hello,</p>
-                        <p>{% if context.applicant != null %}<span style="font-weight: bold">{{ context.applicant.givenName }} {{ context.applicant.familyName }}</span>{% endif %} vient de déposer une demande solidaire. Cette personne a besoin de se déplacer dès le <span style="font-weight: bold">{{ context.journey.criteria.fromDate|date('d/m/Y') }}</span>.</p>
-                        <p>Click here pour consulter sa demande <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{api_env('URL_ADMIN')}}{{ context.adminUrl }}">{{api_env('URL_ADMIN')}}{{ context.adminUrl }}</a>.</p>
-                        <p>Cordialement,</p>
+                        <p>{% if context.applicant != null %}<span style="font-weight: bold">{{ context.applicant.givenName }} {{ context.applicant.familyName }}</span>{% endif %}  has just submitted a solidarity request. This person needs to move from<span style="font-weight: bold">{{ context.journey.criteria.fromDate|date('d/m/Y') }}</span>.</p>
+                        <p>Click here to consult his request<a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{api_env('URL_ADMIN')}}{{ context.adminUrl }}">{{api_env('URL_ADMIN')}}{{ context.adminUrl }}</a>.</p>
+                        <p>Sincerely,</p>
                         <p style="font-weight: bold">{{ context.structure.name }}</p>
                         {% if context.structure.signature != null %}
                             <p>{{ context.structure.signature }}</p>

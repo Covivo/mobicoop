@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Validation de votre adresse email</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Confirm your email address</b></p>
                     </td>
                 </tr>
             </table>
@@ -22,7 +22,7 @@
                     </td>
                     <td align="left">
                         <p style="font-size:11px; margin-bottom:16px;">Hello<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p style="font-size:11px;">Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
+                        <p style="font-size:11px;">Please click on this link to confirm your email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/email/validation/{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
                     </td>
                 </tr>
             </table>
@@ -41,7 +41,7 @@
                         <p> </p>
                     </td>
                     <td align="center" style="width:100%;">
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">See you soon on Rezo Mobicoop</b></p>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">See you soon on Mobicoop</b></p>
                     </td>
                 </tr>
             </table>

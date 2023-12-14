@@ -8,7 +8,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19.5px;" text-align="center" ><b>Avez-vous oublié d’indemniser votre covoitureur ?</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19.5px;" text-align="center" ><b>Have you forgotten to compensate your carpooler ?</b></p>
                     </td>
                 </tr>
             </table>
@@ -37,9 +37,9 @@
                     </td>
                     <td align="left">
                         <p style="font-size:11px; text-align: justify;">
-                            Le conducteur {{ context.creditor.givenName }} vous relance concernant le trajet {{ context.origin }}/{{ context.destination }} réalisé ensemble le {{ context.date|date("d-m-Y") }} pour un montant {{context.amount}} €.</p>
+                            The driver {{ context.creditor.givenName }} reminds you about the trip {{ context.origin }}/{{ context.destination }} you made together on {{ context.date|date("d-m-Y") }} For an amount of {{context.amount}} €.</p>
                         <p style="font-size:11px; text-align: justify;">
-                            Pour valider/payer vos covoitureurs, rendez-vous sur votre profil, depuis l'onglet "Covoiturages acceptés" ou directement depuis le lien suivant <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-covoiturages-acceptes">{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-covoiturages-acceptes</a>.</p>
+                            To validate/pay your carpoolers, go to your profile, from the "Accepted carpools" tab, or directly from the following link <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-covoiturages-acceptes">{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-covoiturages-acceptes</a>.</p>
                         <p style="font-size:11px; text-align: justify;">
                             See you soon on {{api_env('EMAILS_PLATFORM_NAME')}} !</p>
                     </td>

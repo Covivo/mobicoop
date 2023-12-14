@@ -20,7 +20,7 @@
     <tr style="margin-bottom:21px; margin-top:19px;">
         <td align="center">
             <table cellpadding="6" cellspacing="6" summary="" border="0">
-                <tr> 
+                <tr>
                     <td align="center">
                         <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Votre covoiturage est annulé</b></p>
                     </td>
@@ -67,9 +67,9 @@
                          <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
                     </td>
                 </tr>
-            </table>    
-        </td>    
-    </tr>                   
+            </table>
+        </td>
+    </tr>
     <tr>
         <td>
             <table cellpadding="4" cellspacing="6" summary="" border="0">
@@ -133,8 +133,8 @@
                          <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
                     </td>
                 </tr>
-            </table>    
-        </td>    
+            </table>
+        </td>
     </tr>
     <tr>
         <td>
@@ -169,7 +169,7 @@
                 </tr>
             </table>
         </td>
-    </tr> 
+    </tr>
     {% for schedule in ad.schedule %}
         <tr>
             <td>
@@ -184,7 +184,7 @@
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                             />
-                        {% else %} 
+                        {% else %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGrey.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -197,7 +197,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -210,7 +210,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -223,7 +223,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -236,7 +236,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -249,7 +249,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -262,7 +262,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -291,7 +291,7 @@
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
                                             <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
+                                        {% else %}
                                             <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
@@ -300,7 +300,7 @@
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
                                             <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
+                                        {% else %}
                                             <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
@@ -318,7 +318,7 @@
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
                                             <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
+                                        {% else %}
                                             <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
@@ -327,7 +327,7 @@
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
                                             <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
+                                        {% else %}
                                             <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
@@ -357,7 +357,7 @@
                 </tr>
             </table>
         </td>
-    </tr>  
+    </tr>
     <tr>
         <td>
             <table cellpadding="4" cellspacing="4" summary="" border="0">
@@ -366,16 +366,16 @@
                        <p> </p>
                     </td>
                     <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Rappel : Rezo Mobicoop ne prélève pas de paiement en amont, les paiement se font de la main à la main le jour du covoiturage ou par carte bancaire sur notre interface après le jour du covoiturage. <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">En savoir plus.</a></p>
+                        <p style="font-size:11px; text-align: justify;"> Rappel : Mobicoop ne prélève pas de paiement en amont, les paiement se font de la main à la main le jour du covoiturage ou par carte bancaire sur notre interface après le jour du covoiturage. <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">En savoir plus.</a></p>
                     </td>
                 </tr>
             </table>
         </td>
-    </tr>   
+    </tr>
     <tr>
         <td style="height:20px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
 </table>
 {% endblock %}

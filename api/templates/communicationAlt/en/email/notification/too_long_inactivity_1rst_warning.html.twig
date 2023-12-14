@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Votre compte inactif sera prochainement supprimé automatiquement</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Your inactive account will soon be deleted automatically</b></p>
                     </td>
                 </tr>
             </table>
@@ -22,7 +22,7 @@
                     </td>
                     <td align="left">
                         <p style="font-size:11px; margin-bottom:16px;">Hello<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p style="font-size:11px;">Votre compte est inactif depuis {{context.details.nbMonthsOfInactvity}} mois. Sans action de votre part, il sera automatiquement supprimé le {{context.details.autoDeleteDate|date("d/m/Y")}}.Pour relancer votre compte, il vous suffit de vous connecter.</p>
+                        <p style="font-size:11px;">Your account is inactive since {{context.details.nbMonthsOfInactvity}} month. Without any action on your part, it will be automatically deleted on {{context.details.autoDeleteDate|date("d/m/Y")}}.To restart your account, simply log in.</p>
                     </td>
                 </tr>
             </table>
@@ -41,7 +41,7 @@
                         <p> </p>
                     </td>
                     <td align="center" style="width:100%;">
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">See you soon on Rezo Mobicoop</b></p>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">See you soon on Mobicoop</b></p>
                     </td>
                 </tr>
             </table>

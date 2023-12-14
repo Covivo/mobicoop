@@ -16,7 +16,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19px;" text-align="center" ><b>Votre covoiturage régulier va bientôt expirer !</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19px;" text-align="center" ><b>Your regular ad will expire soon !</b></p>
                     </td>
                 </tr>
             </table>
@@ -32,7 +32,7 @@
                     </td>
                     <td align="left">
                         <p style="font-size:11px; margin-bottom:16px;">Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
-                        <p style="font-size:11px;">Votre covoiturage régulier avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} expire dans une semaine.</p>
+                        <p style="font-size:11px;">Your regular carpool with {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} will expire in a week.</p>
                     </td>
                 </tr>
             </table>
@@ -263,7 +263,7 @@
                         <p> </p>
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;">Si vous souhaitez continuer à covoiturer ensemble, vous devez lui faire une <b>nouvelle demande et allonger la période du covoiturage.</b> Sans quoi, vos prochains trajets n’apparaîtront plus dans votre export de covoiturages et vous ne pourrez notamment plus payer vos trajets par carte bancaire.</p>
+                        <p style="font-size:11px; text-align: justify;">If you wish to continue carpooling together, you must submit a <b>new request and extend the carpooling period.</b> Otherwise, your next trips will no longer appear in your carpool export, and you will no longer be able to pay for your trips by credit card.</p>
                     </td>
                 </tr>
             </table>
@@ -311,7 +311,7 @@
                         <p> </p>
                     </td>
                     <td align="center" style="width:100%;">
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Bon covoiturage sur {{api_env('EMAILS_PLATFORM_NAME')}}</b></p>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Enjoy carpooling on {{api_env('EMAILS_PLATFORM_NAME')}}</b></p>
                     </td>
                 </tr>
             </table>

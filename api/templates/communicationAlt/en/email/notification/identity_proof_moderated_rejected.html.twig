@@ -7,7 +7,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Document d'identité non conforme.</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Non-compliant ID document.</b></p>
                     </td>
                 </tr>
             </table>
@@ -22,21 +22,21 @@
                     </td>
                     <td align="left">
                         <p style="font-size:11px; text-align: justify;">Hello {{context.user.givenName}},</p>
-                        <p style="font-size:11px; text-align: justify;">Vous souhaitez vous inscrire au service <strong>Rezo Pouce de {{api_env('EMAILS_PLATFORM_NAME')}}</strong>, et nous vous en remercions.</p>
-                        <p style="font-size:11px; text-align: justify;">En validant votre inscription pour vous adresser votre carte membre, j'ai constaté que la pièce d'identité que vous nous avez transmise n'est pas valide (manquante, illisible ou floue)</p>
-                        <p style="font-size:11px; text-align: justify;">Afin de finaliser votre inscription, je vous prie de bien vouloir me Returnner depuis votre profil utilisateur ou par voie postale (Mobicoop - 9 boulevard Louis Sicre - 82100 CASTELSARRASIN) :</p>
+                        <p style="font-size:11px; text-align: justify;">Thank you for your interest in Mobicoop's <strong>Rezo Pouce </strong>service.</p>
+                        <p style="font-size:11px; text-align: justify;">When I validated your registration to send you your membership card, I noticed that the ID you sent us is not valid (missing, illegible or blurred).</p>
+                        <p style="font-size:11px; text-align: justify;">In order to finalize your registration, please send me back your ID from your user profile or by post (Mobicoop - 9 boulevard Louis Sicre - 82100 CASTELSARRASIN):</p>
                         <ul>
-                            <li style="font-size:11px; text-align: justify;"><strong>La photocopie (ou photo) de votre pièce d'identité</strong></li>
+                            <li style="font-size:11px; text-align: justify;"><strong>A photocopy (or photo) of your identity card</strong></li>
                         </ul>
-                        <p style="font-size:11px; text-align: justify;">{{api_env('EMAILS_PLATFORM_NAME')}} vous assure un réseau serein et convivial, pour cela, merci de bien vouloir me Returnner ces éléments dans les meilleurs délais.</p>
-                        <p style="font-size:11px; text-align: justify;">A réception, je vous ferai parvenir :</p>
+                        <p style="font-size:11px; text-align: justify;">{{api_env('EMAILS_PLATFORM_NAME')}} guarantees you a peaceful and friendly network, so please send me these details as soon as possible.</p>
+                        <p style="font-size:11px; text-align: justify;">AOn receipt, I will send you :</p>
                         <ul>
-                            <li style="font-size:11px; text-align: justify;">Par mail : votre Rezo Kit</li>
-                            <li style="font-size:11px; text-align: justify;">Par courrier postal : votre carte de membre</li>
+                            <li style="font-size:11px; text-align: justify;">By email : your Rezo Kit</li>
+                            <li style="font-size:11px; text-align: justify;">By post : your membership card</li>
                         </ul>
-                        <p style="font-size:11px; text-align: justify;">Sans Return de votre part, je ne pourrais valider votre inscription complète à notre Rezo ni vous envoyer les éléments ci-dessus.</p>
-                        <p style="font-size:11px; text-align: justify;">Assuré de votre compréhension,</p>
-                        <p style="font-size:11px; text-align: justify;">Cordialement.</p>
+                        <p style="font-size:11px; text-align: justify;">Without your reply, I will not be able to validate your full registration to our Rezo or send you the above elements.</p>
+                        <p style="font-size:11px; text-align: justify;">Assured of your understanding,</p>
+                        <p style="font-size:11px; text-align: justify;">Sincerely.</p>
                     </td>
                 </tr>
             </table>
