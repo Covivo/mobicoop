@@ -14,9 +14,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class LdStandard extends SubscriptionDefinition
 {
-    // protected const DEADLINE = '2024-01-01 00:00:00';
-    // ! FAKE
-    protected const DEADLINE = '2023-12-01 00:00:00';
+    protected const DEADLINE = '2024-01-01 00:00:00';
 
     protected const TRANSITIONAL_PERIOD_DURATION = 1;
 
