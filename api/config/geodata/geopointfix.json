@@ -1,0 +1,13 @@
+[
+  {
+    "criteria": {
+      "lat": 14.4793095,
+      "lon": 121.0198229,
+      "locality": "Parañaque"
+    },
+    "replacement": {
+      "lat": 14.477866,
+      "lon": 121.023106
+    }
+  }
+]

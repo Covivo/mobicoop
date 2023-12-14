@@ -705,6 +705,7 @@ services:
       $restrictCountry: "%env(string:POINT_SEARCHER_RESTRICT_COUNTRY)%"
       $exclusionTypes: "%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%"
       $relayPointParams: "%env(json:POINT_SEARCHER_RELAY_POINT_PARAMETERS)%"
+      $fixerData: "%env(json:file:resolve:POINT_SEARCHER_FIXER_DATA)%"
 
   App\Geography\Service\AddressTerritoryLinkChecker:
     arguments:
