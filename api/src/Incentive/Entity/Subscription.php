@@ -2,15 +2,21 @@
 
 namespace App\Incentive\Entity;
 
+use App\Incentive\Entity\Subscription\Progression;
+use App\Incentive\Interfaces\SubscriptionInterface;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-abstract class Subscription
+abstract class Subscription implements SubscriptionInterface
 {
     public const TYPE_LONG = 'long';
     public const TYPE_SHORT = 'short';
 
     public const ALLOWED_TYPE = [self::TYPE_LONG, self::TYPE_SHORT];
+
+    public const BONUS_STATUS_PENDING = 0;
+    public const BONUS_STATUS_NO = 1;
+    public const BONUS_STATUS_OK = 2;
 
     private const ACTIVE_YEAR_PATTERN = '/^202[3-7]{1}$/';
 
@@ -32,7 +38,6 @@ abstract class Subscription
     protected $honorCertificateProofTimestampSigningTime;
 
     protected $version;
-    protected $versionStatus;
 
     /**
      * Journeys which have not been added to the subscription and which could be (compliant with the CEE standard).
@@ -42,6 +47,16 @@ abstract class Subscription
      * @Groups({"readAdminSubscription"})
      */
     protected $additionalJourneys = [];
+
+    /**
+     * @var int
+     */
+    protected $maximumJourneysNumber;
+
+    /**
+     * @var int
+     */
+    protected $validityPeriodDuration;
 
     /**
      * @var bool
@@ -65,9 +80,16 @@ abstract class Subscription
     protected $hasHonorCertificateToken = false;
 
     /**
+     * @var Progression
+     *
+     * @Groups({"readSubscription"})
+     */
+    protected $progression;
+
+    /**
      * @var array
      *
-     * @Groups({"readSubscription"}).
+     * @Groups({"readSubscription"})
      */
     protected $journeys;
 
@@ -185,12 +207,25 @@ abstract class Subscription
         return $this->honorCertificateProofTimestampSigningTime;
     }
 
+    public function getHasIncentiveToken(): bool
+    {
+        return !is_null($this->getIncentiveProofTimestampToken());
+    }
+
     /**
      * Get the value of hasIncentiveToken.
      */
     public function hasIncentiveToken(): bool
     {
-        return !is_null($this->getIncentiveProofTimestampToken());
+        return $this->getHasIncentiveToken();
+    }
+
+    /**
+     * Get the value of hasCommitToken.
+     */
+    public function getHasCommitToken(): bool
+    {
+        return !is_null($this->getCommitmentProofTimestampToken());
     }
 
     /**
@@ -198,7 +233,15 @@ abstract class Subscription
      */
     public function hasCommitToken(): bool
     {
-        return !is_null($this->getCommitmentProofTimestampToken());
+        return $this->getHasCommitToken();
+    }
+
+    /**
+     * Get the value of hasHonorCertificateToken.
+     */
+    public function getHasHonorCertificateToken(): bool
+    {
+        return !is_null($this->getHonorCertificateProofTimestampToken());
     }
 
     /**
@@ -206,15 +249,7 @@ abstract class Subscription
      */
     public function hasHonorCertificateToken(): bool
     {
-        return !is_null($this->getHonorCertificateProofTimestampToken());
-    }
-
-    /**
-     * Get the subscription version.
-     */
-    public function getVersion(): ?string
-    {
-        return $this->version;
+        return $this->getHasHonorCertificateToken();
     }
 
     /**
@@ -290,29 +325,19 @@ abstract class Subscription
     }
 
     /**
-     * Set the subscription version.
-     * TODO - Tester la fonction.
+     * Get the subscription version.
      */
-    public function setVersion(): self
+    public function getVersion(): int
     {
-        if (is_null($this->getVersion()) || SubscriptionVersion::INCENTIVE_MOBICOOP_2024 !== $this->getVersion()) {
-            $version = new SubscriptionVersion($this);
-
-            $this->version = $version->getVersion();
-            $this->setVersionStatus($version->getVersionStatus());
-        }
-
-        return $this;
+        return $this->version;
     }
 
-    public function getVersionStatus(): ?int
+    /**
+     * Set the subscription version.
+     */
+    public function setVersion(int $version): self
     {
-        return $this->versionStatus;
-    }
-
-    public function setVersionStatus($versionStatus): self
-    {
-        $this->versionStatus = $versionStatus;
+        $this->version = $version;
 
         return $this;
     }
@@ -389,6 +414,38 @@ abstract class Subscription
     public function setAdditionalJourneys(array $additionalJourneys): self
     {
         $this->additionalJourneys = $additionalJourneys;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of progression.
+     */
+    public function getProgression(): Progression
+    {
+        return new Progression($this);
+    }
+
+    public function getMaximumJourneysNumber(): int
+    {
+        return $this->maximumJourneysNumber;
+    }
+
+    public function setMaximumJourneysNumber(int $maximumJourneysNumber): self
+    {
+        $this->maximumJourneysNumber = $maximumJourneysNumber;
+
+        return $this;
+    }
+
+    public function getValidityPeriodDuration(): int
+    {
+        return $this->validityPeriodDuration;
+    }
+
+    public function setValidityPeriodDuration(int $validityPeriodDuration): self
+    {
+        $this->validityPeriodDuration = $validityPeriodDuration;
 
         return $this;
     }

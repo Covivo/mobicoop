@@ -8,6 +8,7 @@ use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
+use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
@@ -60,8 +61,19 @@ class MobConnectApiProvider extends MobConnectProvider
      */
     private $_ssoServices;
 
-    public function __construct(EntityManagerInterface $em, MobConnectApiParams $params, LoggerService $loggerService, User $user, array $ssoServices)
-    {
+    /**
+     * @var EecInstance
+     */
+    private $_eecInstance;
+
+    public function __construct(
+        EntityManagerInterface $em,
+        MobConnectApiParams $params,
+        LoggerService $loggerService,
+        User $user,
+        array $ssoServices,
+        EecInstance $eecInstance
+    ) {
         $this->_em = $em;
         $this->_apiParams = $params;
 
@@ -69,6 +81,7 @@ class MobConnectApiProvider extends MobConnectProvider
         $this->_loggerService = $loggerService;
         $this->_user = $user;
         $this->_ssoServices = $ssoServices;
+        $this->_eecInstance = $eecInstance;
     }
 
     private function __getSubscriptionId(bool $shortDistance = false): string
@@ -172,7 +185,7 @@ class MobConnectApiProvider extends MobConnectProvider
     public function postSubscription(bool $isLongDistance = true): MobConnectSubscriptionResponse
     {
         $data = [
-            'incentiveId' => $isLongDistance ? $this->_apiParams->getLongDistanceSubscriptionId() : $this->_apiParams->getShortDistanceSubscriptionId(),
+            'incentiveId' => $isLongDistance ? $this->_eecInstance->getLdKey() : $this->_eecInstance->getSdKey(),
             'consent' => true,
             'Type de trajet' => true === $isLongDistance ? [self::LONG_DISTANCE_LABEL] : [self::SHORT_DISTANCE_LABEL],
             'Numéro de permis de conduire' => $this->_user->getDrivingLicenceNumber(),

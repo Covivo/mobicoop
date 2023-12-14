@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\EecManager;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,11 +46,12 @@ class DefaultController extends AbstractController
     /**
      * HomePage.
      */
-    public function index(Request $request)
+    public function index(Request $request, EecManager $eecManager)
     {
         $params = [
             'baseUri' => $_ENV['API_URI'],
             'searchComponentHorizontal' => $this->searchComponentHorizontal,
+            'eecInstance' => $eecManager->getEecInstance(),                         // The EEC service status for the instance
         ];
 
         return $this->render(

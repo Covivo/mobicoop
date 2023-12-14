@@ -32,15 +32,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class MobConnectManager
 {
-    public const BONUS_STATUS_PENDING = 0;
-    public const BONUS_STATUS_NO = 1;
-    public const BONUS_STATUS_OK = 2;
-
-    public const LONG_DISTANCE_TRIP_THRESHOLD = 3;
-    public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
-
-    public const SUBSCRIPTION_EXPIRATION_DELAY = 3;     // Expressed in months
-
     /**
      * Period, expressed in months, preceding the subscription request during which the user must not have made a trip.
      *
@@ -119,6 +110,11 @@ abstract class MobConnectManager
     protected $_currentSubscription;
 
     /**
+     * @var InstanceManager
+     */
+    protected $_instanceManager;
+
+    /**
      * @var bool
      */
     protected $_pushOnlyMode = false;
@@ -140,6 +136,7 @@ abstract class MobConnectManager
 
     public function __construct(
         EntityManagerInterface $em,
+        InstanceManager $instanceManager,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
         string $carpoolProofPrefix,
@@ -147,6 +144,9 @@ abstract class MobConnectManager
         array $ssoServices
     ) {
         $this->_em = $em;
+
+        $this->_instanceManager = $instanceManager;
+
         $this->_loggerService = $loggerService;
         $this->_honourCertificateService = $honourCertificateService;
 
@@ -202,15 +202,6 @@ abstract class MobConnectManager
                     && array_key_exists('client_id', $this->_mobConnectParams['credentials'])
                     && !empty($this->_mobConnectParams['credentials']['client_id'])
                     && array_key_exists('api_key', $this->_mobConnectParams['credentials'])
-                )
-                && (
-                    array_key_exists('subscription_ids', $this->_mobConnectParams)
-                    && is_array($this->_mobConnectParams['subscription_ids'])
-                    && !empty($this->_mobConnectParams['subscription_ids'])
-                    && array_key_exists('short_distance', $this->_mobConnectParams['subscription_ids'])
-                    && !empty($this->_mobConnectParams['subscription_ids']['short_distance'])
-                    && array_key_exists('long_distance', $this->_mobConnectParams['subscription_ids'])
-                    && !empty($this->_mobConnectParams['subscription_ids']['long_distance'])
                 )
             );
     }
@@ -270,11 +261,11 @@ abstract class MobConnectManager
     /**
      * Sets subscription expiration date.
      */
-    protected function getExpirationDate(): \DateTime
+    protected function getExpirationDate(int $delay): \DateTime
     {
         $now = new \DateTime('now');
 
-        return $now->add(new \DateInterval('P'.self::SUBSCRIPTION_EXPIRATION_DELAY.'M'));
+        return $now->add(new \DateInterval('P'.$delay.'M'));
     }
 
     protected function executeRequestVerifySubscription(string $subscriptionId)
@@ -286,7 +277,14 @@ abstract class MobConnectManager
 
     protected function setApiProvider()
     {
-        $this->_apiProvider = new MobConnectApiProvider($this->_em, new MobConnectApiParams($this->_mobConnectParams), $this->_loggerService, $this->_driver, $this->_ssoServices);
+        $this->_apiProvider = new MobConnectApiProvider(
+            $this->_em,
+            new MobConnectApiParams($this->_mobConnectParams),
+            $this->_loggerService,
+            $this->_driver,
+            $this->_ssoServices,
+            $this->_instanceManager->getEecInstance()
+        );
     }
 
     protected function getCarpoolersNumber(Ask $ask): int

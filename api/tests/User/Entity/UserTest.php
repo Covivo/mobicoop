@@ -61,4 +61,30 @@ class UserTest extends TestCase
         $this->_user->addSsoAccount($this->_ssoAccount);
         $this->assertInstanceOf('App\User\Entity\SsoAccount', $this->_user->getSsoAccount(self::DEFAULT_SSO_PROVIDER));
     }
+
+    /**
+     * @test
+     */
+    public function isPhoneValidatedFalsy()
+    {
+        $this->assertFalse($this->_user->isPhoneValidated());
+
+        $this->_user->setTelephone('060102030405');
+        $this->assertFalse($this->_user->isPhoneValidated());
+
+        $this->_user->setTelephone(null);
+        $this->_user->setPhoneValidatedDate(new \DateTime('now'));
+        $this->assertFalse($this->_user->isPhoneValidated());
+    }
+
+    /**
+     * @test
+     */
+    public function isPhoneValidatedTruly()
+    {
+        $this->_user->setTelephone('060102030405');
+        $this->_user->setPhoneValidatedDate(new \DateTime('now'));
+
+        $this->assertTrue($this->_user->isPhoneValidated());
+    }
 }

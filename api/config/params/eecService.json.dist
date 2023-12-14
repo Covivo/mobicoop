@@ -1,0 +1,19 @@
+{
+  "expirationDate": null,
+  "mobConnect": {
+    "client_id": null,
+    "app_id": null,
+    "app_secret": null,
+    "api_uri": "https://api-fabmob.stg.hub.flowbird.io"
+  },
+  "subscriptions": {
+    "ld": {
+      "key": null,
+      "expirationDate": null
+    },
+    "sd": {
+      "key": null,
+      "expirationDate": null
+    }
+  }
+}
