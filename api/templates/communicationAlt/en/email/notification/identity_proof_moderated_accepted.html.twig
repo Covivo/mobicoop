@@ -1,0 +1,43 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Welcome to Rezo Pouce !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
+                <tr>
+                    <td style="width:22px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Hello,</p>
+                        <p style="font-size:11px; text-align: justify;">You are now a member of Rezo Pouce and, on behalf of the entire community, I would like to welcome you ! 😀 As you know, Rezo Pouce is a network for sharing your commute. Thanks to a number of Arrêts sur le Pouce (which you can find on rezopouce.fr) and our application, you can easily find your neighbors to share your daily commute !</p>
+                        <p style="font-size:11px; text-align: justify;">Rezo Pouce works in hitchhiking mode (for flexible and immediate journeys) and with the app. If you don't have it yet, you can download it from Google Play or the App Store. ! 📱</p>
+                        <p style="font-size:11px; text-align: justify;">If you haven't already done so, you can enter your status (driver and/or passenger) and address in your profile to receive your membership card by post and, if you're a driver, a sticker to put on your car's windscreen !</p>
+                        <p style="font-size:11px; text-align: justify;">Need advice on carpooling or hitchhiking? I invite you to take a look at your <strong>Rezo Kit</strong>, which includes an instruction manual, lots of good advice on how to carpool with peace of mind, and the Rezo Pouce Code of Ethics. You'll also find the Mobility Sheet for your municipality (with a map showing the stops on the Pouce and all the means of transport at your disposal).</p>
+                        <p style="font-size:11px; text-align: justify;">Ready to share your daily commute ?  Let's go ! 😀</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
+

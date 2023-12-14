@@ -1,0 +1,17 @@
+{% set new = context.object.new %}
+{% set old = context.object.old %}
+{% set ask = context.object.ask %}
+{% set sender = context.object.sender %}
+{% set recipient = context.user %}
+{% set outwardOrigin = context.origin %}
+{% set outwardDestination = context.destination %}
+
+Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+
+Cancelled carpool.
+
+Your carpool : {{ outwardOrigin.address.displayLabel[0] }} - {{ outwardDestination.address.displayLabel[0] }}
+with {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} has been cancelled.
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} has modified his carpooling ad.
+
+See you soon on {{api_env('PUSH_PLATFORM_NAME')}}

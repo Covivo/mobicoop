@@ -1,0 +1,54 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Non-compliant ID document.</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
+                <tr>
+                    <td style="width:22px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Hello {{context.user.givenName}},</p>
+                        <p style="font-size:11px; text-align: justify;">Thank you for your interest in Mobicoop's <strong>Rezo Pouce </strong>service.</p>
+                        <p style="font-size:11px; text-align: justify;">When I validated your registration to send you your membership card, I noticed that the ID you sent us is not valid (missing, illegible or blurred).</p>
+                        <p style="font-size:11px; text-align: justify;">In order to finalize your registration, please send me back your ID from your user profile or by post (Mobicoop - 9 boulevard Louis Sicre - 82100 CASTELSARRASIN):</p>
+                        <ul>
+                            <li style="font-size:11px; text-align: justify;"><strong>A photocopy (or photo) of your identity card</strong></li>
+                        </ul>
+                        <p style="font-size:11px; text-align: justify;">{{api_env('EMAILS_PLATFORM_NAME')}} guarantees you a peaceful and friendly network, so please send me these details as soon as possible.</p>
+                        <p style="font-size:11px; text-align: justify;">AOn receipt, I will send you :</p>
+                        <ul>
+                            <li style="font-size:11px; text-align: justify;">By email : your Rezo Kit</li>
+                            <li style="font-size:11px; text-align: justify;">By post : your membership card</li>
+                        </ul>
+                        <p style="font-size:11px; text-align: justify;">Without your reply, I will not be able to validate your registration to our Rezo and will be obliged to delete your account.</p>
+                        <p style="font-size:11px; text-align: justify;">Assured of your understanding,</p>
+                        <p style="font-size:11px; text-align: justify;">Sincerely.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
+
+

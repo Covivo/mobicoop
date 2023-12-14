@@ -1,0 +1,18 @@
+{% set ad = context.ad %}
+{% set recipient = context.user %}
+{% set sender = context.sender %}
+{% set result = context.result %}
+{% set outwardOrigin = context.outwardOrigin %}
+{% set outwardDestination = context.outwardDestination %}
+{% set returnOrigin = context.returnOrigin %}
+{% set returnDestination = context.returnDestination %}
+
+Hello {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+{% if ad.results[0].frequency == 1 %}
+Carpool confirmed with {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} on {{ ad.results[0].date|date("d/m/Y") }} at {{outwardOrigin.time|date('H:i')}} from {{ outwardOrigin.address.displayLabel[0] }} to {{ outwardDestination.address.displayLabel[0] }}. See the ad on {{api_env('SMS_PLATFORM_NAME')|raw}}.
+You can contact her/him by phone : {{sender.telephone}}
+{% else %}
+Recurrent carpool confirmed with {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} from  {{ outwardOrigin.address.displayLabel[0] }} to {{ outwardDestination.address.displayLabel[0] }}. See the ad on  {{api_env('SMS_PLATFORM_NAME')|raw}}.
+You can contact her/him by phone : {{sender.telephone}}
+{% endif %}
+See you soon on {{api_env('SMS_PLATFORM_NAME')|raw}}

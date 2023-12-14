@@ -1,0 +1,16 @@
+{% set ad = context.ad %}
+{% set recipient = context.user %}
+{% set sender = context.sender %}
+{% set result = context.result %}
+{% set outwardOrigin = context.outwardOrigin %}
+{% set outwardDestination = context.outwardDestination %}
+{% set returnOrigin = context.returnOrigin %}
+{% set returnDestination = context.returnDestination %}
+
+Hello {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
+{% if ad.results[0].frequency == 1 %}
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} offers a carpool from {{ outwardOrigin.address.displayLabel[0] }} to {{ outwardDestination.address.displayLabel[0] }}. Accept or decline the request in 'My Messages' on {{api_env('PUSH_PLATFORM_NAME')}}.
+{% else %}
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} offers a reccurent carpool from {{ outwardOrigin.address.displayLabel[0] }} to {{ outwardDestination.address.displayLabel[0] }}. Accept or decline the request in 'My Messages' on {{api_env('PUSH_PLATFORM_NAME')}}.
+{% endif %}
+See you soon on {{api_env('PUSH_PLATFORM_NAME')}}
