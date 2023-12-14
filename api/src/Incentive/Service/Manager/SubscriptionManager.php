@@ -14,6 +14,7 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
+use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\CeeSubscriptions;
@@ -210,13 +211,11 @@ class SubscriptionManager extends MobConnectManager
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
 
         if (!is_null($shortDistanceSubscription)) {
-            $shortDistanceSubscription->setVersion();
             $this->_subscriptions->setShortDistanceSubscription($shortDistanceSubscription);
         }
 
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
         if (!is_null($longDistanceSubscription)) {
-            $longDistanceSubscription->setVersion();
             $this->_subscriptions->setLongDistanceSubscription($longDistanceSubscription);
         }
 
@@ -441,6 +440,25 @@ class SubscriptionManager extends MobConnectManager
     public function getTimestamps()
     {
         return $this->_timestampTokenManager->getCurrentTimestampTokensResponse();
+    }
+
+    public function processingVersionTransitionalPeriods()
+    {
+        /**
+         * @var SubscriptionDefinitionInterface[]
+         */
+        $definitions = array_merge(LongDistanceSubscription::getAvailableDefinitions(), ShortDistanceSubscription::getAvailableDefinitions());
+
+        foreach ($definitions as $definition) {
+            if (
+                !$definition::isDeadlineOver()
+                || $definition::isTransitionalPeriodOver()
+            ) {
+                continue;
+            }
+
+            $definition::manageTransition($this->_em, $this->_longDistanceSubscriptionRepository);
+        }
     }
 
     private function _computeShortDistance()

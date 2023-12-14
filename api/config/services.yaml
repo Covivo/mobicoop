@@ -905,6 +905,10 @@ services:
     tags:
       - { name: "console.command", command: "app:carpool:proof-send-history" }
 
+  App\Carpool\Command\VersionTransitionalPeriodCommand:
+    tags:
+      - { name: "console.command", command: app:incentive:subscription-transitional-period" }
+
   App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
       $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"

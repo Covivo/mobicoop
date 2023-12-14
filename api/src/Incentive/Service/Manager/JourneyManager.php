@@ -355,8 +355,6 @@ class JourneyManager extends MobConnectManager
             $subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
         }
 
-        $subscription->setVersion();
-
         $this->_em->flush();
     }
 
@@ -560,8 +558,6 @@ class JourneyManager extends MobConnectManager
             $this->getCarpoolersNumber($this->_currentCarpoolItem->getAsk()),
             $this->getAddressesLocality($this->_currentCarpoolItem)
         );
-
-        $this->_currentSubscription->setVersion();
 
         $this->_em->flush();
     }

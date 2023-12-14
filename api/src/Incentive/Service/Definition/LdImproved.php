@@ -7,6 +7,8 @@ namespace App\Incentive\Service\Definition;
  */
 class LdImproved extends SubscriptionDefinition
 {
+    protected const VERSION = 1;
+
     protected const DEADLINE = '2024-01-01 00:00:00';
 
     protected const MAXIMUM_JOURNEY_NUMBER = 1;

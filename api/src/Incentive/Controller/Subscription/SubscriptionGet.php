@@ -23,7 +23,7 @@ abstract class SubscriptionGet
         $this->_subscriptionManager = $subscriptionManager;
     }
 
-    protected function getMobConnectSubscriptionVersion()
+    protected function getMobConnectSubscription()
     {
         return $this->_subscriptionManager->getMobConnectSubscription($this->_currentSubscription);
     }

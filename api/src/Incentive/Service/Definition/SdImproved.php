@@ -7,6 +7,8 @@ namespace App\Incentive\Service\Definition;
  */
 class SdImproved extends SubscriptionDefinition
 {
+    protected const VERSION = 0;
+
     protected const MAXIMUM_JOURNEY_NUMBER = 1;
 
     public static function isReady(): bool

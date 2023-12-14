@@ -16,6 +16,6 @@ class SdSubscriptionGet extends SubscriptionGet
     {
         $this->_currentSubscription = $subscription;
 
-        return $this->getMobConnectSubscriptionVersion();
+        return $this->getMobConnectSubscription();
     }
 }

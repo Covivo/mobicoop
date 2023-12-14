@@ -190,10 +190,7 @@ class ShortDistanceSubscription extends Subscription
      *
      * @var int
      *
-     * @ORM\Column(
-     *      type="smallint",
-     *      nullable=true
-     * )
+     * @ORM\Column(type="smallint")
      *
      * @Groups({"readSubscription"})
      */
@@ -391,6 +388,7 @@ class ShortDistanceSubscription extends Subscription
         $this->setTelephone($user->getTelephone());
         $this->setEmail($user->getEmail());
 
+        $this->setVersion($subscriptionDefinition->getVersion());
         $this->setMaximumJourneysNumber($subscriptionDefinition->getMaximumJourneysNumber());
         $this->setValidityPeriodDuration($subscriptionDefinition->getValidityPeriodDuration());
     }

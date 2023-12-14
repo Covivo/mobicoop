@@ -253,14 +253,6 @@ abstract class Subscription implements SubscriptionInterface
     }
 
     /**
-     * Get the subscription version.
-     */
-    public function getVersion(): ?int
-    {
-        return $this->version;
-    }
-
-    /**
      * Set the long distance EEC incentive proof timestamp token.
      *
      * @param string $incentiveProofTimestampToken the long distance EEC incentive proof timestamp token
@@ -333,16 +325,19 @@ abstract class Subscription implements SubscriptionInterface
     }
 
     /**
-     * Set the subscription version.
-     * TODO - Tester la fonction.
+     * Get the subscription version.
      */
-    public function setVersion(): self
+    public function getVersion(): int
     {
-        if (is_null($this->getVersion()) || SubscriptionVersion::EEC_VERSION_IMPROVED !== $this->getVersion()) {
-            $version = new SubscriptionVersion($this);
+        return $this->version;
+    }
 
-            $this->version = $version->getVersion();
-        }
+    /**
+     * Set the subscription version.
+     */
+    public function setVersion(int $version): self
+    {
+        $this->version = $version;
 
         return $this;
     }
