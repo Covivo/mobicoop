@@ -450,10 +450,7 @@ class SubscriptionManager extends MobConnectManager
         $definitions = array_merge(LongDistanceSubscription::getAvailableDefinitions(), ShortDistanceSubscription::getAvailableDefinitions());
 
         foreach ($definitions as $definition) {
-            if (
-                !$definition::isDeadlineOver()
-                || $definition::isTransitionalPeriodOver()
-            ) {
+            if (!$definition::isDeadlineOver()) {
                 continue;
             }
 
