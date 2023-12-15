@@ -1059,8 +1059,8 @@ class LongDistanceSubscription extends Subscription
     public static function getAvailableDefinitions(): array
     {
         return [
-            LdStandard::class,
             LdImproved::class,
+            LdStandard::class,
         ];
     }
 }

@@ -3,14 +3,16 @@
 namespace App\Incentive\Service\Definition;
 
 /**
- * Definition of a subscription to a standard short distance form as validated by the French government.
+ * Definition of short distance subscription improved by Mobicoop.
  */
 class SdStandard extends SubscriptionDefinition
 {
-    protected const MAXIMUM_JOURNEY_NUMBER = 10;
+    protected const VERSION = 1;
+
+    protected const MAXIMUM_JOURNEY_NUMBER = 1;
 
     public static function isReady(): bool
     {
-        return true;
+        return false;
     }
 }
