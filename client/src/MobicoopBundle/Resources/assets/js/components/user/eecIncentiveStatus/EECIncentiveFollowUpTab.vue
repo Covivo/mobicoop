@@ -12,24 +12,63 @@
         >
           {{ $t('followupTab.subtitle') }}
         </h2>
-
-        <v-tabs
-          v-model="tabs.tab"
-          grow
-          background-color="transparent"
-        >
-          <v-tab
-            v-for="title in tabs.titles"
-            :key="title"
+        <div v-if="isTabDisplayAvailable">
+          <v-tabs
+            v-model="tabs.tab"
+            grow
+            background-color="transparent"
           >
-            {{ title }}
-          </v-tab>
-        </v-tabs>
-        <v-tabs-items
-          v-model="tabs.tab"
-          class="transparent-background"
-        >
-          <v-tab-item>
+            <v-tab
+              v-for="title in tabs.titles"
+              :key="title"
+            >
+              {{ title }}
+            </v-tab>
+          </v-tabs>
+          <v-tabs-items
+            v-model="tabs.tab"
+            class="transparent-background"
+          >
+            <v-tab-item>
+              <EECFollowUpStandardIncentive
+                v-if="isStandardVersion('SD')"
+                type="SD"
+                :subscription="eecSubscriptions.shortDistanceSubscription"
+                :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
+                :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
+                :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
+              />
+              <EECFollowUpImprovedIncentive
+                v-else
+                type="SD"
+                :subscription="eecSubscriptions.shortDistanceSubscription"
+                :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
+                :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
+                :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
+              />
+            </v-tab-item>
+            <v-tab-item>
+              <EECFollowUpStandardIncentive
+                v-if="isStandardVersion('LD')"
+                type="LD"
+                :subscription="eecSubscriptions.longDistanceSubscription"
+                :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
+                :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
+                :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
+              />
+              <EECFollowUpImprovedIncentive
+                v-else
+                type="LD"
+                :subscription="eecSubscriptions.longDistanceSubscription"
+                :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
+                :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
+                :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
+              />
+            </v-tab-item>
+          </v-tabs-items>
+        </div>
+        <div v-else>
+          <div v-if="isSdAvailable">
             <EECFollowUpStandardIncentive
               v-if="isStandardVersion('SD')"
               type="SD"
@@ -46,8 +85,8 @@
               :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
               :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
             />
-          </v-tab-item>
-          <v-tab-item>
+          </div>
+          <div v-else-if="isLdAvailable">
             <EECFollowUpStandardIncentive
               v-if="isStandardVersion('LD')"
               type="LD"
@@ -64,8 +103,8 @@
               :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
               :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
             />
-          </v-tab-item>
-        </v-tabs-items>
+          </div>
+        </div>
       </v-card-text>
     </v-card>
   </div>
@@ -103,6 +142,10 @@ export default {
     }
   },
   props: {
+    eecInstance: {
+      type: Object,
+      default: () => ({})
+    },
     eecSubscriptions: {
       type: Object,
       default: () => ({})
@@ -118,6 +161,19 @@ export default {
         ],
         content: []
       }
+    }
+  },
+  computed: {
+    isTabDisplayAvailable() {
+      return this.isLdAvailable && this.isSdAvailable
+      || (!this.isLdAvailable && this.eecSubscriptions.longDistanceSubscription)
+      || (!this.isSdAvailable && this.eecSubscriptions.shortDistanceSubscription);
+    },
+    isLdAvailable() {
+      return this.eecInstance.ldAvailable;
+    },
+    isSdAvailable() {
+      return this.eecInstance.sdAvailable;
     }
   },
   methods:{

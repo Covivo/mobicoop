@@ -1962,6 +1962,13 @@ gratuity_campaign_as_notified:
 # Incentive routes #
 #######################
 
+eec_instance:
+  path:
+    fr: /eec/instance
+    en: /eec/instance
+    nl: /eec/instance
+  controller: Mobicoop\Bundle\MobicoopBundle\Eec\Controller\EecInstanceController::getEecInstance
+
 my_cee_subscriptions:
   path:
     fr: /getMyCeeSubscriptions

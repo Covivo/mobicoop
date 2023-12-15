@@ -300,6 +300,11 @@ services:
   Mobicoop\Bundle\MobicoopBundle\Territory\Service\:
     resource: "@MobicoopBundle/Territory/Service/*"
 
+  # EEC
+  Mobicoop\Bundle\MobicoopBundle\Eec\Controller\:
+    resource: "@MobicoopBundle/Eec/Controller/*"
+    tags: ["controller.service_arguments"]
+
   # Assistive devices
   Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\:
     resource: "@MobicoopBundle/Incentive/Controller/*"

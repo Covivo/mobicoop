@@ -65,6 +65,7 @@
       />
       <EECIncentiveFollowUpTab
         v-else
+        :eec-instance="eecInstance"
         :eec-subscriptions="eecSubscriptions"
       />
     </div>
@@ -98,6 +99,10 @@ export default {
     EECIncentiveFollowUpTab,
   },
   props: {
+    eecInstance: {
+      type: Object,
+      default: () => ({})
+    },
     eecSubscriptions: {
       type: Object,
       default: () => ({})
