@@ -30,15 +30,15 @@
             class="transparent-background"
           >
             <v-tab-item>
-              <EECFollowUpStandardIncentive
-                v-if="isStandardVersion('SD')"
+              <EECFollowUpImprovedIncentive
+                v-if="isImprovedVersion('SD')"
                 type="SD"
                 :subscription="eecSubscriptions.shortDistanceSubscription"
                 :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
               />
-              <EECFollowUpImprovedIncentive
+              <EECFollowUpStandardIncentive
                 v-else
                 type="SD"
                 :subscription="eecSubscriptions.shortDistanceSubscription"
@@ -48,15 +48,15 @@
               />
             </v-tab-item>
             <v-tab-item>
-              <EECFollowUpStandardIncentive
-                v-if="isStandardVersion('LD')"
+              <EECFollowUpImprovedIncentive
+                v-if="isImprovedVersion('LD')"
                 type="LD"
                 :subscription="eecSubscriptions.longDistanceSubscription"
                 :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
               />
-              <EECFollowUpImprovedIncentive
+              <EECFollowUpStandardIncentive
                 v-else
                 type="LD"
                 :subscription="eecSubscriptions.longDistanceSubscription"
@@ -69,15 +69,15 @@
         </div>
         <div v-else>
           <div v-if="isSdAvailable">
-            <EECFollowUpStandardIncentive
-              v-if="isStandardVersion('SD')"
+            <EECFollowUpImprovedIncentive
+              v-if="isImprovedVersion('SD')"
               type="SD"
               :subscription="eecSubscriptions.shortDistanceSubscription"
               :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
               :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
               :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
             />
-            <EECFollowUpImprovedIncentive
+            <EECFollowUpStandardIncentive
               v-else
               type="SD"
               :subscription="eecSubscriptions.shortDistanceSubscription"
@@ -87,15 +87,15 @@
             />
           </div>
           <div v-else-if="isLdAvailable">
-            <EECFollowUpStandardIncentive
-              v-if="isStandardVersion('LD')"
+            <EECFollowUpImprovedIncentive
+              v-if="isImprovedVersion('LD')"
               type="LD"
               :subscription="eecSubscriptions.longDistanceSubscription"
               :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
               :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
               :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
             />
-            <EECFollowUpImprovedIncentive
+            <EECFollowUpStandardIncentive
               v-else
               type="LD"
               :subscription="eecSubscriptions.longDistanceSubscription"
@@ -116,7 +116,7 @@ import { merge } from "lodash";
 import EECFollowUpStandardIncentive from '@components/user/eecIncentiveStatus/EECFollowUpStandardIncentive';
 import EECFollowUpImprovedIncentive from '@components/user/eecIncentiveStatus/EECFollowUpImprovedIncentive';
 
-import { eec_standard_version } from "@utils/constants";
+import { eec_improved_version } from "@utils/constants";
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
@@ -177,14 +177,14 @@ export default {
     }
   },
   methods:{
-    isStandardVersion(type) {
+    isImprovedVersion(type) {
       if (this.eecSubscriptions && this.eecSubscriptions.longDistanceSubscription && this.eecSubscriptions.shortDistanceSubscription) {
         switch (type) {
         case 'LD':
-          return eec_standard_version === this.eecSubscriptions.longDistanceSubscription.version;
+          return eec_improved_version === this.eecSubscriptions.longDistanceSubscription.version;
 
         case 'SD':
-          return eec_standard_version === this.eecSubscriptions.shortDistanceSubscription.version;
+          return eec_improved_version === this.eecSubscriptions.shortDistanceSubscription.version;
         }
       }
 
