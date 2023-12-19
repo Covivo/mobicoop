@@ -23,28 +23,28 @@ install:
 	$(info $(pink)Make ($(os)): Installing monorepo root deps...)
 	$(info $(pink)------------------------------------------------------$(reset))
 
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm install
+	@docker compose -f docker-compose-builder-$(os).yml run --rm install
 	@make -s install-deps
 
 install-deps:
 	$(info $(green)------------------------------------------------------)
 	$(info $(green)Make ($(os)): Installing api-client deps...)
 	$(info $(green)------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm install-all
+	@docker compose -f docker-compose-builder-$(os).yml run --rm install-all
 
 fixtures:
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Make ($(os)): Generating fixtures...)
 	$(info $(pink)------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm fixtures
+	@docker compose -f docker-compose-builder-$(os).yml run --rm fixtures
 
 start:
 	$(info Make ($(os)): Starting Mobicoop-platform environment containers.)
-	@docker-compose -f docker-compose-$(os).yml up -d
+	@docker compose -f docker-compose-$(os).yml up -d
 
 stop:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
-	@docker-compose -f docker-compose-$(os).yml stop
+	@docker compose -f docker-compose-$(os).yml stop
 
 status:
 	@docker ps -a | grep mobicoop_platform
@@ -63,11 +63,11 @@ reload:
 
 remove:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
-	@docker-compose -f docker-compose-$(os).yml rm -f
+	@docker compose -f docker-compose-$(os).yml rm -f
 
 clean:
 	@make -s stop
-	@docker-compose -f docker-compose-$(os).yml down -v --rmi all
+	@docker compose -f docker-compose-$(os).yml down -v --rmi all
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Drop all deps + containers + volumes)
 	$(info $(pink)------------------------------------------------------$(reset))
@@ -80,7 +80,7 @@ migrate:
 	$(info $(builder)------------------------------------------------------)
 	$(info $(builder)Make ($(os)): Generating fixtures...)
 	$(info $(builder)------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm fixtures
+	@docker compose -f docker-compose-builder-$(os).yml run --rm fixtures
 
 update:
 	@make -s stop
@@ -101,37 +101,37 @@ db-migrate:
 	$(info $(builder)------------------------------------------------------)
 	$(info $(builder)Make ($(os)): DB Migration...)
 	$(info $(builder)------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-migrate
+	@docker compose -f docker-compose-builder-$(os).yml run --rm db-migrate
 
 db-diff:
 	$(info $(builder)------------------------------------------------------)
 	$(info $(builder)Make ($(os)): DB Diff...)
 	$(info $(builder)------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-diff
+	@docker compose -f docker-compose-builder-$(os).yml run --rm db-diff
 
 db-fixtures-basic:
 	$(info $(builder)------------------------------------------------------)
 	$(info $(builder)Make ($(os)): DB Basic Fixtures...)
 	$(info $(builder)------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-fixtures-basic
+	@docker compose -f docker-compose-builder-$(os).yml run --rm db-fixtures-basic
 
 db-fixtures-solidary:
 	$(info $(builder)------------------------------------------------------)
 	$(info $(builder)Make ($(os)): DB Solidary Fixtures...)
 	$(info $(builder)------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-fixtures-solidary
+	@docker compose -f docker-compose-builder-$(os).yml run --rm db-fixtures-solidary
 
 app-geography-territory-link-batch:
 	$(info $(builder)-----------------------------------------------------------)
 	$(info $(builder)Make ($(os)): Command app:geography:territory-link-batch...)
 	$(info $(builder)-----------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm app-geography-territory-link-batch
+	@docker compose -f docker-compose-builder-$(os).yml run --rm app-geography-territory-link-batch
 
 app-carpool-proof-batch:
 	$(info $(builder)------------------------------------------------)
 	$(info $(builder)Make ($(os)): Command app:carpool:proof-batch...)
 	$(info $(builder)------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm app-carpool-proof-batch
+	@docker compose -f docker-compose-builder-$(os).yml run --rm app-carpool-proof-batch
 
 logs:
 	$(info $(green)------------------------------------------------------)
