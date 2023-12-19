@@ -803,7 +803,7 @@ class LongDistanceSubscription extends Subscription
         return
             !empty($this->getJourneys())
             && !is_null($this->getExpirationDate())
-            && $this->getExpirationDate() < $now->sub(new \DateInterval('P'.self::VALIDITY_PERIOD.'M'));
+            && $this->getExpirationDate() < $now->sub(new \DateInterval('P'.$this->getValidityPeriodDuration().'M'));
     }
 
     /**
