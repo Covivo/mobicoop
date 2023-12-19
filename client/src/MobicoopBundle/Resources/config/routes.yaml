@@ -1319,6 +1319,14 @@ solidary_carpool:
     nl: /solidary-carpool
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpool
 
+# display solidary carpool page
+solidary_carpool_alt:
+  path:
+    fr: /covoiturage-solidaire-alt
+    en: /solidary-carpool-alt
+    nl: /solidary-carpool-alt
+  controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpoolAlt
+
 # display become a partner page
 become_partner:
   path:
