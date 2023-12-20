@@ -266,7 +266,7 @@ services:
       $signInSsoOriented: "%env(bool:SIGNIN_SSO_ORIENTED)%"
       $ceeDisplay: "%env(bool:CEE_DISPLAY)%"
       $gendersList: "%env(json:SIGNUP_GENDERS_LIST)%"
-      $specificTerms: "env(bool:SIGNUP_SPECIFIC_TERMS)"
+      $specificTerms: "%env(bool:SIGNUP_SPECIFIC_TERMS)%"
     tags: ["controller.service_arguments"]
   Mobicoop\Bundle\MobicoopBundle\User\Service\:
     resource: "@MobicoopBundle/User/Service/*"
