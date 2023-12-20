@@ -144,7 +144,8 @@ class PointSearcher
             $points = array_merge($points, $provider->search(str_replace(['"', "'"], ' ', $search), $user));
         }
 
-        return $this->_fixer->fix($points);
+        // return $this->_fixer->fix($points);
+        return $points;
     }
 
     public function reverse(float $lon, float $lat): array
