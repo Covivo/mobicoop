@@ -54,18 +54,19 @@
       </v-card-text>
     </v-card>
     <div v-else>
+      <EECIncentiveFollowUpTab
+        v-if="isTabView"
+        :eec-instance="eecInstance"
+        :eec-subscriptions="eecSubscriptions"
+      />
       <EECIncentiveFollowUp
-        v-if="is2023"
+        v-else
         :long-distance-subscriptions="eecSubscriptions.longDistanceSubscriptions"
         :short-distance-subscriptions="eecSubscriptions.shortDistanceSubscriptions"
         :long-distance-subscription-expiration-date="eecSubscriptions.longDistanceSubscriptionExpirationDate"
         :short-distance-subscription-expiration-date="eecSubscriptions.shortDistanceSubscriptionExpirationDate"
         :pending-proofs="eecSubscriptions.pendingProofs"
         :refused-proofs="eecSubscriptions.refusedProofs"
-      />
-      <EECIncentiveFollowUpTab
-        v-else
-        :eec-subscriptions="eecSubscriptions"
       />
     </div>
   </div>
@@ -98,6 +99,10 @@ export default {
     EECIncentiveFollowUpTab,
   },
   props: {
+    eecInstance: {
+      type: Object,
+      default: () => ({})
+    },
     eecSubscriptions: {
       type: Object,
       default: () => ({})
@@ -110,10 +115,8 @@ export default {
     }
   },
   computed:{
-    is2023() {
-      const now = new Date();
-
-      return 2023 === now.getFullYear();
+    isTabView() {
+      return this.eecInstance.tabView;
     },
     hasBankCoordinates(){
       if(!this.bankCoordinates || this.bankCoordinates.status == 0){

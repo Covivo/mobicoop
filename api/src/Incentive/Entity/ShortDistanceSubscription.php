@@ -977,8 +977,8 @@ class ShortDistanceSubscription extends Subscription
     public static function getAvailableDefinitions(): array
     {
         return [
-            SdStandard::class,
             SdImproved::class,
+            SdStandard::class,
         ];
     }
 }

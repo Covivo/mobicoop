@@ -1,4 +1,5 @@
 {
+  "//expirationDate": "string - The date the subscription is due to expire",
   "expirationDate": null,
   "mobConnect": {
     "client_id": null,
@@ -8,12 +9,18 @@
   },
   "subscriptions": {
     "ld": {
+      "//key": "string - The LD subscription key",
       "key": null,
-      "expirationDate": null
+      "//expirationDate": "string - The date the subscription is due to expire",
+      "expirationDate": "2023-12-31"
     },
     "sd": {
+      "//key": "string - The SD subscription key",
       "key": null,
+      "//expirationDate": "string - The date the subscription is due to expire",
       "expirationDate": null
     }
-  }
+  },
+  "//tabView": "null|bool - Determines whether trip tracking is displayed, in tab form or not",
+  "tabView": null
 }

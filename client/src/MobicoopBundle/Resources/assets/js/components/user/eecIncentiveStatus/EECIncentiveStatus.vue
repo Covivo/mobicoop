@@ -30,6 +30,7 @@
       />
       <EECIncentiveAdditionalInformations
         v-else
+        :eec-instance="eecInstance"
         :eec-subscriptions="subscriptions"
         @changeTab="changeTab"
       />
@@ -96,6 +97,7 @@ export default {
   data() {
     return {
       subscriptions: null,
+      eecInstance: null,
       loading: false,
       snackbar: {
         color: 'error',
@@ -113,9 +115,20 @@ export default {
     }
   },
   mounted(){
+    this.getCeeInstance();
     this.getMyCeeSubscriptions();
   },
   methods:{
+    getCeeInstance(){
+      this.loading = true;
+      maxios
+        .get(this.$t('routes.getEecInstance'))
+        .then(response => {
+          this.eecInstance = response.data;
+          this.loading = false;
+        })
+        .catch(error => {});
+    },
     getMyCeeSubscriptions(){
       this.loading = true;
       maxios.get(this.$t("routes.getMyCeeSubscriptions"))

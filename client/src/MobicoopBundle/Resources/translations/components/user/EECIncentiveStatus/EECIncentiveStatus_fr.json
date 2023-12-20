@@ -22,6 +22,7 @@
   "service": "mobConnect",
   "specificPath": "user/sso",
   "routes": {
+    "getEecInstance": "/eec/instance",
     "getMyCeeSubscriptions": "/getMyCeeSubscriptions",
     "getMyEecEligibility": "/getMyEecEligibility"
   },
