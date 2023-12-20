@@ -9,11 +9,12 @@
   "subscriptions": {
     "ld": {
       "key": null,
-      "expirationDate": null
+      "expirationDate": "2023-12-31"
     },
     "sd": {
       "key": null,
       "expirationDate": null
     }
-  }
+  },
+  "tabView": true
 }

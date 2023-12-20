@@ -100,6 +100,13 @@ class EecInstance
     private $sdKey;
 
     /**
+     * @var ?bool
+     *
+     * @Groups("readEecInstance")
+     */
+    private $tabView;
+
+    /**
      * @var array
      */
     private $configuration;
@@ -113,6 +120,7 @@ class EecInstance
         $this->setLdExpirationDate();
         $this->setSdExpirationDate();
         $this->setAvailable($this->_isServiceOpened());
+        $this->setTabView();
     }
 
     public function getId(): int
@@ -254,6 +262,18 @@ class EecInstance
     {
         $this->setLdKey($this->configuration['subscriptions']['ld']['key']);
         $this->setSdKey($this->configuration['subscriptions']['sd']['key']);
+
+        return $this;
+    }
+
+    public function isTabView(): bool
+    {
+        return $this->tabView;
+    }
+
+    private function setTabView(): self
+    {
+        $this->tabView = is_null($this->configuration['tabView']) ? false : $this->configuration['tabView'];
 
         return $this;
     }
