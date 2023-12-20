@@ -456,7 +456,10 @@ class JourneyManager extends MobConnectManager
             is_null($this->_currentSubscription)
             || $this->_currentSubscription->hasExpired()
             || is_null($this->_currentCarpoolItem->getCarpoolProof())
-            || $this->carpoolItemAlreadyTreated()
+            || (
+                false === $this->_pushOnlyMode
+                && $this->carpoolItemAlreadyTreated()
+            )
         ) {
             return;
         }
