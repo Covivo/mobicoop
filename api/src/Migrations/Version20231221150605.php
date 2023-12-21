@@ -20,7 +20,7 @@ final class Version20231221150605 extends AbstractMigration
         $this->addSql('ALTER TABLE carpool_proof ADD validated_date DATETIME DEFAULT NULL');
 
         // Update validated_date base on updated_date
-        $this->addSql('UPDATE `carpool_proof` SET validated_date = updated_date where type in (\'A\',\'B\',\'C\')');
+        $this->addSql('UPDATE `carpool_proof` SET validated_date = updated_date where type in (\'A\',\'B\',\'C\') and status = 8');
     }
 
     public function down(Schema $schema): void
