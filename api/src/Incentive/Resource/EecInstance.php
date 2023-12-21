@@ -273,7 +273,11 @@ class EecInstance
 
     private function setTabView(): self
     {
-        $this->tabView = is_null($this->configuration['tabView']) ? false : $this->configuration['tabView'];
+        $this->tabView =
+            is_null($this->configuration)
+            || !isset($this->configuration['tabView'])
+            || is_null($this->configuration['tabView'])
+            ? false : $this->configuration['tabView'];
 
         return $this;
     }

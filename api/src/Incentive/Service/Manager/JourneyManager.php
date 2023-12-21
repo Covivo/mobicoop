@@ -278,15 +278,15 @@ class JourneyManager extends MobConnectManager
         // Use case for short distance journey
         $this->_loggerService->log('Step 17 - We start the processing process for a short distance trip.');
 
-        $subscription = $this->getDriver()->getShortDistanceSubscription();
+        $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
 
-        if (is_null($subscription) || $subscription->hasExpired()) {
+        if (is_null($this->_currentSubscription) || $this->_currentSubscription->hasExpired()) {
             return;
         }
 
-        $shortDistanceJourneysNumber = count($subscription->getJourneys());
+        $shortDistanceJourneysNumber = count($this->_currentSubscription->getJourneys());
 
-        $commitmentJourney = $subscription->getCommitmentProofJourney();
+        $commitmentJourney = $this->_currentSubscription->getCommitmentProofJourney();
 
         // There is not commitment journey
         if (is_null($commitmentJourney)) {
@@ -303,7 +303,7 @@ class JourneyManager extends MobConnectManager
         if ($commitmentJourney->getCarpoolProof()->getId() === $carpoolProof->getId()) {
             // The journey is not EEC compliant : we are removing it from short distance trips and resetting the subscription
             if (!$commitmentJourney->isEECCompliant()) {
-                $this->_resetSubscription($subscription, $commitmentJourney);
+                $this->_resetSubscription();
 
                 return;
             }
@@ -320,11 +320,11 @@ class JourneyManager extends MobConnectManager
                 return;
             }
 
-            $subscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
+            $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
 
-            $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
+            $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
-            $subscription->setExpirationDate($this->getExpirationDate($subscription->getValidityPeriodDuration()));
+            $this->_currentSubscription->setExpirationDate($this->getExpirationDate($this->_currentSubscription->getValidityPeriodDuration()));
 
             $commitmentJourney = $this->_updateShortDistanceJourney($commitmentJourney, $carpoolProof);
         } else {
@@ -335,7 +335,7 @@ class JourneyManager extends MobConnectManager
             //    - The journey origin and/or destination is the reference country
             if (
                 $this->_pushOnlyMode
-                || $subscription->getMaximumJourneysNumber() <= $shortDistanceJourneysNumber
+                || $this->_currentSubscription->getMaximumJourneysNumber() <= $shortDistanceJourneysNumber
                 || is_null($carpoolProof->getAsk())
                 || is_null($carpoolProof->getAsk()->getMatching())
                 || $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
@@ -348,11 +348,11 @@ class JourneyManager extends MobConnectManager
             $this->_loggerService->log('Step 17 - Added a normal journey');
             $journey = new ShortDistanceJourney($carpoolProof);
             $journey = $this->_updateShortDistanceJourney($journey, $carpoolProof);
-            $subscription->addShortDistanceJourney($journey);
+            $this->_currentSubscription->addShortDistanceJourney($journey);
         }
 
-        if ($subscription->getMaximumJourneysNumber() === $shortDistanceJourneysNumber) {
-            $subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
+        if ($this->_currentSubscription->getMaximumJourneysNumber() === $shortDistanceJourneysNumber) {
+            $this->_currentSubscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
         }
 
         $this->_em->flush();
@@ -597,14 +597,9 @@ class JourneyManager extends MobConnectManager
         $this->_em->flush();
     }
 
-    /**
-     * @param LongDistanceJourney|ShortDistanceJourney $journey
-     */
-    private function _resetSubscription($journey = null)
+    private function _resetSubscription()
     {
         $this->_loggerService->log('Step 17 - The commitment journey is invalid. We remove it from subscription');
-
-        $this->_removeMobJourneyReference();
 
         $this->_currentSubscription = $this->_currentSubscription->reset();
 
@@ -630,18 +625,11 @@ class JourneyManager extends MobConnectManager
     private function _invalidateJourney($journey)
     {
         if ($this->_currentSubscription->isCommitmentJourney($journey)) {
-            return $this->_resetSubscription($this->_currentSubscription, $journey);
+            return $this->_resetSubscription();
         }
 
         $this->_currentSubscription->removeJourney($journey);
 
         $this->_em->flush();
-    }
-
-    private function _removeMobJourneyReference()
-    {
-        if ($this->hasSubscriptionCommited($this->_currentSubscription->getSubscriptionId())) {
-            // TODO: Remove subscription commitment (journey and token) on moB API
-        }
     }
 }
