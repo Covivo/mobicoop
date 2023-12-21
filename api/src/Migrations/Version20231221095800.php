@@ -29,7 +29,8 @@ final class Version20231221095800 extends AbstractMigration
         (319, 318),
         (319, 308),
         (320, 319),
-        (320, 304)
+        (320, 304),
+        (1, 320)
         ');
     }
 
