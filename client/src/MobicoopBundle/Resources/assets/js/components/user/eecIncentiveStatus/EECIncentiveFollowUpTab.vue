@@ -12,7 +12,7 @@
         >
           {{ $t('followupTab.subtitle') }}
         </h2>
-        <div v-if="isTabDisplayAvailable">
+        <div v-if="isTabView">
           <v-tabs
             v-model="tabs.tab"
             grow
@@ -164,10 +164,10 @@ export default {
     }
   },
   computed: {
-    isTabDisplayAvailable() {
-      return this.isLdAvailable && this.isSdAvailable
-      || (!this.isLdAvailable && this.eecSubscriptions.longDistanceSubscription)
-      || (!this.isSdAvailable && this.eecSubscriptions.shortDistanceSubscription);
+    isTabView() {
+      return this.isLdAvailable && this.isSdAvailable                                   // The 2 subscriptions are available
+      || (!this.isLdAvailable && this.eecSubscriptions.longDistanceSubscription)        // The LD subscription is not avavailable but the user has susbcribed to
+      || (!this.isSdAvailable && this.eecSubscriptions.shortDistanceSubscription);      // The SD subscription is not avavailable but the user has susbcribed to
     },
     isLdAvailable() {
       return this.eecInstance.ldAvailable;
@@ -178,13 +178,13 @@ export default {
   },
   methods:{
     isImprovedVersion(type) {
-      if (this.eecSubscriptions && this.eecSubscriptions.longDistanceSubscription && this.eecSubscriptions.shortDistanceSubscription) {
+      if (this.eecSubscriptions) {
         switch (type) {
         case 'LD':
-          return eec_improved_version === this.eecSubscriptions.longDistanceSubscription.version;
+          return this.eecSubscriptions.longDistanceSubscription && eec_improved_version === this.eecSubscriptions.longDistanceSubscription.version;
 
         case 'SD':
-          return eec_improved_version === this.eecSubscriptions.shortDistanceSubscription.version;
+          return this.eecSubscriptions.shortDistanceSubscription && eec_improved_version === this.eecSubscriptions.shortDistanceSubscription.version;
         }
       }
 
