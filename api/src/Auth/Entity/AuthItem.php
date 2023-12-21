@@ -107,6 +107,9 @@ class AuthItem
     public const ROLE_SOLIDARY_OPERATOR = 10;
     public const ROLE_STRUCTURE_MANAGE = 195;
     public const ROLE_STRUCTURE_UPDATE_OPERATOR = 276;
+    public const HITCHHICKING_WATCHER = 318;
+    public const HITCHHICKING_MANAGER = 319;
+    public const HITCHHICKING_ADMINISTRATOR = 320;
 
     /**
      * @var int the id of this item
