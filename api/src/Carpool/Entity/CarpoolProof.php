@@ -272,6 +272,13 @@ class CarpoolProof
      */
     private $mobConnectShortDistanceJourney;
 
+    /**
+     * @var \DateTimeInterface validated date by RPC (status = ok)
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $validatedDate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -541,6 +548,18 @@ class CarpoolProof
     public function setDestinationDriverAddress(?Address $destinationDriverAddress): self
     {
         $this->destinationDriverAddress = $destinationDriverAddress;
+
+        return $this;
+    }
+
+    public function getValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->validatedDate;
+    }
+
+    public function setValidatedDate(\DateTimeInterface $validatedDate): self
+    {
+        $this->validatedDate = $validatedDate;
 
         return $this;
     }
