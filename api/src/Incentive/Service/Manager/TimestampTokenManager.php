@@ -26,6 +26,12 @@ class TimestampTokenManager extends MobConnectManager
         self::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE,
     ];
 
+    public const TIMESTAMP_TOKEN_TYPES = [
+        self::TIMESTAMP_TOKEN_TYPE_INCENTIVE => 'subscription',
+        self::TIMESTAMP_TOKEN_TYPE_COMMITMENT => 'commitment',
+        self::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE => 'honor certificate',
+    ];
+
     private const DEFAULT_GETTER_PREFIX = 'get';
     private const DEFAULT_SETTER_PREFIX = 'set';
     private const DEFAULT_TOKEN_SUFFIX = 'ProofTimestampToken';
@@ -149,6 +155,11 @@ class TimestampTokenManager extends MobConnectManager
         return $this->_currentTimestampTokensResponse;
     }
 
+    public function getTokenTypeAsString(int $tokenType): string
+    {
+        return self::TIMESTAMP_TOKEN_TYPES[$tokenType];
+    }
+
     private function _isMissingTimestampToken(int $tokenType): bool
     {
         switch ($tokenType) {
@@ -226,6 +237,14 @@ class TimestampTokenManager extends MobConnectManager
 
         if (!is_null($this->_currentLogType)) {
             $this->_currentSubscription->addLog($this->_currentTimestampTokensResponse, $this->_currentLogType);
+        }
+
+        if (is_null($this->_currentTimestampTokensResponse->getIncentiveProofTimestampToken())) {
+            $this->_loggerService->log(
+                'We were unable to determine the '.$this->getTokenTypeAsString($tokenType).' token for the subscription '.$this->_currentSubscription->getId().' ('.$this->_currentSubscription->getType().').',
+                'ERROR',
+                true
+            );
         }
 
         if (!is_null($this->_currentTimestampTokensResponse->getIncentiveProofTimestampToken())) {

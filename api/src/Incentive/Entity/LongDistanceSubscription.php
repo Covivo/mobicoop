@@ -996,4 +996,9 @@ class LongDistanceSubscription
 
         return $this;
     }
+
+    public function getType(): string
+    {
+        return self::SUBSCRIPTION_TYPE;
+    }
 }
