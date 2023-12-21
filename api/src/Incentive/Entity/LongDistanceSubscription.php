@@ -897,6 +897,8 @@ class LongDistanceSubscription extends Subscription
                 $this->addLongDistanceJourney($commitmentProofJourney);
             }
         } else {
+            $this->getCommitmentProofJourney()->setCarpoolItem(null);
+            $this->getCommitmentProofJourney()->setCarpoolPayment(null);
             $this->removeJourney($this->getCommitmentProofJourney());
         }
 
