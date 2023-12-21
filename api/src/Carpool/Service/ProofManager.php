@@ -694,9 +694,6 @@ class ProofManager
 
                     case 'ok':
                         $proof->setStatus(CarpoolProof::STATUS_VALIDATED);
-                        if (is_null($proof->getValidatedDate())) {
-                            $proof->setValidatedDate(new \DateTime('now'));
-                        }
 
                         break;
 

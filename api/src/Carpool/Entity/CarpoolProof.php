@@ -292,6 +292,9 @@ class CarpoolProof
     public function setStatus(int $status): self
     {
         $this->status = $status;
+        if (self::STATUS_VALIDATED == $status && is_null($this->getValidatedDate())) {
+            $this->setValidatedDate(new \DateTime('now'));
+        }
 
         return $this;
     }
