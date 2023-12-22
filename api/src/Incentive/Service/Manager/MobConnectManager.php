@@ -8,6 +8,8 @@ use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\IncentiveResponse;
 use App\DataProvider\Entity\MobConnect\Response\IncentivesResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
@@ -16,6 +18,8 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
+use App\Incentive\Repository\ShortDistanceJourneyRepository;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
@@ -65,6 +69,16 @@ abstract class MobConnectManager
      * @var EntityManagerInterface
      */
     protected $_em;
+
+    /**
+     * @var LongDistanceJourneyRepository
+     */
+    protected $_longDistanceJourneyRepository;
+
+    /**
+     * @var ShortDistanceJourneyRepository
+     */
+    protected $_shortDistanceJourneyRepository;
 
     /**
      * @var LoggerService
@@ -167,6 +181,61 @@ abstract class MobConnectManager
         }
 
         return $this;
+    }
+
+    public function getCarpoolProofsFromCarpoolItem(CarpoolItem $carpoolItem): array
+    {
+        $ask = $carpoolItem->getAsk();
+        $driver = $carpoolItem->getCreditorUser();
+
+        return !is_null($ask)
+            ? array_values(array_filter($ask->getCarpoolProofs(), function ($carpoolProof) use ($driver) {
+                return $carpoolProof->getDriver()->getId() === $driver->getId();
+            }))
+            : [];
+    }
+
+    /**
+     * Returns the CEE journey, LD or SD, if the proof of carpooling matches it.
+     *
+     * @return null|LongDistanceJourney|ShortDistanceJourney
+     */
+    protected function _getEecJourneyFromCarpoolProof(CarpoolProof $carpoolProof)
+    {
+        $journey = $this->_getEecSdJourneyFromCarpoolProof($carpoolProof);
+
+        if (
+            is_null($journey)
+            && !is_null($carpoolProof->getCarpoolItem())
+        ) {
+            $journey = $this->_getEecLdJourneyFromCarpoolProof($carpoolProof);
+        }
+
+        return $journey;
+    }
+
+    protected function _getEecSdJourneyFromCarpoolProof(CarpoolProof $carpoolProof): ?ShortDistanceJourney
+    {
+        return $carpoolProof->getMobConnectShortDistanceJourney();
+    }
+
+    protected function _getEecLdJourneyFromCarpoolProof(CarpoolProof $carpoolProof): ?LongDistanceJourney
+    {
+        return $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal(
+            $carpoolProof->getCarpoolItem(),
+            $this->getDriverPassengerProposalForCarpoolItem($carpoolProof->getCarpoolItem(), self::DRIVER)
+        );
+    }
+
+    protected function hasRequestErrorReturned(MobConnectResponseInterface $response): bool
+    {
+        $result = in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
+
+        if (true === $result) {
+            $this->_loggerService->log('The mobConnect request returned an error: '.$response->getContent(), 'error', true);
+        }
+
+        return $result;
     }
 
     protected function isValidParameters(): bool
