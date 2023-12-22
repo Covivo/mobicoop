@@ -83,6 +83,7 @@ class ArticleController extends AbstractController
     public const MOREABOUT_ALT_2 = 44;
     public const MOREABOUT_ALT_3 = 45;
     public const REZO_POUCE = 46;
+    public const RPC = 47;
 
     /**
      * Display of the project page.
@@ -432,6 +433,11 @@ class ArticleController extends AbstractController
         return $this->showArticle($articleManager->getArticle(self::REZO_POUCE));
     }
 
+    public function showRPC(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::RPC));
+    }
+
     /**
      * Get the last external articles.
      */
@@ -488,7 +494,6 @@ class ArticleController extends AbstractController
     /**
      * Rss feeds list controller.
      *
-     * @param string         $context        The context
      * @param ArticleManager $articleManager The article manager
      *
      * @return JsonResponse
