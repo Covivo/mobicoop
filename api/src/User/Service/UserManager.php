@@ -1749,6 +1749,9 @@ class UserManager
                 $this->entityManager->persist($ssoAccount);
                 $this->entityManager->flush();
 
+                $event = new SsoAssociationEvent($user, $ssoUser);
+                $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
+
                 return $user;
             }
         }
