@@ -44,6 +44,9 @@ class AuthManager
             AuthItem::ROLE_ADMIN,
             AuthItem::ROLE_USER_REGISTERED_FULL,
             AuthItem::ROLE_MASS_MATCH,
+            AuthItem::HITCHHICKING_WATCHER,
+            AuthItem::HITCHHICKING_MANAGER,
+            AuthItem::HITCHHICKING_ADMINISTRATOR,
         ],
         AuthItem::ROLE_ADMIN => [
             AuthItem::ROLE_ADMIN,
