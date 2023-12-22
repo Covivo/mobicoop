@@ -944,7 +944,7 @@ class ShortDistanceSubscription extends Subscription
 
         $this->setCommitmentProofDate(null);
         $this->setCommitmentProofTimestampToken(null);
-        $this->setExpirationDate(null);                                 // Todo: Vérifer que cela est possible
+        $this->setExpirationDate(null);
         $this->setCommitmentProofTimestampSigningTime(null);
         $this->setHonourCertificate(null);
         $this->setHonorCertificateProofTimestampToken(null);
