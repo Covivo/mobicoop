@@ -107,7 +107,7 @@ class LongDistanceJourney extends Journey
     /**
      * The carpool payment associate with the journey.
      *
-     * @var CarpoolPayment
+     * @var null|CarpoolPayment
      *
      * @ORM\ManyToOne(targetEntity=CarpoolPayment::class)
      *
@@ -334,10 +334,8 @@ class LongDistanceJourney extends Journey
 
     /**
      * Set the carpool proof associate with the journey.
-     *
-     * @param CarpoolPayment $carpoolPayment the carpool proof associate with the journey
      */
-    public function setCarpoolPayment(CarpoolPayment $carpoolPayment): self
+    public function setCarpoolPayment(?CarpoolPayment $carpoolPayment): self
     {
         $this->carpoolPayment = $carpoolPayment;
 

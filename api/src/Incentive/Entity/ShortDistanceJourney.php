@@ -123,7 +123,7 @@ class ShortDistanceJourney extends Journey
     /**
      * The carpool proof associate with the journey.
      *
-     * @var CarpoolProof
+     * @var null|CarpoolProof
      *
      * @ORM\OneToOne(targetEntity=CarpoolProof::class, inversedBy="mobConnectShortDistanceJourney")
      *
@@ -373,17 +373,15 @@ class ShortDistanceJourney extends Journey
     /**
      * Get the carpool proof associate with the journey.
      */
-    public function getCarpoolProof(): CarpoolProof
+    public function getCarpoolProof(): ?CarpoolProof
     {
         return $this->carpoolProof;
     }
 
     /**
      * Set the carpool proof associate with the journey.
-     *
-     * @param CarpoolProof $carpoolProof the carpool proof associate with the journey
      */
-    public function setCarpoolProof(CarpoolProof $carpoolProof): self
+    public function setCarpoolProof(?CarpoolProof $carpoolProof): self
     {
         $this->carpoolProof = $carpoolProof;
 

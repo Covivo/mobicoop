@@ -885,6 +885,7 @@ class ShortDistanceSubscription extends Subscription
                 $this->addShortDistanceJourney($commitmentProofJourney);
             }
         } else {
+            $this->getCommitmentProofJourney()->setCarpoolProof(null);
             $this->removeJourney($this->getCommitmentProofJourney());
         }
 
