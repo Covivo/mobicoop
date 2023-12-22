@@ -155,7 +155,7 @@ yourInscriptionAtByTiers:
 wellTakenIntoAccount: "has been taken into account"
 clickHereToConfirm: "Please click on this link to confirm your email"
 orUseTheValidationCode: "Or use the validation code directly on the site"
-urlEmailValidation: "/user/registration/validation/"
+urlEmailValidation: "/user/signup/validation/"
 urlMobileEmailValidation: "/#/confirm-registration/"
 yourPasswordIs: "Your password is"
 yourPasswordHasBeenSendBySms: "Your password has been sent to you by text message."
