@@ -41,7 +41,7 @@ class GraphhopperProvider implements GeorouterInterface
 {
     private const NAME = 'GH';
     private const DIRECTION_RESOURCE = 'route';
-    private const MODE_CAR = 'CAR';
+    private const MODE_CAR = 'car';
     private const PROFILE_NO_TOLL = 'car_without_toll';
     private const LOCALE = 'fr-FR';
     private const WEIGHTING = 'fastest';
