@@ -29,24 +29,23 @@ case "${VERSION}" in
         ;;
 esac
 
-# check json files
-RDEX_CLIENTS_FILE="${ROOT}/api/config/rdex/clients.json"
-RDEX_OPERATOR_FILE="${ROOT}/api/config/rdex/operator.json"
-RDEX_PROVIDERS_FILE="${ROOT}/api/config/rdex/providers.json"
-PT_PROVIDERS_FILE="${ROOT}/api/config/publicTransport/providers.json"
-MODULES_FILE="${ROOT}/api/config/params/modules.json"
-CONTACTS_FILE="${ROOT}/api/config/params/contacts.json"
-ANALYTICS_FILE="${ROOT}/api/config/params/analytics.json"
-GEOCOMPLETE_PALETTE_FILE="${ROOT}/client/config/geocomplete/palette.json"
-AUTOMATED_COMMANDS_FILE="${ROOT}/api/config/params/commands.json"
-CSV_EXPORT_FILE="${ROOT}/api/config/csvExport/csvExport.json"
-SCHEDULES_REMINDERS_FILE="${ROOT}/api/config/params/reminders.json"
-EEC_SERVICE_FILE="${ROOT}/api/config/params/eecService.json"
+declare -a json_files_dist=(
+ "${ROOT}/api/config/rdex/clients.json"\
+ "${ROOT}/api/config/rdex/operator.json"\
+ "${ROOT}/api/config/rdex/providers.json"\
+ "${ROOT}/api/config/publicTransport/providers.json"\
+ "${ROOT}/api/config/params/modules.json"\
+ "${ROOT}/api/config/params/contacts.json"\
+ "${ROOT}/api/config/params/analytics.json"\
+ "${ROOT}/client/config/geocomplete/palette.json"\
+ "${ROOT}/api/config/params/commands.json"\
+ "${ROOT}/api/config/csvExport/csvExport.json"\
+ "${ROOT}/api/config/params/reminders.json"\
+ "${ROOT}/api/config/params/eecService.json"
+)
 
 # if json file does not exist, copy it from .dist file
-for json_file in "${RDEX_CLIENTS_FILE}" "${RDEX_OPERATOR_FILE}" "${RDEX_PROVIDERS_FILE}" "${PT_PROVIDERS_FILE}"\
-                 "${MODULES_FILE}" "${CONTACTS_FILE}" "${ANALYTICS_FILE}" "${GEOCOMPLETE_PALETTE_FILE}"\
-                 "${AUTOMATED_COMMANDS_FILE}" "${CSV_EXPORT_FILE}" "${SCHEDULES_REMINDERS_FILE}" "${EEC_SERVICE_FILE}"
+for json_file in "${json_files_dist[@]}"
 do
     [ -f "${json_file}" ] || cp "${json_file}.dist" "${json_file}"
 done
