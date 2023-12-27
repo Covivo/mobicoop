@@ -17,7 +17,7 @@ final class Version20231222142000 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql("INSERT INTO article (`id`, `title`, `status`) VALUES (47, 'Les preuves de covoiturage', 1)");
+        $this->addSql("INSERT INTO article (`id`, `title`, `status`) VALUES (48, 'Les preuves de covoiturage', 1)");
     }
 
     public function down(Schema $schema): void
