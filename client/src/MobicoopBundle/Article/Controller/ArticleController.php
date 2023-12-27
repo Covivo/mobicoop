@@ -83,7 +83,8 @@ class ArticleController extends AbstractController
     public const MOREABOUT_ALT_2 = 44;
     public const MOREABOUT_ALT_3 = 45;
     public const REZO_POUCE = 46;
-    public const RPC = 47;
+    public const SOLIDARY_CARPOOL_ALT = 47;
+    public const RPC = 48;
 
     /**
      * Display of the project page.
@@ -147,6 +148,14 @@ class ArticleController extends AbstractController
     public function showSolidaryCarpool(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::SOLIDARY_CARPOOL));
+    }
+
+    /**
+     * Display of the solidary carpool page.
+     */
+    public function showSolidaryCarpoolAlt(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::SOLIDARY_CARPOOL_ALT));
     }
 
     /**
