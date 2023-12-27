@@ -1063,4 +1063,9 @@ class LongDistanceSubscription extends Subscription
             LdImproved::class,
         ];
     }
+
+    public function getType(): string
+    {
+        return self::SUBSCRIPTION_TYPE;
+    }
 }

@@ -981,4 +981,9 @@ class ShortDistanceSubscription extends Subscription
             SdImproved::class,
         ];
     }
+
+    public function getType(): string
+    {
+        return self::SUBSCRIPTION_TYPE;
+    }
 }
