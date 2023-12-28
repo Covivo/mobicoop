@@ -269,9 +269,11 @@ class CarpoolProofRepository
 
     public function findUserCEEEligibleProof(User $user)
     {
-        $allreadyAdded = array_map(function ($journey) {
-            return $journey->getCarpoolProof();
-        }, $user->getShortDistanceSubscription()->getJourneys());
+        $allreadyAdded = [];
+        $journeys = $user->getShortDistanceSubscription()->getJourneys();
+        foreach ($journeys as $journey) {
+            $allreadyAdded[] = $journey->getCarpoolProof()->getId();
+        }
 
         $parameters = [
             'country' => Validation::REFERENCE_COUNTRY,
