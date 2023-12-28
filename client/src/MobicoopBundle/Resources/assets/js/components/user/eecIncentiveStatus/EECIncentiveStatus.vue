@@ -30,12 +30,8 @@
       />
       <EECIncentiveAdditionalInformations
         v-else
-        :long-distance-subscriptions="subscriptions.longDistanceSubscriptions"
-        :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
-        :long-distance-subscription-expiration-date="subscriptions.longDistanceExpirationDate"
-        :short-distance-subscription-expiration-date="subscriptions.shortDistanceExpirationDate"
-        :pending-proofs="subscriptions.nbPendingProofs"
-        :refused-proofs="subscriptions.nbRejectedProofs"
+        :eec-instance="eecInstance"
+        :eec-subscriptions="subscriptions"
         @changeTab="changeTab"
       />
     </div>
@@ -100,7 +96,8 @@ export default {
   },
   data() {
     return {
-      subscriptions:null,
+      subscriptions: null,
+      eecInstance: null,
       loading: false,
       snackbar: {
         color: 'error',
@@ -111,16 +108,27 @@ export default {
   },
   computed:{
     subscriptionInitiated(){
-      if(this.subscriptions && (this.subscriptions.longDistanceSubscriptions || this.subscriptions.shortDistanceSubscriptions)){
+      if(this.subscriptions && (this.subscriptions.longDistanceSubscription || this.subscriptions.shortDistanceSubscription)){
         return true;
       }
       return false;
     }
   },
   mounted(){
+    this.getCeeInstance();
     this.getMyCeeSubscriptions();
   },
   methods:{
+    getCeeInstance(){
+      this.loading = true;
+      maxios
+        .get(this.$t('routes.getEecInstance'))
+        .then(response => {
+          this.eecInstance = response.data;
+          this.loading = false;
+        })
+        .catch(error => {});
+    },
     getMyCeeSubscriptions(){
       this.loading = true;
       maxios.get(this.$t("routes.getMyCeeSubscriptions"))
@@ -139,14 +147,14 @@ export default {
     afterEECSubscriptionValidation() {
       if (this.isAfterEecSubscription) {
         switch (true) {
-        case null !== this.subscriptions.longDistanceSubscriptions && null !== this.subscriptions.shortDistanceSubscriptions:
+        case null !== this.subscriptions.longDistanceSubscription.journeys && null !== this.subscriptions.shortDistanceSubscription.journeys:
           this.snackbar.color = 'success';
           this.snackbar.text = this.$t('EEC-subscription-snackbar.success');
           break;
-        case null === this.subscriptions.longDistanceSubscriptions && null !== this.subscriptions.shortDistanceSubscriptions:
+        case null === this.subscriptions.longDistanceSubscription.journeys && null !== this.subscriptions.shortDistanceSubscription.journeys:
           this.snackbar.text = this.$t('EEC-subscription-snackbar.longDistanceFailed');
           break;
-        case null !== this.subscriptions.longDistanceSubscriptions && null === this.subscriptions.shortDistanceSubscriptions:
+        case null !== this.subscriptions.longDistanceSubscription.journeys && null === this.subscriptions.shortDistanceSubscription.journeys:
           this.snackbar.text = this.$t('EEC-subscription-snackbar.shortDistanceFailed');
           break;
         default:

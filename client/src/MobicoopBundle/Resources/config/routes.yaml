@@ -57,24 +57,24 @@ user_bank_coordinates:
   methods: [POST]
   path:
     fr: /utilisateur/coordonnees-bancaires
-    en: /user/bank-coordinates
-    nl: /user/bank-coordinates
+    en: /user/bank-details
+    nl: /user/bank-details
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getBankCoordinates
 
 user_bank_coordinates_add:
   methods: [POST]
   path:
     fr: /utilisateur/coordonnees-bancaires/ajouter
-    en: /user/bank-coordinates/add
-    nl: /user/bank-coordinates/add
+    en: /user/bank-details/add
+    nl: /user/bank-details/add
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::addBankCoordinates
 
 user_bank_coordinates_delete:
   methods: [POST]
   path:
     fr: /utilisateur/coordonnees-bancaires/supprimer
-    en: /user/bank-coordinates/delete
-    nl: /user/bank-coordinates/delete
+    en: /user/bank-details/delete
+    nl: /user/bank-details/delete
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::deleteBankCoordinates
 
 user_send_identity_validation_document:
@@ -441,7 +441,6 @@ user_message_booking_complete_thread:
     nl: /user/messages/booking/{idBooking}/thread
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageBookingCompleteThread
 
-
 user_message_actions_infos:
   methods: [POST]
   path:
@@ -483,7 +482,7 @@ send_external_message:
     fr: /utilisateur/messages/externe/envoyer
     en: /user/messages/external/send
     nl: /user/messages/external/send
-  controller: Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\MessageController::sendExternalMessage  
+  controller: Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\MessageController::sendExternalMessage
 
 # get a message thread
 user_message_thread:
@@ -1348,8 +1347,8 @@ cookies:
 ToolBox:
   path:
     fr: /boite-a-outils
-    en: /toolBox
-    nl: /toolBox
+    en: /toolbox
+    nl: /toolbox
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox
 
 # display noName page
@@ -1947,8 +1946,28 @@ gamification_tag_reward_as_notified:
   controller: Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\GamificationController::tagRewardAsNotified
 
 #######################
+# Gratuity routes #
+#######################
+
+# Tag the given gratuity campaign as notified
+gratuity_campaign_as_notified:
+  methods: [POST]
+  path:
+    fr: /gratuity/tagGratuityCampaignAsNotified
+    en: /gratuity/tagGratuityCampaignAsNotified
+    nl: /gratuity/tagGratuityCampaignAsNotified
+  controller: Mobicoop\Bundle\MobicoopBundle\Gratuity\Controller\GratuityController::tagGratuityCampaignAsNotified
+
+#######################
 # Incentive routes #
 #######################
+
+eec_instance:
+  path:
+    fr: /eec/instance
+    en: /eec/instance
+    nl: /eec/instance
+  controller: Mobicoop\Bundle\MobicoopBundle\Eec\Controller\EecInstanceController::getEecInstance
 
 my_cee_subscriptions:
   path:

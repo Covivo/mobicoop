@@ -27,6 +27,7 @@
     :territory-id="{{ referenceTerritory is defined and referenceTerritory != "" ? referenceTerritory : 'null' }}"
     :date-time-picker="{{ dateTimePicker ? 'true' : 'false'}}"
     :display-cee="{{ displayCee ? 'true' : 'false' }}"
+    :eec-instance="{{ eecInstance|json_encode }}"
     >
 </home>
 {% endblock %}

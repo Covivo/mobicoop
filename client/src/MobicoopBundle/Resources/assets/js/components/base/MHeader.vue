@@ -338,6 +338,7 @@
       </v-menu>
     </v-toolbar>
     <GamificationNotifications :user-gamification-notifications="(user && user.gamificationNotifications) ? user.gamificationNotifications : null" />
+    <GratuityNotifications :user-gratuity-notifications="(user && user.gratuityNotifications) ? user.gratuityNotifications : null" />
   </div>
 </template>
 
@@ -351,6 +352,7 @@ import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
 import MMessageBtn from "@components/base/MMessageBtn.vue";
 import GamificationNotifications from "@components/utilities/gamification/GamificationNotifications";
+import GratuityNotifications from "@components/utilities/gratuity/GratuityNotifications";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -372,7 +374,8 @@ export default {
     MHeaderCommunities,
     MHeaderLanguage,
     MMessageBtn,
-    GamificationNotifications
+    GamificationNotifications,
+    GratuityNotifications
   },
   props: {
     user: {
@@ -406,6 +409,10 @@ export default {
     gamificationActive:{
       type: Boolean,
       default: false
+    },
+    gratuityActive:{
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -430,6 +437,7 @@ export default {
       this.dlocale = this.defaultLocale;
     }
     this.$store.commit('g/setActive',this.gamificationActive);
+    this.$store.commit('grt/setActive',this.gratuityActive);
     this.$store.commit('m/setUnreadCarpoolMessageNumber', this.user?.unreadCarpoolMessageNumber);
     this.$store.commit('m/setUnreadDirectMessageNumber', this.user?.unreadDirectMessageNumber);
     this.$store.commit('m/setUnreadSolidaryMessageNumber', this.user?.unreadSolidaryMessageNumber);

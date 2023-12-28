@@ -41,6 +41,7 @@ use Mobicoop\Bundle\MobicoopBundle\I18n\Service\LanguageManager;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\CeeSubscriptionManager;
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\EecManager;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
@@ -98,6 +99,7 @@ class UserController extends AbstractController
     private $signInSsoOriented;
     private $ceeDisplay;
     private $gendersList;
+    private $specificTerms;
 
     /**
      * Constructor.
@@ -140,7 +142,8 @@ class UserController extends AbstractController
         bool $carpoolSettingsDisplay,
         bool $signInSsoOriented,
         bool $ceeDisplay,
-        array $gendersList
+        array $gendersList,
+        bool $specificTerms
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -170,6 +173,7 @@ class UserController extends AbstractController
         $this->signInSsoOriented = $signInSsoOriented;
         $this->ceeDisplay = $ceeDisplay;
         $this->gendersList = $gendersList;
+        $this->specificTerms = $specificTerms;
     }
 
     private function __parsePostParams(string $response): array
@@ -352,6 +356,7 @@ class UserController extends AbstractController
             'birthDateDisplay' => $this->birthDateDisplay,
             'communityId' => $communityId,
             'gendersList' => $this->gendersList,
+            'specificTerms' => $this->specificTerms,
         ]);
     }
 
@@ -496,7 +501,7 @@ class UserController extends AbstractController
      * @param mixed $tabDefault
      * @param mixed $selectedTab
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault, $selectedTab)
+    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault, $selectedTab, EecManager $eecManager)
     {
         $user = $userManager->getLoggedUser();
 
@@ -537,6 +542,7 @@ class UserController extends AbstractController
             $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription('true' === $data->get('newsSubscription') ? true : false);
+            $user->setGratuity('true' === $data->get('gratuitySubscription') ? true : false);
             $user->setDrivingLicenceNumber('' !== trim($data->get('drivingLicenceNumber')) ? $data->get('drivingLicenceNumber') : null);
 
             if ($user = $userManager->updateUser($user)) {
@@ -553,6 +559,7 @@ class UserController extends AbstractController
                     if ($image = $imageManager->createImage($image)) {
                         return new JsonResponse($image);
                     }
+
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
@@ -605,6 +612,7 @@ class UserController extends AbstractController
             'tabDefault' => $tabDefault,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'gendersList' => $this->gendersList,
+            'eecInstance' => $eecManager->getEecInstance(),                         // The EEC service status for the instance
         ]);
     }
 
@@ -1287,6 +1295,7 @@ class UserController extends AbstractController
             $user->setMusicFavorites($data['musicFavorites']);
             $user->setChat($data['chat']);
             $user->setChatFavorites($data['chatFavorites']);
+            $user->setGratuity($data['gratuity']);
 
             if ($response = $userManager->updateUser($user)) {
                 $reponseofmanager = $this->handleManagerReturnValue($response);

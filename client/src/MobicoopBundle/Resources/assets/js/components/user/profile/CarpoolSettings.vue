@@ -32,6 +32,7 @@
         cols="4"
       >
         <v-card
+          v-if="$data['form'][item.key]['show']"
           :height="cardHeight"
           class="pa-2"
           flat
@@ -115,15 +116,18 @@ export default {
       form: {
         smoke: {
           // returned value is integer
-          value: this.user && this.user.smoke !== null ? this.user.smoke : null 
+          show: true,
+          value: this.user && this.user.smoke !== null ? this.user.smoke : null
         },
         music: {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value
+          show: true,
           value: !this.user || this.user.music === null ? null : this.user.music ? 1 : 0,
           favorite: this.user && this.user.musicFavorites && this.user.musicFavorites.length > 0 ? this.user.musicFavorites : ""
         },
         chat: {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value
+          show: true,
           value: !this.user || this.user.chat === null ? null : this.user.chat ? 1 : 0,
           favorite: this.user && this.user.chatFavorites && this.user.chatFavorites.length > 0 ? this.user.chatFavorites : ""
         }
@@ -140,7 +144,7 @@ export default {
         music: this.form.music.value,
         musicFavorites: this.form.music.favorite,
         chat: this.form.chat.value,
-        chatFavorites: this.form.chat.favorite,
+        chatFavorites: this.form.chat.favorite
       })
         .then(function (response) {
           if (response.data && response.data.message) {
@@ -172,7 +176,7 @@ export default {
         message: ""
       }
     }
-  }
+  },
 }
 </script>
 

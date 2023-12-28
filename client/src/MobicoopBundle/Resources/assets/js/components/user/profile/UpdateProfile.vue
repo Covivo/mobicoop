@@ -254,6 +254,14 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
+
+            <v-switch
+              v-if="gratuityActive"
+              v-model="gratuitySubscription"
+              :label="$t('gratuity.label', {platform:platform})"
+              inset
+              color="secondary"
+            />
           </v-row>
 
           <v-row
@@ -508,7 +516,7 @@
 
     <!-- EEC form -->
     <EECIncentiveStatus
-      v-if="ceeDisplay"
+      v-if="isEecblockDisplayed"
       :id="$t('eec-incentive')"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
@@ -757,8 +765,11 @@ export default {
     gendersList: {
       type: Array,
       default: () => []
-    }
-
+    },
+    eecInstance: {              // The EEC service status for the instance
+      type: Object,
+      default: () => ({})
+    },
   },
   data() {
     return {
@@ -840,7 +851,8 @@ export default {
       emailChanged: false,
       dialogEmail: false,
       ssoConnection: null,
-      drivingLicenceNumberValid: true
+      drivingLicenceNumberValid: true,
+      gratuitySubscription: this.user && this.user.gratuity !== null ? this.user.gratuity : null
     };
   },
   computed : {
@@ -878,6 +890,21 @@ export default {
         return this.gendersList.includes(parseInt(genderItem.value));
       });
     },
+    gratuityActive(){
+      return this.$store.getters['grt/isActive'];
+    },
+    isEecblockDisplayed() {
+      return (
+        this.ceeDisplay
+        && (
+          this.eecInstance.available
+          || (
+            !this.eecInstance.available
+            && (this.user.longDistanceSubscription || this.user.shortDistanceSubscription)
+          )
+        )
+      );
+    }
   },
   watch: {
     menu (val) {
@@ -969,6 +996,7 @@ export default {
       updateUser.append("birthDay", this.birthDay);
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
+      updateUser.append("gratuitySubscription", this.gratuitySubscription);
       updateUser.append("phoneDisplay", this.phoneDisplay.value);
       updateUser.append("drivingLicenceNumber", this.drivingLicenceNumber);
 

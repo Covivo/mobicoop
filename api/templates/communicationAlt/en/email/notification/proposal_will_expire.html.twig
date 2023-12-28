@@ -1,0 +1,201 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+{% set proposal = context.proposal %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19px;" text-align="center" ><b>Your ad will expire soon !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    {# intro #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
+                <tr>
+                    <td style="width:15px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Hello {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px;">Your carpool ad will expire soon:</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+{# info trajet #}
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:15px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/origin.png"
+                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    {% if proposal.criteria.frequency == 1 %}
+                        <td>
+                            <p style="font-size:11px;">{{context.departureTime.time|date('H:i')}}</p>
+                        </td>
+                    {% endif %}
+                    <td>
+                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ context.origin.address.displayLabel[0] }}</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:15px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/destination.png"
+                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    {% if proposal.criteria.frequency == 1 %}
+                        <td>
+                            <p style="font-size:11px;">{{context.arrivalTime.time|date('H:i')}}</p>
+                        </td>
+                    {% endif %}
+                    <td>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ context.destination.address.displayLabel[0] }}</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+     <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">There are now more than 550,000 carpoolers on our platform. Your involvement counts, so don't hesitate to update your ads. !</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
+                            style="border:0; height:26px; width:175; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="center" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Save up to €2,000 a year.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Reduce your carbon footprint by 1.5 tonnes of CO2, equivalent to about 3 months of gas heating - not bad!</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"> Reduce traffic jams and the resulting bad moods !</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Enjoy carpooling on {{api_env('EMAILS_PLATFORM_NAME')}}</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}

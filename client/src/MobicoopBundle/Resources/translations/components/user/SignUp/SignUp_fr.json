@@ -96,6 +96,10 @@
     "text": "Je confirme être âgé d'au moins 18 ans",
     "required": "Requis"
   },
+  "specificTerms": {
+    "text": "",
+    "required": "Requis"
+  },
   "communities": {
     "label": "Rejoindre une communauté",
     "route": "/utilisateur/inscription/liste-des-communautes"

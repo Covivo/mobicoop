@@ -23,6 +23,7 @@
 
 namespace App\Import\Admin\Service;
 
+use App\Geography\Service\PointSearcher;
 use App\Import\Admin\Interfaces\DeletorInterface;
 use App\Import\Admin\Interfaces\LineImportValidatorInterface;
 use App\Import\Admin\Interfaces\PopulatorInterface;
@@ -72,13 +73,22 @@ class Importer
 
     private $_eventProvider;
 
+    private $_pointSearcher;
+
     /**
      * @var User
      */
     private $_requester;
 
-    public function __construct(File $file, string $filename, object $manager = null, User $requester = null, object $repository = null, string $eventProvider = null)
-    {
+    public function __construct(
+        File $file,
+        string $filename,
+        object $manager = null,
+        User $requester = null,
+        ?object $repository = null,
+        ?string $eventProvider = null,
+        ?PointSearcher $pointSearcher = null
+    ) {
         $this->_file = $file;
         $this->_filename = $filename;
         $this->_manager = $manager;
@@ -87,6 +97,7 @@ class Importer
         $this->_requester = $requester;
         $this->_repository = $repository;
         $this->_eventProvider = $eventProvider;
+        $this->_pointSearcher = $pointSearcher;
     }
 
     public function importUsers(): Import
@@ -97,7 +108,7 @@ class Importer
         }
         $this->_validateLines(new UserLineImportValidator());
         if (0 == count($this->_errors)) {
-            $this->_populateTable(new UserImportPopulator($this->_manager, $this->_requester));
+            $this->_populateTable(new UserImportPopulator($this->_manager, $this->_requester, $this->_pointSearcher));
         }
 
         return $this->_buildImport(self::USER_ENTITY);

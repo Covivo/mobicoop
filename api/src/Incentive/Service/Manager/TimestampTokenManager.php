@@ -55,12 +55,13 @@ class TimestampTokenManager extends MobConnectManager
     public function __construct(
         EntityManagerInterface $em,
         LoggerService $loggerService,
+        InstanceManager $instanceManager,
         HonourCertificateService $honourCertificateService,
         string $carpoolProofPrefix,
         array $mobConnectParams,
         array $ssoServices
     ) {
-        parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
     }
 
     public function getMobTimestampToken($subscription)

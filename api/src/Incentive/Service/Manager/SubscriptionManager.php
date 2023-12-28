@@ -7,17 +7,16 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
-use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
-use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
-use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
+use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Resource\EecEligibility;
+use App\Incentive\Service\Definition\DefinitionSelector;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\SubscriptionValidation;
@@ -28,10 +27,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
 {
-    public const BONUS_STATUS_PENDING = 0;
-    public const BONUS_STATUS_NO = 1;
-    public const BONUS_STATUS_OK = 2;
-
     public const STATUS_ERROR = 'ERROR';
     public const STATUS_REJECTED = 'REJETEE';
     public const STATUS_VALIDATED = 'VALIDEE';
@@ -45,11 +40,6 @@ class SubscriptionManager extends MobConnectManager
      * @var JourneyManager
      */
     private $_journeyManager;
-
-    /**
-     * @var TimestampTokenManager
-     */
-    private $_timestampTokenManager;
 
     /**
      * @var CarpoolProofRepository
@@ -82,6 +72,7 @@ class SubscriptionManager extends MobConnectManager
         UserValidation $userValidation,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
+        InstanceManager $instanceManager,
         JourneyManager $journeyManager,
         TimestampTokenManager $timestampTokenManager,
         CarpoolProofRepository $carpoolProofRepository,
@@ -91,7 +82,7 @@ class SubscriptionManager extends MobConnectManager
         array $mobConnectParams,
         array $ssoServices
     ) {
-        parent::__construct($em, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
 
         $this->_journeyManager = $journeyManager;
         $this->_timestampTokenManager = $timestampTokenManager;
@@ -109,20 +100,25 @@ class SubscriptionManager extends MobConnectManager
      */
     public function createSubscriptions(User $user)
     {
-        if (!$this->isValidParameters()) {
+        if (!$this->isValidParameters() || !$this->_instanceManager->isEecServiceAvailable()) {
             return;
         }
 
         $this->setDriver($user);
 
         if (
-            is_null($this->getDriver()->getLongDistanceSubscription())
-            && $this->isDriverAccountReadyForSubscription(LongDistanceSubscription::SUBSCRIPTION_TYPE)
+            $this->_instanceManager->isLdSubscriptionAvailable()                                        // The service is available
+            && is_null($this->getDriver()->getLongDistanceSubscription())                               // Subscription does not yet exist
+            && $this->isDriverAccountReadyForSubscription(LongDistanceSubscription::SUBSCRIPTION_TYPE)  // There is no incompatibility with the user account
         ) {
             $postResponse = $this->postSubscription();
 
             if (!$this->hasRequestErrorReturned($postResponse)) {
-                $longDistanceSubscription = new LongDistanceSubscription($this->getDriver(), $postResponse);
+                $longDistanceSubscription = new LongDistanceSubscription(
+                    $this->getDriver(),
+                    $postResponse,
+                    DefinitionSelector::getDefinition(LongDistanceSubscription::SUBSCRIPTION_TYPE)
+                );
                 $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
                 $longDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($longDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
@@ -132,13 +128,18 @@ class SubscriptionManager extends MobConnectManager
         }
 
         if (
-            is_null($this->getDriver()->getShortDistanceSubscription())
-            && $this->isDriverAccountReadyForSubscription(ShortDistanceSubscription::SUBSCRIPTION_TYPE)
+            $this->_instanceManager->isSdSubscriptionAvailable()                                        // The service is available
+            && is_null($this->getDriver()->getShortDistanceSubscription())                              // Subscription does not yet exist
+            && $this->isDriverAccountReadyForSubscription(ShortDistanceSubscription::SUBSCRIPTION_TYPE) // There is no incompatibility with the user account
         ) {
             $postResponse = $this->postSubscription(false);
 
             if (!$this->hasRequestErrorReturned($postResponse)) {
-                $shortDistanceSubscription = new ShortDistanceSubscription($this->getDriver(), $postResponse);
+                $shortDistanceSubscription = new ShortDistanceSubscription(
+                    $this->getDriver(),
+                    $postResponse,
+                    DefinitionSelector::getDefinition(ShortDistanceSubscription::SUBSCRIPTION_TYPE)
+                );
                 $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
 
                 $shortDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($shortDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
@@ -207,31 +208,19 @@ class SubscriptionManager extends MobConnectManager
         $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
 
         if (!is_null($shortDistanceSubscription)) {
-            $shortDistanceSubscription->setVersion();
             $this->_subscriptions->setShortDistanceSubscription($shortDistanceSubscription);
-
-            $shortDistanceSubscriptions = $this->_getFlatJourneys($shortDistanceSubscription->getCompliantJourneys());
-
-            $this->_subscriptions->setShortDistanceSubscriptions($shortDistanceSubscriptions);
-            $this->_subscriptions->setShortDistanceExpirationDate($shortDistanceSubscription->getExpirationDate());
         }
 
         $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
         if (!is_null($longDistanceSubscription)) {
-            $longDistanceSubscription->setVersion();
             $this->_subscriptions->setLongDistanceSubscription($longDistanceSubscription);
-
-            $longDistanceSubscriptions = $this->_getFlatJourneys($longDistanceSubscription->getCompliantJourneys());
-
-            $this->_subscriptions->setLongDistanceSubscriptions($longDistanceSubscriptions);
-            $this->_subscriptions->setLongDistanceExpirationDate($longDistanceSubscription->getExpirationDate());
         }
 
         $this->_em->flush();
 
         $this->_computeShortDistance();
 
-        return [$this->_subscriptions];
+        return $this->_subscriptions;
     }
 
     /**
@@ -377,10 +366,10 @@ class SubscriptionManager extends MobConnectManager
         );
 
         if (self::STATUS_VALIDATED === $subscription->getStatus()) {
-            $subscription->setBonusStatus(self::BONUS_STATUS_OK);
+            $subscription->setBonusStatus(Subscription::BONUS_STATUS_OK);
             $subscription->setStatus(self::STATUS_VALIDATED);
         } else {
-            $subscription->setBonusStatus(self::BONUS_STATUS_NO);
+            $subscription->setBonusStatus(Subscription::BONUS_STATUS_NO);
             $subscription->setStatus(self::STATUS_REJECTED);
         }
 
@@ -417,6 +406,8 @@ class SubscriptionManager extends MobConnectManager
             $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getShortDistanceSubscription());
         }
 
+        $this->_em->flush();
+
         return $this->getDriver();
     }
 
@@ -446,6 +437,22 @@ class SubscriptionManager extends MobConnectManager
     public function getTimestamps()
     {
         return $this->_timestampTokenManager->getCurrentTimestampTokensResponse();
+    }
+
+    public function processingVersionTransitionalPeriods()
+    {
+        /**
+         * @var SubscriptionDefinitionInterface[]
+         */
+        $definitions = array_merge(LongDistanceSubscription::getAvailableDefinitions(), ShortDistanceSubscription::getAvailableDefinitions());
+
+        foreach ($definitions as $definition) {
+            if (!$definition::isDeadlineOver()) {
+                continue;
+            }
+
+            $definition::manageTransition($this->_em, $this->_longDistanceSubscriptionRepository);
+        }
     }
 
     private function _computeShortDistance()
@@ -493,20 +500,5 @@ class SubscriptionManager extends MobConnectManager
 
             $this->_ceeEligibleProofs[] = $proof;
         }
-    }
-
-    private function _getFlatJourneys($journeys): array
-    {
-        $subscriptions = [];
-
-        foreach ($journeys as $journey) {
-            if ($journey instanceof ShortDistanceJourney) {
-                array_push($subscriptions, new FlatShortDistanceSubscription($journey));
-            } else {
-                array_push($subscriptions, new FlatLongDistanceSubscription($journey));
-            }
-        }
-
-        return $subscriptions;
     }
 }

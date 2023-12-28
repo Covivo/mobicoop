@@ -1,9 +1,9 @@
 {
   "title": "Register",
-  "urlSignUp": "/user/registration",
-  "urlSignUpResult": "/user/registration/{id}",
-  "urlSignUpEvent": "/user/registration/event/{id}",
-  "urlRedirectAfterSignUp": "/user/registration/validation/{email}",
+  "urlSignUp": "/user/signup",
+  "urlSignUpResult": "/user/signup/{id}",
+  "urlSignUpEvent": "/user/signup/event/{id}",
+  "urlRedirectAfterSignUp": "/user/signup/validation/{email}",
   "urlRedirectAfterSignUpResult": "/user/login/{id}",
   "urlRedirectAfterSignUpEvent": "/user/login/event/{id}",
   "urlRedirectAfterSignUpCommunity": "/user/login/community/{id}",
@@ -78,11 +78,11 @@
     }
   },
   "checkEmail": {
-    "url": "/user/verify/email",
+    "url": "/user/check/email",
     "error": "This email is already in use"
   },
   "checkPhoneValidity": {
-    "url": "/utilisateur/verif/telephone",
+    "url": "/user/check/telephone",
     "error": "Ce numéro de téléphone n'est pas valide"
   },
   "chart": {

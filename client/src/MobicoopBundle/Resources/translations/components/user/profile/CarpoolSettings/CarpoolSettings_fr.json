@@ -51,12 +51,12 @@
       "favorite": {
         "label": "Sujets préférés"
       }
-    } 
+    }
   ],
   "button": {
     "label": "Enregistrer",
     "route": "/utilisateur/preferences-covoiturage/modifier"
   },
   "success": "Préférences de covoiturage mises à jour avec succès !",
-  "error":  "Une erreur est survenue."
+  "error": "Une erreur est survenue."
 }

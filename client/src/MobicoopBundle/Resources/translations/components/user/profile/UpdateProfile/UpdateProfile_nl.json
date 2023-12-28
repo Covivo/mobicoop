@@ -152,6 +152,9 @@
     "tooltip": "Het nieuws over de dienst zijn e-mails die enkel beantwoorden aan het doel u op de hoogte te houden van de evoluties van de dienst en het carpoolen in de praktijk voor u te bevorderen. Zoals updates van het platform of e-mails van het aanspreekpunt van een community waartoe u behoort. Deze informatie kan betrekking hebben op updates van het platform. Deze e-mails hebben geen commerciële doeleinden.",
     "label": "Nieuws over {platform}  (nuttige info om te carpoolen, en nieuwe diensten en nieuwe functies)"
   },
+  "gratuity": {
+    "label": "Gratuity programme"
+  },
   "route": {
     "supprimer": "/utilisateur/profil/supprimer",
     "update": "/utilisateur/profil/modifier"

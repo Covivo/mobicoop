@@ -49,6 +49,7 @@ use App\Event\Entity\Event;
 use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
 use App\Geography\Entity\Address;
+use App\Gratuity\Entity\GratuityCampaign;
 use App\I18n\Entity\Language;
 use App\Image\Entity\Image;
 use App\Import\Entity\UserImport;
@@ -1876,6 +1877,26 @@ class User implements UserInterface, EquatableInterface
      */
     private $hasAccessToMobAPI = false;
 
+    /**
+     * @var null|ArrayCollection the gratuities created by this User
+     *
+     * @ORM\OneToMany(targetEntity="\App\Gratuity\Entity\GratuityCampaign", mappedBy="user", cascade={"remove"})
+     *
+     * @ORM\JoinColumn(onDelete="SET NULL")
+     */
+    private $gratuityCampaigns;
+
+    /**
+     * @var null|bool Gratuity preferences.
+     *                0 = no gratuity
+     *                1 = accept gratuity
+     *
+     * @ORM\Column(type="boolean", options={"default" : 1}, nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $gratuity;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1922,6 +1943,8 @@ class User implements UserInterface, EquatableInterface
         $this->setMobileRegistration(null);
         $this->setExperienced(false);
         $this->ssoAccounts = new ArrayCollection();
+        $this->gratuityCampaigns = new ArrayCollection();
+        $this->gratuity = true;
     }
 
     public function getId(): ?int
@@ -2341,6 +2364,13 @@ class User implements UserInterface, EquatableInterface
     public function getPhoneValidatedDate(): ?\DateTimeInterface
     {
         return $this->phoneValidatedDate;
+    }
+
+    public function isPhoneValidated(): bool
+    {
+        return
+            !is_null($this->getTelephone())
+            && !is_null($this->getPhoneValidatedDate());
     }
 
     public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): ?self
@@ -4183,5 +4213,40 @@ class User implements UserInterface, EquatableInterface
         return array_filter($this->getSsoAccounts(), function ($ssoAccount) use ($provider) {
             return $provider === $ssoAccount->getSsoProvider();
         })[0];
+    }
+
+    public function getGratuityCampaigns()
+    {
+        return $this->gratuityCampaigns->getValues();
+    }
+
+    public function addGratuityCampaign(GratuityCampaign $gratuityCampaign): self
+    {
+        if (!$this->gratuityCampaigns->contains($gratuityCampaign)) {
+            $this->gratuityCampaigns[] = $gratuityCampaign;
+        }
+
+        return $this;
+    }
+
+    public function removeGratuityCampaign(GratuityCampaign $gratuityCampaign): self
+    {
+        if ($this->gratuityCampaigns->contains($gratuityCampaign)) {
+            $this->gratuityCampaigns->removeElement($gratuityCampaign);
+        }
+
+        return $this;
+    }
+
+    public function hasGratuity(): ?bool
+    {
+        return $this->gratuity;
+    }
+
+    public function setGratuity(?bool $gratuity): self
+    {
+        $this->gratuity = $gratuity;
+
+        return $this;
     }
 }

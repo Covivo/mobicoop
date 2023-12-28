@@ -613,7 +613,7 @@
 
                 <v-row>
                   <v-col
-                    v-if="driver"
+                    v-if="driver && !specificTerms"
                   >
                     {{ $t('stepper.driverLicense.text') }}
                     <a
@@ -623,6 +623,45 @@
                       @click.stop
                     >{{ $t('stepper.driverLicense.link') }}
                     </a>
+                  </v-col>
+                </v-row>
+                <v-row
+                  v-if="driver && specificTerms"
+                >
+                  <v-col>
+                    <v-checkbox
+                      v-model="checkboxDrivingLicence"
+                      color="primary"
+                      required
+                    >
+                      <template v-slot:label>
+                        <div>
+                          {{ $t("checkboxes.drivingLicence") }}
+                        </div>
+                      </template>
+                    </v-checkbox>
+                    <v-checkbox
+                      v-model="checkboxEmployer"
+                      color="primary"
+                      required
+                    >
+                      <template v-slot:label>
+                        <div>
+                          {{ $t("checkboxes.employer") }}
+                        </div>
+                      </template>
+                    </v-checkbox>
+                    <v-checkbox
+                      v-model="checkboxInssurance"
+                      color="primary"
+                      required
+                    >
+                      <template v-slot:label>
+                        <div>
+                          {{ $t("checkboxes.inssurance") }}
+                        </div>
+                      </template>
+                    </v-checkbox>
                   </v-col>
                 </v-row>
               </v-container>
@@ -914,7 +953,11 @@ export default {
     defaultDigitalClock: {
       type: Boolean,
       default: false
-    }
+    },
+    specificTerms: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -977,7 +1020,11 @@ export default {
       strictPunctual: null,     // not used yet
       strictRegular: null,      // not used yet
       userDelegated: null,      // if user delegation
-      useTime: null             // not used yet
+      useTime: null,             // not used yet
+      // specific terms
+      checkboxDrivingLicence: false,
+      checkboxEmployer: false,
+      checkboxInssurance: false
     }
   },
   computed: {
@@ -1046,6 +1093,10 @@ export default {
       if (this.isValidUpdate && this.oldUpdateObject == null) return false;
       // update mode and there are no changes
       if (!this.isUpdated ) return false;
+
+      if(!this.checkboxDrivingLicence && this.driver && this.specificTerms) return false;
+      if(!this.checkboxEmployer && this.driver && this.specificTerms) return false;
+      if(!this.checkboxInssurance && this.driver && this.specificTerms) return false;
 
       // validation ok
       return true;

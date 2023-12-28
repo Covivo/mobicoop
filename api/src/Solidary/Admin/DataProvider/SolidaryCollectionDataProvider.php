@@ -117,6 +117,7 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
                     case 'progression':
                         // progression filter is rewritten from "progression equals xx" to "progression lower than xx"
                         $newContext['filters']['progression'] = ['lt' => $filter];
+
                         // no break
                     default:
                         break;
@@ -141,6 +142,7 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
             ->join('sus.solidaryUser', 'su')
             ->innerjoin('su.user', 'u', 'WITH', 'u.status != :pseudonymizedStatus')
             ->andWhere("{$rootAlias}.status != :status")
+            ->andWhere("{$rootAlias}.proposal is not null")
             ->setParameters([
                 'pseudonymizedStatus' => User::STATUS_PSEUDONYMIZED,
                 'status' => Solidary::STATUS_CLOSED_FOR_EDITION,

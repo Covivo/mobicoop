@@ -42,7 +42,12 @@ services:
     arguments:
       $badgeImageUri: "%env(string:GAMIFICATION_BADGE_IMAGE_URI)%"
       $gamificationActive: "%env(bool:GAMIFICATION_ACTIVE)%"
+      $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
     decorates: "api_platform.jsonld.normalizer.item"
+
+  'App\Serializer\GratuityNotificationNormalizer':
+    arguments:
+      $baseUri: "%env(string:BASE_URI)%"
 
   # EVENT LISTENERS
 
@@ -554,10 +559,14 @@ services:
     arguments:
       $eventProviderType: "%env(string:EVENT_PROVIDER_TYPE)%"
       $eventImportEnabled: "%env(bool:EVENT_IMPORT_ENABLED)%"
-  
+
   App\Event\Admin\DataProvider\EventCollectionDataProvider:
     arguments:
       $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
+
+  App\EventSubscriber\RequestSubscriber:
+    tags:
+      - { name: "kernel.event_subscriber" }
 
   # External Connection
   App\ExternalJourney\Service\ExternalConnectionManager:
@@ -696,6 +705,7 @@ services:
       $restrictCountry: "%env(string:POINT_SEARCHER_RESTRICT_COUNTRY)%"
       $exclusionTypes: "%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%"
       $relayPointParams: "%env(json:POINT_SEARCHER_RELAY_POINT_PARAMETERS)%"
+      $fixerData: "%env(json:file:resolve:POINT_SEARCHER_FIXER_DATA)%"
 
   App\Geography\Service\AddressTerritoryLinkChecker:
     arguments:
@@ -708,6 +718,25 @@ services:
       $batchTemp: "%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%"
     tags:
       - { name: monolog.logger, channel: geography }
+
+  # Gratuity
+  App\Gratuity:
+    tags:
+      - { name: monolog.logger, channel: gratuity }
+
+  App\Gratuity\Service\GratuityCampaignManager:
+    arguments:
+      $gratuityCampaignActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
+    tags:
+      - { name: monolog.logger, channel: gratuity }
+
+  App\Gratuity\EventSubscriber\LogSubscriber:
+    arguments:
+      $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
+
+  App\Gratuity\EventSubscriber\ActionSubscriber:
+    arguments:
+      $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
 
   App\Stats\Admin\Service\AnalyticManager:
     arguments:
@@ -767,39 +796,53 @@ services:
       - { name: monolog.logger, channel: faker }
 
   App\Import\Admin\Controller\ImportEventsAction:
-    arguments:  
+    arguments:
       $eventProviderServerIP: "%env(string:EVENT_PROVIDER_SERVER_IP)%"
       $eventRemoteFilePath: "%env(string:EVENT_REMOTE_FILE_PATH)%"
       $eventFtpLogin: "%env(string:EVENT_FTP_LOGIN)%"
-      $eventFtpPassword: "%env(string:EVENT_FTP_PASWORD)%" 
+      $eventFtpPassword: "%env(string:EVENT_FTP_PASWORD)%"
       $eventProvider: "%env(string:EVENT_PROVIDER)%"
 
   # INCENTIVE
 
-
   App\Incentive\Command\SubscriptionsVerificationCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:subscriptions-verification" }
+      - {
+          name: "console.command",
+          command: "app:incentive:subscriptions-verification",
+        }
 
   App\Incentive\Command\SubscriptionVerificationCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:subscription-verify" }
+      - {
+          name: "console.command",
+          command: "app:incentive:subscription-verify",
+        }
 
   App\Incentive\Command\ProofInvalidateCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:proof-invalidate"}
+      - { name: "console.command", command: "app:incentive:proof-invalidate" }
 
   App\Incentive\Command\SubscriptionCommitCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:subscription-commit"}
+      - {
+          name: "console.command",
+          command: "app:incentive:subscription-commit",
+        }
 
   App\Incentive\Command\SubscriptionUpdateCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:subscription-update"}
+      - {
+          name: "console.command",
+          command: "app:incentive:subscription-update",
+        }
 
   App\Incentive\Command\UpdateTokenCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:subscription-tokens"}
+      - {
+          name: "console.command",
+          command: "app:incentive:subscription-tokens",
+        }
 
   App\Incentive\Command\JourneyRecoveryCommand:
     tags:
@@ -807,11 +850,17 @@ services:
 
   App\Incentive\Command\SubscriptionTimestampsCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:subscription-timestamps" }
-      
+      - {
+          name: "console.command",
+          command: "app:incentive:subscription-timestamps",
+        }
+
   App\Incentive\Command\SubscriptionTimestampsTokenCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:subscription-mobTimestampsToken" }
+      - {
+          name: "console.command",
+          command: "app:incentive:subscription-mobTimestampsToken",
+        }
 
   App\Incentive\Controller\IncentivesController:
     tags:
@@ -823,12 +872,11 @@ services:
 
   App\Incentive\Controller\Subscription\LdSubscriptionCommit:
     tags:
-      - controller.service_arguments  
-  
+      - controller.service_arguments
+
   App\Incentive\Controller\Subscription\LdSubscriptionGet:
     tags:
       - controller.service_arguments
-
 
   App\Incentive\Controller\Subscription\LdSubscriptionUpdate:
     tags:
@@ -858,6 +906,10 @@ services:
     tags:
       - { name: "console.command", command: "app:carpool:proof-send-history" }
 
+  App\Carpool\Command\VersionTransitionalPeriodCommand:
+    tags:
+      - { name: "console.command", command: app:incentive:subscription-transitional-period" }
+
   App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
       $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
@@ -881,9 +933,6 @@ services:
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
           app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
           app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-        subscription_ids:
-          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
-          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
@@ -898,10 +947,11 @@ services:
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
           app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
           app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-        subscription_ids:
-          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
-          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+  
+  App\Incentive\Service\Manager\InstanceManager:
+    arguments:
+     $eecServiveConfiguration: "%env(json:file:resolve:EEC_SERVICE)%"
 
   App\Incentive\Service\Manager\JourneyManager:
     arguments:
@@ -913,9 +963,6 @@ services:
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
           app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
           app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-        subscription_ids:
-          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
-          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
@@ -930,9 +977,6 @@ services:
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
           app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
           app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-        subscription_ids:
-          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
-          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
@@ -947,9 +991,6 @@ services:
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
           app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
           app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-        subscription_ids:
-          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
-          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
@@ -964,9 +1005,6 @@ services:
           api_key: "%env(string:MOBCONNECT_API_KEY)%"
           app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
           app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-        subscription_ids:
-          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
-          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
@@ -1286,7 +1324,7 @@ services:
   'App\User\Admin\DataProvider\UserCampaignAssociateCollectionDataProvider':
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-  
+
   'App\User\Admin\DataProvider\UserDeleteCollectionDataProvider':
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection

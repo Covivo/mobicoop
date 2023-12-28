@@ -47,6 +47,12 @@ class AddressLoadListener
         $address = $args->getEntity();
         if ($address instanceof Address) {
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $this->security->getUser()));
+            if (
+                (is_null($address->getStreet()) || '' == trim($address->getStreet()))
+                && !is_null($address->getStreetAddress())
+            ) {
+                $address->setStreet($address->getStreetAddress());
+            }
             if ($address->getEvent()) {
                 $address->setName($address->getEvent()->getName());
             }

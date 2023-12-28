@@ -70,6 +70,16 @@ class CarpoolProof
 
     public const MINIMUM_DISTANCE_GPS_FOR_TYPE_HIGH = 3000; // Minimum distance required between driver/passenger pickUp/dropOff in meters
 
+    public const ERROR_STATUS = [
+        self::STATUS_ERROR,
+        self::STATUS_CANCELED,
+        self::STATUS_ACQUISITION_ERROR,
+        self::STATUS_NORMALIZATION_ERROR,
+        self::STATUS_FRAUD_ERROR,
+        self::STATUS_EXPIRED,
+        self::STATUS_CANCELED_BY_OPERATOR,
+    ];
+
     /**
      * @var int the id of this proof
      *
@@ -262,6 +272,13 @@ class CarpoolProof
      */
     private $mobConnectShortDistanceJourney;
 
+    /**
+     * @var \DateTimeInterface validated date by RPC (status = ok)
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $validatedDate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -275,6 +292,9 @@ class CarpoolProof
     public function setStatus(int $status): self
     {
         $this->status = $status;
+        if (self::STATUS_VALIDATED == $status && is_null($this->getValidatedDate())) {
+            $this->setValidatedDate(new \DateTime('now'));
+        }
 
         return $this;
     }
@@ -535,6 +555,18 @@ class CarpoolProof
         return $this;
     }
 
+    public function getValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->validatedDate;
+    }
+
+    public function setValidatedDate(\DateTimeInterface $validatedDate): self
+    {
+        $this->validatedDate = $validatedDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**
@@ -692,5 +724,14 @@ class CarpoolProof
             && !is_null($this->getAsk()->getMatching())
             ? $this->getAsk()->getMatching()->getCommonDistance()
             : null;
+    }
+
+    public function isGeolocatedAddressesPresent(): bool
+    {
+        return
+            !is_null($this->getPickUpDriverAddress())
+            && !is_null($this->getPickUpPassengerAddress())
+            && !is_null($this->getDropOffDriverAddress())
+            && !is_null($this->getDropOffPassengerAddress());
     }
 }

@@ -177,7 +177,10 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <m-dialog v-if="displayCee" />
+    <m-dialog
+      v-if="displayCee"
+      :eec-instance="eecInstance"
+    />
     <!-- end homeBottom -->
   </v-container>
 </template>
@@ -316,6 +319,10 @@ export default {
     displayCee: {
       type: Boolean,
       default: false
+    },
+    eecInstance: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {

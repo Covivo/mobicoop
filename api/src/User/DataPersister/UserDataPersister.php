@@ -18,15 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
-use App\User\Service\UserManager;
 
 final class UserDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -50,17 +50,18 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     {
         // call your persistence layer to save $data
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad user id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad user id is provided'));
         }
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+        if (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
             $data = $this->userManager->registerUser($data, true);
-        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'userRegistration') {
+        } elseif (isset($context['collection_operation_name']) && 'userRegistration' == $context['collection_operation_name']) {
             $data = $this->userManager->registerUser($data);
-        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
+        } elseif (isset($context['item_operation_name']) && 'put' == $context['item_operation_name']) {
             $data = $this->userManager->updateUser($data);
-        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'updateLanguage') {
+        } elseif (isset($context['item_operation_name']) && 'updateLanguage' == $context['item_operation_name']) {
             $data = $this->userManager->updateLanguage($data);
         }
+
         return $data;
     }
 

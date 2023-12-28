@@ -1,0 +1,59 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19.5px;" text-align="center" ><b>Warning: scammer reported !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Hello, </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Our system has detected that the user  <b>{{ context.scammer.givenName }} {{ context.scammer.familyName }}</b> does not respect our terms of use and offers our community prepaid card payments (example: Transcash). We prohibit this type of payment as it is considered fraudulent. This user has been removed from the carppoling platform and we recommend that you do not reply to his messages if you communicate via other channels.</p>
+                        <p style="font-size:11px; text-align: justify;">As a reminder, on mobicoop.fr there are two main types of payment :</p>
+                        <ul>
+                            <li style="font-size:11px; text-align: justify;">Directly from hand to hand on the day of the carpool. We invite you to declare the trip as "paid by hand" from the "My accepted carpools" page.;</li>
+                            <li style="font-size:11px; text-align: justify;">By credit card from the "My accepted carpools" page. To do so, please enter your bank details in your Profile</li>
+                        </ul>
+                        <p style="font-size:11px; text-align: justify;">You can report suspicious users by clicking on the "Report" button on the mobicoop.fr online messaging system and on a user's profile.</p>
+                        <p style="font-size:11px; text-align: justify;">We apologize for the inconvenience and invite you to <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">post an ad</a></p>
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}

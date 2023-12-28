@@ -57,16 +57,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Analytic
 {
-    public const AUTHORIZED_TYPES = [
-        'summary',
-        'saved_co2',
-        'published_ads',
-        'users',
-        'solidary_users',
-        'communities',
-        'summary_community',
-    ];
-
     public const AUTHORIZED_PERIODICITY = [
         'monthly',
         'daily',

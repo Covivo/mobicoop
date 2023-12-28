@@ -13,8 +13,11 @@ use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
+use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
@@ -24,19 +27,11 @@ use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class MobConnectManager
 {
-    public const BONUS_STATUS_PENDING = 0;
-    public const BONUS_STATUS_NO = 1;
-    public const BONUS_STATUS_OK = 2;
-
-    public const LONG_DISTANCE_TRIP_THRESHOLD = 3;
-    public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
-
-    public const SUBSCRIPTION_EXPIRATION_DELAY = 3;     // Expressed in months
-
     /**
      * Period, expressed in months, preceding the subscription request during which the user must not have made a trip.
      *
@@ -80,6 +75,11 @@ abstract class MobConnectManager
     protected $_carpoolProofPrefix;
 
     /**
+     * @var TimestampTokenManager
+     */
+    protected $_timestampTokenManager;
+
+    /**
      * @var UserValidation
      */
     protected $_userValidation;
@@ -100,9 +100,24 @@ abstract class MobConnectManager
     protected $_currentCarpoolProof;
 
     /**
+     * @var Proposal
+     */
+    protected $_currentProposal;
+
+    /**
      * @var null|LongDistanceSubscription|ShortDistanceSubscription
      */
     protected $_currentSubscription;
+
+    /**
+     * @var InstanceManager
+     */
+    protected $_instanceManager;
+
+    /**
+     * @var bool
+     */
+    protected $_pushOnlyMode = false;
 
     /**
      * @var MobConnectApiProvider
@@ -121,6 +136,7 @@ abstract class MobConnectManager
 
     public function __construct(
         EntityManagerInterface $em,
+        InstanceManager $instanceManager,
         LoggerService $loggerService,
         HonourCertificateService $honourCertificateService,
         string $carpoolProofPrefix,
@@ -128,6 +144,9 @@ abstract class MobConnectManager
         array $ssoServices
     ) {
         $this->_em = $em;
+
+        $this->_instanceManager = $instanceManager;
+
         $this->_loggerService = $loggerService;
         $this->_honourCertificateService = $honourCertificateService;
 
@@ -152,7 +171,8 @@ abstract class MobConnectManager
         return $this;
     }
 
-    protected function hasRequestErrorReturned(MobConnectResponseInterface $response): bool {
+    protected function hasRequestErrorReturned(MobConnectResponseInterface $response): bool
+    {
         $result = in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
 
         if (true === $result) {
@@ -182,15 +202,6 @@ abstract class MobConnectManager
                     && array_key_exists('client_id', $this->_mobConnectParams['credentials'])
                     && !empty($this->_mobConnectParams['credentials']['client_id'])
                     && array_key_exists('api_key', $this->_mobConnectParams['credentials'])
-                )
-                && (
-                    array_key_exists('subscription_ids', $this->_mobConnectParams)
-                    && is_array($this->_mobConnectParams['subscription_ids'])
-                    && !empty($this->_mobConnectParams['subscription_ids'])
-                    && array_key_exists('short_distance', $this->_mobConnectParams['subscription_ids'])
-                    && !empty($this->_mobConnectParams['subscription_ids']['short_distance'])
-                    && array_key_exists('long_distance', $this->_mobConnectParams['subscription_ids'])
-                    && !empty($this->_mobConnectParams['subscription_ids']['long_distance'])
                 )
             );
     }
@@ -250,11 +261,11 @@ abstract class MobConnectManager
     /**
      * Sets subscription expiration date.
      */
-    protected function getExpirationDate(): \DateTime
+    protected function getExpirationDate(int $delay): \DateTime
     {
         $now = new \DateTime('now');
 
-        return $now->add(new \DateInterval('P'.self::SUBSCRIPTION_EXPIRATION_DELAY.'M'));
+        return $now->add(new \DateInterval('P'.$delay.'M'));
     }
 
     protected function executeRequestVerifySubscription(string $subscriptionId)
@@ -266,7 +277,14 @@ abstract class MobConnectManager
 
     protected function setApiProvider()
     {
-        $this->_apiProvider = new MobConnectApiProvider($this->_em, new MobConnectApiParams($this->_mobConnectParams), $this->_loggerService, $this->_driver, $this->_ssoServices);
+        $this->_apiProvider = new MobConnectApiProvider(
+            $this->_em,
+            new MobConnectApiParams($this->_mobConnectParams),
+            $this->_loggerService,
+            $this->_driver,
+            $this->_ssoServices,
+            $this->_instanceManager->getEecInstance()
+        );
     }
 
     protected function getCarpoolersNumber(Ask $ask): int
@@ -425,5 +443,54 @@ abstract class MobConnectManager
         $this->setApiProvider();
 
         return $this->_apiProvider->getIncentive($incentive_id);
+    }
+
+    protected function _checkPushOnlyMode(): bool
+    {
+        if (
+            true === $this->_pushOnlyMode
+            && is_null($this->_currentSubscription->getCommitmentProofJourney())
+        ) {
+            throw new BadRequestHttpException('The pushOnly option is only possible if the subscription has already been initiated');
+        }
+
+        return true;
+    }
+
+    protected function getCommitmentRequestParams(): array
+    {
+        return $this->_currentSubscription instanceof LongDistanceSubscription
+            ? [
+                SpecificFields::JOURNEY_ID => LongDistanceSubscription::COMMITMENT_PREFIX.$this->_currentProposal->getId(),
+                SpecificFields::JOURNEY_PUBLISH_DATE => $this->_currentProposal->getCreatedDate()->format(self::DATE_FORMAT),
+            ]
+            : [
+                SpecificFields::JOURNEY_ID => $this->getRPCOperatorId($this->_currentCarpoolProof->getId()),
+                SpecificFields::JOURNEY_START_DATE => $this->_currentCarpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
+            ];
+    }
+
+    protected function _finalizesCommitment()
+    {
+        $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
+
+        $journey = (
+            true === $this->_pushOnlyMode
+            ? $this->_currentSubscription->getCommitmentProofJourney()
+            : (
+                $this->_currentSubscription instanceof LongDistanceSubscription
+                ? new LongDistanceJourney($this->_currentProposal)
+                : new ShortDistanceJourney($this->_currentCarpoolProof)
+            )
+        );
+
+        $this->_currentSubscription->setCommitmentProofJourney($journey);
+        $this->_currentSubscription->setCommitmentProofDate(new \DateTime());
+
+        $this->_currentSubscription->setVersion();
+
+        $this->_em->flush();
+
+        return $journey;
     }
 }

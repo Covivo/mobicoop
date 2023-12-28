@@ -408,6 +408,19 @@
                   </template>
                 </v-checkbox>
 
+                <!-- checkbox -->
+                <v-checkbox
+                  v-if="specificTerms"
+                  color="primary"
+                  :rules="form.checkboxSpecificTermsRules"
+                  required
+                >
+                  <template v-slot:label>
+                    <div>
+                      {{ $t("specificTerms.text") }}
+                    </div>
+                  </template>
+                </v-checkbox>
 
                 <!-- checkbox -->
                 <v-checkbox
@@ -636,7 +649,11 @@ export default {
     gendersList: {
       type: Array,
       default: () => []
-    }
+    },
+    specificTerms: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -746,6 +763,9 @@ export default {
         ],
         checkboxLegalAgeRules: [
           (v) => !!v || this.$t("legalAge.required"),
+        ],
+        checkboxSpecificTermsRules: [
+          (v) => !!v || this.$t("specificTerms.required"),
         ],
         idFacebook: null,
         newsSubscription: this.newsSubscriptionDefault

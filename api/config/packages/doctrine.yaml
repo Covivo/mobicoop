@@ -1,210 +1,216 @@
 parameters:
-    # Adds a fallback DATABASE_URL if the env var is not set.
-    # This allows you to run cache:warmup even if your
-    # environment variables are not available yet.
-    # You should not need to change this value.
-    env(DATABASE_URL): ''
+  # Adds a fallback DATABASE_URL if the env var is not set.
+  # This allows you to run cache:warmup even if your
+  # environment variables are not available yet.
+  # You should not need to change this value.
+  env(DATABASE_URL): ""
 
 doctrine:
-    dbal:
-        # configure these for your database server
-        driver: 'pdo_mysql'
-        server_version: 'mariadb-10.4.6'
-        charset: utf8mb4
-        default_table_options:
-            charset: utf8mb4
-            collate: utf8mb4_unicode_ci
-        url: '%env(resolve:DATABASE_URL)%'
-        logging: true
-        profiling: true
-        types:
-            geometry:   CrEOF\Spatial\DBAL\Types\GeometryType
-            point:      CrEOF\Spatial\DBAL\Types\Geometry\PointType
-            polygon:    CrEOF\Spatial\DBAL\Types\Geometry\PolygonType
-            multipolygon:    CrEOF\Spatial\DBAL\Types\Geometry\MultiPolygonType
-            linestring: CrEOF\Spatial\DBAL\Types\Geometry\LineStringType
-        options:
-            1001: true
-    orm:
-        auto_generate_proxy_classes: '%kernel.debug%'
-        naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
-        dql:
-            datetime_functions:
-                dayofweek: DoctrineExtensions\Query\Mysql\DayOfWeek
-                addtime: DoctrineExtensions\Query\Mysql\AddTime
-                sectotime: DoctrineExtensions\Query\Mysql\SecToTime
-            numeric_functions:
-                contains:           CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Contains
-                st_contains:        CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STContains
-                st_distance:        CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STDistance
-                st_area:            CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Area
-                linestringfromwkb:  CrEOF\Spatial\ORM\Query\AST\Functions\MySql\LineStringFromWKB
-                st_geomfromtext:    CrEOF\Spatial\ORM\Query\AST\Functions\MySql\GeomFromText
-                st_intersects:      CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STIntersects
-                st_buffer:          CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STBuffer
-                point:              CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Point
-                acos:               DoctrineExtensions\Query\Mysql\Acos
-                cos:                DoctrineExtensions\Query\Mysql\Cos
-                radians:            DoctrineExtensions\Query\Mysql\Radians
-                sin:                DoctrineExtensions\Query\Mysql\Sin   
-            string_functions:
-                match: DoctrineExtensions\Query\Mysql\MatchAgainst
-                DATE_FORMAT: DoctrineExtensions\Query\Mysql\DateFormat
-        mappings:
-            Action:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Action/Entity'
-                prefix: 'App\Action\Entity'
-                alias: Action
-            App:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/App/Entity'
-                prefix: 'App\App\Entity'
-                alias: App
-            Auth:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Auth/Entity'
-                prefix: 'App\Auth\Entity'
-                alias: Auth
-            Article:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Article/Entity'
-                prefix: 'App\Article\Entity'
-                alias: Article
-            Carpool:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Carpool/Entity'
-                prefix: 'App\Carpool\Entity'
-                alias: Carpool
-            ClientMigs:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/ClientMigs/Entity'
-                prefix: 'App\ClientMigs\Entity'
-                alias: ClientMigs
-            Communication:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Communication/Entity'
-                prefix: 'App\Communication\Entity'
-                alias: Communication
-            Community:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Community/Entity'
-                prefix: 'App\Community\Entity'
-                alias: Community
-            Editorial:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Editorial/Entity'
-                prefix: 'App\Editorial\Entity'
-                alias: Editorial    
-            Event:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Event/Entity'
-                prefix: 'App\Event\Entity'
-                alias: Event
-            Gamification:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Gamification/Entity'
-                prefix: 'App\Gamification\Entity'
-                alias: Gamification
-            Geography:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Geography/Entity'
-                prefix: 'App\Geography\Entity'
-                alias: Geography
-            I18n:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/I18n/Entity'
-                prefix: 'App\I18n\Entity'
-                alias: I18n    
-            Image:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Image/Entity'
-                prefix: 'App\Image\Entity'
-                alias: Image
-            Import:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Import/Entity'
-                prefix: 'App\Import\Entity'
-                alias: Import
-            Incentive:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Incentive/Entity'
-                prefix: 'App\Incentive\Entity'
-                alias: Incentive
-            Journey:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Journey/Entity'
-                prefix: 'App\Journey\Entity'
-                alias: Journey
-            MassCommunication:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/MassCommunication/Entity'
-                prefix: 'App\MassCommunication\Entity'
-                alias: MassCommunication
-            Match:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Match/Entity'
-                prefix: 'App\Match\Entity'
-                alias: Match
-            Payment:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Payment/Entity'
-                prefix: 'App\Payment\Entity'
-                alias: Payment
-            PublicTransport:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/PublicTransport/Entity'
-                prefix: 'App\PublicTransport\Entity'
-                alias: PublicTransport
-            RelayPoint:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/RelayPoint/Entity'
-                prefix: 'App\RelayPoint\Entity'
-                alias: RelayPoint
-            Scammer:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Scammer/Entity'
-                prefix: 'App\Scammer\Entity'
-                alias: Scammer    
-            Solidary:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Solidary/Entity'
-                prefix: 'App\Solidary\Entity'
-                alias: Solidary
-            Travel:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Travel/Entity'
-                prefix: 'App\Travel\Entity'
-                alias: Travel
-            User:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/User/Entity'
-                prefix: 'App\User\Entity'
-                alias: User
+  dbal:
+    # configure these for your database server
+    driver: "pdo_mysql"
+    server_version: "mariadb-10.4.6"
+    charset: utf8mb4
+    default_table_options:
+      charset: utf8mb4
+      collate: utf8mb4_unicode_ci
+    url: "%env(resolve:DATABASE_URL)%"
+    logging: true
+    profiling: true
+    types:
+      geometry: CrEOF\Spatial\DBAL\Types\GeometryType
+      point: CrEOF\Spatial\DBAL\Types\Geometry\PointType
+      polygon: CrEOF\Spatial\DBAL\Types\Geometry\PolygonType
+      multipolygon: CrEOF\Spatial\DBAL\Types\Geometry\MultiPolygonType
+      linestring: CrEOF\Spatial\DBAL\Types\Geometry\LineStringType
+    options:
+      1001: true
+  orm:
+    auto_generate_proxy_classes: "%kernel.debug%"
+    naming_strategy: doctrine.orm.naming_strategy.underscore
+    auto_mapping: true
+    dql:
+      datetime_functions:
+        dayofweek: DoctrineExtensions\Query\Mysql\DayOfWeek
+        addtime: DoctrineExtensions\Query\Mysql\AddTime
+        sectotime: DoctrineExtensions\Query\Mysql\SecToTime
+      numeric_functions:
+        contains: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Contains
+        st_contains: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STContains
+        st_distance: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STDistance
+        st_area: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Area
+        linestringfromwkb: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\LineStringFromWKB
+        st_geomfromtext: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\GeomFromText
+        st_intersects: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STIntersects
+        st_buffer: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STBuffer
+        point: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Point
+        acos: DoctrineExtensions\Query\Mysql\Acos
+        cos: DoctrineExtensions\Query\Mysql\Cos
+        radians: DoctrineExtensions\Query\Mysql\Radians
+        sin: DoctrineExtensions\Query\Mysql\Sin
+      string_functions:
+        match: DoctrineExtensions\Query\Mysql\MatchAgainst
+        DATE_FORMAT: DoctrineExtensions\Query\Mysql\DateFormat
+    mappings:
+      Action:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Action/Entity"
+        prefix: 'App\Action\Entity'
+        alias: Action
+      App:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/App/Entity"
+        prefix: 'App\App\Entity'
+        alias: App
+      Auth:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Auth/Entity"
+        prefix: 'App\Auth\Entity'
+        alias: Auth
+      Article:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Article/Entity"
+        prefix: 'App\Article\Entity'
+        alias: Article
+      Carpool:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Carpool/Entity"
+        prefix: 'App\Carpool\Entity'
+        alias: Carpool
+      ClientMigs:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/ClientMigs/Entity"
+        prefix: 'App\ClientMigs\Entity'
+        alias: ClientMigs
+      Communication:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Communication/Entity"
+        prefix: 'App\Communication\Entity'
+        alias: Communication
+      Community:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Community/Entity"
+        prefix: 'App\Community\Entity'
+        alias: Community
+      Editorial:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Editorial/Entity"
+        prefix: 'App\Editorial\Entity'
+        alias: Editorial
+      Event:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Event/Entity"
+        prefix: 'App\Event\Entity'
+        alias: Event
+      Gamification:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Gamification/Entity"
+        prefix: 'App\Gamification\Entity'
+        alias: Gamification
+      Gratuity:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Gratuity/Entity"
+        prefix: 'App\Gratuity\Entity'
+        alias: Gratuity
+      Geography:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Geography/Entity"
+        prefix: 'App\Geography\Entity'
+        alias: Geography
+      I18n:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/I18n/Entity"
+        prefix: 'App\I18n\Entity'
+        alias: I18n
+      Image:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Image/Entity"
+        prefix: 'App\Image\Entity'
+        alias: Image
+      Import:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Import/Entity"
+        prefix: 'App\Import\Entity'
+        alias: Import
+      Incentive:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Incentive/Entity"
+        prefix: 'App\Incentive\Entity'
+        alias: Incentive
+      Journey:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Journey/Entity"
+        prefix: 'App\Journey\Entity'
+        alias: Journey
+      MassCommunication:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/MassCommunication/Entity"
+        prefix: 'App\MassCommunication\Entity'
+        alias: MassCommunication
+      Match:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Match/Entity"
+        prefix: 'App\Match\Entity'
+        alias: Match
+      Payment:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Payment/Entity"
+        prefix: 'App\Payment\Entity'
+        alias: Payment
+      PublicTransport:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/PublicTransport/Entity"
+        prefix: 'App\PublicTransport\Entity'
+        alias: PublicTransport
+      RelayPoint:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/RelayPoint/Entity"
+        prefix: 'App\RelayPoint\Entity'
+        alias: RelayPoint
+      Scammer:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Scammer/Entity"
+        prefix: 'App\Scammer\Entity'
+        alias: Scammer
+      Solidary:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Solidary/Entity"
+        prefix: 'App\Solidary\Entity'
+        alias: Solidary
+      Travel:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/Travel/Entity"
+        prefix: 'App\Travel\Entity'
+        alias: Travel
+      User:
+        is_bundle: false
+        type: annotation
+        dir: "%kernel.project_dir%/src/User/Entity"
+        prefix: 'App\User\Entity'
+        alias: User
