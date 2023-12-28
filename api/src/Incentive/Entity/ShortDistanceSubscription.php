@@ -793,7 +793,7 @@ class ShortDistanceSubscription extends Subscription
         return
             !empty($this->getJourneys())
             && !is_null($this->getExpirationDate())
-            && $this->getExpirationDate() < $now->sub(new \DateInterval('P'.self::VALIDITY_PERIOD.'M'));
+            && $this->getExpirationDate() < $now->sub(new \DateInterval('P'.$this->getValidityPeriodDuration().'M'));
     }
 
     /**
@@ -885,6 +885,7 @@ class ShortDistanceSubscription extends Subscription
                 $this->addShortDistanceJourney($commitmentProofJourney);
             }
         } else {
+            $this->getCommitmentProofJourney()->setCarpoolProof(null);
             $this->removeJourney($this->getCommitmentProofJourney());
         }
 
@@ -977,8 +978,8 @@ class ShortDistanceSubscription extends Subscription
     public static function getAvailableDefinitions(): array
     {
         return [
-            SdStandard::class,
             SdImproved::class,
+            SdStandard::class,
         ];
     }
 

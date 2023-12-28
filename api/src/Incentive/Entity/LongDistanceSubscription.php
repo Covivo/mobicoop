@@ -803,7 +803,7 @@ class LongDistanceSubscription extends Subscription
         return
             !empty($this->getJourneys())
             && !is_null($this->getExpirationDate())
-            && $this->getExpirationDate() < $now->sub(new \DateInterval('P'.self::VALIDITY_PERIOD.'M'));
+            && $this->getExpirationDate() < $now->sub(new \DateInterval('P'.$this->getValidityPeriodDuration().'M'));
     }
 
     /**
@@ -897,6 +897,8 @@ class LongDistanceSubscription extends Subscription
                 $this->addLongDistanceJourney($commitmentProofJourney);
             }
         } else {
+            $this->getCommitmentProofJourney()->setCarpoolItem(null);
+            $this->getCommitmentProofJourney()->setCarpoolPayment(null);
             $this->removeJourney($this->getCommitmentProofJourney());
         }
 
@@ -1059,8 +1061,8 @@ class LongDistanceSubscription extends Subscription
     public static function getAvailableDefinitions(): array
     {
         return [
-            LdStandard::class,
             LdImproved::class,
+            LdStandard::class,
         ];
     }
 

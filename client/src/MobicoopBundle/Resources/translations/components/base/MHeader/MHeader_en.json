@@ -2,7 +2,7 @@
     "buttons": {
         "signup": {
             "label": "Register",
-            "route": "/user/registration"
+            "route": "/user/signup"
         },
         "logIn": {
             "label": "Login",

@@ -56,7 +56,6 @@ class ActionSubscriber implements EventSubscriberInterface
             switch ($event->getAction()->getName()) {
                 case 'user_home_address_updated':
                 case UserRegisteredEvent::NAME:
-                    echo $event->getAction()->getName().PHP_EOL;
                     $this->_gratuityCampaignActionManager->handleHomeAddressUpdatedAction($event->getUser());
 
                     break;

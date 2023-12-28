@@ -7,11 +7,8 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
-use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
-use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
-use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
@@ -503,20 +500,5 @@ class SubscriptionManager extends MobConnectManager
 
             $this->_ceeEligibleProofs[] = $proof;
         }
-    }
-
-    private function _getFlatJourneys($journeys): array
-    {
-        $subscriptions = [];
-
-        foreach ($journeys as $journey) {
-            if ($journey instanceof ShortDistanceJourney) {
-                array_push($subscriptions, new FlatShortDistanceSubscription($journey));
-            } else {
-                array_push($subscriptions, new FlatLongDistanceSubscription($journey));
-            }
-        }
-
-        return $subscriptions;
     }
 }

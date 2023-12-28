@@ -11,7 +11,7 @@
   "urlRecovery": "/user/password/recovery",
   "textRecovery": "Forgot your password?",
   "signUp": "Not registered?",
-  "urlSignUp": "/user/registration",
+  "urlSignUp": "/user/signup",
   "urlGetSsoServices": "/user/getSsoServices",
   "connection": "Log in",
   "password": "Password",

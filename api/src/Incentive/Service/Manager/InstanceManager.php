@@ -7,16 +7,6 @@ use App\Incentive\Resource\EecInstance;
 class InstanceManager
 {
     /**
-     * @var null|\DateTime
-     */
-    private $_eecServiceExpirationDate;
-
-    /**
-     * @var string[]
-     */
-    private $_subscriptionKeys;
-
-    /**
      * @var EecInstance
      */
     private $_currentEecInstance;

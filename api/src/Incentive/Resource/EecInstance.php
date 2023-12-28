@@ -62,11 +62,25 @@ class EecInstance
     private $expirationDate;
 
     /**
+     * @var bool
+     *
+     * @Groups("readEecInstance")
+     */
+    private $ldAvailable;
+
+    /**
      * @var null|\DateTimeInterface
      *
      * @Groups({"readEecInstance"})
      */
     private $ldExpirationDate;
+
+    /**
+     * @var bool
+     *
+     * @Groups("readEecInstance")
+     */
+    private $sdAvailable;
 
     /**
      * @var null|\DateTimeInterface
@@ -86,6 +100,13 @@ class EecInstance
     private $sdKey;
 
     /**
+     * @var ?bool
+     *
+     * @Groups("readEecInstance")
+     */
+    private $tabView;
+
+    /**
      * @var array
      */
     private $configuration;
@@ -99,6 +120,7 @@ class EecInstance
         $this->setLdExpirationDate();
         $this->setSdExpirationDate();
         $this->setAvailable($this->_isServiceOpened());
+        $this->setTabView();
     }
 
     public function getId(): int
@@ -152,6 +174,16 @@ class EecInstance
         $this->expirationDate = $this->getDate($this->configuration['expirationDate']);
 
         return $this;
+    }
+
+    public function isLdAvailable(): bool
+    {
+        return !is_null($this->ldKey) && !$this->isDateExpired($this->getLdExpirationDate());
+    }
+
+    public function isSdAvailable(): bool
+    {
+        return !is_null($this->sdKey) && !$this->isDateExpired($this->getSdExpirationDate());
     }
 
     /**
@@ -234,9 +266,20 @@ class EecInstance
         return $this;
     }
 
-    public function areSubscriptionKeysAvailable(): bool
+    public function isTabView(): bool
     {
-        return !is_null($this->ldKey) && !is_null($this->sdKey);
+        return $this->tabView;
+    }
+
+    private function setTabView(): self
+    {
+        $this->tabView =
+            is_null($this->configuration)
+            || !isset($this->configuration['tabView'])
+            || is_null($this->configuration['tabView'])
+            ? false : $this->configuration['tabView'];
+
+        return $this;
     }
 
     private function getDate(?string $date): ?\DateTime
@@ -260,36 +303,24 @@ class EecInstance
     {
         if (
             is_null($this->expirationDate)
-            && is_null($this->ldExpirationDate)
-            && is_null($this->sdExpirationDate)
-            && $this->areSubscriptionKeysAvailable()
+            && (
+                $this->isLdAvailable() && $this->isSdAvailable()
+                || $this->isLdAvailable() && !$this->isSdAvailable()
+                || !$this->isLdAvailable() && $this->isSdAvailable()
+            )
         ) {
             return true;
         }
 
         if (
-            $this->areSubscriptionKeysAvailable()
+            !is_null($this->expirationDate)
             && (
-                !is_null($this->expirationDate)
-                || (!is_null($this->ldExpirationDate) && !is_null($this->sdExpirationDate))
-                || (!is_null($this->ldExpirationDate) && is_null($this->sdExpirationDate))
-                || (is_null($this->ldExpirationDate) && !is_null($this->sdExpirationDate))
+                $this->isLdAvailable() && $this->isSdAvailable()
+                || $this->isLdAvailable() && !$this->isSdAvailable()
+                || !$this->isLdAvailable() && $this->isSdAvailable()
             )
         ) {
-            if (!is_null($this->expirationDate)) {
-                return !$this->isDateExpired($this->expirationDate);
-            }
-
-            if (!is_null($this->ldExpirationDate) && !is_null($this->sdExpirationDate)) {
-                return !$this->isDateExpired($this->ldExpirationDate) && !$this->isDateExpired($this->sdExpirationDate);
-            }
-
-            if (
-                !is_null($this->ldExpirationDate) && is_null($this->sdExpirationDate)
-                || (is_null($this->ldExpirationDate) && !is_null($this->sdExpirationDate))
-            ) {
-                return true;
-            }
+            return !$this->isDateExpired($this->expirationDate);
         }
 
         return false;
