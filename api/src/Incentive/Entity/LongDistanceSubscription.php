@@ -868,7 +868,7 @@ class LongDistanceSubscription extends Subscription
 
     public function getCommitmentProofJourneyFromInitialProposal(Proposal $initialProposal): ?LongDistanceJourney
     {
-        $filteredJourneys = array_values(array_filter($this->getJourneys(), function (LongDistanceJourney $journey) use ($initialProposal) {
+        $filteredJourneys = array_values(array_filter($this->getJourneys()->toArray(), function (LongDistanceJourney $journey) use ($initialProposal) {
             return
                 !is_null($journey->getInitialProposal())
                 && $journey->getInitialProposal()->getId() === $initialProposal->getId();

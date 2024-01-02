@@ -858,7 +858,7 @@ class ShortDistanceSubscription extends Subscription
 
     public function getCommitmentProofJourneyFromCarpoolProof(CarpoolProof $carpoolProof): ?ShortDistanceJourney
     {
-        $filteredJourneys = array_values(array_filter($this->getJourneys(), function (ShortDistanceJourney $journey) use ($carpoolProof) {
+        $filteredJourneys = array_values(array_filter($this->getJourneys()->toArray(), function (ShortDistanceJourney $journey) use ($carpoolProof) {
             return
                 !is_null($journey->getCarpoolProof())
                 && $journey->getCarpoolProof()->getId() === $carpoolProof->getId();
