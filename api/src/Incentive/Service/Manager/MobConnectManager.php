@@ -29,7 +29,6 @@ use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class MobConnectManager
@@ -501,18 +500,6 @@ abstract class MobConnectManager
         return $this->_apiProvider->getIncentive($incentive_id);
     }
 
-    protected function _checkPushOnlyMode(): bool
-    {
-        if (
-            true === $this->_pushOnlyMode
-            && is_null($this->_currentSubscription->getCommitmentProofJourney())
-        ) {
-            throw new BadRequestHttpException('The pushOnly option is only possible if the subscription has already been initiated');
-        }
-
-        return true;
-    }
-
     protected function getCommitmentRequestParams(): array
     {
         return $this->_currentSubscription instanceof LongDistanceSubscription
@@ -532,7 +519,11 @@ abstract class MobConnectManager
 
         $journey = (
             true === $this->_pushOnlyMode
-            ? $this->_currentSubscription->getCommitmentProofJourney()
+            ? (
+                $this->_currentSubscription instanceof LongDistanceSubscription
+                ? $this->_currentSubscription->getCommitmentProofJourneyFromInitialProposal($this->_currentProposal)
+                : $this->_currentSubscription->getCommitmentProofJourneyFromCarpoolProof($this->_currentCarpoolProof)
+            )
             : (
                 $this->_currentSubscription instanceof LongDistanceSubscription
                 ? new LongDistanceJourney($this->_currentProposal)

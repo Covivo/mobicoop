@@ -119,6 +119,8 @@ abstract class Subscription implements SubscriptionInterface
 
     /**
      * Return all journeys.
+     *
+     * @return LongDistanceJourney[]|ShortDistanceJourney[]
      */
     public function getJourneys()
     {
