@@ -14,7 +14,7 @@
           mdi-alert
         </v-icon>
         <span class="white--text ">
-          CEE
+          {{ $t('eecWarning.title') }}
         </span>
       </v-card-text>
     </v-card>
