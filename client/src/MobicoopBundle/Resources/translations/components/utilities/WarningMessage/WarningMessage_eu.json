@@ -10,5 +10,8 @@
     "passengerWithoutValidatedIdentity": "Rappel: pour la plupart des primes pour le covoiturage comme la Prime Covoiturage CEE permettant au conducteur de toucher 100€, la saisie de votre identité bancaire et de la sienne sont nécessaires. Selon le type de prime, celle-ci est versée au conducteur et/ou au passager. En savoir plus.",
     "female": "elle",
     "male": "il"
+  },
+  "routes": {
+    "getEecInstance": "/eec/instance"
   }
 }
