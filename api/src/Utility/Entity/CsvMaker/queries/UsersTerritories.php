@@ -16,16 +16,18 @@ class UsersTerritories implements MultipleQueriesInterface
             user_id int NOT NULL,
             territory_id int NOT NULL,
             territory_name varchar(100) NOT NULL,
+            admin_level int(11) NOT NULL,
             PRIMARY KEY(user_id, territory_id)
         );';
 
         $this->_multipleQueries[] = '
         INSERT
-            IGNORE INTO user_territory (user_id, territory_id, territory_name)
+            IGNORE INTO user_territory (user_id, territory_id, territory_name, admin_level)
         SELECT
             user.id,
             territory_id,
-            homeTerritory.name
+            homeTerritory.name,
+            homeTerritory.admin_level
         FROM
             user
             inner join address as homeAddress on homeAddress.user_id = user.id
@@ -45,11 +47,12 @@ class UsersTerritories implements MultipleQueriesInterface
 
         $this->_multipleQueries[] = '
         INSERT
-            IGNORE INTO user_territory (user_id, territory_id, territory_name)
+            IGNORE INTO user_territory (user_id, territory_id, territory_name, admin_level)
         SELECT
             user.id,
             territory_id,
-            destination_territory.name
+            destination_territory.name,
+            destination_territory.admin_level
         FROM
             user
             inner join proposal ON user.id = proposal.user_id
@@ -74,11 +77,12 @@ class UsersTerritories implements MultipleQueriesInterface
 
         $this->_multipleQueries[] = '
         INSERT
-            IGNORE INTO user_territory (user_id, territory_id, territory_name)
+            IGNORE INTO user_territory (user_id, territory_id, territory_name, admin_level)
         SELECT
             user.id,
             territory_id,
-            ask_destination_territory.name
+            ask_destination_territory.name,
+            ask_destination_territory.admin_level
         FROM
             user
             inner join ask on ask.user_id = user.id
