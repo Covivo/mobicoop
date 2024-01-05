@@ -2,6 +2,7 @@
 
 namespace App\Utility\Entity\CsvMaker\queries;
 
+use App\Carpool\Entity\Ask;
 use App\Utility\Interfaces\MultipleQueriesInterface;
 
 class Journeys implements MultipleQueriesInterface
@@ -76,7 +77,8 @@ class Journeys implements MultipleQueriesInterface
             inner join criteria c on c.id = ask.criteria_id
             inner join proposal pr on m.proposal_request_id = pr.id
         where
-            ask.status in (4, 5)';
+            ask.status in ('.Ask::STATUS_ACCEPTED_AS_DRIVER.', '.Ask::STATUS_ACCEPTED_AS_PASSENGER.')
+            and COALESCE(c.to_date, c.from_date) >= NOW()';
 
         $this->_multipleQueries[] = '
             INSERT IGNORE INTO journeys (journeyId, adId, userId, role, origin, destination, end_validity_date, journeytype, frequency, origin_lat, origin_lon, destination_lat, destination_lon, price)
@@ -124,7 +126,8 @@ class Journeys implements MultipleQueriesInterface
                 inner join criteria c on c.id = ask.criteria_id
                 inner join proposal po on m.proposal_offer_id = po.id
             where
-                ask.status in (4, 5)';
+                ask.status in ('.Ask::STATUS_ACCEPTED_AS_DRIVER.', '.Ask::STATUS_ACCEPTED_AS_PASSENGER.')
+                and COALESCE(c.to_date, c.from_date) >= NOW()';
 
         $this->_multipleQueries[] = '
             select
