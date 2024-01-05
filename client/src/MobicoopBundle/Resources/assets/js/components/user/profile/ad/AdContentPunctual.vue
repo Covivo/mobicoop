@@ -57,15 +57,23 @@ export default {
     },
     origin () {
       return {
+        houseNumber: this.ad.waypoints.find(el => el.position === 0)['houseNumber'],
+        postalCode: this.ad.waypoints.find(el => el.position === 0)['postalCode'],
+        street: this.ad.waypoints.find(el => el.position === 0)['street'],
         streetAddress: this.ad.waypoints.find(el => el.position === 0)['streetAddress'],
         addressLocality: this.ad.waypoints.find(el => el.position === 0)['addressLocality'],
-        name: this.ad.waypoints.find(el => el.position === 0)['name'],
+        addressCountry: this.ad.waypoints.find(el => el.position === 0)['addressCountry'],
+        name: this.ad.waypoints.find(el => el.position === 0)['name']
       }
     },
     destination () {
       return {
+        houseNumber: this.ad.waypoints.find(el => el.destination === true)['houseNumber'],
+        postalCode: this.ad.waypoints.find(el => el.destination === true)['postalCode'],
+        street: this.ad.waypoints.find(el => el.destination === true)['street'],
         streetAddress: this.ad.waypoints.find(el => el.destination === true)['streetAddress'],
         addressLocality: this.ad.waypoints.find(el => el.destination === true)['addressLocality'],
+        addressCountry: this.ad.waypoints.find(el => el.destination === true)['addressCountry'],
         name: this.ad.waypoints.find(el => el.destination === true)['name']
       }
     }
