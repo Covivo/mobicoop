@@ -19,9 +19,9 @@ class DisplayLabelBuilderTest extends TestCase
 
     public function setUp(): void
     {
-        $this->_carpoolDisplayFieldsOrder = json_decode('{"0":{"0":"street","1":"postalCode"},"1":{"0":"addressLocality"}}', true);
+        $this->_carpoolDisplayFieldsOrder = json_decode('{"0":{"0":"street","1":"postalCode"},"1":{"0":"locality"}}', true);
         $this->_carpoolDisplayFieldsOrderEmpty = json_decode('{}', true);
-        $this->_carpoolDisplayFieldsOrderWithInvalidField = json_decode('{"0":{"0":"street","1":"postalCode"},"1":{"0":"addressLocality", "1":"blahblah"}}', true);
+        $this->_carpoolDisplayFieldsOrderWithInvalidField = json_decode('{"0":{"0":"street","1":"postalCode"},"1":{"0":"locality", "1":"blahblah"}}', true);
     }
 
     /**
@@ -89,14 +89,26 @@ class DisplayLabelBuilderTest extends TestCase
         $address2->setStreet('Grand Case');
         $address2->setPostalCode('97801');
         $waypoint2->setAddress($address2);
-        $waypoint1_result2 = [
+        $waypoint2_result = [
             ['Grand Case', '97801'],
+            ['Saint-Martin'],
+        ];
+
+        $waypoint3 = new Waypoint();
+        $address3 = new Address();
+        $address3->setAddressLocality('Cul-de-Sac');
+        $address3->setAddressCountry('Saint-Martin');
+        $address3->setPostalCode('97150');
+        $waypoint3->setAddress($address3);
+        $waypoint3_result = [
+            ['Cul-de-Sac', '97150'],
             ['Saint-Martin'],
         ];
 
         return [
             [$waypoint1, $waypoint1_result],
-            [$waypoint2, $waypoint1_result2],
+            [$waypoint2, $waypoint2_result],
+            [$waypoint3, $waypoint3_result],
         ];
     }
 }

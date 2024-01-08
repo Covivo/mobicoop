@@ -30,8 +30,14 @@ use App\Carpool\Entity\Waypoint;
  */
 class DisplayLabelBuilder
 {
+    private const MATCHING_FIELDS = [
+        'street' => ['streetAddress', 'street', 'addressLocality'],
+        'locality' => ['addressLocality', 'addressCountry'],
+        'postalCode' => ['postalCode'],
+    ];
     private $_carpoolDisplayFieldsOrder;
     private $_waypoint;
+    private $_displayLabel;
 
     public function __construct(array $carpoolDisplayFieldsOrder)
     {
@@ -50,7 +56,9 @@ class DisplayLabelBuilder
             return [];
         }
 
-        return $this->_formatWithCustomOrder();
+        $this->_formatWithCustomOrder();
+
+        return $this->_displayLabel;
     }
 
     public function getCarpoolDisplayFieldsOrder(): array
@@ -58,20 +66,46 @@ class DisplayLabelBuilder
         return $this->_carpoolDisplayFieldsOrder;
     }
 
-    private function _formatWithCustomOrder(): array
+    public function _inArrayInSubArrays($needle, $haystack)
     {
-        $displayLabel = [];
-        $address = $this->_waypoint->getAddress();
-        foreach ($this->_carpoolDisplayFieldsOrder as $lineOrder) {
-            $line = [];
-            foreach ($lineOrder as $field) {
-                if (method_exists($address, 'get'.ucfirst($field))) {
-                    $line[] = call_user_func([$address, 'get'.ucfirst($field)]);
-                }
+        foreach ($haystack as $subArray) {
+            if (in_array($needle, $subArray)) {
+                return true;
             }
-            $displayLabel[] = $line;
         }
 
-        return $displayLabel;
+        return false;
+    }
+
+    private function _formatWithCustomOrder()
+    {
+        //        $this->_carpoolDisplayFieldsOrder = json_decode('{"0":{"0":"street","1":"postalCode"},"1":{"0":"locality"}}', true);
+
+        $this->_displayLabel = [];
+        $address = $this->_waypoint->getAddress();
+        foreach ($this->_carpoolDisplayFieldsOrder as $lineOrder) {
+            $this->_displayLabel[] = $this->_treatOrderLine($address, $lineOrder);
+        }
+    }
+
+    private function _treatOrderLine($address, $lineOrder)
+    {
+        $line = [];
+        foreach ($lineOrder as $field) {
+            if (isset(self::MATCHING_FIELDS[$field])) {
+                foreach (self::MATCHING_FIELDS[$field] as $correspondingField) {
+                    if (method_exists($address, 'get'.ucfirst($correspondingField))) {
+                        $value = call_user_func([$address, 'get'.ucfirst($correspondingField)]);
+                        if ('' !== trim($value) && !$this->_inArrayInSubArrays($value, $this->_displayLabel)) {
+                            $line[] = $value;
+
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $line;
     }
 }
