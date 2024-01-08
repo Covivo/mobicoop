@@ -47,6 +47,7 @@ class AuthManager
             AuthItem::HITCHHICKING_WATCHER,
             AuthItem::HITCHHICKING_MANAGER,
             AuthItem::HITCHHICKING_ADMINISTRATOR,
+            AuthItem::ROLE_EXPORTER,
         ],
         AuthItem::ROLE_ADMIN => [
             AuthItem::ROLE_ADMIN,
