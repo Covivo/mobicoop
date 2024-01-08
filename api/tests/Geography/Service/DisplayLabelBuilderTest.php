@@ -2,7 +2,6 @@
 
 namespace App\Geography\Service;
 
-use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
 use App\Geography\Entity\Address;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +33,7 @@ class DisplayLabelBuilderTest extends TestCase
      */
     public function testBuildDisplayLabelFromWaypointReturnArray($waypoint)
     {
-        $this->assertIsArray($this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint, Criteria::FREQUENCY_PUNCTUAL));
+        $this->assertIsArray($this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
     }
 
     /**
@@ -47,7 +46,7 @@ class DisplayLabelBuilderTest extends TestCase
      */
     public function testBuildDisplayLabelFromWaypoint($waypoint, $expectedResult)
     {
-        $this->assertEquals($expectedResult, $this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint, Criteria::FREQUENCY_PUNCTUAL));
+        $this->assertEquals($expectedResult, $this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
     }
 
     /**
@@ -59,7 +58,7 @@ class DisplayLabelBuilderTest extends TestCase
      */
     public function testBuildDisplayLabelFromWaypointWithEmptyOrder($waypoint)
     {
-        $this->assertEquals([], $this->_displayLabelBuilderEmptyOrder->buildDisplayLabelFromWaypoint($waypoint, Criteria::FREQUENCY_PUNCTUAL));
+        $this->assertEquals([], $this->_displayLabelBuilderEmptyOrder->buildDisplayLabelFromWaypoint($waypoint));
     }
 
     public function dataWaypoints(): array
