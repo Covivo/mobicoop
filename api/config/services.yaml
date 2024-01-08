@@ -906,7 +906,7 @@ services:
     tags:
       - { name: "console.command", command: "app:carpool:proof-send-history" }
 
-  App\Carpool\Command\VersionTransitionalPeriodCommand:
+  App\Incentive\Command\VersionTransitionalPeriodCommand:
     tags:
       - { name: "console.command", command: app:incentive:subscription-transitional-period" }
 
