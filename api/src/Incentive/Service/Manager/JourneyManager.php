@@ -139,8 +139,6 @@ class JourneyManager extends MobConnectManager
             return null;
         }
 
-        $this->_checkPushOnlyMode();
-
         $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
 
         $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
@@ -175,8 +173,6 @@ class JourneyManager extends MobConnectManager
         if (is_null($this->_currentSubscription)) {
             return null;
         }
-
-        $this->_checkPushOnlyMode();
 
         $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
 
