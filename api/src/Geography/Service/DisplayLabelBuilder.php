@@ -37,8 +37,23 @@ class DisplayLabelBuilder
         $this->_carpoolDisplayFieldsOrder = $carpoolDisplayFieldsOrder;
     }
 
-    public function buildDisplayLabelFromWaypoint(Waypoint $waypoint): array
+    public function buildDisplayLabelFromWaypoint(Waypoint $waypoint, int $frequency): array
     {
-        return [];
+        if (0 == count($this->_carpoolDisplayFieldsOrder)) {
+            return [];
+        }
+
+        if (is_null($waypoint->getAddress())) {
+            return [];
+        }
+
+        return [
+            [$waypoint->getAddress()->getAddressLocality()],
+        ];
+    }
+
+    public function getCarpoolDisplayFieldsOrder(): array
+    {
+        return $this->_carpoolDisplayFieldsOrder;
     }
 }

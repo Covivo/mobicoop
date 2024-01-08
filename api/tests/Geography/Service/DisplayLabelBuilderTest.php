@@ -2,7 +2,9 @@
 
 namespace App\Geography\Service;
 
+use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
+use App\Geography\Entity\Address;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,11 +15,14 @@ use PHPUnit\Framework\TestCase;
 class DisplayLabelBuilderTest extends TestCase
 {
     private $_displayLabelBuilder;
+    private $_displayLabelBuilderEmptyOrder;
 
     public function setUp(): void
     {
-        $carpoolDisplayFieldsOrder = [];
+        $carpoolDisplayFieldsOrder = ['addressLocality'];
+        $carpoolDisplayFieldsOrderEmpty = [];
         $this->_displayLabelBuilder = new DisplayLabelBuilder($carpoolDisplayFieldsOrder);
+        $this->_displayLabelBuilderEmptyOrder = new DisplayLabelBuilder($carpoolDisplayFieldsOrderEmpty);
     }
 
     /**
@@ -29,7 +34,7 @@ class DisplayLabelBuilderTest extends TestCase
      */
     public function testBuildDisplayLabelFromWaypointReturnArray($waypoint)
     {
-        $this->assertIsArray($this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
+        $this->assertIsArray($this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint, Criteria::FREQUENCY_PUNCTUAL));
     }
 
     /**
@@ -42,7 +47,19 @@ class DisplayLabelBuilderTest extends TestCase
      */
     public function testBuildDisplayLabelFromWaypoint($waypoint, $expectedResult)
     {
-        $this->assertEquals($expectedResult, $this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
+        $this->assertEquals($expectedResult, $this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint, Criteria::FREQUENCY_PUNCTUAL));
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataWaypoints
+     *
+     * @param mixed $waypoint
+     */
+    public function testBuildDisplayLabelFromWaypointWithEmptyOrder($waypoint)
+    {
+        $this->assertEquals([], $this->_displayLabelBuilderEmptyOrder->buildDisplayLabelFromWaypoint($waypoint, Criteria::FREQUENCY_PUNCTUAL));
     }
 
     public function dataWaypoints(): array
@@ -50,8 +67,17 @@ class DisplayLabelBuilderTest extends TestCase
         $waypoint1 = new Waypoint();
         $waypoint1_result = [];
 
+        $waypoint2 = new Waypoint();
+        $address2 = new Address();
+        $address2->setAddressLocality('Saint-Martin');
+        $waypoint2->setAddress($address2);
+        $waypoint1_result2 = [
+            ['Saint-Martin'],
+        ];
+
         return [
             [$waypoint1, $waypoint1_result],
+            [$waypoint2, $waypoint1_result2],
         ];
     }
 }
