@@ -6,7 +6,8 @@ SELECT
     email,
     telephone,
     created_date,
-    last_activity_date
+    last_activity_date,
+    news_subscription as 'optin'
 FROM
     `user`
 WHERE

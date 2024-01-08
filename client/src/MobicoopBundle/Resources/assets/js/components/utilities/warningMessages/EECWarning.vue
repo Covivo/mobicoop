@@ -14,7 +14,7 @@
           mdi-alert
         </v-icon>
         <span class="white--text ">
-          CEE
+          {{ $t('eecWarning.title') }}
         </span>
       </v-card-text>
     </v-card>
@@ -46,6 +46,7 @@
 import { DRIVER, PASSENGER } from "./../../user/mailbox/Messages";
 
 import { merge } from "lodash";
+import maxios from "@utils/maxios";
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/WarningMessage";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/utilities/WarningMessage";
@@ -68,14 +69,11 @@ export default {
     carpoolersIdentity: {
       type: Object,
       default: () => {}
-    },
-    eecDisplay: {
-      type: Boolean,
-      default: false
     }
   },
   data() {
     return {
+      eecInstance: null,
       isMessageDisplayed: false,
       warningMessages: null,
     }
@@ -87,16 +85,18 @@ export default {
   },
   watch: {
     carpoolersIdentity: function (newVal, oldVal) {
-      console.log(newVal);
       if (newVal != oldVal && this.carpoolersIdentity) {
         this.isMessageDisplayed = false;
         this.warningMessages = [];
 
-        if (this.eecDisplay) {
+        if (this.eecInstance && this.eecInstance.available) {
           this.build();
         }
       }
     }
+  },
+  mounted() {
+    this.getEecInstance();
   },
   methods: {
     build() {
@@ -125,6 +125,20 @@ export default {
 
         break;
       }
+    },
+    getEecInstance(){
+      this.loading = true;
+      maxios
+        .get(this.$t('routes.getEecInstance'))
+        .then(response => {
+          this.eecInstance = response.data;
+          this.loading = false;
+
+          if (this.carpoolersIdentity && this.eecInstance && this.eecInstance.available) {
+            this.build()
+          }
+        })
+        .catch(error => {});
     },
   },
 }

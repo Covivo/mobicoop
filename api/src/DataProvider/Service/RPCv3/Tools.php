@@ -8,7 +8,7 @@ use App\DataProvider\Entity\CarpoolProofGouvProvider;
 use App\Geography\Entity\Address;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Service\DrivingLicenceService;
-use App\Service\PhoneService;
+use App\Service\Phone\PhoneService;
 use App\User\Entity\User;
 
 class Tools
@@ -123,7 +123,7 @@ class Tools
 
     public function getPhoneTruncNumber(string $carpoolerType): ?string
     {
-        return $this->_getInternationalPhone($carpoolerType, true, $this->_phoneNumberTruncLength);
+        return $this->_getInternationalPhone($carpoolerType, $this->_phoneNumberTruncLength);
     }
 
     public function getProofType(): string
@@ -292,14 +292,16 @@ class Tools
         return null;
     }
 
-    private function _getInternationalPhone(string $carpoolerType, bool $trunc = false, int $truncLen = null): ?string
+    private function _getInternationalPhone(string $carpoolerType, int $truncLen = null): ?string
     {
         $carpooler = $this->_getCarpooler($carpoolerType);
 
         if (!is_null($carpooler)) {
-            $phoneService = new PhoneService(PhoneService::FR, $carpooler->getTelephone());
+            $phoneService = new PhoneService($carpooler->getTelephone());
 
-            return $phoneService->getInternationalPhoneNumber($trunc, $truncLen);
+            return !is_null($truncLen)
+                ? $phoneService->getTruncatedInternationalPhoneNumber($truncLen)
+                : $phoneService->getInternationalPhoneNumber();
         }
 
         return null;
