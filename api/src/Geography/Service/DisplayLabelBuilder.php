@@ -79,8 +79,6 @@ class DisplayLabelBuilder
 
     private function _formatWithCustomOrder()
     {
-        //        $this->_carpoolDisplayFieldsOrder = json_decode('{"0":{"0":"street","1":"postalCode"},"1":{"0":"locality"}}', true);
-
         $this->_displayLabel = [];
         $address = $this->_waypoint->getAddress();
         foreach ($this->_carpoolDisplayFieldsOrder as $lineOrder) {
