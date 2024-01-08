@@ -22,7 +22,7 @@ class LdImproved extends SubscriptionDefinition
 
     public static function isReady(): bool
     {
-        return self::getDeadline() < new \DateTime();
+        return self::getDeadline() > new \DateTime();
     }
 
     public static function manageTransition(...$params): void
