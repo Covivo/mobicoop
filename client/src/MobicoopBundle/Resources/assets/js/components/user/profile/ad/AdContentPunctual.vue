@@ -63,7 +63,8 @@ export default {
         streetAddress: this.ad.waypoints.find(el => el.position === 0)['streetAddress'],
         addressLocality: this.ad.waypoints.find(el => el.position === 0)['addressLocality'],
         addressCountry: this.ad.waypoints.find(el => el.position === 0)['addressCountry'],
-        name: this.ad.waypoints.find(el => el.position === 0)['name']
+        name: this.ad.waypoints.find(el => el.position === 0)['name'],
+        displayLabel: this.ad.waypoints.find(el => el.position === 0)['displayLabel']
       }
     },
     destination () {
@@ -74,7 +75,8 @@ export default {
         streetAddress: this.ad.waypoints.find(el => el.destination === true)['streetAddress'],
         addressLocality: this.ad.waypoints.find(el => el.destination === true)['addressLocality'],
         addressCountry: this.ad.waypoints.find(el => el.destination === true)['addressCountry'],
-        name: this.ad.waypoints.find(el => el.destination === true)['name']
+        name: this.ad.waypoints.find(el => el.destination === true)['name'],
+        displayLabel: this.ad.waypoints.find(el => el.destination === true)['displayLabel']
       }
     }
   }
