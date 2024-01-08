@@ -13,15 +13,15 @@ use PHPUnit\Framework\TestCase;
  */
 class DisplayLabelBuilderTest extends TestCase
 {
-    private $_displayLabelBuilder;
-    private $_displayLabelBuilderEmptyOrder;
+    private $_carpoolDisplayFieldsOrder;
+    private $_carpoolDisplayFieldsOrderEmpty;
+    private $_carpoolDisplayFieldsOrderWithInvalidField;
 
     public function setUp(): void
     {
-        $carpoolDisplayFieldsOrder = ['addressLocality'];
-        $carpoolDisplayFieldsOrderEmpty = [];
-        $this->_displayLabelBuilder = new DisplayLabelBuilder($carpoolDisplayFieldsOrder);
-        $this->_displayLabelBuilderEmptyOrder = new DisplayLabelBuilder($carpoolDisplayFieldsOrderEmpty);
+        $this->_carpoolDisplayFieldsOrder = json_decode('{"0":{"0":"street","1":"postalCode"},"1":{"0":"addressLocality"}}', true);
+        $this->_carpoolDisplayFieldsOrderEmpty = json_decode('{}', true);
+        $this->_carpoolDisplayFieldsOrderWithInvalidField = json_decode('{"0":{"0":"street","1":"postalCode"},"1":{"0":"addressLocality", "1":"blahblah"}}', true);
     }
 
     /**
@@ -33,7 +33,8 @@ class DisplayLabelBuilderTest extends TestCase
      */
     public function testBuildDisplayLabelFromWaypointReturnArray($waypoint)
     {
-        $this->assertIsArray($this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
+        $displayLabelBuilder = new DisplayLabelBuilder($this->_carpoolDisplayFieldsOrder);
+        $this->assertIsArray($displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
     }
 
     /**
@@ -46,7 +47,8 @@ class DisplayLabelBuilderTest extends TestCase
      */
     public function testBuildDisplayLabelFromWaypoint($waypoint, $expectedResult)
     {
-        $this->assertEquals($expectedResult, $this->_displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
+        $displayLabelBuilder = new DisplayLabelBuilder($this->_carpoolDisplayFieldsOrder);
+        $this->assertEquals($expectedResult, $displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
     }
 
     /**
@@ -58,7 +60,22 @@ class DisplayLabelBuilderTest extends TestCase
      */
     public function testBuildDisplayLabelFromWaypointWithEmptyOrder($waypoint)
     {
-        $this->assertEquals([], $this->_displayLabelBuilderEmptyOrder->buildDisplayLabelFromWaypoint($waypoint));
+        $displayLabelBuilderEmptyOrder = new DisplayLabelBuilder($this->_carpoolDisplayFieldsOrderEmpty);
+        $this->assertEquals([], $displayLabelBuilderEmptyOrder->buildDisplayLabelFromWaypoint($waypoint));
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataWaypoints
+     *
+     * @param mixed $waypoint
+     * @param mixed $expectedResult
+     */
+    public function testBuildDisplayLabelFromWaypointWithInvalidGetter($waypoint, $expectedResult)
+    {
+        $displayLabelBuilderEmptyOrder = new DisplayLabelBuilder($this->_carpoolDisplayFieldsOrderWithInvalidField);
+        $this->assertEquals($expectedResult, $displayLabelBuilderEmptyOrder->buildDisplayLabelFromWaypoint($waypoint));
     }
 
     public function dataWaypoints(): array
@@ -69,8 +86,11 @@ class DisplayLabelBuilderTest extends TestCase
         $waypoint2 = new Waypoint();
         $address2 = new Address();
         $address2->setAddressLocality('Saint-Martin');
+        $address2->setStreet('Grand Case');
+        $address2->setPostalCode('97801');
         $waypoint2->setAddress($address2);
         $waypoint1_result2 = [
+            ['Grand Case', '97801'],
             ['Saint-Martin'],
         ];
 

@@ -31,6 +31,7 @@ use App\Carpool\Entity\Waypoint;
 class DisplayLabelBuilder
 {
     private $_carpoolDisplayFieldsOrder;
+    private $_waypoint;
 
     public function __construct(array $carpoolDisplayFieldsOrder)
     {
@@ -39,21 +40,38 @@ class DisplayLabelBuilder
 
     public function buildDisplayLabelFromWaypoint(Waypoint $waypoint): array
     {
+        $this->_waypoint = $waypoint;
+
         if (0 == count($this->_carpoolDisplayFieldsOrder)) {
             return [];
         }
 
-        if (is_null($waypoint->getAddress())) {
+        if (is_null($this->_waypoint->getAddress())) {
             return [];
         }
 
-        return [
-            [$waypoint->getAddress()->getAddressLocality()],
-        ];
+        return $this->_formatWithCustomOrder();
     }
 
     public function getCarpoolDisplayFieldsOrder(): array
     {
         return $this->_carpoolDisplayFieldsOrder;
+    }
+
+    private function _formatWithCustomOrder(): array
+    {
+        $displayLabel = [];
+        $address = $this->_waypoint->getAddress();
+        foreach ($this->_carpoolDisplayFieldsOrder as $lineOrder) {
+            $line = [];
+            foreach ($lineOrder as $field) {
+                if (method_exists($address, 'get'.ucfirst($field))) {
+                    $line[] = call_user_func([$address, 'get'.ucfirst($field)]);
+                }
+            }
+            $displayLabel[] = $line;
+        }
+
+        return $displayLabel;
     }
 }
