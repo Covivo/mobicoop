@@ -24,6 +24,7 @@
 namespace App\Geography\Service;
 
 use App\Carpool\Entity\Waypoint;
+use App\Geography\Entity\Address;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -86,21 +87,29 @@ class DisplayLabelBuilder
         }
     }
 
-    private function _treatOrderLine($address, $lineOrder)
+    private function _determineRelevantValue(Address $address, string $field): ?string
+    {
+        if (isset(self::MATCHING_FIELDS[$field])) {
+            foreach (self::MATCHING_FIELDS[$field] as $correspondingField) {
+                if (method_exists($address, 'get'.ucfirst($correspondingField))) {
+                    $value = call_user_func([$address, 'get'.ucfirst($correspondingField)]);
+                    if ('' !== trim($value) && !$this->_inArrayInSubArrays($value, $this->_displayLabel)) {
+                        return $value;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function _treatOrderLine(Address $address, array $lineOrder): array
     {
         $line = [];
         foreach ($lineOrder as $field) {
-            if (isset(self::MATCHING_FIELDS[$field])) {
-                foreach (self::MATCHING_FIELDS[$field] as $correspondingField) {
-                    if (method_exists($address, 'get'.ucfirst($correspondingField))) {
-                        $value = call_user_func([$address, 'get'.ucfirst($correspondingField)]);
-                        if ('' !== trim($value) && !$this->_inArrayInSubArrays($value, $this->_displayLabel)) {
-                            $line[] = $value;
-
-                            break;
-                        }
-                    }
-                }
+            $value = $this->_determineRelevantValue($address, $field);
+            if (!is_null($value) && '' !== trim($value)) {
+                $line[] = $value;
             }
         }
 
