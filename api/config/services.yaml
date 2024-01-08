@@ -233,6 +233,7 @@ services:
   App\Carpool\Service\MyAdManager:
     arguments:
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
+      $carpoolDisplayFieldsOrder: "%env(json:CARPOOL_DISPLAY_FIELDS_ORDER)%"
 
   App\Carpool\Service\ProofManager:
     arguments:
@@ -908,7 +909,10 @@ services:
 
   App\Carpool\Command\VersionTransitionalPeriodCommand:
     tags:
-      - { name: "console.command", command: app:incentive:subscription-transitional-period" }
+      - {
+          name: "console.command",
+          command: app:incentive:subscription-transitional-period",
+        }
 
   App\Incentive\Repository\LongDistanceSubscriptionRepository:
     arguments:
@@ -948,10 +952,10 @@ services:
           app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
           app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
-  
+
   App\Incentive\Service\Manager\InstanceManager:
     arguments:
-     $eecServiveConfiguration: "%env(json:file:resolve:EEC_SERVICE)%"
+      $eecServiveConfiguration: "%env(json:file:resolve:EEC_SERVICE)%"
 
   App\Incentive\Service\Manager\JourneyManager:
     arguments:

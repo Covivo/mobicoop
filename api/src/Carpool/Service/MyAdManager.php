@@ -32,6 +32,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\MyAd;
+use App\Geography\Service\DisplayLabelBuilder;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\Payment\Repository\CarpoolPaymentRepository;
@@ -53,6 +54,7 @@ class MyAdManager
     private $proofManager;
     private $matchingRepository;
     private $carpoolPaymentRepository;
+    private $displayLabelBuilder;
 
     /**
      * Constructor.
@@ -68,7 +70,8 @@ class MyAdManager
         string $paymentActive,
         ProofManager $proofManager,
         MatchingRepository $matchingRepository,
-        CarpoolPaymentRepository $carpoolPaymentRepository
+        CarpoolPaymentRepository $carpoolPaymentRepository,
+        array $carpoolDisplayFieldsOrder
     ) {
         $this->proposalRepository = $proposalRepository;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -81,6 +84,7 @@ class MyAdManager
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
+        $this->displayLabelBuilder = new DisplayLabelBuilder($carpoolDisplayFieldsOrder);
     }
 
     /**
@@ -196,6 +200,7 @@ class MyAdManager
                     'latitude' => $waypoint->getAddress()->getLatitude(),
                     'addressId' => $waypoint->getAddress()->getId(),
                     'name' => $waypoint->getAddress()->getName(),
+                    'displayLabel' => $this->displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint),
                 ];
             }
         }
@@ -261,6 +266,7 @@ class MyAdManager
                     }
                     // the overall payment status is the driver payment status
                     $myAd->setPaymentStatus($driver['payment']['status']);
+
                     // theorically, only one driver, if we found it we exit the loop
                     break;
                 }

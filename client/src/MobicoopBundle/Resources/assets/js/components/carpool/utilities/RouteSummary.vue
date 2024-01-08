@@ -110,7 +110,7 @@
         :color="textColorClass"
       >
         <v-list-item-content>
-          <v-list-item-title 
+          <v-list-item-title
             :class="(regular && type==2 || !regular && type==1) ? 'text-subtitle-1' : 'text-subtitle-2'"
           >
             <span :class="textColorClass">{{ destinationFirstLine }}</span>
