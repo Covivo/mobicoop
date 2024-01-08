@@ -819,9 +819,9 @@ services:
           command: "app:incentive:subscription-verify",
         }
 
-  App\Incentive\Command\ProofInvalidateCommand:
+  App\Incentive\Command\SubscriptionResetCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:proof-invalidate" }
+      - { name: "console.command", command: "app:incentive:subscription-reset" }
 
   App\Incentive\Command\SubscriptionCommitCommand:
     tags:
@@ -906,7 +906,7 @@ services:
     tags:
       - { name: "console.command", command: "app:carpool:proof-send-history" }
 
-  App\Carpool\Command\VersionTransitionalPeriodCommand:
+  App\Incentive\Command\VersionTransitionalPeriodCommand:
     tags:
       - { name: "console.command", command: app:incentive:subscription-transitional-period" }
 
