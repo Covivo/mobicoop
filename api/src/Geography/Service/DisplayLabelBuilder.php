@@ -31,6 +31,7 @@ use App\Geography\Entity\Address;
  */
 class DisplayLabelBuilder
 {
+    // Will use the first one find if not already used in another line
     private const MATCHING_FIELDS = [
         'street' => ['streetAddress', 'street', 'addressLocality'],
         'locality' => ['addressLocality', 'addressCountry'],
