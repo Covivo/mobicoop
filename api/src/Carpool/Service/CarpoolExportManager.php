@@ -24,6 +24,7 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\CarpoolExport;
+use App\Carpool\Repository\CarpoolProofRepository;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
@@ -41,6 +42,7 @@ class CarpoolExportManager
     private $security;
     private $pdfManager;
     private $carpoolItemRepository;
+    private $carpoolProofRepository;
     private $carpoolExportUri;
     private $carpoolExportPath;
     private $carpoolExportPlatformName;
@@ -55,6 +57,7 @@ class CarpoolExportManager
         Security $security,
         PdfManager $pdfManager,
         CarpoolItemRepository $carpoolItemRepository,
+        CarpoolProofRepository $carpoolProofRepository,
         UserManager $userManager,
         string $carpoolExportUri,
         string $carpoolExportPath,
@@ -64,6 +67,7 @@ class CarpoolExportManager
         $this->security = $security;
         $this->pdfManager = $pdfManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
+        $this->carpoolProofRepository = $carpoolProofRepository;
         $this->userManager = $userManager;
         $this->carpoolExportUri = $carpoolExportUri;
         $this->carpoolExportPath = $carpoolExportPath;
@@ -188,8 +192,7 @@ class CarpoolExportManager
             }
 
             // We set the certification type
-            $carpoolExport->setCertification($carpoolItem->getCarpoolProof());
-
+            $carpoolExport->setCertification($this->getCarpoolProof($carpoolItem));
             $carpoolExports[] = $carpoolExport;
         }
 
@@ -217,5 +220,37 @@ class CarpoolExportManager
         $infoForPdf['savedCo2'] = ($totalSavedCo2 / 1000);
 
         return $this->pdfManager->generatePDF($infoForPdf);
+    }
+
+    public function getCarpoolProof(CarpoolItem $carpoolItem): ?array
+    {
+        if (
+            is_null($carpoolItem->getAsk())
+        ) {
+            return null;
+        }
+
+        $carpoolProofs = $this->carpoolProofRepository->findByAsk($carpoolItem->getAsk());
+
+        $filteredCarpoolProofs = [];
+        foreach ($carpoolProofs as $carpoolProof) {
+            $referenceDate =
+                !is_null($carpoolProof['pick_up_driver_date'])
+                ? $carpoolProof['pick_up_driver_date']                              // Returns the driver pickup date
+                : (
+                    !is_null($carpoolProof['pick_up_passenger_date'])
+                    ? $carpoolProof['pick_up_passenger_date']                       // Returns the passenger pickup date
+                    : function ($carpoolProof) {
+                        $date = new \DateTime($carpoolProof['created_date']->format('Y-m-d'));
+
+                        return $date->sub(new \DateInterval('P1D'));                // Returns the day before the proof creation date
+                    }
+                );
+            if ($carpoolItem->getItemDate()->format('Y-m-d') === (new \DateTime($referenceDate))->format('Y-m-d')) {
+                $filteredCarpoolProofs[] = $carpoolProof;
+            }
+        }
+
+        return !empty($filteredCarpoolProofs) ? $filteredCarpoolProofs[0] : null;
     }
 }

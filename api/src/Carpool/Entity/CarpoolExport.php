@@ -203,12 +203,12 @@ class CarpoolExport
         return $this->certification;
     }
 
-    public function setCertification(?CarpoolProof $carpoolProof): self
+    public function setCertification(?array $carpoolProof): self
     {
         $certification = null;
 
         if (!is_null($carpoolProof)) {
-            switch ($carpoolProof->getStatus()) {
+            switch ($carpoolProof['status']) {
                 case CarpoolProof::STATUS_PENDING:
                 case CarpoolProof::STATUS_SENT:
                 case CarpoolProof::STATUS_UNDER_CHECKING:
@@ -223,7 +223,7 @@ class CarpoolExport
                     break;
 
                 case CarpoolProof::STATUS_VALIDATED:
-                    $certification = $carpoolProof->getType();
+                    $certification = $carpoolProof['type'];
 
                     break;
 
