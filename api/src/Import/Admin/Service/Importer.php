@@ -76,6 +76,11 @@ class Importer
     private $_pointSearcher;
 
     /**
+     * @var bool
+     */
+    private $_columnHeadersFirstLine;
+
+    /**
      * @var User
      */
     private $_requester;
@@ -100,9 +105,11 @@ class Importer
         $this->_pointSearcher = $pointSearcher;
     }
 
-    public function importUsers(): Import
+    public function importUsers(bool $columnHeadersFirstLine = false): Import
     {
         set_time_limit(self::TIME_LIMIT);
+        $this->_columnHeadersFirstLine = $columnHeadersFirstLine;
+
         if (!$this->_validateFile()) {
             return $this->_buildImport(self::USER_ENTITY);
         }
@@ -114,9 +121,11 @@ class Importer
         return $this->_buildImport(self::USER_ENTITY);
     }
 
-    public function importRelayPoints(): Import
+    public function importRelayPoints(bool $columnHeadersFirstLine = false): Import
     {
         set_time_limit(self::TIME_LIMIT);
+        $this->_columnHeadersFirstLine = $columnHeadersFirstLine;
+
         if (!$this->_validateFile()) {
             return $this->_buildImport(self::USER_ENTITY);
         }
@@ -172,7 +181,7 @@ class Importer
 
     private function _populateTable(PopulatorInterface $populator)
     {
-        $messages = $populator->populate($this->_file);
+        $messages = $populator->populate($this->_file, $this->_columnHeadersFirstLine);
         $this->_messages = array_merge($this->_messages, $messages);
     }
 
@@ -187,8 +196,16 @@ class Importer
         $openedFile = fopen($this->_file, 'r');
 
         $numLine = 1;
+        $isFirstLine = true;
         while (!feof($openedFile)) {
             $line = fgetcsv($openedFile, 0, ';');
+
+            if ($this->_columnHeadersFirstLine && $isFirstLine) {
+                $isFirstLine = false;
+
+                continue;
+            }
+
             if ($line) {
                 $this->_errors = array_merge($this->_errors, $lineImportValidator->validate($line, $numLine));
             }

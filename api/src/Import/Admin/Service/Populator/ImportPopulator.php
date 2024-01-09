@@ -41,12 +41,20 @@ abstract class ImportPopulator implements PopulatorInterface
         $this->_messages = [];
     }
 
-    public function populate(File $file): array
+    public function populate(File $file, bool $columnHeadersFirstLine = false): array
     {
         $openedFile = fopen($file, 'r');
 
+        $isFirstLine = true;
         while (!feof($openedFile)) {
             $line = fgetcsv($openedFile, 0, ';');
+
+            if ($columnHeadersFirstLine && $isFirstLine) {
+                $isFirstLine = false;
+
+                continue;
+            }
+
             if ($line) {
                 $this->_addEntity($line);
             }
