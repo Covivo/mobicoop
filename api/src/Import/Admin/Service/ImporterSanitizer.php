@@ -30,6 +30,33 @@ class ImporterSanitizer
 {
     public function sanitize(array $line): array
     {
+        foreach ($line as $key => $field) {
+            if ($this->isLatLon($field)) {
+                $line[$key] = str_replace(',', '.', $field);
+            }
+        }
+
         return $line;
+    }
+
+    public function isLatLon(string $value): bool
+    {
+        return $this->_isValidLatitude($value) || $this->_isValidLongitude($value);
+    }
+
+    private function _isValidLatitude($lat)
+    {
+        // Utilisation d'une expression régulière pour vérifier si la chaîne correspond à une latitude valide
+        $pattern = '/^[-]?(([0-8]?[0-9])[\.,](\d+))|(90[\.,](\d+)?)$/';
+
+        return preg_match($pattern, $lat);
+    }
+
+    private function _isValidLongitude($lon)
+    {
+        // Utilisation d'une expression régulière pour vérifier si la chaîne correspond à une longitude valide
+        $pattern = '/^[-]?((1[0-7]|[0-9])?(\d)[\.,](\d+))|(180[\.,](\d+)?)$/';
+
+        return preg_match($pattern, $lon);
     }
 }
