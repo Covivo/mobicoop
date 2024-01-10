@@ -44,12 +44,14 @@ class CarpoolProofRepository
      * @var EntityRepository
      */
     private $repository;
+    private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository)
     {
         $this->_userRepository = $userRepository;
 
         $this->repository = $entityManager->getRepository(CarpoolProof::class);
+        $this->entityManager = $entityManager;
     }
 
     public function find(int $id): ?CarpoolProof
@@ -304,5 +306,18 @@ class CarpoolProofRepository
         $qb->setParameters($parameters);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findByAsk(Ask $ask)
+    {
+        $stmt = $this->entityManager->getConnection()->prepare(
+            'SELECT *
+            FROM carpool_proof cp
+            WHERE cp.ask_id = '.$ask->getId()
+        );
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 }
