@@ -31,6 +31,8 @@ class ImporterSanitizer
     public function sanitize(array $line): array
     {
         foreach ($line as $key => $field) {
+            $field = trim($field);
+
             switch ($field) {
                 case $this->isLatLon($field): $line[$key] = $this->_sanitizeLatLon($field);
 
