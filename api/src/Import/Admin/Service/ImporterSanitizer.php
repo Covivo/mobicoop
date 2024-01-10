@@ -31,8 +31,10 @@ class ImporterSanitizer
     public function sanitize(array $line): array
     {
         foreach ($line as $key => $field) {
-            if ($this->isLatLon($field)) {
-                $line[$key] = str_replace(',', '.', $field);
+            switch ($field) {
+                case $this->isLatLon($field): $line[$key] = $this->_sanitizeLatLon($field);
+
+                    break;
             }
         }
 
@@ -58,5 +60,10 @@ class ImporterSanitizer
         $pattern = '/^[-]?((1[0-7]|[0-9])?(\d)[\.,](\d+))|(180[\.,](\d+)?)$/';
 
         return preg_match($pattern, $lon);
+    }
+
+    private function _sanitizeLatLon(string $field): string
+    {
+        return str_replace(',', '.', $field);
     }
 }
