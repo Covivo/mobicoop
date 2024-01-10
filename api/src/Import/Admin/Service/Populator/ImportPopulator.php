@@ -24,6 +24,7 @@
 namespace App\Import\Admin\Service\Populator;
 
 use App\Import\Admin\Interfaces\PopulatorInterface;
+use App\Import\Admin\Service\ImporterSanitizer;
 use App\User\Admin\Service\UserManager;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -34,6 +35,7 @@ abstract class ImportPopulator implements PopulatorInterface
 {
     private $_userManager;
     private $_messages;
+    private $_importerSanitizer;
 
     public function __construct(UserManager $userManager)
     {
@@ -43,6 +45,7 @@ abstract class ImportPopulator implements PopulatorInterface
 
     public function populate(File $file, bool $columnHeadersFirstLine = false): array
     {
+        $importerSanitizer = new ImporterSanitizer();
         $openedFile = fopen($file, 'r');
 
         $isFirstLine = true;
@@ -56,7 +59,7 @@ abstract class ImportPopulator implements PopulatorInterface
             }
 
             if ($line) {
-                $this->_addEntity($line);
+                $this->_addEntity($importerSanitizer->sanitize($line));
             }
         }
 
