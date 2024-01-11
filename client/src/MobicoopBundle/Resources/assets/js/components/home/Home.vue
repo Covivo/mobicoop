@@ -178,7 +178,7 @@
       </template>
     </v-snackbar>
     <m-dialog
-      v-if="displayCee"
+      v-if="isEecAvailable"
       :eec-instance="eecInstance"
     />
     <!-- end homeBottom -->
@@ -316,10 +316,6 @@ export default {
       type: Boolean,
       default: false
     },
-    displayCee: {
-      type: Boolean,
-      default: false
-    },
     eecInstance: {
       type: Object,
       default: () => ({})
@@ -333,6 +329,11 @@ export default {
       displayVerifiedMessageEmail: false,
       mobConnectSnackbar: false
     };
+  },
+  computed: {
+    isEecAvailable() {
+      return this.eecInstance && this.eecInstance.available;
+    }
   },
   mounted() {
     if (this.user !== null && this.user.validatedDate !== null) {

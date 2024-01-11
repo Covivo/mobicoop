@@ -110,7 +110,7 @@
         :color="textColorClass"
       >
         <v-list-item-content>
-          <v-list-item-title 
+          <v-list-item-title
             :class="(regular && type==2 || !regular && type==1) ? 'text-subtitle-1' : 'text-subtitle-2'"
           >
             <span :class="textColorClass">{{ destinationFirstLine }}</span>
@@ -194,57 +194,77 @@ export default {
   },
   computed: {
     originFirstLine() {
-      if(this.origin.name){
-        return this.origin.name;
+      if(this.origin.displayLabel && this.origin.displayLabel[0]){
+        return this.origin.displayLabel[0].join(" ");
       }
-      else if (this.type == 1 && !this.regular) {
-        return (this.origin.streetAddress) ? this.origin.streetAddress : this.origin.addressLocality
-      } else if (this.type == 1 && this.regular) {
-        return this.origin.streetAddress
-      } else if (this.type == 2 && !this.regular) {
-        return this.origin.addressLocality
-      } else {
-        return this.origin.streetAddress
+      else{
+        if(this.origin.name){
+          return this.origin.name;
+        }
+        else if (this.type == 1 && !this.regular) {
+          return (this.origin.streetAddress) ? this.origin.streetAddress : this.origin.addressLocality
+        } else if (this.type == 1 && this.regular) {
+          return this.origin.streetAddress
+        } else if (this.type == 2 && !this.regular) {
+          return this.origin.addressLocality
+        } else {
+          return this.origin.streetAddress
+        }
       }
     },
     destinationFirstLine() {
-      if(this.destination.name){
-        return this.destination.name;
+      if(this.destination.displayLabel && this.destination.displayLabel[0]){
+        return this.destination.displayLabel[0].join(" ");
       }
-      else if (this.type == 1 && !this.regular) {
-        return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality
-      } else if (this.type == 1 && this.regular) {
-        return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality
-      } else if (this.type == 2 && !this.regular) {
-        return this.destination.addressLocality
-      } else {
-        return this.destination.streetAddress
+      else{
+        if(this.destination.name){
+          return this.destination.name;
+        }
+        else if (this.type == 1 && !this.regular) {
+          return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality
+        } else if (this.type == 1 && this.regular) {
+          return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality
+        } else if (this.type == 2 && !this.regular) {
+          return this.destination.addressLocality
+        } else {
+          return this.destination.streetAddress
+        }
       }
     },
     originSecondLine() {
-      if (this.type == 1 && this.regular) {
-        return this.origin.addressLocality
-      } else if(this.type == 1 && !this.regular){
-        return (this.origin.streetAddress) ? this.origin.addressLocality : ''
-      } else if (this.type == 2 && !this.regular) {
-        return this.origin.streetAddress
-      } else if (this.type == 2 && this.regular) {
-        return this.origin.addressLocality
+      if(this.origin.displayLabel && this.origin.displayLabel[1]){
+        return this.origin.displayLabel[1].join(" ");
       }
-      return null;
+      else{
+        if (this.type == 1 && this.regular) {
+          return this.origin.addressLocality
+        } else if(this.type == 1 && !this.regular){
+          return (this.origin.streetAddress) ? this.origin.addressLocality : ''
+        } else if (this.type == 2 && !this.regular) {
+          return this.origin.streetAddress
+        } else if (this.type == 2 && this.regular) {
+          return this.origin.addressLocality
+        }
+        return null;
+      }
     },
     destinationSecondLine() {
-      let secondline = '';
-      if (this.type == 1 && this.regular) {
-        secondline = this.destination.addressLocality
-      } else if(this.type == 1 && !this.regular){
-        secondline = (this.destination.streetAddress) ? this.destination.addressLocality : ''
-      } else if (this.type == 2 && !this.regular) {
-        secondline = this.destination.streetAddress
-      } else if (this.type == 2 && this.regular) {
-        secondline = this.destination.addressLocality
+      if(this.destination.displayLabel && this.destination.displayLabel[1]){
+        return this.destination.displayLabel[1].join(" ");
       }
-      return secondline === this.destinationFirstLine ? null : secondline;
+      else{
+        let secondline = '';
+        if (this.type == 1 && this.regular) {
+          secondline = this.destination.addressLocality
+        } else if(this.type == 1 && !this.regular){
+          secondline = (this.destination.streetAddress) ? this.destination.addressLocality : ''
+        } else if (this.type == 2 && !this.regular) {
+          secondline = this.destination.streetAddress
+        } else if (this.type == 2 && this.regular) {
+          secondline = this.destination.addressLocality
+        }
+        return secondline === this.destinationFirstLine ? null : secondline;
+      }
     }
   },
   created() {

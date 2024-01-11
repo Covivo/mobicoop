@@ -21,20 +21,26 @@
  *    LICENSE
  */
 
-namespace App\Import\Admin\Interfaces;
+namespace App\Import\Admin\Service\Validator;
 
-use Symfony\Component\HttpFoundation\File\File;
+use App\Import\Admin\Interfaces\FieldValidatorInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-interface PopulatorInterface
+class EmptyOrPostalCodeValidator implements FieldValidatorInterface
 {
-    public function populate(File $file, bool $columnHeadersFirstLine = false): array;
+    public function validate($value): bool
+    {
+        if (0 == strlen(trim($value)) || '' == trim($value)) {
+            return true;
+        }
 
-    public function getEntity(): string;
+        return is_string($value) && strlen($value) <= 15;
+    }
 
-    public function getMessages(): array;
-
-    public function addMessage(string $message): array;
+    public function errorMessage($value): string
+    {
+        return $value.' can only be empty or a string value of a 15 length maximum';
+    }
 }

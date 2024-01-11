@@ -1,8 +1,14 @@
 SELECT
-    p.id,
+    p.id as 'id',
+    p.proposal_linked_id as 'linkedId',
     p.user_id as 'userId',
     ad.address_locality AS 'origin',
     aa.address_locality AS 'destination',
+    CASE
+        c.frequency
+        WHEN 1 THEN 'punctual'
+        WHEN 2 THEN 'regular'
+    END AS 'frequency',
     CASE
         c.frequency
         WHEN 1 THEN c.from_date
@@ -10,7 +16,7 @@ SELECT
     END AS 'end_validity_date',
     CASE
         p.type
-        WHEN 1 THEN 'onway'
+        WHEN 1 THEN 'oneway'
         WHEN 2 THEN 'outward'
         WHEN 3 THEN 'return'
     END AS 'journeytype',
@@ -32,7 +38,22 @@ SELECT
     ad.latitude AS "origin_lat",
     ad.longitude AS "origin_lon",
     aa.latitude AS "destination_lat",
-    aa.longitude AS "destination_lon"
+    aa.longitude AS "destination_lon",
+    CASE
+        WHEN c.driver = 1
+        and c.passenger = 1 THEN c.driver_computed_rounded_price
+        WHEN (
+            c.driver = 0
+            or c.driver is null
+        )
+        and c.passenger = 1 THEN c.passenger_computed_rounded_price
+        WHEN c.driver = 1
+        and (
+            c.passenger = 0
+            or c.passenger is null
+        ) THEN c.driver_computed_rounded_price
+        ELSE 'unknown'
+    END AS 'price'
 FROM
     proposal p
     INNER JOIN criteria c ON c.id = p.criteria_id

@@ -187,7 +187,6 @@
                 :hide-no-thread-selected="(idRecipient!==null)"
                 :fraud-warning-display="fraudWarningDisplay"
                 :carpoolers-identity="carpoolersIdentity"
-                :eec-display="eecDisplay"
                 @refreshCompleted="refreshDetailsCompleted"
               />
             </v-col>

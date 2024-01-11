@@ -1,5 +1,5 @@
-name;type;latitude;longitude;number of places;number of places for disabled;secured;free;official;private;externalId;externalAuthor;communityId;description;full_description
-Point relais trop cool;1;48.69395065307617;6.1790642738342285;154;10;1;1;1;0;XXX-XXX;Source of the point;1;short desc;full description
+name;type;latitude;longitude;number of places;number of places for disabled;secured;free;official;private;externalId;externalAuthor;communityId;description;full_description;address;postalcode;locality;country
+Point relais trop cool;1;48.69395065307617;6.1790642738342285;154;10;1;1;1;0;XXX-XXX;Source of the point;1;short desc;full description;5 Rue de la Monnaie;54000;Nancy;France
 
 indications about data formating:
 communityId : empty or int number refering to an EXISTING Community

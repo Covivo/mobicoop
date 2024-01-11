@@ -53,6 +53,10 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
     private const COMMUNITY_ID = 12;
     private const DESCRIPTION = 13;
     private const FULL_DESCRIPTION = 14;
+    private const ADDRESS = 15;
+    private const POSTALCODE = 16;
+    private const LOCALITY = 17;
+    private const COUNTRY = 18;
 
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists and will be ignored';
@@ -178,6 +182,11 @@ class RelayPointImportPopulator extends ImportPopulator implements PopulatorInte
         $address = new Address();
         $address->setLatitude((float) $line[self::LATITUDE]);
         $address->setLongitude((float) $line[self::LONGITUDE]);
+        $address->setStreetAddress($line[self::ADDRESS]);
+        $address->setStreet($line[self::ADDRESS]);
+        $address->setPostalCode($line[self::POSTALCODE]);
+        $address->setAddressLocality($line[self::LOCALITY]);
+        $address->setAddressCountry($line[self::COUNTRY]);
 
         $relaypoint->setAddress($address);
 
