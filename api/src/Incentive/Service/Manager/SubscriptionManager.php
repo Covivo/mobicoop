@@ -100,7 +100,7 @@ class SubscriptionManager extends MobConnectManager
      */
     public function createSubscriptions(User $user)
     {
-        if (!$this->isValidParameters() || !$this->_instanceManager->isEecServiceAvailable()) {
+        if (!$this->_instanceManager->isEecServiceAvailable()) {
             return;
         }
 
@@ -111,7 +111,7 @@ class SubscriptionManager extends MobConnectManager
             && is_null($this->getDriver()->getLongDistanceSubscription())                               // Subscription does not yet exist
             && $this->isDriverAccountReadyForSubscription(LongDistanceSubscription::SUBSCRIPTION_TYPE)  // There is no incompatibility with the user account
         ) {
-            $postResponse = $this->postSubscription();
+            $postResponse = $this->postSubscription(Subscription::TYPE_LONG);
 
             if (!$this->hasRequestErrorReturned($postResponse)) {
                 $longDistanceSubscription = new LongDistanceSubscription(
@@ -132,7 +132,7 @@ class SubscriptionManager extends MobConnectManager
             && is_null($this->getDriver()->getShortDistanceSubscription())                              // Subscription does not yet exist
             && $this->isDriverAccountReadyForSubscription(ShortDistanceSubscription::SUBSCRIPTION_TYPE) // There is no incompatibility with the user account
         ) {
-            $postResponse = $this->postSubscription(false);
+            $postResponse = $this->postSubscription(Subscription::TYPE_SHORT);
 
             if (!$this->hasRequestErrorReturned($postResponse)) {
                 $shortDistanceSubscription = new ShortDistanceSubscription(
@@ -176,7 +176,7 @@ class SubscriptionManager extends MobConnectManager
     {
         $this->setDriver($subscription->getUser());
 
-        return $subscription->setMoBSubscription(json_encode($this->getMobSubscription($subscription->getSubscriptionid())->getContent()));
+        return $subscription->setMoBSubscription(json_encode($this->getSubscription($subscription, $this->getDriver())->getContent()));
     }
 
     public function getUserEECEligibility(User $user): EecEligibility
@@ -411,9 +411,12 @@ class SubscriptionManager extends MobConnectManager
         return $this->getDriver();
     }
 
-    public function getSubscription(string $subscriptionId): MobConnectSubscriptionResponse
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function getSubscription($subscription, User $user): MobConnectSubscriptionResponse
     {
-        return $this->getMobSubscription($subscriptionId);
+        return $this->getSubscription($subscription, $user);
     }
 
     /**

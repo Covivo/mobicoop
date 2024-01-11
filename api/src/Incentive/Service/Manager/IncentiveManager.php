@@ -39,14 +39,14 @@ class IncentiveManager extends MobConnectManager
 
     public function getMobConnectIncentives(): ArrayCollection
     {
-        $getResponse = $this->getIncentives();
+        $getResponse = $this->getIncentives($this->getDriver());
 
         return !is_null($getResponse) ? $getResponse->getIncentives() : new ArrayCollection();
     }
 
-    public function getMobConnectIncentive(string $incentive_id): ?Incentive
+    public function getMobConnectIncentive(string $incentiveId): ?Incentive
     {
-        $getResponse = $this->getIncentive($incentive_id);
+        $getResponse = $this->getIncentive($incentiveId, $this->getDriver());
 
         return new Incentive($getResponse->getId(), $getResponse->getType(), $getResponse->getTitle(), $getResponse->getDescription(), $getResponse->getSubscriptionLink());
     }

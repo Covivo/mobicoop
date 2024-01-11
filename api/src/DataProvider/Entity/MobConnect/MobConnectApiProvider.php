@@ -2,261 +2,198 @@
 
 namespace App\DataProvider\Entity\MobConnect;
 
+use App\DataProvider\Entity\MobConnect\AuthenticationProvider\AppAuthenticationProvider;
+use App\DataProvider\Entity\MobConnect\AuthenticationProvider\UserAuthenticationProvider;
 use App\DataProvider\Entity\MobConnect\Response\IncentiveResponse;
 use App\DataProvider\Entity\MobConnect\Response\IncentivesResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
-use App\DataProvider\Ressource\MobConnectApiParams;
+use App\DataProvider\Interfaces\AuthenticationProviderInterface;
+use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Entity\Subscription;
 use App\Incentive\Resource\EecInstance;
-use App\Incentive\Service\LoggerService;
-use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
-/**
- * MobConnect API provider.
- *
- * @author Olivier FILLOL <olivier.fillol@mobicoop.org>
- */
+// Le Role du provider est de proposer des functions
 class MobConnectApiProvider extends MobConnectProvider
 {
-    public const SERVICE_NAME = 'mobConnect';
-
-    private const ROUTE_SUBSCRIPTIONS = '/v1/subscriptions';
-    private const ROUTE_GET_SUBSCRIPTION = self::ROUTE_SUBSCRIPTIONS.'/'.self::SUBSCRIPTION_ID_TAG;
-    private const ROUTE_PATCH_SUBSCRIPTIONS = self::ROUTE_GET_SUBSCRIPTION;
-    private const ROUTE_SUBSCRIPTIONS_VERIFY = self::ROUTE_GET_SUBSCRIPTION.'/verify';
-    private const ROUTE_SUBSCRIPTIONS_TIMESTAMPS = self::ROUTE_SUBSCRIPTIONS.'/timestamps';
-    private const ROUTE_INCENTIVES = '/v1/incentives';
-    private const ROUTE_INCENTIVE = self::ROUTE_INCENTIVES.'/'.self::INCENTIVE_ID_TAG;
-
-    private const SHORT_DISTANCE_LABEL = 'Court';
-    private const LONG_DISTANCE_LABEL = 'Long';
-
-    /**
-     * @var null|string
-     */
-    protected $_appClientID;
-
-    /**
-     * @var null|string
-     */
-    protected $_appClientSecret;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $_em;
-
-    /**
-     * @var MobConnectApiParams
-     */
-    private $_apiParams;
-
-    /**
-     * @var array
-     */
-    private $_ssoServices;
-
     /**
      * @var EecInstance
      */
     private $_eecInstance;
 
-    public function __construct(
-        EntityManagerInterface $em,
-        MobConnectApiParams $params,
-        LoggerService $loggerService,
-        User $user,
-        array $ssoServices,
-        EecInstance $eecInstance
-    ) {
-        $this->_em = $em;
-        $this->_apiParams = $params;
+    /**
+     * @var AuthenticationProviderInterface
+     */
+    private $_appAuthenticationProvider;
 
-        $this->_apiUri = $this->_apiParams->getApiUri();
-        $this->_loggerService = $loggerService;
-        $this->_user = $user;
-        $this->_ssoServices = $ssoServices;
+    /**
+     * @var AuthenticationProviderInterface
+     */
+    private $_userAuthenticationProvider;
+
+    public function __construct(EecInstance $eecInstance)
+    {
         $this->_eecInstance = $eecInstance;
+
+        $this->_build();
     }
 
-    private function __getSubscriptionId(bool $shortDistance = false): string
+    public function postSubscription(string $subscriptionType, User $user): MobConnectSubscriptionResponse
     {
-        return $shortDistance ? $this->_apiParams->getShortDistanceSubscriptionId() : $this->_apiParams->getLongDistanceSubscriptionId();
-    }
+        $token = $this->_userAuthenticationProvider->getToken($user);
 
-    private function __getAppToken(): array
-    {
-        if (!array_key_exists(self::SERVICE_NAME, $this->_ssoServices)) {
-            throw new \LogicException(str_replace('{SERVICE_NAME}', self::SERVICE_NAME, MobConnectMessages::MOB_CONFIG_UNAVAILABLE));
+        if (!$token) {
+            return new MobConnectSubscriptionResponse([
+                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
+                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
+            ]);
         }
 
-        if (is_null($this->_apiParams->getAppClientId()) || is_null($this->_apiParams->getAppClientSecret())) {
-            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'There is a misconfiguration');
-        }
-
-        $service = $this->_ssoServices[self::SERVICE_NAME];
-
-        $provider = new OpenIdSsoProvider(
-            self::SERVICE_NAME,
-            '',
-            $service['baseUri'],
-            $service['clientId'],
-            $service['clientSecret'],
-            '',
-            $service['autoCreateAccount'],
-            $service['logOutRedirectUri'] = '',
-            $service['codeVerifier'] = null,
-            $this->_apiParams->getAppClientId(),
-            $this->_apiParams->getAppClientSecret()
-        );
-
-        return $provider->getAppToken();
-    }
-
-    private function __getToken(): string
-    {
-        $mobConnectAuth = $this->_user->getMobConnectAuth();
-
-        if (is_null($mobConnectAuth)) {
-            throw new \LogicException(MobConnectMessages::USER_AUTHENTICATION_MISSING);
-        }
-
-        $now = new \DateTime('now');
-
-        if ($now >= $mobConnectAuth->getRefreshTokenExpiresDate()) {
-            throw new \LogicException(MobConnectMessages::USER_AUTHENTICATION_EXPIRED);
-        }
-
-        return $now >= $mobConnectAuth->getAccessTokenExpiresDate()
-            ? $this->__refreshToken() : $mobConnectAuth->getAccessToken();
-    }
-
-    private function __refreshToken()
-    {
-        if (!array_key_exists(self::SERVICE_NAME, $this->_ssoServices)) {
-            throw new \LogicException(str_replace('{SERVICE_NAME}', self::SERVICE_NAME, MobConnectMessages::MOB_CONFIG_UNAVAILABLE));
-        }
-
-        $service = $this->_ssoServices[self::SERVICE_NAME];
-
-        $provider = new OpenIdSsoProvider(
-            self::SERVICE_NAME,
-            '',
-            $service['baseUri'],
-            $service['clientId'],
-            $service['clientSecret'],
-            '',
-            $service['autoCreateAccount'],
-            $service['logOutRedirectUri'] = '',
-            $service['codeVerifier'] = null
-        );
-
-        $mobConnectAuth = $this->_user->getMobConnectAuth();
-
-        $tokens = $provider->getRefreshToken($mobConnectAuth->getRefreshToken());
-
-        if (isset($tokens['code']) && 400 === $tokens['code']) {
-            $this->_loggerService->log('Refreshing the authentication token - The request returned an error for the user '.$mobConnectAuth->getUser()->getId());
-
-            throw new \LogicException('EEC - The token refresh request did not complete');
-        }
-
-        $mobConnectAuth->updateTokens($tokens);
-
-        $this->_em->flush();
-
-        return $mobConnectAuth->getAccessToken();
-    }
-
-    public function getMobSubscription(string $subscriptionId)
-    {
-        $this->_createDataProvider(self::ROUTE_GET_SUBSCRIPTION, $subscriptionId);
-
-        return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($this->__getToken())))
-        );
-    }
-
-    public function postSubscription(bool $isLongDistance = true): MobConnectSubscriptionResponse
-    {
         $data = [
-            'incentiveId' => $isLongDistance ? $this->_eecInstance->getLdKey() : $this->_eecInstance->getSdKey(),
+            'incentiveId' => Subscription::TYPE_LONG === $subscriptionType ? $this->_eecInstance->getLdKey() : $this->_eecInstance->getSdKey(),
             'consent' => true,
-            'Type de trajet' => true === $isLongDistance ? [self::LONG_DISTANCE_LABEL] : [self::SHORT_DISTANCE_LABEL],
-            'Numéro de permis de conduire' => $this->_user->getDrivingLicenceNumber(),
-            'Numéro de téléphone' => $this->_user->getTelephone(),
+            'Type de trajet' => Subscription::TYPE_LONG === $subscriptionType ? ['Long'] : ['Court'],
+            'Numéro de permis de conduire' => $user->getDrivingLicenceNumber(),
+            'Numéro de téléphone' => $user->getTelephone(),
         ];
 
-        $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS);
+        $this->_createDataProvider(RouteProvider::ROUTE_SUBSCRIPTIONS);
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($this->__getToken())))
+            $this->_getResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($token)))
         );
     }
 
     /**
-     * Updates a user subscription with a carpool proof.
-     *
-     * @param string $subscriptionId The ID of the subscription that needs to be updated
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public function patchUserSubscription(string $subscriptionId, array $data): MobConnectSubscriptionResponse
+    public function getSubscription($subscription, User $user): MobConnectSubscriptionResponse
     {
-        $this->_loggerService->log('We PATCH the subscription on mobConnect', 'info', true);
-        $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
+        $token = $this->_userAuthenticationProvider->getToken($subscription->getUser());
+
+        if (!$token) {
+            return new MobConnectSubscriptionResponse([
+                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
+                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
+            ]);
+        }
+
+        $this->_createDataProvider(RouteProvider::ROUTE_GET_SUBSCRIPTION, $subscription->getSubscriptionId());
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken()))),
+            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
+        );
+    }
+
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function patchSubscription($subscription, array $data): MobConnectSubscriptionResponse
+    {
+        $token = $this->_userAuthenticationProvider->getToken($subscription->getUser());
+
+        if (!$token) {
+            return new MobConnectSubscriptionResponse([
+                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
+                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
+            ]);
+        }
+
+        $this->_createDataProvider(RouteProvider::ROUTE_PATCH_SUBSCRIPTIONS, $subscription->getSubscriptionId());
+
+        return new MobConnectSubscriptionResponse(
+            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($token))),
             $data
         );
     }
 
-    public function getUserSubscriptionTimestamps(string $subscriptionId)
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function verifySubscription($subscription): MobConnectSubscriptionVerifyResponse
     {
-        $this->_loggerService->log('We get the subscription timestamps on mobConnect', 'info', true);
-        $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS_TIMESTAMPS);
+        $token = $this->_userAuthenticationProvider->getToken($subscription->getUser());
 
-        $appToken = $this->__getAppToken();
+        if (!$token) {
+            return new MobConnectSubscriptionVerifyResponse([
+                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
+                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
+            ]);
+        }
 
-        return
-            isset($appToken['access_token'])
-            ? new MobConnectSubscriptionTimestampsResponse(
-                $this->_getResponse($this->_dataProvider->getItem(['subscriptionId' => $subscriptionId], $this->_buildHeaders($appToken['access_token'])))
-            )
-            : new MobConnectSubscriptionTimeStampsResponse($appToken);
-    }
-
-    public function verifyUserSubscription(string $subscriptionId): MobConnectSubscriptionVerifyResponse
-    {
-        $this->_loggerService->log('We verify the subscription on mobConnect', 'info', true);
-        $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS_VERIFY, $subscriptionId);
+        $this->_createDataProvider(RouteProvider::ROUTE_SUBSCRIPTIONS_VERIFY, $subscription->getSubscriptionId());
 
         return new MobConnectSubscriptionVerifyResponse(
             $this->_getResponse(
-                $this->_dataProvider->postCollection(null, $this->_buildHeaders($this->__getToken()))
+                $this->_dataProvider->postCollection(null, $this->_buildHeaders($token))
             )
         );
     }
 
-    public function getIncentives(): ?IncentivesResponse
+    public function getSubscriptionTimestamps(string $subscriptionId): MobConnectSubscriptionTimestampsResponse
     {
-        $this->_createDataProvider(self::ROUTE_INCENTIVES);
+        $this->_createDataProvider(RouteProvider::ROUTE_SUBSCRIPTIONS_TIMESTAMPS);
 
-        return new IncentivesResponse(
-            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($this->__getToken())))
+        $token = $this->_appAuthenticationProvider->getToken(null);
+
+        if (!$token) {
+            return new MobConnectSubscriptionTimeStampsResponse([
+                'code' => $this->_appAuthenticationProvider->getResponse()->getStatusCode(),
+                'content' => $this->_appAuthenticationProvider->getResponse()->getContent(),
+            ]);
+        }
+
+        return new MobConnectSubscriptionTimestampsResponse(
+            $this->_getResponse($this->_dataProvider->getItem(['subscriptionId' => $subscriptionId], $this->_buildHeaders($token)))
         );
     }
 
-    public function getIncentive(string $incentive_id): ?IncentiveResponse
+    public function getIncentives(User $user): ?IncentivesResponse
     {
-        $this->_createDataProvider(self::ROUTE_INCENTIVE, $incentive_id, self::INCENTIVE_ID_TAG);
+        $token = $this->_userAuthenticationProvider->getToken($user);
+
+        if (!$token) {
+            return new IncentivesResponse([
+                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
+                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
+            ]);
+        }
+
+        $this->_createDataProvider(RouteProvider::ROUTE_INCENTIVES);
+
+        return new IncentivesResponse(
+            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
+        );
+    }
+
+    public function getIncentive(string $incentiveId, User $user): ?IncentiveResponse
+    {
+        $token = $this->_userAuthenticationProvider->getToken($user);
+
+        if (!$token) {
+            return new IncentivesResponse([
+                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
+                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
+            ]);
+        }
+
+        $this->_createDataProvider(RouteProvider::ROUTE_INCENTIVE, $incentiveId, RouteProvider::INCENTIVE_ID_TAG);
 
         return new IncentiveResponse(
-            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($this->__getToken())))
+            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
         );
+    }
+
+    private function _build(): self
+    {
+        $this->_apiUri = $this->_eecInstance->getProvider()->getApiUri();
+
+        $this->_appAuthenticationProvider = new AppAuthenticationProvider($this->_eecInstance->getProvider());
+        $this->_userAuthenticationProvider = new UserAuthenticationProvider($this->_eecInstance->getProvider());
+
+        return $this;
     }
 }

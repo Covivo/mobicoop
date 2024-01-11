@@ -2,11 +2,15 @@
   "//expirationDate": "string - The date the subscription is due to expire",
   "expirationDate": null,
   "provider": {
-    "client_id": null,
+    "api_uri": "https://api-fabmob.stg.hub.flowbird.io",
     "app_id": null,
     "app_secret": null,
-    "api_uri": "https://api-fabmob.stg.hub.flowbird.io",
     "authentication_uri": "https://idp-fabmob.stg.hub.flowbird.io/",
+    "auto_create_account": false,
+    "client_id": null,
+    "client_secret": null,
+    "code_verifier": null,
+    "logout_redirect_uri": "",
     "name": "mobConnect"
   },
   "subscriptions": {

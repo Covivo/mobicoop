@@ -131,15 +131,15 @@ class JourneyManager extends MobConnectManager
 
         $this->setDriver($this->_currentProposal->getUser());
 
-        $params = $this->getCommitmentRequestParams();
-
         $this->_currentSubscription = $this->getDriver()->getLongDistanceSubscription();
+
+        $params = $this->getCommitmentRequestParams();
 
         if (is_null($this->_currentSubscription)) {
             return null;
         }
 
-        $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
+        $patchResponse = $this->patchSubscription($this->_currentSubscription, $params);
 
         $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
 
@@ -166,15 +166,15 @@ class JourneyManager extends MobConnectManager
 
         $this->setDriver($this->_currentCarpoolProof->getDriver());
 
-        $params = $this->getCommitmentRequestParams();
-
         $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
+
+        $params = $this->getCommitmentRequestParams();
 
         if (is_null($this->_currentSubscription)) {
             return null;
         }
 
-        $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
+        $patchResponse = $this->patchSubscription($this->_currentSubscription, $params);
 
         $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
 
@@ -300,7 +300,7 @@ class JourneyManager extends MobConnectManager
 
             $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');
 
-            $patchResponse = $this->patchSubscription($this->getDriverShortSubscriptionId(), $params);
+            $patchResponse = $this->patchSubscription($this->getDriver()->getShortDistanceSubscription(), $params);
 
             if ($this->hasRequestErrorReturned($patchResponse)) {
                 return;
@@ -492,7 +492,7 @@ class JourneyManager extends MobConnectManager
         $this->_loggerService->log('Step 17 - Processing for the commitment journey');
 
         $patchResponse = $this->patchSubscription(
-            $this->getDriverLongSubscriptionId(),
+            $this->getDriver()->getLongDistanceSubscription(),
             [
                 SpecificFields::JOURNEY_COST_SHARING_DATE => $this->_currentCarpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
                 SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate(),

@@ -22,9 +22,29 @@ abstract class EecProvider implements EecProviderInterface
     private $authenticationUri;
 
     /**
+     * @var bool
+     */
+    private $autoCreateAccount;
+
+    /**
      * @var string
      */
     private $clientId;
+
+    /**
+     * @var null|string
+     */
+    private $clientSecret;
+
+    /**
+     * @var null|string
+     */
+    private $codeVerifier;
+
+    /**
+     * @var null|string
+     */
+    private $logoutRedirectUri;
 
     /**
      * @var string
@@ -51,19 +71,39 @@ abstract class EecProvider implements EecProviderInterface
         return $this->authenticationUri;
     }
 
+    public function getAutoCreateAccount(): bool
+    {
+        return $this->autoCreateAccount;
+    }
+
     public function getClientId(): string
     {
         return $this->clientId;
     }
 
-    public function geAppId(): string
+    public function getClientSecret(): string
+    {
+        return !is_null($this->clientSecret) ? $this->clientSecret : '';
+    }
+
+    public function getCodeVerifier(): ?string
+    {
+        return $this->codeVerifier;
+    }
+
+    public function getAppId(): string
     {
         return $this->appId;
     }
 
-    public function geAppSecret(): string
+    public function getAppSecret(): string
     {
         return $this->appSecret;
+    }
+
+    public function getLogoutRedirectUri(): string
+    {
+        return !is_null($this->logoutRedirectUri) ? $this->logoutRedirectUri : '';
     }
 
     protected function _build(array $provider): self
@@ -71,7 +111,11 @@ abstract class EecProvider implements EecProviderInterface
         $this->_setName($provider['name']);
         $this->_setApiUri($provider['api_uri']);
         $this->_setAuthenticationUri($provider['authentication_uri']);
+        $this->_setAutoCreateAccount($provider['auto_create_account']);
         $this->_setClientId($provider['client_id']);
+        $this->_setClientSecret($provider['client_secret']);
+        $this->_setCodeVerifier($provider['code_verifier']);
+        $this->_setLogoutRedirectUri($provider['logout_redirect_uri']);
         $this->_setAppId($provider['app_id']);
         $this->_setAppSecret($provider['app_secret']);
 
@@ -108,6 +152,13 @@ abstract class EecProvider implements EecProviderInterface
         return $this;
     }
 
+    protected function _setAutoCreateAccount(bool $autoCreateAccount): self
+    {
+        $this->autoCreateAccount = $autoCreateAccount;
+
+        return $this;
+    }
+
     /**
      * Set the value of clientId.
      */
@@ -116,6 +167,28 @@ abstract class EecProvider implements EecProviderInterface
         $this->clientId = $clientId;
 
         return $this;
+    }
+
+    /**
+     * Set the value of clientSecret.
+     */
+    protected function _setClientSecret(?string $clientSecret): self
+    {
+        $this->clientSecret = $clientSecret;
+
+        return $this;
+    }
+
+    protected function _setCodeVerifier(?string $code): self
+    {
+        $this->codeVerifier = $code;
+
+        return $this;
+    }
+
+    protected function _setLogoutRedirectUri(?string $uri)
+    {
+        $this->logoutRedirectUri = $uri;
     }
 
     /**

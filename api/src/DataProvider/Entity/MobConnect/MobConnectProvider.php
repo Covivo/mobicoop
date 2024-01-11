@@ -16,11 +16,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 abstract class MobConnectProvider
 {
-    public const INCENTIVE_ID_TAG = '{INCENTIVE_ID}';
-    public const SUBSCRIPTION_ID_TAG = '{SUBSCRIPTION_ID}';
-
-    public const ALLOWED_ID_TAGS = [self::INCENTIVE_ID_TAG, self::SUBSCRIPTION_ID_TAG];
-
     /**
      * The Data provider.
      *
@@ -47,13 +42,13 @@ abstract class MobConnectProvider
 
     private function __buildResource(string $resource, string $resource_id = null, ?string $tag = null): string
     {
-        if (strpos($resource, self::SUBSCRIPTION_ID_TAG) || strpos($resource, self::INCENTIVE_ID_TAG)) {
+        if (strpos($resource, RouteProvider::SUBSCRIPTION_ID_TAG) || strpos($resource, RouteProvider::INCENTIVE_ID_TAG)) {
             if (is_null($resource_id)) {
                 throw new BadRequestHttpException(MobConnectMessages::SUBSCRIPTION_PARAMETER_MISSING);
             }
 
             $resource = str_replace(
-                !is_null($tag) ? $tag : self::SUBSCRIPTION_ID_TAG,
+                !is_null($tag) ? $tag : RouteProvider::SUBSCRIPTION_ID_TAG,
                 $resource_id,
                 $resource
             );
@@ -75,7 +70,7 @@ abstract class MobConnectProvider
 
     protected function _createDataProvider(string $resource, string $resource_id = null, ?string $tag = null)
     {
-        $this->_dataProvider = new DataProvider($this->_apiUri, $this->__buildResource($resource, $resource_id, $tag));
+        $this->_dataProvider = new DataProvider($this->_apiUri, RouteProvider::buildResource($resource, $resource_id, $tag));
     }
 
     protected function _getResponse(Response $response)
@@ -106,6 +101,6 @@ abstract class MobConnectProvider
                 break;
         }
 
-        $this->_loggerService->log('The mobConnect request response is: '.$code.' | '.(is_null($content) ? '' : $content), $logType, true);
+        // $this->_loggerService->log('The mobConnect request response is: '.$code.' | '.(is_null($content) ? '' : $content), $logType, true);
     }
 }

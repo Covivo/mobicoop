@@ -6,6 +6,7 @@ use App\DataProvider\Entity\OpenIdSsoProvider as EntityOpenIdSsoProvider;
 use App\DataProvider\Service\DataProvider;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Olivier Fillol <olivier.fillol@mobicoop.org>
@@ -43,10 +44,20 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
 
     public function getUserProfile(string $code): SsoUser
     {
-        $tokens = $this->getToken($code);
+        $response = $this->getToken($code);
+        $content = json_decode($response->getContent());
 
-        if (!is_null($tokens) && is_array($tokens) && isset($tokens['access_token'])) {
-            $data = json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', explode('.', $tokens['access_token'])[1]))), true);
+        if (
+            Response::HTTP_OK != $response->getStatusCode()
+        ) {
+            throw new \LogicException('Error getUserProfile');
+        }
+
+        if (
+            !is_null($content)
+            && property_exists($content, 'access_token')
+        ) {
+            $data = json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', explode('.', $content->access_token)[1]))), true);
 
             $ssoUser = new SsoUser();
             $ssoUser->setSub((isset($data['sub'])) ? $data['sub'] : null);
@@ -58,10 +69,10 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
             $ssoUser->setBirthdate((isset($data['birthdate'])) ? $data['birthdate'] : null);
             $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
 
-            $ssoUser->setAccessToken($tokens['access_token']);
-            $ssoUser->setAccessTokenExpiresDuration($tokens['expires_in']);
-            $ssoUser->setRefreshToken($tokens['refresh_token']);
-            $ssoUser->setRefreshTokenExpiresDuration($tokens['refresh_expires_in']);
+            $ssoUser->setAccessToken($content->access_token);
+            $ssoUser->setAccessTokenExpiresDuration($content->expires_in);
+            $ssoUser->setRefreshToken($content->refresh_token);
+            $ssoUser->setRefreshTokenExpiresDuration($content->refresh_expires_in);
 
             if (
                 $this->autoCreateAccount
@@ -87,7 +98,7 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         ]);
     }
 
-    public function getRefreshToken(string $refreshToken)
+    public function getRefreshToken(string $refreshToken): Response
     {
         return $this->execute([
             'grant_type' => 'refresh_token',
@@ -108,19 +119,24 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         ]);
     }
 
-    private function execute(array $body)
+    private function execute(array $body): Response
     {
         $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::TOKEN_URL]);
 
         $response = $dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId, $this->clientSecret]);
 
-        if (200 == $response->getCode()) {
-            return json_decode($response->getValue(), true);
-        }
+        // if (200 == $response->getCode()) {
+        //     return json_decode($response->getValue(), true);
+        // }
 
-        return [
-            'code' => $response->getCode(),
-            'content' => !is_null(json_decode($response->getValue())) ? json_decode($response->getValue()) : $response->getValue(),
-        ];
+        return new Response(
+            $response->getValue(),
+            $response->getcode()
+        );
+
+        // return [
+        //     'code' => $response->getCode(),
+        //     'content' => !is_null(json_decode($response->getValue())) ? json_decode($response->getValue()) : $response->getValue(),
+        // ];
     }
 }
