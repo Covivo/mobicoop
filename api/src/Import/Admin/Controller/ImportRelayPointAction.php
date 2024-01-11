@@ -42,6 +42,6 @@ final class ImportRelayPointAction
 
         $importer = new Importer($request->files->get('file'), $request->get('filename'), $importManager, $security->getUser());
 
-        return $importer->importRelayPoints();
+        return $importer->importRelayPoints(filter_var($request->get('columnHeadersFirstLine'), FILTER_VALIDATE_BOOLEAN));
     }
 }
