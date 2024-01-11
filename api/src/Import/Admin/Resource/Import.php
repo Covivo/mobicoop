@@ -129,6 +129,13 @@ class Import
     private $originalName;
 
     /**
+     * @var null|bool the original file name of the proof
+     *
+     * @Groups({"read","aRead","write"})
+     */
+    private $columnHeadersFirstLine;
+
+    /**
      * @var array Errors of there is any
      *
      * @Groups({"read","aRead"})
@@ -195,6 +202,16 @@ class Import
     public function setOriginalName(?string $originalName)
     {
         $this->originalName = $originalName;
+    }
+
+    public function getColumnHeadersFirstLine(): ?bool
+    {
+        return $this->columnHeadersFirstLine;
+    }
+
+    public function setColumnHeadersFirstLine(?bool $columnHeadersFirstLine)
+    {
+        $this->columnHeadersFirstLine = $columnHeadersFirstLine;
     }
 
     public function getErrors(): ?array

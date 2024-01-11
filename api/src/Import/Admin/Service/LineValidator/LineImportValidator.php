@@ -25,6 +25,7 @@ namespace App\Import\Admin\Service\LineValidator;
 
 use App\Import\Admin\Interfaces\FieldValidatorInterface;
 use App\Import\Admin\Interfaces\LineImportValidatorInterface;
+use App\Import\Admin\Service\ImporterSanitizer;
 use App\Import\Admin\Service\ImportLineValidator;
 
 /**
@@ -32,6 +33,13 @@ use App\Import\Admin\Service\ImportLineValidator;
  */
 abstract class LineImportValidator implements LineImportValidatorInterface
 {
+    private $_importerSanitizer;
+
+    public function __construct()
+    {
+        $this->_importerSanitizer = new ImporterSanitizer();
+    }
+
     public function validate(array $line, int $numLine): array
     {
         $importLineValidator = new ImportLineValidator($line, $numLine);
@@ -40,7 +48,7 @@ abstract class LineImportValidator implements LineImportValidatorInterface
             return ['Incorrect number of column line '.$numLine.' ('.$this->_getNumberOfColumn().' expected)'];
         }
 
-        return $importLineValidator->validateLine($line, $this->_getInstanciatedFieldsValidators());
+        return $importLineValidator->validateLine($this->_importerSanitizer->sanitize($line), $this->_getInstanciatedFieldsValidators());
     }
 
     abstract public function _getNumberOfColumn(): int;
