@@ -2,7 +2,6 @@
 
 namespace App\Incentive\Service\Manager;
 
-use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
@@ -108,19 +107,11 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Set, for a user the mobConnect subscription data.
+     * Returns EEC subscriptions for the authenticated user.
      */
-    public function getUserMobConnectSubscription(User $user): User
+    public function getMyEecSubscriptions(User $driver)
     {
-        if (!is_null($user->getLongDistanceSubscription())) {
-            $user->setLongDistanceSubscription($this->getMobConnectSubscription($user->getLongDistanceSubscription()));
-        }
-
-        if (!is_null($user->getShortDistanceSubscription())) {
-            $user->setShortDistanceSubscription($this->getMobConnectSubscription($user->getShortDistanceSubscription()));
-        }
-
-        return $user;
+        return new CeeSubscriptions($driver);
     }
 
     /**
@@ -149,34 +140,6 @@ class SubscriptionManager extends MobConnectManager
         $userEligibility->setShortDistancePhoneDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
 
         return $userEligibility;
-    }
-
-    /**
-     * Returns flat paths to be used in particular as logs.
-     * This service is called by the CeeSubscriptionsCollectionDataProvider.
-     */
-    public function getUserSubscriptions(User $driver)
-    {
-        $this->setDriver($driver);
-
-        $this->_subscriptions = new CeeSubscriptions($this->_driver->getId());
-
-        $shortDistanceSubscription = $this->_driver->getShortDistanceSubscription();
-
-        if (!is_null($shortDistanceSubscription)) {
-            $this->_subscriptions->setShortDistanceSubscription($shortDistanceSubscription);
-        }
-
-        $longDistanceSubscription = $this->_driver->getLongDistanceSubscription();
-        if (!is_null($longDistanceSubscription)) {
-            $this->_subscriptions->setLongDistanceSubscription($longDistanceSubscription);
-        }
-
-        $this->_em->flush();
-
-        $this->_computeShortDistance();
-
-        return $this->_subscriptions;
     }
 
     /**
@@ -445,52 +408,5 @@ class SubscriptionManager extends MobConnectManager
         }
 
         return false;
-    }
-
-    private function _computeShortDistance()
-    {
-        $this->_getCEEEligibleProofsShortDistance();
-
-        foreach ($this->_ceeEligibleProofs as $proof) {
-            switch ($proof->getStatus()) {
-                case CarpoolProof::STATUS_PENDING:
-                case CarpoolProof::STATUS_SENT:$this->_subscriptions->setNbPendingProofs($this->_subscriptions->getNbPendingProofs() + 1);
-
-                    break;
-
-                case CarpoolProof::STATUS_ERROR:
-                case CarpoolProof::STATUS_ACQUISITION_ERROR:
-                case CarpoolProof::STATUS_NORMALIZATION_ERROR:
-                case CarpoolProof::STATUS_FRAUD_ERROR:$this->_subscriptions->setNbRejectedProofs($this->_subscriptions->getNbRejectedProofs() + 1);
-
-                    break;
-
-                case CarpoolProof::STATUS_VALIDATED:$this->_subscriptions->setNbValidatedProofs($this->_subscriptions->getNbValidatedProofs() + 1);
-
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Keep only the eligible proofs (for short distance only).
-     */
-    private function _getCEEEligibleProofsShortDistance()
-    {
-        foreach ($this->_driver->getCarpoolProofsAsDriver() as $proof) {
-            if (
-                !is_null($proof->getAsk())
-                && !is_null($proof->getAsk()->getMatching())
-                && $proof->getAsk()->getMatching()->getCommonDistance() >= CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS
-            ) {
-                continue;
-            }
-
-            if (CarpoolProof::TYPE_HIGH !== $proof->getType() && CarpoolProof::TYPE_UNDETERMINED_DYNAMIC !== $proof->getType()) {
-                continue;
-            }
-
-            $this->_ceeEligibleProofs[] = $proof;
-        }
     }
 }
