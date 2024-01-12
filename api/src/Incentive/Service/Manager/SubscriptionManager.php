@@ -3,7 +3,6 @@
 namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Log\Log;
@@ -21,6 +20,7 @@ use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
@@ -123,7 +123,7 @@ class SubscriptionManager extends MobConnectManager
     {
         $this->setDriver($subscription->getUser());
 
-        return $subscription->setMoBSubscription(json_encode($this->getSubscription($subscription, $this->getDriver())->getContent()));
+        return $subscription->setMoBSubscription($this->getSubscription($subscription, $this->getDriver())->getContent());
     }
 
     public function getUserEECEligibility(User $user): EecEligibility
@@ -239,16 +239,19 @@ class SubscriptionManager extends MobConnectManager
         $subscription = $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
 
         if (!$subscription->isReadyToVerify()) {
-            $this->_loggerService->log('The subscription '.$subscription->getId().' is not ready for verification');
+            $this->_loggerService->log(
+                'The subscription '.$subscription->getId().' is not ready for verification',
+                'debug',
+                true
+            );
 
             if (!$subscription->isAddressValid()) {
                 // TODO: notify the user that his residence address must be entered.
             }
 
-            $response = new MobConnectSubscriptionTimestampsResponse([
-                'code' => Log::VERIFICATION_VALIDATION_ERROR,
-                'content' => Log::ERROR_MESSAGES[Log::VERIFICATION_VALIDATION_ERROR],
-            ]);
+            $response = new MobConnectSubscriptionTimestampsResponse(
+                new Response('The subscription did not pass the test before the verify operation', Response::HTTP_FORBIDDEN)
+            );
 
             $subscription->addLog($response, Log::TYPE_VERIFY);
 
@@ -257,27 +260,23 @@ class SubscriptionManager extends MobConnectManager
             return $response;
         }
 
-        switch (true) {
-            case $subscription instanceof LongDistanceSubscription:
-                $this->_loggerService->log('Verification for the long-distance subscription with the ID '.$subscription->getId());
-
-                break;
-
-            case $subscription instanceof ShortDistanceSubscription:
-                $this->_loggerService->log('Verification for the short-distance subscription with the ID '.$subscription->getId());
-
-                break;
-        }
-
         $this->_driver = $subscription->getUser();
 
         $verifyResponse = $this->executeRequestVerifySubscription($subscription->getSubscriptionId());
 
         if ($this->hasRequestErrorReturned($verifyResponse)) {
+            $subscription->addLog($verifyResponse, Log::TYPE_VERIFY);
+
+            $this->_em->flush();
+
+            $this->_loggerService->log(
+                'During the '.($subscription instanceof LongDistanceSubscription ? 'LD' : 'SD').' incentive verifying process, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$verifyResponse->getContent().'.',
+                'error',
+                true
+            );
+
             return $verifyResponse;
         }
-
-        $subscription->addLog($verifyResponse, Log::TYPE_VERIFY);
 
         $subscription->setStatus(
             MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $verifyResponse->getCode()
@@ -331,14 +330,6 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     */
-    public function getSubscription($subscription, User $user): MobConnectSubscriptionResponse
-    {
-        return $this->getSubscription($subscription, $user);
-    }
-
-    /**
      * Set missing subscription timestamps.
      *
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
@@ -383,15 +374,16 @@ class SubscriptionManager extends MobConnectManager
     private function _createSubscription(string $subscriptionType)
     {
         if (
-            $this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()            // The service is available
-            && is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())     // Subscription does not yet exist
-            && $this->isDriverAccountReadyForSubscription($subscriptionType)                                // There is no incompatibility with the user account
+            Subscription::isTypeAllowed($subscriptionType)
+            && $this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()
+            && is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())
+            && $this->isDriverAccountReadyForSubscription($subscriptionType)
         ) {
             $postResponse = $this->postSubscription($subscriptionType);
 
-            $subscriptionClass = 'App\Incentive\Entity\\'.ucfirst($subscriptionType).'DistanceSubscription';
-
             if (!$this->hasRequestErrorReturned($postResponse)) {
+                $subscriptionClass = 'App\Incentive\Entity\\'.ucfirst($subscriptionType).'DistanceSubscription';
+
                 $subscription = new $subscriptionClass(
                     $this->getDriver(),
                     $postResponse,
@@ -405,7 +397,21 @@ class SubscriptionManager extends MobConnectManager
 
                 return $subscription;
             }
+
+            $this->_loggerService->log(
+                'During the creating process of a '.$subscriptionType.' incentive, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$postResponse->getContent().'.',
+                'error',
+                true
+            );
+
+            return false;
         }
+
+        $this->_loggerService->log(
+            'The creating process of a '.$subscriptionType.' incentive, for the user '.$this->getDriver()->getId().'has been stopped prematurely.',
+            'debug',
+            true
+        );
 
         return false;
     }

@@ -395,7 +395,7 @@ abstract class Subscription implements SubscriptionInterface
      */
     public function setMoBSubscription($moBSubscription): self
     {
-        $this->moBSubscription = $moBSubscription;
+        $this->moBSubscription = empty($moBSubscription) ? null : $moBSubscription;
 
         return $this;
     }

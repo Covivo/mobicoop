@@ -198,19 +198,15 @@ abstract class MobConnectManager
 
     protected function hasRequestErrorReturned(MobConnectResponseInterface $response): bool
     {
-        $result = in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
-
-        if (true === $result) {
-            $this->_loggerService->log('The mobConnect request returned an error: '.$response->getContent(), 'error', true);
-        }
-
-        return $result;
+        return in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
     }
 
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     *
+     * @return bool|MobConnectSubscriptionResponse
      */
-    protected function getSubscription($subscription, User $user): MobConnectSubscriptionResponse
+    protected function getSubscription($subscription, User $user)
     {
         $this->setApiProvider();
 

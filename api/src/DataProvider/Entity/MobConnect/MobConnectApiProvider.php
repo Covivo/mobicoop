@@ -4,6 +4,7 @@ namespace App\DataProvider\Entity\MobConnect;
 
 use App\DataProvider\Entity\MobConnect\AuthenticationProvider\AppAuthenticationProvider;
 use App\DataProvider\Entity\MobConnect\AuthenticationProvider\UserAuthenticationProvider;
+use App\DataProvider\Entity\MobConnect\Converters\ResponseConverter;
 use App\DataProvider\Entity\MobConnect\Response\IncentiveResponse;
 use App\DataProvider\Entity\MobConnect\Response\IncentivesResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
@@ -46,10 +47,7 @@ class MobConnectApiProvider extends MobConnectProvider
         $token = $this->_userAuthenticationProvider->getToken($user);
 
         if (!$token) {
-            return new MobConnectSubscriptionResponse([
-                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
-                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
-            ]);
+            return new MobConnectSubscriptionResponse($this->_userAuthenticationProvider->getResponse());
         }
 
         $data = [
@@ -63,7 +61,8 @@ class MobConnectApiProvider extends MobConnectProvider
         $this->_createDataProvider(RouteProvider::ROUTE_SUBSCRIPTIONS);
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($token)))
+            ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($token))),
+            $data
         );
     }
 
@@ -75,16 +74,13 @@ class MobConnectApiProvider extends MobConnectProvider
         $token = $this->_userAuthenticationProvider->getToken($subscription->getUser());
 
         if (!$token) {
-            return new MobConnectSubscriptionResponse([
-                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
-                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
-            ]);
+            return new MobConnectSubscriptionResponse($this->_userAuthenticationProvider->getResponse());
         }
 
         $this->_createDataProvider(RouteProvider::ROUTE_GET_SUBSCRIPTION, $subscription->getSubscriptionId());
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
+            ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
         );
     }
 
@@ -96,16 +92,13 @@ class MobConnectApiProvider extends MobConnectProvider
         $token = $this->_userAuthenticationProvider->getToken($subscription->getUser());
 
         if (!$token) {
-            return new MobConnectSubscriptionResponse([
-                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
-                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
-            ]);
+            return new MobConnectSubscriptionResponse($this->_userAuthenticationProvider->getResponse());
         }
 
         $this->_createDataProvider(RouteProvider::ROUTE_PATCH_SUBSCRIPTIONS, $subscription->getSubscriptionId());
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($token))),
+            ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($token))),
             $data
         );
     }
@@ -118,18 +111,13 @@ class MobConnectApiProvider extends MobConnectProvider
         $token = $this->_userAuthenticationProvider->getToken($subscription->getUser());
 
         if (!$token) {
-            return new MobConnectSubscriptionVerifyResponse([
-                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
-                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
-            ]);
+            return new MobConnectSubscriptionVerifyResponse($this->_userAuthenticationProvider->getResponse());
         }
 
         $this->_createDataProvider(RouteProvider::ROUTE_SUBSCRIPTIONS_VERIFY, $subscription->getSubscriptionId());
 
         return new MobConnectSubscriptionVerifyResponse(
-            $this->_getResponse(
-                $this->_dataProvider->postCollection(null, $this->_buildHeaders($token))
-            )
+            ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->postCollection(null, $this->_buildHeaders($token)))
         );
     }
 
@@ -140,14 +128,11 @@ class MobConnectApiProvider extends MobConnectProvider
         $token = $this->_appAuthenticationProvider->getToken(null);
 
         if (!$token) {
-            return new MobConnectSubscriptionTimeStampsResponse([
-                'code' => $this->_appAuthenticationProvider->getResponse()->getStatusCode(),
-                'content' => $this->_appAuthenticationProvider->getResponse()->getContent(),
-            ]);
+            return new MobConnectSubscriptionTimeStampsResponse($this->_appAuthenticationProvider->getResponse());
         }
 
         return new MobConnectSubscriptionTimestampsResponse(
-            $this->_getResponse($this->_dataProvider->getItem(['subscriptionId' => $subscriptionId], $this->_buildHeaders($token)))
+            ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->getItem(['subscriptionId' => $subscriptionId], $this->_buildHeaders($token)))
         );
     }
 
@@ -156,16 +141,13 @@ class MobConnectApiProvider extends MobConnectProvider
         $token = $this->_userAuthenticationProvider->getToken($user);
 
         if (!$token) {
-            return new IncentivesResponse([
-                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
-                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
-            ]);
+            return new MobConnectSubscriptionVerifyResponse($this->_userAuthenticationProvider->getResponse());
         }
 
         $this->_createDataProvider(RouteProvider::ROUTE_INCENTIVES);
 
         return new IncentivesResponse(
-            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
+            ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
         );
     }
 
@@ -174,16 +156,13 @@ class MobConnectApiProvider extends MobConnectProvider
         $token = $this->_userAuthenticationProvider->getToken($user);
 
         if (!$token) {
-            return new IncentivesResponse([
-                'code' => $this->_userAuthenticationProvider->getResponse()->getStatusCode(),
-                'content' => $this->_userAuthenticationProvider->getResponse()->getContent(),
-            ]);
+            return new MobConnectSubscriptionVerifyResponse($this->_userAuthenticationProvider->getResponse());
         }
 
         $this->_createDataProvider(RouteProvider::ROUTE_INCENTIVE, $incentiveId, RouteProvider::INCENTIVE_ID_TAG);
 
         return new IncentiveResponse(
-            $this->_getResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
+            ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
         );
     }
 

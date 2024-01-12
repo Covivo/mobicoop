@@ -2,6 +2,7 @@
 
 namespace App\DataProvider\Entity\MobConnect;
 
+use App\DataProvider\Entity\MobConnect\Converters\ResponseConverter;
 use App\DataProvider\Entity\OpenIdSsoProvider as EntityOpenIdSsoProvider;
 use App\DataProvider\Service\DataProvider;
 use App\User\Entity\SsoUser;
@@ -89,7 +90,7 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         throw new \LogicException('Error getUserProfile');
     }
 
-    public function getAppToken()
+    public function getAppToken(): Response
     {
         return $this->execute([
             'client_id' => $this->_appClientID,
@@ -108,7 +109,7 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         ]);
     }
 
-    protected function getToken($code)
+    protected function getToken($code): Response
     {
         return $this->execute([
             'grant_type' => 'authorization_code',
@@ -123,20 +124,6 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
     {
         $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::TOKEN_URL]);
 
-        $response = $dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId, $this->clientSecret]);
-
-        // if (200 == $response->getCode()) {
-        //     return json_decode($response->getValue(), true);
-        // }
-
-        return new Response(
-            $response->getValue(),
-            $response->getcode()
-        );
-
-        // return [
-        //     'code' => $response->getCode(),
-        //     'content' => !is_null(json_decode($response->getValue())) ? json_decode($response->getValue()) : $response->getValue(),
-        // ];
+        return ResponseConverter::convertResponseToHttpFondationResponse($dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId, $this->clientSecret]));
     }
 }

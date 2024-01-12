@@ -2,7 +2,6 @@
 
 namespace App\DataProvider\Entity\MobConnect;
 
-use App\DataProvider\Entity\Response;
 use App\DataProvider\Service\DataProvider;
 use App\User\Entity\User;
 
@@ -46,15 +45,5 @@ abstract class MobConnectProvider
     protected function _createDataProvider(string $resource, string $resource_id = null, ?string $tag = null)
     {
         $this->_dataProvider = new DataProvider($this->_apiUri, RouteProvider::buildResource($resource, $resource_id, $tag));
-    }
-
-    protected function _getResponse(Response $response)
-    {
-        $responseValue = $response->getValue();
-
-        return [
-            'code' => $response->getCode(),
-            'content' => $responseValue,
-        ];
     }
 }

@@ -142,8 +142,10 @@ class JourneyManager extends MobConnectManager
 
     /**
      * Step 9 - Long distance journey.
+     *
+     * @return bool|LongDistanceJourney
      */
-    public function declareFirstLongDistanceJourney(Proposal $proposal, bool $pushOnly = false): ?LongDistanceJourney
+    public function declareFirstLongDistanceJourney(Proposal $proposal, bool $pushOnly = false)
     {
         $this->_pushOnlyMode = $pushOnly;
         $this->_currentProposal = $proposal;
@@ -152,24 +154,25 @@ class JourneyManager extends MobConnectManager
 
         $this->_currentSubscription = $this->getDriver()->getLongDistanceSubscription();
 
-        $params = $this->getCommitmentRequestParams(LongDistanceSubscription::COMMITMENT_PREFIX);
-
         if (is_null($this->_currentSubscription)) {
-            return null;
+            return false;
         }
 
-        $patchResponse = $this->patchSubscription($this->_currentSubscription, $params);
-
-        $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
-
-        $log = 204 === $patchResponse->getCode()
-            ? 'The subscription '.$this->_currentSubscription->getId().' has been patch successfully with the proposal '.$this->_currentProposal->getId()
-            : 'The subscription '.$this->_currentSubscription->getId().' was not patch with the carpoolProof '.$this->_currentProposal->getId();
-
-        $this->_loggerService->log($log);
+        $patchResponse = $this->patchSubscription(
+            $this->_currentSubscription,
+            $this->getCommitmentRequestParams(LongDistanceSubscription::COMMITMENT_PREFIX)
+        );
 
         if ($this->hasRequestErrorReturned($patchResponse)) {
-            return null;
+            $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
+
+            $this->_loggerService->log(
+                'The subscription '.$this->_currentSubscription->getId().' was not patch with the carpoolProof '.$this->_currentProposal->getId(),
+                'error',
+                true
+            );
+
+            return false;
         }
 
         return $this->_finalizesCommitment();
@@ -177,8 +180,10 @@ class JourneyManager extends MobConnectManager
 
     /**
      * Step 9 - Short distance journey.
+     *
+     * @return bool|ShortDistanceJourney
      */
-    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof, bool $pushOnly = false): ?ShortDistanceJourney
+    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof, bool $pushOnly = false)
     {
         $this->_pushOnlyMode = $pushOnly;
         $this->_currentCarpoolProof = $carpoolProof;
@@ -187,24 +192,25 @@ class JourneyManager extends MobConnectManager
 
         $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
 
-        $params = $this->getCommitmentRequestParams($this->_carpoolProofPrefix);
-
         if (is_null($this->_currentSubscription)) {
-            return null;
+            return false;
         }
 
-        $patchResponse = $this->patchSubscription($this->_currentSubscription, $params);
-
-        $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
-
-        $log = 204 === $patchResponse->getCode()
-            ? 'The subscription '.$this->_currentSubscription->getId().' has been patch successfully with the carpoolProof '.$this->_currentCarpoolProof->getId()
-            : 'The subscription '.$this->_currentSubscription->getId().' was not patch with the carpoolProof '.$this->_currentCarpoolProof->getId();
-
-        $this->_loggerService->log($log);
+        $patchResponse = $this->patchSubscription(
+            $this->_currentSubscription,
+            $this->getCommitmentRequestParams($this->_carpoolProofPrefix)
+        );
 
         if ($this->hasRequestErrorReturned($patchResponse)) {
-            return null;
+            $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
+
+            $this->_loggerService->log(
+                'The subscription '.$this->_currentSubscription->getId().' was not patch with the carpoolProof '.$this->_currentCarpoolProof->getId(),
+                'error',
+                true
+            );
+
+            return false;
         }
 
         return $this->_finalizesCommitment();
@@ -235,7 +241,7 @@ class JourneyManager extends MobConnectManager
     }
 
     /**
-     * Step 17 - Validation of proof for a short distance journey,.
+     * Step 17 - Validation of proof for a short distance journey.
      */
     public function validationOfProof(CarpoolProof $carpoolProof, bool $pushOnly = false)
     {
@@ -313,19 +319,26 @@ class JourneyManager extends MobConnectManager
                 return;
             }
 
-            $params = [
-                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate($this->getDriver()->getShortDistanceSubscription()),
-            ];
-
             $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');
 
-            $patchResponse = $this->patchSubscription($this->getDriver()->getShortDistanceSubscription(), $params);
+            $patchResponse = $this->patchSubscription(
+                $this->getDriver()->getShortDistanceSubscription(),
+                [
+                    SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate($this->getDriver()->getShortDistanceSubscription()),
+                ]
+            );
 
             if ($this->hasRequestErrorReturned($patchResponse)) {
+                $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
+
+                $this->_loggerService->log(
+                    'During the short incentive updating process, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$patchResponse->getContent().'.',
+                    'error',
+                    true
+                );
+
                 return;
             }
-
-            $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
 
             $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
@@ -519,10 +532,17 @@ class JourneyManager extends MobConnectManager
         );
 
         if ($this->hasRequestErrorReturned($patchResponse)) {
+            $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
+
+            $this->_loggerService->log(
+                'During the short incentive updating process, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$patchResponse->getContent().'.',
+                'error',
+                true
+            );
+
             return;
         }
 
-        $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
         $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
         $this->_currentSubscription->setExpirationDate($this->getExpirationDate($this->_currentSubscription->getValidityPeriodDuration()));
