@@ -17,7 +17,6 @@ use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Service\Definition\DefinitionSelector;
-use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
@@ -71,18 +70,14 @@ class SubscriptionManager extends MobConnectManager
         SubscriptionValidation $subscriptionValidation,
         UserValidation $userValidation,
         LoggerService $loggerService,
-        HonourCertificateService $honourCertificateService,
         InstanceManager $instanceManager,
         JourneyManager $journeyManager,
         TimestampTokenManager $timestampTokenManager,
         CarpoolProofRepository $carpoolProofRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
-        ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
-        string $carpoolProofPrefix,
-        array $mobConnectParams,
-        array $ssoServices
+        ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository
     ) {
-        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService);
 
         $this->_journeyManager = $journeyManager;
         $this->_timestampTokenManager = $timestampTokenManager;

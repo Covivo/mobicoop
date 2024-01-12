@@ -7,6 +7,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
+use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
@@ -25,6 +26,11 @@ use Doctrine\ORM\EntityManagerInterface;
 class JourneyManager extends MobConnectManager
 {
     /**
+     * @var string
+     */
+    private $_carpoolProofPrefix;
+
+    /**
      * @var CarpoolProofRepository
      */
     private $_carpoolProofRepository;
@@ -33,6 +39,11 @@ class JourneyManager extends MobConnectManager
      * @var CarpoolItemRepository
      */
     private $_carpoolItemRepository;
+
+    /**
+     * @var HonourCertificateService
+     */
+    private $_honourCertificateService;
 
     /**
      * @var JourneyValidation
@@ -50,19 +61,27 @@ class JourneyManager extends MobConnectManager
         TimestampTokenManager $timestampTokenManager,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         ShortDistanceJourneyRepository $shortDistanceJourneyRepository,
-        string $carpoolProofPrefix,
-        array $mobConnectParams,
-        array $ssoServices
+        string $carpoolProofPrefix
     ) {
-        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService);
 
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_carpoolItemRepository = $carpoolItemRepository;
         $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
         $this->_shortDistanceJourneyRepository = $shortDistanceJourneyRepository;
+        $this->_carpoolProofPrefix = $carpoolProofPrefix;
 
+        $this->_honourCertificateService = $honourCertificateService;
         $this->_journeyValidation = $journeyValidation;
+    }
+
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function getHonorCertificate($subscription): string
+    {
+        return $this->_honourCertificateService->generateHonourCertificate($subscription);
     }
 
     public function userProofsRecovery(User $driver, string $subscriptionType): bool
@@ -133,7 +152,7 @@ class JourneyManager extends MobConnectManager
 
         $this->_currentSubscription = $this->getDriver()->getLongDistanceSubscription();
 
-        $params = $this->getCommitmentRequestParams();
+        $params = $this->getCommitmentRequestParams(LongDistanceSubscription::COMMITMENT_PREFIX);
 
         if (is_null($this->_currentSubscription)) {
             return null;
@@ -168,7 +187,7 @@ class JourneyManager extends MobConnectManager
 
         $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
 
-        $params = $this->getCommitmentRequestParams();
+        $params = $this->getCommitmentRequestParams($this->_carpoolProofPrefix);
 
         if (is_null($this->_currentSubscription)) {
             return null;
@@ -295,7 +314,7 @@ class JourneyManager extends MobConnectManager
             }
 
             $params = [
-                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate(false),
+                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate($this->getDriver()->getShortDistanceSubscription()),
             ];
 
             $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');
@@ -463,7 +482,7 @@ class JourneyManager extends MobConnectManager
 
     private function _updateShortDistanceJourney(ShortDistanceJourney $journey, CarpoolProof $carpoolProof): ShortDistanceJourney
     {
-        return $journey->updateJourney($carpoolProof, $this->getRPCOperatorId($carpoolProof->getId()), $this->getCarpoolersNumber($carpoolProof->getAsk()));
+        return $journey->updateJourney($carpoolProof, $this->_carpoolProofPrefix.$carpoolProof->getId(), $this->getCarpoolersNumber($carpoolProof->getAsk()));
     }
 
     private function _addLDJourneyToSubscription()
@@ -495,7 +514,7 @@ class JourneyManager extends MobConnectManager
             $this->getDriver()->getLongDistanceSubscription(),
             [
                 SpecificFields::JOURNEY_COST_SHARING_DATE => $this->_currentCarpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
-                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate(),
+                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate($this->getDriver()->getLongDistanceSubscription()),
             ]
         );
 

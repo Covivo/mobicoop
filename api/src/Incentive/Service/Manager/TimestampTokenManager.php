@@ -10,7 +10,6 @@ use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -61,13 +60,9 @@ class TimestampTokenManager extends MobConnectManager
     public function __construct(
         EntityManagerInterface $em,
         LoggerService $loggerService,
-        InstanceManager $instanceManager,
-        HonourCertificateService $honourCertificateService,
-        string $carpoolProofPrefix,
-        array $mobConnectParams,
-        array $ssoServices
+        InstanceManager $instanceManager
     ) {
-        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService);
     }
 
     public function getMobTimestampToken($subscription)

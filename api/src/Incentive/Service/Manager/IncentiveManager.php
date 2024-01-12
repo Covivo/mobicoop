@@ -3,7 +3,6 @@
 namespace App\Incentive\Service\Manager;
 
 use App\Incentive\Resource\Incentive;
-use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,13 +16,9 @@ class IncentiveManager extends MobConnectManager
         EntityManagerInterface $em,
         Security $security,
         InstanceManager $instanceManager,
-        LoggerService $loggerService,
-        HonourCertificateService $honourCertificateService,
-        string $carpoolProofPrefix,
-        array $mobConnectParams,
-        array $ssoServices
+        LoggerService $loggerService
     ) {
-        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService);
 
         /**
          * @var User
