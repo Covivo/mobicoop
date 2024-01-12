@@ -26,12 +26,12 @@ class InstanceManager
         return $this->getEecInstance()->isAvailable();
     }
 
-    public function isLdSubscriptionAvailable(): bool
+    public function isLongSubscriptionAvailable(): bool
     {
         return $this->_currentEecInstance->isLongDistanceSubscriptionAvailable();
     }
 
-    public function isSdSubscriptionAvailable(): bool
+    public function isShortSubscriptionAvailable(): bool
     {
         return $this->_currentEecInstance->isShortDistanceSubscriptionAvailable();
     }

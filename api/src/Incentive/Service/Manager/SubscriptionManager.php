@@ -101,47 +101,8 @@ class SubscriptionManager extends MobConnectManager
 
         $this->setDriver($user);
 
-        if (
-            $this->_instanceManager->isLdSubscriptionAvailable()                                        // The service is available
-            && is_null($this->getDriver()->getLongDistanceSubscription())                               // Subscription does not yet exist
-            && $this->isDriverAccountReadyForSubscription(LongDistanceSubscription::SUBSCRIPTION_TYPE)  // There is no incompatibility with the user account
-        ) {
-            $postResponse = $this->postSubscription(Subscription::TYPE_LONG);
-
-            if (!$this->hasRequestErrorReturned($postResponse)) {
-                $longDistanceSubscription = new LongDistanceSubscription(
-                    $this->getDriver(),
-                    $postResponse,
-                    DefinitionSelector::getDefinition(LongDistanceSubscription::SUBSCRIPTION_TYPE)
-                );
-                $longDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
-
-                $longDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($longDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
-
-                $this->_em->persist($longDistanceSubscription);
-            }
-        }
-
-        if (
-            $this->_instanceManager->isSdSubscriptionAvailable()                                        // The service is available
-            && is_null($this->getDriver()->getShortDistanceSubscription())                              // Subscription does not yet exist
-            && $this->isDriverAccountReadyForSubscription(ShortDistanceSubscription::SUBSCRIPTION_TYPE) // There is no incompatibility with the user account
-        ) {
-            $postResponse = $this->postSubscription(Subscription::TYPE_SHORT);
-
-            if (!$this->hasRequestErrorReturned($postResponse)) {
-                $shortDistanceSubscription = new ShortDistanceSubscription(
-                    $this->getDriver(),
-                    $postResponse,
-                    DefinitionSelector::getDefinition(ShortDistanceSubscription::SUBSCRIPTION_TYPE)
-                );
-                $shortDistanceSubscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
-
-                $shortDistanceSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($shortDistanceSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
-
-                $this->_em->persist($shortDistanceSubscription);
-            }
-        }
+        $this->_createSubscription(Subscription::TYPE_SHORT);
+        $this->_createSubscription(Subscription::TYPE_LONG);
 
         $this->_em->flush();
     }
@@ -451,6 +412,39 @@ class SubscriptionManager extends MobConnectManager
 
             $definition::manageTransition($this->_em, $this->_longDistanceSubscriptionRepository);
         }
+    }
+
+    /**
+     * @return bool|LongDistanceSubscription|ShortDistanceSubscription
+     */
+    private function _createSubscription(string $subscriptionType)
+    {
+        if (
+            $this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()            // The service is available
+            && is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())     // Subscription does not yet exist
+            && $this->isDriverAccountReadyForSubscription($subscriptionType)                                // There is no incompatibility with the user account
+        ) {
+            $postResponse = $this->postSubscription($subscriptionType);
+
+            $subscriptionClass = 'App\Incentive\Entity\\'.ucfirst($subscriptionType).'DistanceSubscription';
+
+            if (!$this->hasRequestErrorReturned($postResponse)) {
+                $subscription = new $subscriptionClass(
+                    $this->getDriver(),
+                    $postResponse,
+                    DefinitionSelector::getDefinition($subscriptionType)
+                );
+                $subscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
+
+                $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
+
+                $this->_em->persist($subscription);
+
+                return $subscription;
+            }
+        }
+
+        return false;
     }
 
     private function _computeShortDistance()
