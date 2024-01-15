@@ -146,9 +146,15 @@ class CarpoolProofRepository
 
     public function findCarpoolProofToCheck(array $status): ?array
     {
+        $now = new \DateTime('now');
+        $date = $now->modify('- 15 days')->format('Y-m-d');
+
         $query = $this->repository->createQueryBuilder('cp')
             ->where('cp.status in (:status)')
+            ->orWhere('cp.status = :errorStatus AND cp.createdDate >= :date')
             ->setParameter('status', $status)
+            ->setParameter('errorStatus', CarpoolProof::STATUS_ERROR)
+            ->setParameter('date', $date)
         ;
 
         return $query->getQuery()->getResult();
