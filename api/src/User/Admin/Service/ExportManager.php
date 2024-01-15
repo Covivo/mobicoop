@@ -152,10 +152,10 @@ class ExportManager
         $this->_currentUserExport->setEmail($this->_currentUser['email']);
         $this->_currentUserExport->setTelephone($this->_currentUser['telephone']);
         $this->_currentUserExport->setBirthDate(new \DateTime($this->_currentUser['birthDate']));
-        $this->_currentUserExport->setRegistrationDate(new \DateTime($this->_currentUser['registrationDate']));
-        $this->_currentUserExport->setLastActivityDate(new \DateTime($this->_currentUser['lastActivityDate']));
+        $this->_currentUserExport->setRegistrationDate('' != trim($this->_currentUser['registrationDate']) ? new \DateTime($this->_currentUser['registrationDate']) : null);
+        $this->_currentUserExport->setLastActivityDate('' != trim($this->_currentUser['lastActivityDate']) ? new \DateTime($this->_currentUser['lastActivityDate']) : null);
         $this->_currentUserExport->setNewsletterSubscription($this->_currentUser['newsletterSubscription']);
-        $this->_currentUserExport->setMaxValidityAnnonceDate(new \DateTime($this->_currentUser['maxValidityAnnonceDate']));
+        $this->_currentUserExport->setMaxValidityAnnonceDate('' != trim($this->_currentUser['maxValidityAnnonceDate']) ? new \DateTime($this->_currentUser['maxValidityAnnonceDate']) : null);
         $this->_currentUserExport->setAddressLocality($this->_currentUser['addressLocality']);
         $this->_currentUserExport->setSolidaryUser($this->_currentUser['solidaryUser']);
 
