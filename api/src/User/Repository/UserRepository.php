@@ -312,6 +312,7 @@ class UserRepository
     public function findForExport(array $filters, array $restrictionTerritoryIds)
     {
         $query = "SELECT
+            u.id AS userId,
             u.family_name AS familyName,
             u.given_name AS givenName,
             CASE u.gender
