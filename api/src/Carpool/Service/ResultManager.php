@@ -34,6 +34,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
+use App\Geography\Service\DisplayLabelBuilder;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
 use App\User\Repository\ReviewRepository;
@@ -62,6 +63,7 @@ class ResultManager
     private $carpoolNoticeableDetourDurationPercent;
     private $carpoolNoticeableDetourDistancePercent;
     private $proposalRepository;
+    private $displayLabelBuilder;
 
     /**
      * Constructor.
@@ -78,7 +80,8 @@ class ResultManager
         ProposalRepository $proposalRepository,
         bool $userReview,
         int $carpoolNoticeableDetourDurationPercent,
-        int $carpoolNoticeableDetourDistancePercent
+        int $carpoolNoticeableDetourDistancePercent,
+        array $carpoolDisplayFieldsOrder
     ) {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -92,6 +95,7 @@ class ResultManager
         $this->carpoolNoticeableDetourDurationPercent = $carpoolNoticeableDetourDurationPercent;
         $this->carpoolNoticeableDetourDistancePercent = $carpoolNoticeableDetourDistancePercent;
         $this->proposalRepository = $proposalRepository;
+        $this->displayLabelBuilder = new DisplayLabelBuilder($carpoolDisplayFieldsOrder);
     }
 
     // set the params
@@ -264,16 +268,19 @@ class ResultManager
                             $return = $a->getTime()->format('H') >= $value->format('H');
 
                             break;
+
                             // Filter on Role (driver, passenger, both)
                         case 'role':
                             $return = self::filterByRole($a, $value);
 
                             break;
+
                             // Filter on Gender
                         case 'gender':
                             $return = $a->getCarpooler()->getGender() == $value;
 
                             break;
+
                             // Filter on a Community
                         case 'community':
                             $return = array_key_exists($value, $a->getCommunities());
@@ -307,8 +314,7 @@ class ResultManager
     /**
      * Paginate the results.
      *
-     * @param array      $results The array of results to paginate
-     * @param null|array $filters The array of filters to apply (applied successively in the order of the array)
+     * @param array $results The array of results to paginate
      *
      * @return array The results filtered
      */
@@ -724,6 +730,7 @@ class ResultManager
         $results = [];
         // we group the matchings by matching proposalId to merge potential driver and/or passenger candidates
         $matchings = [];
+
         // we search the matchings as an offer
         /** @var Matching $request */
         foreach ($proposal->getMatchingRequests() as $request) {
@@ -1195,6 +1202,11 @@ class ResultManager
                     $type = 'destination';
                     $item->setDestinationDriver($waypoint->getAddress());
                 }
+
+                $waypointAddress = $waypoint->getAddress();
+                $waypointAddress->setDisplayLabel($this->displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
+                $waypoint->setAddress($waypointAddress);
+
                 $waypoints[$i] = [
                     'id' => $i,
                     'person' => 1 == $waypoint->getRole() ? 'requester' : 'carpooler',
@@ -1764,6 +1776,11 @@ class ResultManager
                     $type = 'destination';
                     $item->setDestinationPassenger($waypoint->getAddress());
                 }
+
+                $waypointAddress = $waypoint->getAddress();
+                $waypointAddress->setDisplayLabel($this->displayLabelBuilder->buildDisplayLabelFromWaypoint($waypoint));
+                $waypoint->setAddress($waypointAddress);
+
                 $waypoints[$i] = [
                     'id' => $i,
                     'person' => 2 == $waypoint->getRole() ? 'requester' : 'carpooler',
