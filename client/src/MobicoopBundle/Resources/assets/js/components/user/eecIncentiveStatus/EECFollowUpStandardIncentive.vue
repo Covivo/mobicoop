@@ -128,8 +128,11 @@ export default {
         subscribe: {
           title: this.$t('improvedIncentive.panels.subscribe.title'),
           error() {
-            return !_this.subscription && _this.subscription.progression
-              && !isNull(_this.subscription.progression.registrationFinalized) && true != _this.subscription.progression.registrationFinalized;
+            return !_this.subscription || (
+              _this.subscription
+              && _this.subscription.progression
+              && !isNull(_this.subscription.progression.registrationFinalized) && true != _this.subscription.progression.registrationFinalized
+            );
           },
           success() {
             return _this.subscription && _this.subscription.progression
