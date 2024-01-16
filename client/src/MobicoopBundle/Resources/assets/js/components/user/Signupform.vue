@@ -416,9 +416,10 @@
                   required
                 >
                   <template v-slot:label>
-                    <div>
-                      {{ $t("specificTerms.text") }}
-                    </div>
+                    <div
+                      @click.stop
+                      v-html="$t('specificTerms.text')"
+                    />
                   </template>
                 </v-checkbox>
 
