@@ -309,7 +309,7 @@ class UserRepository
         return $query->getQuery()->getResult();
     }
 
-    public function findForExport(array $filters, array $restrictionTerritoryIds)
+    public function findForExport(array $filters, array $restrictionTerritoryIds, array $selected = [])
     {
         $query = "SELECT
             u.family_name AS familyName,
@@ -512,10 +512,14 @@ class UserRepository
         foreach ($filters as $filter => $value) {
             switch ($filter) {
                 case 'isHitchHiker':
-                    $query .= 'AND u.hitch_hike_driver IS NOT NULL OR u.hitch_hike_passenger IS NOT NULL ';
+                    $query .= 'AND (u.hitch_hike_driver IS NOT NULL OR u.hitch_hike_passenger IS NOT NULL) ';
 
                     break;
             }
+        }
+
+        if (is_array($selected) && count($selected) > 0) {
+            $query .= "AND u.id in ('".implode("','", $selected)."')";
         }
 
         $stmt = $this->entityManager->getConnection()->prepare($query);
