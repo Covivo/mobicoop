@@ -26,6 +26,15 @@ class UserExport
     public const IDENTITY_CANCELED = 'Annulée';
 
     /**
+     * @var int
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("userId")
+     */
+    private $id;
+
+    /**
      * @var string
      *
      * @Groups({"user-export"})
@@ -421,10 +430,20 @@ class UserExport
      */
     private $rezoPouceUse;
 
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function setId(?string $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     /**
      * Get the value of familyName.
-     *
-     * @return string
      */
     public function getFamilyName(): ?string
     {
@@ -443,8 +462,6 @@ class UserExport
 
     /**
      * Get the value of givenName.
-     *
-     * @return string
      */
     public function getGivenName(): ?string
     {
@@ -463,8 +480,6 @@ class UserExport
 
     /**
      * Get the value of gender.
-     *
-     * @return string
      */
     public function getGender(): ?string
     {
@@ -507,8 +522,6 @@ class UserExport
 
     /**
      * Get the value of email.
-     *
-     * @return string
      */
     public function getEmail(): ?string
     {
@@ -527,8 +540,6 @@ class UserExport
 
     /**
      * Get the value of telephone.
-     *
-     * @return string
      */
     public function getTelephone(): ?string
     {
@@ -547,8 +558,6 @@ class UserExport
 
     /**
      * Get the value of birthDate.
-     *
-     * @return string
      */
     public function getBirthDate(): ?string
     {
@@ -639,8 +648,6 @@ class UserExport
 
     /**
      * Get the value of addressLocality.
-     *
-     * @return string
      */
     public function getAddressLocality(): ?string
     {
@@ -677,8 +684,6 @@ class UserExport
 
     /**
      * Get the value of community1.
-     *
-     * @return string
      */
     public function getCommunity1(): ?string
     {
@@ -687,8 +692,6 @@ class UserExport
 
     /**
      * Set the value of community1.
-     *
-     * @param string $community1
      */
     public function setCommunity1(?string $community1): self
     {
@@ -699,8 +702,6 @@ class UserExport
 
     /**
      * Get the value of community2.
-     *
-     * @return string
      */
     public function getCommunity2(): ?string
     {
@@ -709,8 +710,6 @@ class UserExport
 
     /**
      * Set the value of community2.
-     *
-     * @param string $community2
      */
     public function setCommunity2(?string $community2): self
     {
@@ -721,8 +720,6 @@ class UserExport
 
     /**
      * Get the value of community3.
-     *
-     * @return string
      */
     public function getCommunity3(): ?string
     {
@@ -731,8 +728,6 @@ class UserExport
 
     /**
      * Set the value of community3.
-     *
-     * @param string $community3
      */
     public function setCommunity3(?string $community3): self
     {
@@ -743,8 +738,6 @@ class UserExport
 
     /**
      * Get the value of carpool1OriginLocality.
-     *
-     * @return string
      */
     public function getCarpool1OriginLocality(): ?string
     {
@@ -753,8 +746,6 @@ class UserExport
 
     /**
      * Set the value of carpool1OriginLocality.
-     *
-     * @param string $carpool1OriginLocality
      */
     public function setCarpool1OriginLocality(?string $carpool1OriginLocality): self
     {
@@ -765,8 +756,6 @@ class UserExport
 
     /**
      * Get the value of carpool2OriginLocality.
-     *
-     * @return string
      */
     public function getCarpool2OriginLocality(): ?string
     {
@@ -775,8 +764,6 @@ class UserExport
 
     /**
      * Set the value of carpool2OriginLocality.
-     *
-     * @param string $carpool2OriginLocality
      */
     public function setCarpool2OriginLocality(?string $carpool2OriginLocality): self
     {
@@ -787,8 +774,6 @@ class UserExport
 
     /**
      * Get the value of carpool3OriginLocality.
-     *
-     * @return string
      */
     public function getCarpool3OriginLocality(): ?string
     {
@@ -797,8 +782,6 @@ class UserExport
 
     /**
      * Set the value of carpool3OriginLocality.
-     *
-     * @param string $carpool3OriginLocality
      */
     public function setCarpool3OriginLocality(?string $carpool3OriginLocality): self
     {
@@ -809,8 +792,6 @@ class UserExport
 
     /**
      * Get the value of carpool1DestinationLocality.
-     *
-     * @return string
      */
     public function getCarpool1DestinationLocality(): ?string
     {
@@ -819,8 +800,6 @@ class UserExport
 
     /**
      * Set the value of carpool1DestinationLocality.
-     *
-     * @param string $carpool1DestinationLocality
      */
     public function setCarpool1DestinationLocality(?string $carpool1DestinationLocality): self
     {
@@ -831,8 +810,6 @@ class UserExport
 
     /**
      * Get the value of carpool2DestinationLocality.
-     *
-     * @return string
      */
     public function getCarpool2DestinationLocality(): ?string
     {
@@ -841,8 +818,6 @@ class UserExport
 
     /**
      * Set the value of carpool2DestinationLocality.
-     *
-     * @param string $carpool2DestinationLocality
      */
     public function setCarpool2DestinationLocality(?string $carpool2DestinationLocality): self
     {
@@ -853,8 +828,6 @@ class UserExport
 
     /**
      * Get the value of carpool3DestinationLocality.
-     *
-     * @return string
      */
     public function getCarpool3DestinationLocality(): ?string
     {
@@ -863,8 +836,6 @@ class UserExport
 
     /**
      * Set the value of carpool3DestinationLocality.
-     *
-     * @param string $carpool3DestinationLocality
      */
     public function setCarpool3DestinationLocality(?string $carpool3DestinationLocality): self
     {
@@ -875,8 +846,6 @@ class UserExport
 
     /**
      * Get the value of carpool1Frequency.
-     *
-     * @return string
      */
     public function getCarpool1Frequency(): ?string
     {
@@ -885,8 +854,6 @@ class UserExport
 
     /**
      * Set the value of carpool1Frequency.
-     *
-     * @param string $carpool1Frequency
      */
     public function setCarpool1Frequency(?string $carpool1Frequency): self
     {
@@ -905,8 +872,6 @@ class UserExport
 
     /**
      * Set the value of carpool2Frequency.
-     *
-     * @param string $carpool2Frequency
      */
     public function setCarpool2Frequency(?string $carpool2Frequency): self
     {
@@ -925,8 +890,6 @@ class UserExport
 
     /**
      * Set the value of carpool3Frequency.
-     *
-     * @param string $carpool3Frequency
      */
     public function setCarpool3Frequency(?string $carpool3Frequency): self
     {

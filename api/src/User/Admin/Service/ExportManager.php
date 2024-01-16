@@ -161,6 +161,7 @@ class ExportManager
     {
         $this->_currentUserExport = new UserExport();
 
+        $this->_currentUserExport->setId((int) $this->_currentUser['userId']);
         $this->_currentUserExport->setFamilyName($this->_currentUser['familyName']);
         $this->_currentUserExport->setGivenName($this->_currentUser['givenName']);
         $this->_currentUserExport->setGender($this->_currentUser['gender']);
