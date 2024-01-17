@@ -660,10 +660,14 @@ class ProofManager
 
     public function checkProofs()
     {
-        $proofs = $this->carpoolProofRepository->findCarpoolProofToCheck([CarpoolProof::STATUS_UNDER_CHECKING, CarpoolProof::STATUS_SENT]);
+        $proofs = $this->carpoolProofRepository->findCarpoolProofToCheck();
         $nbChecked = 0;
 
-        foreach ($proofs as $proof) {
+        var_dump(count($proofs));
+
+        exit;
+        foreach ($proofs as $subproof) {
+            $proof = $this->carpoolProofRepository->find($subproof['id']);
             /**
              * @var CarpoolProof $proof
              */

@@ -144,20 +144,18 @@ class CarpoolProofRepository
         return $query->getQuery()->getResult();
     }
 
-    public function findCarpoolProofToCheck(array $status): ?array
+    public function findCarpoolProofToCheck(): ?array
     {
         $now = new \DateTime('now');
         $date = $now->modify('- 15 days')->format('Y-m-d');
 
-        $query = $this->repository->createQueryBuilder('cp')
-            ->where('cp.status in (:status)')
-            ->orWhere('cp.status = :errorStatus AND cp.createdDate >= :date')
-            ->setParameter('status', $status)
-            ->setParameter('errorStatus', CarpoolProof::STATUS_ERROR)
-            ->setParameter('date', $date)
-        ;
+        $stmt = $this->entityManager->getConnection()->prepare(
+            'SELECT * FROM carpool_proof cp
+            WHERE cp.status in ('.CarpoolProof::STATUS_SENT.','.CarpoolProof::STATUS_UNDER_CHECKING.') or (cp.status = '.CarpoolProof::STATUS_ERROR.' and cp.created_date >= \''.$date.'\')'
+        );
+        $stmt->execute();
 
-        return $query->getQuery()->getResult();
+        return $stmt->fetchAll();
     }
 
     /**
