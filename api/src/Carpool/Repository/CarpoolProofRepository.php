@@ -152,6 +152,8 @@ class CarpoolProofRepository
         $date = $now->modify('- '.$this->carpoolProofErroCheckLimit.'days')->format('Y-m-d');
 
         $query = $this->repository->createQueryBuilder('cp')
+            ->leftJoin('cp.mobConnectShortDistanceJourney', 'sdj')
+            ->leftJoin('sdj.subscription', 's')
             ->where('cp.status in (:status)')
             ->orWhere('cp.status = :errorStatus AND cp.createdDate >= :date')
             ->setParameter('status', $status)
