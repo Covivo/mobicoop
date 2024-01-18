@@ -663,9 +663,6 @@ class ProofManager
         $proofs = $this->carpoolProofRepository->findCarpoolProofToCheck([CarpoolProof::STATUS_UNDER_CHECKING, CarpoolProof::STATUS_SENT]);
         $nbChecked = 0;
 
-        var_dump(count($proofs));
-
-        exit;
         foreach ($proofs as $proof) {
             /**
              * @var CarpoolProof $proof
