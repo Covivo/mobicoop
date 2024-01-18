@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @coversDefaultClass
  */
-class DisplayLabelBuilderTest extends TestCase
+class ImporterSanitizerTest extends TestCase
 {
     private $_sanitizer;
 
