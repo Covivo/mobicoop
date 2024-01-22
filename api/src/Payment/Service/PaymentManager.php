@@ -1094,6 +1094,9 @@ class PaymentManager
             // No Payment Profile, we create one
             $identifier = null;
 
+            //RPC we check the user have already a bank account with anotherEmail
+            $this->checkExistingPaymentProfile($user);
+
             // First we register the User on the payment provider to get an identifier
             $identifier = $this->paymentProvider->registerUser($user, $bankAccount->getAddress());
 
@@ -1612,6 +1615,15 @@ class PaymentManager
             $carpoolItem = $this->consumptionFeedbackProvider->getConsumptionCarpoolItem();
             $this->consumptionFeedbackProvider->setConsumptionUser(null);
             $this->consumptionFeedbackProvider->setConsumptionCarpoolItem(null);
+        }
+    }
+
+    private function checkExistingPaymentProfile(User $user)
+    {
+        $paymentProfiles = $this->paymentProfileRepository->findPaymentProfileByUserInfos($user);
+
+        if (0 < count($paymentProfiles)) {
+            throw new PaymentException(PaymentException::USER_ALREADY_HAVE_BANK_ACCOUNT);
         }
     }
 }
