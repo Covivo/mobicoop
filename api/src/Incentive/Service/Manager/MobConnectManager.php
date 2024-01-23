@@ -512,30 +512,4 @@ abstract class MobConnectManager
                 SpecificFields::JOURNEY_START_DATE => $this->_currentCarpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
             ];
     }
-
-    protected function _finalizesCommitment()
-    {
-        $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
-
-        $journey = (
-            true === $this->_pushOnlyMode
-            ? (
-                $this->_currentSubscription instanceof LongDistanceSubscription
-                ? $this->_currentSubscription->getCommitmentProofJourneyFromInitialProposal($this->_currentProposal)
-                : $this->_currentSubscription->getCommitmentProofJourneyFromCarpoolProof($this->_currentCarpoolProof)
-            )
-            : (
-                $this->_currentSubscription instanceof LongDistanceSubscription
-                ? new LongDistanceJourney($this->_currentProposal)
-                : new ShortDistanceJourney($this->_currentCarpoolProof)
-            )
-        );
-
-        $this->_currentSubscription->setCommitmentProofJourney($journey);
-        $this->_currentSubscription->setCommitmentProofDate(new \DateTime());
-
-        $this->_em->flush();
-
-        return $journey;
-    }
 }

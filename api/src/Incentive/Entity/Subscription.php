@@ -3,11 +3,10 @@
 namespace App\Incentive\Entity;
 
 use App\Incentive\Entity\Subscription\Progression;
-use App\Incentive\Interfaces\SubscriptionInterface;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-abstract class Subscription implements SubscriptionInterface
+abstract class Subscription
 {
     public const TYPE_LONG = 'long';
     public const TYPE_SHORT = 'short';

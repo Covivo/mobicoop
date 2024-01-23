@@ -107,13 +107,19 @@ class EecInstance
     private $tabView;
 
     /**
+     * @var null|string
+     */
+    private $carpoolProofPrefix;
+
+    /**
      * @var array
      */
     private $configuration;
 
-    public function __construct(array $instanceConfiguration)
+    public function __construct(array $instanceConfiguration, ?string $carpoolProofPrefix)
     {
         $this->configuration = $instanceConfiguration;
+        $this->carpoolProofPrefix = $carpoolProofPrefix;
 
         $this->setKeys();
         $this->setExpirationDate();
@@ -269,6 +275,14 @@ class EecInstance
     public function isTabView(): bool
     {
         return $this->tabView;
+    }
+
+    /**
+     * Get the value of carpoolProofPrefix.
+     */
+    public function getCarpoolProofPrefix(): ?string
+    {
+        return $this->carpoolProofPrefix;
     }
 
     private function setTabView(): self

@@ -37,7 +37,7 @@ class ProofInvalidateCommand extends EecCommand
             $this->throwException(Response::HTTP_NOT_FOUND, 'The requested proof was not found');
         }
 
-        $this->_journeyManager->invalidationOfProof($carpoolProof);
+        $this->_journeyManager->invalidateProof($carpoolProof);
 
         $output->writeln('The incentive has been updated');
     }

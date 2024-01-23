@@ -87,12 +87,10 @@ class SubscriptionCommitCommand extends EecCommand
          */
         $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_currentInput->getOption('journey'));
 
-        $this->checkCarpoolProof($carpoolProof);
+        if (is_null($carpoolProof)) {
+            throw new NotFoundHttpException('The requested CarpoolProof was not found');
+        }
 
-        $this->_currentSubscription->reset();
-
-        $this->_em->flush();
-
-        $this->_journeyManager->declareFirstShortDistanceJourney($carpoolProof, $this->_currentInput->getOption('pushOnly'));
+        $this->_journeyManager->invalidateProof($carpoolProof);
     }
 }

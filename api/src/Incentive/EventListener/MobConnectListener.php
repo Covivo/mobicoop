@@ -118,7 +118,7 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onProofInvalidated(CarpoolProofInvalidatedEvent $event): void
     {
-        $this->_journeyManager->invalidationOfProof($event->getCarpoolProof());
+        $this->_journeyManager->invalidateProof($event->getCarpoolProof());
     }
 
     public function onUserHomeAddressUpdated(UserHomeAddressUpdateEvent $event)

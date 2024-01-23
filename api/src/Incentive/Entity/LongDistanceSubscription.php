@@ -456,6 +456,10 @@ class LongDistanceSubscription extends Subscription
     public function removeJourney(?LongDistanceJourney $journey): self
     {
         if (!is_null($journey)) {
+            $journey->setInitialProposal(null);
+            $journey->setCarpoolItem(null);
+            $journey->setCarpoolPayment(null);
+
             $this->longDistanceJourneys->removeElement($journey);
         }
 

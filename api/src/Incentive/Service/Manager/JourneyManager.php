@@ -15,7 +15,12 @@ use App\Incentive\Repository\ShortDistanceJourneyRepository;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Provider\JourneyProvider;
+use App\Incentive\Service\Stage\CommitLDSubscription;
+use App\Incentive\Service\Stage\CommitSDSubscription;
+use App\Incentive\Service\Stage\ProofInvalidate;
 use App\Incentive\Service\Validation\JourneyValidation;
+use App\Incentive\Validator\CarpoolProofValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
@@ -124,71 +129,37 @@ class JourneyManager extends MobConnectManager
     /**
      * Step 9 - Long distance journey.
      */
-    public function declareFirstLongDistanceJourney(Proposal $proposal, bool $pushOnly = false): ?LongDistanceJourney
+    public function declareFirstLongDistanceJourney(Proposal $proposal): ?LongDistanceJourney
     {
-        $this->_pushOnlyMode = $pushOnly;
-        $this->_currentProposal = $proposal;
+        $subscription = !is_null($proposal->getUser()) && !is_null($proposal->getUser()->getLongDistanceSubscription())
+            ? $proposal->getUser()->getLongDistanceSubscription()
+            : null;
 
-        $this->setDriver($this->_currentProposal->getUser());
-
-        $params = $this->getCommitmentRequestParams();
-
-        $this->_currentSubscription = $this->getDriver()->getLongDistanceSubscription();
-
-        if (is_null($this->_currentSubscription)) {
+        if (is_null($subscription)) {
             return null;
         }
 
-        $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
+        $stage = new CommitLDSubscription($this->_em, $this->_timestampTokenManager, $this->_instanceManager->getEecInstance(), $subscription, $proposal);
 
-        $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
-
-        $log = 204 === $patchResponse->getCode()
-            ? 'The subscription '.$this->_currentSubscription->getId().' has been patch successfully with the proposal '.$this->_currentProposal->getId()
-            : 'The subscription '.$this->_currentSubscription->getId().' was not patch with the carpoolProof '.$this->_currentProposal->getId();
-
-        $this->_loggerService->log($log);
-
-        if ($this->hasRequestErrorReturned($patchResponse)) {
-            return null;
-        }
-
-        return $this->_finalizesCommitment();
+        return $stage->execute();
     }
 
     /**
      * Step 9 - Short distance journey.
      */
-    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof, bool $pushOnly = false): ?ShortDistanceJourney
+    public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof): ?ShortDistanceJourney
     {
-        $this->_pushOnlyMode = $pushOnly;
-        $this->_currentCarpoolProof = $carpoolProof;
+        $subscription = !is_null($carpoolProof->getDriver()) && !is_null($carpoolProof->getDriver()->getShortDistanceSubscription())
+            ? $carpoolProof->getDriver()->getShortDistanceSubscription()
+            : null;
 
-        $this->setDriver($this->_currentCarpoolProof->getDriver());
-
-        $params = $this->getCommitmentRequestParams();
-
-        $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
-
-        if (is_null($this->_currentSubscription)) {
+        if (is_null($subscription)) {
             return null;
         }
 
-        $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
+        $stage = new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_instanceManager->getEecInstance(), $subscription, $carpoolProof);
 
-        $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
-
-        $log = 204 === $patchResponse->getCode()
-            ? 'The subscription '.$this->_currentSubscription->getId().' has been patch successfully with the carpoolProof '.$this->_currentCarpoolProof->getId()
-            : 'The subscription '.$this->_currentSubscription->getId().' was not patch with the carpoolProof '.$this->_currentCarpoolProof->getId();
-
-        $this->_loggerService->log($log);
-
-        if ($this->hasRequestErrorReturned($patchResponse)) {
-            return null;
-        }
-
-        return $this->_finalizesCommitment();
+        return $stage->execute();
     }
 
     /**
@@ -348,18 +319,23 @@ class JourneyManager extends MobConnectManager
      * Step 17 - Unvalidation of proof.
      * Resets a short distance subscription when the commitment journey has not been validated by the RPC.
      */
-    public function invalidationOfProof(CarpoolProof $carpoolProof): void
+    public function invalidateProof(CarpoolProof $carpoolProof): void
     {
-        $journey = $this->_getEecJourneyFromCarpoolProof($carpoolProof);
+        $validator = new CarpoolProofValidator($carpoolProof);
 
-        if (!is_null($journey)) {
-            $this->setDriver($carpoolProof->getDriver());
-
-            $this->_currentSubscription = $journey->getSubscription();
-
-            $this->_invalidateJourney($journey);
-            $this->_em->refresh($carpoolProof);
+        if ($validator->isEecCompliant()) {
+            return;
         }
+
+        $journeyProvider = new JourneyProvider($this->_longDistanceJourneyRepository);
+        $journey = $journeyProvider->getJourneyFromCarpoolProof($carpoolProof);
+
+        if (is_null($journey)) {
+            return;
+        }
+
+        $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_instanceManager->getEecInstance(), $journey);
+        $stage->execute();
     }
 
     /**

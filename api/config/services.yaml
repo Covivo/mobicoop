@@ -956,6 +956,7 @@ services:
   App\Incentive\Service\Manager\InstanceManager:
     arguments:
       $eecServiveConfiguration: "%env(json:file:resolve:EEC_SERVICE)%"
+      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
 
   App\Incentive\Service\Manager\JourneyManager:
     arguments:

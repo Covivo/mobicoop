@@ -451,6 +451,7 @@ class ShortDistanceSubscription extends Subscription
     public function removeJourney(?ShortDistanceJourney $journey): self
     {
         if (!is_null($journey)) {
+            $journey->setCarpoolProof(null);
             $this->shortDistanceJourneys->removeElement($journey);
         }
 
