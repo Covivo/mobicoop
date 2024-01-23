@@ -3,22 +3,65 @@
 namespace App\Incentive\Validator;
 
 use App\Carpool\Entity\CarpoolProof;
-use App\Incentive\Interfaces\EecValidatorInterface;
+use App\Incentive\Entity\LongDistanceSubscription;
 
-class CarpoolProofValidator implements EecValidatorInterface
+class CarpoolProofValidator
 {
-    /**
-     * @var CarpoolProof
-     */
-    private $carpooProof;
+    public const VALID_EEC_STATUS = CarpoolProof::STATUS_VALIDATED;
+    public const VALID_EEC_TYPE = CarpoolProof::TYPE_HIGH;
 
-    public function __construct(CarpoolProof $carpooProof)
+    public const REFERENCE_COUNTRY = 'France';
+
+    public static function isEecCompliant(CarpoolProof $carpoolProof): bool
     {
-        $this->carpooProof = $carpooProof;
+        return self::isCarpoolProofStatusEecCompliant($carpoolProof) && self::isCarpoolProofTypeEecCompliant($carpoolProof);
     }
 
-    public function isEecCompliant(): bool
+    public static function isCarpoolProofStatusEecCompliant(CarpoolProof $carpoolProof): bool
     {
-        return CarpoolProof::STATUS_VALIDATED === $this->carpooProof->getStatus() && CarpoolProof::TYPE_HIGH === $this->carpooProof->getType();
+        return static::VALID_EEC_STATUS === $carpoolProof->getStatus();
+    }
+
+    public static function isCarpoolProofTypeEecCompliant(CarpoolProof $carpoolProof): bool
+    {
+        return static::VALID_EEC_TYPE === $carpoolProof->getType();
+    }
+
+    /**
+     * @param LongDistanceSubscription|ShortDistanceubscription $subscription
+     */
+    public static function isCarpoolProofSubscriptionCommitmentProof($subscription, CarpoolProof $carpoolProof): bool
+    {
+        $commitmentJourney = $subscription->getCommitmentProofJourney();
+
+        if (is_null($commitmentJourney)) {
+            return false;
+        }
+
+        return $commitmentJourney->getCarpoolProof()->getId() === $carpoolProof->getId();
+    }
+
+    public static function isCarpoolProofOriginOrDestinationFromFrance(CarpoolProof $carpoolProof): bool
+    {
+        if (
+            !is_null($carpoolProof->getAsk())
+            && !is_null($carpoolProof->getAsk()->getMatching())
+            && !is_null($carpoolProof->getAsk()->getMatching()->getWaypoints())
+            && !empty($carpoolProof->getAsk()->getMatching()->getWaypoints())
+        ) {
+            $waypoints = $carpoolProof->getAsk()->getMatching()->getWaypoints();
+
+            foreach ($waypoints as $waypoint) {
+                if (
+                    !is_null($waypoint->getAddress())
+                    && !is_null($waypoint->getAddress()->getAddressCountry())
+                    && self::REFERENCE_COUNTRY === $waypoint->getAddress()->getAddressCountry()
+                ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Incentive\Service\Provider;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
+use App\Payment\Entity\CarpoolItem;
 
 class JourneyProvider
 {
@@ -29,5 +30,10 @@ class JourneyProvider
                 $carpoolProof->getCarpoolItem(),
                 ProposalProvider::getProposalFromCarpoolItem($carpoolProof->getCarpoolItem(), ProposalProvider::DRIVER)
             );
+    }
+
+    public function getJourneyFromCarpoolItem(CarpoolItem $carpoolItem): ?LongDistanceJourney
+    {
+        return $this->_ldJourneyRepository->findBy(['carpoolItem' => $carpoolItem]);
     }
 }

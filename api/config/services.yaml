@@ -937,8 +937,6 @@ services:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
 
   App\Incentive\Service\Manager\JourneyManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 

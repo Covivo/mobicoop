@@ -5,22 +5,18 @@ namespace App\Incentive\Service\Manager;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
-use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription;
-use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\ShortDistanceJourneyRepository;
-use App\Incentive\Resource\CeeSubscriptions;
-use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Stage\CommitLDSubscription;
 use App\Incentive\Service\Stage\CommitSDSubscription;
 use App\Incentive\Service\Stage\ProofInvalidate;
-use App\Incentive\Service\Validation\JourneyValidation;
+use App\Incentive\Service\Stage\ProofValidate;
+use App\Incentive\Service\Stage\ValidateLDSubscription;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
@@ -31,11 +27,6 @@ use Doctrine\ORM\EntityManagerInterface;
 class JourneyManager extends MobConnectManager
 {
     /**
-     * @var string
-     */
-    private $_carpoolProofPrefix;
-
-    /**
      * @var CarpoolProofRepository
      */
     private $_carpoolProofRepository;
@@ -45,28 +36,15 @@ class JourneyManager extends MobConnectManager
      */
     private $_carpoolItemRepository;
 
-    /**
-     * @var HonourCertificateService
-     */
-    private $_honourCertificateService;
-
-    /**
-     * @var JourneyValidation
-     */
-    private $_journeyValidation;
-
     public function __construct(
         CarpoolProofRepository $carpoolProofRepository,
         CarpoolItemRepository $carpoolItemRepository,
         EntityManagerInterface $em,
         InstanceManager $instanceManager,
-        JourneyValidation $journeyValidation,
         LoggerService $loggerService,
-        HonourCertificateService $honourCertificateService,
         TimestampTokenManager $timestampTokenManager,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
-        ShortDistanceJourneyRepository $shortDistanceJourneyRepository,
-        string $carpoolProofPrefix
+        ShortDistanceJourneyRepository $shortDistanceJourneyRepository
     ) {
         parent::__construct($em, $instanceManager, $loggerService);
 
@@ -75,18 +53,6 @@ class JourneyManager extends MobConnectManager
         $this->_carpoolItemRepository = $carpoolItemRepository;
         $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
         $this->_shortDistanceJourneyRepository = $shortDistanceJourneyRepository;
-        $this->_carpoolProofPrefix = $carpoolProofPrefix;
-
-        $this->_honourCertificateService = $honourCertificateService;
-        $this->_journeyValidation = $journeyValidation;
-    }
-
-    /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     */
-    public function getHonorCertificate($subscription): string
-    {
-        return $this->_honourCertificateService->generateHonourCertificate($subscription);
     }
 
     public function userProofsRecovery(User $driver, string $subscriptionType): bool
@@ -188,161 +154,19 @@ class JourneyManager extends MobConnectManager
     /**
      * Step 17 - Electronic payment is validated for a long distance journey. All carpooling compliant with the CEE standard will be processed.
      */
-    public function receivingElectronicPayment(CarpoolPayment $carpoolPayment, bool $pushOnly = false)
+    public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
     {
-        $this->_currentCarpoolPayment = $carpoolPayment;
-        $this->_pushOnlyMode = $pushOnly;
-
-        $this->_loggerService->log('Step 17 - Processing the carpoolPayment ID '.$this->_currentCarpoolPayment->getId());
-
-        /**
-         * @var CarpoolItem[]
-         */
-        $carpoolItems = $this->_getEECCarpoolItemsFromCarpoolPayment($this->_currentCarpoolPayment);
-
-        foreach ($carpoolItems as $carpoolItem) {
-            $this->_currentCarpoolItem = $carpoolItem;
-
-            $this->_subscriptionConfirmationForLDJourney();
-        }
-
-        $this->_loggerService->log('Step 17 - End of treatment');
+        $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_instanceManager->getEecInstance(), $carpoolPayment);
+        $stage->execute();
     }
 
     /**
      * Step 17 - Validation of proof for a short distance journey.
      */
-    public function validationOfProof(CarpoolProof $carpoolProof, bool $pushOnly = false)
+    public function validationOfProof(CarpoolProof $carpoolProof)
     {
-        $this->_pushOnlyMode = $pushOnly;
-
-        $this->setDriver($carpoolProof->getDriver());
-
-        $distanceTraveled = $this->getDistanceTraveled($carpoolProof);
-
-        switch (true) {
-            case is_null($distanceTraveled):
-                // Use case when the distance cannot be obtained
-                $this->_loggerService->log('Step 17 - The distance traveled cannot be determined for proof '.$carpoolProof->getId().'.');
-
-                return;
-
-            case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distanceTraveled && !$this->isJourneyPaid($carpoolProof):
-                // Use case for long distance journey but payment has not yet been made
-                $this->_loggerService->log('Step 17 - The distance traveled for the proof '.$carpoolProof->getId().' has been determined to be long distance but payment has not yet been made.');
-
-                return;
-
-            case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distanceTraveled && $this->isJourneyPaid($carpoolProof):
-                // Use case for a long distance journey where payment has been made
-
-                if (is_null($this->_currentCarpoolItem)) {
-                    $this->_currentCarpoolItem = $carpoolProof->getCarpoolItem();
-                    if (is_null($this->_currentCarpoolItem)) {
-                        return;
-                    }
-                }
-
-                if (is_null($this->_currentCarpoolPayment)) {
-                    $this->_currentCarpoolPayment = $this->_currentCarpoolItem->getSuccessfullPayment();
-                    if (is_null($this->_currentCarpoolPayment)) {
-                        return;
-                    }
-                }
-
-                $this->_subscriptionConfirmationForLDJourney();
-
-                return;
-        }
-
-        // Use case for short distance journey
-        $this->_loggerService->log('Step 17 - We start the processing process for a short distance trip.');
-
-        $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
-
-        if (is_null($this->_currentSubscription) || $this->_currentSubscription->hasExpired()) {
-            return;
-        }
-
-        $shortDistanceJourneysNumber = count($this->_currentSubscription->getJourneys());
-
-        $commitmentJourney = $this->_currentSubscription->getCommitmentProofJourney();
-
-        // There is not commitment journey
-        if (is_null($commitmentJourney)) {
-            if ($this->_journeyValidation->isStartedJourneyValidShortECCJourney($carpoolProof)) {
-                $this->_loggerService->log('Step 17 - We declare a new commitment journey');
-
-                $commitmentJourney = $this->declareFirstShortDistanceJourney($carpoolProof);
-            } else {
-                return;
-            }
-        }
-
-        // Processing with commitment journey
-        if ($commitmentJourney->getCarpoolProof()->getId() === $carpoolProof->getId()) {
-            // The journey is not EEC compliant : we are removing it from short distance trips and resetting the subscription
-            if (!$commitmentJourney->isEECCompliant()) {
-                $this->_resetSubscription();
-
-                return;
-            }
-
-            $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');
-
-            $patchResponse = $this->patchSubscription(
-                $this->getDriver()->getShortDistanceSubscription(),
-                [
-                    SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate($this->getDriver()->getShortDistanceSubscription()),
-                ]
-            );
-
-            if ($this->hasRequestErrorReturned($patchResponse)) {
-                $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
-
-                $this->_loggerService->log(
-                    'During the short incentive updating process, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$patchResponse->getContent().'.',
-                    'error',
-                    true
-                );
-
-                return;
-            }
-
-            $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
-
-            $this->_currentSubscription->setExpirationDate($this->getExpirationDate($this->_currentSubscription->getValidityPeriodDuration()));
-
-            $commitmentJourney = $this->_updateShortDistanceJourney($commitmentJourney, $carpoolProof);
-        } else {
-            // Checks :
-            //    - The maximum journey threshold has not been reached
-            //    - The journey is a short distance journey
-            //    - The journey is a C type
-            //    - The journey origin and/or destination is the reference country
-            if (
-                $this->_pushOnlyMode
-                || $this->_currentSubscription->getMaximumJourneysNumber() <= $shortDistanceJourneysNumber
-                || is_null($carpoolProof->getAsk())
-                || is_null($carpoolProof->getAsk()->getMatching())
-                || $this->_journeyValidation->isDistanceLongDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance())
-                || CarpoolProof::TYPE_HIGH !== $carpoolProof->getType()
-                || !$this->_journeyValidation->isOriginOrDestinationFromFrance($carpoolProof)
-            ) {
-                return;
-            }
-
-            $this->_loggerService->log('Step 17 - Added a normal journey');
-            $journey = new ShortDistanceJourney($carpoolProof);
-            $journey = $this->_updateShortDistanceJourney($journey, $carpoolProof);
-            $this->_currentSubscription->addShortDistanceJourney($journey);
-        }
-
-        if ($this->_currentSubscription->getMaximumJourneysNumber() === $shortDistanceJourneysNumber) {
-            $this->_currentSubscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
-        }
-
-        $this->_em->flush();
+        $stage = new ProofValidate($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_instanceManager->getEecInstance(), $carpoolProof);
+        $stage->execute();
     }
 
     /**
@@ -351,9 +175,7 @@ class JourneyManager extends MobConnectManager
      */
     public function invalidateProof(CarpoolProof $carpoolProof): void
     {
-        $validator = new CarpoolProofValidator($carpoolProof);
-
-        if ($validator->isEecCompliant()) {
+        if (CarpoolProofValidator::isEecCompliant($carpoolProof)) {
             return;
         }
 
@@ -366,86 +188,6 @@ class JourneyManager extends MobConnectManager
 
         $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_instanceManager->getEecInstance(), $journey);
         $stage->execute();
-    }
-
-    /**
-     * Step 17 - Process for long distance journey. Processing of a single carpool if it complies with the CEE standard.
-     */
-    private function _subscriptionConfirmationForLDJourney(): void
-    {
-        $this->_loggerService->log('Step 17 - We start the processing process for a long distance trip.');
-
-        $this->setDriver($this->_currentCarpoolItem->getCreditorUser());
-
-        $this->_currentSubscription = $this->_driver->getLongDistanceSubscription();
-
-        if (
-            is_null($this->_currentSubscription)
-            || $this->_currentSubscription->hasExpired()
-            || is_null($this->_currentCarpoolItem->getCarpoolProof())
-            || (
-                false === $this->_pushOnlyMode
-                && $this->carpoolItemAlreadyTreated()
-            )
-        ) {
-            return;
-        }
-
-        $this->_currentCarpoolProof = $this->_currentCarpoolItem->getCarpoolProof();
-
-        $journey = $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal(
-            $this->_currentCarpoolItem,
-            $this->getDriverPassengerProposalForCarpoolItem($this->_currentCarpoolItem, self::DRIVER)
-        );
-
-        // Use case where there is not yet a LD journey associated with the carpoolitem
-        if (is_null($journey) && !$this->_pushOnlyMode) {
-            if ($this->_currentCarpoolProof->isEECCompliant()) {
-                // Processes for journeys that are not the commitment journey
-                $this->_addLDJourneyToSubscription();
-            }
-
-            return;
-        }
-
-        // Process for commitment journey
-        switch (true) {
-            case $this->_currentCarpoolProof->isStatusPending(): return;
-
-            case $this->_currentCarpoolProof->isStatusError():
-            case $this->_currentCarpoolProof->isCarpoolProofDowngraded():
-                $this->_invalidateJourney($journey);
-
-                return;
-        }
-
-        $this->_loggerService->log('Step 17 - Processing the carpoolItem ID '.$this->_currentCarpoolItem->getId().'with normal process');
-
-        if ($this->_currentSubscription->isCommitmentJourney($journey)) {
-            $this->_updateSubscriptionForCommitmentJourney();
-        }
-    }
-
-    private function carpoolItemAlreadyTreated(): bool
-    {
-        $longDistanceJourneys = $this->_longDistanceJourneyRepository->findBy(['carpoolItem' => $this->_currentCarpoolItem]);
-        if (is_array($longDistanceJourneys) && count($longDistanceJourneys) > 0) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private function _getEECCarpoolItemsFromCarpoolPayment(CarpoolPayment $carpoolPayment): array
-    {
-        return array_filter($carpoolPayment->getCarpoolItems(), function (CarpoolItem $carpoolItem) {
-            $driver = $carpoolItem->getCreditorUser();
-
-            return
-                !is_null($driver)
-                && !is_null($driver->getMobConnectAuth())
-                && $carpoolItem->isEECompliant();
-        });
     }
 
     private function _getCarpoolPaymentFromCarpoolItem(CarpoolItem $carpoolItem): ?CarpoolPayment
@@ -465,105 +207,5 @@ class JourneyManager extends MobConnectManager
         }));
 
         return !(empty($carpoolPayments)) ? $carpoolPayments[0] : null;
-    }
-
-    private function _updateShortDistanceJourney(ShortDistanceJourney $journey, CarpoolProof $carpoolProof): ShortDistanceJourney
-    {
-        return $journey->updateJourney($carpoolProof, $this->_carpoolProofPrefix.$carpoolProof->getId(), $this->getCarpoolersNumber($carpoolProof->getAsk()));
-    }
-
-    private function _addLDJourneyToSubscription()
-    {
-        if ($this->_currentSubscription->getMaximumJourneysNumber() <= $this->_currentSubscription->getJourneysNumber()) {
-            return;
-        }
-
-        $journey = new LongDistanceJourney();
-
-        $this->_currentSubscription->addLongDistanceJourney($journey);
-
-        $journey->updateJourney(
-            $this->_currentCarpoolItem,
-            $this->_currentCarpoolPayment,
-            $this->getCarpoolersNumber($this->_currentCarpoolItem->getAsk()),
-            $this->getAddressesLocality($this->_currentCarpoolItem)
-        );
-
-        $this->_em->flush();
-    }
-
-    private function _updateSubscriptionForCommitmentJourney()
-    {
-        // L'attestation sur l'honneur doit être transmise à mob
-        $this->_loggerService->log('Step 17 - Processing for the commitment journey');
-
-        $patchResponse = $this->patchSubscription(
-            $this->getDriver()->getLongDistanceSubscription(),
-            [
-                SpecificFields::JOURNEY_COST_SHARING_DATE => $this->_currentCarpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
-                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate($this->getDriver()->getLongDistanceSubscription()),
-            ]
-        );
-
-        if ($this->hasRequestErrorReturned($patchResponse)) {
-            $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
-
-            $this->_loggerService->log(
-                'During the short incentive updating process, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$patchResponse->getContent().'.',
-                'error',
-                true
-            );
-
-            return;
-        }
-
-        $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
-
-        $this->_currentSubscription->setExpirationDate($this->getExpirationDate($this->_currentSubscription->getValidityPeriodDuration()));
-
-        $this->_currentSubscription->getCommitmentProofJourney()->updateJourney(
-            $this->_currentCarpoolItem,
-            $this->_currentCarpoolPayment,
-            $this->getCarpoolersNumber($this->_currentCarpoolItem->getAsk()),
-            $this->getAddressesLocality($this->_currentCarpoolItem)
-        );
-
-        $this->_em->flush();
-    }
-
-    private function _resetSubscription()
-    {
-        $this->_loggerService->log('Step 17 - The commitment journey is invalid. We remove it from subscription');
-
-        $this->_currentSubscription = $this->_currentSubscription->reset();
-
-        // If there are other journeys associated with the subscription, then we declare the 1st one as the commitment journey
-        if (!empty($this->_currentSubscription->getJourneys())) {
-            $journey = $this->_currentSubscription->getJourneys()[0];
-
-            if ($journey instanceof LongDistanceJourney && !is_null($journey->getInitialProposal())) {
-                $this->declareFirstLongDistanceJourney($journey->getInitialProposal());
-            }
-
-            if ($journey instanceof ShortDistanceJourney && !is_null($journey->getCarpoolProof())) {
-                $this->declareFirstShortDistanceJourney($journey->getCarpoolProof());
-            }
-        }
-
-        $this->_em->flush();
-    }
-
-    /**
-     * @param LongDistanceJourney|ShortDistanceJourney $journey
-     */
-    private function _invalidateJourney($journey)
-    {
-        if ($this->_currentSubscription->isCommitmentJourney($journey)) {
-            return $this->_resetSubscription();
-        }
-
-        $this->_currentSubscription->removeJourney($journey);
-
-        $this->_em->flush();
     }
 }

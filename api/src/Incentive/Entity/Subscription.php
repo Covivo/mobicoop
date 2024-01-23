@@ -450,6 +450,14 @@ abstract class Subscription
     }
 
     /**
+     * Returns whether the subscription has reached the maximum journeys number it can be associated with.
+     */
+    public function isComplete(): bool
+    {
+        return $this->getMaximumJourneysNumber() <= count($this->getJourneys());
+    }
+
+    /**
      * TODO - Tester la fonction.
      */
     private function checkYearPattern(string $year): void
