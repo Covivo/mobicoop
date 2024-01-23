@@ -425,6 +425,7 @@ class CommunityManager
                     'regular' => $mapsAd['regular'],
                     'date' => $date,
                     'cid' => $mapsAd['entityId'],
+                    'includePassenger' => (!$mapsAd['driver'] && $mapsAd['passenger']) ? 1 : 0,
                 ];
                 $mapsAd['searchLink'] = $this->router->generate('carpool_search_result_get', $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
             }
