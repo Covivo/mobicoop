@@ -537,6 +537,10 @@ export default {
       type: Boolean,
       default: false
     },
+    defaultIncludePassenger: {
+      type: Boolean,
+      default: false
+    }
   },
   data : function() {
     return {
@@ -570,7 +574,7 @@ export default {
       nbCarpoolOther:0,
       nbPtResults:0,
       role:this.defaultRole,
-      includePassenger:false,
+      includePassenger:this.defaultIncludePassenger,
       displayNewSearch:true,
       initFiltersChips:false,
       lCommunityId: this.communityId,
@@ -647,6 +651,9 @@ export default {
     }
   },
   created() {
+    if(this.includePassenger){
+      this.role = 3;
+    }
     if(this.proposalId) this.displayNewSearch = false;
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
@@ -774,6 +781,7 @@ export default {
           });
       } else {
       // otherwise we send a proposal search
+        console.log("yes");
         this.loading = true;
         this.setLoadingStep();
         this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
