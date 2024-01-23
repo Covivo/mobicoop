@@ -19,6 +19,8 @@ class CommitSDSubscription extends CommitSubscription
         $this->_subscription = $subscription;
         $this->_carpoolProof = $carpoolProof;
         $this->_pushOnlyMode = $pushOnlyMode;
+
+        $this->_build();
     }
 
     public function execute()

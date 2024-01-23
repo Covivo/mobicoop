@@ -19,6 +19,8 @@ class CommitLDSubscription extends CommitSubscription
         $this->_subscription = $subscription;
         $this->_proposal = $proposal;
         $this->_pushOnlyMode = $pushOnlyMode;
+
+        $this->_build();
     }
 
     public function execute()

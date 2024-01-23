@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Service\Stage;
 
+use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Interfaces\StageInterface;
@@ -11,6 +12,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 abstract class Stage implements StageInterface
 {
+    /**
+     * @var MobConnectApiProvider
+     */
+    protected $_apiProvider;
+
     /**
      * @var EntityManagerInterface
      */
@@ -30,4 +36,9 @@ abstract class Stage implements StageInterface
      * @var LongDistanceSubscription|ShortDistanceSubscription
      */
     protected $_subscription;
+
+    protected function _setApiProvider()
+    {
+        $this->_apiProvider = new MobConnectApiProvider($this->_eecInstance);
+    }
 }

@@ -7,6 +7,7 @@ use App\DataProvider\Entity\MobConnect\AuthenticationProvider\UserAuthentication
 use App\DataProvider\Entity\MobConnect\Converters\ResponseConverter;
 use App\DataProvider\Entity\MobConnect\Response\IncentiveResponse;
 use App\DataProvider\Entity\MobConnect\Response\IncentivesResponse;
+use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
@@ -164,6 +165,11 @@ class MobConnectApiProvider extends MobConnectProvider
         return new IncentiveResponse(
             ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->getItem([], $this->_buildHeaders($token)))
         );
+    }
+
+    public function hasRequestErrorReturned(MobConnectResponse $response): bool
+    {
+        return in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
     }
 
     private function _build(): self

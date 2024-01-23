@@ -25,11 +25,11 @@ abstract class CommitSubscription extends UpdateSubscription
 
     protected function _commitSubscription()
     {
-        $patchResponse = $this->patchSubscription($this->_subscription->getSubscriptionId(), $this->_getCommitmentParams());
+        $httpResponse = $this->_apiProvider->patchSubscription($this->_subscription->getSubscriptionId(), $this->_getCommitmentParams());
 
-        $this->_subscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
+        $this->_subscription->addLog($httpResponse, Log::TYPE_COMMITMENT);
 
-        if ($this->hasRequestErrorReturned($patchResponse)) {
+        if ($this->_apiProvider->hasRequestErrorReturned($httpResponse)) {
             return null;
         }
 
