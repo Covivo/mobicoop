@@ -18,7 +18,7 @@ class MobConnectSubscriptionResponse extends MobConnectResponse implements \Json
         parent::__construct($mobConnectResponse, $data);
 
         if (!in_array($this->getCode(), self::ERROR_CODES) && !is_null($this->_content)) {
-            if (property_exists($this->_content, 'id' && !is_null($this->_content->id))) {
+            if (property_exists($this->_content, 'id') && !is_null($this->_content->id)) {
                 $this->setId($this->_content->id);
             }
 
@@ -31,7 +31,7 @@ class MobConnectSubscriptionResponse extends MobConnectResponse implements \Json
     /**
      * Get the value of _id.
      */
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->_id;
     }

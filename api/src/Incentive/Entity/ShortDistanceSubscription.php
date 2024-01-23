@@ -6,7 +6,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\Incentive\Controller\Subscription\SdSubscriptionCommit;
 use App\Incentive\Controller\Subscription\SdSubscriptionGet;
 use App\Incentive\Controller\Subscription\SdSubscriptionUpdate;
@@ -371,14 +370,14 @@ class ShortDistanceSubscription extends Subscription
 
     public function __construct(
         User $user,
-        MobConnectSubscriptionResponse $mobConnectSubscriptionResponse,
+        string $subscriptionId,
         SubscriptionDefinitionInterface $subscriptionDefinition
     ) {
         $this->shortDistanceJourneys = new ArrayCollection();
         $this->logs = new ArrayCollection();
 
         $this->setUser($user);
-        $this->setSubscriptionId($mobConnectSubscriptionResponse->getId());
+        $this->setSubscriptionId($subscriptionId);
 
         $this->setGivenName($user->getGivenName());
         $this->setFamilyName($user->getFamilyName());

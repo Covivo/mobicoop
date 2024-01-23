@@ -386,7 +386,7 @@ class SubscriptionManager extends MobConnectManager
 
                 $subscription = new $subscriptionClass(
                     $this->getDriver(),
-                    $postResponse,
+                    $postResponse->getContent()->id,
                     DefinitionSelector::getDefinition($subscriptionType)
                 );
                 $subscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);

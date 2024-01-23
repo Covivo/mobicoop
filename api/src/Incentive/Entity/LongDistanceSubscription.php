@@ -7,7 +7,6 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\Incentive\Controller\Subscription\LdSubscriptionCommit;
 use App\Incentive\Controller\Subscription\LdSubscriptionGet;
 use App\Incentive\Controller\Subscription\LdSubscriptionUpdate;
@@ -372,14 +371,14 @@ class LongDistanceSubscription extends Subscription
 
     public function __construct(
         User $user,
-        MobConnectSubscriptionResponse $mobConnectSubscriptionResponse,
+        string $subscriptionId,
         SubscriptionDefinitionInterface $subscriptionDefinition
     ) {
         $this->longDistanceJourneys = new ArrayCollection();
         $this->logs = new ArrayCollection();
 
         $this->setUser($user);
-        $this->setSubscriptionId($mobConnectSubscriptionResponse->getId());
+        $this->setSubscriptionId($subscriptionId);
 
         $this->setGivenName($user->getGivenName());
         $this->setFamilyName($user->getFamilyName());
