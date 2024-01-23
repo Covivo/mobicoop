@@ -23,24 +23,18 @@
 
 namespace App\Communication\EventSubscriber;
 
-use App\Action\Repository\ActionRepository;
 use App\Carpool\Event\CarpoolProofCertifyDropOffEvent;
 use App\Carpool\Event\CarpoolProofCertifyPickUpEvent;
 use App\Communication\Service\NotificationManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class CarpoolproofSubscriber implements EventSubscriberInterface
+class CarpoolProofSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
-    private $eventDispatcher;
-    private $actionRepository;
 
-    public function __construct(NotificationManager $notificationManager, EventDispatcherInterface $eventDispatcher, ActionRepository $actionRepository)
+    public function __construct(NotificationManager $notificationManager)
     {
         $this->notificationManager = $notificationManager;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->actionRepository = $actionRepository;
     }
 
     public static function getSubscribedEvents()
