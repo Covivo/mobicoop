@@ -781,7 +781,6 @@ export default {
           });
       } else {
       // otherwise we send a proposal search
-        console.log("yes");
         this.loading = true;
         this.setLoadingStep();
         this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
