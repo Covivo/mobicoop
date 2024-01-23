@@ -1,35 +1,35 @@
 {
-    "buttons": {
-        "signup": {
-            "label": "Register",
-            "route": "/user/signup"
-        },
-        "logIn": {
-            "label": "Login",
-            "route": "/user/login"
-        },
-        "shareAnAd": {
-            "label": "Post an announcement",
-            "route": "/carpool/postproposal"
-        },
-        "messages": {
-            "label": "Messages",
-            "route": "/user/messages"
-        },
-        "myProfile": {
-            "label": "My profile",
-            "route": "/user/profile/edit"
-        },
-        "logOut": {
-            "label": "Logout",
-            "route": "/user/logout"
-        },
-        "solidary": {
-            "label": "Become a solidarity driver",
-            "route": "http://solidaires.mobicoop.fr/"
-        }
+  "buttons": {
+    "signup": {
+      "label": "Register",
+      "route": "/user/signup"
     },
-    "snackbar": {
-        "needConnection": "Please login or register to post a proposal"
+    "logIn": {
+      "label": "Login",
+      "route": "/user/login"
+    },
+    "shareAnAd": {
+      "label": "Post an announcement",
+      "route": "/carpool/postad"
+    },
+    "messages": {
+      "label": "Messages",
+      "route": "/user/messages"
+    },
+    "myProfile": {
+      "label": "My profile",
+      "route": "/user/profile/edit"
+    },
+    "logOut": {
+      "label": "Logout",
+      "route": "/user/logout"
+    },
+    "solidary": {
+      "label": "Become a solidarity driver",
+      "route": "http://solidaires.mobicoop.fr/"
     }
+  },
+  "snackbar": {
+    "needConnection": "Please login or register to post a proposal"
+  }
 }
