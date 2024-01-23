@@ -27,6 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Event\CarpoolProofCertifyDropOffEvent;
 use App\Carpool\Event\CarpoolProofCertifyPickUpEvent;
 use App\Carpool\Event\CarpoolProofInvalidatedEvent;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
@@ -541,11 +542,11 @@ class ProofManager
 
         if ($firstDropOffCertification) {
             if (CarpoolProof::ACTOR_PASSENGER == $actor) {
-                $event = new CarpoolProofCertifyPickUpEvent($carpoolProof, $carpoolProof->getDriver());
-                $this->eventDispatcher->dispatch(CarpoolProofCertifyPickUpEvent::NAME, $event);
+                $event = new CarpoolProofCertifyDropOffEvent($carpoolProof, $carpoolProof->getDriver());
+                $this->eventDispatcher->dispatch(CarpoolProofCertifyDropOffEvent::NAME, $event);
             } else {
-                $event = new CarpoolProofCertifyPickUpEvent($carpoolProof, $carpoolProof->getPassenger());
-                $this->eventDispatcher->dispatch(CarpoolProofCertifyPickUpEvent::NAME, $event);
+                $event = new CarpoolProofCertifyDropOffEvent($carpoolProof, $carpoolProof->getPassenger());
+                $this->eventDispatcher->dispatch(CarpoolProofCertifyDropOffEvent::NAME, $event);
             }
         }
 
