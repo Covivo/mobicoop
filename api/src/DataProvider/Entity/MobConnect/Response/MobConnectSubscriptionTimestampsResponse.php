@@ -53,7 +53,7 @@ class MobConnectSubscriptionTimestampsResponse extends MobConnectResponse
      */
     private $journeyId;
 
-    public function __construct(array $mobConnectResponse)
+    public function __construct(Response $mobConnectResponse)
     {
         parent::__construct($mobConnectResponse);
 

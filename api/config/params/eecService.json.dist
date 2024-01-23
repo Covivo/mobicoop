@@ -1,11 +1,17 @@
 {
   "//expirationDate": "string - The date the subscription is due to expire",
   "expirationDate": null,
-  "mobConnect": {
-    "client_id": null,
+  "provider": {
+    "api_uri": "https://api-fabmob.stg.hub.flowbird.io",
     "app_id": null,
     "app_secret": null,
-    "api_uri": "https://api-fabmob.stg.hub.flowbird.io"
+    "authentication_uri": "https://idp-fabmob.stg.hub.flowbird.io/",
+    "auto_create_account": false,
+    "client_id": null,
+    "client_secret": null,
+    "code_verifier": null,
+    "logout_redirect_uri": "",
+    "name": "mobConnect"
   },
   "subscriptions": {
     "ld": {
@@ -21,6 +27,8 @@
       "expirationDate": null
     }
   },
+  "//previousPeriodWithoutTravel": "null|int - null if infinite period, 0 if no period, a number that expresses the period in months",
+  "previousPeriodWithoutTravel": null,
   "//tabView": "null|bool - Determines whether trip tracking is displayed, in tab form or not",
   "tabView": null
 }

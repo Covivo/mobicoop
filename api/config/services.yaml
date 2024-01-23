@@ -820,9 +820,9 @@ services:
           command: "app:incentive:subscription-verify",
         }
 
-  App\Incentive\Command\ProofInvalidateCommand:
+  App\Incentive\Command\SubscriptionResetCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:proof-invalidate" }
+      - { name: "console.command", command: "app:incentive:subscription-reset" }
 
   App\Incentive\Command\SubscriptionCommitCommand:
     tags:
@@ -928,30 +928,8 @@ services:
       - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\AuthManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
-
-  App\Incentive\Service\Manager\IncentiveManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
 
   App\Incentive\Service\Manager\InstanceManager:
     arguments:
@@ -961,56 +939,20 @@ services:
   App\Incentive\Service\Manager\JourneyManager:
     arguments:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\JourneyRecoveryManager:
     arguments:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\SubscriptionManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\TimestampTokenManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 

@@ -4,8 +4,10 @@ namespace App\Incentive\Resource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -72,28 +74,32 @@ class CeeSubscriptions
      *
      * @Groups({"readSubscription"})
      */
-    private $nbPendingProofs;
+    private $nbPendingProofs = 0;
 
     /**
      * @var int Nb validated class C proofs
      *
      * @Groups({"readSubscription"})
      */
-    private $nbValidatedProofs;
+    private $nbValidatedProofs = 0;
 
     /**
      * @var int Nb rejected class C proofs
      *
      * @Groups({"readSubscription"})
      */
-    private $nbRejectedProofs;
+    private $nbRejectedProofs = 0;
 
-    public function __construct($id = null)
+    /**
+     * @var User
+     */
+    private $_user;
+
+    public function __construct(User $user)
     {
-        $this->id = $id ? $id : self::DEFAULT_ID;
-        $this->nbPendingProofs = 0;
-        $this->nbValidatedProofs = 0;
-        $this->nbRejectedProofs = 0;
+        $this->_user = $user;
+
+        $this->_build();
     }
 
     public function getId(): int
@@ -150,7 +156,7 @@ class CeeSubscriptions
      *
      * @param ShortDistanceSubscription $shortDistanceSubscription Short distance subscription
      */
-    public function setShortDistanceSubscription(ShortDistanceSubscription $shortDistanceSubscription): self
+    public function setShortDistanceSubscription(?ShortDistanceSubscription $shortDistanceSubscription): self
     {
         $this->shortDistanceSubscription = $shortDistanceSubscription;
 
@@ -170,10 +176,69 @@ class CeeSubscriptions
      *
      * @param LongDistanceSubscription $longDistanceSubscription Long distance subscriptions
      */
-    public function setLongDistanceSubscription(LongDistanceSubscription $longDistanceSubscription): self
+    public function setLongDistanceSubscription(?LongDistanceSubscription $longDistanceSubscription): self
     {
         $this->longDistanceSubscription = $longDistanceSubscription;
 
         return $this;
+    }
+
+    private function _computeShortDistance()
+    {
+        foreach ($this->_getEecEligibleProofsShortDistance() as $proof) {
+            switch ($proof->getStatus()) {
+                case CarpoolProof::STATUS_PENDING:
+                case CarpoolProof::STATUS_SENT:$this->setNbPendingProofs($this->getNbPendingProofs() + 1);
+
+                    break;
+
+                case CarpoolProof::STATUS_ERROR:
+                case CarpoolProof::STATUS_ACQUISITION_ERROR:
+                case CarpoolProof::STATUS_NORMALIZATION_ERROR:
+                case CarpoolProof::STATUS_FRAUD_ERROR:$this->setNbRejectedProofs($this->getNbRejectedProofs() + 1);
+
+                    break;
+
+                case CarpoolProof::STATUS_VALIDATED:$this->setNbValidatedProofs($this->getNbValidatedProofs() + 1);
+
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Keep only the eligible proofs (for short distance only).
+     */
+    private function _getEecEligibleProofsShortDistance(): array
+    {
+        $eecEligibleProofs = [];
+
+        foreach ($this->_user->getCarpoolProofsAsDriver() as $proof) {
+            if (
+                !is_null($proof->getAsk())
+                && !is_null($proof->getAsk()->getMatching())
+                && $proof->getAsk()->getMatching()->getCommonDistance() >= self::LONG_DISTANCE_MINIMUM_IN_METERS
+            ) {
+                continue;
+            }
+
+            if (CarpoolProof::TYPE_HIGH !== $proof->getType() && CarpoolProof::TYPE_UNDETERMINED_DYNAMIC !== $proof->getType()) {
+                continue;
+            }
+
+            $eecEligibleProofs[] = $proof;
+        }
+
+        return $eecEligibleProofs;
+    }
+
+    private function _build()
+    {
+        $this->id = $this->_user->getId() ? $this->_user->getId() : self::DEFAULT_ID;
+
+        $this->setShortDistanceSubscription($this->_user->getShortDistanceSubscription());
+        $this->setLongDistanceSubscription($this->_user->getLongDistanceSubscription());
+
+        $this->_computeShortDistance();
     }
 }

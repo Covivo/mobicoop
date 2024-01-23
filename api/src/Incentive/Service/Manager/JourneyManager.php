@@ -7,6 +7,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
+use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
@@ -30,6 +31,11 @@ use Doctrine\ORM\EntityManagerInterface;
 class JourneyManager extends MobConnectManager
 {
     /**
+     * @var string
+     */
+    private $_carpoolProofPrefix;
+
+    /**
      * @var CarpoolProofRepository
      */
     private $_carpoolProofRepository;
@@ -38,6 +44,11 @@ class JourneyManager extends MobConnectManager
      * @var CarpoolItemRepository
      */
     private $_carpoolItemRepository;
+
+    /**
+     * @var HonourCertificateService
+     */
+    private $_honourCertificateService;
 
     /**
      * @var JourneyValidation
@@ -55,19 +66,27 @@ class JourneyManager extends MobConnectManager
         TimestampTokenManager $timestampTokenManager,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         ShortDistanceJourneyRepository $shortDistanceJourneyRepository,
-        string $carpoolProofPrefix,
-        array $mobConnectParams,
-        array $ssoServices
+        string $carpoolProofPrefix
     ) {
-        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService);
 
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_carpoolItemRepository = $carpoolItemRepository;
         $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
         $this->_shortDistanceJourneyRepository = $shortDistanceJourneyRepository;
+        $this->_carpoolProofPrefix = $carpoolProofPrefix;
 
+        $this->_honourCertificateService = $honourCertificateService;
         $this->_journeyValidation = $journeyValidation;
+    }
+
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function getHonorCertificate($subscription): string
+    {
+        return $this->_honourCertificateService->generateHonourCertificate($subscription);
     }
 
     public function userProofsRecovery(User $driver, string $subscriptionType): bool
@@ -128,6 +147,8 @@ class JourneyManager extends MobConnectManager
 
     /**
      * Step 9 - Long distance journey.
+     *
+     * @return bool|LongDistanceJourney
      */
     public function declareFirstLongDistanceJourney(Proposal $proposal): ?LongDistanceJourney
     {
@@ -146,6 +167,8 @@ class JourneyManager extends MobConnectManager
 
     /**
      * Step 9 - Short distance journey.
+     *
+     * @return bool|ShortDistanceJourney
      */
     public function declareFirstShortDistanceJourney(CarpoolProof $carpoolProof): ?ShortDistanceJourney
     {
@@ -187,7 +210,7 @@ class JourneyManager extends MobConnectManager
     }
 
     /**
-     * Step 17 - Validation of proof for a short distance journey,.
+     * Step 17 - Validation of proof for a short distance journey.
      */
     public function validationOfProof(CarpoolProof $carpoolProof, bool $pushOnly = false)
     {
@@ -265,19 +288,26 @@ class JourneyManager extends MobConnectManager
                 return;
             }
 
-            $params = [
-                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate(false),
-            ];
-
             $this->_loggerService->log('Step 17 - Journey update and sending honor attestation');
 
-            $patchResponse = $this->patchSubscription($this->getDriverShortSubscriptionId(), $params);
+            $patchResponse = $this->patchSubscription(
+                $this->getDriver()->getShortDistanceSubscription(),
+                [
+                    SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate($this->getDriver()->getShortDistanceSubscription()),
+                ]
+            );
 
             if ($this->hasRequestErrorReturned($patchResponse)) {
+                $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
+
+                $this->_loggerService->log(
+                    'During the short incentive updating process, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$patchResponse->getContent().'.',
+                    'error',
+                    true
+                );
+
                 return;
             }
-
-            $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
 
             $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
@@ -439,7 +469,7 @@ class JourneyManager extends MobConnectManager
 
     private function _updateShortDistanceJourney(ShortDistanceJourney $journey, CarpoolProof $carpoolProof): ShortDistanceJourney
     {
-        return $journey->updateJourney($carpoolProof, $this->getRPCOperatorId($carpoolProof->getId()), $this->getCarpoolersNumber($carpoolProof->getAsk()));
+        return $journey->updateJourney($carpoolProof, $this->_carpoolProofPrefix.$carpoolProof->getId(), $this->getCarpoolersNumber($carpoolProof->getAsk()));
     }
 
     private function _addLDJourneyToSubscription()
@@ -468,18 +498,25 @@ class JourneyManager extends MobConnectManager
         $this->_loggerService->log('Step 17 - Processing for the commitment journey');
 
         $patchResponse = $this->patchSubscription(
-            $this->getDriverLongSubscriptionId(),
+            $this->getDriver()->getLongDistanceSubscription(),
             [
                 SpecificFields::JOURNEY_COST_SHARING_DATE => $this->_currentCarpoolPayment->getUpdatedDate()->format(self::DATE_FORMAT),
-                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate(),
+                SpecificFields::HONOR_CERTIFICATE => $this->getHonorCertificate($this->getDriver()->getLongDistanceSubscription()),
             ]
         );
 
         if ($this->hasRequestErrorReturned($patchResponse)) {
+            $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
+
+            $this->_loggerService->log(
+                'During the short incentive updating process, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$patchResponse->getContent().'.',
+                'error',
+                true
+            );
+
             return;
         }
 
-        $this->_currentSubscription->addLog($patchResponse, Log::TYPE_ATTESTATION);
         $this->_currentSubscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_currentSubscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
 
         $this->_currentSubscription->setExpirationDate($this->getExpirationDate($this->_currentSubscription->getValidityPeriodDuration()));

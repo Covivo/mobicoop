@@ -12,7 +12,6 @@ use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
-use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
@@ -21,7 +20,6 @@ use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\ShortDistanceJourneyRepository;
 use App\Incentive\Resource\CeeSubscriptions;
-use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\UserValidation;
 use App\Payment\Entity\CarpoolItem;
@@ -74,16 +72,6 @@ abstract class MobConnectManager
      * @var LoggerService
      */
     protected $_loggerService;
-
-    /**
-     * @var HonourCertificateService
-     */
-    protected $_honourCertificateService;
-
-    /**
-     * @var int
-     */
-    protected $_carpoolProofPrefix;
 
     /**
      * @var TimestampTokenManager
@@ -148,36 +136,18 @@ abstract class MobConnectManager
     public function __construct(
         EntityManagerInterface $em,
         InstanceManager $instanceManager,
-        LoggerService $loggerService,
-        HonourCertificateService $honourCertificateService,
-        string $carpoolProofPrefix,
-        array $mobConnectParams,
-        array $ssoServices
+        LoggerService $loggerService
     ) {
         $this->_em = $em;
 
         $this->_instanceManager = $instanceManager;
 
         $this->_loggerService = $loggerService;
-        $this->_honourCertificateService = $honourCertificateService;
-
-        $this->_carpoolProofPrefix = $carpoolProofPrefix;
-        $this->_mobConnectParams = $mobConnectParams;
-        $this->_ssoServices = $ssoServices;
-    }
-
-    public function getHonorCertificate(bool $isLongDistance = true): string
-    {
-        return $this->_honourCertificateService->generateHonourCertificate($isLongDistance);
     }
 
     public function setDriver(User $driver): self
     {
         $this->_driver = $driver;
-
-        if (!is_null($this->_driver)) {
-            $this->_honourCertificateService->setDriver($this->getDriver());
-        }
 
         return $this;
     }
@@ -228,80 +198,43 @@ abstract class MobConnectManager
 
     protected function hasRequestErrorReturned(MobConnectResponseInterface $response): bool
     {
-        $result = in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
-
-        if (true === $result) {
-            $this->_loggerService->log('The mobConnect request returned an error: '.$response->getContent(), 'error', true);
-        }
-
-        return $result;
+        return in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
     }
 
-    protected function isValidParameters(): bool
-    {
-        return
-                !empty($this->_ssoServices)
-                && array_key_exists(MobConnectApiProvider::SERVICE_NAME, $this->_ssoServices)
-
-            && (
-                !empty($this->_mobConnectParams)
-                && (
-                    array_key_exists('api_uri', $this->_mobConnectParams)
-                    && !is_null($this->_mobConnectParams['api_uri'])
-                    && !empty($this->_mobConnectParams['api_uri'])
-                )
-                && (
-                    array_key_exists('credentials', $this->_mobConnectParams)
-                    && is_array($this->_mobConnectParams['credentials'])
-                    && !empty($this->_mobConnectParams['credentials'])
-                    && array_key_exists('client_id', $this->_mobConnectParams['credentials'])
-                    && !empty($this->_mobConnectParams['credentials']['client_id'])
-                    && array_key_exists('api_key', $this->_mobConnectParams['credentials'])
-                )
-            );
-    }
-
-    protected function getMobSubscription(string $subscriptionId)
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     *
+     * @return bool|MobConnectSubscriptionResponse
+     */
+    protected function getSubscription($subscription, User $user)
     {
         $this->setApiProvider();
 
-        return $this->_apiProvider->getMobSubscription($subscriptionId);
-    }
-
-    protected function getRPCOperatorId(int $id): string
-    {
-        return $this->_carpoolProofPrefix.$id;
-    }
-
-    protected function getDriverLongSubscriptionId(): string
-    {
-        return $this->getDriver()->getLongDistanceSubscription()->getSubscriptionId();
-    }
-
-    protected function getDriverShortSubscriptionId(): string
-    {
-        return $this->getDriver()->getShortDistanceSubscription()->getSubscriptionId();
+        return $this->_apiProvider->getSubscription($subscription, $user);
     }
 
     protected function getDriverSubscriptionTimestamps(string $subscriptionId): MobConnectSubscriptionTimestampsResponse
     {
         $this->setApiProvider();
 
-        return $this->_apiProvider->getUserSubscriptionTimestamps($subscriptionId);
+        return $this->_apiProvider->getSubscriptionTimestamps($subscriptionId);
     }
 
-    protected function postSubscription(bool $isLongDistance = true): MobConnectSubscriptionResponse
+    protected function postSubscription(string $subscriptionType): MobConnectSubscriptionResponse
     {
         $this->setApiProvider();
 
-        return $this->_apiProvider->postSubscription($isLongDistance);
+        return $this->_apiProvider->postSubscription($subscriptionType, $this->_driver);
     }
 
-    protected function patchSubscription(string $subscriptionId, array $params)
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    protected function patchSubscription($subscription, array $params)
     {
         $this->setApiProvider();
 
-        return $this->_apiProvider->patchUserSubscription($subscriptionId, $params);
+        return $this->_apiProvider->patchSubscription($subscription, $params);
     }
 
     protected function hasSubscriptionCommited(string $subscriptionId): bool
@@ -323,23 +256,19 @@ abstract class MobConnectManager
         return $now->add(new \DateInterval('P'.$delay.'M'));
     }
 
-    protected function executeRequestVerifySubscription(string $subscriptionId)
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    protected function executeRequestVerifySubscription($subscription)
     {
         $this->setApiProvider();
 
-        return $this->_apiProvider->verifyUserSubscription($subscriptionId);
+        return $this->_apiProvider->verifySubscription($subscription);
     }
 
     protected function setApiProvider()
     {
-        $this->_apiProvider = new MobConnectApiProvider(
-            $this->_em,
-            new MobConnectApiParams($this->_mobConnectParams),
-            $this->_loggerService,
-            $this->_driver,
-            $this->_ssoServices,
-            $this->_instanceManager->getEecInstance()
-        );
+        $this->_apiProvider = new MobConnectApiProvider($this->_instanceManager->getEecInstance());
     }
 
     protected function getCarpoolersNumber(Ask $ask): int
@@ -486,29 +415,29 @@ abstract class MobConnectManager
             );
     }
 
-    protected function getIncentives(): ?IncentivesResponse
+    protected function getIncentives(User $user): ?IncentivesResponse
     {
         $this->setApiProvider();
 
-        return $this->_apiProvider->getIncentives();
+        return $this->_apiProvider->getIncentives($user);
     }
 
-    protected function getIncentive(string $incentive_id): ?IncentiveResponse
+    protected function getIncentive(string $incentiveId, User $user): ?IncentiveResponse
     {
         $this->setApiProvider();
 
-        return $this->_apiProvider->getIncentive($incentive_id);
+        return $this->_apiProvider->getIncentive($incentiveId, $user);
     }
 
-    protected function getCommitmentRequestParams(): array
+    protected function getCommitmentRequestParams(string $prefix): array
     {
         return $this->_currentSubscription instanceof LongDistanceSubscription
             ? [
-                SpecificFields::JOURNEY_ID => LongDistanceSubscription::COMMITMENT_PREFIX.$this->_currentProposal->getId(),
+                SpecificFields::JOURNEY_ID => $prefix.$this->_currentProposal->getId(),
                 SpecificFields::JOURNEY_PUBLISH_DATE => $this->_currentProposal->getCreatedDate()->format(self::DATE_FORMAT),
             ]
             : [
-                SpecificFields::JOURNEY_ID => $this->getRPCOperatorId($this->_currentCarpoolProof->getId()),
+                SpecificFields::JOURNEY_ID => $prefix.$this->_currentCarpoolProof->getId(),
                 SpecificFields::JOURNEY_START_DATE => $this->_currentCarpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
             ];
     }

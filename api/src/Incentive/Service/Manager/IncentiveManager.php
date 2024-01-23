@@ -3,7 +3,6 @@
 namespace App\Incentive\Service\Manager;
 
 use App\Incentive\Resource\Incentive;
-use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,13 +16,9 @@ class IncentiveManager extends MobConnectManager
         EntityManagerInterface $em,
         Security $security,
         InstanceManager $instanceManager,
-        LoggerService $loggerService,
-        HonourCertificateService $honourCertificateService,
-        string $carpoolProofPrefix,
-        array $mobConnectParams,
-        array $ssoServices
+        LoggerService $loggerService
     ) {
-        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService);
 
         /**
          * @var User
@@ -39,14 +34,14 @@ class IncentiveManager extends MobConnectManager
 
     public function getMobConnectIncentives(): ArrayCollection
     {
-        $getResponse = $this->getIncentives();
+        $getResponse = $this->getIncentives($this->getDriver());
 
         return !is_null($getResponse) ? $getResponse->getIncentives() : new ArrayCollection();
     }
 
-    public function getMobConnectIncentive(string $incentive_id): ?Incentive
+    public function getMobConnectIncentive(string $incentiveId): ?Incentive
     {
-        $getResponse = $this->getIncentive($incentive_id);
+        $getResponse = $this->getIncentive($incentiveId, $this->getDriver());
 
         return new Incentive($getResponse->getId(), $getResponse->getType(), $getResponse->getTitle(), $getResponse->getDescription(), $getResponse->getSubscriptionLink());
     }

@@ -2,6 +2,8 @@
 
 namespace App\Incentive\Service;
 
+use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\User\Entity\User;
 
 class HonourCertificateService
@@ -26,13 +28,16 @@ class HonourCertificateService
      */
     private $_certificate;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
-    public function generateHonourCertificate(bool $longDistance = true): string
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function generateHonourCertificate($subscription): string
     {
-        $this->_longDistance = $longDistance;
+        $this->setDriver($subscription->getUser());
+
+        $this->_longDistance = $subscription instanceof LongDistanceSubscription;
 
         $this->_getCertificate();
         $this->_parseCertificate();

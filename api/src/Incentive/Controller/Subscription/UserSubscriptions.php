@@ -26,8 +26,6 @@ class UserSubscriptions
 
     public function __invoke(User $user): User
     {
-        $user = $this->_journeyManager->getAdditionalJourneys($user);
-
-        return $this->_subscriptionManager->getUserMobConnectSubscription($user);
+        return $user;
     }
 }
