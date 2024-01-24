@@ -13,7 +13,7 @@ use App\Incentive\Service\DateService;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Validator\CarpoolProofValidator;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ValidateSDSubscription extends ValidateSubscription
 {
@@ -28,7 +28,7 @@ class ValidateSDSubscription extends ValidateSubscription
     private $_carpoolProof;
 
     public function __construct(
-        EntityManager $em,
+        EntityManagerInterface $em,
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,
         CarpoolProof $carpoolProof,

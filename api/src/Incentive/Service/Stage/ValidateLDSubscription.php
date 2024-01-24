@@ -17,7 +17,7 @@ use App\Incentive\Service\Provider\SubscriptionProvider;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ValidateLDSubscription extends ValidateSubscription
 {
@@ -37,7 +37,7 @@ class ValidateLDSubscription extends ValidateSubscription
     private $_carpoolPayment;
 
     public function __construct(
-        EntityManager $em,
+        EntityManagerInterface $em,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,

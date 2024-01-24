@@ -4,8 +4,6 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
@@ -13,18 +11,17 @@ use App\Incentive\Entity\Subscription;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
-use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Definition\DefinitionSelector;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Stage\ResetSubscription;
+use App\Incentive\Service\Stage\VerifySubscription;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
@@ -77,7 +74,7 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
-     * Step 5 - Creating incentives requests.
+     * STEP 5 - Creating incentives requests.
      *
      * For the authenticated user, if needed, creates the CEE sheets.
      */
@@ -93,14 +90,6 @@ class SubscriptionManager extends MobConnectManager
         $this->_createSubscription(Subscription::TYPE_LONG);
 
         $this->_em->flush();
-    }
-
-    /**
-     * Returns EEC subscriptions for the authenticated user.
-     */
-    public function getMyEecSubscriptions(User $driver)
-    {
-        return new CeeSubscriptions($driver);
     }
 
     /**
@@ -162,131 +151,6 @@ class SubscriptionManager extends MobConnectManager
         return $response;
     }
 
-    /**
-     * Step 20.
-     */
-    public function verifySubscriptionFromControllerCommand(?string $subscriptionType, ?string $subscriptionId)
-    {
-        if (is_null($subscriptionType) || is_null($subscriptionId)) {
-            return $this->verifySubscriptions();
-        }
-
-        $this->_subscriptionValidation->checkSubscriptionTypeValidity($subscriptionType);
-
-        $this->_subscriptionValidation->checkSubscriptionIdValidity($subscriptionId);
-
-        $subscriptionId = intval($subscriptionId);
-
-        switch ($subscriptionType) {
-            case 'long':
-                $repository = $this->_em->getRepository(LongDistanceSubscription::class);
-
-                break;
-
-            case 'short':
-                $repository = $this->_em->getRepository(ShortDistanceSubscription::class);
-
-                break;
-        }
-
-        $subscription = $repository->find($subscriptionId);
-
-        if (is_null($subscription)) {
-            throw new NotFoundHttpException("The {$subscriptionType} subscription was not found");
-        }
-
-        return $this->verifySubscription($subscription);
-    }
-
-    /**
-     * STEP 20 - Verify subscriptions.
-     */
-    public function verifySubscriptions()
-    {
-        $shortDistanceSubscriptions = $this->_shortDistanceSubscriptionRepository->getReadyForVerify();
-        $longDistanceSubscriptions = $this->_longDistanceSubscriptionRepository->getReadyForVerify();
-
-        $subscriptions = array_merge($shortDistanceSubscriptions, $longDistanceSubscriptions);
-
-        $this->_loggerService->log('There is '.count($subscriptions).' journeys to process');
-
-        foreach ($subscriptions as $key => $subscription) {
-            $this->verifySubscription($subscription);
-        }
-
-        $this->_loggerService->log('Process processing is complete');
-    }
-
-    /**
-     * Step 20 - Vérify a subscription.
-     *
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     */
-    public function verifySubscription($subscription)
-    {
-        $this->_loggerService->log('Step 20 - Obtaining missing tokens');
-        $subscription = $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
-
-        if (!$subscription->isReadyToVerify()) {
-            $this->_loggerService->log(
-                'The subscription '.$subscription->getId().' is not ready for verification',
-                'debug',
-                true
-            );
-
-            if (!$subscription->isAddressValid()) {
-                // TODO: notify the user that his residence address must be entered.
-            }
-
-            $response = new MobConnectSubscriptionTimestampsResponse(
-                new Response('The subscription did not pass the test before the verify operation', Response::HTTP_FORBIDDEN)
-            );
-
-            $subscription->addLog($response, Log::TYPE_VERIFY);
-
-            $this->_em->flush();
-
-            return $response;
-        }
-
-        $this->_driver = $subscription->getUser();
-
-        $verifyResponse = $this->executeRequestVerifySubscription($subscription->getSubscriptionId());
-
-        if ($this->hasRequestErrorReturned($verifyResponse)) {
-            $subscription->addLog($verifyResponse, Log::TYPE_VERIFY);
-
-            $this->_em->flush();
-
-            $this->_loggerService->log(
-                'During the '.($subscription instanceof LongDistanceSubscription ? 'LD' : 'SD').' incentive verifying process, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$verifyResponse->getContent().'.',
-                'error',
-                true
-            );
-
-            return $verifyResponse;
-        }
-
-        $subscription->setStatus(
-            MobConnectSubscriptionVerifyResponse::SUCCESS_STATUS === $verifyResponse->getCode()
-            ? $verifyResponse->getStatus() : self::STATUS_ERROR
-        );
-
-        if (self::STATUS_VALIDATED === $subscription->getStatus()) {
-            $subscription->setBonusStatus(Subscription::BONUS_STATUS_OK);
-            $subscription->setStatus(self::STATUS_VALIDATED);
-        } else {
-            $subscription->setBonusStatus(Subscription::BONUS_STATUS_NO);
-            $subscription->setStatus(self::STATUS_REJECTED);
-        }
-
-        $subscription->setVerificationDate(new \DateTime());
-
-        $this->_em->flush();
-
-        return $subscription;
-    }
-
     public function updateSubscriptionsAddress(User $user)
     {
         $this->setDriver($user);
@@ -336,11 +200,6 @@ class SubscriptionManager extends MobConnectManager
         return false;
     }
 
-    public function getTimestamps()
-    {
-        return $this->_timestampTokenManager->getCurrentTimestampTokensResponse();
-    }
-
     public function processingVersionTransitionalPeriods()
     {
         /**
@@ -369,6 +228,8 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * STEP 9 - Commit a subscription.
+     *
      * @param CarpoolProof|Proposal                              $referenceObject
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
@@ -388,6 +249,8 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * STEP 17 - Validate a subscription.
+     *
      * @param CarpoolPayment|CarpoolProof $referenceObject
      */
     public function validateSubscription($referenceObject, bool $pushOnlyMode = false): void
@@ -400,12 +263,61 @@ class SubscriptionManager extends MobConnectManager
         $stage->execute();
     }
 
-    // public function verifySubscription() {}
+    /**
+     * STEP 20 - Verify ready subscriptions.
+     */
+    public function verifySubscriptions()
+    {
+        $subscriptions = array_merge(
+            $this->_shortDistanceSubscriptionRepository->getReadyForVerify(),
+            $this->_longDistanceSubscriptionRepository->getReadyForVerify()
+        );
+
+        foreach ($subscriptions as $key => $subscription) {
+            $this->_verifySubscription($subscription);
+        }
+    }
+
+    /**
+     * STEP 20 - Vérify a subscription from it's type and ID.
+     */
+    public function verifySubscriptionFromType(?string $subscriptionType, ?string $subscriptionId)
+    {
+        if (is_null($subscriptionType) || is_null($subscriptionId)) {
+            return $this->verifySubscriptions();
+        }
+
+        $this->_subscriptionValidation->checkSubscriptionTypeValidity($subscriptionType);
+
+        $this->_subscriptionValidation->checkSubscriptionIdValidity($subscriptionId);
+
+        $subscriptionId = intval($subscriptionId);
+
+        switch ($subscriptionType) {
+            case 'long':
+                $repository = $this->_em->getRepository(LongDistanceSubscription::class);
+
+                break;
+
+            case 'short':
+                $repository = $this->_em->getRepository(ShortDistanceSubscription::class);
+
+                break;
+        }
+
+        $subscription = $repository->find($subscriptionId);
+
+        if (is_null($subscription)) {
+            throw new NotFoundHttpException('The requested subscription was not found');
+        }
+
+        $this->_verifySubscription($subscription);
+    }
 
     /**
      * @return bool|LongDistanceSubscription|ShortDistanceSubscription
      */
-    private function _createSubscription(string $subscriptionType)
+    protected function _createSubscription(string $subscriptionType)
     {
         if (
             Subscription::isTypeAllowed($subscriptionType)
@@ -448,5 +360,16 @@ class SubscriptionManager extends MobConnectManager
         );
 
         return false;
+    }
+
+    /**
+     * STEP 20 - Vérify a subscription from it's ID.
+     *
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    protected function _verifySubscription($subscription): void
+    {
+        $stage = new VerifySubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
+        $stage->execute();
     }
 }
