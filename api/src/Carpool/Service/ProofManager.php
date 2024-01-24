@@ -436,6 +436,9 @@ class ProofManager
                             $carpoolProof->getDropOffPassengerAddress()->getLongitude()
                         ) <= $distance) {
                             // drop off driver
+                            if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getDropOffPassengerDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                                throw new ProofException('Driver dropoff certification failed : the time between driver and passenger certifications exceeds 2 minutes');
+                            }
                             $carpoolProof->setDropOffDriverDate(new \DateTime('UTC'));
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
@@ -453,6 +456,9 @@ class ProofManager
                         $carpoolProof->getPickUpPassengerAddress()->getLatitude(),
                         $carpoolProof->getPickUpPassengerAddress()->getLongitude()
                     ) <= $distance) {
+                        if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getPickUpPassengerDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                            throw new ProofException('Driver pickup certification failed : the time between driver and passenger certifications exceeds 2 minutes');
+                        }
                         $carpoolProof->setPickupDriverDate(new \DateTime('UTC'));
                         $carpoolProof->setPickUpDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                     } else {
@@ -497,6 +503,9 @@ class ProofManager
                             $carpoolProof->getDropOffDriverAddress()->getLongitude()
                         ) <= $distance) {
                             // drop off passenger
+                            if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getDropOffDriverDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                                throw new ProofException('Passenger dropoff certification failed : the time between driver and passenger certifications exceeds 2 minutes');
+                            }
                             $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
                             $carpoolProof->setDropOffPassengerAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // set the passenger dynamic ad to finished if relevant
@@ -518,6 +527,9 @@ class ProofManager
                         $carpoolProof->getPickUpDriverAddress()->getLatitude(),
                         $carpoolProof->getPickUpDriverAddress()->getLongitude()
                     ) <= $distance) {
+                        if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getPickUpDriverDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                            throw new ProofException('Passenger pickup certification failed : the time between driver and passenger certifications exceeds 2 minutes');
+                        }
                         $carpoolProof->setPickupPassengerDate(new \DateTime('UTC'));
                         $carpoolProof->setPickUpPassengerAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                     } else {
