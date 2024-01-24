@@ -457,6 +457,11 @@ abstract class Subscription
         return $this->getMaximumJourneysNumber() <= count($this->getJourneys());
     }
 
+    public function isCommited(): bool
+    {
+        return !is_null($this->getCommitmentProofJourney());
+    }
+
     /**
      * TODO - Tester la fonction.
      */

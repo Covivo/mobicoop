@@ -820,7 +820,7 @@ services:
           command: "app:incentive:subscription-verify",
         }
 
-  App\Incentive\Command\SubscriptionResetCommand:
+  App\Incentive\Command\ResetSubscriptionCommand:
     tags:
       - { name: "console.command", command: "app:incentive:subscription-reset" }
 
@@ -941,8 +941,6 @@ services:
       - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\JourneyRecoveryManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 

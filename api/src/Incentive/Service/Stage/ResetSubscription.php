@@ -6,7 +6,7 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SubscriptionReset extends Stage
+class ResetSubscription extends Stage
 {
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription

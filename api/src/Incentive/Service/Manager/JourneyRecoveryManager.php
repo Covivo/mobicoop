@@ -7,9 +7,7 @@ use App\Incentive\Entity\EecResponse;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\ShortDistanceJourneyRepository;
-use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
-use App\Incentive\Service\Validation\JourneyValidation;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\Payment\Repository\CarpoolItemRepository;
@@ -49,29 +47,23 @@ class JourneyRecoveryManager extends JourneyManager
         CarpoolItemRepository $carpoolItemRepository,
         EntityManagerInterface $em,
         InstanceManager $instanceManager,
-        JourneyValidation $journeyValidation,
         LoggerService $loggerService,
-        HonourCertificateService $honourCertificateService,
         TimestampTokenManager $timestampTokenManager,
         SubscriptionValidation $subscriptionValidation,
         UserRepository $userRepository,
         UserValidation $userValidation,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
-        ShortDistanceJourneyRepository $shortDistanceJourneyRepository,
-        string $carpoolProofPrefix
+        ShortDistanceJourneyRepository $shortDistanceJourneyRepository
     ) {
         parent::__construct(
             $carpoolProofRepository,
             $carpoolItemRepository,
             $em,
             $instanceManager,
-            $journeyValidation,
             $loggerService,
-            $honourCertificateService,
             $timestampTokenManager,
             $longDistanceJourneyRepository,
-            $shortDistanceJourneyRepository,
-            $carpoolProofPrefix
+            $shortDistanceJourneyRepository
         );
 
         $this->_subscriptionValidation = $subscriptionValidation;

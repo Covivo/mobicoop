@@ -2,7 +2,8 @@
 
 namespace App\Incentive\Service\Manager;
 
-use App\Carpool\Repository\CarpoolProofRepository;
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Log\Log;
@@ -14,8 +15,10 @@ use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Resource\EecEligibility;
+use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Definition\DefinitionSelector;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Stage\ResetSubscription;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\User\Entity\User;
@@ -32,17 +35,10 @@ class SubscriptionManager extends MobConnectManager
     public const VERIFICATION_STATUS_PENDING = 0;
     public const VERIFICATION_STATUS_ENDED = 1;
 
-    private $_ceeEligibleProofs = [];
-
     /**
-     * @var JourneyManager
+     * @var EecInstance
      */
-    private $_journeyManager;
-
-    /**
-     * @var CarpoolProofRepository
-     */
-    private $_carpoolProofRepository;
+    protected $_eecInstance;
 
     /**
      * @var LongDistanceSubscriptionRepository
@@ -55,11 +51,6 @@ class SubscriptionManager extends MobConnectManager
     private $_shortDistanceSubscriptionRepository;
 
     /**
-     * @var CeeSubscriptions
-     */
-    private $_subscriptions;
-
-    /**
      * @var SubscriptionValidation
      */
     private $_subscriptionValidation;
@@ -70,21 +61,18 @@ class SubscriptionManager extends MobConnectManager
         UserValidation $userValidation,
         LoggerService $loggerService,
         InstanceManager $instanceManager,
-        JourneyManager $journeyManager,
         TimestampTokenManager $timestampTokenManager,
-        CarpoolProofRepository $carpoolProofRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository
     ) {
         parent::__construct($em, $instanceManager, $loggerService);
 
-        $this->_journeyManager = $journeyManager;
         $this->_timestampTokenManager = $timestampTokenManager;
-        $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
         $this->_shortDistanceSubscriptionRepository = $shortDistanceSubscriptionRepository;
         $this->_subscriptionValidation = $subscriptionValidation;
         $this->_userValidation = $userValidation;
+        $this->_eecInstance = $instanceManager->getEecInstance();
     }
 
     /**
@@ -291,7 +279,7 @@ class SubscriptionManager extends MobConnectManager
             $subscription->setStatus(self::STATUS_REJECTED);
         }
 
-        $subscription->setVerificationDate();
+        $subscription->setVerificationDate(new \DateTime());
 
         $this->_em->flush();
 
@@ -366,6 +354,41 @@ class SubscriptionManager extends MobConnectManager
 
             $definition::manageTransition($this->_em, $this->_longDistanceSubscriptionRepository);
         }
+    }
+
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function resetSubscription($subscription): void
+    {
+        $stage = new ResetSubscription($this->_em, $subscription);
+        $stage->execute();
+    }
+
+    /**
+     * @param CarpoolProof|Proposal                              $referenceObject
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function commitSubscription($subscription, $referenceObject, bool $pushOnlyMode = false): void
+    {
+        if ($subscription->isCommited()) {
+            $stage = new ResetSubscription($this->_em, $subscription);
+            $stage->execute();
+        }
+
+        $commitClass = $referenceObject instanceof Proposal
+            ? 'App\\Incentive\\Service\\Stage\\CommitLDSubscription'
+            : 'App\\Incentive\\Service\\Stage\\CommitSDSubscription';
+
+        $stage = new $commitClass(
+            $this->_em,
+            $this->_timestampTokenManager,
+            $this->_eecInstance,
+            $subscription,
+            $referenceObject,
+            $pushOnlyMode
+        );
+        $stage->execute();
     }
 
     /**

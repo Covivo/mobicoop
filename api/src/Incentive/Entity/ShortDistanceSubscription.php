@@ -759,7 +759,7 @@ class ShortDistanceSubscription extends Subscription
      */
     public function setVerificationDate(?\DateTimeInterface $verificationDate = null): self
     {
-        $this->verificationDate = !is_null($verificationDate) ? $verificationDate : new \DateTime('now');
+        $this->verificationDate = $verificationDate;
 
         return $this;
     }
@@ -948,9 +948,7 @@ class ShortDistanceSubscription extends Subscription
 
     public function reset(): self
     {
-        $commitmentProofJourney = $this->getCommitmentProofJourney();
-
-        if (!is_null($commitmentProofJourney)) {
+        if (!is_null($this->getCommitmentProofJourney())) {
             $this->setCommitmentProofJourney(null);
         }
 

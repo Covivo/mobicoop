@@ -770,9 +770,9 @@ class LongDistanceSubscription extends Subscription
     /**
      * Set the value of verificationDate.
      */
-    public function setVerificationDate(): self
+    public function setVerificationDate(?\DateTimeInterface $verificationDate = null): self
     {
-        $this->verificationDate = new \DateTime('now');
+        $this->verificationDate = $verificationDate;
 
         return $this;
     }
@@ -964,9 +964,7 @@ class LongDistanceSubscription extends Subscription
 
     public function reset(): self
     {
-        $commitmentProofJourney = $this->getCommitmentProofJourney();
-
-        if (!is_null($commitmentProofJourney)) {
+        if (!is_null($this->getCommitmentProofJourney())) {
             $this->setCommitmentProofJourney(null);
         }
 

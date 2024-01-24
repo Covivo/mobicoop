@@ -57,11 +57,6 @@ class RecommitSubscription extends Stage
 
     public function execute()
     {
-        $this->_recommitSubscription();
-    }
-
-    protected function _recommitSubscription()
-    {
         $commitClassName = 'App\\Incentive\\Service\\Stage\\Commit'.$this->_shortcutName.'Subscription';
         $stage = new $commitClassName($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE);
         $stage->execute();

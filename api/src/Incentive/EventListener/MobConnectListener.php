@@ -74,12 +74,32 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onFirstLongDistanceJourneyPublished(FirstLongDistanceJourneyPublishedEvent $event)
     {
-        $this->_journeyManager->declareFirstLongDistanceJourney($event->getProposal());
+        $proposal = $event->getProposal();
+
+        $subscription = !is_null($proposal->getUser()) && !is_null($proposal->getUser()->getLongDistanceSubscription())
+            ? $proposal->getUser()->getLongDistanceSubscription()
+            : null;
+
+        if (is_null($subscription)) {
+            return null;
+        }
+
+        $this->_subscriptionManager->commitSubscription($subscription, $proposal);
     }
 
     public function onFirstShortDistanceJourneyPublished(FirstShortDistanceJourneyPublishedEvent $event)
     {
-        $this->_journeyManager->declareFirstShortDistanceJourney($event->getCarpoolProof());
+        $carpoolProof = $event->getCarpoolProof();
+
+        $subscription = !is_null($carpoolProof->getDriver()) && !is_null($carpoolProof->getDriver()->getShortDistanceSubscription())
+            ? $carpoolProof->getDriver()->getShortDistanceSubscription()
+            : null;
+
+        if (is_null($subscription)) {
+            return null;
+        }
+
+        $this->_subscriptionManager->commitSubscription($subscription, $carpoolProof);
     }
 
     /**

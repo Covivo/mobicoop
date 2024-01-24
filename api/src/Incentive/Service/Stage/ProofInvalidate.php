@@ -29,7 +29,7 @@ class ProofInvalidate extends Stage
     public function execute(): void
     {
         if ($this->_subscription->isCommitmentJourney($this->_journey)) {
-            $stage = new SubscriptionReset($this->_em, $this->_subscription);
+            $stage = new ResetSubscription($this->_em, $this->_subscription);
             $stage->execute();
 
             // If there are other subscription associated journeys, then we declare the 1st one as a new commitment journey
