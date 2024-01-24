@@ -71,7 +71,7 @@ class ValidateSDSubscription extends ValidateSubscription
             $this->_executeForStandardJourney();
         }
 
-        if ($this->_subscription->getMaximumJourneysNumber() === $this->_associatedJourneysNumber) {
+        if ($this->_subscription->isComplete()) {
             $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
         }
 

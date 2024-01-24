@@ -27,6 +27,7 @@ use App\Action\Entity\Log;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
+use App\Incentive\Validator\CarpoolPaymentValidator;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -735,7 +736,7 @@ class CarpoolItem
     public function getSuccessfullPayment(): ?CarpoolPayment
     {
         $successFullPayment = array_values(array_filter($this->getCarpoolPayments(), function (CarpoolPayment $carpoolPayment) {
-            return $carpoolPayment->isEECCompliant();
+            return CarpoolPaymentValidator::isEecCompliant($carpoolPayment);
         }));
 
         return !empty($successFullPayment) ? $successFullPayment[0] : null;

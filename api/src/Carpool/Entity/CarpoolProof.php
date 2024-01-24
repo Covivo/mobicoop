@@ -659,11 +659,6 @@ class CarpoolProof
         return !empty($filteredCarpoolItems) ? $filteredCarpoolItems[0] : null;
     }
 
-    public function isEECCompliant(): bool
-    {
-        return self::STATUS_VALIDATED === $this->getStatus() && self::TYPE_HIGH === $this->getType();
-    }
-
     /**
      * Used in the context of CEE, checks and returns if proof is awaiting validation of the RPC.
      */

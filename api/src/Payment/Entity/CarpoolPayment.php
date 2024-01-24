@@ -25,6 +25,7 @@ namespace App\Payment\Entity;
 
 use App\Action\Entity\Log;
 use App\Carpool\Entity\CarpoolProof;
+use App\Incentive\Validator\CarpoolProofValidator;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -428,7 +429,7 @@ class CarpoolPayment
              */
             $carpoolProof = $carpoolItem->getCarpoolProof();
 
-            if (!is_null($carpoolProof) && $carpoolProof->isEECCompliant()) {
+            if (!is_null($carpoolProof) && CarpoolProofValidator::isEecCompliant($carpoolProof)) {
                 $response = true;
 
                 break;
@@ -436,19 +437,6 @@ class CarpoolPayment
         }
 
         return $response;
-    }
-
-    /**
-     * Checks if the payment complies with the CEE standard:
-     * - Payment must have been completed successfully,
-     * - Payment must keep track of the transaction,
-     * - The payment must be associated with at least a compliant CarpoolProof with the EEC standard.
-     */
-    public function isEECCompliant(): bool
-    {
-        return
-            self::STATUS_SUCCESS === $this->getStatus() && !is_null($this->getTransactionId())
-            && $this->hasAtLeastAProofEECCompliant();
     }
 
     /**

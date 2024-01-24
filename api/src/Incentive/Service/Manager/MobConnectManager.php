@@ -2,26 +2,20 @@
 
 namespace App\Incentive\Service\Manager;
 
-use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\IncentiveResponse;
 use App\DataProvider\Entity\MobConnect\Response\IncentivesResponse;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
-use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
-use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\ShortDistanceJourneyRepository;
-use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Validation\UserValidation;
+use App\Incentive\Validator\CarpoolProofValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
@@ -123,16 +117,6 @@ abstract class MobConnectManager
      */
     private $_apiProvider;
 
-    /**
-     * @var array
-     */
-    private $_mobConnectParams;
-
-    /**
-     * @var array
-     */
-    private $_ssoServices;
-
     public function __construct(
         EntityManagerInterface $em,
         InstanceManager $instanceManager,
@@ -152,53 +136,9 @@ abstract class MobConnectManager
         return $this;
     }
 
-    public function getCarpoolProofsFromCarpoolItem(CarpoolItem $carpoolItem): array
+    protected function setApiProvider()
     {
-        $ask = $carpoolItem->getAsk();
-        $driver = $carpoolItem->getCreditorUser();
-
-        return !is_null($ask)
-            ? array_values(array_filter($ask->getCarpoolProofs(), function ($carpoolProof) use ($driver) {
-                return $carpoolProof->getDriver()->getId() === $driver->getId();
-            }))
-            : [];
-    }
-
-    /**
-     * Returns the CEE journey, LD or SD, if the proof of carpooling matches it.
-     *
-     * @return null|LongDistanceJourney|ShortDistanceJourney
-     */
-    protected function _getEecJourneyFromCarpoolProof(CarpoolProof $carpoolProof)
-    {
-        $journey = $this->_getEecSdJourneyFromCarpoolProof($carpoolProof);
-
-        if (
-            is_null($journey)
-            && !is_null($carpoolProof->getCarpoolItem())
-        ) {
-            $journey = $this->_getEecLdJourneyFromCarpoolProof($carpoolProof);
-        }
-
-        return $journey;
-    }
-
-    protected function _getEecSdJourneyFromCarpoolProof(CarpoolProof $carpoolProof): ?ShortDistanceJourney
-    {
-        return $carpoolProof->getMobConnectShortDistanceJourney();
-    }
-
-    protected function _getEecLdJourneyFromCarpoolProof(CarpoolProof $carpoolProof): ?LongDistanceJourney
-    {
-        return $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal(
-            $carpoolProof->getCarpoolItem(),
-            $this->getDriverPassengerProposalForCarpoolItem($carpoolProof->getCarpoolItem(), self::DRIVER)
-        );
-    }
-
-    protected function hasRequestErrorReturned(MobConnectResponseInterface $response): bool
-    {
-        return in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
+        $this->_apiProvider = new MobConnectApiProvider($this->_instanceManager->getEecInstance());
     }
 
     /**
@@ -220,87 +160,23 @@ abstract class MobConnectManager
         return $this->_apiProvider->getSubscriptionTimestamps($subscriptionId);
     }
 
-    protected function hasSubscriptionCommited(string $subscriptionId): bool
+    protected function getIncentives(User $user): ?IncentivesResponse
     {
         $this->setApiProvider();
 
-        // TODO: Add the query allowing you to know if a subscription has been commited
-
-        return false;
+        return $this->_apiProvider->getIncentives($user);
     }
 
-    /**
-     * Sets subscription expiration date.
-     */
-    protected function getExpirationDate(int $delay): \DateTime
+    protected function getIncentive(string $incentiveId, User $user): ?IncentiveResponse
     {
-        $now = new \DateTime('now');
+        $this->setApiProvider();
 
-        return $now->add(new \DateInterval('P'.$delay.'M'));
-    }
-
-    protected function setApiProvider()
-    {
-        $this->_apiProvider = new MobConnectApiProvider($this->_instanceManager->getEecInstance());
-    }
-
-    protected function getCarpoolersNumber(Ask $ask): int
-    {
-        $conn = $this->_em->getConnection();
-
-        $sql = 'SELECT DISTINCT ci.debtor_user_id FROM carpool_item ci WHERE ci.ask_id = '.$ask->getId().'';
-
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-
-        return count($stmt->fetchAll(\PDO::FETCH_COLUMN)) + 1;
+        return $this->_apiProvider->getIncentive($incentiveId, $user);
     }
 
     protected function getDriver(): User
     {
         return $this->_driver;
-    }
-
-    protected function getDriverPassengerProposalForCarpoolItem(CarpoolItem $carpoolItem, int $carpoolerType): ?Proposal
-    {
-        $proposal = null;
-
-        $user = self::DRIVER === $carpoolerType ? $carpoolItem->getCreditorUser() : $carpoolItem->getDebtorUser();
-
-        switch ($user->getId()) {
-            case $carpoolItem->getAsk()->getMatching()->getProposalOffer()->getUser()->getId():
-                $proposal = $carpoolItem->getAsk()->getMatching()->getProposalOffer();
-
-                break;
-
-            case $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getUser()->getId():
-                $proposal = $carpoolItem->getAsk()->getMatching()->getProposalRequest();
-
-                break;
-        }
-
-        return $proposal;
-    }
-
-    protected function getAddressesLocality(CarpoolItem $carpoolItem): array
-    {
-        $addresses = [
-            'origin' => null,
-            'destination' => null,
-        ];
-
-        $waypoints = $carpoolItem->getAsk()->getMatching()->getWaypoints();
-
-        foreach ($carpoolItem->getAsk()->getMatching()->getWaypoints() as $waypoint) {
-            if (0 === $waypoint->getPosition() && !$waypoint->isDestination()) {
-                $addresses['origin'] = $waypoint->getAddress()->getAddressLocality();
-            }
-            if ($waypoint->isDestination()) {
-                $addresses['destination'] = $waypoint->getAddress()->getAddressLocality();
-            }
-        }
-
-        return $addresses;
     }
 
     protected function getThresholdDate(): \DateTime
@@ -333,7 +209,7 @@ abstract class MobConnectManager
             array_filter($this->getDriver()->getCarpoolProofsAsDriver(), function (CarpoolProof $carpoolProof) use ($thresholdDate) {
                 return
                     $carpoolProof->getCreatedDate() > $thresholdDate
-                    && $carpoolProof->isEECCompliant();
+                    && CarpoolProofValidator::isEecCompliant($carpoolProof);
             })
         );
     }
@@ -348,70 +224,5 @@ abstract class MobConnectManager
         return
             $this->_userValidation->isUserValid($this->getDriver())
             && 0 === count($this->getEECCompliantProofsObtainedSinceDate($distanceType));
-    }
-
-    protected function getDistanceTraveled(CarpoolProof $carpoolProof): ?int
-    {
-        return
-            !is_null($carpoolProof->getAsk())
-            && !is_null($carpoolProof->getAsk()->getMatching())
-            ? $carpoolProof->getAsk()->getMatching()->getCommonDistance() : null;
-    }
-
-    protected function isJourneyPaid(CarpoolProof $carpoolProof): bool
-    {
-        return !is_null($carpoolProof->getSuccessfullPayment());
-    }
-
-    protected function isLongDistance(?int $distance): bool
-    {
-        return !is_null($distance) && CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distance;
-    }
-
-    protected function isShortDistance(?int $distance): bool
-    {
-        return !is_null($distance) && CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS > $distance;
-    }
-
-    /**
-     * Returns if the distance passed as an argument is long or short.
-     */
-    protected function getDistanceType(int $distance): ?string
-    {
-        return
-            $this->isLongDistance($distance)
-            ? LongDistanceSubscription::SUBSCRIPTION_TYPE
-            : (
-                $this->isShortDistance($distance)
-                ? ShortDistanceSubscription::SUBSCRIPTION_TYPE
-                : null
-            );
-    }
-
-    protected function getIncentives(User $user): ?IncentivesResponse
-    {
-        $this->setApiProvider();
-
-        return $this->_apiProvider->getIncentives($user);
-    }
-
-    protected function getIncentive(string $incentiveId, User $user): ?IncentiveResponse
-    {
-        $this->setApiProvider();
-
-        return $this->_apiProvider->getIncentive($incentiveId, $user);
-    }
-
-    protected function getCommitmentRequestParams(string $prefix): array
-    {
-        return $this->_currentSubscription instanceof LongDistanceSubscription
-            ? [
-                SpecificFields::JOURNEY_ID => $prefix.$this->_currentProposal->getId(),
-                SpecificFields::JOURNEY_PUBLISH_DATE => $this->_currentProposal->getCreatedDate()->format(self::DATE_FORMAT),
-            ]
-            : [
-                SpecificFields::JOURNEY_ID => $prefix.$this->_currentCarpoolProof->getId(),
-                SpecificFields::JOURNEY_START_DATE => $this->_currentCarpoolProof->getPickUpDriverDate()->format(self::DATE_FORMAT),
-            ];
     }
 }

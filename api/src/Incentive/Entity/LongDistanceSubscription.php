@@ -16,6 +16,7 @@ use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Service\Definition\LdImproved;
 use App\Incentive\Service\Definition\LdStandard;
 use App\Incentive\Service\Manager\SubscriptionManager;
+use App\Incentive\Validator\CarpoolPaymentValidator;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -953,7 +954,7 @@ class LongDistanceSubscription extends Subscription
             && !$this->getJourneys()->isEmpty()
             && !is_null($this->getCommitmentProofJourney())
             && !is_null($this->getCommitmentProofJourney()->getCarpoolPayment())
-            && $this->getCommitmentProofJourney()->getCarpoolPayment()->isEecCompliant()
+            && CarpoolPaymentValidator::isEecCompliant($this->getCommitmentProofJourney()->getCarpoolPayment())
             && !is_null($this->getIncentiveProofTimestampToken())
             && !is_null($this->getIncentiveProofTimestampSigningTime())
             && !is_null($this->getCommitmentProofTimestampToken())

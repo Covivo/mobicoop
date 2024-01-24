@@ -128,7 +128,6 @@ class EecInstance
     private $carpoolProofPrefix;
 
     /**
-     * @var array
      * @var EecProviderInterface
      */
     private $provider;

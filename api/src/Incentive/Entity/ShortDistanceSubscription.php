@@ -15,6 +15,7 @@ use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Service\Definition\SdImproved;
 use App\Incentive\Service\Definition\SdStandard;
 use App\Incentive\Service\Manager\SubscriptionManager;
+use App\Incentive\Validator\CarpoolProofValidator;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -937,7 +938,7 @@ class ShortDistanceSubscription extends Subscription
             && !$this->getJourneys()->isEmpty()
             && !is_null($this->getCommitmentProofJourney())
             && !is_null($this->getCommitmentProofJourney()->getCarpoolProof())
-            && $this->getCommitmentProofJourney()->getCarpoolProof()->isEecCompliant()
+            && CarpoolProofValidator::isEecCompliant($this->getCommitmentProofJourney()->getCarpoolProof())
             && !is_null($this->getIncentiveProofTimestampToken())
             && !is_null($this->getIncentiveProofTimestampSigningTime())
             && !is_null($this->getCommitmentProofTimestampToken())
