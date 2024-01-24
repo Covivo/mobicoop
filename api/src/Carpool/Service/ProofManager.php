@@ -27,6 +27,8 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Event\CarpoolProofCertifyDropOffEvent;
+use App\Carpool\Event\CarpoolProofCertifyPickUpEvent;
 use App\Carpool\Event\CarpoolProofInvalidatedEvent;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Carpool\Exception\DynamicException;
@@ -367,6 +369,14 @@ class ProofManager
         $this->entityManager->persist($carpoolProof);
         $this->entityManager->flush();
 
+        if ($author->getId() == $passenger->getId()) {
+            $event = new CarpoolProofCertifyPickUpEvent($carpoolProof, $driver);
+            $this->eventDispatcher->dispatch(CarpoolProofCertifyPickUpEvent::NAME, $event);
+        } else {
+            $event = new CarpoolProofCertifyPickUpEvent($carpoolProof, $passenger);
+            $this->eventDispatcher->dispatch(CarpoolProofCertifyPickUpEvent::NAME, $event);
+        }
+
         return $carpoolProof;
     }
 
@@ -399,6 +409,7 @@ class ProofManager
             $actor = CarpoolProof::ACTOR_DRIVER;
         }
 
+        $firstDropOffCertification = false;
         // we perform different actions depending on the role and the moment
         switch ($actor) {
             case CarpoolProof::ACTOR_DRIVER:
@@ -417,6 +428,7 @@ class ProofManager
                         // the passenger has not set its dropoff
                         $carpoolProof->setDropOffDriverDate(new \DateTime('UTC'));
                         $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+                        $firstDropOffCertification = true;
                     } else {
                         // the passenger has set its dropoff, we have to check the positions
                         if ($this->geoTools->haversineGreatCircleDistance(
@@ -426,6 +438,9 @@ class ProofManager
                             $carpoolProof->getDropOffPassengerAddress()->getLongitude()
                         ) <= $distance) {
                             // drop off driver
+                            if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getDropOffPassengerDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                                throw new ProofException('Driver dropoff certification failed : the time between driver and passenger certifications exceeds 2 minutes');
+                            }
                             $carpoolProof->setDropOffDriverDate(new \DateTime('UTC'));
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
@@ -443,6 +458,9 @@ class ProofManager
                         $carpoolProof->getPickUpPassengerAddress()->getLatitude(),
                         $carpoolProof->getPickUpPassengerAddress()->getLongitude()
                     ) <= $distance) {
+                        if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getPickUpPassengerDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                            throw new ProofException('Driver pickup certification failed : the time between driver and passenger certifications exceeds 2 minutes');
+                        }
                         $carpoolProof->setPickupDriverDate(new \DateTime('UTC'));
                         $carpoolProof->setPickUpDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                     } else {
@@ -477,6 +495,7 @@ class ProofManager
                             $carpoolProof->getAsk()->getMatching()->getProposalRequest()->setFinished(true);
                             $this->entityManager->persist($carpoolProof->getAsk()->getMatching()->getProposalRequest());
                         }
+                        $firstDropOffCertification = true;
                     } else {
                         // the driver has set its dropoff, we have to check the positions
                         if ($this->geoTools->haversineGreatCircleDistance(
@@ -486,6 +505,9 @@ class ProofManager
                             $carpoolProof->getDropOffDriverAddress()->getLongitude()
                         ) <= $distance) {
                             // drop off passenger
+                            if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getDropOffDriverDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                                throw new ProofException('Passenger dropoff certification failed : the time between driver and passenger certifications exceeds 2 minutes');
+                            }
                             $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
                             $carpoolProof->setDropOffPassengerAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // set the passenger dynamic ad to finished if relevant
@@ -507,6 +529,9 @@ class ProofManager
                         $carpoolProof->getPickUpDriverAddress()->getLatitude(),
                         $carpoolProof->getPickUpDriverAddress()->getLongitude()
                     ) <= $distance) {
+                        if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getPickUpDriverDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                            throw new ProofException('Passenger pickup certification failed : the time between driver and passenger certifications exceeds 2 minutes');
+                        }
                         $carpoolProof->setPickupPassengerDate(new \DateTime('UTC'));
                         $carpoolProof->setPickUpPassengerAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                     } else {
@@ -534,6 +559,16 @@ class ProofManager
         if ($this->_journeyValidation->isStartedJourneyValidShortECCJourney($carpoolProof)) {
             $event = new FirstShortDistanceJourneyPublishedEvent($carpoolProof);
             $this->eventDispatcher->dispatch(FirstShortDistanceJourneyPublishedEvent::NAME, $event);
+        }
+
+        if ($firstDropOffCertification) {
+            if (CarpoolProof::ACTOR_PASSENGER == $actor) {
+                $event = new CarpoolProofCertifyDropOffEvent($carpoolProof, $carpoolProof->getDriver());
+                $this->eventDispatcher->dispatch(CarpoolProofCertifyDropOffEvent::NAME, $event);
+            } else {
+                $event = new CarpoolProofCertifyDropOffEvent($carpoolProof, $carpoolProof->getPassenger());
+                $this->eventDispatcher->dispatch(CarpoolProofCertifyDropOffEvent::NAME, $event);
+            }
         }
 
         return $carpoolProof;
