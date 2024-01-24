@@ -2,7 +2,7 @@
 
 namespace App\Incentive\Controller;
 
-use App\Incentive\Service\Manager\JourneyRecoveryManager;
+use App\Incentive\Service\Manager\SubscriptionManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,13 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class JourneysRecoveryController extends AbstractController
 {
     /**
-     * @var JourneyRecoveryManager
+     * @var SubscriptionManager
      */
-    private $_journeyRecoveryManager;
+    private $_subscriptionManager;
 
-    public function __construct(JourneyRecoveryManager $journeyRecoveryManager)
+    public function __construct(SubscriptionManager $subscriptionManager)
     {
-        $this->_journeyRecoveryManager = $journeyRecoveryManager;
+        $this->_subscriptionManager = $subscriptionManager;
     }
 
     /**
@@ -38,6 +38,6 @@ class JourneysRecoveryController extends AbstractController
             throw new BadRequestHttpException('The mandatory type parameter is missing.');
         }
 
-        return new JsonResponse($this->_journeyRecoveryManager->executeProofsRecovery($type, $request->get('user')));
+        return new JsonResponse($this->_subscriptionManager->proofsRecover($type, $request->get('user')));
     }
 }

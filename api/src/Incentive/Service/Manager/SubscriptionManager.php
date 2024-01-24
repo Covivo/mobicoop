@@ -4,6 +4,7 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
@@ -14,13 +15,19 @@ use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Stage\CreateSubscription;
+use App\Incentive\Service\Stage\ProofInvalidate;
+use App\Incentive\Service\Stage\ProofRecovery;
 use App\Incentive\Service\Stage\ResetSubscription;
 use App\Incentive\Service\Stage\VerifySubscription;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
+use App\Incentive\Validator\CarpoolProofValidator;
 use App\Payment\Entity\CarpoolPayment;
+use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
+use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -39,6 +46,16 @@ class SubscriptionManager extends MobConnectManager
     protected $_eecInstance;
 
     /**
+     * @var CarpoolItemRepository
+     */
+    protected $_carpoolItemRepository;
+
+    /**
+     * @var CarpoolProofRepository
+     */
+    protected $_carpoolProofRepository;
+
+    /**
      * @var LongDistanceSubscriptionRepository
      */
     private $_longDistanceSubscriptionRepository;
@@ -47,6 +64,11 @@ class SubscriptionManager extends MobConnectManager
      * @var ShortDistanceSubscriptionRepository
      */
     private $_shortDistanceSubscriptionRepository;
+
+    /**
+     * @var UserRepository
+     */
+    private $_userRepository;
 
     /**
      * @var SubscriptionValidation
@@ -60,14 +82,20 @@ class SubscriptionManager extends MobConnectManager
         LoggerService $loggerService,
         InstanceManager $instanceManager,
         TimestampTokenManager $timestampTokenManager,
+        CarpoolItemRepository $carpoolItemRepository,
+        CarpoolProofRepository $carpoolProofRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
-        ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository
+        ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
+        UserRepository $userRepository
     ) {
         parent::__construct($em, $instanceManager, $loggerService);
 
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_carpoolItemRepository = $carpoolItemRepository;
+        $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
         $this->_shortDistanceSubscriptionRepository = $shortDistanceSubscriptionRepository;
+        $this->_userRepository = $userRepository;
         $this->_subscriptionValidation = $subscriptionValidation;
         $this->_userValidation = $userValidation;
         $this->_eecInstance = $instanceManager->getEecInstance();
@@ -88,18 +116,6 @@ class SubscriptionManager extends MobConnectManager
 
         $this->_createSubscription(Subscription::TYPE_SHORT);
         $this->_createSubscription(Subscription::TYPE_LONG);
-    }
-
-    /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     *
-     * @return LongDistanceSubscription|ShortDistanceSubscription
-     */
-    public function getMobConnectSubscription($subscription)
-    {
-        $this->setDriver($subscription->getUser());
-
-        return $subscription->setMoBSubscription($this->getSubscription($subscription, $this->getDriver())->getContent());
     }
 
     public function getUserEECEligibility(User $user): EecEligibility
@@ -214,8 +230,6 @@ class SubscriptionManager extends MobConnectManager
         }
     }
 
-    public function createSubscription() {}
-
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
@@ -259,6 +273,49 @@ class SubscriptionManager extends MobConnectManager
 
         $stage = new $validateClass($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
         $stage->execute();
+    }
+
+    /**
+     * Step 17 - Unvalidate proof.
+     */
+    public function invalidateProof(CarpoolProof $carpoolProof): void
+    {
+        if (CarpoolProofValidator::isEecCompliant($carpoolProof)) {
+            return;
+        }
+
+        $journeyProvider = new JourneyProvider($this->_longDistanceJourneyRepository);
+        $journey = $journeyProvider->getJourneyFromCarpoolProof($carpoolProof);
+
+        if (is_null($journey)) {
+            return;
+        }
+
+        $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $journey);
+        $stage->execute();
+    }
+
+    public function proofsRecover(string $subscriptionType, ?int $userId): void
+    {
+        if (!is_null($userId)) {
+            $user = $this->_em->getRepository(User::class)->find($userId);
+
+            if (is_null($user)) {
+                throw new NotFoundHttpException('The requested user was not found');
+            }
+
+            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $user, $subscriptionType);
+            $stage->execute();
+
+            return;
+        }
+
+        $users = $users = $this->_userRepository->findUsersCeeSubscribed();
+
+        foreach ($users as $user) {
+            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $user, $subscriptionType);
+            $stage->execute();
+        }
     }
 
     /**
@@ -312,6 +369,9 @@ class SubscriptionManager extends MobConnectManager
         $this->_verifySubscription($subscription);
     }
 
+    /**
+     * STEP 5 - Create a subscription from it's type.
+     */
     protected function _createSubscription(string $subscriptionType): void
     {
         if (

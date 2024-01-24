@@ -3,8 +3,6 @@
 namespace App\Incentive\Command;
 
 use App\Carpool\Entity\CarpoolProof;
-use App\Incentive\Service\Manager\JourneyManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,11 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProofInvalidateCommand extends EecCommand
 {
-    public function __construct(EntityManagerInterface $em, JourneyManager $journeyManager)
-    {
-        parent::__construct($em, $journeyManager);
-    }
-
     protected function configure()
     {
         $this
@@ -37,7 +30,7 @@ class ProofInvalidateCommand extends EecCommand
             $this->throwException(Response::HTTP_NOT_FOUND, 'The requested proof was not found');
         }
 
-        $this->_journeyManager->invalidateProof($carpoolProof);
+        $this->_subscriptionManager->invalidateProof($carpoolProof);
 
         $output->writeln('The incentive has been updated');
     }

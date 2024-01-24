@@ -8,7 +8,6 @@ use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
 use App\Incentive\Service\Manager\AuthManager;
-use App\Incentive\Service\Manager\JourneyManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
@@ -42,20 +41,14 @@ class MobConnectListener implements EventSubscriberInterface
     private $_authManager;
 
     /**
-     * @var JourneyManager
-     */
-    private $_journeyManager;
-
-    /**
      * @var SubscriptionManager
      */
     private $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, AuthManager $authManager, JourneyManager $journeyManager, SubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, SubscriptionManager $subscriptionManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
         $this->_authManager = $authManager;
-        $this->_journeyManager = $journeyManager;
         $this->_subscriptionManager = $subscriptionManager;
     }
 
@@ -138,7 +131,7 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onProofInvalidated(CarpoolProofInvalidatedEvent $event): void
     {
-        $this->_journeyManager->invalidateProof($event->getCarpoolProof());
+        $this->_subscriptionManager->invalidateProof($event->getCarpoolProof());
     }
 
     public function onUserHomeAddressUpdated(UserHomeAddressUpdateEvent $event)

@@ -5,9 +5,6 @@ namespace App\Incentive\Command;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
-use App\Incentive\Service\Manager\JourneyManager;
-use App\Incentive\Service\Manager\SubscriptionManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,13 +12,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionResetCommand extends EecCommand
 {
-    public function __construct(EntityManagerInterface $em, JourneyManager $journeyManager, SubscriptionManager $subscriptionManager)
-    {
-        parent::__construct($em, $journeyManager);
-
-        $this->_subscriptionManager = $subscriptionManager;
-    }
-
     protected function configure()
     {
         $this

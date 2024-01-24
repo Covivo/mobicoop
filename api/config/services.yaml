@@ -875,19 +875,11 @@ services:
     tags:
       - controller.service_arguments
 
-  App\Incentive\Controller\Subscription\LdSubscriptionGet:
-    tags:
-      - controller.service_arguments
-
   App\Incentive\Controller\Subscription\LdSubscriptionUpdate:
     tags:
       - controller.service_arguments
 
   App\Incentive\Controller\Subscription\SdSubscriptionCommit:
-    tags:
-      - controller.service_arguments
-
-  App\Incentive\Controller\Subscription\SdSubscriptionGet:
     tags:
       - controller.service_arguments
 
@@ -935,14 +927,6 @@ services:
     arguments:
       $eecServiveConfiguration: "%env(json:file:resolve:EEC_SERVICE)%"
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-
-  App\Incentive\Service\Manager\JourneyManager:
-    tags:
-      - { name: monolog.logger, channel: incentive_subscription }
-
-  App\Incentive\Service\Manager\JourneyRecoveryManager:
-    tags:
-      - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\SubscriptionManager:
     tags:
