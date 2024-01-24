@@ -251,13 +251,15 @@ class ProofManager
      *
      * @return CarpoolProof The created proof
      */
-    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger)
+    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger, string $driverPhoneUniqueId, string $passengerPhoneUniqueId)
     {
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setType($type);
         $carpoolProof->setAsk($ask);
         $carpoolProof->setDriver($driver);
         $carpoolProof->setPassenger($passenger);
+        $carpoolProof->setDriverPhoneUniqueId($driverPhoneUniqueId);
+        $carpoolProof->setPassengerPhoneUniqueId($passengerPhoneUniqueId);
         $originWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
         $destinationWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
         $carpoolProof->setOriginDriverAddress(clone $originWaypoint->getAddress());
@@ -380,7 +382,7 @@ class ProofManager
      *
      * @return CarpoolProof The updated proof
      */
-    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance)
+    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance, string $driverPhoneUniqueId, string $passengerPhoneUniqueId)
     {
         // search the proof
         if (!$carpoolProof = $this->carpoolProofRepository->find($id)) {
@@ -517,6 +519,13 @@ class ProofManager
                 }
 
                 break;
+        }
+
+        if (is_null($carpoolProof->getDriverPhoneUniqueId())) {
+            $carpoolProof->setDriverPhoneUniqueId($driverPhoneUniqueId);
+        }
+        if (is_null($carpoolProof->getPassengerPhoneUniqueId())) {
+            $carpoolProof->setPassengerPhoneUniqueId($passengerPhoneUniqueId);
         }
 
         $this->entityManager->persist($carpoolProof);

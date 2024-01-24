@@ -179,9 +179,9 @@ class AdManager
      * @param bool   $forceNotUseTime   For to set useTime at false
      * @param string $matchingAlgorithm Version of the matching algorithm
      *
-     * @return Ad
-     *
      * @throws \Exception
+     *
+     * @return Ad
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
@@ -1233,9 +1233,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @return array
-     *
      * @throws \Exception
+     *
+     * @return array
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1312,9 +1312,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @return Ad
-     *
      * @throws \Exception
+     *
+     * @return Ad
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1411,9 +1411,9 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
@@ -1453,9 +1453,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function compareSchedules($old, $new)
     {
@@ -1583,9 +1583,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {
@@ -1928,7 +1928,8 @@ class AdManager
             // the proof already exists, it's an update
             return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
         }
-        $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_CLASSIC, $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
+        $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_CLASSIC, $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser(), $classicProof->getDriverPhoneUniqueId(), $classicProof->getPassengerPhoneUniqueId());
+
         $classicProof->setId($carpoolProof->getId());
 
         return $classicProof;
@@ -1955,7 +1956,7 @@ class AdManager
         }
 
         try {
-            $carpoolProof = $this->proofManager->updateProof($id, $classicProofData->getLongitude(), $classicProofData->getLatitude(), $classicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['carpoolProofDistance']);
+            $carpoolProof = $this->proofManager->updateProof($id, $classicProofData->getLongitude(), $classicProofData->getLatitude(), $classicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['carpoolProofDistance'], $classicProofData->getDriverPhoneUniqueId(), $classicProofData->getPassengerPhoneUniqueId());
         } catch (ProofException $proofException) {
             throw new AdException($proofException->getMessage());
         }
