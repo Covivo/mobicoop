@@ -54,6 +54,7 @@ class PaymentException extends \LogicException
     public const NO_BANKACCOUNT_ID_IN_UPDATE_REQUEST = 'This request must contains en idBankAccount parameter';
     public const NOT_THE_OWNER = 'The current User is not the owner of this BankAccount';
     public const ERROR_CREATING = 'Error the bank account cannot be created';
+    public const USER_ALREADY_HAVE_BANK_ACCOUNT = 'The user already have a bank account';
 
     // Ad/Ask
     public const NO_ASK_FOUND = 'No Ask found';
