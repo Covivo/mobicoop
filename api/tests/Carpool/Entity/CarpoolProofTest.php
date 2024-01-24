@@ -34,19 +34,6 @@ class CarpoolProofTest extends TestCase
         $this->assertSame($expectedResponse, $this->_carpoolProof->isEECCompliant());
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider dataForProofDowngraded
-     */
-    public function isCarpoolProofDowngraded(int $status, string $type, bool $expectedResponse)
-    {
-        $this->_carpoolProof->setStatus($status);
-        $this->_carpoolProof->setType($type);
-
-        $this->assertSame($expectedResponse, $this->_carpoolProof->isCarpoolProofDowngraded());
-    }
-
     public function dataForEECCompliance()
     {
         return [

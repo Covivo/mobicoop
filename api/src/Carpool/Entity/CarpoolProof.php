@@ -679,33 +679,6 @@ class CarpoolProof
     }
 
     /**
-     * Used in the context of CEE, checks and returns if the RPC returned an error during the validation of the request.
-     */
-    public function isStatusError(): bool
-    {
-        $status = $this->getStatus();
-
-        return
-            self::STATUS_ERROR === $status
-            || self::STATUS_CANCELED === $status
-            || self::STATUS_ACQUISITION_ERROR === $status
-            || self::STATUS_NORMALIZATION_ERROR === $status
-            || self::STATUS_FRAUD_ERROR === $status
-            || self::STATUS_EXPIRED === $status
-            || self::STATUS_CANCELED_BY_OPERATOR === $status;
-    }
-
-    /**
-     * Used in the context of CEE, checks and returns if the RPC has validated a proof but not with class C.
-     */
-    public function isCarpoolProofDowngraded(): bool
-    {
-        return
-            self::STATUS_VALIDATED === $this->getStatus()
-            && self::TYPE_HIGH != $this->getType();
-    }
-
-    /**
      * Used in the context of CEE, return the associated payment. This latest must meet the criteria:
      * - Have been successfully paid,
      * - Keep track of the transaction.

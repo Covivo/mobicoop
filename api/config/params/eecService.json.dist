@@ -18,7 +18,8 @@
       "//key": "string - The LD subscription key",
       "key": null,
       "//expirationDate": "string - The date the subscription is due to expire",
-      "expirationDate": "2023-12-31"
+      "expirationDate": "2023-12-31",
+      "minimalDistance": 80000
     },
     "sd": {
       "//key": "string - The SD subscription key",

@@ -12,6 +12,16 @@ class CarpoolProofValidator
 
     public const REFERENCE_COUNTRY = 'France';
 
+    public const CARPOOL_PROOF_ERROR_STATUS = [
+        CarpoolProof::STATUS_ERROR,
+        CarpoolProof::STATUS_CANCELED,
+        CarpoolProof::STATUS_ACQUISITION_ERROR,
+        CarpoolProof::STATUS_NORMALIZATION_ERROR,
+        CarpoolProof::STATUS_FRAUD_ERROR,
+        CarpoolProof::STATUS_EXPIRED,
+        CarpoolProof::STATUS_CANCELED_BY_OPERATOR,
+    ];
+
     public static function isEecCompliant(CarpoolProof $carpoolProof): bool
     {
         return self::isCarpoolProofStatusEecCompliant($carpoolProof) && self::isCarpoolProofTypeEecCompliant($carpoolProof);
@@ -39,6 +49,16 @@ class CarpoolProofValidator
         }
 
         return $commitmentJourney->getCarpoolProof()->getId() === $carpoolProof->getId();
+    }
+
+    public static function isStatusError(CarpoolProof $carpoolProof): bool
+    {
+        return in_array($carpoolProof->getStatus(), static::CARPOOL_PROOF_ERROR_STATUS);
+    }
+
+    public static function isDowngradedType(CarpoolProof $carpoolProof): bool
+    {
+        return $carpoolProof->getStatus() != static::VALID_EEC_TYPE;
     }
 
     public static function isCarpoolProofOriginOrDestinationFromFrance(CarpoolProof $carpoolProof): bool

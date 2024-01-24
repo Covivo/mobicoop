@@ -21,6 +21,7 @@ use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Stage\ResetSubscription;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
+use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -356,6 +357,8 @@ class SubscriptionManager extends MobConnectManager
         }
     }
 
+    public function createSubscription() {}
+
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
@@ -376,20 +379,28 @@ class SubscriptionManager extends MobConnectManager
             $stage->execute();
         }
 
-        $commitClass = $referenceObject instanceof Proposal
+        $commitClass = $subscription instanceof LongDistanceSubscription
             ? 'App\\Incentive\\Service\\Stage\\CommitLDSubscription'
             : 'App\\Incentive\\Service\\Stage\\CommitSDSubscription';
 
-        $stage = new $commitClass(
-            $this->_em,
-            $this->_timestampTokenManager,
-            $this->_eecInstance,
-            $subscription,
-            $referenceObject,
-            $pushOnlyMode
-        );
+        $stage = new $commitClass($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription, $referenceObject, $pushOnlyMode);
         $stage->execute();
     }
+
+    /**
+     * @param CarpoolPayment|CarpoolProof $referenceObject
+     */
+    public function validateSubscription($referenceObject, bool $pushOnlyMode = false): void
+    {
+        $validateClass = $referenceObject instanceof CarpoolPayment
+            ? 'App\\Incentive\\Service\\Stage\\ValidateLDSubscription'
+            : 'App\\Incentive\\Service\\Stage\\ProofValidate';
+
+        $stage = new $validateClass($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
+        $stage->execute();
+    }
+
+    // public function verifySubscription() {}
 
     /**
      * @return bool|LongDistanceSubscription|ShortDistanceSubscription

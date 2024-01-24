@@ -156,7 +156,7 @@ class JourneyManager extends MobConnectManager
      */
     public function receivingElectronicPayment(CarpoolPayment $carpoolPayment)
     {
-        $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_instanceManager->getEecInstance(), $carpoolPayment);
+        $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_instanceManager->getEecInstance(), $carpoolPayment);
         $stage->execute();
     }
 

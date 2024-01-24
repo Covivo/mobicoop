@@ -133,6 +133,11 @@ class EecInstance
      */
     private $provider;
 
+    /**
+     * @var int
+     */
+    private $ldMinimalDistance;
+
     public function __construct(array $instanceConfiguration, ?string $carpoolProofPrefix)
     {
         $this->_build($instanceConfiguration, $carpoolProofPrefix);
@@ -325,6 +330,24 @@ class EecInstance
     }
 
     /**
+     * Get the value of ldMinimalDistance.
+     */
+    public function getLdMinimalDistance(): int
+    {
+        return $this->ldMinimalDistance;
+    }
+
+    /**
+     * Set the value of ldMinimalDistance.
+     */
+    private function setLdMinimalDistance(int $ldMinimalDistance): self
+    {
+        $this->ldMinimalDistance = $ldMinimalDistance;
+
+        return $this;
+    }
+
+    /**
      * Set the value of provider.
      */
     private function setProvider(array $provider): self
@@ -405,6 +428,7 @@ class EecInstance
         $this->setPreviousPeriodWithoutTravel($configuration['previousPeriodWithoutTravel']);
         $this->setTabView($configuration['tabView']);
         $this->setProvider($configuration['provider']);
+        $this->setLdMinimalDistance($configuration['subscriptions']['ld']['minimalDistance']);
 
         $this->carpoolProofPrefix = $carpoolProofPrefix;
 

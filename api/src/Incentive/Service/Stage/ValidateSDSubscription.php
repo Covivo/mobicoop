@@ -10,6 +10,7 @@ use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\DateService;
+use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Validator\CarpoolProofValidator;
 use Doctrine\ORM\EntityManager;
@@ -17,7 +18,7 @@ use Doctrine\ORM\EntityManager;
 class ValidateSDSubscription extends ValidateSubscription
 {
     /**
-     * @var ShortDistanceSubscription
+     * @var ?ShortDistanceSubscription
      */
     protected $_subscription;
 
@@ -30,7 +31,6 @@ class ValidateSDSubscription extends ValidateSubscription
         EntityManager $em,
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,
-        ShortDistanceSubscription $subscription,
         CarpoolProof $carpoolProof,
         bool $pushOnlyMode = false
     ) {
@@ -38,7 +38,6 @@ class ValidateSDSubscription extends ValidateSubscription
         $this->_timestampTokenManager = $timestampTokenManager;
 
         $this->_eecInstance = $eecInstance;
-        $this->_subscription = $subscription;
         $this->_carpoolProof = $carpoolProof;
         $this->_pushOnlyMode = $pushOnlyMode;
 
@@ -47,7 +46,9 @@ class ValidateSDSubscription extends ValidateSubscription
 
     public function execute()
     {
-        $shortDistanceJourneysNumber = count($this->_subscription->getJourneys());
+        if (is_null($this->_subscription) || $this->_subscription->hasExpired()) {
+            return;
+        }
 
         // There is not commitment journey
         if (is_null($this->_subscription->getCommitmentProofJourney())) {
@@ -58,15 +59,9 @@ class ValidateSDSubscription extends ValidateSubscription
         if (CarpoolProofValidator::isCarpoolProofSubscriptionCommitmentProof($this->_subscription, $this->_carpoolProof)) {
             $this->_executeForCommitmentJourney();
         } else {
-            // Checks :
-            //    - The maximum journey threshold has not been reached
-            //    - The journey is a short distance journey
-            //    - The journey is a C type
-            //    - The journey origin and/or destination is the reference country
             if (
-                $this->_pushOnlyMode
-                || $this->_subscription->isComplete()
-                || $this->_subscription->hasExpired()
+                $this->_subscription->isComplete()
+                || $this->_pushOnlyMode
                 || !CarpoolProofValidator::isEecCompliant($this->_carpoolProof)
                 || !CarpoolProofValidator::isCarpoolProofOriginOrDestinationFromFrance($this->_carpoolProof)
             ) {
@@ -76,11 +71,22 @@ class ValidateSDSubscription extends ValidateSubscription
             $this->_executeForStandardJourney();
         }
 
-        if ($this->_subscription->getMaximumJourneysNumber() === $shortDistanceJourneysNumber) {
+        if ($this->_subscription->getMaximumJourneysNumber() === $this->_associatedJourneysNumber) {
             $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
         }
 
         $this->_em->flush();
+    }
+
+    protected function _build()
+    {
+        $this->_setApiProvider();
+
+        $this->_honorCertificateService = new HonourCertificateService();
+
+        $this->_subscription = !is_null($this->_carpoolProof->getDriver()) && !is_null($this->_carpoolProof->getDriver()->getShortDistanceSubscription())
+            ? $this->_carpoolProof->getDriver()->getShortDistanceSubscription()
+            : null;
     }
 
     protected function _executeForStandardJourney()
@@ -92,6 +98,8 @@ class ValidateSDSubscription extends ValidateSubscription
             $this->getCarpoolersNumber($this->_carpoolProof->getAsk())
         );
         $this->_subscription->addShortDistanceJourney($journey);
+
+        $this->_em->flush();
     }
 
     protected function _executeForCommitmentJourney()
@@ -100,11 +108,9 @@ class ValidateSDSubscription extends ValidateSubscription
             !CarpoolProofValidator::isEecCompliant($this->_carpoolProof)
             || !CarpoolProofValidator::isCarpoolProofOriginOrDestinationFromFrance($this->_carpoolProof)
         ) {
-            $stage = new RecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
+            $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription->getCommitmentProofJourney());
             $stage->execute();
-        }
 
-        if (is_null($this->_subscription->getCommitmentProofJourney())) {
             return;
         }
 
