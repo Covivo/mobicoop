@@ -24,6 +24,7 @@
 namespace App\Payment\Repository;
 
 use App\Payment\Entity\PaymentProfile;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
@@ -63,6 +64,19 @@ class PaymentProfileRepository
         $query = $this->repository->createQueryBuilder('pp')
             ->select('pp.id', 'pp.identifier', 'pp.validationId')
         ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findPaymentProfileByUserInfos(User $user): ?array
+    {
+        $query = $this->repository->createQueryBuilder('pp')
+            ->join('pp.user', 'u')
+            ->where('u.givenName = :givenName and u.familyName = :familyName and u.birthDate = :birthDate')
+            ->setParameter('givenName', $user->getGivenName())
+            ->setParameter('familyName', $user->getFamilyName())
+            ->setParameter('birthDate', $user->getBirthDate())
+            ;
 
         return $query->getQuery()->getResult();
     }

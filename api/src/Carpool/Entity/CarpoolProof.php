@@ -279,6 +279,20 @@ class CarpoolProof
      */
     private $validatedDate;
 
+    /**
+     * @var null|string driver's phone unique id
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $driverPhoneUniqueId;
+
+    /**
+     * @var null|string passenger's phone unique id
+     *
+     *  @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $passengerPhoneUniqueId;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -563,6 +577,30 @@ class CarpoolProof
     public function setValidatedDate(\DateTimeInterface $validatedDate): self
     {
         $this->validatedDate = $validatedDate;
+
+        return $this;
+    }
+
+    public function getDriverPhoneUniqueId(): ?string
+    {
+        return $this->driverPhoneUniqueId;
+    }
+
+    public function setDriverPhoneUniqueId(?string $driverPhoneUniqueId): self
+    {
+        $this->driverPhoneUniqueId = $driverPhoneUniqueId;
+
+        return $this;
+    }
+
+    public function getPassengerPhoneUniqueId(): ?string
+    {
+        return $this->passengerPhoneUniqueId;
+    }
+
+    public function setPassengerPhoneUniqueId(?string $passengerPhoneUniqueId): self
+    {
+        $this->passengerPhoneUniqueId = $passengerPhoneUniqueId;
 
         return $this;
     }

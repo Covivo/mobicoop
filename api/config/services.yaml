@@ -316,6 +316,10 @@ services:
       $carpoolNoticeableDetourDurationPercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DURATION_PERCENT)%"
       $carpoolNoticeableDetourDistancePercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%"
 
+  App\Carpool\Repository\CarpoolProofRepository:
+    arguments:
+      $carpoolProofErroCheckLimit: "%env(int:CARPOOL_PROOF_ERROR_CHECK_LIMIT)%"
+
   # CarpoolStandard
   App\CarpoolStandard\Service\CarpoolStandardProvider:
     arguments:

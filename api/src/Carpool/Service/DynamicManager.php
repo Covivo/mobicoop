@@ -923,7 +923,7 @@ class DynamicManager
             return $this->updateDynamicProof($ask->getCarpoolProofs()[0]->getId(), $dynamicProof);
         }
 
-        $carpoolProof = $this->proofManager->createProof($ask, $dynamicProof->getLongitude(), $dynamicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_DYNAMIC, $dynamicProof->getUser(), $ask->getUserRelated(), $ask->getUser());
+        $carpoolProof = $this->proofManager->createProof($ask, $dynamicProof->getLongitude(), $dynamicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_DYNAMIC, $dynamicProof->getUser(), $ask->getUserRelated(), $ask->getUser(), $dynamicProof->getDriverPhoneUniqueId(), $dynamicProof->getPassengerPhoneUniqueId());
 
         $dynamicProof->setId($carpoolProof->getId());
         $dynamicProof->setStatus(
@@ -957,7 +957,7 @@ class DynamicManager
         }
 
         try {
-            $carpoolProof = $this->proofManager->updateProof($id, $dynamicProofData->getLongitude(), $dynamicProofData->getLatitude(), $dynamicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['dynamicProofDistance']);
+            $carpoolProof = $this->proofManager->updateProof($id, $dynamicProofData->getLongitude(), $dynamicProofData->getLatitude(), $dynamicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['dynamicProofDistance'], $dynamicProofData->getDriverPhoneUniqueId(), $dynamicProofData->getPassengerPhoneUniqueId());
             $dynamicProofData->setId($carpoolProof->getId());
             $dynamicProofData->setStatus(
                 ($carpoolProof->getPickUpPassengerDate() ? '1' : '0').

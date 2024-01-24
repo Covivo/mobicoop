@@ -25,6 +25,7 @@ namespace App\Communication\Service;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
@@ -1176,6 +1177,12 @@ class NotificationManager
                         'senderAlias' => $senderAlias,
                         'senderOperator' => $senderOperator,
                     ];
+
+                    break;
+
+                case CarpoolProof::class:
+                    $titleContext = [];
+                    $bodyContext = ['user' => $recipient, 'notification' => $notification, 'object' => $object];
 
                     break;
 
