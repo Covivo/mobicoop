@@ -220,23 +220,6 @@ abstract class MobConnectManager
         return $this->_apiProvider->getSubscriptionTimestamps($subscriptionId);
     }
 
-    protected function postSubscription(string $subscriptionType): MobConnectSubscriptionResponse
-    {
-        $this->setApiProvider();
-
-        return $this->_apiProvider->postSubscription($subscriptionType, $this->_driver);
-    }
-
-    /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     */
-    protected function patchSubscription($subscription, array $params)
-    {
-        $this->setApiProvider();
-
-        return $this->_apiProvider->patchSubscription($subscription, $params);
-    }
-
     protected function hasSubscriptionCommited(string $subscriptionId): bool
     {
         $this->setApiProvider();
@@ -254,16 +237,6 @@ abstract class MobConnectManager
         $now = new \DateTime('now');
 
         return $now->add(new \DateInterval('P'.$delay.'M'));
-    }
-
-    /**
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     */
-    protected function executeRequestVerifySubscription($subscription)
-    {
-        $this->setApiProvider();
-
-        return $this->_apiProvider->verifySubscription($subscription);
     }
 
     protected function setApiProvider()

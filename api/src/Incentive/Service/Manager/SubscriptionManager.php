@@ -13,8 +13,8 @@ use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
-use App\Incentive\Service\Definition\DefinitionSelector;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\Stage\CreateSubscription;
 use App\Incentive\Service\Stage\ResetSubscription;
 use App\Incentive\Service\Stage\VerifySubscription;
 use App\Incentive\Service\Validation\SubscriptionValidation;
@@ -88,8 +88,6 @@ class SubscriptionManager extends MobConnectManager
 
         $this->_createSubscription(Subscription::TYPE_SHORT);
         $this->_createSubscription(Subscription::TYPE_LONG);
-
-        $this->_em->flush();
     }
 
     /**
@@ -314,10 +312,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_verifySubscription($subscription);
     }
 
-    /**
-     * @return bool|LongDistanceSubscription|ShortDistanceSubscription
-     */
-    protected function _createSubscription(string $subscriptionType)
+    protected function _createSubscription(string $subscriptionType): void
     {
         if (
             Subscription::isTypeAllowed($subscriptionType)
@@ -325,41 +320,9 @@ class SubscriptionManager extends MobConnectManager
             && is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())
             && $this->isDriverAccountReadyForSubscription($subscriptionType)
         ) {
-            $postResponse = $this->postSubscription($subscriptionType);
-
-            if (!$this->hasRequestErrorReturned($postResponse)) {
-                $subscriptionClass = 'App\Incentive\Entity\\'.ucfirst($subscriptionType).'DistanceSubscription';
-
-                $subscription = new $subscriptionClass(
-                    $this->getDriver(),
-                    $postResponse->getContent()->id,
-                    DefinitionSelector::getDefinition($subscriptionType)
-                );
-                $subscription->addLog($postResponse, Log::TYPE_SUBSCRIPTION);
-
-                $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
-
-                $this->_em->persist($subscription);
-
-                return $subscription;
-            }
-
-            $this->_loggerService->log(
-                'During the creating process of a '.$subscriptionType.' incentive, for the user '.$this->getDriver()->getId().', the mobConnect HTTP request has returned an error: '.$postResponse->getContent().'.',
-                'error',
-                true
-            );
-
-            return false;
+            $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_driver, $subscriptionType);
+            $stage->execute();
         }
-
-        $this->_loggerService->log(
-            'The creating process of a '.$subscriptionType.' incentive, for the user '.$this->getDriver()->getId().'has been stopped prematurely.',
-            'debug',
-            true
-        );
-
-        return false;
     }
 
     /**
