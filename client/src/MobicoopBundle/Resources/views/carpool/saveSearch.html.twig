@@ -22,5 +22,8 @@
         :geo-complete-palette="{{geoCompletePalette|json_encode}}"
         {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
         :default-digital-clock="{{ defaultDigitalClock ? 'true' : 'false' }}"
+        :participation-text = "{{ participationText ? "true" : "false" }}"
+        :specific-terms="{{ specificTerms ? "true" : "false" }}"
+        :default-price-km="{{ priceKm }}"
     />
 {% endblock %}

@@ -398,14 +398,10 @@
               :fri-time="outwardFriTime"
               :sat-time="outwardSatTime"
               :sun-time="outwardSunTime"
-              :origin-driver="
-                lResult.resultDriver ? lResult.originDriver : null
-              "
-              :destination-driver="
-                lResult.resultDriver ? lResult.destinationDriver : null
-              "
-              :origin-passenger="lResult.originPassenger"
-              :destination-passenger="lResult.destinationPassenger"
+              :origin-driver="originDriver"
+              :destination-driver="destinationDriver"
+              :origin-passenger="originPassenger"
+              :destination-passenger="destinationPassenger"
               :from-date="fromDate"
               :max-date="maxDate"
               @change="changeOutward"
@@ -430,14 +426,10 @@
               :fri-time="returnFriTime"
               :sat-time="returnSatTime"
               :sun-time="returnSunTime"
-              :origin-driver="
-                lResult.resultDriver ? lResult.destinationDriver : null
-              "
-              :destination-driver="
-                lResult.resultDriver ? lResult.originDriver : null
-              "
-              :origin-passenger="lResult.destinationPassenger"
-              :destination-passenger="lResult.originPassenger"
+              :origin-driver="destinationDriver"
+              :destination-driver="originDriver"
+              :origin-passenger="destinationPassenger"
+              :destination-passenger="originPassenger"
               :from-date="fromDate"
               :max-date="maxDate"
               @change="changeReturn"
@@ -807,6 +799,18 @@ export default {
     };
   },
   computed: {
+    originDriver(){
+      return this.lResult.resultDriver ? this.lResult.originDriver : null
+    },
+    destinationDriver(){
+      return this.lResult.resultDriver ? this.lResult.originDriver : null;
+    },
+    originPassenger(){
+      return this.lResult.originPassenger;
+    },
+    destinationPassenger(){
+      return this.lResult.destinationPassenger;
+    },
     today() {
       return moment().toISOString();
     },

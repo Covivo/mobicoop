@@ -270,6 +270,8 @@ class CarpoolController extends AbstractController
             'hasAsks' => $hasAsks,
             'hasPotentialAds' => $hasPotentialAds,
             'solidaryExclusive' => $ad->isSolidaryExclusive(),
+            'specificTerms' => $this->specificTerms,
+            'participationText' => $this->participationText,
         ]);
     }
 

@@ -315,6 +315,7 @@ services:
       $userReview: "%env(bool:USER_REVIEW)%"
       $carpoolNoticeableDetourDurationPercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DURATION_PERCENT)%"
       $carpoolNoticeableDetourDistancePercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%"
+      $carpoolDisplayFieldsOrder: "%env(json:CARPOOL_DISPLAY_FIELDS_ORDER)%"
 
   App\Carpool\Repository\CarpoolProofRepository:
     arguments:
