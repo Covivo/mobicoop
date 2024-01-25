@@ -3,7 +3,6 @@
 namespace App\Incentive\Service\Manager;
 
 use App\Incentive\Entity\MobConnectAuth;
-use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\LoggerService;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
@@ -19,13 +18,9 @@ class AuthManager extends MobConnectManager
     public function __construct(
         EntityManagerInterface $em,
         InstanceManager $instanceManager,
-        LoggerService $loggerService,
-        HonourCertificateService $honourCertificateService,
-        string $carpoolProofPrefix,
-        array $mobConnectParams,
-        array $ssoServices
+        LoggerService $loggerService
     ) {
-        parent::__construct($em, $instanceManager, $loggerService, $honourCertificateService, $carpoolProofPrefix, $mobConnectParams, $ssoServices);
+        parent::__construct($em, $instanceManager, $loggerService);
     }
 
     private function __createAuth(User $user, SsoUser $ssoUser)

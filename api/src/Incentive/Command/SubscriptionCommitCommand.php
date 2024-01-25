@@ -7,8 +7,6 @@ use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
-use App\Incentive\Service\Manager\JourneyManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,11 +15,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionCommitCommand extends EecCommand
 {
-    public function __construct(EntityManagerInterface $em, JourneyManager $journeyManager)
-    {
-        parent::__construct($em, $journeyManager);
-    }
-
     protected function configure()
     {
         $this
@@ -54,31 +47,29 @@ class SubscriptionCommitCommand extends EecCommand
 
     private function _commitLDSubscription()
     {
-        $this->_currentSubscription = $this->_em->getRepository(LongDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
+        $subscription = $this->_em->getRepository(LongDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
 
-        if (is_null($this->_currentSubscription)) {
+        if (is_null($subscription)) {
             throw new NotFoundHttpException('The subscription was not found');
         }
 
         /**
          * @var Proposal
          */
-        $initialProposal = $this->_em->getRepository(Proposal::class)->find($this->_currentInput->getOption('journey'));
+        $proposal = $this->_em->getRepository(Proposal::class)->find($this->_currentInput->getOption('journey'));
 
-        $this->checkProposal($initialProposal);
+        if (is_null($proposal)) {
+            throw new NotFoundHttpException('The requested Proposal was not found');
+        }
 
-        $this->_currentSubscription->reset();
-
-        $this->_em->flush();
-
-        $this->_journeyManager->declareFirstLongDistanceJourney($initialProposal, $this->_currentInput->getOption('pushOnly'));
+        $this->_subscriptionManager->commitSubscription($subscription, $proposal, $this->_currentInput->getOption('pushOnly'));
     }
 
     private function _commitSDSubscription()
     {
-        $this->_currentSubscription = $this->_em->getRepository(ShortDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
+        $subscription = $this->_em->getRepository(ShortDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
 
-        if (is_null($this->_currentSubscription)) {
+        if (is_null($subscription)) {
             throw new NotFoundHttpException('The subscription was not found');
         }
 
@@ -87,12 +78,10 @@ class SubscriptionCommitCommand extends EecCommand
          */
         $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_currentInput->getOption('journey'));
 
-        $this->checkCarpoolProof($carpoolProof);
+        if (is_null($carpoolProof)) {
+            throw new NotFoundHttpException('The requested CarpoolProof was not found');
+        }
 
-        $this->_currentSubscription->reset();
-
-        $this->_em->flush();
-
-        $this->_journeyManager->declareFirstShortDistanceJourney($carpoolProof, $this->_currentInput->getOption('pushOnly'));
+        $this->_subscriptionManager->commitSubscription($subscription, $carpoolProof, $this->_currentInput->getOption('pushOnly'));
     }
 }

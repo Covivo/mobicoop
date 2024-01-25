@@ -697,11 +697,6 @@ class CarpoolProof
         return !empty($filteredCarpoolItems) ? $filteredCarpoolItems[0] : null;
     }
 
-    public function isEECCompliant(): bool
-    {
-        return self::STATUS_VALIDATED === $this->getStatus() && self::TYPE_HIGH === $this->getType();
-    }
-
     /**
      * Used in the context of CEE, checks and returns if proof is awaiting validation of the RPC.
      */
@@ -714,33 +709,6 @@ class CarpoolProof
             || self::STATUS_PENDING === $status
             || self::STATUS_SENT === $status
             || self::STATUS_UNDER_CHECKING === $status;
-    }
-
-    /**
-     * Used in the context of CEE, checks and returns if the RPC returned an error during the validation of the request.
-     */
-    public function isStatusError(): bool
-    {
-        $status = $this->getStatus();
-
-        return
-            self::STATUS_ERROR === $status
-            || self::STATUS_CANCELED === $status
-            || self::STATUS_ACQUISITION_ERROR === $status
-            || self::STATUS_NORMALIZATION_ERROR === $status
-            || self::STATUS_FRAUD_ERROR === $status
-            || self::STATUS_EXPIRED === $status
-            || self::STATUS_CANCELED_BY_OPERATOR === $status;
-    }
-
-    /**
-     * Used in the context of CEE, checks and returns if the RPC has validated a proof but not with class C.
-     */
-    public function isCarpoolProofDowngraded(): bool
-    {
-        return
-            self::STATUS_VALIDATED === $this->getStatus()
-            && self::TYPE_HIGH != $this->getType();
     }
 
     /**

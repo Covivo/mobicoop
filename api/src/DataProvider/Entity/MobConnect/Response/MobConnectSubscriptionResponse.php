@@ -2,6 +2,8 @@
 
 namespace App\DataProvider\Entity\MobConnect\Response;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class MobConnectSubscriptionResponse extends MobConnectResponse implements \JsonSerializable
 {
     /**
@@ -11,12 +13,12 @@ class MobConnectSubscriptionResponse extends MobConnectResponse implements \Json
      */
     protected $_id;
 
-    public function __construct(array $mobConnectResponse = [], array $data = null)
+    public function __construct(Response $mobConnectResponse, array $data = null)
     {
         parent::__construct($mobConnectResponse, $data);
 
         if (!in_array($this->getCode(), self::ERROR_CODES) && !is_null($this->_content)) {
-            if (isset($this->_content->id)) {
+            if (property_exists($this->_content, 'id') && !is_null($this->_content->id)) {
                 $this->setId($this->_content->id);
             }
 
@@ -29,7 +31,7 @@ class MobConnectSubscriptionResponse extends MobConnectResponse implements \Json
     /**
      * Get the value of _id.
      */
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->_id;
     }

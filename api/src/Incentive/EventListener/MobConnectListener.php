@@ -8,7 +8,6 @@ use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
 use App\Incentive\Service\Manager\AuthManager;
-use App\Incentive\Service\Manager\JourneyManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
@@ -42,20 +41,14 @@ class MobConnectListener implements EventSubscriberInterface
     private $_authManager;
 
     /**
-     * @var JourneyManager
-     */
-    private $_journeyManager;
-
-    /**
      * @var SubscriptionManager
      */
     private $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, AuthManager $authManager, JourneyManager $journeyManager, SubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, SubscriptionManager $subscriptionManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
         $this->_authManager = $authManager;
-        $this->_journeyManager = $journeyManager;
         $this->_subscriptionManager = $subscriptionManager;
     }
 
@@ -74,12 +67,32 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onFirstLongDistanceJourneyPublished(FirstLongDistanceJourneyPublishedEvent $event)
     {
-        $this->_journeyManager->declareFirstLongDistanceJourney($event->getProposal());
+        $proposal = $event->getProposal();
+
+        $subscription = !is_null($proposal->getUser()) && !is_null($proposal->getUser()->getLongDistanceSubscription())
+            ? $proposal->getUser()->getLongDistanceSubscription()
+            : null;
+
+        if (is_null($subscription)) {
+            return null;
+        }
+
+        $this->_subscriptionManager->commitSubscription($subscription, $proposal);
     }
 
     public function onFirstShortDistanceJourneyPublished(FirstShortDistanceJourneyPublishedEvent $event)
     {
-        $this->_journeyManager->declareFirstShortDistanceJourney($event->getCarpoolProof());
+        $carpoolProof = $event->getCarpoolProof();
+
+        $subscription = !is_null($carpoolProof->getDriver()) && !is_null($carpoolProof->getDriver()->getShortDistanceSubscription())
+            ? $carpoolProof->getDriver()->getShortDistanceSubscription()
+            : null;
+
+        if (is_null($subscription)) {
+            return null;
+        }
+
+        $this->_subscriptionManager->commitSubscription($subscription, $carpoolProof);
     }
 
     /**
@@ -105,7 +118,7 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onElectronicPaymentValidated(ElectronicPaymentValidatedEvent $event): void
     {
-        $this->_journeyManager->receivingElectronicPayment($event->getCarpoolPayment());
+        $this->_subscriptionManager->validateSubscription($event->getCarpoolPayment());
     }
 
     /**
@@ -113,12 +126,12 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onProofValidated(CarpoolProofValidatedEvent $event): void
     {
-        $this->_journeyManager->validationOfProof($event->getCarpoolProof());
+        $this->_subscriptionManager->validateSubscription($event->getCarpoolProof());
     }
 
     public function onProofInvalidated(CarpoolProofInvalidatedEvent $event): void
     {
-        $this->_journeyManager->invalidationOfProof($event->getCarpoolProof());
+        $this->_subscriptionManager->invalidateProof($event->getCarpoolProof());
     }
 
     public function onUserHomeAddressUpdated(UserHomeAddressUpdateEvent $event)

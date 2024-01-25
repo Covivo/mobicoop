@@ -7,7 +7,6 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\Incentive\Controller\Subscription\LdSubscriptionCommit;
 use App\Incentive\Controller\Subscription\LdSubscriptionGet;
 use App\Incentive\Controller\Subscription\LdSubscriptionUpdate;
@@ -17,6 +16,7 @@ use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Service\Definition\LdImproved;
 use App\Incentive\Service\Definition\LdStandard;
 use App\Incentive\Service\Manager\SubscriptionManager;
+use App\Incentive\Validator\CarpoolPaymentValidator;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -372,14 +372,14 @@ class LongDistanceSubscription extends Subscription
 
     public function __construct(
         User $user,
-        MobConnectSubscriptionResponse $mobConnectSubscriptionResponse,
+        string $subscriptionId,
         SubscriptionDefinitionInterface $subscriptionDefinition
     ) {
         $this->longDistanceJourneys = new ArrayCollection();
         $this->logs = new ArrayCollection();
 
         $this->setUser($user);
-        $this->setSubscriptionId($mobConnectSubscriptionResponse->getId());
+        $this->setSubscriptionId($subscriptionId);
 
         $this->setGivenName($user->getGivenName());
         $this->setFamilyName($user->getFamilyName());
@@ -456,6 +456,10 @@ class LongDistanceSubscription extends Subscription
     public function removeJourney(?LongDistanceJourney $journey): self
     {
         if (!is_null($journey)) {
+            $journey->setInitialProposal(null);
+            $journey->setCarpoolItem(null);
+            $journey->setCarpoolPayment(null);
+
             $this->longDistanceJourneys->removeElement($journey);
         }
 
@@ -767,9 +771,9 @@ class LongDistanceSubscription extends Subscription
     /**
      * Set the value of verificationDate.
      */
-    public function setVerificationDate(): self
+    public function setVerificationDate(?\DateTimeInterface $verificationDate = null): self
     {
-        $this->verificationDate = new \DateTime('now');
+        $this->verificationDate = $verificationDate;
 
         return $this;
     }
@@ -950,7 +954,7 @@ class LongDistanceSubscription extends Subscription
             && !$this->getJourneys()->isEmpty()
             && !is_null($this->getCommitmentProofJourney())
             && !is_null($this->getCommitmentProofJourney()->getCarpoolPayment())
-            && $this->getCommitmentProofJourney()->getCarpoolPayment()->isEecCompliant()
+            && CarpoolPaymentValidator::isEecCompliant($this->getCommitmentProofJourney()->getCarpoolPayment())
             && !is_null($this->getIncentiveProofTimestampToken())
             && !is_null($this->getIncentiveProofTimestampSigningTime())
             && !is_null($this->getCommitmentProofTimestampToken())
@@ -961,9 +965,7 @@ class LongDistanceSubscription extends Subscription
 
     public function reset(): self
     {
-        $commitmentProofJourney = $this->getCommitmentProofJourney();
-
-        if (!is_null($commitmentProofJourney)) {
+        if (!is_null($this->getCommitmentProofJourney())) {
             $this->setCommitmentProofJourney(null);
         }
 

@@ -3,11 +3,10 @@
 namespace App\Incentive\Entity;
 
 use App\Incentive\Entity\Subscription\Progression;
-use App\Incentive\Interfaces\SubscriptionInterface;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-abstract class Subscription implements SubscriptionInterface
+abstract class Subscription
 {
     public const TYPE_LONG = 'long';
     public const TYPE_SHORT = 'short';
@@ -395,7 +394,7 @@ abstract class Subscription implements SubscriptionInterface
      */
     public function setMoBSubscription($moBSubscription): self
     {
-        $this->moBSubscription = $moBSubscription;
+        $this->moBSubscription = empty($moBSubscription) ? null : $moBSubscription;
 
         return $this;
     }
@@ -448,6 +447,19 @@ abstract class Subscription implements SubscriptionInterface
         $this->validityPeriodDuration = $validityPeriodDuration;
 
         return $this;
+    }
+
+    /**
+     * Returns whether the subscription has reached the maximum journeys number it can be associated with.
+     */
+    public function isComplete(): bool
+    {
+        return $this->getMaximumJourneysNumber() <= count($this->getJourneys());
+    }
+
+    public function isCommited(): bool
+    {
+        return !is_null($this->getCommitmentProofJourney());
     }
 
     /**

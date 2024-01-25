@@ -26,7 +26,7 @@ abstract class Log
     public const TYPE_ATTESTATION = 3;              // Ask update - Sworn statement
     public const TYPE_VERIFY = 4;                   // Ask verification
     public const TYPE_JOURNEY_RECOVERING = 5;       // Manual journeys recovering
-    public const TYPE_TOKEN_UPDATE = 8;                 // Manuel token update
+    public const TYPE_TOKEN_UPDATE = 8;             // Manuel token update
 
     public const TYPE_TIMESTAMP_SUBSCRIPTION = 5;   // Timestamp for subscription - Step 5 of the mobConnect process
     public const TYPE_TIMESTAMP_COMMITMENT = 6;     // Timestamp for commitment -   Step 9 of the mobConnect process
@@ -42,12 +42,6 @@ abstract class Log
         self::TYPE_TIMESTAMP_SUBSCRIPTION,
         self::TYPE_TIMESTAMP_COMMITMENT,
         self::TYPE_TIMESTAMP_ATTESTATION,
-    ];
-
-    public const VERIFICATION_VALIDATION_ERROR = 403;
-
-    public const ERROR_MESSAGES = [
-        self::VERIFICATION_VALIDATION_ERROR => 'The subscription did not pass the test before the verify operation',
     ];
 
     /**

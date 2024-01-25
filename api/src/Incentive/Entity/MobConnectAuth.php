@@ -194,6 +194,11 @@ class MobConnectAuth
         return $this;
     }
 
+    public function hasAccessTokenExpired(): bool
+    {
+        return new \DateTime() >= $this->getAccessTokenExpiresDate();
+    }
+
     /**
      * Get the value of authorizationCode.
      */
