@@ -2,7 +2,7 @@
   <v-timeline
     dense
   >
-    <v-timeline-item 
+    <v-timeline-item
       v-for="waypoint in waypoints"
       :key="waypoint.id"
       :color="waypoint.person == 'requester' ? 'primary' : 'secondary'"
@@ -10,7 +10,7 @@
     >
       <template v-slot:icon>
         <v-tooltip
-          color="info" 
+          color="info"
           right
         >
           <template v-slot:activator="{ on }">
@@ -30,25 +30,25 @@
           </template>
           <span> {{ getTooltipMessage (waypoint.type,waypoint.role) }}</span>
         </v-tooltip>
-      </template>    
+      </template>
       <v-row dense>
-        <v-col 
+        <v-col
           v-if="time && waypoint.time"
           cols="3"
           class="text-left"
         >
           <span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ formatTime(waypoint.time) }}</span>
         </v-col>
-        <v-col 
+        <v-col
           :cols="time ? '9' : '12'"
           class="text-left"
         >
           <v-icon v-if="waypoint.avatar">
-            {{ getIcon(waypoint.type,waypoint.role) }} 
+            {{ getIcon(waypoint.type,waypoint.role) }}
           </v-icon>
           <v-icon v-if="noticeableDetour && waypoint.role=='passenger'">
             mdi-clock
-          </v-icon><span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ displayLabel(waypoint) }}
+          </v-icon><span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span><br v-if="lineBreak">{{ displayLabel(waypoint) }}
         </v-col>
       </v-row>
     </v-timeline-item>
@@ -91,7 +91,8 @@ export default {
   data() {
     return {
       locale: localStorage.getItem("X-LOCALE"),
-      message:null
+      message:null,
+      lineBreak: false
     };
   },
   //icon:
@@ -112,7 +113,7 @@ export default {
     },
     getTooltipMessage (type,role){
       if (role == 'driver') {
-        if (type == 'origin') return this.$t('driverOrigin'); 
+        if (type == 'origin') return this.$t('driverOrigin');
         if (type == 'destination') return this.$t('driverDestination');
         if (type == 'step') return this.$t('step');
       } else {
@@ -120,22 +121,27 @@ export default {
         if (type == 'destination') return this.$t('dropOff');
         if (type == 'step') return this.$t('step');
       }
-    }, 
+    },
     formatTime(time) {
-      if(time) return moment.utc(time).format(this.$t("hourMinute")); 
+      if(time) return moment.utc(time).format(this.$t("hourMinute"));
     },
     displayLabel(waypoint){
 
-      if(waypoint.address.name){
-        return ' - ' + waypoint.address.name;
+      if(waypoint.address.displayLabel){
+        this.lineBreak = true;
+        return waypoint.address.displayLabel.join(" ");
       }
-      else if(waypoint.address.venue){
-        return ' - ' + waypoint.address.venue;
+      else{
+        if(waypoint.address.name){
+          return ' - ' + waypoint.address.name;
+        }
+        else if(waypoint.address.venue){
+          return ' - ' + waypoint.address.venue;
+        }
+        else if(waypoint.address.streetAddress){
+          return ' - ' + waypoint.address.streetAddress;
+        }
       }
-      else if(waypoint.address.streetAddress){
-        return ' - ' + waypoint.address.streetAddress;
-      }
-
       return "";
     }
 

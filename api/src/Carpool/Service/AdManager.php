@@ -101,6 +101,8 @@ class AdManager
 
     private $currentMargin;
 
+    private $reversePointProvider;
+
     /**
      * @var JourneyValidation
      */

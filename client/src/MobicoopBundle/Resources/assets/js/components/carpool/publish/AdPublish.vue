@@ -635,9 +635,10 @@
                       required
                     >
                       <template v-slot:label>
-                        <div>
-                          {{ $t("checkboxes.drivingLicence") }}
-                        </div>
+                        <div
+                          @click.stop
+                          v-html="$t('checkboxes.drivingLicence')"
+                        />
                       </template>
                     </v-checkbox>
                     <v-checkbox
@@ -646,9 +647,10 @@
                       required
                     >
                       <template v-slot:label>
-                        <div>
-                          {{ $t("checkboxes.employer") }}
-                        </div>
+                        <div
+                          @click.stop
+                          v-html="$t('checkboxes.employer')"
+                        />
                       </template>
                     </v-checkbox>
                     <v-checkbox
@@ -657,9 +659,10 @@
                       required
                     >
                       <template v-slot:label>
-                        <div>
-                          {{ $t("checkboxes.inssurance") }}
-                        </div>
+                        <div
+                          @click.stop
+                          v-html="$t('checkboxes.inssurance')"
+                        />
                       </template>
                     </v-checkbox>
                   </v-col>
