@@ -7,27 +7,27 @@ use App\Incentive\Interfaces\EecProviderInterface;
 abstract class EecProvider implements EecProviderInterface
 {
     /**
-     * @var string
+     * @var null|string
      */
     private $name;
 
     /**
-     * @var string
+     * @var null|string
      */
     private $apiUri;
 
     /**
-     * @var string
+     * @var null|string
      */
     private $authenticationUri;
 
     /**
-     * @var bool
+     * @var null|bool
      */
-    private $autoCreateAccount;
+    private $autoCreateAccount = false;
 
     /**
-     * @var string
+     * @var null|string
      */
     private $clientId;
 
@@ -47,16 +47,16 @@ abstract class EecProvider implements EecProviderInterface
     private $logoutRedirectUri;
 
     /**
-     * @var string
+     * @var null|string
      */
     private $appId;
 
     /**
-     * @var string
+     * @var null|string
      */
     private $appSecret;
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -66,22 +66,22 @@ abstract class EecProvider implements EecProviderInterface
         return $this->apiUri;
     }
 
-    public function getAuthenticationUri(): string
+    public function getAuthenticationUri(): ?string
     {
         return $this->authenticationUri;
     }
 
-    public function getAutoCreateAccount(): bool
+    public function getAutoCreateAccount(): ?bool
     {
         return $this->autoCreateAccount;
     }
 
-    public function getClientId(): string
+    public function getClientId(): ?string
     {
         return $this->clientId;
     }
 
-    public function getClientSecret(): string
+    public function getClientSecret(): ?string
     {
         return !is_null($this->clientSecret) ? $this->clientSecret : '';
     }
@@ -91,17 +91,17 @@ abstract class EecProvider implements EecProviderInterface
         return $this->codeVerifier;
     }
 
-    public function getAppId(): string
+    public function getAppId(): ?string
     {
         return $this->appId;
     }
 
-    public function getAppSecret(): string
+    public function getAppSecret(): ?string
     {
         return $this->appSecret;
     }
 
-    public function getLogoutRedirectUri(): string
+    public function getLogoutRedirectUri(): ?string
     {
         return !is_null($this->logoutRedirectUri) ? $this->logoutRedirectUri : '';
     }
@@ -125,7 +125,7 @@ abstract class EecProvider implements EecProviderInterface
     /**
      * Set the value of name.
      */
-    protected function _setName(string $name): self
+    protected function _setName(?string $name): self
     {
         $this->name = $name;
 
@@ -135,7 +135,7 @@ abstract class EecProvider implements EecProviderInterface
     /**
      * Set the value of apiUri.
      */
-    protected function _setApiUri(string $apiUri): self
+    protected function _setApiUri(?string $apiUri): self
     {
         $this->apiUri = $apiUri;
 
@@ -145,14 +145,14 @@ abstract class EecProvider implements EecProviderInterface
     /**
      * Set the value of authenticationUri.
      */
-    protected function _setAuthenticationUri(string $authenticationUri): self
+    protected function _setAuthenticationUri(?string $authenticationUri): self
     {
         $this->authenticationUri = $authenticationUri;
 
         return $this;
     }
 
-    protected function _setAutoCreateAccount(bool $autoCreateAccount): self
+    protected function _setAutoCreateAccount(?bool $autoCreateAccount): self
     {
         $this->autoCreateAccount = $autoCreateAccount;
 
@@ -162,7 +162,7 @@ abstract class EecProvider implements EecProviderInterface
     /**
      * Set the value of clientId.
      */
-    protected function _setClientId(string $clientId): self
+    protected function _setClientId(?string $clientId): self
     {
         $this->clientId = $clientId;
 
@@ -194,7 +194,7 @@ abstract class EecProvider implements EecProviderInterface
     /**
      * Set the value of appId.
      */
-    protected function _setAppId(string $appId): self
+    protected function _setAppId(?string $appId): self
     {
         $this->appId = $appId;
 
@@ -204,7 +204,7 @@ abstract class EecProvider implements EecProviderInterface
     /**
      * Set the value of appSecret.
      */
-    protected function _setAppSecret(string $appSecret): self
+    protected function _setAppSecret(?string $appSecret): self
     {
         $this->appSecret = $appSecret;
 
