@@ -68,7 +68,7 @@ class EecInstance
      *
      * @Groups("readEecInstance")
      */
-    private $ldAvailable;
+    private $ldAvailable = false;
 
     /**
      * @var null|\DateTimeInterface
@@ -82,7 +82,7 @@ class EecInstance
      *
      * @Groups("readEecInstance")
      */
-    private $sdAvailable;
+    private $sdAvailable = false;
 
     /**
      * @var null|\DateTimeInterface
