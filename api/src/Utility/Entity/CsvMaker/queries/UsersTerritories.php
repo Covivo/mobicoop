@@ -1,4 +1,24 @@
 <?php
+/**
+ * Copyright (c) 2024, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ */
 
 namespace App\Utility\Entity\CsvMaker\queries;
 
@@ -16,16 +36,18 @@ class UsersTerritories implements MultipleQueriesInterface
             user_id int NOT NULL,
             territory_id int NOT NULL,
             territory_name varchar(100) NOT NULL,
+            admin_level int(11) NOT NULL,
             PRIMARY KEY(user_id, territory_id)
         );';
 
         $this->_multipleQueries[] = '
         INSERT
-            IGNORE INTO user_territory (user_id, territory_id, territory_name)
+            IGNORE INTO user_territory (user_id, territory_id, territory_name, admin_level)
         SELECT
             user.id,
             territory_id,
-            homeTerritory.name
+            homeTerritory.name,
+            homeTerritory.admin_level
         FROM
             user
             inner join address as homeAddress on homeAddress.user_id = user.id
@@ -45,11 +67,12 @@ class UsersTerritories implements MultipleQueriesInterface
 
         $this->_multipleQueries[] = '
         INSERT
-            IGNORE INTO user_territory (user_id, territory_id, territory_name)
+            IGNORE INTO user_territory (user_id, territory_id, territory_name, admin_level)
         SELECT
             user.id,
             territory_id,
-            destination_territory.name
+            destination_territory.name,
+            destination_territory.admin_level
         FROM
             user
             inner join proposal ON user.id = proposal.user_id
@@ -74,11 +97,12 @@ class UsersTerritories implements MultipleQueriesInterface
 
         $this->_multipleQueries[] = '
         INSERT
-            IGNORE INTO user_territory (user_id, territory_id, territory_name)
+            IGNORE INTO user_territory (user_id, territory_id, territory_name, admin_level)
         SELECT
             user.id,
             territory_id,
-            ask_destination_territory.name
+            ask_destination_territory.name,
+            ask_destination_territory.admin_level
         FROM
             user
             inner join ask on ask.user_id = user.id

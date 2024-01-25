@@ -35,16 +35,6 @@ class JourneyManager extends MobConnectManager
     private $_carpoolItemRepository;
 
     /**
-     * @var LongDistanceJourneyRepository
-     */
-    private $_longDistanceJourneyRepository;
-
-    /**
-     * @var ShortDistanceJourneyRepository
-     */
-    private $_shortDistanceJourneyRepository;
-
-    /**
      * @var JourneyValidation
      */
     private $_journeyValidation;
@@ -149,8 +139,6 @@ class JourneyManager extends MobConnectManager
             return null;
         }
 
-        $this->_checkPushOnlyMode();
-
         $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
 
         $this->_currentSubscription->addLog($patchResponse, Log::TYPE_COMMITMENT);
@@ -185,8 +173,6 @@ class JourneyManager extends MobConnectManager
         if (is_null($this->_currentSubscription)) {
             return null;
         }
-
-        $this->_checkPushOnlyMode();
 
         $patchResponse = $this->patchSubscription($this->_currentSubscription->getSubscriptionId(), $params);
 
@@ -364,81 +350,16 @@ class JourneyManager extends MobConnectManager
      */
     public function invalidationOfProof(CarpoolProof $carpoolProof): void
     {
-        if (is_null($carpoolProof->getCarpoolItem())) {
-            return;
+        $journey = $this->_getEecJourneyFromCarpoolProof($carpoolProof);
+
+        if (!is_null($journey)) {
+            $this->setDriver($carpoolProof->getDriver());
+
+            $this->_currentSubscription = $journey->getSubscription();
+
+            $this->_invalidateJourney($journey);
+            $this->_em->refresh($carpoolProof);
         }
-        // Rechercher avant traitement si la preuve est associée à une souscription CEE
-        $journey = $this->_getEECJourneyFromCarpoolProof($carpoolProof);
-
-        if (is_null($journey)) {
-            // Use case, the CarpoolProof does not correspond to any EEC journey.
-            return;
-        }
-
-        $this->setDriver($carpoolProof->getDriver());
-
-        $distanceTraveled = $this->getDistanceTraveled($carpoolProof);
-
-        switch (true) {
-            case is_null($distanceTraveled):
-                // Use case when the distance cannot be obtained
-                $this->_loggerService->log('Step 17 - The distance traveled cannot be determined for proof '.$carpoolProof->getId().'.');
-
-                return;
-
-            case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS <= $distanceTraveled && $journey instanceof LongDistanceJourney:
-                // Use case for long distance journey
-                $this->_currentSubscription = $this->getDriver()->getLongDistanceSubscription();
-
-                break;
-
-            case CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS > $distanceTraveled && $journey instanceof ShortDistanceJourney:
-                // Use case for short distance journey
-                $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
-
-                break;
-        }
-
-        $this->_invalidateJourney($journey);
-        $this->_em->refresh($carpoolProof);
-    }
-
-    public function getAdditionalJourneys(User $user): User
-    {
-        $this->setDriver($user);
-
-        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
-            $this->getDriver()->getLongDistanceSubscription()->setAdditionalJourneys(
-                $this->_carpoolItemRepository->findUserEECEligibleItem($this->getDriver())
-            );
-        }
-
-        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
-            $this->getDriver()->getShortDistanceSubscription()->setAdditionalJourneys(
-                $this->_carpoolProofRepository->findUserCEEEligibleProof($this->getDriver())
-            );
-        }
-
-        return $this->getDriver();
-    }
-
-    /**
-     * Returns the CEE journey if the proof of carpooling matches it.
-     *
-     * @return null|LongDistanceJourney|ShortDistanceJourney
-     */
-    private function _getEECJourneyFromCarpoolProof(CarpoolProof $carpoolProof)
-    {
-        $journey = $this->_longDistanceJourneyRepository->findOneByCarpoolItemOrProposal(
-            $carpoolProof->getCarpoolItem(),
-            $this->getDriverPassengerProposalForCarpoolItem($carpoolProof->getCarpoolItem(), self::DRIVER)
-        );
-
-        if (is_null($journey)) {
-            $journey = $this->_shortDistanceJourneyRepository->findOneByCarpoolProof($carpoolProof);
-        }
-
-        return $journey;
     }
 
     /**

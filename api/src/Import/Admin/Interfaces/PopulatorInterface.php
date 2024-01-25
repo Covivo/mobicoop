@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 interface PopulatorInterface
 {
-    public function populate(File $file): array;
+    public function populate(File $file, bool $columnHeadersFirstLine = false): array;
 
     public function getEntity(): string;
 

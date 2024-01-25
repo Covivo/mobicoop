@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
@@ -855,6 +856,17 @@ class ShortDistanceSubscription extends Subscription
         return $this->commitmentProofJourney;
     }
 
+    public function getCommitmentProofJourneyFromCarpoolProof(CarpoolProof $carpoolProof): ?ShortDistanceJourney
+    {
+        $filteredJourneys = array_values(array_filter($this->getJourneys()->toArray(), function (ShortDistanceJourney $journey) use ($carpoolProof) {
+            return
+                !is_null($journey->getCarpoolProof())
+                && $journey->getCarpoolProof()->getId() === $carpoolProof->getId();
+        }));
+
+        return empty($filteredJourneys) ? null : $filteredJourneys[0];
+    }
+
     public function isCommitmentJourney(ShortDistanceJourney $journey): bool
     {
         return
@@ -981,5 +993,10 @@ class ShortDistanceSubscription extends Subscription
             SdImproved::class,
             SdStandard::class,
         ];
+    }
+
+    public function getType(): string
+    {
+        return self::SUBSCRIPTION_TYPE;
     }
 }

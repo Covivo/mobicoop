@@ -38,6 +38,7 @@ use Symfony\Component\Security\Core\Security;
  */
 class GratuityCampaignManager
 {
+    private const GRATUITY_DISABLED = 'Gratuity disabled on this instance';
     private $_entityManager;
     private $_territoryRepository;
     private $_gratuityCampaignRepository;
@@ -68,7 +69,7 @@ class GratuityCampaignManager
     public function createGratuityCampaign(GratuityCampaign $gratuityCampaign): ?GratuityCampaign
     {
         if (!$this->_isGratuityActive()) {
-            return null;
+            throw new \LogicException(self::GRATUITY_DISABLED);
         }
 
         $entity = $this->_buildEntityGratuityCampaign($gratuityCampaign);
@@ -84,7 +85,7 @@ class GratuityCampaignManager
     public function getGratuityCampaign(int $gratuityCampaignId): ?GratuityCampaign
     {
         if (!$this->_isGratuityActive()) {
-            return null;
+            throw new \LogicException(self::GRATUITY_DISABLED);
         }
 
         if ($entity = $this->_gratuityCampaignRepository->find($gratuityCampaignId)) {
@@ -100,7 +101,7 @@ class GratuityCampaignManager
     public function getGratuityCampaigns(): ?array
     {
         if (!$this->_isGratuityActive()) {
-            return null;
+            throw new \LogicException(self::GRATUITY_DISABLED);
         }
 
         $campaigns = [];

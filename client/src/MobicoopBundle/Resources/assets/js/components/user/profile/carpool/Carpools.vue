@@ -14,9 +14,8 @@
           <v-col
             cols="8"
             class="font-italic text-caption"
-          >
-            {{ $t('clickAndGetFile') }}
-          </v-col>
+            v-html="$t('clickAndGetFile')"
+          />
           <v-tooltip
             right
           >

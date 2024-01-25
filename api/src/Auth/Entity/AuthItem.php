@@ -110,6 +110,7 @@ class AuthItem
     public const HITCHHICKING_WATCHER = 318;
     public const HITCHHICKING_MANAGER = 319;
     public const HITCHHICKING_ADMINISTRATOR = 320;
+    public const ROLE_EXPORTER = 321;
 
     /**
      * @var int the id of this item

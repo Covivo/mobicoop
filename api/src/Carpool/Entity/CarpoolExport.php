@@ -230,6 +230,7 @@ class CarpoolExport
                 case CarpoolProof::STATUS_ERROR:
                 case CarpoolProof::STATUS_ACQUISITION_ERROR:
                 case CarpoolProof::STATUS_FRAUD_ERROR:
+                case CarpoolProof::STATUS_EXPIRED:
                     $certification = self::CERTIFICATION_ERROR;
 
                     break;

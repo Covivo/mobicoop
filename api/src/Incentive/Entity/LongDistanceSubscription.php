@@ -4,6 +4,7 @@ namespace App\Incentive\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
@@ -865,6 +866,17 @@ class LongDistanceSubscription extends Subscription
         return $this->commitmentProofJourney;
     }
 
+    public function getCommitmentProofJourneyFromInitialProposal(Proposal $initialProposal): ?LongDistanceJourney
+    {
+        $filteredJourneys = array_values(array_filter($this->getJourneys()->toArray(), function (LongDistanceJourney $journey) use ($initialProposal) {
+            return
+                !is_null($journey->getInitialProposal())
+                && $journey->getInitialProposal()->getId() === $initialProposal->getId();
+        }));
+
+        return empty($filteredJourneys) ? null : $filteredJourneys[0];
+    }
+
     public function isCommitmentJourney(LongDistanceJourney $journey): bool
     {
         return
@@ -1064,5 +1076,10 @@ class LongDistanceSubscription extends Subscription
             LdImproved::class,
             LdStandard::class,
         ];
+    }
+
+    public function getType(): string
+    {
+        return self::SUBSCRIPTION_TYPE;
     }
 }

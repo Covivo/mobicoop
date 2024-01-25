@@ -1319,6 +1319,14 @@ solidary_carpool:
     nl: /solidary-carpool
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpool
 
+# display solidary carpool page
+solidary_carpool_alt:
+  path:
+    fr: /covoiturage-solidaire-alt
+    en: /solidary-carpool-alt
+    nl: /solidary-carpool-alt
+  controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpoolAlt
+
 # display become a partner page
 become_partner:
   path:
@@ -1632,13 +1640,21 @@ defi:
     nl: /defi
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDefi
 
-  # display Rezo Pouce
+# display Rezo Pouce
 RezoPouce:
   path:
     fr: /Rezo-Pouce
     en: /Rezo-Pouce
     nl: /Rezo-Pouce
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showRezoPouce
+
+# display RPC
+RPC:
+  path:
+    fr: /RPC
+    en: /RPC
+    nl: /RPC
+  controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showRPC
 
 # Get the last external articles (AJAX)
 editorial:

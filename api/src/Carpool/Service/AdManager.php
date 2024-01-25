@@ -101,6 +101,8 @@ class AdManager
 
     private $currentMargin;
 
+    private $reversePointProvider;
+
     /**
      * @var JourneyValidation
      */
@@ -1344,7 +1346,7 @@ class AdManager
             }
             $ad = $this->createAd($ad, true, $withSolidaries, true, false, Ad::MATCHING_ALGORITHM_V3);
             $this->proposalManager->deleteProposal($proposal);
-            // minor update
+        // minor update
         } elseif (
             $oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()
