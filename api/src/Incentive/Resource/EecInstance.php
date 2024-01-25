@@ -277,7 +277,7 @@ class EecInstance
         return $this;
     }
 
-    public function setKeys(string $ldKey, string $sdKey): self
+    public function setKeys(?string $ldKey, ?string $sdKey): self
     {
         $this->setLdKey($ldKey);
         $this->setSdKey($sdKey);
@@ -331,7 +331,7 @@ class EecInstance
     /**
      * Get the value of ldMinimalDistance.
      */
-    public function getLdMinimalDistance(): int
+    public function getLdMinimalDistance(): ?int
     {
         return $this->ldMinimalDistance;
     }
@@ -339,7 +339,7 @@ class EecInstance
     /**
      * Set the value of ldMinimalDistance.
      */
-    private function setLdMinimalDistance(int $ldMinimalDistance): self
+    private function setLdMinimalDistance(?int $ldMinimalDistance): self
     {
         $this->ldMinimalDistance = $ldMinimalDistance;
 
@@ -349,7 +349,7 @@ class EecInstance
     /**
      * Set the value of provider.
      */
-    private function setProvider(array $provider): self
+    private function setProvider(?array $provider): self
     {
         $this->provider = new MobConnectProvider($provider);
 
@@ -359,7 +359,7 @@ class EecInstance
     /**
      * Set the value of previousPeriodWithoutTravel.
      */
-    private function setPreviousPeriodWithoutTravel(int $period): self
+    private function setPreviousPeriodWithoutTravel(?int $period): self
     {
         $this->previousPeriodWithoutTravel = $period;
 
