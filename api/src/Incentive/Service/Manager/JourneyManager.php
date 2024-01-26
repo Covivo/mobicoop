@@ -131,9 +131,9 @@ class JourneyManager extends MobConnectManager
 
         $this->setDriver($this->_currentProposal->getUser());
 
-        $params = $this->getCommitmentRequestParams();
-
         $this->_currentSubscription = $this->getDriver()->getLongDistanceSubscription();
+
+        $params = $this->getCommitmentRequestParams();
 
         if (is_null($this->_currentSubscription)) {
             return null;
@@ -166,9 +166,9 @@ class JourneyManager extends MobConnectManager
 
         $this->setDriver($this->_currentCarpoolProof->getDriver());
 
-        $params = $this->getCommitmentRequestParams();
-
         $this->_currentSubscription = $this->getDriver()->getShortDistanceSubscription();
+
+        $params = $this->getCommitmentRequestParams();
 
         if (is_null($this->_currentSubscription)) {
             return null;
