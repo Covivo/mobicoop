@@ -34,13 +34,11 @@ use App\Geography\Entity\RezoPouceTerritoryStatus;
 use App\Geography\Repository\TerritoryRepository;
 use App\Geography\Ressource\Point;
 use App\Geography\Service\PointSearcher;
-use App\Service\FormatDataManager;
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Repository\UserRepository;
-use App\User\Service\IdentityProofManager;
 use App\User\Service\UserManager as ServiceUserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -62,8 +60,6 @@ class UserManager
     private $security;
     private $userManager;
     private $userRepository;
-    private $formatDataManager;
-    private $identityProofManager;
     private $pointSearcher;
     private $chat;
     private $music;
@@ -90,8 +86,6 @@ class UserManager
         Security $security,
         ServiceUserManager $userManager,
         UserRepository $userRepository,
-        FormatDataManager $formatDataManager,
-        IdentityProofManager $identityProofManager,
         PointSearcher $pointSearcher,
         $chat,
         $smoke,
@@ -109,8 +103,6 @@ class UserManager
         $this->security = $security;
         $this->userManager = $userManager;
         $this->userRepository = $userRepository;
-        $this->formatDataManager = $formatDataManager;
-        $this->identityProofManager = $identityProofManager;
         $this->pointSearcher = $pointSearcher;
         $this->chat = $chat;
         $this->music = $music;
@@ -177,14 +169,7 @@ class UserManager
             $user->addOwnership(['communities' => $communities]);
         }
 
-        $user = $this->setUserPostalAddress($user);
-
-        foreach ($user->getIdentityProofs() as $proof) {
-            $proof->setFileSize($this->formatDataManager->convertFilesize($proof->getSize()));
-            $proof->setFileName($this->identityProofManager->getFileUrl($proof));
-        }
-
-        return $user;
+        return $this->setUserPostalAddress($user);
     }
 
     /**

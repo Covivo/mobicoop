@@ -1528,10 +1528,10 @@ class UserManager
      */
     public function updateActivity(User $user)
     {
-        $user->setLastActivityDate(new \DateTime());
+        // $user->setLastActivityDate(new \DateTime());
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        // $this->entityManager->persist($user);
+        // $this->entityManager->flush();
     }
 
     public function createAuthenticationDelegation(User $userByDelegation, User $user): void
