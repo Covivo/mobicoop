@@ -6,9 +6,9 @@ use App\Carpool\Entity\Ask;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 
-class EecCarpoolItem
+class CarpoolItemMock
 {
-    public static function getCarpoolItem(CarpoolPayment $carpoolPayment, Ask $ask): CarpoolItem
+    public static function getCarpoolItemEec(CarpoolPayment $carpoolPayment, Ask $ask): CarpoolItem
     {
         $carpoolItem = new CarpoolItem();
         $carpoolPayment->addCarpoolItem($carpoolItem);

@@ -5,9 +5,9 @@ namespace App\Incentive\Service\Validator;
 use App\Carpool\Entity\Ask;
 use App\Incentive\Validator\CarpoolPaymentValidator;
 use App\Payment\Entity\CarpoolPayment;
-use App\Tests\Mocks\Carpool\EecCarpoolProof;
-use App\Tests\Mocks\Payment\EecCarpoolItem;
-use App\Tests\Mocks\Payment\EecCarpoolPayment;
+use App\Tests\Mocks\Carpool\CarpoolProofMock;
+use App\Tests\Mocks\Payment\CarpoolItemMock;
+use App\Tests\Mocks\Payment\CarpoolPaymentMock;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,12 +31,12 @@ class CarpoolPaymentValidatorTest extends TestCase
     {
         $this->_carpoolPayment = new CarpoolPayment();
 
-        $this->_carpoolPaymentEecCompliant = EecCarpoolPayment::getCarpoolPayment();
+        $this->_carpoolPaymentEecCompliant = CarpoolPaymentMock::getCarpoolPaymentEec();
 
         $ask = new Ask();
 
-        EecCarpoolItem::getCarpoolItem($this->_carpoolPaymentEecCompliant, $ask);
-        EecCarpoolProof::getCarpoolProof($ask);
+        CarpoolItemMock::getCarpoolItemEec($this->_carpoolPaymentEecCompliant, $ask);
+        CarpoolProofMock::getCarpoolProofEec($ask);
     }
 
     /**

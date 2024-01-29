@@ -5,9 +5,9 @@ namespace App\Tests\Mocks\Carpool;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 
-class EecCarpoolProof
+class CarpoolProofMock
 {
-    public static function getCarpoolProof(Ask $ask): CarpoolProof
+    public static function getCarpoolProofEec(Ask $ask): CarpoolProof
     {
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setAsk($ask);
@@ -18,7 +18,7 @@ class EecCarpoolProof
         return $carpoolProof;
     }
 
-    public static function getCarpoolProofStatusError(): CarpoolProof
+    public static function getCarpoolProofEecStatusError(): CarpoolProof
     {
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setStatus(CarpoolProof::STATUS_ERROR);

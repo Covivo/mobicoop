@@ -2,10 +2,15 @@
 
 namespace App\Incentive\Service\Validator;
 
-use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Validator\CarpoolProofValidator;
-use App\Tests\Mocks\Carpool\EecCarpoolProof;
+use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
+use App\Tests\Mocks\Carpool\AskMock;
+use App\Tests\Mocks\Carpool\CarpoolProofMock;
+use App\Tests\Mocks\Incentive\LdSubscriptionMock;
+use App\Tests\Mocks\Payment\CarpoolItemMock;
+use App\Tests\Mocks\Payment\CarpoolPaymentMock;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,6 +20,16 @@ use PHPUnit\Framework\TestCase;
  */
 class CarpoolProofValidatorTest extends TestCase
 {
+    /**
+     * @var CarpoolItem
+     */
+    private $_carpoolItem;
+
+    /**
+     * @var CarpoolPayment
+     */
+    private $_carpoolPayment;
+
     /**
      * @var CarpoolProof
      */
@@ -32,10 +47,15 @@ class CarpoolProofValidatorTest extends TestCase
 
     public function setUp(): void
     {
+        $ask = AskMock::getAskEec();
+
+        $this->_carpoolPayment = CarpoolPaymentMock::getCarpoolPaymentEec();
+        $this->_carpoolItem = CarpoolItemMock::getCarpoolItemEec($this->_carpoolPayment, $ask);
+
         $this->_carpoolProof = new CarpoolProof();
 
-        $this->_carpoolProofEecCompliant = EecCarpoolProof::getCarpoolProof(new Ask());
-        $this->_carpoolProofStatusError = EecCarpoolProof::getCarpoolProofStatusError();
+        $this->_carpoolProofEecCompliant = CarpoolProofMock::getCarpoolProofEec($ask);
+        $this->_carpoolProofStatusError = CarpoolProofMock::getCarpoolProofEecStatusError();
     }
 
     /**
@@ -164,5 +184,31 @@ class CarpoolProofValidatorTest extends TestCase
     public function isEecCompliantTrue()
     {
         $this->assertTrue(CarpoolProofValidator::isEecCompliant($this->_carpoolProofEecCompliant));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function isCarpoolProofSubscriptionCommitmentProofBool()
+    {
+        $this->assertIsBool(CarpoolProofValidator::isCarpoolProofSubscriptionCommitmentProof(LdSubscriptionMock::getNewSubscription(), $this->_carpoolProof));
+    }
+
+    /**
+     * @test
+     */
+    public function isCarpoolProofSubscriptionCommitmentProofFalse()
+    {
+        $this->assertFalse(CarpoolProofValidator::isCarpoolProofSubscriptionCommitmentProof(LdSubscriptionMock::getNewSubscription(), $this->_carpoolProof));
+    }
+
+    /**
+     * @test
+     */
+    public function isCarpoolProofSubscriptionCommitmentProofTrue()
+    {
+        $this->assertTrue(CarpoolProofValidator::isCarpoolProofSubscriptionCommitmentProof(LdSubscriptionMock::getValidatedSubscription($this->_carpoolItem, $this->_carpoolPayment), $this->_carpoolProof));
     }
 }

@@ -4,9 +4,9 @@ namespace App\Tests\Mocks\Payment;
 
 use App\Payment\Entity\CarpoolPayment;
 
-class EecCarpoolPayment
+class CarpoolPaymentMock
 {
-    public static function getCarpoolPayment(): CarpoolPayment
+    public static function getCarpoolPaymentEec(): CarpoolPayment
     {
         $carpoolPayment = new CarpoolPayment();
         $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
