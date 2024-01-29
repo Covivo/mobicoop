@@ -29,7 +29,6 @@ use App\User\Event\IdentityProofModeratedEvent;
 use App\User\Event\IdentityProofValidationReminderEvent;
 use App\User\Repository\IdentityProofRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\Security;
@@ -62,7 +61,7 @@ class IdentityProofManager
     public function createIdentityProof(User $user, File $file): IdentityProof
     {
         if ($this->userHasAcceptedProof($user)) {
-            throw new Exception('This user already has an accepted identity proof.');
+            throw new \Exception('This user already has an accepted identity proof.');
         }
         $pendingProof = $this->getPendingProofForUser($user);
         if ($pendingProof) {
@@ -83,7 +82,7 @@ class IdentityProofManager
     public function postIdentityProof(IdentityProof $identityProof)
     {
         if ($this->userHasAcceptedProof($identityProof->getUser())) {
-            throw new Exception('This user already has an accepted identity proof.');
+            throw new \Exception('This user already has an accepted identity proof.');
         }
         $identityProof->setStatus(IdentityProof::STATUS_ACCEPTED);
         $identityProof->setAdmin($this->admin);
@@ -102,12 +101,12 @@ class IdentityProofManager
         $identityProof = $this->identityProofRepository->find($id);
 
         if (!$identityProof) {
-            throw new Exception('Identity proof not found');
+            throw new \Exception('Identity proof not found');
         }
 
         if (array_key_exists('validate', $fields)) {
             if (IdentityProof::STATUS_PENDING != $identityProof->getStatus()) {
-                throw new Exception('Identity proof status is not pending');
+                throw new \Exception('Identity proof status is not pending');
             }
 
             return $this->validateIdentityProof($identityProof, $fields['validate']);
@@ -120,6 +119,15 @@ class IdentityProofManager
     {
         if (IdentityProof::STATUS_PENDING == $identityProof->getStatus()) {
             return $this->urlPath.rawurlencode($identityProof->getFileName());
+        }
+
+        return null;
+    }
+
+    public function getFileUrlFromArray(array $identityProof)
+    {
+        if (IdentityProof::STATUS_PENDING == $identityProof['status']) {
+            return $this->urlPath.rawurlencode($identityProof['fileName']);
         }
 
         return null;

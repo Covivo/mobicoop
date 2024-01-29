@@ -23,10 +23,8 @@
 
 namespace App\User\EventListener;
 
-use App\Service\FormatDataManager;
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
-use App\User\Service\IdentityProofManager;
 use App\User\Service\UserManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
@@ -40,13 +38,9 @@ class UserLoadListener
     private $userReviewActive;
     private $userManager;
     private $identityValidation;
-    private $formatDataManager;
-    private $identityProofManager;
 
     public function __construct(
         UserManager $userManager,
-        FormatDataManager $formatDataManager,
-        IdentityProofManager $identityProofManager,
         $params
     ) {
         $this->avatarSizes = $params['avatarSizes'];
@@ -54,8 +48,6 @@ class UserLoadListener
         $this->userReviewActive = $params['userReview'];
         $this->userManager = $userManager;
         $this->identityValidation = $params['identityValidation'];
-        $this->formatDataManager = $formatDataManager;
-        $this->identityProofManager = $identityProofManager;
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -88,11 +80,6 @@ class UserLoadListener
             $user->setVerifiedIdentity(null);
             if ($this->identityValidation && ($user->isHitchHikeDriver() || $user->isHitchHikePassenger())) {
                 $user->setVerifiedIdentity(IdentityProof::STATUS_ACCEPTED == $user->getIdentityStatus());
-            }
-
-            foreach ($user->getIdentityProofs() as $proof) {
-                $proof->setFileSize($this->formatDataManager->convertFilesize($proof->getSize()));
-                $proof->setFileName($this->identityProofManager->getFileUrl($proof));
             }
         }
     }
