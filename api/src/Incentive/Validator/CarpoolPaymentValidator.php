@@ -10,8 +10,10 @@ class CarpoolPaymentValidator
 
     public static function isEecCompliant(CarpoolPayment $carpoolPayment): bool
     {
-        return static::isStatusEecCompliant($carpoolPayment) && static::isTransactionIdEecCompliant($carpoolPayment)
-            && $carpoolPayment->hasAtLeastAProofEECCompliant();
+        return
+            static::isStatusEecCompliant($carpoolPayment)
+            && static::isTransactionIdEecCompliant($carpoolPayment)
+            && static::hasAtLeastAProofEECCompliant($carpoolPayment);
     }
 
     public static function isStatusEecCompliant(CarpoolPayment $carpoolPayment): bool
@@ -22,5 +24,10 @@ class CarpoolPaymentValidator
     public static function isTransactionIdEecCompliant(CarpoolPayment $carpoolPayment): bool
     {
         return !is_null($carpoolPayment->getTransactionId());
+    }
+
+    public static function hasAtLeastAProofEECCompliant(CarpoolPayment $carpoolPayment): bool
+    {
+        return $carpoolPayment->hasAtLeastAProofEECCompliant();
     }
 }
