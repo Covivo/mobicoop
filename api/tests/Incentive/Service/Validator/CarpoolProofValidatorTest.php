@@ -211,4 +211,30 @@ class CarpoolProofValidatorTest extends TestCase
     {
         $this->assertTrue(CarpoolProofValidator::isCarpoolProofSubscriptionCommitmentProof(LdSubscriptionMock::getValidatedSubscription($this->_carpoolItem, $this->_carpoolPayment), $this->_carpoolProof));
     }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function isCarpoolProofOriginOrDestinationFromFranceBool()
+    {
+        $this->assertIsBool(CarpoolProofValidator::isCarpoolProofOriginOrDestinationFromFrance($this->_carpoolProof));
+    }
+
+    /**
+     * @test
+     */
+    public function isCarpoolProofOriginOrDestinationFromFranceFalse()
+    {
+        $this->assertFalse(CarpoolProofValidator::isCarpoolProofOriginOrDestinationFromFrance($this->_carpoolProof));
+    }
+
+    /**
+     * @test
+     */
+    public function isCarpoolProofOriginOrDestinationFromFranceTrue()
+    {
+        $this->assertTrue(CarpoolProofValidator::isCarpoolProofOriginOrDestinationFromFrance($this->_carpoolProofEecCompliant));
+    }
 }

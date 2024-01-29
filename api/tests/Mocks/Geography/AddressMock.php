@@ -17,4 +17,12 @@ class AddressMock
 
         return $homeAddress;
     }
+
+    public static function getAddressEec(): Address
+    {
+        $address = new Address();
+        $address->setAddressCountry('France');
+
+        return $address;
+    }
 }
