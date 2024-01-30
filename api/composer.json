@@ -34,6 +34,7 @@
         "nelmio/cors-bundle": "^1.5 || ^2.0",
         "ocramius/package-versions": "^1.4",
         "odolbeau/phone-number-bundle": "^3.4",
+        "php-amqplib/php-amqplib": "^3.6",
         "php-http/guzzle6-adapter": "1.1.1",
         "php-http/message": "^1.7",
         "phpdocumentor/reflection-docblock": "^3.0 || ^4.0 || ^5.0",
