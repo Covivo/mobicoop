@@ -151,6 +151,12 @@ monolog:
       max_files: 30
       path: "%kernel.logs_dir%/matcherV3.log"
       channels: [matcherV3]
+    messageBrokerV3:
+      type: rotating_file
+      level: info
+      max_files: 30
+      path: "%kernel.logs_dir%/messageBrokerV3.log"
+      channels: [messageBrokerV3]
     notification:
       type: rotating_file
       level: debug
