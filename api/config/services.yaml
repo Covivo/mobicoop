@@ -1047,6 +1047,10 @@ services:
     tags:
       - { name: monolog.logger, channel: mass }
 
+  App\DataProvider\Entity\BrokerV3\MessageBrokerSender:
+    tags:
+      - { name: monolog.logger, channel: messageBrokerV3 }
+
   App\DataProvider\Entity\MobicoopMatcherProvider:
     arguments:
       $uri: "%env(string:MATCHER_URI)%"
