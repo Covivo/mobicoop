@@ -12,11 +12,13 @@
           class="justify-center mt-10"
         >
           <iframe
+            ref="widgetIframe"
             :src="$t('buttons.widget.externalRoute', {'id':event.id})"
             width="100%"
             height="640px"
             frameborder="0"
             scrolling="no"
+            @load="resize"
           />
         </v-col>
         <v-col
@@ -70,6 +72,12 @@ export default {
   methods:{
     getUrl() {
       return window.location.protocol +"//"+ window.location.host + this.$t('buttons.widget.externalRoute', {'id':this.event.id});
+    },
+    resize(){
+      const iframe = this.$refs.widgetIframe;
+      if (iframe) {
+        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+      }
     }
   }
 }
