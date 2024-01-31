@@ -330,4 +330,21 @@ class CarpoolProofRepository
 
         return $stmt->fetchAll();
     }
+
+    public function getConcurrentProofs(CarpoolProof $proof)
+    {
+        $usersToTest = $proof->getDriver()->getId().', '.$proof->getPassenger()->getId();
+        $departudeDateTimeToTest = $proof->getStartDriverDate()->format('Y-m-d H:i');
+        $arrivalDateTimeToTest = $proof->getEndDriverDate()->format('Y-m-d H:i');
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            'SELECT *
+        FROM carpool_proof cp
+        WHERE (cp.driver_id IN ('.$usersToTest.') OR cp.passenger_id IN ('.$usersToTest.')) AND ((cp.start_driver_date BETWEEN \''.$departudeDateTimeToTest.'\' AND \''.$arrivalDateTimeToTest.'\') OR (cp.end_driver_date BETWEEN \''.$departudeDateTimeToTest.'\' AND \''.$arrivalDateTimeToTest.'\'))'
+        );
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
 }

@@ -57,6 +57,7 @@ class CarpoolProof
     public const STATUS_CANCELED_BY_OPERATOR = 10;  // proof canceled by the operator
     public const STATUS_UNDER_CHECKING = 11;        // proof under review by the carpool register
     public const STATUS_UNKNOWN = 12;               // status unknown by the RPC (proof exists but... unknown)
+    public const STATUS_INVALID_CONCURRENT_SCHEDULES = 13; // proof not sent concurrent travel at the same time already sent to rpc
 
     public const ACTOR_DRIVER = 1;
     public const ACTOR_PASSENGER = 2;

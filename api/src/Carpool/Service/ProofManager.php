@@ -445,7 +445,7 @@ class ProofManager
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                            // driver direction will be set when the dynamic ad of the driver will be finished
+                        // driver direction will be set when the dynamic ad of the driver will be finished
                         } else {
                             throw new ProofException('Driver dropoff certification failed : the passenger certified address is too far');
                         }
@@ -627,7 +627,7 @@ class ProofManager
              */
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
-                // uncomment the following to anonymize driver addresses used in the proof
+            // uncomment the following to anonymize driver addresses used in the proof
                 // $carpoolProof->setOriginDriverAddress(null);
                 // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
@@ -678,9 +678,7 @@ class ProofManager
         // exit;
         // send these proofs
         foreach ($proofs as $proof) {
-            /**
-             * @var CarpoolProof $proof
-             */
+            // @var CarpoolProof $proof
             if (CarpoolProof::STATUS_PENDING !== $proof->getStatus()) {
                 continue;
             }
@@ -804,6 +802,31 @@ class ProofManager
         }
         $this->entityManager->flush();
         $this->logger->info('********** END MANUAL SENDING *************');
+    }
+
+    public function proofAntifraudCheck(CarpoolProof $proof)
+    {
+        if (!$this->proofConcurrentSchedulesCheck($proof)) {
+            return false;
+        }
+
+        return $proof;
+    }
+
+    public function proofConcurrentSchedulesCheck(CarpoolProof $proof)
+    {
+        $concurrentProofs = $this->carpoolProofRepository->getConcurrentProofs($proof);
+
+        var_dump(count($concurrentProofs));
+        if (count($concurrentProofs) > 0) {
+            $proof->setStatus(CarpoolProof::STATUS_INVALID_CONCURRENT_SCHEDULES);
+            $this->entityManager->persist($proof);
+            $this->entityManager->flush();
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -1031,6 +1054,9 @@ class ProofManager
                     $dropOffDate->modify('+'.$dropOffWaypoint->getDuration().' second');
                     $carpoolProof->setPickUpPassengerDate($pickUpDate);
                     $carpoolProof->setDropOffPassengerDate($dropOffDate);
+                    // Antifraud rpc check before sending
+                    $this->proofAntifraudCheck($carpoolProof);
+
                     $this->entityManager->persist($carpoolProof);
                 }
             } else {
@@ -1193,6 +1219,9 @@ class ProofManager
                             $dropOffDate->modify('+'.$dropOffWaypoint->getDuration().' second');
                             $carpoolProof->setPickUpPassengerDate($pickUpDate);
                             $carpoolProof->setDropOffPassengerDate($dropOffDate);
+                            // Antifraud rpc check before sending
+                            $this->proofAntifraudCheck($carpoolProof);
+
                             $this->entityManager->persist($carpoolProof);
                         }
                     }
