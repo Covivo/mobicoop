@@ -20,8 +20,25 @@ class SubscriptionDefinition
      *
      * @Groups({"readSubscription"})
      */
+    private $transitionalPeriodDuration;
+
+    /**
+     * @var null|\DateTimeInterface
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $transitionalPeriodEndDate;
+
+    /**
+     * @var null|int
+     *
+     * @Groups({"readSubscription"})
+     */
     private $version;
 
+    /**
+     * @var LongDistanceSuscription|ShortDistaceSubscription
+     */
     private $subscription;
 
     private $definition;
@@ -52,12 +69,44 @@ class SubscriptionDefinition
         return $this->version;
     }
 
+    /**
+     * Get the value of transitionalPeriodDuration.
+     */
+    public function getTransitionalPeriodDuration(): ?int
+    {
+        return $this->transitionalPeriodDuration;
+    }
+
+    /**
+     * Get the value of transitionalPeriodEndDate.
+     */
+    public function getTransitionalPeriodEndDate(): ?\DateTimeInterface
+    {
+        return $this->transitionalPeriodEndDate;
+    }
+
+    /**
+     * Set the value of transitionalPeriodDuration.
+     */
+    protected function setTransitionalPeriodDuration(): self
+    {
+        $this->transitionalPeriodDuration = $this->definition::getTransitionalPeriodDuration();
+
+        return $this;
+    }
+
+    /**
+     * Set the value of transitionalPeriodEndDate.
+     */
+    protected function setTransitionalPeriodEndDate(): self
+    {
+        $this->transitionalPeriodEndDate = $this->definition::getTransitionalPeriodEndDate();
+
+        return $this;
+    }
+
     protected function setDeadline()
     {
-        $this->definition = array_values(array_filter($this->subscription->getAvailableDefinitions(), function ($defintion) {
-            return $this->version === $defintion::getVersion();
-        }))[0];
-
         $this->deadline = $this->definition::getDeadline();
     }
 
@@ -65,6 +114,12 @@ class SubscriptionDefinition
     {
         $this->version = $this->subscription->getVersion();
 
+        $this->definition = array_values(array_filter($this->subscription->getAvailableDefinitions(), function ($defintion) {
+            return $this->version === $defintion::getVersion();
+        }))[0];
+
         $this->setDeadline();
+        $this->setTransitionalPeriodDuration();
+        $this->setTransitionalPeriodEndDate();
     }
 }
