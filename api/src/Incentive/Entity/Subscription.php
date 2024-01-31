@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\Incentive\Entity\Subscription\Progression;
+use App\Incentive\Resource\SubscriptionDefinition;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -98,6 +99,13 @@ abstract class Subscription
      * @Groups({"readAdminSubscription"})
      */
     private $moBSubscription;
+
+    /**
+     * @var SubscriptionDefintion
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $definition;
 
     public static function isTypeAllowed(string $subscriptionType): bool
     {
@@ -460,6 +468,14 @@ abstract class Subscription
     public function isCommited(): bool
     {
         return !is_null($this->getCommitmentProofJourney());
+    }
+
+    /**
+     * Get the value of definition.
+     */
+    public function getDefinition(): SubscriptionDefinition
+    {
+        return new SubscriptionDefinition($this);
     }
 
     /**
