@@ -39,6 +39,6 @@ class PushNotifyToCertifiedJourneyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $result = $this->_pushManager->execute(is_null($input->getOption('interval')) ? $this->_interval : $input->getOption('interval'));
+        $this->_pushManager->execute(is_null($input->getOption('interval')) ? $this->_interval : $input->getOption('interval'));
     }
 }

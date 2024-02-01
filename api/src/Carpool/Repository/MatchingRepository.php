@@ -26,6 +26,7 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method null|Matching find($id, $lockMode = null, $lockVersion = null)
@@ -33,6 +34,9 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class MatchingRepository
 {
+    /**
+     * @var EntityRepository
+     */
     private $repository;
     private $entityManager;
 
@@ -69,10 +73,10 @@ class MatchingRepository
                 SELECT MRR.id FROM matching AS MRR
                 INNER JOIN proposal AS PRR ON PRR.id = MRR.proposal_request_id
                 INNER JOIN proposal AS POR ON POR.id = MRR.proposal_offer_id
-                WHERE 
+                WHERE
                     POR.id = POA.proposal_linked_id AND
                     PRR.id = PRA.proposal_linked_id
-            ) 
+            )
             WHERE MRA.matching_linked_id IS NULL AND (MRA.proposal_offer_id = '.$proposalId.' OR MRA.proposal_request_id = '.$proposalId.')';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
@@ -122,5 +126,29 @@ class MatchingRepository
         ;
 
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find carpools ready to end.
+     *
+     * SELECT *
+     * FROM matching m
+     * JOIN criteria c ON m.criteria_id = c.id
+     * WHERE ADDTIME(c.from_date,c.from_time) BETWEEN "2024-01-29 09:55:00" AND "2024-01-29 10:10:00"
+     */
+    public function findCarpoolsReadyToStart(\DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    {
+        $qb = $this->repository->createQueryBuilder('m');
+
+        $qb
+            ->join('m.criteria', 'c')
+            ->where('ADDTIME(c.fromDate, c.fromTime) BETWEEN :startDate AND :endDate')
+            ->setParameters([
+                'startDate' => $startDate->format('Y-m-d H:i:s'),
+                'endDate' => $endDate->format('Y-m-d H:i:s'),
+            ])
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }
