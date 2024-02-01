@@ -2,6 +2,7 @@
 
 namespace App\Communication\Command;
 
+use App\Communication\Service\PushNotifyToCertifiedJourneyManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,12 +13,18 @@ class PushNotifyToCertifiedJourneyCommand extends Command
     /**
      * @var int
      */
-    private $_interval;
+    protected $_interval;
 
-    public function __construct(?int $interval)
+    /**
+     * @var PushNotifyToCertifiedJourneyManager
+     */
+    protected $_pushManager;
+
+    public function __construct(PushNotifyToCertifiedJourneyManager $pushManager, ?int $interval)
     {
         parent::__construct();
 
+        $this->_pushManager = $pushManager;
         $this->_interval = $interval;
     }
 
@@ -30,5 +37,8 @@ class PushNotifyToCertifiedJourneyCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) {}
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $result = $this->_pushManager->execute(is_null($input->getOption('interval')) ? $this->_interval : $input->getOption('interval'));
+    }
 }
