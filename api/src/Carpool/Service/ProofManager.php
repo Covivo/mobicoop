@@ -817,7 +817,6 @@ class ProofManager
     {
         $concurrentProofs = $this->carpoolProofRepository->getConcurrentProofs($proof);
 
-        var_dump(count($concurrentProofs));
         if (count($concurrentProofs) > 0) {
             $proof->setStatus(CarpoolProof::STATUS_INVALID_CONCURRENT_SCHEDULES);
             $this->entityManager->persist($proof);
