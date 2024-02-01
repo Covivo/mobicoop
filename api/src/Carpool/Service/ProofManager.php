@@ -807,7 +807,11 @@ class ProofManager
     public function proofAntifraudCheck(CarpoolProof $proof)
     {
         if (!$this->proofConcurrentSchedulesCheck($proof)) {
-            return false;
+            return $proof;
+        }
+
+        if (!$this->proofSplittedTripCheck($proof)) {
+            return $proof;
         }
 
         return $proof;
@@ -819,6 +823,21 @@ class ProofManager
 
         if (count($concurrentProofs) > 0) {
             $proof->setStatus(CarpoolProof::STATUS_INVALID_CONCURRENT_SCHEDULES);
+            $this->entityManager->persist($proof);
+            $this->entityManager->flush();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function proofSplittedTripCheck(CarpoolProof $proof)
+    {
+        $splittedTripProofs = $this->carpoolProofRepository->getSplittedTripProofs($proof);
+
+        if (count($splittedTripProofs) > 0) {
+            $proof->setStatus(CarpoolProof::STATUS_INVALID_SPLITTED_TRIP);
             $this->entityManager->persist($proof);
             $this->entityManager->flush();
 
@@ -923,6 +942,7 @@ class ProofManager
                 // if any of the previous is verified, we initialize with the lowest possible type
                 $carpoolProof->setType(CarpoolProof::TYPE_LOW);
                 $this->entityManager->persist($carpoolProof);
+                $this->entityManager->flush();
             }
             $this->entityManager->flush();
         }
@@ -1057,6 +1077,7 @@ class ProofManager
                     $this->proofAntifraudCheck($carpoolProof);
 
                     $this->entityManager->persist($carpoolProof);
+                    $this->entityManager->flush();
                 }
             } else {
                 // regular, we need to create a carpool item for each day between fromDate (or the ask fromDate if it's after the given fromDate) and toDate
@@ -1222,6 +1243,7 @@ class ProofManager
                             $this->proofAntifraudCheck($carpoolProof);
 
                             $this->entityManager->persist($carpoolProof);
+                            $this->entityManager->flush();
                         }
                     }
 
