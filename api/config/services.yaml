@@ -401,6 +401,15 @@ services:
       $schedule: "%env(json:file:resolve:AUTOMATED_COMMANDS)%"
 
   # Communication
+  App\Communication\Command\PushNotifyToCertifiedJourneyCommand:
+    arguments:
+      $interval: "%env(int:PUSH_JOURNEY_CERTIFY_INTERVAL)%"
+    tags:
+      - {
+          name: "console.command",
+          command: "app:notify:journey-certify",
+        }
+
   App\Communication\Controller\:
     resource: "../src/Communication/Controller"
     arguments:
