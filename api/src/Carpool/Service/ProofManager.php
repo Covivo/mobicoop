@@ -806,6 +806,10 @@ class ProofManager
 
     public function proofAntifraudCheck(CarpoolProof $proof)
     {
+        if (!$this->proofSameDeviceCheck($proof)) {
+            return $proof;
+        }
+
         if (!$this->proofConcurrentSchedulesCheck($proof)) {
             return $proof;
         }
@@ -837,6 +841,19 @@ class ProofManager
         $splittedTripProofs = $this->carpoolProofRepository->getSplittedTripProofs($proof);
 
         if (count($splittedTripProofs) > 0) {
+            $proof->setStatus(CarpoolProof::STATUS_INVALID_SPLITTED_TRIP);
+            $this->entityManager->persist($proof);
+            $this->entityManager->flush();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function proofSameDeviceCheck(CarpoolProof $proof)
+    {
+        if (!is_null($proof->getDriverPhoneUniqueId() && !is_null($proof->getPassengerPhoneUniqueId()) && $proof->getDriverPhoneUniqueId() == $proof->getPassengerPhoneUniqueId())) {
             $proof->setStatus(CarpoolProof::STATUS_INVALID_SPLITTED_TRIP);
             $this->entityManager->persist($proof);
             $this->entityManager->flush();
