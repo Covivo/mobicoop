@@ -334,7 +334,7 @@ class CarpoolProofRepository
     }
 
     /**
-     * Find carpools ready to start.
+     * Find carpools ready to end.
      *
      * @return CarpoolProof[]
      *

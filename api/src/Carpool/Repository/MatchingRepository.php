@@ -129,7 +129,7 @@ class MatchingRepository
     }
 
     /**
-     * Find carpools ready to end.
+     * Find carpools ready to start.
      *
      * @return Matching[]
      *
