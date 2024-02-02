@@ -22,14 +22,14 @@ class DateService
         return new \DateTime();
     }
 
-    public static function getDateAccordingFutureInterval(string $baseTime, int $interval): \DateTime
+    public static function getDateAccordingFutureInterval(string $baseTime, int $interval, \DateTimeInterface $referenceDate = null): \DateTime
     {
-        return static::getDateAccordingPastOrFutureInterval(static::INTERVAL_ADD, $baseTime, $interval);
+        return static::getDateAccordingPastOrFutureInterval(static::INTERVAL_ADD, $baseTime, $interval, $referenceDate);
     }
 
-    public static function getDateAccordingPastInterval(string $baseTime, int $interval): \DateTime
+    public static function getDateAccordingPastInterval(string $baseTime, int $interval, \DateTimeInterface $referenceDate = null): \DateTime
     {
-        return static::getDateAccordingPastOrFutureInterval(static::INTERVAL_SUB, $baseTime, $interval);
+        return static::getDateAccordingPastOrFutureInterval(static::INTERVAL_SUB, $baseTime, $interval, $referenceDate);
     }
 
     public static function getPrefix(string $baseTime): string
@@ -51,12 +51,12 @@ class DateService
         return preg_match('/^({static::YEAR}|{static::MONTH}|{static::DAY}|{static::HOUR}|{static::MINUTE}|{static::SECOND}|){1}$/', $baseTime);
     }
 
-    protected static function getDateAccordingPastOrFutureInterval(string $function, string $baseTime, int $interval): \DateTime
+    protected static function getDateAccordingPastOrFutureInterval(string $function, string $baseTime, int $interval, \DateTimeInterface $referenceDate = null): \DateTime
     {
         static::isValidBaseTime($baseTime);
 
-        $now = static::getNow();
-        $date = clone $now;
+        $referenceDate = !is_null($referenceDate) ? $referenceDate : static::getNow();
+        $date = clone $referenceDate;
 
         $prefix = static::getPrefix($baseTime);
         $suffix = static::getSuffix($baseTime);
