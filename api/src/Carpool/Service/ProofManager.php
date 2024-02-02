@@ -253,7 +253,7 @@ class ProofManager
      *
      * @return CarpoolProof The created proof
      */
-    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger, string $driverPhoneUniqueId, string $passengerPhoneUniqueId)
+    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger, string $driverPhoneUniqueId = null, string $passengerPhoneUniqueId = null)
     {
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setType($type);
@@ -392,7 +392,7 @@ class ProofManager
      *
      * @return CarpoolProof The updated proof
      */
-    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance, string $driverPhoneUniqueId, string $passengerPhoneUniqueId)
+    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance, string $driverPhoneUniqueId = null, string $passengerPhoneUniqueId = null)
     {
         // search the proof
         if (!$carpoolProof = $this->carpoolProofRepository->find($id)) {
@@ -445,7 +445,7 @@ class ProofManager
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                            // driver direction will be set when the dynamic ad of the driver will be finished
+                        // driver direction will be set when the dynamic ad of the driver will be finished
                         } else {
                             throw new ProofException('Driver dropoff certification failed : the passenger certified address is too far');
                         }
@@ -627,7 +627,7 @@ class ProofManager
              */
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
-                // uncomment the following to anonymize driver addresses used in the proof
+            // uncomment the following to anonymize driver addresses used in the proof
                 // $carpoolProof->setOriginDriverAddress(null);
                 // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
