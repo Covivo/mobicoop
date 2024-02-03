@@ -127,30 +127,4 @@ class MatchingRepository
 
         return $query->getQuery()->getResult();
     }
-
-    /**
-     * Find carpools ready to start.
-     *
-     * @return Matching[]
-     *
-     * SELECT *
-     * FROM matching m
-     * JOIN criteria c ON m.criteria_id = c.id
-     * WHERE ADDTIME(c.from_date,c.from_time) BETWEEN "2024-01-29 09:55:00" AND "2024-01-29 10:10:00"
-     */
-    public function findCarpoolsReadyToStart(\DateTimeInterface $startDate, \DateTimeInterface $endDate)
-    {
-        $qb = $this->repository->createQueryBuilder('m');
-
-        $qb
-            ->join('m.criteria', 'c')
-            ->where('ADDTIME(c.fromDate, c.fromTime) BETWEEN :startDate AND :endDate')
-            ->setParameters([
-                'startDate' => $startDate->format('Y-m-d H:i:s'),
-                'endDate' => $endDate->format('Y-m-d H:i:s'),
-            ])
-        ;
-
-        return $qb->getQuery()->getResult();
-    }
 }

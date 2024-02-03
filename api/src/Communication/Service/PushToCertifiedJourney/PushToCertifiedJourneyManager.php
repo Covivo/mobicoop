@@ -2,8 +2,8 @@
 
 namespace App\Communication\Service\PushToCertifiedJourney;
 
+use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Service\NotificationManager;
 use App\Communication\Service\PushToCertifiedJourney\PushEvents\PushBeforeCarpoolEndEvent;
 use App\Communication\Service\PushToCertifiedJourney\PushEvents\PushBeforeCarpoolStartEvent;
@@ -22,9 +22,9 @@ class PushToCertifiedJourneyManager
     protected $_notificationManager;
 
     /**
-     * @var MatchingRepository
+     * @var AskRepository
      */
-    protected $_matchingRepository;
+    protected $_askRepository;
 
     /**
      * @var int
@@ -38,13 +38,13 @@ class PushToCertifiedJourneyManager
 
     public function __construct(
         NotificationManager $notificationManager,
+        AskRepository $askRepository,
         CarpoolProofRepository $carpoolProofRepository,
-        MatchingRepository $matchingRepository,
         int $timeMargin
     ) {
         $this->_notificationManager = $notificationManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
-        $this->_matchingRepository = $matchingRepository;
+        $this->_askRepository = $askRepository;
 
         $this->_timeMargin = $timeMargin;
     }
@@ -62,7 +62,7 @@ class PushToCertifiedJourneyManager
 
     protected function _pushBeforeCarpoolStart(): void
     {
-        $event = new PushBeforeCarpoolStartEvent($this->_notificationManager, $this->_interval, $this->_matchingRepository);
+        $event = new PushBeforeCarpoolStartEvent($this->_notificationManager, $this->_interval, $this->_askRepository);
         $event->execute();
     }
 
