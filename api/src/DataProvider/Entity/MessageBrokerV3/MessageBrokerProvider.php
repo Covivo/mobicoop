@@ -23,28 +23,22 @@
 
 namespace App\DataProvider\Entity\MessageBrokerV3;
 
-use Psr\Log\LoggerInterface;
-
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class MessageBrokerProvider
 {
-    private $_logger;
-
     private $_brokerUri;
     private $_brokerPort;
     private $_brokerUsername;
     private $_brokerPassword;
 
     public function __construct(
-        LoggerInterface $logger,
         string $brokerUri,
-        string $brokerPort,
+        int $brokerPort,
         string $brokerUsername,
         string $brokerPassword
     ) {
-        $this->_logger = $logger;
         $this->_brokerUri = $brokerUri;
         $this->_brokerPort = $brokerPort;
         $this->_brokerUsername = $brokerUsername;
