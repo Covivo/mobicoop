@@ -1047,7 +1047,12 @@ services:
     tags:
       - { name: monolog.logger, channel: mass }
 
-  App\DataProvider\Entity\BrokerV3\MessageBrokerSender:
+  App\DataProvider\Entity\MessageBrokerV3\MessageBrokerProvider:
+    arguments:
+      $brokerUri: "%env(string:BROKER_URI)%"
+      $brokerPort: "%env(string:BROKER_PORT)%"
+      $brokerUsername: "%env(string:BROKER_USERNAME)%"
+      $brokerPassword: "%env(string:BROKER_PASSWORD)%"
     tags:
       - { name: monolog.logger, channel: messageBrokerV3 }
 
