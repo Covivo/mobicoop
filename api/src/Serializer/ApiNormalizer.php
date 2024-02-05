@@ -225,7 +225,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             $this->entityManager->flush();
         }
 
-        if ($object instanceof User) {
+        if ($object instanceof User && isset($data['identityProofs'])) {
             foreach ($data['identityProofs'] as $key => $proof) {
                 $data['identityProofs'][$key]['fileSize'] = $this->formatDataManager->convertFilesize($proof['size']);
                 $data['identityProofs'][$key]['fileName'] = $this->identityProofManager->getFileUrlFromArray($proof);
