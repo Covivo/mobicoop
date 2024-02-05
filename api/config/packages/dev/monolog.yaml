@@ -90,11 +90,6 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/matcherV3.log"
       channels: [matcherV3]
-    messageBrokerV3:
-      type: stream
-      level: debug
-      path: "%kernel.logs_dir%/messageBrokerV3.log"
-      channels: [messageBrokerV3]
     notification:
       type: stream
       level: debug
@@ -138,7 +133,6 @@ monolog:
           "!notification",
           "!solidary",
           "!user_auto_delete",
-          "!messageBrokerV3",
         ]
 
     console:
@@ -167,5 +161,4 @@ monolog:
           "!matcherV3",
           "!notification",
           "!solidary",
-          "!messageBrokerV3",
         ]

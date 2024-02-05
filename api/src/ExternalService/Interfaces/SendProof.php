@@ -44,6 +44,6 @@ class SendProof
         $carpoolProof = new CarpoolProofEntity();
         $this->_carpoolProofSender->send($carpoolProof);
 
-        return true;
+        return 'OK';
     }
 }
