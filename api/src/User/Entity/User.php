@@ -1107,7 +1107,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var null|Language the language of the user
      *
-     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
+     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users", cascade={"persist"})
      *
      * @ORM\JoinColumn(onDelete="SET NULL")
      *

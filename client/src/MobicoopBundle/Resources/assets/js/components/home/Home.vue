@@ -327,7 +327,8 @@ export default {
       displayVerifiedMessagePhone: false,
       mobileUrl: this.urlMobile,
       displayVerifiedMessageEmail: false,
-      mobConnectSnackbar: false
+      mobConnectSnackbar: false,
+      mobConnect_snackbar_text: null
     };
   },
   computed: {

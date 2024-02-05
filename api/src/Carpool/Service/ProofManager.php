@@ -445,7 +445,7 @@ class ProofManager
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                            // driver direction will be set when the dynamic ad of the driver will be finished
+                        // driver direction will be set when the dynamic ad of the driver will be finished
                         } else {
                             throw new ProofException('Driver dropoff certification failed : the passenger certified address is too far');
                         }
@@ -627,7 +627,7 @@ class ProofManager
              */
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
-                // uncomment the following to anonymize driver addresses used in the proof
+            // uncomment the following to anonymize driver addresses used in the proof
                 // $carpoolProof->setOriginDriverAddress(null);
                 // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
@@ -678,9 +678,7 @@ class ProofManager
         // exit;
         // send these proofs
         foreach ($proofs as $proof) {
-            /**
-             * @var CarpoolProof $proof
-             */
+            // @var CarpoolProof $proof
             if (CarpoolProof::STATUS_PENDING !== $proof->getStatus()) {
                 continue;
             }
@@ -806,6 +804,66 @@ class ProofManager
         $this->logger->info('********** END MANUAL SENDING *************');
     }
 
+    public function proofAntifraudCheck(CarpoolProof $proof)
+    {
+        if (!$this->proofSameDeviceCheck($proof)) {
+            return $proof;
+        }
+
+        if (!$this->proofConcurrentSchedulesCheck($proof)) {
+            return $proof;
+        }
+
+        if (!$this->proofSplittedTripCheck($proof)) {
+            return $proof;
+        }
+
+        return $proof;
+    }
+
+    public function proofConcurrentSchedulesCheck(CarpoolProof $proof)
+    {
+        $concurrentProofs = $this->carpoolProofRepository->getConcurrentProofs($proof);
+
+        if (count($concurrentProofs) > 0) {
+            $proof->setStatus(CarpoolProof::STATUS_INVALID_CONCURRENT_SCHEDULES);
+            $this->entityManager->persist($proof);
+            $this->entityManager->flush();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function proofSplittedTripCheck(CarpoolProof $proof)
+    {
+        $splittedTripProofs = $this->carpoolProofRepository->getSplittedTripProofs($proof);
+
+        if (count($splittedTripProofs) > 0) {
+            $proof->setStatus(CarpoolProof::STATUS_INVALID_SPLITTED_TRIP);
+            $this->entityManager->persist($proof);
+            $this->entityManager->flush();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function proofSameDeviceCheck(CarpoolProof $proof)
+    {
+        if (!is_null($proof->getDriverPhoneUniqueId() && !is_null($proof->getPassengerPhoneUniqueId()) && $proof->getDriverPhoneUniqueId() == $proof->getPassengerPhoneUniqueId())) {
+            $proof->setStatus(CarpoolProof::STATUS_INVALID_SPLITTED_TRIP);
+            $this->entityManager->persist($proof);
+            $this->entityManager->flush();
+
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Validate the pending proofs for the given period.
      * Used to update pending with undetermined final class.
@@ -901,6 +959,7 @@ class ProofManager
                 // if any of the previous is verified, we initialize with the lowest possible type
                 $carpoolProof->setType(CarpoolProof::TYPE_LOW);
                 $this->entityManager->persist($carpoolProof);
+                $this->entityManager->flush();
             }
             $this->entityManager->flush();
         }
@@ -1031,7 +1090,11 @@ class ProofManager
                     $dropOffDate->modify('+'.$dropOffWaypoint->getDuration().' second');
                     $carpoolProof->setPickUpPassengerDate($pickUpDate);
                     $carpoolProof->setDropOffPassengerDate($dropOffDate);
+                    // Antifraud rpc check before sending
+                    $this->proofAntifraudCheck($carpoolProof);
+
                     $this->entityManager->persist($carpoolProof);
+                    $this->entityManager->flush();
                 }
             } else {
                 // regular, we need to create a carpool item for each day between fromDate (or the ask fromDate if it's after the given fromDate) and toDate
@@ -1193,7 +1256,11 @@ class ProofManager
                             $dropOffDate->modify('+'.$dropOffWaypoint->getDuration().' second');
                             $carpoolProof->setPickUpPassengerDate($pickUpDate);
                             $carpoolProof->setDropOffPassengerDate($dropOffDate);
+                            // Antifraud rpc check before sending
+                            $this->proofAntifraudCheck($carpoolProof);
+
                             $this->entityManager->persist($carpoolProof);
+                            $this->entityManager->flush();
                         }
                     }
 

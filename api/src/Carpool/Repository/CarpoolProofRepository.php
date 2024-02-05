@@ -330,4 +330,38 @@ class CarpoolProofRepository
 
         return $stmt->fetchAll();
     }
+
+    public function getConcurrentProofs(CarpoolProof $proof)
+    {
+        $usersToTest = $proof->getDriver()->getId().', '.$proof->getPassenger()->getId();
+        $departudeDateTimeToTest = $proof->getStartDriverDate()->format('Y-m-d H:i');
+        $arrivalDateTimeToTest = $proof->getEndDriverDate()->format('Y-m-d H:i');
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            'SELECT *
+        FROM carpool_proof cp
+        WHERE (cp.driver_id IN ('.$usersToTest.') OR cp.passenger_id IN ('.$usersToTest.')) AND ((cp.start_driver_date BETWEEN \''.$departudeDateTimeToTest.'\' AND \''.$arrivalDateTimeToTest.'\') OR (cp.end_driver_date BETWEEN \''.$departudeDateTimeToTest.'\' AND \''.$arrivalDateTimeToTest.'\'))'
+        );
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    public function getSplittedTripProofs(CarpoolProof $proof)
+    {
+        $usersToTest = $proof->getDriver()->getId().', '.$proof->getPassenger()->getId();
+        $origin = $proof->getOriginDriverAddress()->getAddressLocality();
+        $depertureDateTimeMinus30Min = (clone $proof->getStartDriverDate())->modify('-30 minutes')->format('Y-m-d H:i');
+        $departureDateTimePlus30Min = (clone $proof->getStartDriverDate())->modify('+30 minutes')->format('Y-m-d H:i');
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            'SELECT *
+        FROM carpool_proof cp
+        JOIN address a ON cp.destination_driver_address_id = a.id
+        WHERE (cp.driver_id IN ('.$usersToTest.') AND cp.passenger_id IN ('.$usersToTest.')) AND a.address_locality = \''.$origin.'\' AND (cp.start_driver_date BETWEEN \''.$depertureDateTimeMinus30Min.'\' AND \''.$departureDateTimePlus30Min.'\')'
+        );
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
 }
