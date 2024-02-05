@@ -170,24 +170,55 @@
                   {{ textEmailError }}
                 </v-alert>
 
-                <v-text-field
-                  id="telephone"
-                  v-model="form.telephone"
-                  :label="$t('phone.placeholder') + ` *`"
-                  required
-                  :rules="form.telephoneRules"
-                  aria-required="true"
-                  name="telephone"
-                  @keypress="isNumber(event)"
-                  @focusin="phoneNumberValid = true"
-                  @focusout="checkPhoneNumberValidity"
-                />
-                <v-alert
-                  v-if="!phoneNumberValid"
-                  type="error"
-                >
-                  {{ $t('checkPhoneValidity.error') }}
-                </v-alert>
+                <v-row>
+                  <v-col cols="2">
+                    <v-select
+                      v-model="form.phoneCode"
+                      :items="flags"
+                      required
+                      :label="$t('phoneCode.placeholder') + ` *`"
+                      :rules="form.phoneCodeRules"
+                      item-value="code"
+                      item-text="code"
+                      clearable
+                      @change="checkPhoneNumberValidity"
+                    >
+                      <template v-slot:item="{item}">
+                        <v-list-item>
+                          <v-list-item-action>
+                            <span :class="['fi fi-'+item.country]" />
+                          </v-list-item-action>
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              {{ item.code }}
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </v-list-item>
+                        <v-divider class="mt-2" />
+                      </template>
+                    </v-select>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="form.telephone"
+                      :label="$t('phone.placeholder') + ` *`"
+                      required
+                      :rules="form.telephoneRules"
+                      aria-required="true"
+                      name="telephone"
+                      :disabled="phoneNumberDisabled"
+                      @keypress="isNumber(event)"
+                      @focusin="phoneNumberValid = true"
+                      @focusout="checkPhoneNumberValidity"
+                    />
+                    <v-alert
+                      v-if="!phoneNumberValid"
+                      type="error"
+                    >
+                      {{ $tc('checkPhoneValidity.error', form.cleanedPhoneNumber, { phoneNumber: form.cleanedPhoneNumber }) }}
+                    </v-alert>
+                  </v-col>
+                </v-row>
                 <v-text-field
                   id="password"
                   v-model="form.password"
@@ -713,6 +744,11 @@ export default {
             this.phoneNumberValid ||
             this.$t("phone.errors.valid"),
         ],
+        phoneCode:null,
+        phoneCodeRules: [
+          (v) => !!v || this.$t("phoneCode.errors.required"),
+        ],
+        cleanedPhoneNumber: null,
         password: null,
         showPassword: false,
         passWordRules: {
@@ -773,7 +809,26 @@ export default {
       },
       communities: [],
       selectedCommunity: null,
-      locale: localStorage.getItem("X-LOCALE")
+      locale: localStorage.getItem("X-LOCALE"),
+      flags: [
+        { country: 'fr', code: '+33'},
+        { country: 'gb', code: '+44'},
+        { country: 'gp', code: '+590'},
+        { country: 'mq', code: '+596'},
+        { country: 'mf', code: '+378'},
+        { country: 'ph', code: '+63'},
+        { country: 'nl', code: '+31'},
+        { country: 'be', code: '+32'},
+        { country: 'lu', code: '+352'},
+        { country: 'mc', code: '+377'},
+        { country: 'it', code: '+39'},
+        { country: 'es', code: '+34'},
+        { country: 'pt', code: '+351'},
+        { country: 'dk', code: '+45'},
+        { country: 'ie', code: '+353'},
+        { country: 'ch', code: '+41'},
+        { country: 'de', code: '+49'}
+      ],
     };
   },
   computed: {
@@ -846,6 +901,12 @@ export default {
         return this.gendersList.includes(parseInt(genderItem.value));
       });
     },
+    phoneNumberDisabled(){
+      if(!this.form.phoneCode){
+        return true;
+      }
+      else {return false;}
+    }
   },
   watch: {
     menu(val) {
@@ -891,7 +952,7 @@ export default {
           this.action,
           {
             email: this.form.email,
-            telephone: this.form.telephone,
+            telephone: this.form.cleanedPhoneNumber,
             password: this.form.password,
             givenName: this.form.givenName,
             familyName: this.form.familyName,
@@ -1002,14 +1063,15 @@ export default {
         });
     },
     checkPhoneNumberValidity(){
-      if(!this.form.telephone){
+      if(!this.form.telephone || !this.form.phoneCode){
         return
       }
+      this.cleanPhoneNumber();
       maxios
         .post(
           this.$t("checkPhoneValidity.url"),
           {
-            telephone: this.form.telephone,
+            telephone: this.form.cleanedPhoneNumber,
           },
           {
             headers: {
@@ -1029,6 +1091,9 @@ export default {
           console.error(error);
           this.phoneNumberValid = false;
         });
+    },
+    cleanPhoneNumber() {
+      this.form.cleanedPhoneNumber = this.form.phoneCode + this.form.telephone.replace(/^0+/, "");
     },
     nextStep(n) {
       this.step += 1;
@@ -1081,7 +1146,7 @@ export default {
           }
         });
     }
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
