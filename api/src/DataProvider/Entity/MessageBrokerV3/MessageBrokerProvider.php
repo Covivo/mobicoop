@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2023, MOBICOOP. All rights reserved.
+ * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,14 +21,14 @@
  *    LICENSE
  */
 
-namespace App\DataProvider\Entity\BrokerV3;
+namespace App\DataProvider\Entity\MessageBrokerV3;
 
 use Psr\Log\LoggerInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class MessageBrokerSender
+class MessageBrokerProvider
 {
     private $_logger;
 

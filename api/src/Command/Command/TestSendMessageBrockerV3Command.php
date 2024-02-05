@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2023, MOBICOOP. All rights reserved.
+ * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -25,19 +25,19 @@ declare(strict_types=1);
 
 namespace App\Command\Command;
 
-use App\DataProvider\Entity\BrokerV3\MessageBrokerSender;
+use App\DataProvider\Entity\MessageBrokerV3\MessageBrokerProvider;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TestSendMessageBrockerV3Command extends Command
 {
-    private $messageBrokerSender;
+    private $_messageBrokerProvider;
 
-    public function __construct(MessageBrokerSender $messageBrokerSender)
+    public function __construct(MessageBrokerProvider $messageBrokerProvider)
     {
         parent::__construct();
-        $this->messageBrokerSender = $messageBrokerSender;
+        $this->_messageBrokerProvider = $messageBrokerProvider;
     }
 
     protected function configure()
