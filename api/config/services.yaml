@@ -591,6 +591,18 @@ services:
     arguments:
       $providers: "%env(json:file:resolve:RDEX_PROVIDERS)%"
 
+  # External Service
+  mobicoop.externalservice.broker_data_sender:
+    class: App\ExternalService\Infrastructure\BrokerDataSender
+
+  mobicoop.externalservice.carpool_proof_sender:
+    class: App\ExternalService\Core\Application\Service\CarpoolProofSender
+    arguments: ["@mobicoop.externalservice.broker_data_sender"]
+
+  mobicoop.externalservice.send_proof:
+    class: App\ExternalService\Interfaces\SendProof
+    arguments: ["@mobicoop.externalservice.carpool_proof_sender"]
+
   # Fixtures Basic
   App\DataFixtures\BasicFixtures:
     arguments:
