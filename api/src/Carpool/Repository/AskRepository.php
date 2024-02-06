@@ -27,11 +27,14 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\User\Entity\User;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 class AskRepository
 {
+    /**
+     * @var EntityRepository
+     */
     private $repository;
     private $entityManager;
 
@@ -117,13 +120,13 @@ class AskRepository
     /**
      * Find accepted asks between the given dates, for an optional given user.
      *
-     * @param DateTime  $fromDate The start date
-     * @param DateTime  $toDate   The end date
+     * @param \DateTime $fromDate The start date
+     * @param \DateTime $toDate   The end date
      * @param null|User $user     The user
      *
      * @return null|Ask[] The asks if found
      */
-    public function findAcceptedAsksForPeriod(DateTime $fromDate, DateTime $toDate, ?User $user = null)
+    public function findAcceptedAsksForPeriod(\DateTime $fromDate, \DateTime $toDate, ?User $user = null)
     {
         // we will need the different week number days between fromDate and toDate
         $days = [];
@@ -189,8 +192,8 @@ class AskRepository
             ->andWhere('(
             (
                 c.frequency = :punctual and c.fromDate between :fromDate and :toDate
-            ) 
-            or 
+            )
+            or
             (
                 c.frequency = :regular and c.fromDate <= :toDate and c.toDate >= :fromDate and
                 ('.$regularWhere.')
@@ -216,13 +219,13 @@ class AskRepository
     /**
      * Find pending asks between the given dates, for an optional given user.
      *
-     * @param DateTime  $fromDate The start date
-     * @param DateTime  $toDate   The end date
+     * @param \DateTime $fromDate The start date
+     * @param \DateTime $toDate   The end date
      * @param null|User $user     The user
      *
      * @return null|Ask[] The asks if found
      */
-    public function findPendingAsksForPeriod(DateTime $fromDate, DateTime $toDate, ?User $user = null)
+    public function findPendingAsksForPeriod(\DateTime $fromDate, \DateTime $toDate, ?User $user = null)
     {
         // we will need the different week number days between fromDate and toDate
         $days = [];
@@ -288,8 +291,8 @@ class AskRepository
             ->andWhere('(
             (
                 c.frequency = :punctual and c.fromDate between :fromDate and :toDate
-            ) 
-            or 
+            )
+            or
             (
                 c.frequency = :regular and c.fromDate <= :toDate and c.toDate >= :fromDate and
                 ('.$regularWhere.')
@@ -394,8 +397,6 @@ class AskRepository
 
     /**
      * Count all aks.
-     *
-     * @return int
      */
     public function countAsks(): ?int
     {
@@ -442,5 +443,35 @@ class AskRepository
         ;
 
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find carpools ready to start.
+     *
+     * @return Ask[]
+     *
+     * SELECT *
+     * FROM ask a
+     * JOIN criteria c ON a.criteria_id = c.id
+     * WHERE
+     *     ADDTIME(c.from_date,c.from_time) BETWEEN "2024-01-29 09:55:00" AND "2024-01-29 10:10:00"
+     *     AND a.status IN (4, 5);
+     */
+    public function findCarpoolsReadyToStart(\DateTimeInterface $startDate, \DateTimeInterface $endDate)
+    {
+        $qb = $this->repository->createQueryBuilder('a');
+
+        $qb
+            ->join('a.criteria', 'c')
+            ->where('ADDTIME(c.fromDate, c.fromTime) BETWEEN :startDate AND :endDate')
+            ->andWhere('a.status IN (:termList)')
+            ->setParameters([
+                'startDate' => $startDate->format('Y-m-d H:i:s'),
+                'endDate' => $endDate->format('Y-m-d H:i:s'),
+                'termList' => [Ask::STATUS_ACCEPTED_AS_DRIVER, Ask::STATUS_ACCEPTED_AS_PASSENGER],
+            ])
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }
