@@ -295,6 +295,7 @@ class UserController extends AbstractController
             // pass front info into user form
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
+            $user->setPhoneCode($data['phoneCode']);
             $user->setPassword($data['password']);
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
@@ -617,7 +618,8 @@ class UserController extends AbstractController
             'tabDefault' => $tabDefault,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'gendersList' => $this->gendersList,
-            'eecInstance' => $eecManager->getEecInstance(),                         // The EEC service status for the instance
+            'eecInstance' => $eecManager->getEecInstance(),
+            'phoneCodes' => $this->phoneCodes,
         ]);
     }
 

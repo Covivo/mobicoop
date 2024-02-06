@@ -109,7 +109,52 @@
           >
             <!-- Telephone -->
             <v-col
-              :cols="telephone && phoneVerified ? '12' : '6'"
+              v-if="user.phoneCode"
+              cols="2"
+            >
+              <v-select
+                v-model="phoneCode"
+                :items="flags"
+                required
+                :label="$t('phoneCode.placeholder')"
+                item-value="value"
+                item-text="code"
+                clearable
+                name="phoneCode"
+                @change="checkPhoneNumberValidity"
+              >
+                <template v-slot:item="{item}">
+                  <v-list-item>
+                    <v-list-item-action>
+                      <span :class="['fi fi-'+item.country]" />
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ item.code }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider class="mt-1" />
+                </template>
+
+                <template
+                  v-slot:selection="{item}"
+                >
+                  <v-list-item class="mt-n6 mb-n6">
+                    <v-list-item-action>
+                      <span :class="['fi fi-'+item.country]" />
+                    </v-list-item-action>
+                    <v-list-item-content class="ml-n6">
+                      <v-list-item-title>
+                        {{ item.code }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </template>
+              </v-select>
+            </v-col>
+            <v-col
+              :cols="telephone && phoneVerified ? '10' : '4'"
             >
               <v-text-field
                 v-model="telephone"
@@ -770,6 +815,10 @@ export default {
       type: Object,
       default: () => ({})
     },
+    phoneCodes: {
+      type: Array,
+      default: () => []
+    }
   },
   data() {
     return {
@@ -852,7 +901,10 @@ export default {
       dialogEmail: false,
       ssoConnection: null,
       drivingLicenceNumberValid: true,
-      gratuitySubscription: this.user && this.user.gratuity !== null ? this.user.gratuity : null
+      gratuitySubscription: this.user && this.user.gratuity !== null ? this.user.gratuity : null,
+      flags: this.phoneCodes,
+      cleanedPhoneNumber: null,
+      phoneCode: this.user.phoneCode
     };
   },
   computed : {

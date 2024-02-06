@@ -1897,6 +1897,15 @@ class User implements UserInterface, EquatableInterface
      */
     private $gratuity;
 
+    /**
+     * @var null|int International phone code
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     *
+     * @Groups({"readUser","write"})
+     */
+    private $phoneCode;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -3322,7 +3331,9 @@ class User implements UserInterface, EquatableInterface
         return $this->email;
     }
 
-    public function eraseCredentials() {}
+    public function eraseCredentials()
+    {
+    }
 
     public function isEqualTo(UserInterface $user)
     {
@@ -4039,6 +4050,18 @@ class User implements UserInterface, EquatableInterface
     public function setPostalAddress(?string $postalAddress): self
     {
         $this->postalAddress = $postalAddress;
+
+        return $this;
+    }
+
+    public function getPhoneCode(): ?int
+    {
+        return $this->phoneCode;
+    }
+
+    public function setPhoneCode(?int $phoneCode): self
+    {
+        $this->phoneCode = $phoneCode;
 
         return $this;
     }

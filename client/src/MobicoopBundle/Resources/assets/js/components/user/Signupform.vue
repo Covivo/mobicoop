@@ -178,9 +178,10 @@
                       required
                       :label="$t('phoneCode.placeholder') + ` *`"
                       :rules="form.phoneCodeRules"
-                      item-value="code"
+                      item-value="value"
                       item-text="code"
                       clearable
+                      name="phoneCode"
                       @change="checkPhoneNumberValidity"
                     >
                       <template v-slot:item="{item}">
@@ -195,6 +196,22 @@
                           </v-list-item-content>
                         </v-list-item>
                         <v-divider class="mt-2" />
+                      </template>
+
+                      <template
+                        v-slot:selection="{item}"
+                      >
+                        <v-list-item class="mb-n2 mt-n2">
+                          <v-list-item-action>
+                            <span :class="['fi fi-'+item.country]" />
+                          </v-list-item-action>
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              {{ item.code }}
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </v-list-item>
+                        <v-divider />
                       </template>
                     </v-select>
                   </v-col>
@@ -215,7 +232,7 @@
                       v-if="!phoneNumberValid"
                       type="error"
                     >
-                      {{ $tc('checkPhoneValidity.error', form.cleanedPhoneNumber, { phoneNumber: form.cleanedPhoneNumber }) }}
+                      {{ $tc('checkPhoneValidity.error', cleanedPhoneNumber, { phoneNumber: cleanedPhoneNumber }) }}
                     </v-alert>
                   </v-col>
                 </v-row>
@@ -752,7 +769,6 @@ export default {
         phoneCodeRules: [
           (v) => !!v || this.$t("phoneCode.errors.required"),
         ],
-        cleanedPhoneNumber: null,
         password: null,
         showPassword: false,
         passWordRules: {
@@ -814,7 +830,9 @@ export default {
       communities: [],
       selectedCommunity: null,
       locale: localStorage.getItem("X-LOCALE"),
-      flags: this.phoneCodes
+      flags: this.phoneCodes,
+      cleanedPhoneNumber: null,
+
     };
   },
   computed: {
@@ -938,7 +956,8 @@ export default {
           this.action,
           {
             email: this.form.email,
-            telephone: this.form.cleanedPhoneNumber,
+            telephone: this.form.telephone,
+            phoneCode: this.form.phoneCode,
             password: this.form.password,
             givenName: this.form.givenName,
             familyName: this.form.familyName,
@@ -1057,7 +1076,7 @@ export default {
         .post(
           this.$t("checkPhoneValidity.url"),
           {
-            telephone: this.form.cleanedPhoneNumber,
+            telephone: this.cleanedPhoneNumber,
           },
           {
             headers: {
@@ -1079,7 +1098,7 @@ export default {
         });
     },
     cleanPhoneNumber() {
-      this.form.cleanedPhoneNumber = this.form.phoneCode + this.form.telephone.replace(/^0+/, "");
+      this.cleanedPhoneNumber = '+'+this.form.phoneCode + this.form.telephone.replace(/^0+/, "");
     },
     nextStep(n) {
       this.step += 1;

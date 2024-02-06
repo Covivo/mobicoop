@@ -92,6 +92,12 @@
       }
     }
   },
+  "phoneCode": {
+    "placeholder": "Indicatif",
+    "errors": {
+      "required": "L'indicatif est requis"
+    }
+  },
   "dialog": {
     "titles": {
       "deleteAccount": "Suppression de votre compte",
