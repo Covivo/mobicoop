@@ -6,10 +6,14 @@ use App\Geography\Entity\Address;
 
 class AddressService
 {
-    public const SUFFIX_REGEXP = '((bis|Bis|BIS)|(ter|Ter|TER))';
+    public const BIS_SUFFIX = 'bis';
+    public const TER_SUFFIX = 'ter';
 
-    public const NUMBER_REGEXP = '/^(\d+)|(\d+( )?('.self::SUFFIX_REGEXP.'?))/';
-    public const NUMBER_SUFFIX_REGEXP = '/(\d+)( )?'.self::SUFFIX_REGEXP.'/';
+    public const SUFFIX_REGEXP = '('.self::BIS_SUFFIX.'|'.self::TER_SUFFIX.')';
+
+    public const NUMBER_REGEXP = '/^(\d+)|(\d+( )?('.self::SUFFIX_REGEXP.'?))/i';
+    public const NUMBER_MANDATORY_SUFFIX_REGEXP = '/^\d+ ?(?:'.self::BIS_SUFFIX.'|'.self::TER_SUFFIX.')/i';
+    public const NUMBER_OPTIONAL_SUFFIX_REGEXP = '/^\d+ ?(?:'.self::BIS_SUFFIX.'|'.self::TER_SUFFIX.')?/i';
 
     /**
      * @var Address
@@ -34,13 +38,8 @@ class AddressService
 
                 break;
 
-            case $this->hasHouseNumberSuffix() && $this->isNumberAlreadyInStreetAddress() && !$this->hasStreetAddressSuffix():
-                $response = $this->replaceNumberByHouseNumberInStreetAddress();
-
-                break;
-
             default:
-                $response = $this->addHouseNumberToStreetAddress();
+                $response = $this->replaceNumberByHouseNumberInStreetAddress();
 
                 break;
         }
@@ -48,28 +47,19 @@ class AddressService
         return $response;
     }
 
-    /**
-     * @return bool|int
-     */
-    public function isNumberAlreadyInStreetAddress()
+    public function isNumberAlreadyInStreetAddress(): bool
     {
-        return preg_match(self::NUMBER_REGEXP, $this->_address->getStreetAddress());
+        return preg_match(self::NUMBER_REGEXP, $this->_address->getStreetAddress()) > 0 ? true : false;
     }
 
-    /**
-     * @return bool|int
-     */
-    public function hasStreetAddressSuffix()
+    public function hasStreetAddressSuffix(): bool
     {
-        return preg_match(self::NUMBER_SUFFIX_REGEXP, $this->_address->getStreetAddress());
+        return preg_match(self::NUMBER_OPTIONAL_SUFFIX_REGEXP, $this->_address->getStreetAddress()) > 0 ? true : false;
     }
 
-    /**
-     * @return bool|int
-     */
-    public function hasHouseNumberSuffix()
+    public function hasHouseNumberSuffix(): bool
     {
-        return preg_match(self::NUMBER_SUFFIX_REGEXP, $this->_address->getHouseNumber());
+        return preg_match(self::NUMBER_MANDATORY_SUFFIX_REGEXP, $this->_address->getHouseNumber()) > 0 ? true : false;
     }
 
     /**
@@ -77,11 +67,13 @@ class AddressService
      */
     public function replaceNumberByHouseNumberInStreetAddress(): string
     {
-        return preg_replace(self::NUMBER_REGEXP, $this->_address->getHouseNumber(), $this->_address->getStreetAddress());
+        $this->_address->setStreetAddress(preg_replace(self::NUMBER_OPTIONAL_SUFFIX_REGEXP, '', $this->_address->getStreetAddress()));
+
+        return $this->addHouseNumberToStreetAddress();
     }
 
     public function addHouseNumberToStreetAddress(Address $address = null): string
     {
-        return $this->_address->getHouseNumber().' '.is_null($address) ? $address : $this->_address->getStreetAddress();
+        return trim($this->_address->getHouseNumber()).' '.trim(!is_null($address) ? $address->getStreetAddress() : $this->_address->getStreetAddress());
     }
 }
