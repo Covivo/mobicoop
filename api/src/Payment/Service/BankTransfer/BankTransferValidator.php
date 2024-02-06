@@ -182,18 +182,30 @@ class BankTransferValidator
             $this->_status = BankTransfer::STATUS_NO_AMOUNT;
         }
 
+        if (!is_numeric($value)) {
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] Amount must be numeric : '.$value);
+            $this->_status = BankTransfer::STATUS_NO_AMOUNT;
+        }
+
         $this->_amount = str_replace(',', '.', $value);
     }
 
     private function _checkRecipient()
     {
         $value = $this->_findValue(self::HEADERS_USER_ID);
-        if (!$user = $this->_userManager->getUser($value)) {
-            $this->_logger->error('[BatchId : '.$this->_batchId.'] Unknown Recipient : '.$value);
+
+        if (!is_numeric($value)) {
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] User Id must be an int : '.$value);
             $this->_status = BankTransfer::STATUS_UNKNOWN_RECIPIENT;
+        } else {
+            if (!$user = $this->_userManager->getUser($value)) {
+                $this->_logger->error('[BatchId : '.$this->_batchId.'] Unknown Recipient : '.$value);
+                $this->_status = BankTransfer::STATUS_UNKNOWN_RECIPIENT;
+            }
+            $this->_user = $user;
         }
 
-        $this->_user = $user;
+        $this->_user = null;
     }
 
     private function _checkTerritory()
