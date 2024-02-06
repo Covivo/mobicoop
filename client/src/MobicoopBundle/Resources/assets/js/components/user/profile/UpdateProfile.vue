@@ -487,7 +487,7 @@
               rounded
               color="secondary"
               class="mt-4"
-              :disabled="disabledAddress"
+              :disabled="!homeAddress || disabledAddress"
               :loading="loadingAddress"
               type="button"
               @click="updateAddress"
