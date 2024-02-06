@@ -686,6 +686,10 @@ export default {
       type: Boolean,
       default: false
     },
+    phoneCodes: {
+      type: Array,
+      default: () => []
+    }
   },
   data() {
     return {
@@ -810,25 +814,7 @@ export default {
       communities: [],
       selectedCommunity: null,
       locale: localStorage.getItem("X-LOCALE"),
-      flags: [
-        { country: 'fr', code: '+33'},
-        { country: 'gb', code: '+44'},
-        { country: 'gp', code: '+590'},
-        { country: 'mq', code: '+596'},
-        { country: 'mf', code: '+378'},
-        { country: 'ph', code: '+63'},
-        { country: 'nl', code: '+31'},
-        { country: 'be', code: '+32'},
-        { country: 'lu', code: '+352'},
-        { country: 'mc', code: '+377'},
-        { country: 'it', code: '+39'},
-        { country: 'es', code: '+34'},
-        { country: 'pt', code: '+351'},
-        { country: 'dk', code: '+45'},
-        { country: 'ie', code: '+353'},
-        { country: 'ch', code: '+41'},
-        { country: 'de', code: '+49'}
-      ],
+      flags: this.phoneCodes
     };
   },
   computed: {

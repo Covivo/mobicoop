@@ -100,6 +100,7 @@ class UserController extends AbstractController
     private $ceeDisplay;
     private $gendersList;
     private $specificTerms;
+    private $phoneCodes;
 
     /**
      * Constructor.
@@ -113,6 +114,7 @@ class UserController extends AbstractController
      * @param mixed $loginLinkInConnection
      * @param mixed $solidaryDisplay
      * @param mixed $required_community
+     * @param mixed $phoneCodes
      */
     public function __construct(
         UserPasswordEncoderInterface $encoder,
@@ -143,7 +145,8 @@ class UserController extends AbstractController
         bool $signInSsoOriented,
         bool $ceeDisplay,
         array $gendersList,
-        bool $specificTerms
+        bool $specificTerms,
+        $phoneCodes
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -174,6 +177,7 @@ class UserController extends AbstractController
         $this->ceeDisplay = $ceeDisplay;
         $this->gendersList = $gendersList;
         $this->specificTerms = $specificTerms;
+        $this->phoneCodes = $phoneCodes;
     }
 
     private function __parsePostParams(string $response): array
@@ -357,6 +361,7 @@ class UserController extends AbstractController
             'communityId' => $communityId,
             'gendersList' => $this->gendersList,
             'specificTerms' => $this->specificTerms,
+            'phoneCodes' => $this->phoneCodes,
         ]);
     }
 
