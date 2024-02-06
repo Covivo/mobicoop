@@ -25,6 +25,7 @@ namespace App\Carpool\Repository;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
+use App\Communication\Entity\Notified;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\Validation\Validation;
 use App\Payment\Entity\CarpoolItem;
@@ -32,6 +33,7 @@ use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 class CarpoolProofRepository
 {
@@ -329,6 +331,50 @@ class CarpoolProofRepository
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Find carpools ready to end.
+     *
+     * @return CarpoolProof[]
+     *
+     * SELECT *
+     * FROM carpool_proof cp
+     * JOIN ask a ON cp.ask_id = a.id
+     * JOIN matching m ON a.matching_id = m.id
+     * JOIN criteria c ON m.criteria_id = c.id
+     * JOIN `user` driver ON cp.driver_id = driver.id
+     * JOIN `user` passenger ON cp.passenger_id = passenger.id
+     * WHERE
+     *     TIMESTAMPADD(SECOND, m.new_duration, ADDTIME(c.from_date,c.from_time)) BETWEEN "2024-01-29 09:55" AND "2024-01-29 10:10"
+     *     AND (
+     *         (SELECT COUNT((
+     *             SELECT n.id
+     *             FROM notified n
+     *             WHERE n.user_id = driver.id
+     *             AND n.notification_id = 172
+     *             AND n.sent_date BETWEEN DATE_SUB(ADDTIME(STR_TO_DATE("2024-02-02", '%Y-%m-%d'), "08:00"), INTERVAL 10 MINUTE) AND DATE_ADD(ADDTIME(STR_TO_DATE("2024-02-02", '%Y-%m-%d'), "08:00"), INTERVAL 10 MINUTE)
+     *         )) >=1)
+     *         OR (SELECT COUNT((
+     *             SELECT n.id
+     *             FROM notified n
+     *             WHERE n.user_id = driver.id
+     *             AND n.notification_id = 172
+     *             AND n.sent_date BETWEEN DATE_SUB(ADDTIME(STR_TO_DATE("2024-02-02", '%Y-%m-%d'), "08:00"), INTERVAL 10 MINUTE) AND DATE_ADD(ADDTIME(STR_TO_DATE("2024-02-02", '%Y-%m-%d'), "08:00"), INTERVAL 10 MINUTE)
+     *         )) >= 1)
+     *     );
+     */
+    public function findCarpoolsReadyToEnd(\DateTimeInterface $startDate, \DateTimeInterface $endDate, int $timeMargin): array
+    {
+        $startDate = $startDate->format('Y-m-d H:i');
+        $endDate = $endDate->format('Y-m-d H:i');
+
+        $rsm = new ResultSetMappingBuilder($this->entityManager);
+        $rsm->addRootEntityFromClassMetadata(CarpoolProof::class, 'cp');
+
+        $sql = "SELECT * FROM carpool_proof cp JOIN ask a ON cp.ask_id = a.id JOIN matching m ON a.matching_id = m.id JOIN criteria c ON m.criteria_id = c.id JOIN `user` driver ON cp.driver_id = driver.id JOIN `user` passenger ON cp.passenger_id = passenger.id WHERE TIMESTAMPADD(SECOND, m.new_duration, ADDTIME(c.from_date, c.from_time)) BETWEEN '{$startDate}' AND '{$endDate}' AND ( (SELECT COUNT(( SELECT n.id FROM notified n WHERE n.user_id = driver.id AND n.notification_id = 172 AND n.sent_date BETWEEN DATE_SUB(ADDTIME(c.from_date, c.from_time), INTERVAL {$timeMargin} MINUTE) AND DATE_ADD(ADDTIME(c.from_date, c.from_time), INTERVAL {$timeMargin} MINUTE) )) >=1) OR (SELECT COUNT(( SELECT n.id FROM notified n WHERE n.user_id = driver.id AND n.notification_id = 172 AND n.sent_date BETWEEN DATE_SUB(ADDTIME(c.from_date, c.from_time), INTERVAL {$timeMargin} MINUTE) AND DATE_ADD(ADDTIME(c.from_date, c.from_time), INTERVAL {$timeMargin} MINUTE) )) >= 1) );";
+
+        return $this->entityManager->createNativeQuery($sql, $rsm)->getResult();
     }
 
     public function getConcurrentProofs(CarpoolProof $proof)
