@@ -26,35 +26,35 @@ namespace App\ExternalService\Interfaces\DTO;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class CarpoolProofDto
+class ActorDto
 {
-    public const TYPE_LOW = 'A';
-    public const TYPE_MID = 'B';
-    public const TYPE_HIGH = 'C';
+    /**
+     * @var IdentityDto
+     */
+    private $identity;
 
-    public const TYPES = [
-        self::TYPE_LOW,
-        self::TYPE_MID,
-        self::TYPE_HIGH,
-    ];
+    /**
+     * @var WaypointDto
+     */
+    private $start;
+
+    /**
+     * @var WaypointDto
+     */
+    private $end;
 
     /**
      * @var int
      */
-    private $journeyId;
+    private $seats;
 
     /**
-     * @var string register system proof type : see TYPES
+     * @var int
      */
-    private $operatorClass;
+    private $contribution;
 
     /**
-     * @var ActorDto
+     * @var array
      */
-    private $passenger;
-
-    /**
-     * @var ActorDto
-     */
-    private $driver;
+    private $incentives;
 }
