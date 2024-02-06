@@ -28,5 +28,5 @@ namespace App\ExternalService\Core\Application\Ports;
  */
 interface DataSenderPort
 {
-    public function send();
+    public function send(): string;
 }

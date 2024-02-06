@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,18 +20,40 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Infrastructure;
+namespace App\ExternalService\Core\Application\Service;
 
-use App\ExternalService\Core\Application\Ports\DataSenderPort;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @internal
+ *
+ * @coversDefaultClass
  */
-class BrokerDataSender implements DataSenderPort
+class CarpoolProofSenderTest extends TestCase
 {
-    public function send(): string
+    private $_carpoolProofSender;
+
+    public function setUp(): void
     {
-        // implementation of Broker communication
-        return 'OK';
+        $dataSenderPort = $this->getMockBuilder('App\ExternalService\Core\Application\Ports\DataSenderPort')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $dataSenderPort->method('send')->willReturn('OK');
+
+        $this->_carpoolProofSender = new CarpoolProofSender($dataSenderPort);
+    }
+
+    /**
+     * @test
+     */
+    public function testSendReturnOk()
+    {
+        $carpoolProofEntity = $this->getMockBuilder('App\ExternalService\Core\Domain\Entity\CarpoolProofEntity')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->assertEquals($this->_carpoolProofSender->send($carpoolProofEntity), 'OK');
     }
 }

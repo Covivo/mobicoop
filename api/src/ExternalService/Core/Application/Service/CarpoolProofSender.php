@@ -36,8 +36,6 @@ class CarpoolProofSender
 
     public function send(CarpoolProofEntity $carpoolProofEntity): string
     {
-        $this->_dataSender->send();
-
-        return 'OK';
+        return $this->_dataSender->send();
     }
 }
