@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Resource;
 
+use App\Tests\Mocks\Incentive\EecInstanceMock;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,58 +12,16 @@ use PHPUnit\Framework\TestCase;
  */
 class EecInstanceTest extends TestCase
 {
-    public function setUp(): void {}
-
     /**
      * @test
      */
     public function getAvailableFalsy()
     {
-        $eecInstance = new EecInstance([
-            'expirationDate' => '2023-10-01',
-            'mobConnect' => [
-                'client_id' => null,
-                'app_id' => null,
-                'app_secret' => null,
-                'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
-            ],
-            'subscriptions' => [
-                'ld' => [
-                    'key' => 'my_ld_key',
-                    'expirationDate' => null,
-                ],
-                'sd' => [
-                    'key' => 'my_sd_key',
-                    'expirationDate' => null,
-                ],
-            ],
-        ]);
+        $this->assertFalse(EecInstanceMock::getEecInstanceUnavailable1()->getAvailable());
+        $this->assertFalse(EecInstanceMock::getEecInstanceUnavailable1()->isAvailable());
 
-        $this->assertFalse($eecInstance->getAvailable());
-        $this->assertFalse($eecInstance->isAvailable());
-
-        $eecInstance = new EecInstance([
-            'expirationDate' => null,
-            'mobConnect' => [
-                'client_id' => null,
-                'app_id' => null,
-                'app_secret' => null,
-                'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
-            ],
-            'subscriptions' => [
-                'ld' => [
-                    'key' => 'my_ld_key',
-                    'expirationDate' => '2023-10-01',
-                ],
-                'sd' => [
-                    'key' => 'my_sd_key',
-                    'expirationDate' => '2023-10-01',
-                ],
-            ],
-        ]);
-
-        $this->assertFalse($eecInstance->getAvailable());
-        $this->assertFalse($eecInstance->isAvailable());
+        $this->assertFalse(EecInstanceMock::getEecInstanceUnavailable2()->getAvailable());
+        $this->assertFalse(EecInstanceMock::getEecInstanceUnavailable2()->isAvailable());
     }
 
     /**
@@ -70,96 +29,16 @@ class EecInstanceTest extends TestCase
      */
     public function getAvailableTruly()
     {
-        $eecInstance = new EecInstance([
-            'expirationDate' => null,
-            'mobConnect' => [
-                'client_id' => null,
-                'app_id' => null,
-                'app_secret' => null,
-                'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
-            ],
-            'subscriptions' => [
-                'ld' => [
-                    'key' => 'my_ld_key',
-                    'expirationDate' => null,
-                ],
-                'sd' => [
-                    'key' => 'my_sd_key',
-                    'expirationDate' => null,
-                ],
-            ],
-        ]);
+        $this->assertTrue(EecInstanceMock::getEecInstanceAvailable1()->getAvailable());
+        $this->assertTrue(EecInstanceMock::getEecInstanceAvailable1()->isAvailable());
 
-        $this->assertTrue($eecInstance->getAvailable());
-        $this->assertTrue($eecInstance->isAvailable());
+        $this->assertTrue(EecInstanceMock::getEecInstanceAvailable2()->getAvailable());
+        $this->assertTrue(EecInstanceMock::getEecInstanceAvailable2()->isAvailable());
 
-        $eecInstance = new EecInstance([
-            'expirationDate' => '2027-01-01',
-            'mobConnect' => [
-                'client_id' => null,
-                'app_id' => null,
-                'app_secret' => null,
-                'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
-            ],
-            'subscriptions' => [
-                'ld' => [
-                    'key' => 'my_ld_key',
-                    'expirationDate' => null,
-                ],
-                'sd' => [
-                    'key' => 'my_sd_key',
-                    'expirationDate' => null,
-                ],
-            ],
-        ]);
+        $this->assertTrue(EecInstanceMock::getEecInstanceAvailable3()->getAvailable());
+        $this->assertTrue(EecInstanceMock::getEecInstanceAvailable3()->isAvailable());
 
-        $this->assertTrue($eecInstance->getAvailable());
-        $this->assertTrue($eecInstance->isAvailable());
-
-        $eecInstance = new EecInstance([
-            'expirationDate' => null,
-            'mobConnect' => [
-                'client_id' => null,
-                'app_id' => null,
-                'app_secret' => null,
-                'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
-            ],
-            'subscriptions' => [
-                'ld' => [
-                    'key' => 'my_ld_key',
-                    'expirationDate' => '2027-01-01',
-                ],
-                'sd' => [
-                    'key' => 'my_sd_key',
-                    'expirationDate' => null,
-                ],
-            ],
-        ]);
-
-        $this->assertTrue($eecInstance->getAvailable());
-        $this->assertTrue($eecInstance->isAvailable());
-
-        $eecInstance = new EecInstance([
-            'expirationDate' => null,
-            'mobConnect' => [
-                'client_id' => null,
-                'app_id' => null,
-                'app_secret' => null,
-                'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
-            ],
-            'subscriptions' => [
-                'ld' => [
-                    'key' => 'my_ld_key',
-                    'expirationDate' => null,
-                ],
-                'sd' => [
-                    'key' => 'my_sd_key',
-                    'expirationDate' => '2027-01-01',
-                ],
-            ],
-        ]);
-
-        $this->assertTrue($eecInstance->getAvailable());
-        $this->assertTrue($eecInstance->isAvailable());
+        $this->assertTrue(EecInstanceMock::getEecInstanceAvailable4()->getAvailable());
+        $this->assertTrue(EecInstanceMock::getEecInstanceAvailable4()->isAvailable());
     }
 }
