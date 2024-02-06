@@ -428,7 +428,7 @@ class ProofManager
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                        // driver direction will be set when the dynamic ad of the driver will be finished
+                            // driver direction will be set when the dynamic ad of the driver will be finished
                         } else {
                             throw new ProofException('Driver dropoff certification failed : the passenger certified address is too far');
                         }
@@ -583,9 +583,9 @@ class ProofManager
              */
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
-            // uncomment the following to anonymize driver addresses used in the proof
-            // $carpoolProof->setOriginDriverAddress(null);
-            // $carpoolProof->setDestinationDriverAddress(null);
+                // uncomment the following to anonymize driver addresses used in the proof
+                // $carpoolProof->setOriginDriverAddress(null);
+                // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
                 $carpoolProof->setPassenger(null);
                 // uncomment the following to anonymize passenger addresses used in the proof
@@ -633,7 +633,18 @@ class ProofManager
         $nbSent = 0;
         // exit;
         // send these proofs
+
+        // we check taht we have phone numbers
         foreach ($proofs as $proof) {
+            if (is_null($proof->getDriver()->getTelephone())
+                || '' == trim($proof->getDriver()->getTelephone())
+                || is_null($proof->getPassenger()->getTelephone())
+                || '' == trim($proof->getPassenger()->getTelephone())
+            ) {
+                $proof->setStatus(CarpoolProof::STATUS_NOT_SENT_MISSING_PHONE);
+                $this->entityManager->persist($proof);
+            }
+
             /**
              * @var CarpoolProof $proof
              */
