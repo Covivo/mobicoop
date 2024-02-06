@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,24 +21,40 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Core\Application\Service;
+namespace App\ExternalService\Interfaces;
 
-use App\ExternalService\Core\Application\Ports\DataSenderPort;
-use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
+use PHPUnit\Framework\TestCase;
 
-class CarpoolProofSender
+/**
+ * @internal
+ *
+ * @coversDefaultClass
+ */
+class SendProofTest extends TestCase
 {
-    private $_dataSender;
+    private $_sendProof;
 
-    public function __construct(DataSenderPort $dataSender)
+    public function setUp(): void
     {
-        $this->_dataSender = $dataSender;
+        $carpoolProofSender = $this->getMockBuilder('App\ExternalService\Core\Application\Service\CarpoolProofSender')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $carpoolProofSender->method('send')->willReturn('OK');
+
+        $this->_sendProof = new SendProof($carpoolProofSender);
     }
 
-    public function send(CarpoolProofEntity $carpoolProofEntity): string
+    /**
+     * @test
+     */
+    public function testSendReturnOk()
     {
-        $this->_dataSender->send();
+        $carpoolProofDto = $this->getMockBuilder('App\ExternalService\Interfaces\DTO\CarpoolProofDto')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-        return 'OK';
+        $this->assertEquals($this->_sendProof->send($carpoolProofDto), 'OK');
     }
 }

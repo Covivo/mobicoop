@@ -42,8 +42,7 @@ class SendProof
     public function send(CarpoolProofDto $carpoolProofDto)
     {
         $carpoolProof = new CarpoolProofEntity();
-        $this->_carpoolProofSender->send($carpoolProof);
 
-        return 'OK';
+        return $this->_carpoolProofSender->send($carpoolProof);
     }
 }
