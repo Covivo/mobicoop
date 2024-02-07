@@ -120,8 +120,9 @@
                 item-value="value"
                 item-text="code"
                 clearable
+                :rules="phoneCodeRules"
+
                 name="phoneCode"
-                @change="checkPhoneNumberValidity"
               >
                 <template v-slot:item="{item}">
                   <v-list-item>
@@ -142,9 +143,9 @@
                 >
                   <v-list-item class="mt-n6 mb-n6">
                     <v-list-item-action>
-                      <span :class="['fi fi-'+item.country]" />
+                      <span :class="['ml-n2 fi fi-'+item.country]" />
                     </v-list-item-action>
-                    <v-list-item-content class="ml-n6">
+                    <v-list-item-content class="ml-n9">
                       <v-list-item-title>
                         {{ item.code }}
                       </v-list-item-title>
@@ -154,7 +155,7 @@
               </v-select>
             </v-col>
             <v-col
-              :cols="telephone && phoneVerified ? '10' : '4'"
+              :cols="telephone && phoneVerified ? (phoneCode ? '10' : '12') : (phoneCode ? '4' : '6')"
             >
               <v-text-field
                 v-model="telephone"
@@ -320,12 +321,14 @@
                 v-model="givenName"
                 :label="$t('givenName.label')"
                 class="givenName"
+                :rules="givenNameRules"
               />
               <!--FamilyName-->
               <v-text-field
                 v-model="familyName"
                 :label="$t('familyName.label')"
                 class="familyName"
+                :rules="familyNameRules"
               />
               <!--Gender-->
               <v-select
@@ -836,8 +839,18 @@ export default {
       gender: this.user.gender,
       email: this.user.email,
       telephone: this.user.telephone,
+      phoneCode: this.user.phoneCode,
+      phoneCodeRules: [
+        (v) => !!v || this.$t("phoneCode.errors.required"),
+      ],
       givenName: this.user.givenName,
+      givenNameRules: [
+        (v) => !!v || this.$t("givenName.errors.required"),
+      ],
       familyName: this.user.familyName,
+      familyNameRules: [
+        (v) => !!v || this.$t("familyName.errors.required"),
+      ],
       birthDay: this.user.birthDate ? this.user.birthDate.date : null,
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
       drivingLicenceNumber: this.user.drivingLicenceNumber ? this.user.drivingLicenceNumber : null,
@@ -904,7 +917,6 @@ export default {
       gratuitySubscription: this.user && this.user.gratuity !== null ? this.user.gratuity : null,
       flags: this.phoneCodes,
       cleanedPhoneNumber: null,
-      phoneCode: this.user.phoneCode
     };
   },
   computed : {
@@ -965,12 +977,41 @@ export default {
     telephone (val) {
       this.phoneToken = null;
       this.displayPhoneVerification = false;
-
+      this.cleanPhoneNumber();
       maxios
         .post(
           this.$t("phone.checkValidity.url"),
           {
-            telephone: val,
+            telephone: this.cleanedPhoneNumber,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          if(response.data.valid){
+            this.phoneErrors = [];
+          }
+          else{
+            this.phoneErrors = [this.$t("phone.errors.valid")];
+          }
+        })
+        .catch(function(error) {
+          console.error(error);
+          this.phoneErrors = [this.$t("phone.errors.valid")];
+        });
+    },
+    phoneCode () {
+      this.phoneToken = null;
+      this.displayPhoneVerification = false;
+      this.cleanPhoneNumber();
+      maxios
+        .post(
+          this.$t("phone.checkValidity.url"),
+          {
+            telephone: this.cleanedPhoneNumber,
           },
           {
             headers: {
@@ -1045,6 +1086,7 @@ export default {
       updateUser.append("gender", this.gender);
       updateUser.append("givenName", this.givenName);
       updateUser.append("telephone", this.telephone);
+      updateUser.append("phoneCode", this.phoneCode);
       updateUser.append("birthDay", this.birthDay);
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
@@ -1287,6 +1329,13 @@ export default {
             console.error(error);
             this.drivingLicenceNumberValid = false;
           });
+      }
+    },
+    cleanPhoneNumber() {
+      if (this.phoneCode == null) {
+        this.cleanedPhoneNumber = this.telephone;
+      } else {
+        this.cleanedPhoneNumber = '+'+this.phoneCode + this.telephone.replace(/^0+/, "");
       }
     }
   }

@@ -56,6 +56,7 @@
     },
     "label": "Téléphone portable",
     "errors": {
+      "required": "Le numéro de téléphone est requis",
       "valid": "Le numéro de téléphone doit être valide"
     },
     "tooltips": {
@@ -154,10 +155,16 @@
     "verificationRoute": "/utilisateur/email/validation"
   },
   "givenName": {
-    "label": "Prénom"
+    "label": "Prénom",
+    "errors": {
+      "required": "Le prénom est requis"
+    }
   },
   "familyName": {
-    "label": "Nom"
+    "label": "Nom",
+    "errors": {
+      "required": "Le nom est requis"
+    }
   },
   "gender": {
     "label": "Civilité",

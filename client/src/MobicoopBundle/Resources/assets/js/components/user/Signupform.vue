@@ -201,17 +201,16 @@
                       <template
                         v-slot:selection="{item}"
                       >
-                        <v-list-item class="mb-n2 mt-n2">
+                        <v-list-item class="mt-n6 mb-n6">
                           <v-list-item-action>
-                            <span :class="['fi fi-'+item.country]" />
+                            <span :class="['ml-n2 fi fi-'+item.country]" />
                           </v-list-item-action>
-                          <v-list-item-content>
+                          <v-list-item-content class="ml-n9">
                             <v-list-item-title>
                               {{ item.code }}
                             </v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
-                        <v-divider />
                       </template>
                     </v-select>
                   </v-col>
