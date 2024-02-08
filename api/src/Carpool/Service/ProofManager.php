@@ -253,7 +253,7 @@ class ProofManager
      *
      * @return CarpoolProof The created proof
      */
-    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger, string $driverPhoneUniqueId, string $passengerPhoneUniqueId)
+    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger, string $driverPhoneUniqueId = null, string $passengerPhoneUniqueId = null)
     {
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setType($type);
@@ -392,7 +392,7 @@ class ProofManager
      *
      * @return CarpoolProof The updated proof
      */
-    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance, string $driverPhoneUniqueId, string $passengerPhoneUniqueId)
+    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance, string $driverPhoneUniqueId = null, string $passengerPhoneUniqueId = null)
     {
         // search the proof
         if (!$carpoolProof = $this->carpoolProofRepository->find($id)) {
@@ -410,6 +410,7 @@ class ProofManager
         }
 
         $firstDropOffCertification = false;
+
         // we perform different actions depending on the role and the moment
         switch ($actor) {
             case CarpoolProof::ACTOR_DRIVER:
@@ -438,7 +439,7 @@ class ProofManager
                             $carpoolProof->getDropOffPassengerAddress()->getLongitude()
                         ) <= $distance) {
                             // drop off driver
-                            if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getDropOffPassengerDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                            if (round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime($carpoolProof->getDropOffPassengerDate()->format('Y-m-d h:i:s'))) / 60, 2) > 2) {
                                 throw new ProofException('Driver dropoff certification failed : the time between driver and passenger certifications exceeds 2 minutes');
                             }
                             $carpoolProof->setDropOffDriverDate(new \DateTime('UTC'));
@@ -458,7 +459,7 @@ class ProofManager
                         $carpoolProof->getPickUpPassengerAddress()->getLatitude(),
                         $carpoolProof->getPickUpPassengerAddress()->getLongitude()
                     ) <= $distance) {
-                        if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getPickUpPassengerDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                        if (round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime($carpoolProof->getPickUpPassengerDate()->format('Y-m-d h:i:s'))) / 60, 2) > 2) {
                             throw new ProofException('Driver pickup certification failed : the time between driver and passenger certifications exceeds 2 minutes');
                         }
                         $carpoolProof->setPickupDriverDate(new \DateTime('UTC'));
@@ -505,7 +506,7 @@ class ProofManager
                             $carpoolProof->getDropOffDriverAddress()->getLongitude()
                         ) <= $distance) {
                             // drop off passenger
-                            if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getDropOffDriverDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                            if (round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime($carpoolProof->getDropOffDriverDate()->format('Y-m-d h:i:s'))) / 60, 2) > 2) {
                                 throw new ProofException('Passenger dropoff certification failed : the time between driver and passenger certifications exceeds 2 minutes');
                             }
                             $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
@@ -529,7 +530,7 @@ class ProofManager
                         $carpoolProof->getPickUpDriverAddress()->getLatitude(),
                         $carpoolProof->getPickUpDriverAddress()->getLongitude()
                     ) <= $distance) {
-                        if ((round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime(($carpoolProof->getPickUpDriverDate())->format('Y-m-d h:i:s'))) / 60, 2)) > 2) {
+                        if (round(abs(strtotime((new \DateTime('UTC'))->format('Y-m-d h:i:s')) - strtotime($carpoolProof->getPickUpDriverDate()->format('Y-m-d h:i:s'))) / 60, 2) > 2) {
                             throw new ProofException('Passenger pickup certification failed : the time between driver and passenger certifications exceeds 2 minutes');
                         }
                         $carpoolProof->setPickupPassengerDate(new \DateTime('UTC'));
@@ -628,8 +629,8 @@ class ProofManager
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
             // uncomment the following to anonymize driver addresses used in the proof
-                // $carpoolProof->setOriginDriverAddress(null);
-                // $carpoolProof->setDestinationDriverAddress(null);
+            // $carpoolProof->setOriginDriverAddress(null);
+            // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
                 $carpoolProof->setPassenger(null);
                 // uncomment the following to anonymize passenger addresses used in the proof
@@ -677,8 +678,21 @@ class ProofManager
         $nbSent = 0;
         // exit;
         // send these proofs
+
+        // we check taht we have phone numbers
         foreach ($proofs as $proof) {
-            // @var CarpoolProof $proof
+            if (is_null($proof->getDriver()->getTelephone())
+                || '' == trim($proof->getDriver()->getTelephone())
+                || is_null($proof->getPassenger()->getTelephone())
+                || '' == trim($proof->getPassenger()->getTelephone())
+            ) {
+                $proof->setStatus(CarpoolProof::STATUS_NOT_SENT_MISSING_PHONE);
+                $this->entityManager->persist($proof);
+            }
+
+            /**
+             * @var CarpoolProof $proof
+             */
             if (CarpoolProof::STATUS_PENDING !== $proof->getStatus()) {
                 continue;
             }

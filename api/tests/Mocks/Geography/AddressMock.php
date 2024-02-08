@@ -4,10 +4,25 @@ namespace App\Tests\Mocks\Geography;
 
 use App\Geography\Entity\Address;
 
-abstract class AddressMock
+class AddressMock
 {
-    public static function getAddress(): Address
+    public static function getHomeAddress(): Address
     {
-        return new Address();
+        $homeAddress = new Address();
+        $homeAddress->setHouseNumber('5');
+        $homeAddress->setStreetAddress('rue de la monnaie');
+        $homeAddress->setAddressLocality('Nancy');
+        $homeAddress->setPostalCode('54000');
+        $homeAddress->setCounty('France');
+
+        return $homeAddress;
+    }
+
+    public static function getAddressEec(): Address
+    {
+        $address = new Address();
+        $address->setAddressCountry('France');
+
+        return $address;
     }
 }
