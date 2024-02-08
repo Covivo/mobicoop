@@ -38,11 +38,17 @@ use Psr\Log\LoggerInterface;
  */
 class BankTransferValidator
 {
-    public const COL_USER_ID = 0;
-    public const COL_AMOUNT = 1;
-    public const COL_TERRITORY_ID = 2;
-    public const COL_CARPOOL_PROOF_ID = 3;
-    public const COL_DETAILS_MIN = 4;
+    public const HEADERS_USER_ID = ['id_usager', 'userId'];
+    public const HEADERS_AMOUNT = ['amount', 'montant'];
+    public const HEADERS_TERRITORY_ID = ['territoryId', 'id_territoire', 'territoryId(opt)'];
+    public const HEADERS_CARPOOL_PROOF_ID = ['carpoolProofId', 'carpool_proof_id', 'carpoolProofId(opt)'];
+
+    public const HEADERS = [
+        self::HEADERS_USER_ID,
+        self::HEADERS_AMOUNT,
+        self::HEADERS_TERRITORY_ID,
+        self::HEADERS_CARPOOL_PROOF_ID,
+    ];
 
     /**
      * @var array
@@ -156,35 +162,63 @@ class BankTransferValidator
         $this->_status = BankTransfer::STATUS_INITIATED;
     }
 
+    private function _findValue(array $headers)
+    {
+        $value = null;
+        foreach ($headers as $header) {
+            if (isset($this->_data[$header])) {
+                return $this->_data[$header];
+            }
+        }
+
+        return $value;
+    }
+
     private function _checkAmount()
     {
-        if (is_null($this->_data[self::COL_AMOUNT]) || '' == trim($this->_data[self::COL_AMOUNT])) {
-            $this->_logger->error('[BatchId : '.$this->_batchId.'] Empty Amount : '.$this->_data[self::COL_AMOUNT]);
+        $value = $this->_findValue(self::HEADERS_AMOUNT);
+        if (is_null($value) || '' == trim($value)) {
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] Empty Amount : '.$value);
             $this->_status = BankTransfer::STATUS_NO_AMOUNT;
         }
 
-        $this->_amount = str_replace(',', '.', $this->_data[self::COL_AMOUNT]);
+        if (!is_numeric($value)) {
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] Amount must be numeric : '.$value);
+            $this->_status = BankTransfer::STATUS_NO_AMOUNT;
+        }
+
+        $this->_amount = str_replace(',', '.', $value);
     }
 
     private function _checkRecipient()
     {
-        if (!$user = $this->_userManager->getUser($this->_data[self::COL_USER_ID])) {
-            $this->_logger->error('[BatchId : '.$this->_batchId.'] Unknown Recipient : '.$this->_data[self::COL_USER_ID]);
+        $value = $this->_findValue(self::HEADERS_USER_ID);
+
+        if (!is_numeric($value)) {
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] User Id must be an int : '.$value);
             $this->_status = BankTransfer::STATUS_UNKNOWN_RECIPIENT;
+        } else {
+            if (!$user = $this->_userManager->getUser($value)) {
+                $this->_logger->error('[BatchId : '.$this->_batchId.'] Unknown Recipient : '.$value);
+                $this->_status = BankTransfer::STATUS_UNKNOWN_RECIPIENT;
+            }
+            $this->_user = $user;
         }
 
-        $this->_user = $user;
+        $this->_user = null;
     }
 
     private function _checkTerritory()
     {
-        if (is_null($this->_data[self::COL_TERRITORY_ID]) || '' === trim($this->_data[self::COL_TERRITORY_ID])) {
+        $value = $this->_findValue(self::HEADERS_TERRITORY_ID);
+
+        if (is_null($value) || '' === trim($value)) {
             return null;
         }
 
-        if (!$territory = $this->_territoryManager->getTerritory($this->_data[self::COL_TERRITORY_ID])) {
+        if (!$territory = $this->_territoryManager->getTerritory($value)) {
             $this->_status = BankTransfer::STATUS_UNKNOWN_TERRITORY;
-            $this->_logger->error('[BatchId : '.$this->_batchId.'] Unknown Territory : '.$this->_data[self::COL_TERRITORY_ID]);
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] Unknown Territory : '.$value);
         }
 
         $this->_territory = $territory;
@@ -192,15 +226,17 @@ class BankTransferValidator
 
     private function _checkCarpoolProof()
     {
-        if (is_null($this->_data[self::COL_CARPOOL_PROOF_ID]) || '' === trim($this->_data[self::COL_CARPOOL_PROOF_ID])) {
+        $value = $this->_findValue(self::HEADERS_CARPOOL_PROOF_ID);
+
+        if (is_null($value) || '' === trim($value)) {
             return null;
         }
 
-        $dataCarpoolProof = explode('_', $this->_data[self::COL_CARPOOL_PROOF_ID]);
+        $dataCarpoolProof = explode('_', $value);
 
         if (!isset($dataCarpoolProof[1]) || !is_numeric($dataCarpoolProof[1])) {
             $this->_status = BankTransfer::STATUS_INVALID_CARPOOL_PROOF;
-            $this->_logger->error('[BatchId : '.$this->_batchId.'] CarpoolProof Invalid: '.$this->_data[self::COL_CARPOOL_PROOF_ID]);
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] CarpoolProof Invalid: '.$value);
         } else {
             $carpoolProofId = $dataCarpoolProof[1];
             if (!$carpoolProof = $this->_carpoolProofRepository->find($carpoolProofId)) {
@@ -219,14 +255,27 @@ class BankTransferValidator
         }
     }
 
+    private function _inSubArray(string $needle, array $haystack): bool
+    {
+        foreach ($haystack as $subArray) {
+            if (in_array($needle, $subArray)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function _checkOptionalColumns()
     {
         $options = [];
-        for ($i = self::COL_DETAILS_MIN; $i < count($this->_data); ++$i) {
-            if ('' !== trim($this->_data[$i])) {
-                $options[] = $this->_data[$i];
+
+        foreach ($this->_data as $key => $data) {
+            if (!$this->_inSubArray($key, self::HEADERS)) {
+                $options[] = $data;
             }
         }
+
         $this->_optionalColumns = (0 != count($options)) ? json_encode($options, JSON_UNESCAPED_UNICODE) : null;
     }
 }
