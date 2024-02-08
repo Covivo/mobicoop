@@ -17,6 +17,7 @@ use App\Incentive\Service\Definition\LdImproved;
 use App\Incentive\Service\Definition\LdStandard;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Incentive\Validator\CarpoolPaymentValidator;
+use App\Service\AddressService;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -294,7 +295,7 @@ class LongDistanceSubscription extends Subscription
     private $drivingLicenceNumber;
 
     /**
-     * @var string the full street address of the user
+     * @var null|string the full street address of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -592,11 +593,9 @@ class LongDistanceSubscription extends Subscription
      */
     public function setStreetAddress(): self
     {
-        if (!is_null($this->getUser() && !is_null($this->getUser()->getHomeAddress()))) {
-            $homeAddress = $this->getUser()->getHomeAddress();
+        $addressService = new AddressService($this->getUser()->getHomeAddress());
 
-            $this->streetAddress = $homeAddress->getHouseNumber().', '.$homeAddress->getStreetAddress();
-        }
+        $this->streetAddress = $addressService->getAddressWithStreetNumber();
 
         return $this;
     }

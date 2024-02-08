@@ -39,8 +39,10 @@ class UserLoadListener
     private $userManager;
     private $identityValidation;
 
-    public function __construct(UserManager $userManager, $params)
-    {
+    public function __construct(
+        UserManager $userManager,
+        $params
+    ) {
         $this->avatarSizes = $params['avatarSizes'];
         $this->avatarDefaultFolder = $params['avatarDefaultFolder'];
         $this->userReviewActive = $params['userReview'];

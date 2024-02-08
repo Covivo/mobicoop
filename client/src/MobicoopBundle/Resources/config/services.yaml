@@ -267,6 +267,7 @@ services:
       $ceeDisplay: "%env(bool:CEE_DISPLAY)%"
       $gendersList: "%env(json:SIGNUP_GENDERS_LIST)%"
       $specificTerms: "%env(bool:SIGNUP_SPECIFIC_TERMS)%"
+      $phoneCodes: "%env(json:file:resolve:PHONE_CODES)%"
     tags: ["controller.service_arguments"]
   Mobicoop\Bundle\MobicoopBundle\User\Service\:
     resource: "@MobicoopBundle/User/Service/*"

@@ -144,3 +144,5 @@
 public/maintenance.enable
 /api/public/maintenance.enable
 client/config/geocomplete/palette.json
+client/config/params/phoneCodes.json
+

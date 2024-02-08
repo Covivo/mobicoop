@@ -30,7 +30,9 @@ use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
 use App\Gamification\Repository\RewardRepository;
 use App\Gamification\Repository\RewardStepRepository;
+use App\Service\FormatDataManager;
 use App\User\Entity\User;
+use App\User\Service\IdentityProofManager;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -63,6 +65,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     private $gratuityActive;
     private $gratuityNotificationNormalizer;
 
+    private $formatDataManager;
+    private $identityProofManager;
+
     public function __construct(
         NormalizerInterface $decorated,
         GamificationNotifier $gamificationNotifier,
@@ -77,7 +82,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         RequestStack $request,
         UserManager $userManager,
         bool $gratuityActive,
-        GratuityNotificationNormalizer $gratuityNotificationNormalizer
+        GratuityNotificationNormalizer $gratuityNotificationNormalizer,
+        FormatDataManager $formatDataManager,
+        IdentityProofManager $identityProofManager
     ) {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
@@ -97,6 +104,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->userManager = $userManager;
         $this->gratuityActive = $gratuityActive;
         $this->gratuityNotificationNormalizer = $gratuityNotificationNormalizer;
+        $this->formatDataManager = $formatDataManager;
+        $this->identityProofManager = $identityProofManager;
     }
 
     public function getCurrentRewardStep(): RewardStep
@@ -214,6 +223,13 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                 }
             }
             $this->entityManager->flush();
+        }
+
+        if ($object instanceof User && isset($data['identityProofs'])) {
+            foreach ($data['identityProofs'] as $key => $proof) {
+                $data['identityProofs'][$key]['fileSize'] = $this->formatDataManager->convertFilesize($proof['size']);
+                $data['identityProofs'][$key]['fileName'] = $this->identityProofManager->getFileUrlFromArray($proof);
+            }
         }
 
         return $data;
