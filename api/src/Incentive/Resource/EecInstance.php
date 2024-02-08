@@ -366,7 +366,7 @@ class EecInstance
         return $this;
     }
 
-    private function setTabView(bool $tabView): self
+    private function setTabView(?bool $tabView): self
     {
         $this->tabView = is_null($tabView) || false === $tabView ? false : true;
 

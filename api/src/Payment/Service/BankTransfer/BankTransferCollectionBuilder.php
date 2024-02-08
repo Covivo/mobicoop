@@ -82,16 +82,12 @@ class BankTransferCollectionBuilder
 
     public function build()
     {
-        try {
-            $file = fopen($this->_filepath, 'r');
-        } catch (\Exception $e) {
-            throw new BankTransferException(BankTransferException::ERROR_OPENING_FILE.' '.$this->_filepath);
-        }
-
         $this->_batchId = $this->_generateUuid();
         $this->_logger->info('Starting BatchId : '.$this->_batchId);
-        while (!feof($file)) {
-            $line = fgetcsv($file, 0, self::CSV_DELIMITER);
+
+        $data = $this->_buildArrayWithHeadersAsKeys();
+
+        foreach ($data as $line) {
             if ($line) {
                 $this->_BankTransferBuilder->setData($line);
                 if (!is_null($BankTransfer = $this->_BankTransferBuilder->build($this->_batchId))) {
@@ -99,8 +95,25 @@ class BankTransferCollectionBuilder
                 }
             }
         }
+    }
 
-        fclose($file);
+    private function _buildArrayWithHeadersAsKeys(): array
+    {
+        try {
+            $file = fopen($this->_filepath, 'r');
+        } catch (\Exception $e) {
+            throw new BankTransferException(BankTransferException::ERROR_OPENING_FILE.' '.$this->_filepath);
+        }
+
+        $headers = fgetcsv($file, 0, self::CSV_DELIMITER);
+        $data = [];
+        while (($line = fgetcsv($file, 0, self::CSV_DELIMITER)) !== false) {
+            $lineData = array_combine($headers, $line);
+
+            $data[] = $lineData;
+        }
+
+        return $data;
     }
 
     private function _generateUuid()
