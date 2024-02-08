@@ -92,6 +92,7 @@
                   :api-uri="apiUri"
                   :genders-list="gendersList"
                   :eec-instance="eecInstance"
+                  :phone-codes="phoneCodes"
                   @changeTab="changeTab"
                   @updateUser="updateUser"
                 />
@@ -319,6 +320,10 @@ export default {
       type: Object,
       default: () => ({})
     },
+    phoneCodes: {
+      type: Array,
+      default: () => []
+    }
   },
   data(){
     return{

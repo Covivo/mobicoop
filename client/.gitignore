@@ -348,3 +348,6 @@ cypress/screenshots
 
 # Geocomplete
 /config/geocomplete/palette.json
+
+# PhoneCodes
+/config/params/phoneCodes.json

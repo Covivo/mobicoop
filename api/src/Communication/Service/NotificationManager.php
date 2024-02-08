@@ -790,7 +790,11 @@ class NotificationManager
             return;
         }
         $sms = new Sms();
-        $sms->setRecipientTelephone($recipient->getTelephone());
+        if (!is_null($recipient->getPhoneCode())) {
+            $sms->setRecipientTelephone('+'.$recipient->getPhoneCode().ltrim($recipient->getTelephone(), 0));
+        } else {
+            $sms->setRecipientTelephone($recipient->getTelephone());
+        }
         $bodyContext = [];
         if ($object) {
             switch (get_class($object)) {

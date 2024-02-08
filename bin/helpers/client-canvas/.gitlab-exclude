@@ -133,3 +133,5 @@ mobicoop-platform/client/public/mobile_app_repository.json
 public/maintenance.enable
 public/externalCgu/*.*
 mobicoop-platform/api/public/maintenance.enable
+mobicoop-platform/client/config/geocomplete/palette.json
+mobicoop-platform/client/config/params/phoneCodes.json
