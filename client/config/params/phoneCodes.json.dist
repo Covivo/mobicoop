@@ -1,7 +1,4 @@
-
- {
-    "phoneCodes":[
-        { "country": "fr", "code": "+33", "value": 33 }
-    ]
- }
+[
+    { "country": "fr", "code": "+33", "value": 33 }
+]
 
