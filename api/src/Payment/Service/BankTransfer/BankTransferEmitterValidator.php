@@ -23,6 +23,7 @@
 namespace App\Payment\Service\BankTransfer;
 
 use App\Payment\Entity\BankTransfer;
+use App\Payment\Entity\PaymentProfile;
 use App\Payment\Entity\Wallet;
 use App\Payment\Exception\BankTransferException;
 use App\Payment\Repository\PaymentProfileRepository;
@@ -90,7 +91,23 @@ class BankTransferEmitterValidator
         $this->_checkPaymentProvider();
         $this->_computeTotalAmount();
         $this->_checkFundsAvailability();
+        $this->_checkRecipientsPaymentProfile();
         $this->_checkRecipientsWallets();
+    }
+
+    public function _checkRecipientsPaymentProfile()
+    {
+        foreach ($this->_BankTransfers as $BankTransfer) {
+            if (!$recipientPaymentProfile = $this->_paymentProfileRepository->findOneBy(['user_id' => $BankTransfer->getRecipient()])) {
+                $this->_updateTransfertStatus($BankTransfer, BankTransfer::STATUS_ABANDONNED_NO_RECIPIENT_PAYMENT_PROFILE);
+                $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No payment profile for User '.$BankTransfer->getRecipient()->getId());
+            } else {
+                if (PaymentProfile::STATUS_INACTIVE == $recipientPaymentProfile->getStatus()) {
+                    $this->_updateTransfertStatus($BankTransfer, BankTransfer::STATUS_ABANDONNED_RECIPIENT_PAYMENT_PROFILE_INACTIVE);
+                    $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Inactive payment profile for User '.$BankTransfer->getRecipient()->getId());
+                }
+            }
+        }
     }
 
     public function _checkRecipientsWallets()
