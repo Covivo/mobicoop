@@ -15,6 +15,7 @@ use App\Incentive\Service\Provider\CarpoolItemProvider;
 use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Provider\SubscriptionProvider;
 use App\Incentive\Validator\CarpoolProofValidator;
+use App\Incentive\Validator\SubscriptionValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
@@ -94,6 +95,13 @@ class ValidateLDSubscription extends ValidateSubscription
 
     protected function _executeForStandardJourney(CarpoolItem $carpoolItem)
     {
+        if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
+            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
+            $stage->execute();
+
+            return;
+        }
+
         $journey = new LongDistanceJourney();
         $journey = $this->_updateJourney($journey, $carpoolItem);
 
