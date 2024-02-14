@@ -263,8 +263,6 @@ class SubscriptionManager extends MobConnectManager
 
     public function recommitSubscription($subscription): void
     {
-        exit('ici');
-
         $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
         $stage->execute();
     }
