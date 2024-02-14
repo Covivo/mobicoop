@@ -56,14 +56,14 @@ class ActionSubscriber implements EventSubscriberInterface
             switch ($event->getAction()->getName()) {
                 case 'user_home_address_updated':
                 case UserRegisteredEvent::NAME:
-                    if (!is_null($event->getUser()->getHomeAddress()->getLatitude())) {
+                    if (!is_null($event->getUser()->getHomeAddress()) && !is_null($event->getUser()->getHomeAddress()->getLatitude())) {
                         $this->_gratuityCampaignActionManager->handleHomeAddressUpdatedAction($event->getUser());
                     }
 
                     break;
 
                 case ProposalPostedEvent::NAME:
-                    if (!is_null($event->getUser()->getHomeAddress()->getLatitude())) {
+                    if (!is_null($event->getUser()->getHomeAddress()) && !is_null($event->getUser()->getHomeAddress()->getLatitude())) {
                         $this->_gratuityCampaignActionManager->handleCarpoolAdPostedAction($event->getUser(), $event->getProposal());
                     }
 

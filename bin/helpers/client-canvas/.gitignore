@@ -335,3 +335,9 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 src/MobicoopBundle
+
+# Geocomplete
+/config/geocomplete/palette.json
+
+# PhoneCodes
+/config/params/phoneCodes.json

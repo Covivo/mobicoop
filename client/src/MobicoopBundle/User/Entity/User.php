@@ -565,6 +565,13 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $gratuity;
 
     /**
+     * @var null|int International phone code
+     *
+     * @Groups({"post","put"})
+     */
+    private $phoneCode;
+
+    /**
      * @var array
      */
     private $gratuityNotifications;
@@ -1111,7 +1118,9 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this->email;
     }
 
-    public function eraseCredentials() {}
+    public function eraseCredentials()
+    {
+    }
 
     public function isEqualTo(UserInterface $user)
     {
@@ -1707,6 +1716,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         $this->gratuityNotifications = $gratuityNotifications;
     }
 
+    public function getPhoneCode(): ?int
+    {
+        return $this->phoneCode;
+    }
+
+    public function setPhoneCode(?int $phoneCode): self
+    {
+        $this->phoneCode = $phoneCode;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1765,6 +1786,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'hasAccessToMobAPI' => $this->hasAccessToMobAPI(),
             'gratuity' => $this->hasGratuity(),
             'gratuityNotifications' => $this->getGratuityNotifications(),
+            'phoneCode' => $this->getPhoneCode(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

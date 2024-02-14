@@ -60,6 +60,7 @@ class CarpoolProof
     public const STATUS_INVALID_CONCURRENT_SCHEDULES = 13; // proof not sent: concurrent travel at the same time already sent to rpc
     public const STATUS_INVALID_SPLITTED_TRIP = 14; // proof not sent: a long trip has been splitted
     public const STATUS_INVALID_DUPLICATE_DEVICE = 15; // proof not sent: passenger and driver phone unique id are indentical
+    public const STATUS_NOT_SENT_MISSING_PHONE = 16;
 
     public const ACTOR_DRIVER = 1;
     public const ACTOR_PASSENGER = 2;

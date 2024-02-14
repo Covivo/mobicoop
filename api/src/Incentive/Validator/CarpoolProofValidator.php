@@ -24,7 +24,9 @@ class CarpoolProofValidator
 
     public static function isEecCompliant(CarpoolProof $carpoolProof): bool
     {
-        return self::isCarpoolProofStatusEecCompliant($carpoolProof) && self::isCarpoolProofTypeEecCompliant($carpoolProof);
+        return
+            self::isCarpoolProofStatusEecCompliant($carpoolProof)
+            && self::isCarpoolProofTypeEecCompliant($carpoolProof);
     }
 
     public static function isCarpoolProofStatusEecCompliant(CarpoolProof $carpoolProof): bool
@@ -58,7 +60,7 @@ class CarpoolProofValidator
 
     public static function isDowngradedType(CarpoolProof $carpoolProof): bool
     {
-        return $carpoolProof->getStatus() != static::VALID_EEC_TYPE;
+        return $carpoolProof->getType() != static::VALID_EEC_TYPE;
     }
 
     public static function isCarpoolProofOriginOrDestinationFromFrance(CarpoolProof $carpoolProof): bool
