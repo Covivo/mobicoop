@@ -49,6 +49,7 @@ class CreateSubscription extends Stage
         $httpResponse = $this->_apiProvider->postSubscription($this->_subscriptionType, $this->_user);
 
         if ($this->_apiProvider->hasRequestErrorReturned($httpResponse)) {
+            return;
         }
 
         $subscriptionClass = 'App\Incentive\Entity\\'.ucfirst($this->_subscriptionType).'DistanceSubscription';
