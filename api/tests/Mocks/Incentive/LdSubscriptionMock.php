@@ -22,7 +22,7 @@ class LdSubscriptionMock
     public static function getCommitedSubscription(): LongDistanceSubscription
     {
         $subscription = static::_getLdSubscription();
-        $subscription->setCommitmentProofJourney(LdJourney::getCommitedJourned());
+        $subscription->setCommitmentProofJourney(LdJourneyMock::getCommitedJourned());
         $subscription->setCommitmentProofDate(new \DateTime());
 
         return $subscription;

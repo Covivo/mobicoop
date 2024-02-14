@@ -19,7 +19,7 @@ class SdSubscriptionMock
     public static function getCommitedSubscription(): ShortDistanceSubscription
     {
         $subscription = static::_getSdSubscription();
-        $subscription->setCommitmentProofJourney(SdJourney::getCommitedJourned());
+        $subscription->setCommitmentProofJourney(SdJourneyMock::getCommitedJourned());
         $subscription->setCommitmentProofDate(new \DateTime());
 
         return $subscription;

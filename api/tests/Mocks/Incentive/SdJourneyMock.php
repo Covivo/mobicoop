@@ -5,7 +5,7 @@ namespace App\Tests\Mocks\Incentive;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\ShortDistanceJourney;
 
-class SdJourney
+class SdJourneyMock
 {
     public static function getCommitedJourned(): ShortDistanceJourney
     {
@@ -14,7 +14,12 @@ class SdJourney
 
     public static function getValidatedJourney(): ShortDistanceJourney
     {
-        return static::_getSdJourney();
+        $journey = static::_getSdJourney();
+
+        $journey->getCarpoolProof()->setStatus(CarpoolProof::STATUS_VALIDATED);
+        $journey->getCarpoolProof()->setType(CarpoolProof::TYPE_HIGH);
+
+        return $journey;
     }
 
     private static function _getSdJourney(): ShortDistanceJourney
