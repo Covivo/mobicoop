@@ -23,7 +23,10 @@
 
 namespace App\ExternalService\Interfaces;
 
+use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
 use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
+use App\ExternalService\Interfaces\Builder\CarpoolProofEntityBuilder;
+use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -37,13 +40,13 @@ class SendProofTest extends TestCase
 
     public function setUp(): void
     {
-        $carpoolProofSender = $this->getMockBuilder('App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender')
+        $carpoolProofSender = $this->getMockBuilder(CarpoolProofSender::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
         $carpoolProofSender->method('send')->willReturn('OK');
 
-        $carpoolProofEntityBuilder = $this->getMockBuilder('App\ExternalService\Interfaces\Builder\CarpoolProofEntityBuilder')
+        $carpoolProofEntityBuilder = $this->getMockBuilder(CarpoolProofEntityBuilder::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -57,7 +60,7 @@ class SendProofTest extends TestCase
      */
     public function testSendReturnOk()
     {
-        $carpoolProofDto = $this->getMockBuilder('App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto')
+        $carpoolProofDto = $this->getMockBuilder(CarpoolProofDto::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;

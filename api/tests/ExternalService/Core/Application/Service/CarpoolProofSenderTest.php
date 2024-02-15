@@ -22,7 +22,9 @@
 
 namespace App\ExternalService\Core\Application\Service;
 
+use App\ExternalService\Core\Application\Ports\DataSenderPort;
 use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
+use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -36,7 +38,7 @@ class CarpoolProofSenderTest extends TestCase
 
     public function setUp(): void
     {
-        $dataSenderPort = $this->getMockBuilder('App\ExternalService\Core\Application\Ports\DataSenderPort')
+        $dataSenderPort = $this->getMockBuilder(DataSenderPort::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -50,7 +52,7 @@ class CarpoolProofSenderTest extends TestCase
      */
     public function testSendReturnOk()
     {
-        $carpoolProofEntity = $this->getMockBuilder('App\ExternalService\Core\Domain\Entity\CarpoolProofEntity')
+        $carpoolProofEntity = $this->getMockBuilder(CarpoolProofEntity::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
