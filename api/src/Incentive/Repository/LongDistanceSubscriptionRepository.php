@@ -2,7 +2,10 @@
 
 namespace App\Incentive\Repository;
 
+use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\LongDistanceSubscription;
+use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
 
 class LongDistanceSubscriptionRepository extends SubscriptionRepository
@@ -79,6 +82,32 @@ class LongDistanceSubscriptionRepository extends SubscriptionRepository
             ->where('s.createdAt <= :deadline')
             ->andWhere('j.createdAt >= :deadline')
             ->setParameter('deadline', $deadline)
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function getSubscriptionsReadyToBeRecommited(): array
+    {
+        $qb = $this->_repository->createQueryBuilder('s');
+
+        $qb
+            ->join('s.commitmentProofJourney', 'j')
+            ->join('j.carpoolItem', 'ci')
+            ->join('j.carpoolPayment', 'cp')
+            ->leftJoin('ci.ask', 'a')
+            ->leftJoin('a.criteria', 'c')
+            ->leftJoin('a.carpoolProofs', 'cp2')
+            ->where('s.status IS NULL')
+            ->andWhere('c.fromDate < :now')
+            ->andWhere('ci.creditorStatus != :creditorStatus OR cp.status != :paymentStatus OR cp.transactionId IS NULL OR cp2.status != :proofStatus OR cp2.type != :proofType')
+            ->setParameters([
+                'now' => new \DateTime(),
+                'creditorStatus' => CarpoolItem::CREDITOR_STATUS_ONLINE,
+                'paymentStatus' => CarpoolPayment::STATUS_SUCCESS,
+                'proofStatus' => CarpoolProof::STATUS_VALIDATED,
+                'proofType' => CarpoolProof::TYPE_HIGH,
+            ])
         ;
 
         return $qb->getQuery()->getResult();
