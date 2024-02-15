@@ -23,29 +23,31 @@
 
 namespace App\ExternalService\Interfaces;
 
-use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
+use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
 use App\ExternalService\Interfaces\Builder\CarpoolProofEntityBuilder;
 use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @internal
+ *
+ * @coversDefaultClass
  */
-class SendProof
+class CarpoolProofEntityBuilderTest extends TestCase
 {
-    private $_carpoolProofSender;
     private $_carpoolProofEntityBuilder;
 
-    public function __construct(CarpoolProofSender $carpoolProofSender, CarpoolProofEntityBuilder $carpoolProofEntityBuilder)
+    public function setUp(): void
     {
-        $this->_carpoolProofSender = $carpoolProofSender;
-        $this->_carpoolProofEntityBuilder = $carpoolProofEntityBuilder;
+        $this->_carpoolProofEntityBuilder = new CarpoolProofEntityBuilder();
     }
 
-    public function send(CarpoolProofDto $carpoolProofDto)
+    /**
+     * @test
+     */
+    public function testBuildReturnACarpoolProofEntity()
     {
-        $carpoolProof = $this->_carpoolProofEntityBuilder->build($carpoolProofDto);
-        // on construit carpool proof entity
-
-        return $this->_carpoolProofSender->send($carpoolProof);
+        $carpoolProofDto = new CarpoolProofDto();
+        $this->assertInstanceOf(CarpoolProofEntity::class, $this->_carpoolProofEntityBuilder->build($carpoolProofDto));
     }
 }

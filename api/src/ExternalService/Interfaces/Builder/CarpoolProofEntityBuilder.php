@@ -21,31 +21,18 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces;
+namespace App\ExternalService\Interfaces\Builder;
 
-use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
-use App\ExternalService\Interfaces\Builder\CarpoolProofEntityBuilder;
+use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
 use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SendProof
+class CarpoolProofEntityBuilder
 {
-    private $_carpoolProofSender;
-    private $_carpoolProofEntityBuilder;
-
-    public function __construct(CarpoolProofSender $carpoolProofSender, CarpoolProofEntityBuilder $carpoolProofEntityBuilder)
+    public function build(CarpoolProofDto $carpoolProofDto)
     {
-        $this->_carpoolProofSender = $carpoolProofSender;
-        $this->_carpoolProofEntityBuilder = $carpoolProofEntityBuilder;
-    }
-
-    public function send(CarpoolProofDto $carpoolProofDto)
-    {
-        $carpoolProof = $this->_carpoolProofEntityBuilder->build($carpoolProofDto);
-        // on construit carpool proof entity
-
-        return $this->_carpoolProofSender->send($carpoolProof);
+        return new CarpoolProofEntity();
     }
 }
