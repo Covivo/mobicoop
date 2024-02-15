@@ -633,7 +633,7 @@ class ProposalMatcher
             // $matchingCriteria->setPassengerComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
 
             // we use the driver's computed prices
-            $matchingCriteria->setDriverComputedPrice(($matching->getCommonDistance() + $matching->getDetourDistance()) * $matching->getProposalOffer()->getCriteria()->getPriceKm() / 1000);
+            $matchingCriteria->setDriverComputedPrice(max(0,($matching->getCommonDistance() + $matching->getDetourDistance()) * $matching->getProposalOffer()->getCriteria()->getPriceKm() / 1000));
             $matchingCriteria->setDriverComputedRoundedPrice($this->formatDataManager->roundPrice((float)$matchingCriteria->getDriverComputedPrice(), $matchingCriteria->getFrequency()));
             $matchingCriteria->setPassengerComputedPrice($matchingCriteria->getDriverComputedPrice());
             $matchingCriteria->setPassengerComputedRoundedPrice($matchingCriteria->getDriverComputedRoundedPrice());
@@ -1854,7 +1854,7 @@ class ProposalMatcher
                 $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
 
                 // we use the passenger's computed prices
-                $matchingCriteria->setDriverComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
+                $matchingCriteria->setDriverComputedPrice(max(0,$matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice()));
                 $matchingCriteria->setDriverComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
                 $matchingCriteria->setPassengerComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
                 $matchingCriteria->setPassengerComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
