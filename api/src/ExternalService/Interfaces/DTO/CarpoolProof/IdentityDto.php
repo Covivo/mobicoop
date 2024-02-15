@@ -21,7 +21,7 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces\DTO;
+namespace App\ExternalService\Interfaces\DTO\CarpoolProof;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -29,14 +29,19 @@ namespace App\ExternalService\Interfaces\DTO;
 class IdentityDto
 {
     /**
-     * @var string
+     * @var int
      */
-    private $_identityKey;
+    private $_id;
 
     /**
      * @var string
      */
-    private $_phoneTrunc;
+    private $_givenName;
+
+    /**
+     * @var string
+     */
+    private $_lastName;
 
     /**
      * @var string
@@ -44,35 +49,42 @@ class IdentityDto
     private $_phone;
 
     /**
-     * @var string
+     * @var \DateTimeInterface
      */
-    private $_operatorUserId;
+    private $_birthDate;
 
-    /**
-     * @var ?bool : can be null for a driver
-     */
-    private $_over18;
-
-    public function getIdentityKey(): ?string
+    public function getId(): ?int
     {
-        return $this->_identityKey;
+        return $this->_id;
     }
 
-    public function setIdentityKey(?string $identityKey): self
+    public function setId(?int $id): self
     {
-        $this->_identityKey = $identityKey;
+        $this->_id = $id;
 
         return $this;
     }
 
-    public function getPhoneTrunc(): ?string
+    public function getGivenName(): ?string
     {
-        return $this->_phoneTrunc;
+        return $this->_givenName;
     }
 
-    public function setPhoneTrunc(?string $phoneTrunc): self
+    public function setGivenName(?string $givenName): self
     {
-        $this->_phoneTrunc = $phoneTrunc;
+        $this->_givenName = $givenName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->_lastName;
+    }
+
+    public function setLastName(?string $lastName): self
+    {
+        $this->_lastName = $lastName;
 
         return $this;
     }
@@ -89,26 +101,14 @@ class IdentityDto
         return $this;
     }
 
-    public function getOperatorUserId(): ?string
+    public function isBirthDate(): ?\DateTimeInterface
     {
-        return $this->_operatorUserId;
+        return $this->_birthDate;
     }
 
-    public function setOperatorUserId(?string $operatorUserId): self
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
     {
-        $this->_operatorUserId = $operatorUserId;
-
-        return $this;
-    }
-
-    public function isOver18(): ?bool
-    {
-        return $this->_over18;
-    }
-
-    public function setOver18(?bool $over18): self
-    {
-        $this->_over18 = $over18;
+        $this->_birthDate = $birthDate;
 
         return $this;
     }

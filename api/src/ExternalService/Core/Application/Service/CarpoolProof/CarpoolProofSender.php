@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,27 +20,22 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces\DTO;
+namespace App\ExternalService\Core\Application\Service\CarpoolProof;
 
-/**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-class DriverDto extends ActorDto
+use App\ExternalService\Core\Application\Ports\DataSenderPort;
+use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
+
+class CarpoolProofSender
 {
-    /**
-     * @var int
-     */
-    private $_revenue;
+    private $_dataSender;
 
-    public function getRevenue(): ?int
+    public function __construct(DataSenderPort $dataSender)
     {
-        return $this->_revenue;
+        $this->_dataSender = $dataSender;
     }
 
-    public function setRevenue(?int $revenue): self
+    public function send(CarpoolProofEntity $carpoolProofEntity): string
     {
-        $this->_revenue = $revenue;
-
-        return $this;
+        return $this->_dataSender->send($carpoolProofEntity);
     }
 }

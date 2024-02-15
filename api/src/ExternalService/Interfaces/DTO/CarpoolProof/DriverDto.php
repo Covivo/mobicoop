@@ -21,43 +21,26 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces\DTO;
+namespace App\ExternalService\Interfaces\DTO\CarpoolProof;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class PassengerDto extends ActorDto
+class DriverDto extends IdentityDto
 {
     /**
      * @var int
      */
-    private $_seats;
+    private $_revenue;
 
-    /**
-     * @var int
-     */
-    private $_contribution;
-
-    public function getSeats(): ?int
+    public function getRevenue(): ?int
     {
-        return $this->_seats;
+        return $this->_revenue;
     }
 
-    public function setSeats(?int $seats): self
+    public function setRevenue(?int $revenue): self
     {
-        $this->_seats = $seats;
-
-        return $this;
-    }
-
-    public function getContribution(): ?int
-    {
-        return $this->_contribution;
-    }
-
-    public function setContribution(?int $contribution): self
-    {
-        $this->_contribution = $contribution;
+        $this->_revenue = $revenue;
 
         return $this;
     }

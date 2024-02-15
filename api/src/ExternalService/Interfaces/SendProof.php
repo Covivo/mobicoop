@@ -23,9 +23,9 @@
 
 namespace App\ExternalService\Interfaces;
 
-use App\ExternalService\Core\Application\Service\CarpoolProofSender;
+use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
 use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
-use App\ExternalService\Interfaces\DTO\CarpoolProofDto;
+use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -42,6 +42,7 @@ class SendProof
     public function send(CarpoolProofDto $carpoolProofDto)
     {
         $carpoolProof = new CarpoolProofEntity();
+        // on construit carpool proof entity
 
         return $this->_carpoolProofSender->send($carpoolProof);
     }

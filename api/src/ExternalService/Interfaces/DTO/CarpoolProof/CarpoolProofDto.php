@@ -21,32 +21,17 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces\DTO;
+namespace App\ExternalService\Interfaces\DTO\CarpoolProof;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class CarpoolProofDto
 {
-    public const TYPE_LOW = 'A';
-    public const TYPE_MID = 'B';
-    public const TYPE_HIGH = 'C';
-
-    public const TYPES = [
-        self::TYPE_LOW,
-        self::TYPE_MID,
-        self::TYPE_HIGH,
-    ];
-
     /**
      * @var int
      */
     private $_journeyId;
-
-    /**
-     * @var string register system proof type : see TYPES
-     */
-    private $_operatorClass;
 
     /**
      * @var PassengerDto
@@ -59,24 +44,24 @@ class CarpoolProofDto
     private $_driver;
 
     /**
-     * @var array
+     * @var WaypointDto
      */
-    private $_incentives;
-
-    /**
-     * @var array
-     */
-    private $_incentiveCounterparts;
+    private $_pickUpPassenger;
 
     /**
      * @var WaypointDto
      */
-    private $_start;
+    private $_pickUpDriver;
 
     /**
      * @var WaypointDto
      */
-    private $_end;
+    private $_dropOffDriver;
+
+    /**
+     * @var WaypointDto
+     */
+    private $_dropOffPassenger;
 
     /**
      * @var int
@@ -91,18 +76,6 @@ class CarpoolProofDto
     public function setJourneyId(?int $journeyId): self
     {
         $this->_journeyId = $journeyId;
-
-        return $this;
-    }
-
-    public function getOperatorClass(): ?string
-    {
-        return $this->_operatorClass;
-    }
-
-    public function setOperatorClass(?string $operatorClass): self
-    {
-        $this->_operatorClass = $operatorClass;
 
         return $this;
     }
@@ -131,50 +104,50 @@ class CarpoolProofDto
         return $this;
     }
 
-    public function getIncentives(): ?array
+    public function getPickUpPassenger(): ?WaypointDto
     {
-        return $this->_incentives;
+        return $this->_pickUpPassenger;
     }
 
-    public function setIncentives(?array $incentives): self
+    public function setPickUpPassenger(?WaypointDto $pickUpPassenger): self
     {
-        $this->_incentives = $incentives;
+        $this->_pickUpPassenger = $pickUpPassenger;
 
         return $this;
     }
 
-    public function getincentiveCounterparts(): ?array
+    public function getPickUpDriver(): ?WaypointDto
     {
-        return $this->_incentiveCounterparts;
+        return $this->_pickUpDriver;
     }
 
-    public function setincentiveCounterparts(?array $incentiveCounterparts): self
+    public function setPickUpDriver(?WaypointDto $pickUpDriver): self
     {
-        $this->_incentiveCounterparts = $incentiveCounterparts;
+        $this->_pickUpDriver = $pickUpDriver;
 
         return $this;
     }
 
-    public function getStart(): ?WaypointDto
+    public function getDropOffPassenger(): ?WaypointDto
     {
-        return $this->_start;
+        return $this->_dropOffPassenger;
     }
 
-    public function setStart(?WaypointDto $start): self
+    public function setDropOffPassenger(?WaypointDto $dropOffPassenger): self
     {
-        $this->_start = $start;
+        $this->_dropOffPassenger = $dropOffPassenger;
 
         return $this;
     }
 
-    public function getEnd(): ?WaypointDto
+    public function getDropOffDriver(): ?WaypointDto
     {
-        return $this->_end;
+        return $this->_dropOffDriver;
     }
 
-    public function setEnd(?WaypointDto $end): self
+    public function setDropOffDriver(?WaypointDto $dropOffDriver): self
     {
-        $this->_end = $end;
+        $this->_dropOffDriver = $dropOffDriver;
 
         return $this;
     }
