@@ -23,10 +23,6 @@
 
 namespace App\ExternalService\Core\Domain\Entity\CarpoolProof;
 
-use App\ExternalService\Interfaces\DTO\CarpoolProof\DriverDto;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\PassengerDto;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\WaypointDto;
-
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -38,32 +34,32 @@ class CarpoolProofEntity
     private $_id;
 
     /**
-     * @var PassengerDto
+     * @var PassengerEntity
      */
     private $_passenger;
 
     /**
-     * @var DriverDto
+     * @var DriverEntity
      */
     private $_driver;
 
     /**
-     * @var WaypointDto
+     * @var WaypointEntity
      */
     private $_pickUpPassenger;
 
     /**
-     * @var WaypointDto
+     * @var WaypointEntity
      */
     private $_pickUpDriver;
 
     /**
-     * @var WaypointDto
+     * @var WaypointEntity
      */
     private $_dropOffDriver;
 
     /**
-     * @var WaypointDto
+     * @var WaypointEntity
      */
     private $_dropOffPassenger;
 
@@ -84,72 +80,72 @@ class CarpoolProofEntity
         return $this;
     }
 
-    public function getPassenger(): ?PassengerDto
+    public function getPassenger(): ?PassengerEntity
     {
         return $this->_passenger;
     }
 
-    public function setPassenger(?PassengerDto $passenger): self
+    public function setPassenger(?PassengerEntity $passenger): self
     {
         $this->_passenger = $passenger;
 
         return $this;
     }
 
-    public function getDriver(): ?DriverDto
+    public function getDriver(): ?DriverEntity
     {
         return $this->_driver;
     }
 
-    public function setDriver(?DriverDto $driver): self
+    public function setDriver(?DriverEntity $driver): self
     {
         $this->_driver = $driver;
 
         return $this;
     }
 
-    public function getPickUpPassenger(): ?WaypointDto
+    public function getPickUpPassenger(): ?WaypointEntity
     {
         return $this->_pickUpPassenger;
     }
 
-    public function setPickUpPassenger(?WaypointDto $pickUpPassenger): self
+    public function setPickUpPassenger(?WaypointEntity $pickUpPassenger): self
     {
         $this->_pickUpPassenger = $pickUpPassenger;
 
         return $this;
     }
 
-    public function getPickUpDriver(): ?WaypointDto
+    public function getPickUpDriver(): ?WaypointEntity
     {
         return $this->_pickUpDriver;
     }
 
-    public function setPickUpDriver(?WaypointDto $pickUpDriver): self
+    public function setPickUpDriver(?WaypointEntity $pickUpDriver): self
     {
         $this->_pickUpDriver = $pickUpDriver;
 
         return $this;
     }
 
-    public function getDropOffPassenger(): ?WaypointDto
+    public function getDropOffPassenger(): ?WaypointEntity
     {
         return $this->_dropOffPassenger;
     }
 
-    public function setDropOffPassenger(?WaypointDto $dropOffPassenger): self
+    public function setDropOffPassenger(?WaypointEntity $dropOffPassenger): self
     {
         $this->_dropOffPassenger = $dropOffPassenger;
 
         return $this;
     }
 
-    public function getDropOffDriver(): ?WaypointDto
+    public function getDropOffDriver(): ?WaypointEntity
     {
         return $this->_dropOffDriver;
     }
 
-    public function setDropOffDriver(?WaypointDto $dropOffDriver): self
+    public function setDropOffDriver(?WaypointEntity $dropOffDriver): self
     {
         $this->_dropOffDriver = $dropOffDriver;
 
