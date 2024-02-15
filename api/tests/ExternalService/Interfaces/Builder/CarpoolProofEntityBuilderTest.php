@@ -23,7 +23,7 @@
 
 namespace App\ExternalService\Interfaces;
 
-use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
+use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
 use App\ExternalService\Interfaces\Builder\CarpoolProofEntityBuilder;
 use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
 use PHPUnit\Framework\TestCase;
@@ -45,9 +45,36 @@ class CarpoolProofEntityBuilderTest extends TestCase
     /**
      * @test
      */
-    public function testBuildReturnACarpoolProofEntity()
+    public function testBuildReturnsACarpoolProofEntity()
     {
         $carpoolProofDto = new CarpoolProofDto();
         $this->assertInstanceOf(CarpoolProofEntity::class, $this->_carpoolProofEntityBuilder->build($carpoolProofDto));
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataCarpoolProofs
+     *
+     * @param mixed $carpoolProofDto
+     * @param mixed $carpoolProofEntity
+     */
+    public function testBuildReturnsACarpoolProofEntityWithIdenticalProperties($carpoolProofDto, $carpoolProofEntity)
+    {
+        $this->assertEquals($carpoolProofEntity, $this->_carpoolProofEntityBuilder->build($carpoolProofDto));
+    }
+
+    public function dataCarpoolProofs(): array
+    {
+        $carpoolProofDto = new CarpoolProofDto();
+        $carpoolProofDto->setId(1);
+        $carpoolProofDto->setDistance(10000);
+        $carpoolProofEntity = new CarpoolProofEntity();
+        $carpoolProofEntity->setId(1);
+        $carpoolProofEntity->setDistance(10000);
+
+        return [
+            [$carpoolProofDto, $carpoolProofEntity],
+        ];
     }
 }

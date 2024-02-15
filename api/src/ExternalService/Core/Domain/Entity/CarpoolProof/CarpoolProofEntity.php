@@ -21,12 +21,16 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces\DTO\CarpoolProof;
+namespace App\ExternalService\Core\Domain\Entity\CarpoolProof;
+
+use App\ExternalService\Interfaces\DTO\CarpoolProof\DriverDto;
+use App\ExternalService\Interfaces\DTO\CarpoolProof\PassengerDto;
+use App\ExternalService\Interfaces\DTO\CarpoolProof\WaypointDto;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class CarpoolProofDto
+class CarpoolProofEntity
 {
     /**
      * @var int

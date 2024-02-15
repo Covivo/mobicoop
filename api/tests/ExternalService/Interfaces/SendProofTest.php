@@ -24,7 +24,7 @@
 namespace App\ExternalService\Interfaces;
 
 use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
-use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
+use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
 use App\ExternalService\Interfaces\Builder\CarpoolProofEntityBuilder;
 use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
 use PHPUnit\Framework\TestCase;

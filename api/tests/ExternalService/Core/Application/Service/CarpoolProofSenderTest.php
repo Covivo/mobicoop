@@ -24,7 +24,7 @@ namespace App\ExternalService\Core\Application\Service;
 
 use App\ExternalService\Core\Application\Ports\DataSenderPort;
 use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
-use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
+use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
 use PHPUnit\Framework\TestCase;
 
 /**

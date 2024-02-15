@@ -23,7 +23,7 @@
 namespace App\ExternalService\Core\Application\Service\CarpoolProof;
 
 use App\ExternalService\Core\Application\Ports\DataSenderPort;
-use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
+use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
 
 class CarpoolProofSender
 {

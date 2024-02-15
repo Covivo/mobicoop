@@ -23,7 +23,7 @@
 
 namespace App\ExternalService\Interfaces\Builder;
 
-use App\ExternalService\Core\Domain\Entity\CarpoolProofEntity;
+use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
 use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
 
 /**
@@ -31,8 +31,12 @@ use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
  */
 class CarpoolProofEntityBuilder
 {
-    public function build(CarpoolProofDto $carpoolProofDto)
+    public function build(CarpoolProofDto $carpoolProofDto): CarpoolProofEntity
     {
-        return new CarpoolProofEntity();
+        $carpooProofEntity = new CarpoolProofEntity();
+        $carpooProofEntity->setId($carpoolProofDto->getId());
+        $carpooProofEntity->setDistance($carpoolProofDto->getDistance());
+
+        return $carpooProofEntity;
     }
 }
