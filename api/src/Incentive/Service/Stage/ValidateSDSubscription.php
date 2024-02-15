@@ -13,6 +13,7 @@ use App\Incentive\Service\DateService;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Validator\CarpoolProofValidator;
+use App\Incentive\Validator\SubscriptionValidator;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ValidateSDSubscription extends ValidateSubscription
@@ -91,6 +92,13 @@ class ValidateSDSubscription extends ValidateSubscription
 
     protected function _executeForStandardJourney()
     {
+        if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
+            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
+            $stage->execute();
+
+            return;
+        }
+
         $journey = new ShortDistanceJourney($this->_carpoolProof);
         $journey->updateJourney(
             $this->_carpoolProof,
