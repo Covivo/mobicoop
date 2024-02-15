@@ -31,30 +31,17 @@ class ActorDto
     /**
      * @var IdentityDto
      */
-    private $identity;
+    private $_identity;
 
-    /**
-     * @var WaypointDto
-     */
-    private $start;
+    public function getIdentity(): ?IdentityDto
+    {
+        return $this->_identity;
+    }
 
-    /**
-     * @var WaypointDto
-     */
-    private $end;
+    public function setIdentity(?IdentityDto $identity): self
+    {
+        $this->_identity = $identity;
 
-    /**
-     * @var int
-     */
-    private $seats;
-
-    /**
-     * @var int
-     */
-    private $contribution;
-
-    /**
-     * @var array
-     */
-    private $incentives;
+        return $this;
+    }
 }

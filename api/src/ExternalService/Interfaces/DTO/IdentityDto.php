@@ -31,15 +31,85 @@ class IdentityDto
     /**
      * @var string
      */
-    private $email;
+    private $_identityKey;
 
     /**
      * @var string
      */
-    private $phone;
+    private $_phoneTrunc;
+
+    /**
+     * @var string
+     */
+    private $_phone;
+
+    /**
+     * @var string
+     */
+    private $_operatorUserId;
 
     /**
      * @var ?bool : can be null for a driver
      */
-    private $over_18;
+    private $_over18;
+
+    public function getIdentityKey(): ?string
+    {
+        return $this->_identityKey;
+    }
+
+    public function setIdentityKey(?string $identityKey): self
+    {
+        $this->_identityKey = $identityKey;
+
+        return $this;
+    }
+
+    public function getPhoneTrunc(): ?string
+    {
+        return $this->_phoneTrunc;
+    }
+
+    public function setPhoneTrunc(?string $phoneTrunc): self
+    {
+        $this->_phoneTrunc = $phoneTrunc;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->_phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->_phone = $phone;
+
+        return $this;
+    }
+
+    public function getOperatorUserId(): ?string
+    {
+        return $this->_operatorUserId;
+    }
+
+    public function setOperatorUserId(?string $operatorUserId): self
+    {
+        $this->_operatorUserId = $operatorUserId;
+
+        return $this;
+    }
+
+    public function isOver18(): ?bool
+    {
+        return $this->_over18;
+    }
+
+    public function setOver18(?bool $over18): self
+    {
+        $this->_over18 = $over18;
+
+        return $this;
+    }
 }

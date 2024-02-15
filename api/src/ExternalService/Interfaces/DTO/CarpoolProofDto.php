@@ -41,20 +41,153 @@ class CarpoolProofDto
     /**
      * @var int
      */
-    private $journeyId;
+    private $_journeyId;
 
     /**
      * @var string register system proof type : see TYPES
      */
-    private $operatorClass;
+    private $_operatorClass;
 
     /**
-     * @var ActorDto
+     * @var PassengerDto
      */
-    private $passenger;
+    private $_passenger;
 
     /**
-     * @var ActorDto
+     * @var DriverDto
      */
-    private $driver;
+    private $_driver;
+
+    /**
+     * @var array
+     */
+    private $_incentives;
+
+    /**
+     * @var array
+     */
+    private $_incentiveCounterparts;
+
+    /**
+     * @var WaypointDto
+     */
+    private $_start;
+
+    /**
+     * @var WaypointDto
+     */
+    private $_end;
+
+    /**
+     * @var int
+     */
+    private $_distance;
+
+    public function getJourneyId(): ?int
+    {
+        return $this->_journeyId;
+    }
+
+    public function setJourneyId(?int $journeyId): self
+    {
+        $this->_journeyId = $journeyId;
+
+        return $this;
+    }
+
+    public function getOperatorClass(): ?string
+    {
+        return $this->_operatorClass;
+    }
+
+    public function setOperatorClass(?string $operatorClass): self
+    {
+        $this->_operatorClass = $operatorClass;
+
+        return $this;
+    }
+
+    public function getPassenger(): ?PassengerDto
+    {
+        return $this->_passenger;
+    }
+
+    public function setPassenger(?PassengerDto $passenger): self
+    {
+        $this->_passenger = $passenger;
+
+        return $this;
+    }
+
+    public function getDriver(): ?DriverDto
+    {
+        return $this->_driver;
+    }
+
+    public function setDriver(?DriverDto $driver): self
+    {
+        $this->_driver = $driver;
+
+        return $this;
+    }
+
+    public function getIncentives(): ?array
+    {
+        return $this->_incentives;
+    }
+
+    public function setIncentives(?array $incentives): self
+    {
+        $this->_incentives = $incentives;
+
+        return $this;
+    }
+
+    public function getincentiveCounterparts(): ?array
+    {
+        return $this->_incentiveCounterparts;
+    }
+
+    public function setincentiveCounterparts(?array $incentiveCounterparts): self
+    {
+        $this->_incentiveCounterparts = $incentiveCounterparts;
+
+        return $this;
+    }
+
+    public function getStart(): ?WaypointDto
+    {
+        return $this->_start;
+    }
+
+    public function setStart(?WaypointDto $start): self
+    {
+        $this->_start = $start;
+
+        return $this;
+    }
+
+    public function getEnd(): ?WaypointDto
+    {
+        return $this->_end;
+    }
+
+    public function setEnd(?WaypointDto $end): self
+    {
+        $this->_end = $end;
+
+        return $this;
+    }
+
+    public function getDistance(): ?int
+    {
+        return $this->_distance;
+    }
+
+    public function setDistance(?int $distance): self
+    {
+        $this->_distance = $distance;
+
+        return $this;
+    }
 }

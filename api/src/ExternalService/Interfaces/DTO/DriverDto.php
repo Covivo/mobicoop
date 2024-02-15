@@ -26,55 +26,21 @@ namespace App\ExternalService\Interfaces\DTO;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class WaypointDto
+class DriverDto extends ActorDto
 {
     /**
-     * @var float
+     * @var int
      */
-    private $_lat;
+    private $_revenue;
 
-    /**
-     * @var float
-     */
-    private $_lon;
-
-    /**
-     * @var string
-     */
-    private $_datetime;
-
-    public function getLat(): ?float
+    public function getRevenue(): ?int
     {
-        return $this->_lat;
+        return $this->_revenue;
     }
 
-    public function setLat(?float $lat): self
+    public function setRevenue(?int $revenue): self
     {
-        $this->_lat = $lat;
-
-        return $this;
-    }
-
-    public function getLon(): ?float
-    {
-        return $this->_lon;
-    }
-
-    public function setLon(?float $lon): self
-    {
-        $this->_lon = $lon;
-
-        return $this;
-    }
-
-    public function getDatetime(): ?string
-    {
-        return $this->_datetime;
-    }
-
-    public function setDatetime(?string $datetime): self
-    {
-        $this->_datetime = $datetime;
+        $this->_revenue = $revenue;
 
         return $this;
     }
