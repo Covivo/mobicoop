@@ -96,6 +96,28 @@ class SubscriptionProviderTest extends TestCase
         $this->assertInstanceOf(LongDistanceSubscription::class, SubscriptionProvider::getLDSubscriptionFromCarpoolItem($carpoolItem));
     }
 
+    // ------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * @test
+     */
+    public function getSubscriptionsCanBeResetArray()
+    {
+        $this->assertIsArray(SubscriptionProvider::getSubscriptionsCanBeReset([]));
+        $this->assertIsArray(SubscriptionProvider::getSubscriptionsCanBeReset([], true));
+    }
+
+    /**
+     * @dataProvider dataCanBeReset
+     *
+     * @test
+     */
+    public function getSubscriptionsCanBeResetSame(array $subscriptions)
+    {
+        $this->assertSame([$subscriptions[0], $subscriptions[1]], SubscriptionProvider::getSubscriptionsCanBeReset($subscriptions, true));
+        $this->assertSame([$subscriptions[2]], SubscriptionProvider::getSubscriptionsCanBeReset($subscriptions));
+    }
+
     // dataProviders ----------------------------------------------------------------------------------------------------------------------
 
     public function dataSubscriptionFromType(): array
@@ -111,6 +133,22 @@ class SubscriptionProviderTest extends TestCase
         return [
             [SdSubscriptionMock::getCommitedSubscription(), ShortDistanceSubscription::class],
             [LdSubscriptionMock::getCommitedSubscription(), LongDistanceSubscription::class],
+        ];
+    }
+
+    public function dataCanBeReset(): array
+    {
+        $sdSubscription1 = SdSubscriptionMock::getCommitedSubscription();
+        $sdSubscription2 = SdSubscriptionMock::getCommitedSubscription();
+        $sdSubscription3 = SdSubscriptionMock::getCompleteSubscription();
+
+        $ldSubscription1 = LdSubscriptionMock::getCommitedSubscription();
+        $ldSubscription2 = LdSubscriptionMock::getCommitedSubscription();
+        $ldSubscription3 = LdSubscriptionMock::getCompleteSubscription();
+
+        return [
+            [[$sdSubscription1, $sdSubscription2, $sdSubscription3]],
+            [[$ldSubscription1, $ldSubscription2, $ldSubscription3]],
         ];
     }
 }

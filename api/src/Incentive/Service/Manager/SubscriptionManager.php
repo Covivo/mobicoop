@@ -16,6 +16,7 @@ use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Provider\JourneyProvider;
+use App\Incentive\Service\Provider\SubscriptionProvider;
 use App\Incentive\Service\Stage\AutoRecommitSubscription;
 use App\Incentive\Service\Stage\CreateSubscription;
 use App\Incentive\Service\Stage\ProofInvalidate;
@@ -264,16 +265,16 @@ class SubscriptionManager extends MobConnectManager
     public function autoRecommitSubscriptions(): void
     {
         // Processing subscriptions that simply need to be reset
-        $sdSubscriptions = $this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(true);
-        $ldSubscriptions = $this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(true);
+        $sdSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(), true);
+        $ldSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(), true);
 
         foreach (array_merge($sdSubscriptions, $ldSubscriptions) as $subscription) {
             $this->resetSubscription($subscription);
         }
 
         // Processing subscriptions that need to be recommit
-        $sdSubscriptions = $this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited();
-        $ldSubscriptions = $this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited();
+        $sdSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited());
+        $ldSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited());
 
         foreach (array_merge($sdSubscriptions, $ldSubscriptions) as $subscription) {
             $this->recommitSubscription($subscription);

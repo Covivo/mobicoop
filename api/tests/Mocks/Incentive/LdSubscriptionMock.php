@@ -50,6 +50,28 @@ class LdSubscriptionMock
         return $subscription;
     }
 
+    public static function getCompleteSubscription(): LongDistanceSubscription
+    {
+        $subscription = static::getCommitedSubscription();
+
+        for ($i = 0; $i < 9; ++$i) {
+            $subscription->addLongDistanceJourney(LdJourneyMock::getValidatedJourney());
+        }
+
+        return $subscription;
+    }
+
+    public static function getCompleteValidatedSubscription(): LongDistanceSubscription
+    {
+        $subscription = static::getValidatedSubscription();
+
+        for ($i = 0; $i < 9; ++$i) {
+            $subscription->addLongDistanceJourney(LdJourneyMock::getValidatedJourney());
+        }
+
+        return $subscription;
+    }
+
     private static function _getLdSubscription(): LongDistanceSubscription
     {
         return new LongDistanceSubscription(

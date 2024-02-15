@@ -37,4 +37,18 @@ class SubscriptionProvider
                 ? $carpoolItem->getCreditorUser()->getLongDistanceSubscription()
                 : null;
     }
+
+    /**
+     * @param LongDistanceSubscription[]|ShortDistanceSubscription[] $subscriptions
+     */
+    public static function getSubscriptionsCanBeReset($subscriptions, bool $resetOnly = false): array
+    {
+        return array_values(array_filter($subscriptions, function ($subscription) use ($resetOnly) {
+            if ($resetOnly) {
+                return count($subscription->getJourneys()) <= 1;    // There is only the commitment journey
+            }
+
+            return count($subscription->getJourneys()) > 1;         // It's not just the commitment journey
+        }));
+    }
 }

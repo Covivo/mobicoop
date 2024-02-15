@@ -39,6 +39,28 @@ class SdSubscriptionMock
         return $subscription;
     }
 
+    public static function getCompleteSubscription(): ShortDistanceSubscription
+    {
+        $subscription = static::getCommitedSubscription();
+
+        for ($i = 0; $i < 9; ++$i) {
+            $subscription->addShortDistanceJourney(SdJourneyMock::getValidatedJourney());
+        }
+
+        return $subscription;
+    }
+
+    public static function getCompleteValidatedSubscription(): ShortDistanceSubscription
+    {
+        $subscription = static::getValidatedSubscription();
+
+        for ($i = 0; $i < 9; ++$i) {
+            $subscription->addShortDistanceJourney(SdJourneyMock::getValidatedJourney());
+        }
+
+        return $subscription;
+    }
+
     private static function _getSdSubscription(): ShortDistanceSubscription
     {
         return new ShortDistanceSubscription(
