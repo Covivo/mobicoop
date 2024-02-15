@@ -34,8 +34,19 @@ class CarpoolProofEntityBuilder
     public function build(CarpoolProofDto $carpoolProofDto): CarpoolProofEntity
     {
         $carpooProofEntity = new CarpoolProofEntity();
-        $carpooProofEntity->setId($carpoolProofDto->getId());
-        $carpooProofEntity->setDistance($carpoolProofDto->getDistance());
+
+        $reflectionDto = new \ReflectionObject($carpoolProofDto);
+        $reflectionEntity = new \ReflectionObject($carpooProofEntity);
+
+        foreach ($reflectionDto->getProperties() as $propertyDto) {
+            $propertyName = $propertyDto->getName();
+            if ($reflectionEntity->hasProperty($propertyName)) {
+                $propertyDto->setAccessible(true);
+                $propertyEntity = $reflectionEntity->getProperty($propertyName);
+                $propertyEntity->setAccessible(true);
+                $propertyEntity->setValue($carpooProofEntity, $propertyDto->getValue($reflectionDto));
+            }
+        }
 
         return $carpooProofEntity;
     }

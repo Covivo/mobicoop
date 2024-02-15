@@ -24,8 +24,10 @@
 namespace App\ExternalService\Interfaces;
 
 use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
+use App\ExternalService\Core\Domain\Entity\CarpoolProof\WaypointEntity;
 use App\ExternalService\Interfaces\Builder\CarpoolProofEntityBuilder;
 use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
+use App\ExternalService\Interfaces\DTO\CarpoolProof\WaypointDto;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -69,9 +71,18 @@ class CarpoolProofEntityBuilderTest extends TestCase
         $carpoolProofDto = new CarpoolProofDto();
         $carpoolProofDto->setId(1);
         $carpoolProofDto->setDistance(10000);
+        $pickUpDriverDto = new WaypointDto();
+        $pickUpDriverDto->setLat(18.0146548);
+        $pickUpDriverDto->setLon(6.0146548);
+        $carpoolProofDto->setPickUpDriver($pickUpDriverDto);
+
         $carpoolProofEntity = new CarpoolProofEntity();
         $carpoolProofEntity->setId(1);
         $carpoolProofEntity->setDistance(10000);
+        $pickUpDriverEntity = new WaypointEntity();
+        $pickUpDriverEntity->setLat(18.0146548);
+        $pickUpDriverEntity->setLon(6.0146548);
+        $carpoolProofEntity->setPickUpDriver($pickUpDriverEntity);
 
         return [
             [$carpoolProofDto, $carpoolProofEntity],
