@@ -261,6 +261,25 @@ class SubscriptionManager extends MobConnectManager
         $stage->execute();
     }
 
+    public function autoRecommitSubscriptions(): void
+    {
+        // Processing subscriptions that simply need to be reset
+        $sdSubscriptions = $this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(true);
+        $ldSubscriptions = $this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(true);
+
+        foreach (array_merge($sdSubscriptions, $ldSubscriptions) as $subscription) {
+            $this->resetSubscription($subscription);
+        }
+
+        // Processing subscriptions that need to be recommit
+        $sdSubscriptions = $this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited();
+        $ldSubscriptions = $this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited();
+
+        foreach (array_merge($sdSubscriptions, $ldSubscriptions) as $subscription) {
+            $this->recommitSubscription($subscription);
+        }
+    }
+
     public function recommitSubscription($subscription): void
     {
         $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
