@@ -16,7 +16,10 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Resource\EecInstance;
+use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 // Le Role du provider est de proposer des functions
 class MobConnectApiProvider extends MobConnectProvider
@@ -48,7 +51,7 @@ class MobConnectApiProvider extends MobConnectProvider
         $token = $this->_userAuthenticationProvider->getToken($user);
 
         if (!$token) {
-            return new MobConnectSubscriptionResponse($this->_userAuthenticationProvider->getResponse());
+            throw new HttpException(Response::HTTP_CONFLICT, MobConnectMessages::TOKEN_MISSING);
         }
 
         $data = [
@@ -61,10 +64,16 @@ class MobConnectApiProvider extends MobConnectProvider
 
         $this->_createDataProvider(RouteProvider::ROUTE_SUBSCRIPTIONS);
 
-        return new MobConnectSubscriptionResponse(
+        $response = new MobConnectSubscriptionResponse(
             ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($token))),
             $data
         );
+
+        if ($this->hasRequestErrorReturned($response)) {
+            throw new HttpException($response->getCode(), $response->getContent());
+        }
+
+        return $response;
     }
 
     /**

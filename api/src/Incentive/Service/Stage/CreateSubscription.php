@@ -46,9 +46,9 @@ class CreateSubscription extends Stage
 
     public function execute()
     {
-        $httpResponse = $this->_apiProvider->postSubscription($this->_subscriptionType, $this->_user);
-
-        if ($this->_apiProvider->hasRequestErrorReturned($httpResponse)) {
+        try {
+            $httpResponse = $this->_apiProvider->postSubscription($this->_subscriptionType, $this->_user);
+        } catch (\Throwable $th) {
             return;
         }
 
