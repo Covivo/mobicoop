@@ -22,6 +22,7 @@
 
 namespace App\ExternalService\Core\Application\Service;
 
+use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
 use PHPUnit\Framework\TestCase;
 
 /**

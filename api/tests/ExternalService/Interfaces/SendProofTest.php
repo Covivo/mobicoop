@@ -36,7 +36,7 @@ class SendProofTest extends TestCase
 
     public function setUp(): void
     {
-        $carpoolProofSender = $this->getMockBuilder('App\ExternalService\Core\Application\Service\CarpoolProofSender')
+        $carpoolProofSender = $this->getMockBuilder('App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender')
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -50,7 +50,7 @@ class SendProofTest extends TestCase
      */
     public function testSendReturnOk()
     {
-        $carpoolProofDto = $this->getMockBuilder('App\ExternalService\Interfaces\DTO\CarpoolProofDto')
+        $carpoolProofDto = $this->getMockBuilder('App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto')
             ->disableOriginalConstructor()
             ->getMock()
         ;
