@@ -25,7 +25,7 @@ class AddressServiceTest extends TestCase
 
     public function setUp(): void
     {
-        $this->_address = AddressMock::getAddress();
+        $this->_address = AddressMock::getAddressEec();
         $this->_addressService = new AddressService($this->_address);
     }
 
