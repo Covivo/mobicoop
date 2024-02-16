@@ -8,7 +8,6 @@ use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\IncentiveResponse;
 use App\DataProvider\Entity\MobConnect\Response\IncentivesResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
@@ -151,13 +150,6 @@ abstract class MobConnectManager
         $this->setApiProvider();
 
         return $this->_apiProvider->getSubscription($subscription, $user);
-    }
-
-    protected function getDriverSubscriptionTimestamps(string $subscriptionId): MobConnectSubscriptionTimestampsResponse
-    {
-        $this->setApiProvider();
-
-        return $this->_apiProvider->getSubscriptionTimestamps($subscriptionId);
     }
 
     protected function getIncentives(User $user): ?IncentivesResponse
