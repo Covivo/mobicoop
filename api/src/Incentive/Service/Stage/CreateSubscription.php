@@ -2,13 +2,15 @@
 
 namespace App\Incentive\Service\Stage;
 
-use App\Incentive\Entity\Log\Log;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Definition\DefinitionSelector;
+use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Manager\InstanceManager;
 use App\Incentive\Service\Manager\TimestampTokenManager;
+use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CreateSubscription extends Stage
 {
@@ -27,15 +29,22 @@ class CreateSubscription extends Stage
      */
     protected $_user;
 
+    /**
+     * @var LoggerService
+     */
+    private $_loggerService;
+
     public function __construct(
         EntityManagerInterface $em,
         TimestampTokenManager $timestampTokenManager,
+        LoggerService $loggerService,
         EecInstance $eecInstance,
         User $user,
         string $subscriptionType
     ) {
         $this->_em = $em;
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_loggerService = $loggerService;
         $this->_eecInstance = $eecInstance;
 
         $this->_user = $user;
@@ -48,7 +57,13 @@ class CreateSubscription extends Stage
     {
         try {
             $httpResponse = $this->_apiProvider->postSubscription($this->_subscriptionType, $this->_user);
-        } catch (\Throwable $th) {
+        } catch (HttpException $exception) {
+            $this->_loggerService->log(
+                str_replace('[USER]', $this->_user->getId(), str_replace('[TYPE]', $this->_subscriptionType, MobConnectMessages::HTTP_CREATION_REQUEST_ERROR.$exception->getMessage())),
+                LoggerService::TYPE_INFO,
+                true
+            );
+
             return;
         }
 
@@ -59,7 +74,6 @@ class CreateSubscription extends Stage
             $httpResponse->getContent()->id,
             DefinitionSelector::getDefinition($this->_subscriptionType)
         );
-        $subscription->addLog($httpResponse, Log::TYPE_SUBSCRIPTION);
 
         $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
 
