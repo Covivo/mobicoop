@@ -15,6 +15,7 @@ use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Incentive\Validator\SubscriptionValidator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidateSDSubscription extends ValidateSubscription
 {
@@ -122,15 +123,16 @@ class ValidateSDSubscription extends ValidateSubscription
             return;
         }
 
-        $httpResponse = $this->_apiProvider->patchSubscription(
-            $this->_subscription,
-            [
-                SpecificFields::HONOR_CERTIFICATE => $this->_honorCertificateService->generateHonourCertificate($this->_subscription),
-            ]
-        );
+        $httpQueryParams = [
+            SpecificFields::HONOR_CERTIFICATE => $this->_honorCertificateService->generateHonourCertificate($this->_subscription),
+        ];
 
-        if ($this->_apiProvider->hasRequestErrorReturned($httpResponse)) {
-            $this->_subscription->addLog($httpResponse, Log::TYPE_ATTESTATION);
+        try {
+            $this->_apiProvider->patchSubscription($this->_subscription, $httpQueryParams);
+        } catch (HttpException $exception) {
+            $this->_subscription->addLog($exception, Log::TYPE_ATTESTATION, $httpQueryParams);
+
+            $this->_em->flush();
 
             return;
         }
