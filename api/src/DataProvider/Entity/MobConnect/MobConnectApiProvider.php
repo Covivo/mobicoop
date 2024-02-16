@@ -64,16 +64,10 @@ class MobConnectApiProvider extends MobConnectProvider
 
         $this->_createDataProvider(RouteProvider::ROUTE_SUBSCRIPTIONS);
 
-        $response = new MobConnectSubscriptionResponse(
+        return new MobConnectSubscriptionResponse(
             ResponseConverter::convertResponseToHttpFondationResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($token))),
             $data
         );
-
-        if ($this->hasRequestErrorReturned($response)) {
-            throw new HttpException($response->getCode(), $response->getContent());
-        }
-
-        return $response;
     }
 
     /**

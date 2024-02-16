@@ -16,9 +16,9 @@ class AppAuthenticationProvider extends AuthenticationProvider
     }
 
     /**
-     * @return bool|string
+     * @throws HttpException
      */
-    public function getToken(?User $user)
+    public function getToken(?User $user): string
     {
         $provider = new OpenIdSsoProvider(
             $this->_provider->getName(),

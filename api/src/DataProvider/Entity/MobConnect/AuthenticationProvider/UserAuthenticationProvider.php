@@ -28,9 +28,9 @@ class UserAuthenticationProvider extends AuthenticationProvider
     }
 
     /**
-     * @return bool|string
+     * @throws HttpException
      */
-    public function getToken(?User $user)
+    public function getToken(?User $user): string
     {
         $this->_user = $user;
 
@@ -52,9 +52,9 @@ class UserAuthenticationProvider extends AuthenticationProvider
     }
 
     /**
-     * @return bool|string
+     * @throws HttpException
      */
-    private function _refreshToken()
+    private function _refreshToken(): string
     {
         $provider = new OpenIdSsoProvider(
             $this->_provider->getName(),

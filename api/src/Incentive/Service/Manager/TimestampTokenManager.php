@@ -267,10 +267,6 @@ class TimestampTokenManager extends MobConnectManager
                 break;
         }
 
-        if (!is_null($this->_currentLogType)) {
-            $this->_currentSubscription->addLog($this->_currentTimestampTokensResponse, $this->_currentLogType);
-        }
-
         if (is_null($this->_currentTimestampTokensResponse->getIncentiveProofTimestampToken())) {
             $this->_loggerService->log(
                 'We were unable to determine the '.$this->getTokenTypeAsString($tokenType).' token for the subscription '.$this->_currentSubscription->getId().' ('.$this->_currentSubscription->getType().').',

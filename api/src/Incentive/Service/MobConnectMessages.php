@@ -17,4 +17,6 @@ abstract class MobConnectMessages
     public const USER_AUTHENTICATION_EXPIRED = 'The user refresh token has expired. User must be reassociated.';
     public const USER_AUTHENTICATION_REFRESH = 'We encountered a problem while executing the token update query.';
     public const TOKEN_MISSING = 'JWT token is not available';
+
+    public const HTTP_CREATION_REQUEST_ERROR = 'The http request to create a subscription of type [TYPE] for user [USER] was unsuccessful and returned the error message: ';
 }
