@@ -366,6 +366,10 @@ class TimestampTokenManager extends MobConnectManager
         try {
             return $provider->getSubscriptionTimestamps($this->_currentSubscription->getSubscriptionId());
         } catch (HttpException $exception) {
+            $logType = is_null($this->_currentLogType) ? Log::TYPE_TIMESTAMP : $this->_currentLogType;
+            $this->_currentSubscription->addLog($exception, $logType);
+
+            $this->_em->flush();
         }
     }
 
