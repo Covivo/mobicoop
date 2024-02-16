@@ -31,22 +31,24 @@ use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
  */
 class CarpoolProofEntityBuilder
 {
+    private $_waypointEntityBuilder;
+
+    public function __construct(WaypointEntityBuilder $waypointEntityBuilder)
+    {
+        $this->_waypointEntityBuilder = $waypointEntityBuilder;
+    }
+
     public function build(CarpoolProofDto $carpoolProofDto): CarpoolProofEntity
     {
         $carpooProofEntity = new CarpoolProofEntity();
 
-        $reflectionDto = new \ReflectionObject($carpoolProofDto);
-        $reflectionEntity = new \ReflectionObject($carpooProofEntity);
+        $carpooProofEntity->setId($carpoolProofDto->getId());
+        $carpooProofEntity->getDistance($carpoolProofDto->getDistance());
 
-        foreach ($reflectionDto->getProperties() as $propertyDto) {
-            $propertyName = $propertyDto->getName();
-            if ($reflectionEntity->hasProperty($propertyName)) {
-                $propertyDto->setAccessible(true);
-                $propertyEntity = $reflectionEntity->getProperty($propertyName);
-                $propertyEntity->setAccessible(true);
-                $propertyEntity->setValue($carpooProofEntity, $propertyDto->getValue($reflectionDto));
-            }
-        }
+        $carpooProofEntity->setPickUpDriver($this->_waypointEntityBuilder->build($carpoolProofDto->getPickUpDriver()));
+        $carpooProofEntity->setPickUpPassenger($this->_waypointEntityBuilder->build($carpoolProofDto->getPickUpPassenger()));
+        $carpooProofEntity->setDropOffDriver($this->_waypointEntityBuilder->build($carpoolProofDto->getDropOffDriver()));
+        $carpooProofEntity->setDropOffPassenger($this->_waypointEntityBuilder->build($carpoolProofDto->getDropOffPassenger()));
 
         return $carpooProofEntity;
     }

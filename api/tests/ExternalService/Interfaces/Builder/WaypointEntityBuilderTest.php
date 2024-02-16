@@ -23,8 +23,7 @@
 
 namespace App\ExternalService\Interfaces\Builder;
 
-use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
-use App\Tests\ExternalService\Mock\CarpoolProof;
+use App\ExternalService\Core\Domain\Entity\CarpoolProof\WaypointEntity;
 use App\Tests\ExternalService\Mock\Waypoint;
 use PHPUnit\Framework\TestCase;
 
@@ -33,45 +32,40 @@ use PHPUnit\Framework\TestCase;
  *
  * @coversDefaultClass
  */
-class CarpoolProofEntityBuilderTest extends TestCase
+class WaypointEntityBuilderTest extends TestCase
 {
-    private $_carpoolProofEntityBuilder;
+    private $_waypointEntityBuilder;
 
     public function setUp(): void
     {
-        $waypointEntityBuilder = $this->getMockBuilder(WaypointEntityBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $waypointEntityBuilder->method('build')->willReturn(Waypoint::getWaypointEntity());
-        $this->_carpoolProofEntityBuilder = new CarpoolProofEntityBuilder($waypointEntityBuilder);
+        $this->_waypointEntityBuilder = new WaypointEntityBuilder();
     }
 
     /**
      * @test
      */
-    public function testBuildReturnsACarpoolProofEntity()
+    public function testBuildReturnsAWaypointEntity()
     {
-        $this->assertInstanceOf(CarpoolProofEntity::class, $this->_carpoolProofEntityBuilder->build(CarpoolProof::getCarpoolProofDto()));
+        $this->assertInstanceOf(WaypointEntity::class, $this->_waypointEntityBuilder->build(Waypoint::getWaypointDto()));
     }
 
     /**
      * @test
      *
-     * @dataProvider dataCarpoolProofs
+     * @dataProvider dataWaypoints
      *
-     * @param mixed $carpoolProofDto
-     * @param mixed $carpoolProofEntity
+     * @param mixed $waypointDto
+     * @param mixed $waypointEntity
      */
-    public function testBuildReturnsACarpoolProofEntityWithIdenticalProperties($carpoolProofDto, $carpoolProofEntity)
+    public function testBuildReturnsAWaypointEntityWithIdenticalProperties($waypointDto, $waypointEntity)
     {
-        $this->assertEquals($carpoolProofEntity, $this->_carpoolProofEntityBuilder->build($carpoolProofDto));
+        $this->assertEquals($waypointEntity, $this->_waypointEntityBuilder->build($waypointDto));
     }
 
-    public function dataCarpoolProofs(): array
+    public function dataWaypoints(): array
     {
         return [
-            [CarpoolProof::getCarpoolProofDto(), CarpoolProof::getCarpoolProofEntity()],
+            [Waypoint::getWaypointDto(), Waypoint::getWaypointEntity()],
         ];
     }
 }
