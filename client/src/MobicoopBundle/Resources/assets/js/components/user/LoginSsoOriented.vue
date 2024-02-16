@@ -30,6 +30,7 @@
 
           <SsoLogins
             v-if="consent && ssoButtonDisplay"
+            :specific-sso-services="specificSsoServices"
             class="mb-5"
           />
           <v-expansion-panels>
@@ -207,6 +208,10 @@ export default {
     ssoButtonDisplay:{
       type: Boolean,
       default:false
+    },
+    specificSsoServices: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
