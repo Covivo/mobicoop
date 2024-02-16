@@ -36,10 +36,7 @@ class WaypointEntityBuilder
     public function build(WaypointDto $waypointDto): WaypointEntity
     {
         $waypointEntity = new WaypointEntity();
-        $waypointEntity->setLat($waypointDto->getLat());
-        $waypointEntity->setLon($waypointDto->getLon());
-        $waypointEntity->setDatetime($waypointDto->getDatetime());
 
-        return $waypointEntity;
+        return Tools::cloneObjectDtoToEntity($waypointDto, $waypointDto, $waypointEntity);
     }
 }
