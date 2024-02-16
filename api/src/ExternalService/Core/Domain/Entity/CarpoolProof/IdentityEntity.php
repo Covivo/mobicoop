@@ -53,6 +53,8 @@ class IdentityEntity
      */
     private $_birthDate;
 
+    public function __construct() {}
+
     public function getId(): ?int
     {
         return $this->_id;

@@ -74,7 +74,7 @@ class ActorEntityBuilderTest extends TestCase
     /**
      * @test
      *
-     * @dataProvider dataDriver
+     * @dataProvider dataPassenger
      *
      * @param mixed $passengerDto
      * @param mixed $passengerEntity

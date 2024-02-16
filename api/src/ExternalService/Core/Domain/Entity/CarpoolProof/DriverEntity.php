@@ -33,6 +33,11 @@ class DriverEntity extends IdentityEntity
      */
     private $_revenue;
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function getRevenue(): ?int
     {
         return $this->_revenue;

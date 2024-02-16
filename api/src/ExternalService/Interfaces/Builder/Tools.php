@@ -23,30 +23,21 @@
 
 namespace App\ExternalService\Interfaces\Builder;
 
-use App\ExternalService\Core\Domain\Entity\CarpoolProof\DriverEntity;
-use App\ExternalService\Core\Domain\Entity\CarpoolProof\PassengerEntity;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\DriverDto;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\IdentityDto;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\PassengerDto;
-
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ActorEntityBuilder
+class Tools
 {
-    public function buildDriver(DriverDto $driverDto): DriverEntity
+    public static function cloneObjectDtoToEntity(object $reference, object $dtoSourceObject, object $entityObject): object
     {
-        $driverEntity = new DriverEntity();
-        $driverEntity = Tools::cloneObjectDtoToEntity($driverDto, $driverDto, $driverEntity);
+        $reflectionDto = new \ReflectionObject($reference);
+        foreach ($reflectionDto->getProperties() as $propertyDto) {
+            $methodName = ucfirst(str_replace('_', '', $propertyDto->getName()));
+            $getter = 'get'.$methodName;
+            $setter = 'set'.$methodName;
+            $entityObject->{$setter}($dtoSourceObject->{$getter}());
+        }
 
-        return Tools::cloneObjectDtoToEntity(new IdentityDto(), $driverDto, $driverEntity);
-    }
-
-    public function buildPassenger(PassengerDto $passengerDto): PassengerEntity
-    {
-        $passengerEntity = new PassengerEntity();
-        $passengerEntity = Tools::cloneObjectDtoToEntity($passengerDto, $passengerDto, $passengerEntity);
-
-        return Tools::cloneObjectDtoToEntity(new IdentityDto(), $passengerDto, $passengerEntity);
+        return $entityObject;
     }
 }
