@@ -4,8 +4,6 @@ namespace App\Incentive\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Carpool\Entity\CarpoolProof;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
 use App\Incentive\Controller\Subscription\SdSubscriptionCommit;
 use App\Incentive\Controller\Subscription\SdSubscriptionGet;
 use App\Incentive\Controller\Subscription\SdSubscriptionUpdate;
@@ -20,6 +18,7 @@ use App\Service\AddressService;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -835,13 +834,10 @@ class ShortDistanceSubscription extends Subscription
         return $this->logs;
     }
 
-    public function addLog(MobConnectResponseInterface $response, int $logType): self
+    public function addLog(HttpException $exception, int $logType, array $payload = []): self
     {
-        if (
-            in_array($logType, Log::ALLOWED_TYPES)
-            && MobConnectResponse::isResponseErrorResponse($response)
-        ) {
-            $log = new ShortDistanceSubscriptionLog($this, $response->getCode(), $response->getContent(), $response->getPayload(), $logType);
+        if (in_array($logType, Log::ALLOWED_TYPES)) {
+            $log = new ShortDistanceSubscriptionLog($this, $exception->getStatusCode(), $exception->getMessage(), $payload, $logType);
             $this->logs[] = $log;
         }
 

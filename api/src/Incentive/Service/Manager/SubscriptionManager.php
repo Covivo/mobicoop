@@ -407,7 +407,7 @@ class SubscriptionManager extends MobConnectManager
             && is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())
             && $this->isDriverAccountReadyForSubscription($subscriptionType)
         ) {
-            $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_driver, $subscriptionType);
+            $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
             $stage->execute();
         }
     }

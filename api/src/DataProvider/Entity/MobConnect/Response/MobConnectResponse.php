@@ -3,6 +3,7 @@
 namespace App\DataProvider\Entity\MobConnect\Response;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class MobConnectResponse implements MobConnectResponseInterface
 {
@@ -33,11 +34,8 @@ abstract class MobConnectResponse implements MobConnectResponseInterface
         $this->_content = is_null(json_decode($mobConnectResponse->getContent())) ? $mobConnectResponse->getContent() : json_decode($mobConnectResponse->getContent());
 
         $this->_payload = $payload;
-    }
 
-    public static function isResponseErrorResponse(MobConnectResponseInterface $response)
-    {
-        return in_array($response->getCode(), MobConnectResponse::ERROR_CODES);
+        $this->_isResponseError();
     }
 
     /**
@@ -83,5 +81,17 @@ abstract class MobConnectResponse implements MobConnectResponseInterface
         $this->_timestamp = $_timestamp;
 
         return $this;
+    }
+
+    /**
+     * @throws HttpException
+     */
+    private function _isResponseError(): bool
+    {
+        if (in_array($this->getCode(), self::ERROR_CODES)) {
+            throw new HttpException($this->getCode(), $this->getContent());
+        }
+
+        return false;
     }
 }

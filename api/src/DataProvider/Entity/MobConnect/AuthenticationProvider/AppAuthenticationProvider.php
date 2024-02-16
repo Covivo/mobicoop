@@ -6,6 +6,7 @@ use App\DataProvider\Entity\MobConnect\OpenIdSsoProvider;
 use App\Incentive\Interfaces\EecProviderInterface;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AppAuthenticationProvider extends AuthenticationProvider
 {
@@ -15,9 +16,9 @@ class AppAuthenticationProvider extends AuthenticationProvider
     }
 
     /**
-     * @return bool|string
+     * @throws HttpException
      */
-    public function getToken(?User $user)
+    public function getToken(?User $user): string
     {
         $provider = new OpenIdSsoProvider(
             $this->_provider->getName(),
@@ -36,7 +37,7 @@ class AppAuthenticationProvider extends AuthenticationProvider
         $this->response = $provider->getAppToken();
 
         if (Response::HTTP_OK != $this->response->getStatusCode()) {
-            return false;
+            throw new HttpException($this->response->getStatusCode(), $this->response->getContent());
         }
 
         return json_decode($this->response->getContent())->access_token;
