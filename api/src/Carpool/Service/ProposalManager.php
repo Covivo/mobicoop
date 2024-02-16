@@ -314,7 +314,7 @@ class ProposalManager
                         $event = new AskAdDeletedEvent($ask, $deleter->getId());
                         $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
-                // Ask user is passenger
+                    // Ask user is passenger
                 } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
                     // TO DO check if the deletion is just before 24h and in that case send an other email
                     // /** @var Criteria $criteria */
@@ -434,8 +434,6 @@ class ProposalManager
 
     /**
      * Create matchings for multiple proposals at once.
-     *
-     * @param array $proposals The proposals to treat
      *
      * @return array The proposals treated
      */
@@ -979,8 +977,8 @@ class ProposalManager
     private function setPrices(Proposal $proposal)
     {
         if ($proposal->getCriteria()->getDirectionDriver()) {
-            $proposal->getCriteria()->setDriverComputedPrice((string) ((int) $proposal->getCriteria()->getDirectionDriver()->getDistance() * (float) $proposal->getCriteria()->getPriceKm() / 1000));
-            $proposal->getCriteria()->setDriverComputedRoundedPrice((string) $this->formatDataManager->roundPrice((float) $proposal->getCriteria()->getDriverComputedPrice(), $proposal->getCriteria()->getFrequency()));
+            $proposal->getCriteria()->setDriverComputedPrice(max(0, (string) ((int) $proposal->getCriteria()->getDirectionDriver()->getDistance() * (float) $proposal->getCriteria()->getPriceKm() / 1000)));
+            $proposal->getCriteria()->setDriverComputedRoundedPrice(max(0, (string) $this->formatDataManager->roundPrice((float) $proposal->getCriteria()->getDriverComputedPrice(), $proposal->getCriteria()->getFrequency())));
         }
         if ($proposal->getCriteria()->getDirectionPassenger()) {
             $proposal->getCriteria()->setPassengerComputedPrice((string) ((int) $proposal->getCriteria()->getDirectionPassenger()->getDistance() * (float) $proposal->getCriteria()->getPriceKm() / 1000));
@@ -1258,7 +1256,7 @@ class ProposalManager
                         $criteria->setSunMaxTime($maxTime);
                     }
                     if ($criteria->getDirectionDriver()) {
-                        $criteria->setDriverComputedPrice((string) ((int) $criteria->getDirectionDriver()->getDistance() * (float) $criteria->getPriceKm() / 1000));
+                        $criteria->setDriverComputedPrice(max(0, (string) ((int) $criteria->getDirectionDriver()->getDistance() * (float) $criteria->getPriceKm() / 1000)));
                         $criteria->setDriverComputedRoundedPrice((string) $this->formatDataManager->roundPrice((float) $criteria->getDriverComputedPrice(), $criteria->getFrequency()));
                     }
                     if ($criteria->getDirectionPassenger()) {

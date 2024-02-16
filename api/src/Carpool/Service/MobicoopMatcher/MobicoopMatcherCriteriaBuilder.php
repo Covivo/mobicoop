@@ -122,7 +122,7 @@ class MobicoopMatcherCriteriaBuilder
     private function _setPrices()
     {
         $formatDataManager = new FormatDataManager();
-        $this->_criteria->setDriverComputedPrice(($this->_currentMatching->getCommonDistance() + $this->_currentMatching->getDetourDistance()) * $this->_currentMatching->getProposalOffer()->getCriteria()->getPriceKm() / 1000);
+        $this->_criteria->setDriverComputedPrice(max(0, ($this->_currentMatching->getCommonDistance() + $this->_currentMatching->getDetourDistance()) * $this->_currentMatching->getProposalOffer()->getCriteria()->getPriceKm() / 1000));
         $this->_criteria->setDriverComputedRoundedPrice($formatDataManager->roundPrice((float) $this->_criteria->getDriverComputedPrice(), $this->_criteria->getFrequency()));
         $this->_criteria->setPassengerComputedPrice($this->_criteria->getDriverComputedPrice());
         $this->_criteria->setPassengerComputedRoundedPrice($this->_criteria->getDriverComputedRoundedPrice());
