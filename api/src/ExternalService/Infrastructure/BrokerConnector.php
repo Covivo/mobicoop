@@ -47,22 +47,29 @@ class BrokerConnector
         $this->_password = $password;
     }
 
-    public function sendTopicMessage(string $topic, string $routingKey, $data)
+    public function sendTopicMessage(string $topic, string $routingKey, $data): string
+    {
+        return $this->_send($topic, $routingKey, $data);
+    }
+
+    protected function _send(string $topic, string $routingKey, $data): string
     {
         $this->_connect();
         $this->_channel->exchange_declare($topic, 'topic', false, false, false);
         $msg = new AMQPMessage($data);
         $this->_channel->basic_publish($msg, $topic, $routingKey);
         $this->_close();
+
+        return 'OK';
     }
 
-    public function _connect()
+    private function _connect()
     {
         $this->_connection = new AMQPStreamConnection($this->_uri, $this->_port, $this->_username, $this->_password);
         $this->_channel = $this->_connection->channel();
     }
 
-    public function _close()
+    private function _close()
     {
         $this->_channel->close();
         $this->_connection->close();
