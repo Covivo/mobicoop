@@ -23,20 +23,42 @@
 
 namespace App\ExternalService\Interfaces\Builder;
 
-use App\ExternalService\Core\Domain\Entity\CarpoolProof\WaypointEntity;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\WaypointDto;
+use App\Tests\ExternalService\Mock\Waypoint;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @internal
+ *
+ * @coversDefaultClass
  */
-class WaypointEntityBuilder
+class ToolsTest extends TestCase
 {
-    public function __construct() {}
+    private $_reference;
+    private $_dto;
+    private $_entity;
 
-    public function build(WaypointDto $waypointDto): WaypointEntity
+    public function setUp(): void
     {
-        $waypointEntity = new WaypointEntity();
+        $this->_reference = Waypoint::getWaypointDto();
 
-        return Tools::cloneSimpleObjectDtoToEntity($waypointDto, $waypointDto, $waypointEntity);
+        $this->_dto = Waypoint::getWaypointDto();
+
+        $this->_entity = Waypoint::getWaypointEntity();
+    }
+
+    /**
+     * @test
+     */
+    public function testCloneSimpleObjectDtoToEntityReturnsObject()
+    {
+        $this->assertIsObject(Tools::cloneSimpleObjectDtoToEntity($this->_reference, $this->_dto, $this->_entity));
+    }
+
+    /**
+     * @test
+     */
+    public function testCloneSimpleObjectDtoToEntityReturnsADriverEntityWithIdenticalProperties()
+    {
+        $this->assertEquals($this->_entity, Tools::cloneSimpleObjectDtoToEntity($this->_reference, $this->_dto, $this->_entity));
     }
 }

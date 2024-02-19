@@ -37,16 +37,16 @@ class ActorEntityBuilder
     public function buildDriver(DriverDto $driverDto): DriverEntity
     {
         $driverEntity = new DriverEntity();
-        $driverEntity = Tools::cloneObjectDtoToEntity($driverDto, $driverDto, $driverEntity);
+        $driverEntity = Tools::cloneSimpleObjectDtoToEntity($driverDto, $driverDto, $driverEntity);
 
-        return Tools::cloneObjectDtoToEntity(new IdentityDto(), $driverDto, $driverEntity);
+        return Tools::cloneSimpleObjectDtoToEntity(new IdentityDto(), $driverDto, $driverEntity);
     }
 
     public function buildPassenger(PassengerDto $passengerDto): PassengerEntity
     {
         $passengerEntity = new PassengerEntity();
-        $passengerEntity = Tools::cloneObjectDtoToEntity($passengerDto, $passengerDto, $passengerEntity);
+        $passengerEntity = Tools::cloneSimpleObjectDtoToEntity($passengerDto, $passengerDto, $passengerEntity);
 
-        return Tools::cloneObjectDtoToEntity(new IdentityDto(), $passengerDto, $passengerEntity);
+        return Tools::cloneSimpleObjectDtoToEntity(new IdentityDto(), $passengerDto, $passengerEntity);
     }
 }

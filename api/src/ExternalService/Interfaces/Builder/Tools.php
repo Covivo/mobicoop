@@ -28,7 +28,7 @@ namespace App\ExternalService\Interfaces\Builder;
  */
 class Tools
 {
-    public static function cloneObjectDtoToEntity(object $reference, object $dtoSourceObject, object $entityObject): object
+    public static function cloneSimpleObjectDtoToEntity(object $reference, object $dtoSourceObject, object $entityObject): object
     {
         $reflectionDto = new \ReflectionObject($reference);
         foreach ($reflectionDto->getProperties() as $propertyDto) {
