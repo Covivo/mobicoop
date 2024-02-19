@@ -57,6 +57,7 @@ class CarpoolProofSenderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock()
         ;
+        $carpoolProofEntity->method('getContext')->willReturn('Test');
 
         $this->assertEquals($this->_carpoolProofSender->send($carpoolProofEntity), 'OK');
     }

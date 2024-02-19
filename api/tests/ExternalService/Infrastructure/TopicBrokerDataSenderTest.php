@@ -23,6 +23,7 @@
 
 namespace App\ExternalService\Infrastructure;
 
+use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -44,6 +45,12 @@ class TopicBrokerDataSenderTest extends TestCase
      */
     public function testSendReturnOk()
     {
-        $this->assertEquals($this->_brokerDataSender->send(), 'OK');
+        $carpoolProofEntity = $this->getMockBuilder(CarpoolProofEntity::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $carpoolProofEntity->method('getContext')->willReturn('Test');
+
+        $this->assertEquals($this->_brokerDataSender->send($carpoolProofEntity), 'OK');
     }
 }
