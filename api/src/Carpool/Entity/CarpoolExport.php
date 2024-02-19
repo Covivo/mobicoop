@@ -212,6 +212,7 @@ class CarpoolExport
                 case CarpoolProof::STATUS_PENDING:
                 case CarpoolProof::STATUS_SENT:
                 case CarpoolProof::STATUS_UNDER_CHECKING:
+                case CarpoolProof::STATUS_RPC_NOT_REACHABLE:
                     $certification = self::CERTIFICATION_UNDER_CHECKING;
 
                     break;
@@ -231,6 +232,9 @@ class CarpoolExport
                 case CarpoolProof::STATUS_ACQUISITION_ERROR:
                 case CarpoolProof::STATUS_FRAUD_ERROR:
                 case CarpoolProof::STATUS_EXPIRED:
+                case CarpoolProof::STATUS_INVALID_CONCURRENT_SCHEDULES:
+                case CarpoolProof::STATUS_INVALID_DUPLICATE_DEVICE:
+                case CarpoolProof::STATUS_INVALID_SPLITTED_TRIP:
                     $certification = self::CERTIFICATION_ERROR;
 
                     break;
