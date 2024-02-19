@@ -22,6 +22,7 @@
 
 namespace App\ExternalService\Core\Application\Service;
 
+use App\ExternalService\Core\Application\Exception\CarpoolProofContextNotProvidedException;
 use App\ExternalService\Core\Application\Ports\DataSenderPort;
 use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
 use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
@@ -58,5 +59,20 @@ class CarpoolProofSenderTest extends TestCase
         ;
 
         $this->assertEquals($this->_carpoolProofSender->send($carpoolProofEntity), 'OK');
+    }
+
+    /**
+     * @test
+     */
+    public function testEntityWithoutDomainRaisesException()
+    {
+        $this->expectException(CarpoolProofContextNotProvidedException::class);
+
+        $carpoolProofEntity = $this->getMockBuilder(CarpoolProofEntity::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->_carpoolProofSender->send($carpoolProofEntity);
     }
 }

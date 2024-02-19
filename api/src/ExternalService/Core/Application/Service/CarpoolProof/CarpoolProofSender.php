@@ -22,6 +22,7 @@
 
 namespace App\ExternalService\Core\Application\Service\CarpoolProof;
 
+use App\ExternalService\Core\Application\Exception\CarpoolProofContextNotProvidedException;
 use App\ExternalService\Core\Application\Ports\DataSenderPort;
 use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
 
@@ -36,6 +37,10 @@ class CarpoolProofSender
 
     public function send(CarpoolProofEntity $carpoolProofEntity): string
     {
+        if (is_null($carpoolProofEntity->getContext()) || '' == trim($carpoolProofEntity->getContext())) {
+            throw new CarpoolProofContextNotProvidedException(CarpoolProofContextNotProvidedException::CONTEXT_NOT_PRIVIDED);
+        }
+
         return $this->_dataSender->send($carpoolProofEntity);
     }
 }

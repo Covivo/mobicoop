@@ -21,21 +21,21 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Infrastructure;
+namespace App\ExternalService\Core\Domain\Entity;
 
-use App\ExternalService\Core\Application\Ports\DataSenderPort;
-use App\ExternalService\Core\Domain\Entity\AbstractEntity;
-
-/**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-class TopicBrokerDataSender implements DataSenderPort
+abstract class AbstractEntity
 {
-    // correspondances entre le contexte et le nom du topic
+    private $_context;
 
-    public function send(AbstractEntity $entity): string
+    public function getContext(): ?string
     {
-        // implementation of Broker communication
-        return 'OK';
+        return $this->_context;
+    }
+
+    public function setContext(?string $context): self
+    {
+        $this->_context = $context;
+
+        return $this;
     }
 }

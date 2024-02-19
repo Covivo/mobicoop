@@ -23,11 +23,15 @@
 
 namespace App\ExternalService\Core\Domain\Entity\CarpoolProof;
 
+use App\ExternalService\Core\Domain\Entity\AbstractEntity;
+
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class CarpoolProofEntity
+class CarpoolProofEntity extends AbstractEntity
 {
+    private const CONTEXT = 'CarpoolProof';
+
     /**
      * @var int
      */
@@ -67,6 +71,11 @@ class CarpoolProofEntity
      * @var int
      */
     private $_distance;
+
+    public function __construct()
+    {
+        $this->setContext(self::CONTEXT);
+    }
 
     public function getId(): ?int
     {

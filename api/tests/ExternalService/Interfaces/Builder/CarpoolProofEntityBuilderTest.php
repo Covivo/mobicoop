@@ -23,6 +23,7 @@
 
 namespace App\ExternalService\Interfaces\Builder;
 
+use App\ExternalService\Core\Domain\Entity\AbstractEntity;
 use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
 use App\Tests\ExternalService\Mock\CarpoolProof;
 use App\Tests\ExternalService\Mock\Waypoint;
@@ -66,6 +67,33 @@ class CarpoolProofEntityBuilderTest extends TestCase
     public function testBuildReturnsACarpoolProofEntityWithIdenticalProperties($carpoolProofDto, $carpoolProofEntity)
     {
         $this->assertEquals($carpoolProofEntity, $this->_carpoolProofEntityBuilder->build($carpoolProofDto));
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataCarpoolProofs
+     *
+     * @param mixed $carpoolProofDto
+     * @param mixed $carpoolProofEntity
+     */
+    public function testBuildReturnsACarpoolProofEntityWithAContextProperties($carpoolProofDto, $carpoolProofEntity)
+    {
+        $carpoolProofEntity = $this->_carpoolProofEntityBuilder->build($carpoolProofDto);
+        $this->assertNotEmpty($carpoolProofEntity->getContext());
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataCarpoolProofs
+     *
+     * @param mixed $carpoolProofDto
+     * @param mixed $carpoolProofEntity
+     */
+    public function testBuildReturnsACarpoolProofEntityImplementingAbstractClass($carpoolProofDto, $carpoolProofEntity)
+    {
+        $this->assertInstanceOf(AbstractEntity::class, $this->_carpoolProofEntityBuilder->build(CarpoolProof::getCarpoolProofDto()));
     }
 
     public function dataCarpoolProofs(): array

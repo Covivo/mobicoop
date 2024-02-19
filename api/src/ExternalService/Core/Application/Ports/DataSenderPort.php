@@ -23,10 +23,12 @@
 
 namespace App\ExternalService\Core\Application\Ports;
 
+use App\ExternalService\Core\Domain\Entity\AbstractEntity;
+
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 interface DataSenderPort
 {
-    public function send(): string;
+    public function send(AbstractEntity $entity): string;
 }

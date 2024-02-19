@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2024, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,21 +21,9 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Infrastructure;
+namespace App\ExternalService\Core\Application\Exception;
 
-use App\ExternalService\Core\Application\Ports\DataSenderPort;
-use App\ExternalService\Core\Domain\Entity\AbstractEntity;
-
-/**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-class TopicBrokerDataSender implements DataSenderPort
+class CarpoolProofContextNotProvidedException extends \LogicException
 {
-    // correspondances entre le contexte et le nom du topic
-
-    public function send(AbstractEntity $entity): string
-    {
-        // implementation of Broker communication
-        return 'OK';
-    }
+    public const CONTEXT_NOT_PRIVIDED = 'Context not provided';
 }
