@@ -446,7 +446,7 @@ class ProofManager
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                            // driver direction will be set when the dynamic ad of the driver will be finished
+                        // driver direction will be set when the dynamic ad of the driver will be finished
                         } else {
                             throw new ProofException('Driver dropoff certification failed : the passenger certified address is too far');
                         }
@@ -628,7 +628,7 @@ class ProofManager
              */
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
-                // uncomment the following to anonymize driver addresses used in the proof
+            // uncomment the following to anonymize driver addresses used in the proof
                 // $carpoolProof->setOriginDriverAddress(null);
                 // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
@@ -713,7 +713,7 @@ class ProofManager
                     break;
 
                 case 0 == $result->getCode():
-                    $proof->setStatus(CarpoolProof::STATUS_SENT);
+                    $proof->setStatus(CarpoolProof::STATUS_RPC_NOT_REACHABLE);
 
                     break;
 
@@ -819,12 +819,27 @@ class ProofManager
             ) {
                 $result = $this->provider->postCollection($carpoolProof, $this->provider::RESSOURCE_POST);
                 $this->logger->info('Result of the send for proof #'.$carpoolProof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
-                if (200 == $result->getCode()) {
-                    $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
-                } elseif (409 == $result->getCode()) {
-                    $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
-                } else {
-                    $carpoolProof->setStatus(CarpoolProof::STATUS_ERROR);
+
+                switch ($result) {
+                    case 200 == $result->getCode():
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
+
+                        break;
+
+                    case 409 == $result->getCode():
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
+
+                        break;
+
+                    case 0 == $result->getCode():
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_RPC_NOT_REACHABLE);
+
+                        break;
+
+                    default:
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_ERROR);
+
+                        break;
                 }
                 $this->entityManager->persist($carpoolProof);
             }
