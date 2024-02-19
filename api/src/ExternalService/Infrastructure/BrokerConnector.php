@@ -49,11 +49,6 @@ class BrokerConnector
 
     public function sendTopicMessage(string $topic, string $routingKey, $data): string
     {
-        return $this->_send($topic, $routingKey, $data);
-    }
-
-    protected function _send(string $topic, string $routingKey, $data): string
-    {
         $this->_connect();
         $this->_channel->exchange_declare($topic, 'topic', false, false, false);
         $msg = new AMQPMessage($data);

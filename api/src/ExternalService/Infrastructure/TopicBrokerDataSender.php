@@ -49,8 +49,6 @@ class TopicBrokerDataSender implements DataSenderPort
             throw new UnauthorizedContextException(UnauthorizedContextException::MESSAGE);
         }
 
-        $this->_brokerConnector->sendTopicMessage($entity->getContext(), self::AUTHORIZED_CONTEXTS[$entity->getContext()], $entity);
-
-        return 'OK';
+        return $this->_brokerConnector->sendTopicMessage($entity->getContext(), self::AUTHORIZED_CONTEXTS[$entity->getContext()], $entity);
     }
 }

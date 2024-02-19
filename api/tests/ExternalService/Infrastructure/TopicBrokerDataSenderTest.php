@@ -42,6 +42,7 @@ class TopicBrokerDataSenderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock()
         ;
+        $brokerConnector->method('sendTopicMessage')->willReturn('OK');
 
         $this->_brokerDataSender = new TopicBrokerDataSender($brokerConnector);
     }
