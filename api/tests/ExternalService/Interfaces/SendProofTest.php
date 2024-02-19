@@ -58,7 +58,7 @@ class SendProofTest extends TestCase
     /**
      * @test
      */
-    public function testSendReturnOk()
+    public function testSendReturnsOk()
     {
         $carpoolProofDto = $this->getMockBuilder(CarpoolProofDto::class)
             ->disableOriginalConstructor()
