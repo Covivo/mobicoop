@@ -35,7 +35,12 @@ class Tools
             $methodName = ucfirst(str_replace('_', '', $propertyDto->getName()));
             $getter = 'get'.$methodName;
             $setter = 'set'.$methodName;
-            $entityObject->{$setter}($dtoSourceObject->{$getter}());
+
+            try {
+                $entityObject->{$setter}($dtoSourceObject->{$getter}());
+            } catch (\TypeError $e) {
+                // do nothing in purpose
+            }
         }
 
         return $entityObject;

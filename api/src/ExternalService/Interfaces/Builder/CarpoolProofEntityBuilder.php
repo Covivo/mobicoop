@@ -42,9 +42,7 @@ class CarpoolProofEntityBuilder
     {
         $carpooProofEntity = new CarpoolProofEntity();
 
-        $carpooProofEntity->setId($carpoolProofDto->getId());
-        $carpooProofEntity->getDistance($carpoolProofDto->getDistance());
-
+        $carpooProofEntity = Tools::cloneObjectDtoToEntity($carpoolProofDto, $carpoolProofDto, $carpooProofEntity);
         $carpooProofEntity->setPickUpDriver($this->_waypointEntityBuilder->build($carpoolProofDto->getPickUpDriver()));
         $carpooProofEntity->setPickUpPassenger($this->_waypointEntityBuilder->build($carpoolProofDto->getPickUpPassenger()));
         $carpooProofEntity->setDropOffDriver($this->_waypointEntityBuilder->build($carpoolProofDto->getDropOffDriver()));
