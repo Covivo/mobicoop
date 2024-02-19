@@ -21,9 +21,9 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Core\Application\Exception;
+namespace App\ExternalService\Infrastructure\Exception;
 
-class CarpoolProofContextNotProvidedException extends \LogicException
+class UnauthorizedContextException extends \LogicException
 {
-    public const MESSAGE = 'Context not provided';
+    public const MESSAGE = 'Context not authorized';
 }

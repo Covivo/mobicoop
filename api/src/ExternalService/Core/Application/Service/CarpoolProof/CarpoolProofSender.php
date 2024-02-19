@@ -38,7 +38,7 @@ class CarpoolProofSender
     public function send(CarpoolProofEntity $carpoolProofEntity): string
     {
         if (is_null($carpoolProofEntity->getContext()) || '' == trim($carpoolProofEntity->getContext())) {
-            throw new CarpoolProofContextNotProvidedException(CarpoolProofContextNotProvidedException::CONTEXT_NOT_PRIVIDED);
+            throw new CarpoolProofContextNotProvidedException(CarpoolProofContextNotProvidedException::MESSAGE);
         }
 
         return $this->_dataSender->send($carpoolProofEntity);

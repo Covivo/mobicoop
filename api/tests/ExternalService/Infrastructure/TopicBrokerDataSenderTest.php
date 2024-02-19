@@ -24,6 +24,7 @@
 namespace App\ExternalService\Infrastructure;
 
 use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
+use App\ExternalService\Infrastructure\Exception\UnauthorizedContextException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -37,7 +38,12 @@ class TopicBrokerDataSenderTest extends TestCase
 
     public function setUp(): void
     {
-        $this->_brokerDataSender = new TopicBrokerDataSender();
+        $brokerConnector = $this->getMockBuilder(BrokerConnector::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->_brokerDataSender = new TopicBrokerDataSender($brokerConnector);
     }
 
     /**
@@ -49,8 +55,24 @@ class TopicBrokerDataSenderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock()
         ;
-        $carpoolProofEntity->method('getContext')->willReturn('Test');
+        $carpoolProofEntity->method('getContext')->willReturn('CarpoolProof');
 
-        $this->assertEquals($this->_brokerDataSender->send($carpoolProofEntity), 'OK');
+        $this->assertEquals('OK', $this->_brokerDataSender->send($carpoolProofEntity));
+    }
+
+    /**
+     * @test
+     */
+    public function testContextUnauthorizedRaisesException()
+    {
+        $this->expectException(UnauthorizedContextException::class);
+
+        $carpoolProofEntity = $this->getMockBuilder(CarpoolProofEntity::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $carpoolProofEntity->method('getContext')->willReturn('UnauthorizedContext');
+
+        $this->_brokerDataSender->send($carpoolProofEntity);
     }
 }

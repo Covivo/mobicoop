@@ -25,17 +25,32 @@ namespace App\ExternalService\Infrastructure;
 
 use App\ExternalService\Core\Application\Ports\DataSenderPort;
 use App\ExternalService\Core\Domain\Entity\AbstractEntity;
+use App\ExternalService\Infrastructure\Exception\UnauthorizedContextException;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class TopicBrokerDataSender implements DataSenderPort
 {
-    // correspondances entre le contexte et le nom du topic
+    private const AUTHORIZED_CONTEXTS = [
+        'CarpoolProof' => 'carpool.proof',
+    ];
+
+    private $_brokerConnector;
+
+    public function __construct(BrokerConnector $brokerConnector)
+    {
+        $this->_brokerConnector = $brokerConnector;
+    }
 
     public function send(AbstractEntity $entity): string
     {
-        // implementation of Broker communication
+        if (!isset(self::AUTHORIZED_CONTEXTS[$entity->getContext()])) {
+            throw new UnauthorizedContextException(UnauthorizedContextException::MESSAGE);
+        }
+
+        $this->_brokerConnector->sendTopicMessage($entity->getContext(), self::AUTHORIZED_CONTEXTS[$entity->getContext()], $entity);
+
         return 'OK';
     }
 }

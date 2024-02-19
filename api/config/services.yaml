@@ -602,6 +602,13 @@ services:
       $providers: "%env(json:file:resolve:RDEX_PROVIDERS)%"
 
   # External Service
+  App\ExternalService\Infrastructure\BrokerConnector:
+    arguments:
+      $uri: "%env(string:BROKER_URI)%"
+      $port: "%env(int:BROKER_PORT)%"
+      $username: "%env(string:BROKER_USERNAME)%"
+      $password: "%env(string:BROKER_PASSWORD)%"
+
   mobicoop.externalservice.topic_broker_data_sender:
     class: App\ExternalService\Infrastructure\TopicBrokerDataSender
 
