@@ -23,27 +23,18 @@
 
 namespace App\ExternalService\Infrastructure;
 
-use PHPUnit\Framework\TestCase;
+use App\ExternalService\Core\Application\Ports\DataSenderPort;
 
 /**
- * @internal
- *
- * @coversDefaultClass
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BrokerDataSenderTest extends TestCase
+class TopicBrokerDataSender implements DataSenderPort
 {
-    private $_brokerDataSender;
+    // correspondances entre le contexte et le nom du topic
 
-    public function setUp(): void
+    public function send(): string
     {
-        $this->_brokerDataSender = new BrokerDataSender();
-    }
-
-    /**
-     * @test
-     */
-    public function testSendReturnOk()
-    {
-        $this->assertEquals($this->_brokerDataSender->send(), 'OK');
+        // implementation of Broker communication
+        return 'OK';
     }
 }

@@ -405,10 +405,7 @@ services:
     arguments:
       $interval: "%env(int:PUSH_JOURNEY_CERTIFY_INTERVAL)%"
     tags:
-      - {
-          name: "console.command",
-          command: "app:notify:journey-certify",
-        }
+      - { name: "console.command", command: "app:notify:journey-certify" }
 
   App\Communication\Service\PushToCertifiedJourney\PushToCertifiedJourneyManager:
     arguments:
@@ -605,12 +602,12 @@ services:
       $providers: "%env(json:file:resolve:RDEX_PROVIDERS)%"
 
   # External Service
-  mobicoop.externalservice.broker_data_sender:
-    class: App\ExternalService\Infrastructure\BrokerDataSender
+  mobicoop.externalservice.topic_broker_data_sender:
+    class: App\ExternalService\Infrastructure\TopicBrokerDataSender
 
   mobicoop.externalservice.carpool_proof_sender:
     class: App\ExternalService\Core\Application\Service\CarpoolProofSender
-    arguments: ["@mobicoop.externalservice.broker_data_sender"]
+    arguments: ["@mobicoop.externalservice.topic_broker_data_sender"]
 
   mobicoop.externalservice.send_proof:
     class: App\ExternalService\Interfaces\SendProof
