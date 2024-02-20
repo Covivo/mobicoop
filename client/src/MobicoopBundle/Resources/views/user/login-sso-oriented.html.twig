@@ -13,5 +13,6 @@
     :id="{{ id is defined ? (id ? id : 'null') : 'null' }}" type="{{ type }}"
     :sign-up-link-in-connection="{{ signUpLinkInConnection ? " true" : "false" }}"
     service="{{ service is defined ? service : 'null' }}" app-name="{{ app_name }}"
-    :sso-button-display="{{ ssoButtonDisplay ? " true" : "false" }}" />
+    :sso-button-display="{{ ssoButtonDisplay ? " true" : "false" }}"
+    :specific-sso-services="{{ specificSsoServices|json_encode }}" />
 {% endblock %}
