@@ -192,7 +192,7 @@ class CarpoolExportManager
             }
 
             // We set the certification type
-            $carpoolExport->setCertification($this->getCarpoolProof($carpoolItem));
+            $carpoolExport->setCertification($carpoolItem->getCarpoolProof());
             $carpoolExports[] = $carpoolExport;
         }
 
@@ -220,37 +220,5 @@ class CarpoolExportManager
         $infoForPdf['savedCo2'] = ($totalSavedCo2 / 1000);
 
         return $this->pdfManager->generatePDF($infoForPdf);
-    }
-
-    public function getCarpoolProof(CarpoolItem $carpoolItem): ?array
-    {
-        if (
-            is_null($carpoolItem->getAsk())
-        ) {
-            return null;
-        }
-
-        $carpoolProofs = $this->carpoolProofRepository->findByAsk($carpoolItem->getAsk());
-
-        $filteredCarpoolProofs = [];
-        foreach ($carpoolProofs as $carpoolProof) {
-            $referenceDate =
-                !is_null($carpoolProof['pick_up_driver_date'])
-                ? $carpoolProof['pick_up_driver_date']                              // Returns the driver pickup date
-                : (
-                    !is_null($carpoolProof['pick_up_passenger_date'])
-                    ? $carpoolProof['pick_up_passenger_date']                       // Returns the passenger pickup date
-                    : function ($carpoolProof) {
-                        $date = new \DateTime($carpoolProof['created_date']->format('Y-m-d'));
-
-                        return $date->sub(new \DateInterval('P1D'));                // Returns the day before the proof creation date
-                    }
-                );
-            if ($carpoolItem->getItemDate()->format('Y-m-d') === (new \DateTime($referenceDate))->format('Y-m-d')) {
-                $filteredCarpoolProofs[] = $carpoolProof;
-            }
-        }
-
-        return !empty($filteredCarpoolProofs) ? $filteredCarpoolProofs[0] : null;
     }
 }

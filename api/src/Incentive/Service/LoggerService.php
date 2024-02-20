@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class LoggerService
 {
+    public const TYPE_INFO = 'info';
+
     /**
      * @var bool
      */
@@ -30,7 +32,7 @@ class LoggerService
         $this->_globalForcingLogs = $globalForcingLogs;
     }
 
-    public function log(string $msg, string $type = 'info', ?bool $forced = false)
+    public function log(string $msg, string $type = self::TYPE_INFO, ?bool $forced = false)
     {
         if (true === $this->_globalForcingLogs || $this->_areLogsOpen() || true === $forced) {
             $this->_logger->{$type}('TEST-'.$msg);

@@ -35,6 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A Bank Transfert.
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -61,6 +62,8 @@ class BankTransfer
     public const STATUS_USER_NOT_INVOLVE_CARPOOL_PROOF = 15;
     public const STATUS_UNKNOWN_TERRITORY = 16;
     public const STATUS_NO_AMOUNT = 17;
+    public const STATUS_ABANDONNED_NO_RECIPIENT_PAYMENT_PROFILE = 18;
+    public const STATUS_ABANDONNED_RECIPIENT_PAYMENT_PROFILE_INACTIVE = 19;
 
     public const STATUS_TXT = [
         self::STATUS_INVALID => 'bt_invalid',
@@ -81,14 +84,19 @@ class BankTransfer
         self::STATUS_USER_NOT_INVOLVE_CARPOOL_PROOF => 'bt_userNotInvolvedInCarpoolProof',
         self::STATUS_UNKNOWN_TERRITORY => 'bt_unknownTerritory',
         self::STATUS_NO_AMOUNT => 'bt_noAmount',
+        self::STATUS_ABANDONNED_NO_RECIPIENT_PAYMENT_PROFILE => 'bt_noRecipientPaymentProfile',
+        self::STATUS_ABANDONNED_RECIPIENT_PAYMENT_PROFILE_INACTIVE => 'bt_recipientPaymentProfileInactive',
     ];
 
     /**
      * @var string The id of this bank transfert
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"readPayment"})
      */
     private $id;
@@ -97,8 +105,11 @@ class BankTransfer
      * @var User The recipient of this bank transfert
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"readPayment"})
+     *
      * @MaxDepth(1)
      */
     private $recipient;
@@ -107,7 +118,9 @@ class BankTransfer
      * @var float Amount of this bank transfert (in €)
      *
      * @ORM\Column(type="decimal", precision=10, scale=6)
+     *
      * @Assert\NotBlank
+     *
      * @Groups({"readPayment"})
      */
     private $amount;
@@ -116,6 +129,7 @@ class BankTransfer
      * @var null|int Territory of the paying territory
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
+     *
      * @Groups({"readPayment"})
      */
     private $territory;
@@ -124,7 +138,9 @@ class BankTransfer
      * @var null|int CarpoolProofId linked to this bank transfert
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\CarpoolProof")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"readPayment"})
      */
     private $carpoolProof;
@@ -133,6 +149,7 @@ class BankTransfer
      * @var null|string Various textual details about this bank transfert (json)
      *
      * @ORM\Column(type="text", nullable=true)
+     *
      * @Groups({"readPayment"})
      */
     private $details;
@@ -141,6 +158,7 @@ class BankTransfer
      * @var int Bank Transfert status
      *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"readPayment"})
      */
     private $status;
@@ -149,6 +167,7 @@ class BankTransfer
      * @var string Bank Transfert batch id (timestamp)
      *
      * @ORM\Column(type="string", length=36)
+     *
      * @Groups({"readPayment"})
      */
     private $batchId;
@@ -157,6 +176,7 @@ class BankTransfer
      * @var null|string Error returned by the payment provider (if there is any)
      *
      * @ORM\Column(type="text", nullable=true)
+     *
      * @Groups({"readPayment"})
      */
     private $error;
@@ -165,6 +185,7 @@ class BankTransfer
      * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"readPayment"})
      */
     private $createdDate;
@@ -173,6 +194,7 @@ class BankTransfer
      * @var \DateTimeInterface update date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readPayment"})
      */
     private $updatedDate;

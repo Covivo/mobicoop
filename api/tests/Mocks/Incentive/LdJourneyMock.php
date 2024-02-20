@@ -5,7 +5,7 @@ namespace App\Tests\Mocks\Incentive;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceJourney;
 
-class LdJourney
+class LdJourneyMock
 {
     public static function getCommitedJourned(): LongDistanceJourney
     {

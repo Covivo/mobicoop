@@ -19,6 +19,7 @@ use App\Incentive\Validator\SubscriptionValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidateLDSubscription extends ValidateSubscription
 {
@@ -124,16 +125,17 @@ class ValidateLDSubscription extends ValidateSubscription
                 return;
         }
 
-        $httpResponse = $this->_apiProvider->patchSubscription(
-            $this->_subscription,
-            [
-                SpecificFields::JOURNEY_COST_SHARING_DATE => $this->_carpoolPayment->getUpdatedDate()->format('Y-m-d'),
-                SpecificFields::HONOR_CERTIFICATE => $this->_honorCertificateService->generateHonourCertificate($this->_subscription),
-            ]
-        );
+        $httpQueryParams = [
+            SpecificFields::JOURNEY_COST_SHARING_DATE => $this->_carpoolPayment->getUpdatedDate()->format('Y-m-d'),
+            SpecificFields::HONOR_CERTIFICATE => $this->_honorCertificateService->generateHonourCertificate($this->_subscription),
+        ];
 
-        if ($this->_apiProvider->hasRequestErrorReturned($httpResponse)) {
-            $this->_subscription->addLog($httpResponse, Log::TYPE_ATTESTATION);
+        try {
+            $this->_apiProvider->patchSubscription($this->_subscription, $httpQueryParams);
+        } catch (HttpException $exception) {
+            $this->_subscription->addLog($exception, Log::TYPE_ATTESTATION, $httpQueryParams);
+
+            $this->_em->flush();
 
             return;
         }

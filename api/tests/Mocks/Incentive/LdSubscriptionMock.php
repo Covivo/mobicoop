@@ -22,7 +22,7 @@ class LdSubscriptionMock
     public static function getCommitedSubscription(): LongDistanceSubscription
     {
         $subscription = static::_getLdSubscription();
-        $subscription->setCommitmentProofJourney(LdJourney::getCommitedJourned());
+        $subscription->setCommitmentProofJourney(LdJourneyMock::getCommitedJourned());
         $subscription->setCommitmentProofDate(new \DateTime());
 
         return $subscription;
@@ -46,6 +46,28 @@ class LdSubscriptionMock
         $commitmentJourney = $subscription->getCommitmentProofJourney();
         $commitmentJourney->setCarpoolItem($carpoolItem);
         $commitmentJourney->setCarpoolPayment($carpoolPayment);
+
+        return $subscription;
+    }
+
+    public static function getCompleteSubscription(): LongDistanceSubscription
+    {
+        $subscription = static::getCommitedSubscription();
+
+        for ($i = 0; $i < 9; ++$i) {
+            $subscription->addLongDistanceJourney(LdJourneyMock::getValidatedJourney());
+        }
+
+        return $subscription;
+    }
+
+    public static function getCompleteValidatedSubscription(): LongDistanceSubscription
+    {
+        $subscription = static::getValidatedSubscription();
+
+        for ($i = 0; $i < 9; ++$i) {
+            $subscription->addLongDistanceJourney(LdJourneyMock::getValidatedJourney());
+        }
 
         return $subscription;
     }

@@ -4,14 +4,17 @@ namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
+use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionTimestampsResponse;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class TimestampTokenManager extends MobConnectManager
 {
@@ -43,6 +46,11 @@ class TimestampTokenManager extends MobConnectManager
     private const DEFAULT_TIMESTAMP_SIGNINTIME_SETTER = self::DEFAULT_SETTER_PREFIX.self::DEFAULT_TAG.self::DEFAULT_SIGNINTIME_SUFFIX;
 
     /**
+     * @var EecInstance
+     */
+    protected $_eecInstance;
+
+    /**
      * @var int
      */
     private $_currentLogType;
@@ -62,14 +70,16 @@ class TimestampTokenManager extends MobConnectManager
         LoggerService $loggerService,
         InstanceManager $instanceManager
     ) {
+        $this->_eecInstance = $instanceManager->getEecInstance();
+
         parent::__construct($em, $instanceManager, $loggerService);
     }
 
-    public function getMobTimestampToken($subscription)
+    public function getMobTimestampToken($subscription): MobConnectSubscriptionTimestampsResponse
     {
         $this->setDriver($subscription->getUser());
 
-        return $this->getDriverSubscriptionTimestamps($subscription->getSubscriptionId());
+        return $this->_getTimestamps();
     }
 
     /**
@@ -267,10 +277,6 @@ class TimestampTokenManager extends MobConnectManager
                 break;
         }
 
-        if (!is_null($this->_currentLogType)) {
-            $this->_currentSubscription->addLog($this->_currentTimestampTokensResponse, $this->_currentLogType);
-        }
-
         if (is_null($this->_currentTimestampTokensResponse->getIncentiveProofTimestampToken())) {
             $this->_loggerService->log(
                 'We were unable to determine the '.$this->getTokenTypeAsString($tokenType).' token for the subscription '.$this->_currentSubscription->getId().' ('.$this->_currentSubscription->getType().').',
@@ -345,9 +351,26 @@ class TimestampTokenManager extends MobConnectManager
 
     private function _setCurrentTimestampTokensResponse(): self
     {
-        $this->_currentTimestampTokensResponse = $this->getDriverSubscriptionTimestamps($this->_currentSubscription->getSubscriptionId());
+        $this->_currentTimestampTokensResponse = $this->_getTimestamps();
 
         return $this;
+    }
+
+    /**
+     * @throws HttpException
+     */
+    private function _getTimestamps(): MobConnectSubscriptionTimestampsResponse
+    {
+        $provider = new MobConnectApiProvider($this->_eecInstance);
+
+        try {
+            return $provider->getSubscriptionTimestamps($this->_currentSubscription->getSubscriptionId());
+        } catch (HttpException $exception) {
+            $logType = is_null($this->_currentLogType) ? Log::TYPE_TIMESTAMP : $this->_currentLogType;
+            $this->_currentSubscription->addLog($exception, $logType);
+
+            $this->_em->flush();
+        }
     }
 
     private function _setMissingCommitmentJourney(): self
@@ -366,7 +389,7 @@ class TimestampTokenManager extends MobConnectManager
                 $commitmentJourney = new LongDistanceJourney($proposal);
             }
         } else {
-            $id = intval(substr($journeyId, strlen($this->_carpoolProofPrefix)));
+            $id = intval(substr($journeyId, strlen($this->_eecInstance->getCarpoolProofPrefix())));
             $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($id);
             if (!is_null($carpoolProof)) {
                 $commitmentJourney = new ShortDistanceJourney($carpoolProof);

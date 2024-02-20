@@ -712,24 +712,20 @@ class CarpoolItem
             return null;
         }
 
-        $carpoolProofs = $this->getAsk()->getCarpoolProofs();
-
-        $filteredCarpoolProofs = array_values(array_filter($carpoolProofs, function ($carpoolProof) {
-            $referenceDate =
-                !is_null($carpoolProof->getPickUpDriverDate())
-                ? $carpoolProof->getPickUpDriverDate()                              // Returns the driver pickup date
+        $filteredCarpoolProofs = array_values(array_filter(
+            $this->getAsk()->getCarpoolProofs(),
+            function ($carpoolProof) {
+                $referenceDate = !is_null($carpoolProof->getPickUpDriverDate())
+                ? $carpoolProof->getPickUpDriverDate()                                  // Returns the driver pickup date
                 : (
                     !is_null($carpoolProof->getPickUpPassengerDate())
-                    ? $carpoolProof->getPickUpPassengerDate()                       // Returns the passenger pickup date
-                    : function ($carpoolProof) {
-                        $date = new \DateTime($carpoolProof->getCreatedDate()->format('Y-m-d'));
-
-                        return $date->sub(new \DateInterval('P1D'));                // Returns the day before the proof creation date
-                    }
+                    ? $carpoolProof->getPickUpPassengerDate()                           // Returns the passenger pickup date
+                    : $carpoolProof->getCreatedDate()->sub(new \DateInterval('P1D'))    // Returns the day before the proof creation date
                 );
 
-            return $this->getItemDate()->format('Y-m-d') === $referenceDate->format('Y-m-d');
-        }));
+                return $this->getItemDate()->format('Y-m-d') === $referenceDate->format('Y-m-d');
+            }
+        ));
 
         return !empty($filteredCarpoolProofs) ? $filteredCarpoolProofs[0] : null;
     }
