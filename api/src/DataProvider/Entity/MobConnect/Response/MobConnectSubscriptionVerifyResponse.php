@@ -2,6 +2,8 @@
 
 namespace App\DataProvider\Entity\MobConnect\Response;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
 {
     public const SUCCESS_STATUS = 200;
@@ -21,7 +23,7 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
      */
     private $_comments;
 
-    public function __construct(array $mobConnectResponse)
+    public function __construct(Response $mobConnectResponse)
     {
         parent::__construct($mobConnectResponse);
 
@@ -50,8 +52,6 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
 
     /**
      * Get the value of _rejectReason.
-     *
-     * @return string
      */
     public function getRejectReason(): ?string
     {
@@ -70,8 +70,6 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
 
     /**
      * Get the value of _comment.
-     *
-     * @return string
      */
     public function getComment(): ?string
     {

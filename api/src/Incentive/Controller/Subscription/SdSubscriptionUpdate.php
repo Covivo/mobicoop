@@ -4,18 +4,10 @@ namespace App\Incentive\Controller\Subscription;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Service\Manager\JourneyManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SdSubscriptionUpdate extends SubscriptionUpdate
 {
-    public function __construct(RequestStack $requestStack, EntityManagerInterface $em, JourneyManager $journeyManager)
-    {
-        parent::__construct($requestStack, $em, $journeyManager);
-    }
-
     public function __invoke(ShortDistanceSubscription $subscription)
     {
         /**
@@ -23,13 +15,13 @@ class SdSubscriptionUpdate extends SubscriptionUpdate
          */
         $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_request->get('carpool_proof'));
 
-        $pushOnly = boolval($this->_request->get('push_only'));
+        $pushOnlyMode = boolval($this->_request->get('push_only'));
 
         if (is_null($carpoolProof)) {
             throw new NotFoundHttpException('The requested proof was not found');
         }
 
-        $this->_journeyManager->validationOfProof($carpoolProof, $pushOnly);
+        $this->_subscriptionManager->validateSubscription($carpoolProof, $pushOnlyMode);
 
         return $subscription;
     }

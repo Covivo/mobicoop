@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Incentive\Validator\CarpoolProofValidator;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,7 +38,7 @@ class ShortDistanceJourney extends Journey
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", inversedBy="shortDistanceSubscriptions")
+     * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", inversedBy="shortDistanceJourneys")
      */
     private $subscription;
 
@@ -438,6 +439,6 @@ class ShortDistanceJourney extends Journey
     {
         return
             !is_null($this->getCarpoolProof())
-            && $this->getCarpoolProof()->isEECCompliant();
+            && CarpoolProofValidator::isEecCompliant($this->getCarpoolProof());
     }
 }

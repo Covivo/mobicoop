@@ -6,9 +6,7 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
-use App\Incentive\Service\Manager\JourneyManager;
 use App\Payment\Entity\CarpoolPayment;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,11 +15,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionUpdateCommand extends EecCommand
 {
-    public function __construct(EntityManagerInterface $em, JourneyManager $journeyManager)
-    {
-        parent::__construct($em, $journeyManager);
-    }
-
     protected function configure()
     {
         $this
@@ -54,24 +47,26 @@ class SubscriptionUpdateCommand extends EecCommand
 
     private function _updateLDSubscription()
     {
-        $this->_currentSubscription = $this->_em->getRepository(LongDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
+        $subscription = $this->_em->getRepository(LongDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
 
-        if (is_null($this->_currentSubscription)) {
+        if (is_null($subscription)) {
             throw new NotFoundHttpException('The subscription was not found');
         }
 
         $carpoolPayment = $this->_em->getRepository(CarpoolPayment::class)->find($this->_currentInput->getOption('journey'));
 
-        $this->checkCarpoolPayment($carpoolPayment);
+        if (is_null($carpoolPayment)) {
+            throw new NotFoundHttpException('The requested CarpoolPayment was not found');
+        }
 
-        $this->_journeyManager->receivingElectronicPayment($carpoolPayment, $this->_currentInput->getOption('pushOnly'));
+        $this->_subscriptionManager->validateSubscription($carpoolPayment, $this->_currentInput->getOption('pushOnly'));
     }
 
     private function _updateSDSubscription()
     {
-        $this->_currentSubscription = $this->_em->getRepository(ShortDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
+        $subscription = $this->_em->getRepository(ShortDistanceSubscription::class)->find($this->_currentInput->getOption('subscription'));
 
-        if (is_null($this->_currentSubscription)) {
+        if (is_null($subscription)) {
             throw new NotFoundHttpException('The subscription was not found');
         }
 
@@ -79,10 +74,10 @@ class SubscriptionUpdateCommand extends EecCommand
 
         $this->checkCarpoolProof($carpoolProof);
 
-        if ($this->_currentSubscription->getUser()->getId() !== $carpoolProof->getDriver()->getId()) {
+        if ($subscription->getUser()->getId() !== $carpoolProof->getDriver()->getId()) {
             throw new BadRequestHttpException('The user associated with the incentive is not the one associated with the CarpoolProof');
         }
 
-        $this->_journeyManager->validationOfProof($carpoolProof, $this->_currentInput->getOption('pushOnly'));
+        $this->_subscriptionManager->validateSubscription($carpoolProof, $this->_currentInput->getOption('pushOnly'));
     }
 }

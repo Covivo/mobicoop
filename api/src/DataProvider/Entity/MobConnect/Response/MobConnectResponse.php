@@ -2,6 +2,8 @@
 
 namespace App\DataProvider\Entity\MobConnect\Response;
 
+use Symfony\Component\HttpFoundation\Response;
+
 abstract class MobConnectResponse implements MobConnectResponseInterface
 {
     public const ERROR_CODES = [400, 401, 403, 404, 409, 412, 415, 422, 500, 503];
@@ -25,14 +27,11 @@ abstract class MobConnectResponse implements MobConnectResponseInterface
      */
     protected $_timestamp;
 
-    public function __construct(array $mobConnectResponse, array $payload = null)
+    public function __construct(Response $mobConnectResponse, array $payload = null)
     {
-        if (isset($mobConnectResponse['code'])) {
-            $this->_code = $mobConnectResponse['code'];
-        }
-        if (isset($mobConnectResponse['content'])) {
-            $this->_content = is_null(json_decode($mobConnectResponse['content'])) ? $mobConnectResponse['content'] : json_decode($mobConnectResponse['content']);
-        }
+        $this->_code = $mobConnectResponse->getStatusCode();
+        $this->_content = is_null(json_decode($mobConnectResponse->getContent())) ? $mobConnectResponse->getContent() : json_decode($mobConnectResponse->getContent());
+
         $this->_payload = $payload;
     }
 

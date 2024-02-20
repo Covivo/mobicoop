@@ -7,6 +7,8 @@ namespace App\Incentive\Service\Definition;
  */
 class SdImproved extends SubscriptionDefinition
 {
+    protected const DEADLINE = '2025-01-01 00:00:00';
+
     protected const MAXIMUM_JOURNEY_NUMBER = 10;
 
     public static function isReady(): bool

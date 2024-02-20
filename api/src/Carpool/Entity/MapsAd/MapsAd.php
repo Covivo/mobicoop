@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity\MapsAd;
 
@@ -27,70 +27,94 @@ use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Map's Ad. The necessary data for displaying an Ad on a map
+ * Map's Ad. The necessary data for displaying an Ad on a map.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class MapsAd
 {
     /**
      * @var Address
+     *
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $origin;
 
     /**
      * @var Address
+     *
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $destination;
 
     /**
      * @var int
+     *
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $proposalId;
 
     /**
      * @var bool
+     *
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $oneWay;
 
     /**
      * @var bool
+     *
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $regular;
 
     /**
-     * @var \DateTime|null ONLY FOR PUNCTUAL
+     * @var null|\DateTime ONLY FOR PUNCTUAL
+     *
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $outwardDate;
 
     /**
      * @var int The linked entity's id (Community...)
+     *
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $entityId;
 
     /**
      * @var string
+     *
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $carpoolerFirstName;
 
     /**
      * @var string
+     *
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $carpoolerLastName;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readCommunityAds"})
+     */
+    private $driver;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"readCommunityAds"})
+     */
+    private $passenger;
 
     public function __construct()
     {
         $this->outwardDate = null;
     }
-    
+
     public function getOrigin(): ?Address
     {
         return $this->origin;
@@ -195,6 +219,30 @@ class MapsAd
     public function setCarpoolerLastName(?string $carpoolerLastName): self
     {
         $this->carpoolerLastName = $carpoolerLastName;
+
+        return $this;
+    }
+
+    public function isDriver(): ?bool
+    {
+        return $this->driver;
+    }
+
+    public function setDriver(?bool $driver): self
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    public function isPassenger(): ?bool
+    {
+        return $this->passenger;
+    }
+
+    public function setPassenger(?bool $passenger): self
+    {
+        $this->passenger = $passenger;
 
         return $this;
     }

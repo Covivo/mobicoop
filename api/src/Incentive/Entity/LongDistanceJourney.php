@@ -5,6 +5,8 @@ namespace App\Incentive\Entity;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
+use App\Incentive\Validator\CarpoolPaymentValidator;
+use App\Incentive\Validator\CarpoolProofValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\Mapping as ORM;
@@ -452,9 +454,9 @@ class LongDistanceJourney extends Journey
     {
         return
             !is_null($this->getCarpoolPayment())
-            && $this->getCarpoolPayment()->isEECCompliant()
+            && CarpoolPaymentValidator::isEecCompliant($this->getCarpoolPayment())
             && !is_null($this->getCarpoolProof())
-            && $this->getCarpoolProof()->isEECCompliant();
+            && CarpoolProofValidator::isEecCompliant($this->getCarpoolProof());
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Incentive\Controller\Subscription;
 
-use App\Incentive\Service\Manager\JourneyManager;
+use App\Incentive\Service\Manager\SubscriptionManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -19,15 +19,15 @@ abstract class SubscriptionUpdate
     protected $_request;
 
     /**
-     * @var JourneyManager
+     * @var SubscriptionManager
      */
-    protected $_journeyManager;
+    protected $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, EntityManagerInterface $em, JourneyManager $journeyManager)
+    public function __construct(RequestStack $requestStack, EntityManagerInterface $em, SubscriptionManager $subscriptionManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
         $this->_em = $em;
 
-        $this->_journeyManager = $journeyManager;
+        $this->_subscriptionManager = $subscriptionManager;
     }
 }

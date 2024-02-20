@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Security;
 class ExportManager
 {
     public const ALLOWED_FILTERS = [self::FILTER_COMMUNITY, self::FILTER_HITCHHIKING, self::FILTER_TERRITORY];
+    public const SELECTED = 'selected';
     public const MAXIMUM_NUMBER_OF_ROLES = 5;
     public const FILTER_COMMUNITY = 'community';
     public const FILTER_HITCHHIKING = 'isHitchHiker';
@@ -60,6 +61,11 @@ class ExportManager
      */
     private $_isHitchhiking;
 
+    /**
+     * @var array
+     */
+    private $_selected = [];
+
     public function __construct(
         Security $security,
         RequestStack $requestStack,
@@ -74,13 +80,14 @@ class ExportManager
         $this->_userRepository = $userRepository;
         $this->_isHitchhiking = false;
         $this->_setFilters();
+        $this->_setSelected();
 
         $this->_setAuthenticatedUserRestrictionTerritories();
     }
 
     public function exportAll()
     {
-        $users = $this->_userRepository->findForExport($this->_filters, $this->_authenticatedUserRestrictionTerritories);
+        $users = $this->_userRepository->findForExport($this->_filters, $this->_authenticatedUserRestrictionTerritories, $this->_selected);
 
         $usersToExport = [];
 
@@ -115,7 +122,7 @@ class ExportManager
         $parameters = $this->_request->query->all();
 
         foreach ($parameters as $key => $parameter) {
-            if (!in_array($key, self::ALLOWED_FILTERS)) {
+            if (!in_array($key, self::ALLOWED_FILTERS) && self::SELECTED !== $key) {
                 throw new BadRequestHttpException("The filter {$key} is not allowed");
             }
 
@@ -142,20 +149,29 @@ class ExportManager
         return $this;
     }
 
+    private function _setSelected()
+    {
+        $parameters = $this->_request->query->get(self::SELECTED);
+        if (!is_null($parameters) && '' !== $parameters) {
+            $this->_selected = explode(',', $parameters);
+        }
+    }
+
     private function _transformUser(): UserExport
     {
         $this->_currentUserExport = new UserExport();
 
+        $this->_currentUserExport->setId((int) $this->_currentUser['userId']);
         $this->_currentUserExport->setFamilyName($this->_currentUser['familyName']);
         $this->_currentUserExport->setGivenName($this->_currentUser['givenName']);
         $this->_currentUserExport->setGender($this->_currentUser['gender']);
         $this->_currentUserExport->setEmail($this->_currentUser['email']);
         $this->_currentUserExport->setTelephone($this->_currentUser['telephone']);
         $this->_currentUserExport->setBirthDate(new \DateTime($this->_currentUser['birthDate']));
-        $this->_currentUserExport->setRegistrationDate(new \DateTime($this->_currentUser['registrationDate']));
-        $this->_currentUserExport->setLastActivityDate(new \DateTime($this->_currentUser['lastActivityDate']));
+        $this->_currentUserExport->setRegistrationDate('' != trim($this->_currentUser['registrationDate']) ? new \DateTime($this->_currentUser['registrationDate']) : null);
+        $this->_currentUserExport->setLastActivityDate('' != trim($this->_currentUser['lastActivityDate']) ? new \DateTime($this->_currentUser['lastActivityDate']) : null);
         $this->_currentUserExport->setNewsletterSubscription($this->_currentUser['newsletterSubscription']);
-        $this->_currentUserExport->setMaxValidityAnnonceDate(new \DateTime($this->_currentUser['maxValidityAnnonceDate']));
+        $this->_currentUserExport->setMaxValidityAnnonceDate('' != trim($this->_currentUser['maxValidityAnnonceDate']) ? new \DateTime($this->_currentUser['maxValidityAnnonceDate']) : null);
         $this->_currentUserExport->setAddressLocality($this->_currentUser['addressLocality']);
         $this->_currentUserExport->setSolidaryUser($this->_currentUser['solidaryUser']);
 

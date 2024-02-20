@@ -589,6 +589,7 @@ class CarpoolController extends AbstractController
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
             'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
             'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
+            'includePassenger' => filter_var($request->query->get('includePassenger'), FILTER_VALIDATE_BOOLEAN),
         ]);
     }
 

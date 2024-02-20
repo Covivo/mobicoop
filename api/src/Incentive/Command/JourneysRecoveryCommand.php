@@ -2,22 +2,22 @@
 
 namespace App\Incentive\Command;
 
-use App\Incentive\Service\Manager\JourneyRecoveryManager;
+use App\Incentive\Service\Manager\SubscriptionManager;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class JourneysRecoveryCommand extends Command
 {
     /**
-     * @var JourneyRecoveryManager
+     * @var SubscriptionManager
      */
-    private $_journeyRecoveryManager;
+    private $_subscriptionManager;
 
-    public function __construct(JourneyRecoveryManager $journeyRecoveryManager)
+    public function __construct(SubscriptionManager $subscriptionManager)
     {
-        $this->_journeyRecoveryManager = $journeyRecoveryManager;
+        $this->_subscriptionManager = $subscriptionManager;
 
         parent::__construct();
     }
@@ -28,15 +28,15 @@ class JourneysRecoveryCommand extends Command
             ->setName('app:incentive:journeys-recovery')
             ->setDescription('Executes EEC eligible evidence recovery.')
             ->setHelp('Executes EEC eligible evidence recovery.')
-            ->addArgument('type', InputArgument::REQUIRED, 'The subscription type')
-            ->addArgument('userId', InputArgument::OPTIONAL, 'User\'s ID whose proofs is to be recovered')
+            ->addOption('type', null, InputOption::VALUE_REQUIRED, 'The subscription type')
+            ->addOption('user', null, InputOption::VALUE_OPTIONAL, 'User\'s ID whose proofs is to be recovered')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(json_encode(
-            $this->_journeyRecoveryManager->executeProofsRecovery($input->getArgument('type'), $input->getArgument('userId'))
+            $this->_subscriptionManager->proofsRecover($input->getOption('type'), $input->getOption('userId'))
         ));
     }
 }

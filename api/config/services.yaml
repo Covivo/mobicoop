@@ -317,6 +317,10 @@ services:
       $carpoolNoticeableDetourDistancePercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%"
       $carpoolDisplayFieldsOrder: "%env(json:CARPOOL_DISPLAY_FIELDS_ORDER)%"
 
+  App\Carpool\Repository\CarpoolProofRepository:
+    arguments:
+      $carpoolProofErroCheckLimit: "%env(int:CARPOOL_PROOF_ERROR_CHECK_LIMIT)%"
+
   # CarpoolStandard
   App\CarpoolStandard\Service\CarpoolStandardProvider:
     arguments:
@@ -397,6 +401,19 @@ services:
       $schedule: "%env(json:file:resolve:AUTOMATED_COMMANDS)%"
 
   # Communication
+  App\Communication\Command\PushNotifyToCertifiedJourneyCommand:
+    arguments:
+      $interval: "%env(int:PUSH_JOURNEY_CERTIFY_INTERVAL)%"
+    tags:
+      - {
+          name: "console.command",
+          command: "app:notify:journey-certify",
+        }
+
+  App\Communication\Service\PushToCertifiedJourney\PushToCertifiedJourneyManager:
+    arguments:
+      $timeMargin: "%env(int:PUSH_CARPOOL_START_TIME_MARGIN)%"
+
   App\Communication\Controller\:
     resource: "../src/Communication/Controller"
     arguments:
@@ -821,9 +838,9 @@ services:
           command: "app:incentive:subscription-verify",
         }
 
-  App\Incentive\Command\ProofInvalidateCommand:
+  App\Incentive\Command\ResetSubscriptionCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:proof-invalidate" }
+      - { name: "console.command", command: "app:incentive:subscription-reset" }
 
   App\Incentive\Command\SubscriptionCommitCommand:
     tags:
@@ -876,19 +893,11 @@ services:
     tags:
       - controller.service_arguments
 
-  App\Incentive\Controller\Subscription\LdSubscriptionGet:
-    tags:
-      - controller.service_arguments
-
   App\Incentive\Controller\Subscription\LdSubscriptionUpdate:
     tags:
       - controller.service_arguments
 
   App\Incentive\Controller\Subscription\SdSubscriptionCommit:
-    tags:
-      - controller.service_arguments
-
-  App\Incentive\Controller\Subscription\SdSubscriptionGet:
     tags:
       - controller.service_arguments
 
@@ -929,88 +938,19 @@ services:
       - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\AuthManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
-
-  App\Incentive\Service\Manager\IncentiveManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
 
   App\Incentive\Service\Manager\InstanceManager:
     arguments:
       $eecServiveConfiguration: "%env(json:file:resolve:EEC_SERVICE)%"
-
-  App\Incentive\Service\Manager\JourneyManager:
-    arguments:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
-    tags:
-      - { name: monolog.logger, channel: incentive_subscription }
-
-  App\Incentive\Service\Manager\JourneyRecoveryManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
-    tags:
-      - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\SubscriptionManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\Manager\TimestampTokenManager:
-    arguments:
-      $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
-      $mobConnectParams:
-        api_uri: "%env(string:MOBCONNECT_API_URI)%"
-        credentials:
-          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
-          api_key: "%env(string:MOBCONNECT_API_KEY)%"
-          app_client_id: "%env(string:MOBCONNECT_APP_CLIENT_ID)%"
-          app_client_secret: "%env(string:MOBCONNECT_APP_SECRET)%"
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 

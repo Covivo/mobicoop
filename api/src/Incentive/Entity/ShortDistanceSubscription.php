@@ -6,7 +6,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectResponseInterface;
-use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\Incentive\Controller\Subscription\SdSubscriptionCommit;
 use App\Incentive\Controller\Subscription\SdSubscriptionGet;
 use App\Incentive\Controller\Subscription\SdSubscriptionUpdate;
@@ -16,6 +15,8 @@ use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Service\Definition\SdImproved;
 use App\Incentive\Service\Definition\SdStandard;
 use App\Incentive\Service\Manager\SubscriptionManager;
+use App\Incentive\Validator\CarpoolProofValidator;
+use App\Service\AddressService;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -293,7 +294,7 @@ class ShortDistanceSubscription extends Subscription
     private $drivingLicenceNumber;
 
     /**
-     * @var string the full street address of the user
+     * @var null|string the full street address of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -371,14 +372,14 @@ class ShortDistanceSubscription extends Subscription
 
     public function __construct(
         User $user,
-        MobConnectSubscriptionResponse $mobConnectSubscriptionResponse,
+        string $subscriptionId,
         SubscriptionDefinitionInterface $subscriptionDefinition
     ) {
         $this->shortDistanceJourneys = new ArrayCollection();
         $this->logs = new ArrayCollection();
 
         $this->setUser($user);
-        $this->setSubscriptionId($mobConnectSubscriptionResponse->getId());
+        $this->setSubscriptionId($subscriptionId);
 
         $this->setGivenName($user->getGivenName());
         $this->setFamilyName($user->getFamilyName());
@@ -451,6 +452,7 @@ class ShortDistanceSubscription extends Subscription
     public function removeJourney(?ShortDistanceJourney $journey): self
     {
         if (!is_null($journey)) {
+            $journey->setCarpoolProof(null);
             $this->shortDistanceJourneys->removeElement($journey);
         }
 
@@ -578,11 +580,9 @@ class ShortDistanceSubscription extends Subscription
      */
     public function setStreetAddress(): self
     {
-        if (!is_null($this->getUser() && !is_null($this->getUser()->getHomeAddress()))) {
-            $homeAddress = $this->getUser()->getHomeAddress();
+        $addressService = new AddressService($this->getUser()->getHomeAddress());
 
-            $this->streetAddress = $homeAddress->getHouseNumber().', '.$homeAddress->getStreetAddress();
-        }
+        $this->streetAddress = $addressService->getAddressWithStreetNumber();
 
         return $this;
     }
@@ -759,7 +759,7 @@ class ShortDistanceSubscription extends Subscription
      */
     public function setVerificationDate(?\DateTimeInterface $verificationDate = null): self
     {
-        $this->verificationDate = !is_null($verificationDate) ? $verificationDate : new \DateTime('now');
+        $this->verificationDate = $verificationDate;
 
         return $this;
     }
@@ -937,7 +937,7 @@ class ShortDistanceSubscription extends Subscription
             && !$this->getJourneys()->isEmpty()
             && !is_null($this->getCommitmentProofJourney())
             && !is_null($this->getCommitmentProofJourney()->getCarpoolProof())
-            && $this->getCommitmentProofJourney()->getCarpoolProof()->isEecCompliant()
+            && CarpoolProofValidator::isEecCompliant($this->getCommitmentProofJourney()->getCarpoolProof())
             && !is_null($this->getIncentiveProofTimestampToken())
             && !is_null($this->getIncentiveProofTimestampSigningTime())
             && !is_null($this->getCommitmentProofTimestampToken())
@@ -948,9 +948,7 @@ class ShortDistanceSubscription extends Subscription
 
     public function reset(): self
     {
-        $commitmentProofJourney = $this->getCommitmentProofJourney();
-
-        if (!is_null($commitmentProofJourney)) {
+        if (!is_null($this->getCommitmentProofJourney())) {
             $this->setCommitmentProofJourney(null);
         }
 

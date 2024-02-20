@@ -57,6 +57,9 @@ class CarpoolProof
     public const STATUS_CANCELED_BY_OPERATOR = 10;  // proof canceled by the operator
     public const STATUS_UNDER_CHECKING = 11;        // proof under review by the carpool register
     public const STATUS_UNKNOWN = 12;               // status unknown by the RPC (proof exists but... unknown)
+    public const STATUS_INVALID_CONCURRENT_SCHEDULES = 13; // proof not sent: concurrent travel at the same time already sent to rpc
+    public const STATUS_INVALID_SPLITTED_TRIP = 14; // proof not sent: a long trip has been splitted
+    public const STATUS_INVALID_DUPLICATE_DEVICE = 15; // proof not sent: passenger and driver phone unique id are indentical
     public const STATUS_NOT_SENT_MISSING_PHONE = 16;
 
     public const ACTOR_DRIVER = 1;
@@ -279,6 +282,20 @@ class CarpoolProof
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $validatedDate;
+
+    /**
+     * @var null|string driver's phone unique id
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $driverPhoneUniqueId;
+
+    /**
+     * @var null|string passenger's phone unique id
+     *
+     *  @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $passengerPhoneUniqueId;
 
     public function getId(): ?int
     {
@@ -568,6 +585,30 @@ class CarpoolProof
         return $this;
     }
 
+    public function getDriverPhoneUniqueId(): ?string
+    {
+        return $this->driverPhoneUniqueId;
+    }
+
+    public function setDriverPhoneUniqueId(?string $driverPhoneUniqueId): self
+    {
+        $this->driverPhoneUniqueId = $driverPhoneUniqueId;
+
+        return $this;
+    }
+
+    public function getPassengerPhoneUniqueId(): ?string
+    {
+        return $this->passengerPhoneUniqueId;
+    }
+
+    public function setPassengerPhoneUniqueId(?string $passengerPhoneUniqueId): self
+    {
+        $this->passengerPhoneUniqueId = $passengerPhoneUniqueId;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**
@@ -660,11 +701,6 @@ class CarpoolProof
         return !empty($filteredCarpoolItems) ? $filteredCarpoolItems[0] : null;
     }
 
-    public function isEECCompliant(): bool
-    {
-        return self::STATUS_VALIDATED === $this->getStatus() && self::TYPE_HIGH === $this->getType();
-    }
-
     /**
      * Used in the context of CEE, checks and returns if proof is awaiting validation of the RPC.
      */
@@ -677,33 +713,6 @@ class CarpoolProof
             || self::STATUS_PENDING === $status
             || self::STATUS_SENT === $status
             || self::STATUS_UNDER_CHECKING === $status;
-    }
-
-    /**
-     * Used in the context of CEE, checks and returns if the RPC returned an error during the validation of the request.
-     */
-    public function isStatusError(): bool
-    {
-        $status = $this->getStatus();
-
-        return
-            self::STATUS_ERROR === $status
-            || self::STATUS_CANCELED === $status
-            || self::STATUS_ACQUISITION_ERROR === $status
-            || self::STATUS_NORMALIZATION_ERROR === $status
-            || self::STATUS_FRAUD_ERROR === $status
-            || self::STATUS_EXPIRED === $status
-            || self::STATUS_CANCELED_BY_OPERATOR === $status;
-    }
-
-    /**
-     * Used in the context of CEE, checks and returns if the RPC has validated a proof but not with class C.
-     */
-    public function isCarpoolProofDowngraded(): bool
-    {
-        return
-            self::STATUS_VALIDATED === $this->getStatus()
-            && self::TYPE_HIGH != $this->getType();
     }
 
     /**

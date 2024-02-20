@@ -920,7 +920,6 @@ export default {
       this.selectedOrigin = origin;
     },
     contact: function(data) {
-      console.log(data);
       const form = document.createElement("form");
       form.method = "post";
       form.action = this.$t("buttons.contact.route");

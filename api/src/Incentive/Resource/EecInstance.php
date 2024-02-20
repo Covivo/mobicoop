@@ -4,6 +4,8 @@ namespace App\Incentive\Resource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Incentive\Interfaces\EecProviderInterface;
+use App\Incentive\Resource\Provider\MobConnectProvider;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -66,7 +68,7 @@ class EecInstance
      *
      * @Groups("readEecInstance")
      */
-    private $ldAvailable;
+    private $ldAvailable = false;
 
     /**
      * @var null|\DateTimeInterface
@@ -80,7 +82,7 @@ class EecInstance
      *
      * @Groups("readEecInstance")
      */
-    private $sdAvailable;
+    private $sdAvailable = false;
 
     /**
      * @var null|\DateTimeInterface
@@ -100,6 +102,20 @@ class EecInstance
     private $sdKey;
 
     /**
+     * @var null|int
+     *
+     * @Groups("readEecInstance")
+     */
+    private $previousPeriodWithoutTravel;
+
+    /**
+     * @var null|\DateTimeInterface
+     *
+     * @Groups("readEecInstance")
+     */
+    private $beginDateOfPeriodWithoutJourney;
+
+    /**
      * @var ?bool
      *
      * @Groups("readEecInstance")
@@ -107,20 +123,23 @@ class EecInstance
     private $tabView;
 
     /**
-     * @var array
+     * @var null|string
      */
-    private $configuration;
+    private $carpoolProofPrefix;
 
-    public function __construct(array $instanceConfiguration)
+    /**
+     * @var EecProviderInterface
+     */
+    private $provider;
+
+    /**
+     * @var int
+     */
+    private $ldMinimalDistance;
+
+    public function __construct(array $instanceConfiguration, ?string $carpoolProofPrefix)
     {
-        $this->configuration = $instanceConfiguration;
-
-        $this->setKeys();
-        $this->setExpirationDate();
-        $this->setLdExpirationDate();
-        $this->setSdExpirationDate();
-        $this->setAvailable($this->_isServiceOpened());
-        $this->setTabView();
+        $this->_build($instanceConfiguration, $carpoolProofPrefix);
     }
 
     public function getId(): int
@@ -138,12 +157,12 @@ class EecInstance
         return $this->getAvailable();
     }
 
-    public function isLdSubscriptionAvailable(): bool
+    public function isLongDistanceSubscriptionAvailable(): bool
     {
         return !$this->isDateExpired($this->ldExpirationDate);
     }
 
-    public function isSdSubscriptionAvailable(): bool
+    public function isShortDistanceSubscriptionAvailable(): bool
     {
         return !$this->isDateExpired($this->sdExpirationDate);
     }
@@ -169,9 +188,9 @@ class EecInstance
     /**
      * Set the value of expirationDate.
      */
-    public function setExpirationDate(): self
+    public function setExpirationDate(?string $expirationDate): self
     {
-        $this->expirationDate = $this->getDate($this->configuration['expirationDate']);
+        $this->expirationDate = $this->getDate($expirationDate);
 
         return $this;
     }
@@ -197,9 +216,9 @@ class EecInstance
     /**
      * Set the value of ldExpirationDate.
      */
-    public function setLdExpirationDate(): self
+    public function setLdExpirationDate(?string $expirationDate): self
     {
-        $this->ldExpirationDate = $this->getDate($this->configuration['subscriptions']['ld']['expirationDate']);
+        $this->ldExpirationDate = $this->getDate($expirationDate);
 
         return $this;
     }
@@ -215,9 +234,9 @@ class EecInstance
     /**
      * Set the value of sdExpirationDate.
      */
-    public function setSdExpirationDate(): self
+    public function setSdExpirationDate(?string $expirationDate): self
     {
-        $this->sdExpirationDate = $this->getDate($this->configuration['subscriptions']['sd']['expirationDate']);
+        $this->sdExpirationDate = $this->getDate($expirationDate);
 
         return $this;
     }
@@ -258,10 +277,10 @@ class EecInstance
         return $this;
     }
 
-    public function setKeys(): self
+    public function setKeys(?string $ldKey, ?string $sdKey): self
     {
-        $this->setLdKey($this->configuration['subscriptions']['ld']['key']);
-        $this->setSdKey($this->configuration['subscriptions']['sd']['key']);
+        $this->setLdKey($ldKey);
+        $this->setSdKey($sdKey);
 
         return $this;
     }
@@ -271,13 +290,85 @@ class EecInstance
         return $this->tabView;
     }
 
-    private function setTabView(): self
+    /**
+     * Get the value of carpoolProofPrefix.
+     */
+    public function getCarpoolProofPrefix(): ?string
     {
-        $this->tabView =
-            is_null($this->configuration)
-            || !isset($this->configuration['tabView'])
-            || is_null($this->configuration['tabView'])
-            ? false : $this->configuration['tabView'];
+        return $this->carpoolProofPrefix;
+    }
+
+    /**
+     * Get the value of previousPeriodWithoutTravel.
+     *
+     * @return null|int
+     */
+    public function getPreviousPeriodWithoutTravel()
+    {
+        return $this->previousPeriodWithoutTravel;
+    }
+
+    public function getBeginDateOfPeriodWithoutJourney(): ?\DateTimeInterface
+    {
+        if (is_null($this->previousPeriodWithoutTravel)) {
+            return new \DateTime('1900-01-01');
+        }
+
+        $now = new \DateTime();
+        $beginDate = clone $now;
+
+        return $beginDate->sub(new \DateInterval('P'.$this->previousPeriodWithoutTravel.'M'));
+    }
+
+    /**
+     * Get the value of provider.
+     */
+    public function getProvider(): EecProviderInterface
+    {
+        return $this->provider;
+    }
+
+    /**
+     * Get the value of ldMinimalDistance.
+     */
+    public function getLdMinimalDistance(): ?int
+    {
+        return $this->ldMinimalDistance;
+    }
+
+    /**
+     * Set the value of ldMinimalDistance.
+     */
+    private function setLdMinimalDistance(?int $ldMinimalDistance): self
+    {
+        $this->ldMinimalDistance = $ldMinimalDistance;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of provider.
+     */
+    private function setProvider(?array $provider): self
+    {
+        $this->provider = new MobConnectProvider($provider);
+
+        return $this;
+    }
+
+    /**
+     * Set the value of previousPeriodWithoutTravel.
+     */
+    private function setPreviousPeriodWithoutTravel(?int $period): self
+    {
+        $this->previousPeriodWithoutTravel = $period;
+
+        return $this;
+    }
+
+    private function setTabView(?bool $tabView): self
+    {
+        $this->tabView = is_null($tabView) || false === $tabView ? false : true;
 
         return $this;
     }
@@ -324,5 +415,22 @@ class EecInstance
         }
 
         return false;
+    }
+
+    private function _build(array $configuration, string $carpoolProofPrefix): self
+    {
+        $this->setKeys($configuration['subscriptions']['ld']['key'], $configuration['subscriptions']['sd']['key']);
+        $this->setExpirationDate($configuration['expirationDate']);
+        $this->setLdExpirationDate($configuration['subscriptions']['ld']['expirationDate']);
+        $this->setSdExpirationDate($configuration['subscriptions']['sd']['expirationDate']);
+        $this->setAvailable($this->_isServiceOpened());
+        $this->setPreviousPeriodWithoutTravel($configuration['previousPeriodWithoutTravel']);
+        $this->setTabView($configuration['tabView']);
+        $this->setProvider($configuration['provider']);
+        $this->setLdMinimalDistance($configuration['subscriptions']['ld']['minimalDistance']);
+
+        $this->carpoolProofPrefix = $carpoolProofPrefix;
+
+        return $this;
     }
 }

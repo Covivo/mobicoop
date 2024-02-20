@@ -1107,7 +1107,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var null|Language the language of the user
      *
-     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
+     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users", cascade={"persist"})
      *
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
@@ -1896,6 +1896,15 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $gratuity;
+
+    /**
+     * @var null|int International phone code
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     *
+     * @Groups({"readUser","write"})
+     */
+    private $phoneCode;
 
     public function __construct($status = null)
     {
@@ -3322,7 +3331,9 @@ class User implements UserInterface, EquatableInterface
         return $this->email;
     }
 
-    public function eraseCredentials() {}
+    public function eraseCredentials()
+    {
+    }
 
     public function isEqualTo(UserInterface $user)
     {
@@ -4039,6 +4050,18 @@ class User implements UserInterface, EquatableInterface
     public function setPostalAddress(?string $postalAddress): self
     {
         $this->postalAddress = $postalAddress;
+
+        return $this;
+    }
+
+    public function getPhoneCode(): ?int
+    {
+        return $this->phoneCode;
+    }
+
+    public function setPhoneCode(?int $phoneCode): self
+    {
+        $this->phoneCode = $phoneCode;
 
         return $this;
     }

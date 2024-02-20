@@ -11,9 +11,9 @@ class InstanceManager
      */
     private $_currentEecInstance;
 
-    public function __construct($eecServiveConfiguration)
+    public function __construct($eecServiveConfiguration, ?string $carpoolProofPrefix)
     {
-        $this->_currentEecInstance = new EecInstance($eecServiveConfiguration);
+        $this->_currentEecInstance = new EecInstance($eecServiveConfiguration, $carpoolProofPrefix);
     }
 
     public function getEecInstance(): EecInstance
@@ -26,13 +26,13 @@ class InstanceManager
         return $this->getEecInstance()->isAvailable();
     }
 
-    public function isLdSubscriptionAvailable(): bool
+    public function isLongSubscriptionAvailable(): bool
     {
-        return $this->_currentEecInstance->isLdSubscriptionAvailable();
+        return $this->_currentEecInstance->isLongDistanceSubscriptionAvailable();
     }
 
-    public function isSdSubscriptionAvailable(): bool
+    public function isShortSubscriptionAvailable(): bool
     {
-        return $this->_currentEecInstance->isSdSubscriptionAvailable();
+        return $this->_currentEecInstance->isShortDistanceSubscriptionAvailable();
     }
 }

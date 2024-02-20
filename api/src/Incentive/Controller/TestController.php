@@ -3,7 +3,6 @@
 namespace App\Incentive\Controller;
 
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Service\Manager\JourneyManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Incentive\Service\Validation\JourneyValidation;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,11 +33,6 @@ class TestController extends AbstractController
     private $_journeyValidation;
 
     /**
-     * @var JourneyManager
-     */
-    private $_journeyManager;
-
-    /**
      * @var SubscriptionManager
      */
     private $_subscriptionManager;
@@ -47,13 +41,11 @@ class TestController extends AbstractController
         EntityManagerInterface $em,
         EventDispatcherInterface $eventDispatcher,
         JourneyValidation $journeyValidation,
-        JourneyManager $journeyManager,
         SubscriptionManager $subscriptionManager
     ) {
         $this->_em = $em;
         $this->_eventDispatcher = $eventDispatcher;
         $this->_journeyValidation = $journeyValidation;
-        $this->_journeyManager = $journeyManager;
         $this->_subscriptionManager = $subscriptionManager;
     }
 

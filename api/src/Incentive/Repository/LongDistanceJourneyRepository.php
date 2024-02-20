@@ -23,8 +23,12 @@ class LongDistanceJourneyRepository
         return $this->_repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    public function findOneByCarpoolItemOrProposal(CarpoolItem $carpoolItem, ?Proposal $proposal): ?LongDistanceJourney
+    public function findOneByCarpoolItemOrProposal(?CarpoolItem $carpoolItem, ?Proposal $proposal): ?LongDistanceJourney
     {
+        if (is_null($carpoolItem)) {
+            return null;
+        }
+
         $qb = $this->_entityManager->createQueryBuilder('j');
 
         $qb

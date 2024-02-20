@@ -6,7 +6,7 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Service\Manager\JourneyManager;
+use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -32,14 +32,14 @@ abstract class EecCommand extends Command
     protected $_em;
 
     /**
-     * @var JourneyManager
+     * @var SubscriptionManager
      */
-    protected $_journeyManager;
+    protected $_subscriptionManager;
 
-    public function __construct(EntityManagerInterface $em, JourneyManager $journeyManager)
+    public function __construct(EntityManagerInterface $em, SubscriptionManager $subscriptionManager)
     {
         $this->_em = $em;
-        $this->_journeyManager = $journeyManager;
+        $this->_subscriptionManager = $subscriptionManager;
 
         parent::__construct();
     }
