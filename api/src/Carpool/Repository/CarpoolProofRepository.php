@@ -320,19 +320,6 @@ class CarpoolProofRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findByAsk(Ask $ask)
-    {
-        $stmt = $this->entityManager->getConnection()->prepare(
-            'SELECT *
-            FROM carpool_proof cp
-            WHERE cp.ask_id = '.$ask->getId()
-        );
-
-        $stmt->execute();
-
-        return $stmt->fetchAll();
-    }
-
     /**
      * Find carpools ready to end.
      *
