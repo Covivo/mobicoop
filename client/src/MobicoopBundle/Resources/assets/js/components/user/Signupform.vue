@@ -171,7 +171,13 @@
                 </v-alert>
 
                 <v-row>
-                  <v-col cols="2">
+                  <v-col
+                    cols="5"
+                    sm="5"
+                    md="4"
+                    lg="3"
+                    xl="2"
+                  >
                     <v-select
                       v-model="form.phoneCode"
                       :items="flags"
@@ -764,7 +770,7 @@ export default {
             this.phoneNumberValid ||
             this.$t("phone.errors.valid"),
         ],
-        phoneCode:null,
+        phoneCode:33,
         phoneCodeRules: [
           (v) => !!v || this.$t("phoneCode.errors.required"),
         ],
