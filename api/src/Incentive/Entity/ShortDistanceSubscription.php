@@ -978,7 +978,7 @@ class ShortDistanceSubscription extends Subscription
         return
             !is_null($this->getCommitmentProofJourney())
             && !is_null($this->getCommitmentProofJourney()->getCarpoolProof())
-            && $this->getCommitmentProofJourney()->getCarpoolProof()->isEECCompliant();
+            && CarpoolProofValidator::isEecCompliant($this->getCommitmentProofJourney()->getCarpoolProof());
     }
 
     public static function getAvailableDefinitions(): array
