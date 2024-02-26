@@ -43,12 +43,15 @@ abstract class PushEvent implements PushEventInterface
      */
     protected $_users = [];
 
-    protected function __construct(NotificationManager $notificationManager, int $interval)
-    {
+    protected function __construct(
+        NotificationManager $notificationManager,
+        int $interval,
+        int $serverUtcTimeDiff = DateService::SERVER_UTC_TIME_DIFF
+    ) {
         $this->_notificationManager = $notificationManager;
 
         $this->_interval = $interval;
-        $this->_now = DateService::getNow();
+        $this->_now = DateService::getNow($serverUtcTimeDiff);
     }
 
     public function execute(): bool
