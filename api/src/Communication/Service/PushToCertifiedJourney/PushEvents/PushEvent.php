@@ -2,6 +2,7 @@
 
 namespace App\Communication\Service\PushToCertifiedJourney\PushEvents;
 
+use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Matching;
 use App\Communication\Interfaces\PushEventInterface;
@@ -67,19 +68,27 @@ abstract class PushEvent implements PushEventInterface
     {
         foreach ($this->_journeys as $journey) {
             switch (true) {
-                case $journey instanceof CarpoolProof:
-                    array_push($this->_users, $journey->getDriver());
-                    array_push($this->_users, $journey->getPassenger());
+                case $journey instanceof Ask:
+                    if (!is_null($journey->getMatching())) {
+                        $this->_addUsers($journey->getMatching());
+                    }
 
                     break;
 
                 case $journey instanceof Matching:
-                    array_push($this->_users, $journey->getProposalOffer()->getUser());
-                    array_push($this->_users, $journey->getProposalRequest()->getUser());
+                    $this->_addUsers($journey);
 
                     break;
             }
         }
+    }
+
+    protected function _addUsers(Matching $matching): self
+    {
+        array_push($this->_users, $matching->getProposalOffer()->getUser());
+        array_push($this->_users, $matching->getProposalRequest()->getUser());
+
+        return $this;
     }
 
     protected function _notifyUsers()
