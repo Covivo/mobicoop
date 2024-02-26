@@ -15,16 +15,20 @@ class PushBeforeCarpoolStartEvent extends PushEvent
      */
     protected $_askRepository;
 
-    public function __construct(NotificationManager $notificationManager, int $interval, AskRepository $askRepository)
-    {
-        parent::__construct($notificationManager, $interval);
+    public function __construct(
+        NotificationManager $notificationManager,
+        int $interval,
+        AskRepository $askRepository,
+        int $serverUtcTimeDiff = DateService::SERVER_UTC_TIME_DIFF
+    ) {
+        parent::__construct($notificationManager, $interval, $serverUtcTimeDiff);
 
         $this->_askRepository = $askRepository;
     }
 
     public function execute(): bool
     {
-        $this->_deadlineDate = DateService::getDateAccordingFutureInterval(DateService::MINUTE, $this->_interval);
+        $this->_deadlineDate = DateService::getDateAccordingFutureInterval(DateService::MINUTE, $this->_interval, $this->_now);
 
         $this->_journeys = $this->_askRepository->findCarpoolsReadyToStart($this->_now, $this->_deadlineDate);
 
