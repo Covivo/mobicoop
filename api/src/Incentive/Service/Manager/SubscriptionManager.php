@@ -10,6 +10,7 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\EecEligibility;
@@ -63,6 +64,11 @@ class SubscriptionManager extends MobConnectManager
     private $_longDistanceSubscriptionRepository;
 
     /**
+     * @var LongDistanceJourneyRepository
+     */
+    private $_longDistanceJourneyRepository;
+
+    /**
      * @var ShortDistanceSubscriptionRepository
      */
     private $_shortDistanceSubscriptionRepository;
@@ -86,6 +92,7 @@ class SubscriptionManager extends MobConnectManager
         TimestampTokenManager $timestampTokenManager,
         CarpoolItemRepository $carpoolItemRepository,
         CarpoolProofRepository $carpoolProofRepository,
+        LongDistanceJourneyRepository $longDistanceJourneyRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
         UserRepository $userRepository
@@ -95,6 +102,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolItemRepository = $carpoolItemRepository;
         $this->_carpoolProofRepository = $carpoolProofRepository;
+        $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
         $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
         $this->_shortDistanceSubscriptionRepository = $shortDistanceSubscriptionRepository;
         $this->_userRepository = $userRepository;
