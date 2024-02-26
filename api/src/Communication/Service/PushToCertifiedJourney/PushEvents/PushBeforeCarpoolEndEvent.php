@@ -20,9 +20,14 @@ class PushBeforeCarpoolEndEvent extends PushEvent
      */
     protected $_timeMargin;
 
-    public function __construct(NotificationManager $notificationManager, int $interval, CarpoolProofRepository $carpoolProofRepository, int $timeMargin)
-    {
-        parent::__construct($notificationManager, $interval);
+    public function __construct(
+        NotificationManager $notificationManager,
+        int $interval,
+        CarpoolProofRepository $carpoolProofRepository,
+        int $timeMargin,
+        int $serverUtcTimeDiff = DateService::SERVER_UTC_TIME_DIFF
+    ) {
+        parent::__construct($notificationManager, $interval, $serverUtcTimeDiff);
 
         $this->_carpoolProofRepository = $carpoolProofRepository;
 
@@ -31,7 +36,7 @@ class PushBeforeCarpoolEndEvent extends PushEvent
 
     public function execute(): bool
     {
-        $this->_deadlineDate = DateService::getDateAccordingPastInterval(DateService::MINUTE, $this->_interval);
+        $this->_deadlineDate = DateService::getDateAccordingPastInterval(DateService::MINUTE, $this->_interval, $this->_now);
 
         $this->_journeys = $this->_carpoolProofRepository->findCarpoolsReadyToEnd($this->_deadlineDate, $this->_now, $this->_timeMargin);
 
