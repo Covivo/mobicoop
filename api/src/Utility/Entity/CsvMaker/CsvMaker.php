@@ -128,11 +128,16 @@ class CsvMaker
 
         $path = $folder.'/'.date('YmdHis').'-'.$resultsFileName.'.csv';
         $file = fopen($path, 'w+');
-        $header = false;
+        $header = true;
         foreach ($this->_queryResults as $result) {
-            if (!$header) {
+            if ($header) {
                 fputcsv($file, array_keys($result), self::CSV_DELIMITER);
-                $header = true;
+                $header = false;
+
+                continue;
+            }
+            if (isset($this->_csvExports[$this->_service]['anonymize']) && $this->_csvExports[$this->_service]['anonymize']) {
+                $result = $this->_dataAnonymizer->anonymize($result);
             }
             fputcsv($file, $result, self::CSV_DELIMITER);
         }
