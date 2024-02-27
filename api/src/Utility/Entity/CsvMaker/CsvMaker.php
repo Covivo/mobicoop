@@ -47,13 +47,15 @@ class CsvMaker
     private $_csvExports;
     private $_service;
     private $_ftpUploader;
+    private $_dataAnonymizer;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, array $csvExports)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, DataAnonymizer $dataAnonymizer, array $csvExports)
     {
         $this->_entityManager = $entityManager;
         $this->_logger = $logger;
         $this->_csvExports = $csvExports;
         $this->_ftpUploader = null;
+        $this->_dataAnonymizer = $dataAnonymizer;
     }
 
     public function make()
