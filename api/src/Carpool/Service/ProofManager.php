@@ -821,23 +821,14 @@ class ProofManager
     public function proofAntifraudCheck(CarpoolProof $proof)
     {
         if (!$this->proofSameDeviceCheck($proof)) {
-            var_dump('1');
-            var_dump($proof->getId());
-
             return $proof;
         }
 
         if (!$this->proofConcurrentSchedulesCheck($proof)) {
-            var_dump('2');
-            var_dump($proof->getId());
-
             return $proof;
         }
 
         if (!$this->proofSplittedTripCheck($proof)) {
-            var_dump('3');
-            var_dump($proof->getId());
-
             return $proof;
         }
 
