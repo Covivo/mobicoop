@@ -26,9 +26,9 @@ use App\Carpool\Entity\Ask;
 use App\Utility\Interfaces\MultipleQueriesInterface;
 
 /**
- * ONLY VALID JOURNEYS.
+ * ALL JOURNEYS EVEN OUTDATED ONES.
  */
-class Journeys implements MultipleQueriesInterface
+class AllJourneys implements MultipleQueriesInterface
 {
     private $_multipleQueries;
 
@@ -100,8 +100,7 @@ class Journeys implements MultipleQueriesInterface
             inner join criteria c on c.id = ask.criteria_id
             inner join proposal pr on m.proposal_request_id = pr.id
         where
-            ask.status in ('.Ask::STATUS_ACCEPTED_AS_DRIVER.', '.Ask::STATUS_ACCEPTED_AS_PASSENGER.')
-            and COALESCE(c.to_date, c.from_date) >= NOW()';
+            ask.status in ('.Ask::STATUS_ACCEPTED_AS_DRIVER.', '.Ask::STATUS_ACCEPTED_AS_PASSENGER.')';
 
         $this->_multipleQueries[] = '
             INSERT IGNORE INTO journeys (journeyId, adId, userId, role, origin, destination, end_validity_date, journeytype, frequency, origin_lat, origin_lon, destination_lat, destination_lon, price)
@@ -149,8 +148,7 @@ class Journeys implements MultipleQueriesInterface
                 inner join criteria c on c.id = ask.criteria_id
                 inner join proposal po on m.proposal_offer_id = po.id
             where
-                ask.status in ('.Ask::STATUS_ACCEPTED_AS_DRIVER.', '.Ask::STATUS_ACCEPTED_AS_PASSENGER.')
-                and COALESCE(c.to_date, c.from_date) >= NOW()';
+                ask.status in ('.Ask::STATUS_ACCEPTED_AS_DRIVER.', '.Ask::STATUS_ACCEPTED_AS_PASSENGER.')';
 
         $this->_multipleQueries[] = '
             select
