@@ -7,6 +7,7 @@
       "remotePath": "remote path for the file",
       "login": "login",
       "password": "password"
-    }
+    },
+    "anonymize": false
   }
 }
