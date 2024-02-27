@@ -31,28 +31,50 @@ namespace App\Utility\Entity\CsvMaker;
 class DataAnonymizer
 {
     private const DATA_TO_ANONYMIZE = [
-        'given_name',
-        'family_name',
-        'email',
-        'telephone',
+        'given_name' => '',
+        'family_name' => '',
+        'email' => '_anonymizeEmail',
+        'telephone' => '_anonymizeTelephone',
     ];
+
+    private const EMAIL_ANONYMIZED_DOMAIN = 'xyz.io';
+    private const TELEPHONE_ANONYMIZED = '0606060606';
 
     private $_data;
 
     public function anonymize(array $data): array
     {
         $this->_data = $data;
-        $this->_anonymizedData();
+        $this->_anonymizeData();
 
         return $this->_data;
     }
 
-    private function _anonymizedData()
+    private function _anonymizeData()
     {
         foreach ($this->_data as $key => $value) {
-            if (in_array($key, self::DATA_TO_ANONYMIZE)) {
-                $this->_data[$key] = $value.'_bidule';
+            if (isset(self::DATA_TO_ANONYMIZE[$key])) {
+                if ('' !== self::DATA_TO_ANONYMIZE[$key]) {
+                    $this->_data[$key] = $this->{self::DATA_TO_ANONYMIZE[$key]}();
+                } else {
+                    $this->_data[$key] = $value.'_bidule';
+                }
             }
         }
+    }
+
+    private function _anonymizeEmail(): string
+    {
+        $base = '';
+        if (isset($this->_data['userId'])) {
+            $base = $this->_data['userId'];
+        }
+
+        return $base.'@'.self::EMAIL_ANONYMIZED_DOMAIN;
+    }
+
+    private function _anonymizeTelephone(): string
+    {
+        return self::TELEPHONE_ANONYMIZED;
     }
 }

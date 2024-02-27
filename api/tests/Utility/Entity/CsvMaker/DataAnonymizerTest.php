@@ -22,6 +22,7 @@ class DataAnonymizerTest extends TestCase
     private const OPTIN = 'optin';
     private $_dataAnonymizer;
     private $_testData;
+    private $_testDataAnonymized;
 
     public function setUp(): void
     {
@@ -36,6 +37,9 @@ class DataAnonymizerTest extends TestCase
         $this->_testData['created_date'] = '2024-01-31 10:47:11';
         $this->_testData['last_activity_date'] = null;
         $this->_testData['optin'] = '1';
+
+        $this->_testDataAnonymized['email'] = '1@xyz.io';
+        $this->_testDataAnonymized['telephone'] = '0606060606';
     }
 
     /**
@@ -57,7 +61,7 @@ class DataAnonymizerTest extends TestCase
     /**
      * @test
      */
-    public function testGivenNameHasBeenAnonimyzed()
+    public function testGivenNameHasBeenAnonymized()
     {
         $this->assertNotEquals($this->_testData[self::GIVEN_NAME], $this->_dataAnonymizer->anonymize($this->_testData)[self::GIVEN_NAME]);
     }
@@ -65,7 +69,7 @@ class DataAnonymizerTest extends TestCase
     /**
      * @test
      */
-    public function testFamilyNameHasBeenAnonimyzed()
+    public function testFamilyNameHasBeenAnonymized()
     {
         $this->assertNotEquals($this->_testData[self::FAMILY_NAME], $this->_dataAnonymizer->anonymize($this->_testData)[self::FAMILY_NAME]);
     }
@@ -73,7 +77,7 @@ class DataAnonymizerTest extends TestCase
     /**
      * @test
      */
-    public function testEmailHasBeenAnonimyzed()
+    public function testEmailHasBeenAnonymized()
     {
         $this->assertNotEquals($this->_testData[self::EMAIL], $this->_dataAnonymizer->anonymize($this->_testData)[self::EMAIL]);
     }
@@ -81,7 +85,15 @@ class DataAnonymizerTest extends TestCase
     /**
      * @test
      */
-    public function testTelephoneHasBeenAnonimyzed()
+    public function testEmailHasBeenAnonymizedCorrectly()
+    {
+        $this->assertEquals($this->_testDataAnonymized[self::EMAIL], $this->_dataAnonymizer->anonymize($this->_testData)[self::EMAIL]);
+    }
+
+    /**
+     * @test
+     */
+    public function testTelephoneHasBeenAnonymized()
     {
         $this->assertNotEquals($this->_testData[self::TELEPHONE], $this->_dataAnonymizer->anonymize($this->_testData)[self::TELEPHONE]);
     }
@@ -89,7 +101,15 @@ class DataAnonymizerTest extends TestCase
     /**
      * @test
      */
-    public function testUserIdHasNotBeenAnonimyzed()
+    public function testTelephoneHasBeenAnonymizedCorrectly()
+    {
+        $this->assertEquals($this->_testDataAnonymized[self::TELEPHONE], $this->_dataAnonymizer->anonymize($this->_testData)[self::TELEPHONE]);
+    }
+
+    /**
+     * @test
+     */
+    public function testUserIdHasNotBeenAnonymized()
     {
         $this->assertEquals($this->_testData[self::USER_ID], $this->_dataAnonymizer->anonymize($this->_testData)[self::USER_ID]);
     }
@@ -97,7 +117,7 @@ class DataAnonymizerTest extends TestCase
     /**
      * @test
      */
-    public function testGenderHasNotBeenAnonimyzed()
+    public function testGenderHasNotBeenAnonymized()
     {
         $this->assertEquals($this->_testData[self::GENDER], $this->_dataAnonymizer->anonymize($this->_testData)[self::GENDER]);
     }
@@ -105,7 +125,7 @@ class DataAnonymizerTest extends TestCase
     /**
      * @test
      */
-    public function testCreatedDateHasNotBeenAnonimyzed()
+    public function testCreatedDateHasNotBeenAnonymized()
     {
         $this->assertEquals($this->_testData[self::CREATED_DATE], $this->_dataAnonymizer->anonymize($this->_testData)[self::CREATED_DATE]);
     }
@@ -113,7 +133,7 @@ class DataAnonymizerTest extends TestCase
     /**
      * @test
      */
-    public function testLastActivityDateHasNotBeenAnonimyzed()
+    public function testLastActivityDateHasNotBeenAnonymized()
     {
         $this->assertEquals($this->_testData[self::LAST_ACTIVITY_DATE], $this->_dataAnonymizer->anonymize($this->_testData)[self::LAST_ACTIVITY_DATE]);
     }
@@ -121,7 +141,7 @@ class DataAnonymizerTest extends TestCase
     /**
      * @test
      */
-    public function testOptInHasNotBeenAnonimyzed()
+    public function testOptInHasNotBeenAnonymized()
     {
         $this->assertEquals($this->_testData[self::OPTIN], $this->_dataAnonymizer->anonymize($this->_testData)[self::OPTIN]);
     }
