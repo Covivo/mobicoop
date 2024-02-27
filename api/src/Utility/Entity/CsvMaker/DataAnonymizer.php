@@ -57,7 +57,7 @@ class DataAnonymizer
                 if ('' !== self::DATA_TO_ANONYMIZE[$key]) {
                     $this->_data[$key] = $this->{self::DATA_TO_ANONYMIZE[$key]}();
                 } else {
-                    $this->_data[$key] = $value.'_bidule';
+                    $this->_data[$key] = $this->_generateRandomString(20);
                 }
             }
         }
@@ -76,5 +76,10 @@ class DataAnonymizer
     private function _anonymizeTelephone(): string
     {
         return self::TELEPHONE_ANONYMIZED;
+    }
+
+    private function _generateRandomString(int $length = 10)
+    {
+        return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
     }
 }
