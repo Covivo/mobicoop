@@ -446,7 +446,7 @@ class ProofManager
                             $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                        // driver direction will be set when the dynamic ad of the driver will be finished
+                            // driver direction will be set when the dynamic ad of the driver will be finished
                         } else {
                             throw new ProofException('Driver dropoff certification failed : the passenger certified address is too far');
                         }
@@ -628,9 +628,9 @@ class ProofManager
              */
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
-            // uncomment the following to anonymize driver addresses used in the proof
-            // $carpoolProof->setOriginDriverAddress(null);
-            // $carpoolProof->setDestinationDriverAddress(null);
+                // uncomment the following to anonymize driver addresses used in the proof
+                // $carpoolProof->setOriginDriverAddress(null);
+                // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
                 $carpoolProof->setPassenger(null);
                 // uncomment the following to anonymize passenger addresses used in the proof
@@ -821,14 +821,23 @@ class ProofManager
     public function proofAntifraudCheck(CarpoolProof $proof)
     {
         if (!$this->proofSameDeviceCheck($proof)) {
+            var_dump('1');
+            var_dump($proof->getId());
+
             return $proof;
         }
 
         if (!$this->proofConcurrentSchedulesCheck($proof)) {
+            var_dump('2');
+            var_dump($proof->getId());
+
             return $proof;
         }
 
         if (!$this->proofSplittedTripCheck($proof)) {
+            var_dump('3');
+            var_dump($proof->getId());
+
             return $proof;
         }
 
@@ -867,8 +876,8 @@ class ProofManager
 
     public function proofSameDeviceCheck(CarpoolProof $proof)
     {
-        if (!is_null($proof->getDriverPhoneUniqueId() && !is_null($proof->getPassengerPhoneUniqueId()) && $proof->getDriverPhoneUniqueId() == $proof->getPassengerPhoneUniqueId())) {
-            $proof->setStatus(CarpoolProof::STATUS_INVALID_SPLITTED_TRIP);
+        if (!is_null($proof->getDriverPhoneUniqueId()) && !is_null($proof->getPassengerPhoneUniqueId()) && $proof->getDriverPhoneUniqueId() == $proof->getPassengerPhoneUniqueId()) {
+            $proof->setStatus(CarpoolProof::STATUS_INVALID_DUPLICATE_DEVICE);
             $this->entityManager->persist($proof);
             $this->entityManager->flush();
 
