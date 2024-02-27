@@ -37,12 +37,22 @@ class DataAnonymizer
         'telephone',
     ];
 
+    private $_data;
+
     public function anonymize(array $data): array
     {
-        foreach ($data as $key => $value) {
-            $data[$key] = $value.'_bidule';
-        }
+        $this->_data = $data;
+        $this->_anonymizedData();
 
-        return $data;
+        return $this->_data;
+    }
+
+    private function _anonymizedData()
+    {
+        foreach ($this->_data as $key => $value) {
+            if (in_array($key, self::DATA_TO_ANONYMIZE)) {
+                $this->_data[$key] = $value.'_bidule';
+            }
+        }
     }
 }
