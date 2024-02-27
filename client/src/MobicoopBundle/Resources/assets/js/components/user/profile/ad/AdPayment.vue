@@ -17,7 +17,7 @@
               color="primary"
               rounded
               :outlined="outlined"
-              :disabled="disabled"
+              :disabled="isDisabled"
               @click="action()"
               v-on="(isDriver === false) ? on : {}"
             >
@@ -94,10 +94,17 @@ export default {
       return this.getStatus(this.paymentStatus);
     },
     displayPaymentStatus(){
+      if (this.freeCarpooling) {
+        return this.$t('freeCarpoolingLabel')
+      }
+
       return (this.isDriver) ? this.$t('driver.'+this.status) : (this.paymentElectronicActive) ? this.$t('passenger.'+this.status) : this.$t('passenger.pendingElectronicNotActive');
     },
     displayTooltips(){
       return (this.paymentElectronicActive) ? this.$t('tooltip.paymentElectronicActive') : this.$t('tooltip.paymentElectronicNotActive')
+    },
+    isDisabled() {
+      return this.disabled || this.freeCarpooling
     },
     type(){
       return (this.isDriver) ? 2 : 1;
