@@ -36,7 +36,7 @@ class JourneysRecoveryCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(json_encode(
-            $this->_subscriptionManager->proofsRecover($input->getOption('type'), $input->getOption('userId'))
+            $this->_subscriptionManager->proofsRecover($input->getOption('type'), $input->getOption('user'))
         ));
     }
 }
