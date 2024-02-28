@@ -79,13 +79,13 @@
       "LD": {
         "intro": "<span class=\"font-weight-bold\">Votre première annonce de trajet de plus de 80 km a été publiée en 2023&nbsp;?</span> Vous pourrez bénéficier d’une prime jusque 100€ si avant le 31 janvier votre premier trajet est payé en ligne et validé par le Registre de Preuve de Covoiturage.",
         "expiredText": "La période légale de 3 mois pour compléter vos trajets longue distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant.",
-        "payment": "Versement: 25€ au 1<sup>er</sup> trajet, 75€ au 3<sup>e</sup>.",
+        "paymentImproved": "Versement: 25€ au 1<sup>er</sup> trajet, 75€ au 3<sup>e</sup>.",
         "paymentStandard": "Versement: 50€ dès le 1<sup>er</sup> trajet."
       },
       "SD": {
         "intro": "<span class=\"font-weight-bold\">Votre premier trajet de moins de 80 km a été réalisé en 2023&nbsp;?</span> Vous bénéficierez d’une prime de 100€ si vos preuves de covoiturage sont validées par le Registre de Preuve de Covoiturage.",
         "expiredText": "La période légale de 3 mois pour compléter vos trajets courte distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant.",
-        "payment": "Versement: 25€ au 1<sup>er</sup> trajet, 75€ au 10<sup>e</sup>.",
+        "paymentImproved": "Versement: 25€ au 1<sup>er</sup> trajet, 75€ au 10<sup>e</sup>.",
         "paymentStandard": "Versement: 50€ dès le 1<sup>er</sup> trajet."
       }
     },
