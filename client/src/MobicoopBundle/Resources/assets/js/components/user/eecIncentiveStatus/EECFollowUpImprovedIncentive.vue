@@ -1,5 +1,18 @@
 <template>
   <v-container class="pa-7">
+    <v-row>
+      <v-col
+        class="primary--text d-flex align-center"
+      >
+        <v-icon
+          color="primary"
+          class="mr-2"
+        >
+          mdi-cash-multiple
+        </v-icon>
+        <span v-html="$t(`followupTab.subscriptions.${type}.payment`)" />
+      </v-col>
+    </v-row>
     <v-row
       align-content="start"
     >
