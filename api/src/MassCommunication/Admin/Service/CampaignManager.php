@@ -37,6 +37,7 @@ use App\User\Exception\UserNotFoundException;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -292,10 +293,8 @@ class CampaignManager
      * Handle an unsubscribe webhook.
      *
      * @param Request $request The request that contains the data
-     *
-     * @return array An empty array
      */
-    public function handleUnsubscribeHook(MassCommunicationHook $hook, Request $request)
+    public function handleUnsubscribeHook(MassCommunicationHook $hook, Request $request): JsonResponse
     {
         switch ($this->mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
@@ -321,7 +320,7 @@ class CampaignManager
                 break;
         }
 
-        return [];
+        return new JsonResponse(['message' => 'OK'], 200);
     }
 
     /**
@@ -357,6 +356,7 @@ class CampaignManager
 
                 break;
         }
+
         // then we send the message or test message
         switch ($mode) {
             case self::MODE_TEST:
@@ -433,6 +433,7 @@ class CampaignManager
 
                 break;
         }
+
         // then we send the message or test message
         // TODO : finish !
         switch ($mode) {
