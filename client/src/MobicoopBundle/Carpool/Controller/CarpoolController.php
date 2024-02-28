@@ -76,6 +76,7 @@ class CarpoolController extends AbstractController
     private $carpoolStandardBookingEnabled;
     private $carpoolStandardMessagingEnabled;
     private $specificTerms;
+    private $defaultRoleToPublish;
     private $bothRoleEnabled;
 
     public function __construct(
@@ -100,7 +101,8 @@ class CarpoolController extends AbstractController
         bool $carpoolStandardBookingEnabled,
         bool $carpoolStandardMessagingEnabled,
         bool $specificTerms,
-        bool $bothRoleEnabled,
+        int $defaultRoleToPublish,
+        bool $bothRoleEnabled
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -123,6 +125,7 @@ class CarpoolController extends AbstractController
         $this->carpoolStandardBookingEnabled = $carpoolStandardBookingEnabled;
         $this->carpoolStandardMessagingEnabled = $carpoolStandardMessagingEnabled;
         $this->specificTerms = $specificTerms;
+        $this->defaultRoleToPublish = $defaultRoleToPublish;
         $this->bothRoleEnabled = $bothRoleEnabled;
     }
 
@@ -203,6 +206,7 @@ class CarpoolController extends AbstractController
             'defaultSeatNumber' => $this->defaultSeatNumber,
             'contentPassenger' => $this->contentPassenger,
             'specificTerms' => $this->specificTerms,
+            'defaultRoleToPublish' => $this->defaultRoleToPublish,
             'bothRoleEnabled' => $this->bothRoleEnabled,
         ]);
     }
@@ -240,6 +244,7 @@ class CarpoolController extends AbstractController
             'hasPotentialAds' => $hasPotentialAds,
             'solidaryExclusive' => $ad->isSolidaryExclusive(),
             'seatNumber' => $this->seatNumber,
+            'defaultRoleToPublish' => $this->defaultRoleToPublish,
             'bothRoleEnabled' => $this->bothRoleEnabled,
         ]);
     }
@@ -277,6 +282,7 @@ class CarpoolController extends AbstractController
             'solidaryExclusive' => $ad->isSolidaryExclusive(),
             'specificTerms' => $this->specificTerms,
             'participationText' => $this->participationText,
+            'defaultRoleToPublish' => $this->defaultRoleToPublish,
             'bothRoleEnabled' => $this->bothRoleEnabled,
         ]);
     }
@@ -303,6 +309,7 @@ class CarpoolController extends AbstractController
             'defaultSeatNumber' => $this->defaultSeatNumber,
             'contentPassenger' => $this->contentPassenger,
             'specificTerms' => $this->specificTerms,
+            'defaultRoleToPublish' => $this->defaultRoleToPublish,
             'bothRoleEnabled' => $this->bothRoleEnabled,
         ]);
     }
@@ -331,6 +338,7 @@ class CarpoolController extends AbstractController
                 'defaultSeatNumber' => $this->defaultSeatNumber,
                 'contentPassenger' => $this->contentPassenger,
                 'specificTerms' => $this->specificTerms,
+                'defaultRoleToPublish' => $this->defaultRoleToPublish,
                 'bothRoleEnabled' => $this->bothRoleEnabled,
             ]
         );
@@ -383,6 +391,7 @@ class CarpoolController extends AbstractController
                 'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
                 'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
                 'specificTerms' => $this->specificTerms,
+                'defaultRoleToPublish' => $this->defaultRoleToPublish,
                 'bothRoleEnabled' => $this->bothRoleEnabled,
             ]
         );

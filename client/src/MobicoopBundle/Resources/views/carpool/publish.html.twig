@@ -36,6 +36,7 @@
     {{ staggeredSchedulesAllowed ? 'staggered-schedules-allowed' : '' }}
     :default-digital-clock="{{ defaultDigitalClock ? 'true' : 'false' }}"
     :specific-terms="{{ specificTerms ? "true" : "false" }}"
+    :default-role-to-publish="{{defaultRoleToPublish}}"
     :both-role-enabled="{{ bothRoleEnabled ? "true" : "false" }}"
   />
 {% endblock %}
