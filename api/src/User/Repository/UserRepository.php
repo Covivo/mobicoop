@@ -316,9 +316,10 @@ class UserRepository
             u.family_name AS familyName,
             u.given_name AS givenName,
             CASE u.gender
-                WHEN 3 THEN 'Autre'
+                WHEN 0 THEN 'Indéfini'
                 WHEN 1 THEN 'Femme'
                 WHEN 2 THEN 'Homme'
+                WHEN 3 THEN 'Autre'
             END AS gender,
             u.email AS email,
             u.telephone AS telephone,
