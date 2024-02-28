@@ -339,13 +339,6 @@ class SubscriptionManager extends MobConnectManager
 
             return;
         }
-
-        $users = $users = $this->_userRepository->findUsersCeeSubscribed();
-
-        foreach ($users as $user) {
-            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $user, $subscriptionType);
-            $stage->execute();
-        }
     }
 
     /**
