@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-7">
+  <v-container class="pa-7 white">
     <v-expansion-panels
       accordion
       flat
