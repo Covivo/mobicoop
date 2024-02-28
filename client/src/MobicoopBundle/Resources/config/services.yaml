@@ -72,6 +72,7 @@ services:
       $carpoolStandardBookingEnabled: "%env(bool:CARPOOL_STANDARD_BOOKING_ENABLED)%"
       $carpoolStandardMessagingEnabled: "%env(bool:CARPOOL_STANDARD_MESSAGING_ENABLED)%"
       $specificTerms: "%env(bool:CARPOOL_SPECIFIC_TERMS)%"
+      $defaultRoleToPublish: "%env(resolve:CARPOOL_ROLE_TO_PUBLISH)%"
       $bothRoleEnabled: "%env(bool:CARPOOL_ROLE_BOTH_ENABLED)%"
 
   Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
