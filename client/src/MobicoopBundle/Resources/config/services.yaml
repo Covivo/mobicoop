@@ -56,7 +56,7 @@ services:
       $midPrice: "%env(resolve:MID_PRICE)%"
       $highPrice: "%env(resolve:HIGH_PRICE)%"
       $forbiddenPrice: "%env(resolve:FORBIDDEN_PRICE)%"
-      $defaultRole: "%env(resolve:CARPOOL_ROLE)%"
+      $defaultRole: "%env(resolve:CARPOOL_ROLE_TO_SEARCH)%"
       $defaultRegular: "%env(bool:CARPOOL_SEARCH_REGULAR)%"
       $platformName: "%env(resolve:APP_NAME)%"
       $carpoolRDEXJourneys: "%env(bool:CARPOOL_RDEX_JOURNEYS)%"
