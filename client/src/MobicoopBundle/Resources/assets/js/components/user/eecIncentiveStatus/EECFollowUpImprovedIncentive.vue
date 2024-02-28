@@ -10,7 +10,7 @@
         >
           mdi-cash-multiple
         </v-icon>
-        <span v-html="$t(`followupTab.subscriptions.${type}.payment`)" />
+        <span v-html="$t(`followupTab.subscriptions.${type}.paymentImproved`)" />
       </v-col>
     </v-row>
     <v-row
