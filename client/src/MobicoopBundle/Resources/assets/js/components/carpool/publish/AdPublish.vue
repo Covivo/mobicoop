@@ -242,6 +242,7 @@
                 :init-destination="destination"
                 :init-regular="regular"
                 :init-role="role"
+                :both-role-enabled="bothRoleEnabled"
                 @change="searchChanged"
               />
             </v-stepper-content>
@@ -961,6 +962,14 @@ export default {
       type: Boolean,
       default: false
     },
+    defaultRoleToPublish: {
+      type: Number,
+      default:null
+    },
+    bothRoleEnabled: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -1003,7 +1012,7 @@ export default {
       returnTime: null,
       returnTimeIsValid: true,
       returnTrip: null,
-      role: null,
+      role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
       route: null,
       schedules: null,
       seats : this.defaultSeatNumber,
