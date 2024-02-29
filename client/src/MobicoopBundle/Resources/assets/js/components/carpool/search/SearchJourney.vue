@@ -36,6 +36,7 @@
                 color="secondary"
               />
               <v-radio
+                v-if="hasBothRoleEnabled"
                 :value="3"
                 :label="$t('radio.both.label')"
                 color="secondary"
@@ -328,6 +329,10 @@ export default {
     switchColor: {
       type: String,
       default: 'secondary'
+    },
+    bothRoleEnabled: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -341,9 +346,9 @@ export default {
       time: this.initOutwardTime,
       dateTime: (this.initOutwardDate && this.initOutwardTime) ? this.initOutwardDate+' '+this.initOutwardTime : null,
       regular: this.initRegular,
-      role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : 3),
-      passenger: this.initRole == 2 ? true : (this.initRole == 3 || (this.initRole == null && !this.solidaryExclusiveAd) ? true : false),
-      driver: this.initRole == 1 ? true : (this.initRole == 3 || this.initRole == null ? true : false),
+      role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : this.bothRoleEnabled ? 3 : 1),
+      passenger: this.initRole == 2 ? true : ((this.initRole == 3 && this.bothRoleEnabled) || (this.initRole == null && !this.solidaryExclusiveAd) ? true : false),
+      driver: this.initRole == 1 ? true : ((this.initRole == 3 && this.bothRoleEnabled) || this.initRole == null ? true : false),
       labelOrigin: this.$t("origin.label"),
       labelDestination: this.$t("destination.label"),
       requiredErrorOrigin: this.$t("origin.error"),
@@ -354,9 +359,10 @@ export default {
       customInitOrigin: (this.initOrigin)?this.initOrigin:null,
       customInitDestination: (this.initDestination)?this.initDestination:null,
       valid: false,
-      nowDate : new Date().toISOString().slice(0,10),
+      nowDate: new Date().toISOString().slice(0,10),
       ariaLabelDestination : this.$t('ariaLabelDestination'),
-      ariaLabelOrgin : this.$t('ariaLabelOrgin'),
+      ariaLabelOrgin: this.$t('ariaLabelOrgin'),
+      hasBothRoleEnabled: this.bothRoleEnabled,
 
     };
   },

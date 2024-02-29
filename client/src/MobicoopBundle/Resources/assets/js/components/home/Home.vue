@@ -147,6 +147,7 @@
           :geo-complete-palette="geoCompletePalette"
           :geo-complete-chip="geoCompleteChip"
           :date-time-picker="dateTimePicker"
+          :both-role-enabled="bothRoleEnabled"
         />
       </v-col>
     </v-row>
@@ -319,6 +320,14 @@ export default {
     eecInstance: {
       type: Object,
       default: () => ({})
+    },
+    defaultRoleToPublish: {
+      type: Number,
+      default:null
+    },
+    bothRoleEnabled: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
