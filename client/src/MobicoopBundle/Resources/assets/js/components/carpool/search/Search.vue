@@ -32,6 +32,8 @@
           :geo-complete-chip="geoCompleteChip"
           :date-time-picker="dateTimePicker"
           :switch-color="switchColor"
+          :init-role="role"
+          :both-role-enabled="bothRoleEnabled"
           @change="searchChanged"
         />
       </v-col>
@@ -278,6 +280,14 @@ export default {
     switchColor: {
       type: String,
       default: 'secondary'
+    },
+    defaultRoleToPublish: {
+      type: Number,
+      default:null
+    },
+    bothRoleEnabled: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -290,7 +300,8 @@ export default {
       time: this.defaultOutwardTime,
       origin: this.defaultOrigin,
       destination: this.defaultDestination,
-      locale: localStorage.getItem("X-LOCALE")
+      locale: localStorage.getItem("X-LOCALE"),
+      role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
     };
   },
   computed: {
