@@ -12,8 +12,9 @@
 {% block main %}
 <home
     geo-search-url="{{ geoCompleteUri }}"
-    :user="{{app.user|json_encode}}" {{ searchRegular ? 'regular' : '' }} {{
-    searchPunctualDate ? 'punctual-date-optional' : '' }}
+    :user="{{app.user|json_encode}}"
+    {{ searchRegular ? 'regular' : '' }}
+    {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
     :community-display="{{homeCommunityDisplay}}"
     :additional-text-display="{{additionalTextDisplay }}"
     :event-display="{{homeEventDisplay}}"
@@ -22,10 +23,8 @@
     :display-unsubscribe-email="{{ unsubscribe is defined ? unsubscribe : 'null' }}"
     :publish-button-always-active="{{ publishButtonAlwaysActive ? " true" : "false" }}"
     :url-mobile="{{urlMobile|json_encode}}"
-    :informative-message-active="{{ informativeMessageActive is defined ? informativeMessageActive ? " true" : "false"
-    : "false" }}" informative-message-text="{{ informativeMessageText is defined ? informativeMessageText : "" }}"
-    :search-component-horizontal="{{ searchComponentHorizontal is defined ? searchComponentHorizontal ? " true"
-    : "false" : "false" }}" :map-provider="{{ mapProvider|json_encode }}"
+    :informative-message-active="{{ informativeMessageActive is defined ? informativeMessageActive ? " true" : "false" : "false" }}" informative-message-text="{{ informativeMessageText is defined ? informativeMessageText : "" }}"
+    :search-component-horizontal="{{ searchComponentHorizontal is defined ? searchComponentHorizontal ? " true" : "false" : "false" }}" :map-provider="{{ mapProvider|json_encode }}"
     :url-tiles="{{ urlTiles|json_encode }}"
     :attribution-copyright="{{ attributionCopyright|json_encode }}"
     :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
