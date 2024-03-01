@@ -321,10 +321,6 @@ export default {
       type: Object,
       default: () => ({})
     },
-    defaultRoleToPublish: {
-      type: Number,
-      default:null
-    },
     bothRoleEnabled: {
       type: Boolean,
       default: true
