@@ -33,7 +33,6 @@
           :date-time-picker="dateTimePicker"
           :switch-color="switchColor"
           :init-role="role"
-          :both-role-enabled="bothRoleEnabled"
           @change="searchChanged"
         />
       </v-col>
@@ -284,10 +283,6 @@ export default {
     defaultRoleToPublish: {
       type: Number,
       default:null
-    },
-    bothRoleEnabled: {
-      type: Boolean,
-      default: true
     }
   },
   data() {

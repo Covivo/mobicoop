@@ -61,4 +61,3 @@ twig:
     dateTimePicker: "%env(bool:DATE_TIME_PICKER)%"
     defaultDigitalClock: "%env(bool:DEFAULT_DIGITAL_CLOCK)%"
     gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
-    bothRoleEnabled: "%env(bool:CARPOOL_ROLE_BOTH_ENABLED)%"
