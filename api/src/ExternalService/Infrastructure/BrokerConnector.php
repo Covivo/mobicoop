@@ -23,6 +23,9 @@
 
 namespace App\ExternalService\Infrastructure;
 
+use App\ExternalService\Infrastructure\Exception\BrokerConnectionException;
+use App\ExternalService\Infrastructure\Exception\BrokerMissingParamException;
+use App\ExternalService\Infrastructure\Exception\BrokerPublishException;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -49,13 +52,38 @@ class BrokerConnector
 
     public function sendTopicMessage(string $topic, string $routingKey, $data): string
     {
-        $this->_connect();
-        $this->_channel->exchange_declare($topic, 'topic', false, false, false);
-        $msg = new AMQPMessage($data);
-        $this->_channel->basic_publish($msg, $topic, $routingKey);
+        if ('' == trim($topic)) {
+            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_TOPIC);
+        }
+        if ('' == trim($routingKey)) {
+            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_ROUTING_KEY);
+        }
+        if (is_null($data)) {
+            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_DATA);
+        }
+
+        try {
+            $this->_connect();
+        } catch (\Exception $e) {
+            throw new BrokerConnectionException(BrokerConnectionException::MESSAGE);
+        }
+
+        try {
+            $this->_publish($topic, $routingKey, $data);
+        } catch (\Exception $e) {
+            throw new BrokerPublishException(BrokerPublishException::MESSAGE);
+        }
+
         $this->_close();
 
         return 'OK';
+    }
+
+    private function _publish(string $topic, string $routingKey, $data)
+    {
+        $this->_channel->exchange_declare($topic, 'topic', false, false, false);
+        $msg = new AMQPMessage($data);
+        $this->_channel->basic_publish($msg, $topic, $routingKey);
     }
 
     private function _connect()
