@@ -26,5 +26,13 @@
             "title": "The carpooling cooperative",
             "text": "Mobicoop is a cooperative, so the platform belongs to its members on the principle of 1 member = 1 vote. This status allows for open governance between members, employees, platform users and customers. However, it is not mandatory to be a member to use the carpooling service."
         }
-    ]
+    ],
+    "mobConnect-snackbar": {
+      "close-btn": "Fermer",
+      "text": {
+        "base": "L'inscription à la prime CEE",
+        "success": "a bien été effectué",
+        "error": "a echoué"
+      }
+    }
 }
