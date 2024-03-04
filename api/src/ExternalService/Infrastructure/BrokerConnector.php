@@ -65,13 +65,13 @@ class BrokerConnector
         try {
             $this->_connect();
         } catch (\Exception $e) {
-            throw new BrokerConnectionException(BrokerConnectionException::MESSAGE);
+            throw new BrokerConnectionException(BrokerConnectionException::MESSAGE.PHP_EOL.$e->getMessage());
         }
 
         try {
             $this->_publish($topic, $routingKey, $data);
         } catch (\Exception $e) {
-            throw new BrokerPublishException(BrokerPublishException::MESSAGE);
+            throw new BrokerPublishException(BrokerPublishException::MESSAGE.PHP_EOL.$e->getMessage());
         }
 
         $this->_close();
