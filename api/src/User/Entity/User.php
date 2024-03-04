@@ -1906,6 +1906,26 @@ class User implements UserInterface, EquatableInterface
      */
     private $phoneCode;
 
+    /**
+     * @var null|string the email of the user's legal guardian
+     *
+     * @Assert\Email()
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $legalGuardianEmail;
+
+    /**
+     * @var null|\DateTimeInterface Date of the parental consent
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $parentalConsentDate;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -4269,6 +4289,30 @@ class User implements UserInterface, EquatableInterface
     public function setGratuity(?bool $gratuity): self
     {
         $this->gratuity = $gratuity;
+
+        return $this;
+    }
+
+    public function getLegalGuardianEmail(): ?string
+    {
+        return $this->legalGuardianEmail;
+    }
+
+    public function setLegalGuardianEmail(?string $legalGuardianEmail): self
+    {
+        $this->legalGuardianEmail = $legalGuardianEmail;
+
+        return $this;
+    }
+
+    public function getParentalConsentDate(): ?\DateTimeInterface
+    {
+        return $this->parentalConsentDate;
+    }
+
+    public function setParentalConsentDate(?\DateTimeInterface $parentalConsentDate): self
+    {
+        $this->parentalConsentDate = $parentalConsentDate;
 
         return $this;
     }
