@@ -32,7 +32,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @coversDefaultClass
  */
-class TopicBrokerDataSenderTest extends TestCase
+class FanoutBrokerDataSenderTest extends TestCase
 {
     private $_brokerDataSender;
 
@@ -42,9 +42,9 @@ class TopicBrokerDataSenderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock()
         ;
-        $brokerConnector->method('sendTopicMessage')->willReturn('OK');
+        $brokerConnector->method('sendMessage')->willReturn('OK');
 
-        $this->_brokerDataSender = new TopicBrokerDataSender($brokerConnector);
+        $this->_brokerDataSender = new FanoutBrokerDataSender($brokerConnector);
     }
 
     /**
