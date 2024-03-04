@@ -44,7 +44,6 @@ class SendProof
     public function send(CarpoolProofDto $carpoolProofDto)
     {
         $carpoolProof = $this->_carpoolProofEntityBuilder->build($carpoolProofDto);
-        // on construit carpool proof entity
 
         return $this->_carpoolProofSender->send($carpoolProof);
     }
