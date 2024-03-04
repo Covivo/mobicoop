@@ -30,7 +30,7 @@ use App\ExternalService\Infrastructure\Exception\UnauthorizedContextException;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class TopicBrokerDataSender implements DataSenderPort
+class FanoutBrokerDataSender implements DataSenderPort
 {
     private const AUTHORIZED_CONTEXTS = [
         'CarpoolProof' => 'carpool.proof',
@@ -49,6 +49,6 @@ class TopicBrokerDataSender implements DataSenderPort
             throw new UnauthorizedContextException(UnauthorizedContextException::MESSAGE);
         }
 
-        return $this->_brokerConnector->sendTopicMessage($entity->getContext(), self::AUTHORIZED_CONTEXTS[$entity->getContext()], $entity);
+        return $this->_brokerConnector->sendMessage(self::AUTHORIZED_CONTEXTS[$entity->getContext()], $entity);
     }
 }

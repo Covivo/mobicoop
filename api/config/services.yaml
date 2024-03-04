@@ -609,16 +609,16 @@ services:
       $username: "%env(string:BROKER_USERNAME)%"
       $password: "%env(string:BROKER_PASSWORD)%"
 
-  mobicoop.externalservice.topic_broker_data_sender:
-    class: App\ExternalService\Infrastructure\TopicBrokerDataSender
+  mobicoop.externalservice.fanout_broker_data_sender:
+    class: App\ExternalService\Infrastructure\FanoutBrokerDataSender
 
-  mobicoop.externalservice.carpool_proof_sender:
-    class: App\ExternalService\Core\Application\Service\CarpoolProofSender
-    arguments: ["@mobicoop.externalservice.topic_broker_data_sender"]
+  mobicoop.externalservice.carpool_proof.carpool_proof_sender:
+    class: App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender
+    arguments: ["@mobicoop.externalservice.fanout_broker_data_sender"]
 
   mobicoop.externalservice.send_proof:
     class: App\ExternalService\Interfaces\SendProof
-    arguments: ["@mobicoop.externalservice.carpool_proof_sender"]
+    arguments: ["@mobicoop.externalservice.carpool_proof.carpool_proof_sender"]
 
   # Fixtures Basic
   App\DataFixtures\BasicFixtures:
@@ -864,14 +864,20 @@ services:
           name: "console.command",
           command: "app:incentive:subscription-commit",
         }
-  
+
   App\Incentive\Command\SubscriptionRecommitCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:subscription-recommit" }
+      - {
+          name: "console.command",
+          command: "app:incentive:subscription-recommit",
+        }
 
   App\Incentive\Command\SubscriptionAutoRecommitCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:subscription-autorecommit" }
+      - {
+          name: "console.command",
+          command: "app:incentive:subscription-autorecommit",
+        }
 
   App\Incentive\Command\SubscriptionUpdateCommand:
     tags:

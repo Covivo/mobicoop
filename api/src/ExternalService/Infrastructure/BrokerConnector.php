@@ -50,6 +50,33 @@ class BrokerConnector
         $this->_password = $password;
     }
 
+    public function sendMessage(string $channel, $data): string
+    {
+        if ('' == trim($channel)) {
+            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_CHANNEL);
+        }
+
+        if (is_null($data)) {
+            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_DATA);
+        }
+
+        try {
+            $this->_connect();
+        } catch (\Exception $e) {
+            throw new BrokerConnectionException(BrokerConnectionException::MESSAGE.PHP_EOL.$e->getMessage());
+        }
+
+        try {
+            $this->_publish($channel, $data);
+        } catch (\Exception $e) {
+            throw new BrokerPublishException(BrokerPublishException::MESSAGE.PHP_EOL.$e->getMessage());
+        }
+
+        $this->_close();
+
+        return 'OK';
+    }
+
     public function sendTopicMessage(string $topic, string $routingKey, $data): string
     {
         if ('' == trim($topic)) {
@@ -69,7 +96,7 @@ class BrokerConnector
         }
 
         try {
-            $this->_publish($topic, $routingKey, $data);
+            $this->_publishByTopic($topic, $routingKey, $data);
         } catch (\Exception $e) {
             throw new BrokerPublishException(BrokerPublishException::MESSAGE.PHP_EOL.$e->getMessage());
         }
@@ -79,10 +106,17 @@ class BrokerConnector
         return 'OK';
     }
 
-    private function _publish(string $topic, string $routingKey, $data)
+    private function _publish(string $channel, $data)
+    {
+        $this->_channel->exchange_declare($channel, 'fanout', false, false, false);
+        $msg = new AMQPMessage(json_encode($data));
+        $this->_channel->basic_publish($msg, $channel);
+    }
+
+    private function _publishByTopic(string $topic, string $routingKey, $data)
     {
         $this->_channel->exchange_declare($topic, 'topic', false, false, false);
-        $msg = new AMQPMessage($data);
+        $msg = new AMQPMessage(json_encode($data));
         $this->_channel->basic_publish($msg, $topic, $routingKey);
     }
 

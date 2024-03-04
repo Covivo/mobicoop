@@ -25,6 +25,7 @@ namespace App\ExternalService\Infrastructure\Exception;
 
 class BrokerMissingParamException extends \LogicException
 {
+    public const MESSAGE_MISSING_CHANNEL = 'No specified channel';
     public const MESSAGE_MISSING_TOPIC = 'No specified topic';
     public const MESSAGE_MISSING_ROUTING_KEY = 'No specified routing key';
     public const MESSAGE_MISSING_DATA = 'No given data';
