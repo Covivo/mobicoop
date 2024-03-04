@@ -348,6 +348,26 @@
                     @change="save"
                   />
                 </v-menu>
+                <v-text-field
+                  v-if="isUnderAge"
+                  id="legalGuardianEmail"
+                  v-model="form.legalGuardianEmail"
+                  :rules="form.legalGuardianEmailRules"
+                  :label="$t('legalGuardianEmail.placeholder') + ` *`"
+                  name="legalGuardianEmail"
+                  required
+                  aria-required="true"
+                  :aria-label="$t('email.placeholder')"
+                  :loading="loadingCheckEmailAldreadyTaken"
+                  @focusout="checkEmail"
+                  @focusin="emailAlreadyTaken = false"
+                />
+                <v-alert
+                  v-if="emailAlreadyTaken"
+                  type="error"
+                >
+                  {{ textEmailError }}
+                </v-alert>
                 <v-row
                   justify="center"
                   align="center"
@@ -587,6 +607,7 @@
 
 <script>
 import maxios from "@utils/maxios";
+import moment from "moment";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import CommunityHelp from "@components/community/CommunityHelp";
 
@@ -750,6 +771,11 @@ export default {
           (v) => !!v || this.$t("email.errors.required"),
           (v) => /.+@.+/.test(v) || this.$t("email.errors.valid"),
         ],
+        legalGuardianEmail: null,
+        legalGuardianEmailRules: [
+          (v) => !!v || this.$t("email.errors.required"),
+          (v) => /.+@.+/.test(v) || this.$t("email.errors.valid"),
+        ],
         givenName: null,
         givenNameRules: [
           (v) => !!v || this.$t("givenName.errors.required"),
@@ -806,16 +832,9 @@ export default {
         birthdayRules: {
           required: (v) =>
             !!v || this.$t("birthDay.errors.required"),
-          checkIfAdult: (value) => {
-            var d1 = new Date();
-            var d2 = new Date(value);
-
-            var diff = (d1.getTime() - d2.getTime()) / 1000;
-            diff /= 60 * 60 * 24;
-
-            var diffYears = Math.abs(Math.floor(diff / 365.24));
+          checkIfHaveAge: (value) => {
             return (
-              diffYears >= this.ageMin || this.$t("birthDay.errors.notadult", {age:this.ageMin})
+              moment().diff(value, 'year') >= this.ageMin || this.$t("birthDay.errors.notadult", {age:this.ageMin})
             );
           },
         },
@@ -837,7 +856,7 @@ export default {
       locale: localStorage.getItem("X-LOCALE"),
       flags: this.phoneCodes,
       cleanedPhoneNumber: null,
-
+      isUnderAge: false,
     };
   },
   computed: {
@@ -921,6 +940,16 @@ export default {
     menu(val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
     },
+    'form.date'(){
+      if (moment().diff(this.form.date, 'year') < 18 ) {
+        console.log('ici');
+        this.isUnderAge = true;
+      }
+      else {
+        console.log('la');
+        this.isUnderAge = false;
+      }
+    },
     selectedCommunity() {
       this.communities.forEach((community, index) => {
         if (community.id == this.selectedCommunity) {
@@ -954,6 +983,11 @@ export default {
     save(date) {
       this.$refs.menu.save(date);
     },
+    // checkAge() {
+    //   if (moment().diff(this.form.age, 'year') < 18 ) {
+    //     this.isUnderAge = true;
+    //   }
+    // },
     validate: function(e) {
       this.loading = true;
       maxios
