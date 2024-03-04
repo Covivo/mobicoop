@@ -24,6 +24,7 @@ services:
       - ./build/cache:/root/.cache/:cached
     networks:
       - mobicoop_platform
+      - v3-network
 
   db:
     image: mariadb:10.4
@@ -58,3 +59,6 @@ services:
 networks:
   mobicoop_platform:
     name: mobicoop_platform
+  v3-network:
+    name: v3-network
+    external: true
