@@ -39,15 +39,14 @@ class CarpoolProofSend extends Command
         $pickUpDriverDto = new WaypointDto();
         $pickUpDriverDto->setLat(18.0146548);
         $pickUpDriverDto->setLon(6.0146548);
+        $dropOffDriverDto = new WaypointDto();
+        $dropOffDriverDto->setLat(18.0146548);
+        $dropOffDriverDto->setLon(6.0146548);
         $carpoolProofDto->setPickUpDriver($pickUpDriverDto);
+        $carpoolProofDto->setPickUpPassenger($pickUpDriverDto);
+        $carpoolProofDto->setDropOffDriver($pickUpDriverDto);
+        $carpoolProofDto->setDropOffPassenger($pickUpDriverDto);
 
-        $reflectionDto = new \ReflectionObject($carpoolProofDto);
-
-        foreach ($reflectionDto->getProperties() as $propertyDto) {
-            $methodNameDto = 'get'.ucfirst(str_replace('_', '', $propertyDto->getName()));
-            echo $methodNameDto.PHP_EOL;
-            var_dump($carpoolProofDto->{$methodNameDto}());
-            echo PHP_EOL;
-        }
+        var_dump($this->_sendProof->send($carpoolProofDto));
     }
 }
