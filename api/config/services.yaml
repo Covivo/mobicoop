@@ -609,6 +609,13 @@ services:
       $username: "%env(string:BROKER_USERNAME)%"
       $password: "%env(string:BROKER_PASSWORD)%"
 
+  App\ExternalService\Command\CarpoolProofListeningCommand:
+    arguments:
+      $uri: "%env(string:BROKER_URI)%"
+      $port: "%env(int:BROKER_PORT)%"
+      $username: "%env(string:BROKER_USERNAME)%"
+      $password: "%env(string:BROKER_PASSWORD)%"
+
   mobicoop.externalservice.fanout_broker_data_sender:
     class: App\ExternalService\Infrastructure\FanoutBrokerDataSender
 
