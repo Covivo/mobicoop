@@ -31,8 +31,12 @@ use App\ExternalService\Interfaces\DTO\CarpoolProof\WaypointDto;
  */
 class WaypointEntityBuilder
 {
-    public function build(WaypointDto $waypointDto): WaypointEntity
+    public function build(?WaypointDto $waypointDto): ?WaypointEntity
     {
+        if (is_null($waypointDto)) {
+            return null;
+        }
+
         $waypointEntity = new WaypointEntity();
 
         return Tools::cloneSimpleObjectDtoToEntity($waypointDto, $waypointDto, $waypointEntity);

@@ -45,10 +45,12 @@ class CarpoolProofEntityBuilder
         $carpooProofEntity = new CarpoolProofEntity();
 
         $carpooProofEntity = Tools::cloneSimpleObjectDtoToEntity($carpoolProofDto, $carpoolProofDto, $carpooProofEntity);
+
         $carpooProofEntity->setPickUpDriver($this->_waypointEntityBuilder->build($carpoolProofDto->getPickUpDriver()));
         $carpooProofEntity->setPickUpPassenger($this->_waypointEntityBuilder->build($carpoolProofDto->getPickUpPassenger()));
         $carpooProofEntity->setDropOffDriver($this->_waypointEntityBuilder->build($carpoolProofDto->getDropOffDriver()));
         $carpooProofEntity->setDropOffPassenger($this->_waypointEntityBuilder->build($carpoolProofDto->getDropOffPassenger()));
+
         $carpooProofEntity->setDriver($this->_actorEntityBuilder->buildDriver($carpoolProofDto->getDriver()));
         $carpooProofEntity->setPassenger($this->_actorEntityBuilder->buildPassenger($carpoolProofDto->getPassenger()));
 
