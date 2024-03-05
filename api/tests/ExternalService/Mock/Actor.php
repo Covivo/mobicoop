@@ -58,8 +58,8 @@ class Actor
     {
         $passengerDto = new PassengerDto();
         $passengerDto->setContribution(5);
-        $passengerDto->setGivenName('Jean-Michel');
-        $passengerDto->setLastName('Jefaisdestests');
+        $passengerDto->setGivenName('Francis-Patrick');
+        $passengerDto->setLastName('Cesttoujoursuntest');
         $passengerDto->setBirthDate(\DateTime::createFromFormat('d/m/Y', '03/02/1982'));
         $passengerDto->setPhone('0303030303');
 
@@ -70,8 +70,8 @@ class Actor
     {
         $passengerEntity = new PassengerEntity();
         $passengerEntity->setContribution(5);
-        $passengerEntity->setGivenName('Jean-Michel');
-        $passengerEntity->setLastName('Jefaisdestests');
+        $passengerEntity->setGivenName('Francis-Patrick');
+        $passengerEntity->setLastName('Cesttoujoursuntest');
         $passengerEntity->setBirthDate(\DateTime::createFromFormat('d/m/Y', '03/02/1982'));
         $passengerEntity->setPhone('0303030303');
 

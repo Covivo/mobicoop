@@ -26,7 +26,6 @@ namespace App\ExternalService\Interfaces\Builder;
 use App\ExternalService\Core\Domain\Entity\AbstractEntity;
 use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
 use App\Tests\ExternalService\Mock\CarpoolProof;
-use App\Tests\ExternalService\Mock\Waypoint;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -40,12 +39,7 @@ class CarpoolProofEntityBuilderTest extends TestCase
 
     public function setUp(): void
     {
-        $waypointEntityBuilder = $this->getMockBuilder(WaypointEntityBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $waypointEntityBuilder->method('build')->willReturn(Waypoint::getWaypointEntity());
-        $this->_carpoolProofEntityBuilder = new CarpoolProofEntityBuilder($waypointEntityBuilder);
+        $this->_carpoolProofEntityBuilder = new CarpoolProofEntityBuilder(new WaypointEntityBuilder(), new ActorEntityBuilder());
     }
 
     /**

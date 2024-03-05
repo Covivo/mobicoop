@@ -31,8 +31,6 @@ use App\ExternalService\Interfaces\DTO\CarpoolProof\WaypointDto;
  */
 class WaypointEntityBuilder
 {
-    public function __construct() {}
-
     public function build(WaypointDto $waypointDto): WaypointEntity
     {
         $waypointEntity = new WaypointEntity();

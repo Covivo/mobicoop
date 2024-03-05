@@ -55,17 +55,19 @@ class CarpoolProofSendCommand extends Command
         $driver->setId(2);
         $driver->setGivenName('Jean-Michel');
         $driver->setLastName('Test');
-        $driver->setBirthDate(\DateTime::createFromFormat('d/m/Y H:i:s', '03/02/1982 00:00:00'));
+        $driver->setBirthDate(\DateTime::createFromFormat('d/m/Y', '03/02/1982'));
         $driver->setRevenue(18);
+        $driver->setPhone('0303030303');
         $carpoolProofDto->setDriver($driver);
 
         $passenger = new PassengerDto();
         $passenger->setId(2);
-        $passenger->setGivenName('Jean-Michel');
+        $passenger->setGivenName('Francis-Daniel');
         $passenger->setLastName('Test');
-        $passenger->setBirthDate(\DateTime::createFromFormat('d/m/Y H:i:s', '03/02/1982 00:00:00'));
+        $passenger->setBirthDate(\DateTime::createFromFormat('d/m/Y', '03/02/1982'));
         $passenger->setSeats(1);
         $passenger->setContribution(18);
+        $passenger->setPhone('0606060606');
         $carpoolProofDto->setPassenger($passenger);
 
         var_dump($this->_sendProof->send($carpoolProofDto));

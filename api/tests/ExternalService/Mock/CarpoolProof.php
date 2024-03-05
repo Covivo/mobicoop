@@ -37,6 +37,8 @@ class CarpoolProof
         $carpoolProofDto->setPickUpPassenger(Waypoint::getWaypointDto());
         $carpoolProofDto->setDropOffDriver(Waypoint::getWaypointDto());
         $carpoolProofDto->setDropOffPassenger(Waypoint::getWaypointDto());
+        $carpoolProofDto->setDriver(Actor::getDriverDto());
+        $carpoolProofDto->setPassenger(Actor::getPassengerDto());
 
         return $carpoolProofDto;
     }
@@ -50,6 +52,8 @@ class CarpoolProof
         $carpoolProofEntity->setPickUpPassenger(Waypoint::getWaypointEntity());
         $carpoolProofEntity->setDropOffDriver(Waypoint::getWaypointEntity());
         $carpoolProofEntity->setDropOffPassenger(Waypoint::getWaypointEntity());
+        $carpoolProofEntity->setDriver(Actor::getDriverEntity());
+        $carpoolProofEntity->setPassenger(Actor::getPassengerEntity());
 
         return $carpoolProofEntity;
     }

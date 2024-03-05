@@ -32,10 +32,12 @@ use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
 class CarpoolProofEntityBuilder
 {
     private $_waypointEntityBuilder;
+    private $_actorEntityBuilder;
 
-    public function __construct(WaypointEntityBuilder $waypointEntityBuilder)
+    public function __construct(WaypointEntityBuilder $waypointEntityBuilder, ActorEntityBuilder $actorEntityBuilder)
     {
         $this->_waypointEntityBuilder = $waypointEntityBuilder;
+        $this->_actorEntityBuilder = $actorEntityBuilder;
     }
 
     public function build(CarpoolProofDto $carpoolProofDto): CarpoolProofEntity
@@ -47,6 +49,8 @@ class CarpoolProofEntityBuilder
         $carpooProofEntity->setPickUpPassenger($this->_waypointEntityBuilder->build($carpoolProofDto->getPickUpPassenger()));
         $carpooProofEntity->setDropOffDriver($this->_waypointEntityBuilder->build($carpoolProofDto->getDropOffDriver()));
         $carpooProofEntity->setDropOffPassenger($this->_waypointEntityBuilder->build($carpoolProofDto->getDropOffPassenger()));
+        $carpooProofEntity->setDriver($this->_actorEntityBuilder->buildDriver($carpoolProofDto->getDriver()));
+        $carpooProofEntity->setPassenger($this->_actorEntityBuilder->buildPassenger($carpoolProofDto->getPassenger()));
 
         return $carpooProofEntity;
     }
