@@ -75,6 +75,16 @@ services:
           method: onAuthenticationSuccessResponse,
         }
 
+  # Authentication failure listener (classic login)
+  mobicoop.event.authentication_failure_listener:
+    class: App\Security\LoginAuthenticationFailure
+    tags:
+      - {
+          name: kernel.event_listener,
+          event: lexik_jwt_authentication.on_authentication_failure,
+          method: onAuthenticationFailureResponse,
+        }      
+
   # JWT Event Listener
   mobicoop.event.jwt_created_listener:
     class: App\Security\EventListener\JWTCreatedListener
