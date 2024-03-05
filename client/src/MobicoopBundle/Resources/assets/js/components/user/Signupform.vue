@@ -348,26 +348,6 @@
                     @change="save"
                   />
                 </v-menu>
-                <v-text-field
-                  v-if="isUnderAge"
-                  id="legalGuardianEmail"
-                  v-model="form.legalGuardianEmail"
-                  :rules="form.legalGuardianEmailRules"
-                  :label="$t('legalGuardianEmail.placeholder') + ` *`"
-                  name="legalGuardianEmail"
-                  required
-                  aria-required="true"
-                  :aria-label="$t('email.placeholder')"
-                  :loading="loadingCheckEmailAldreadyTaken"
-                  @focusout="checkEmail"
-                  @focusin="emailAlreadyTaken = false"
-                />
-                <v-alert
-                  v-if="emailAlreadyTaken"
-                  type="error"
-                >
-                  {{ textEmailError }}
-                </v-alert>
                 <v-row
                   justify="center"
                   align="center"
@@ -407,6 +387,23 @@
                 class="pb-2"
                 @submit.prevent
               >
+                <div v-if="isUnder18">
+                  <h2>{{ $t("parentalConsent.title") }}</h2>
+                  <p>{{ $t("parentalConsent.explanation") }}</p>
+                  <v-text-field
+
+                    id="legalGuardianEmail"
+                    v-model="form.legalGuardianEmail"
+                    :rules="form.legalGuardianEmailRules"
+                    :label="$t('legalGuardianEmail.placeholder') + ` *`"
+                    name="legalGuardianEmail"
+                    required
+                    aria-required="true"
+                    :aria-label="$t('legalGuardianEmail.placeholder')"
+                    :loading="loadingCheckEmailAldreadyTaken"
+                    @focusout="checkEmail"
+                  />
+                </div>
                 <!-- hometown -->
                 <geocomplete
                   :uri="geoSearchUrl"
@@ -773,8 +770,8 @@ export default {
         ],
         legalGuardianEmail: null,
         legalGuardianEmailRules: [
-          (v) => !!v || this.$t("email.errors.required"),
-          (v) => /.+@.+/.test(v) || this.$t("email.errors.valid"),
+          (v) => !!v || this.$t("legalGuardianEmail.errors.required"),
+          (v) => /.+@.+/.test(v) || this.$t("legalGuardianEmail.errors.valid"),
         ],
         givenName: null,
         givenNameRules: [
@@ -856,7 +853,7 @@ export default {
       locale: localStorage.getItem("X-LOCALE"),
       flags: this.phoneCodes,
       cleanedPhoneNumber: null,
-      isUnderAge: false,
+      isUnder18: false,
     };
   },
   computed: {
@@ -942,12 +939,10 @@ export default {
     },
     'form.date'(){
       if (moment().diff(this.form.date, 'year') < 18 ) {
-        console.log('ici');
-        this.isUnderAge = true;
+        this.isUnder18 = true;
       }
       else {
-        console.log('la');
-        this.isUnderAge = false;
+        this.isUnder18 = false;
       }
     },
     selectedCommunity() {
@@ -985,7 +980,7 @@ export default {
     },
     // checkAge() {
     //   if (moment().diff(this.form.age, 'year') < 18 ) {
-    //     this.isUnderAge = true;
+    //     this.isUnder18 = true;
     //   }
     // },
     validate: function(e) {
