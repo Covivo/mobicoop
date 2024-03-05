@@ -61,4 +61,3 @@ networks:
     name: mobicoop_platform
   v3-network:
     name: v3-network
-    external: true
