@@ -44,22 +44,22 @@ class CarpoolProofDto
     private $_driver;
 
     /**
-     * @var WaypointDto
+     * @var ?WaypointDto
      */
     private $_pickUpPassenger;
 
     /**
-     * @var WaypointDto
+     * @var ?WaypointDto
      */
     private $_pickUpDriver;
 
     /**
-     * @var WaypointDto
+     * @var ?WaypointDto
      */
     private $_dropOffDriver;
 
     /**
-     * @var WaypointDto
+     * @var ?WaypointDto
      */
     private $_dropOffPassenger;
 
