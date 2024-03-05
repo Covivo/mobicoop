@@ -1000,6 +1000,7 @@ export default {
             address: this.form.homeAddress,
             idFacebook: this.form.idFacebook,
             newsSubscription: this.form.newsSubscription,
+            legalGuardianEmail: this.form.legalGuardianEmail ? this.form.legalGuardianEmail : null,
             community: this.selectedCommunity ? this.selectedCommunity : null,
           },
           {
