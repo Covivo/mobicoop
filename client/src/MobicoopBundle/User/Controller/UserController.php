@@ -302,6 +302,7 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             // $user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new \DateTime($data['birthDay']));
+            $user->setLegalGuardianEmail($data['legalGuardianEmail']);
 
             if (isset($data['newsSubscription'])) {
                 $newsSubscription = $data['newsSubscription'];
