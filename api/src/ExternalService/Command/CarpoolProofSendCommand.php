@@ -3,6 +3,8 @@
 namespace App\ExternalService\Command;
 
 use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
+use App\ExternalService\Interfaces\DTO\CarpoolProof\DriverDto;
+use App\ExternalService\Interfaces\DTO\CarpoolProof\PassengerDto;
 use App\ExternalService\Interfaces\DTO\CarpoolProof\WaypointDto;
 use App\ExternalService\Interfaces\SendProof;
 use Symfony\Component\Console\Command\Command;
@@ -39,13 +41,32 @@ class CarpoolProofSendCommand extends Command
         $pickUpDriverDto = new WaypointDto();
         $pickUpDriverDto->setLat(18.0146548);
         $pickUpDriverDto->setLon(6.0146548);
+        $pickUpDriverDto->setDatetime('20240203');
         $dropOffDriverDto = new WaypointDto();
         $dropOffDriverDto->setLat(18.0146548);
         $dropOffDriverDto->setLon(6.0146548);
+        $dropOffDriverDto->setDatetime('20240203');
         $carpoolProofDto->setPickUpDriver($pickUpDriverDto);
         $carpoolProofDto->setPickUpPassenger($pickUpDriverDto);
         $carpoolProofDto->setDropOffDriver($pickUpDriverDto);
         $carpoolProofDto->setDropOffPassenger($pickUpDriverDto);
+
+        $driver = new DriverDto();
+        $driver->setId(2);
+        $driver->setGivenName('Jean-Michel');
+        $driver->setLastName('Test');
+        $driver->setBirthDate(\DateTime::createFromFormat('d/m/Y H:i:s', '03/02/1982 00:00:00'));
+        $driver->setRevenue(18);
+        $carpoolProofDto->setDriver($driver);
+
+        $passenger = new PassengerDto();
+        $passenger->setId(2);
+        $passenger->setGivenName('Jean-Michel');
+        $passenger->setLastName('Test');
+        $passenger->setBirthDate(\DateTime::createFromFormat('d/m/Y H:i:s', '03/02/1982 00:00:00'));
+        $passenger->setSeats(1);
+        $passenger->setContribution(18);
+        $carpoolProofDto->setPassenger($passenger);
 
         var_dump($this->_sendProof->send($carpoolProofDto));
     }

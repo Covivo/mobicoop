@@ -26,7 +26,7 @@ namespace App\ExternalService\Core\Domain\Entity\CarpoolProof;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class WaypointEntity
+class WaypointEntity implements \JsonSerializable
 {
     /**
      * @var float
@@ -77,5 +77,15 @@ class WaypointEntity
         $this->_datetime = $datetime;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'lat' => $this->getLat(),
+                'lon' => $this->getLon(),
+                'datetime' => $this->getDatetime(),
+            ];
     }
 }

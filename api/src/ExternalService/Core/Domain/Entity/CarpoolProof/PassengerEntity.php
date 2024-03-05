@@ -26,7 +26,7 @@ namespace App\ExternalService\Core\Domain\Entity\CarpoolProof;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class PassengerEntity extends IdentityEntity
+class PassengerEntity extends IdentityEntity implements \JsonSerializable
 {
     /**
      * @var int
@@ -60,5 +60,19 @@ class PassengerEntity extends IdentityEntity
         $this->_contribution = $contribution;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id' => $this->getId(),
+                'givenName' => $this->getGivenName(),
+                'lastName' => $this->getLastName(),
+                'phone' => $this->getPhone(),
+                'birthDate' => $this->getBirthDate(),
+                'seats' => $this->getSeats(),
+                'contribution' => $this->getContribution(),
+            ];
     }
 }

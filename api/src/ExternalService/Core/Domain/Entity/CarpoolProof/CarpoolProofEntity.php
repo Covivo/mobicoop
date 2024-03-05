@@ -28,7 +28,7 @@ use App\ExternalService\Core\Domain\Entity\AbstractEntity;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class CarpoolProofEntity extends AbstractEntity
+class CarpoolProofEntity extends AbstractEntity implements \JsonSerializable
 {
     private const CONTEXT = 'CarpoolProof';
 
@@ -171,5 +171,20 @@ class CarpoolProofEntity extends AbstractEntity
         $this->_distance = $distance;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id' => $this->getId(),
+                'passenger' => $this->getPassenger(),
+                'driver' => $this->getDriver(),
+                'pickUpPassenger' => $this->getPickUpPassenger(),
+                'pickUpDriver' => $this->getPickUpDriver(),
+                'dropOffPassenger' => $this->getDropOffPassenger(),
+                'dropOffDriver' => $this->getDropOffDriver(),
+                'distance' => $this->getDistance(),
+            ];
     }
 }

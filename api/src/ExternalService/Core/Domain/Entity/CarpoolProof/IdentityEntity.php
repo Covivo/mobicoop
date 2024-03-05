@@ -103,7 +103,7 @@ class IdentityEntity
         return $this;
     }
 
-    public function isBirthDate(): ?\DateTimeInterface
+    public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->_birthDate;
     }
