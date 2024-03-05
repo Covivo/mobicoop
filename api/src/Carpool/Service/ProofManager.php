@@ -376,8 +376,8 @@ class ProofManager
         }
         $carpoolProof->setDirection($direction);
 
-        // $this->entityManager->persist($carpoolProof);
-        // $this->entityManager->flush();
+        $this->entityManager->persist($carpoolProof);
+        $this->entityManager->flush();
         $this->_sendProofToExternalService($carpoolProof);
 
         if ($author->getId() == $passenger->getId()) {
