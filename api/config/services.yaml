@@ -602,7 +602,7 @@ services:
       $providers: "%env(json:file:resolve:RDEX_PROVIDERS)%"
 
   # External Service
-  App\ExternalService\Infrastructure\BrokerConnector:
+  App\ExternalService\Infrastructure\BrokerPublisher:
     arguments:
       $uri: "%env(string:BROKER_URI)%"
       $port: "%env(int:BROKER_PORT)%"

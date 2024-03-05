@@ -32,7 +32,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BrokerConnector
+class BrokerPublisher
 {
     private $_uri;
     private $_port;

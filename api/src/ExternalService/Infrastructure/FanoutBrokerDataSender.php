@@ -36,11 +36,11 @@ class FanoutBrokerDataSender implements DataSenderPort
         'CarpoolProof' => 'carpool.proof',
     ];
 
-    private $_brokerConnector;
+    private $_brokerPublisher;
 
-    public function __construct(BrokerConnector $brokerConnector)
+    public function __construct(BrokerPublisher $brokerPublisher)
     {
-        $this->_brokerConnector = $brokerConnector;
+        $this->_brokerPublisher = $brokerPublisher;
     }
 
     public function send(AbstractEntity $entity): string
@@ -49,6 +49,6 @@ class FanoutBrokerDataSender implements DataSenderPort
             throw new UnauthorizedContextException(UnauthorizedContextException::MESSAGE);
         }
 
-        return $this->_brokerConnector->sendMessage(self::AUTHORIZED_CONTEXTS[$entity->getContext()], $entity);
+        return $this->_brokerPublisher->sendMessage(self::AUTHORIZED_CONTEXTS[$entity->getContext()], $entity);
     }
 }

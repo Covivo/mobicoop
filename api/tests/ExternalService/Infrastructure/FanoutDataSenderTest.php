@@ -38,13 +38,13 @@ class FanoutBrokerDataSenderTest extends TestCase
 
     public function setUp(): void
     {
-        $brokerConnector = $this->getMockBuilder(BrokerConnector::class)
+        $brokerPublisher = $this->getMockBuilder(BrokerPublisher::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
-        $brokerConnector->method('sendMessage')->willReturn('OK');
+        $brokerPublisher->method('sendMessage')->willReturn('OK');
 
-        $this->_brokerDataSender = new FanoutBrokerDataSender($brokerConnector);
+        $this->_brokerDataSender = new FanoutBrokerDataSender($brokerPublisher);
     }
 
     /**
