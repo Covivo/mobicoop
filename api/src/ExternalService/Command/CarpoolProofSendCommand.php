@@ -41,11 +41,11 @@ class CarpoolProofSendCommand extends Command
         $pickUpDriverDto = new WaypointDto();
         $pickUpDriverDto->setLat(18.0146548);
         $pickUpDriverDto->setLon(6.0146548);
-        $pickUpDriverDto->setDatetime('20240203');
+        $pickUpDriverDto->setDatetime(\DateTime::createFromFormat('Ymd H:i:s', '20240801 12:00:00'));
         $dropOffDriverDto = new WaypointDto();
         $dropOffDriverDto->setLat(18.0146548);
         $dropOffDriverDto->setLon(6.0146548);
-        $dropOffDriverDto->setDatetime('20240203');
+        $dropOffDriverDto->setDatetime(\DateTime::createFromFormat('Ymd H:i:s', '20240801 12:00:00'));
         $carpoolProofDto->setPickUpDriver($pickUpDriverDto);
         $carpoolProofDto->setPickUpPassenger($pickUpDriverDto);
         $carpoolProofDto->setDropOffDriver($pickUpDriverDto);

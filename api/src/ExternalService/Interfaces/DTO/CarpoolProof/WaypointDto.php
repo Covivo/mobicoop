@@ -39,7 +39,7 @@ class WaypointDto
     private $_lon;
 
     /**
-     * @var string
+     * @var \DateTimeInterface
      */
     private $_datetime;
 
@@ -67,12 +67,12 @@ class WaypointDto
         return $this;
     }
 
-    public function getDatetime(): ?string
+    public function getDatetime(): ?\DateTimeInterface
     {
         return $this->_datetime;
     }
 
-    public function setDatetime(?string $datetime): self
+    public function setDatetime(?\DateTimeInterface $datetime): self
     {
         $this->_datetime = $datetime;
 

@@ -33,6 +33,7 @@ class Waypoint
         $pickUpDriverDto = new WaypointDto();
         $pickUpDriverDto->setLat(18.0146548);
         $pickUpDriverDto->setLon(6.0146548);
+        $pickUpDriverDto->setDatetime(\DateTime::createFromFormat('Ymd H:i:s', '20240801 12:00:00'));
 
         return $pickUpDriverDto;
     }
@@ -42,6 +43,7 @@ class Waypoint
         $pickUpDriverEntity = new WaypointEntity();
         $pickUpDriverEntity->setLat(18.0146548);
         $pickUpDriverEntity->setLon(6.0146548);
+        $pickUpDriverEntity->setDatetime(\DateTime::createFromFormat('Ymd H:i:s', '20240801 12:00:00'));
 
         return $pickUpDriverEntity;
     }
