@@ -43,6 +43,10 @@ case $i in
     TYPE="${i#*=}"
     shift # past argument=value
     ;;
+	--pushOnly=*)
+	PUSHONLY="${i#*=}"
+	shift
+	;;
 esac
 done
 
@@ -59,6 +63,11 @@ do
 	if [[ "$COMMAND" = "commit" || "$COMMAND" = "update" ]];
 	then
 		commandLine="$commandLine --journey=${JOURNEYS[$i]}"
+	fi
+
+	if [[ "$PUSHONLY" = "true"  ]];
+	then
+		commandLine="$commandLine --pushOnly"
 	fi
 
     echo $commandLine
