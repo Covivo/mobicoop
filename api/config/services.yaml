@@ -199,6 +199,12 @@ services:
     # Uncomment only if autoconfiguration isn't enabled
     #tags: [ 'api_platform.filter' ]
 
+  App\Carpool\EventSubscriber\CarpoolProofEventSubscriber:
+    arguments:
+      $externalServiceEnable: "%env(bool:EXTERNAL_SERVICE_ENABLE)%"
+    tags:
+      - { name: monolog.logger, channel: carpool }
+
   App\Carpool\Service\AntiFraudManager:
     arguments:
       $params:

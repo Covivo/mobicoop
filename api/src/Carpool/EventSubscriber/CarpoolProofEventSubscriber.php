@@ -32,11 +32,13 @@ class CarpoolProofEventSubscriber implements EventSubscriberInterface
 {
     private $_externalServiceSendProof;
     private $_proofManager;
+    private $_externalServiceEnable;
 
-    public function __construct(ProofManager $proofManager, ExternalServiceSendProof $externalServiceSendProof)
+    public function __construct(ProofManager $proofManager, ExternalServiceSendProof $externalServiceSendProof, bool $externalServiceEnable)
     {
         $this->_externalServiceSendProof = $externalServiceSendProof;
         $this->_proofManager = $proofManager;
+        $this->_externalServiceEnable = $externalServiceEnable;
     }
 
     public static function getSubscribedEvents()
@@ -51,6 +53,8 @@ class CarpoolProofEventSubscriber implements EventSubscriberInterface
      */
     public function onCarpoolProofCreated(CarpoolProofCreatedEvent $event)
     {
-        $this->_externalServiceSendProof->send($this->_proofManager->buildCarpoolProofDto($event->getCarpoolProof()));
+        if ($this->_externalServiceEnable) {
+            $this->_externalServiceSendProof->send($this->_proofManager->buildCarpoolProofDto($event->getCarpoolProof()));
+        }
     }
 }
