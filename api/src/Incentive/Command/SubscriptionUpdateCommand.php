@@ -72,7 +72,9 @@ class SubscriptionUpdateCommand extends EecCommand
 
         $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_currentInput->getOption('journey'));
 
-        $this->checkCarpoolProof($carpoolProof);
+        if (is_null($carpoolProof)) {
+            throw new NotFoundHttpException('The proof was not found');
+        }
 
         if ($subscription->getUser()->getId() !== $carpoolProof->getDriver()->getId()) {
             throw new BadRequestHttpException('The user associated with the incentive is not the one associated with the CarpoolProof');
