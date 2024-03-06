@@ -2,7 +2,6 @@
 
 namespace App\Incentive\Command;
 
-use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
@@ -57,17 +56,6 @@ abstract class EecCommand extends Command
             ) {
                 throw new BadRequestHttpException('The user associated with the incentive is not the one associated with the CarpoolPayment');
             }
-        }
-    }
-
-    protected function checkCarpoolProof(CarpoolProof $carpoolProof)
-    {
-        if (is_null($carpoolProof)) {
-            $this->throwException(Response::HTTP_NOT_FOUND, 'The journey (CarpoolProof) was not found');
-        }
-
-        if ($this->_currentSubscription->getUser()->getId() !== $carpoolProof->getDriver()->getId()) {
-            $this->throwException(Response::HTTP_BAD_REQUEST, 'The user associated with the incentive is not the one associated with the CarpoolProof');
         }
     }
 
