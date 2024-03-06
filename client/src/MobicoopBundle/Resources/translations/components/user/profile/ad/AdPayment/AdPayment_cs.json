@@ -1,4 +1,5 @@
 {
+    "freeCarpoolingLabel": "Free carpooling: cannot be paid",
     "tooltip": {
         "paymentElectronicActive": "Zaplatit online nebo potvrdit platbu ručně a dokončit spolujízdu",
         "paymentElectronicNotActive": "Potvrzení platby a dokončení spolujízdy"

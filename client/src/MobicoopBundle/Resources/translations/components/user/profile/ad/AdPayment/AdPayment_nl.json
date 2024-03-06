@@ -1,4 +1,5 @@
 {
+    "freeCarpoolingLabel": "Free carpooling: cannot be paid",
     "unpaid": "Onbetaald",
     "route": "/paiements/{id}/{frequency}/{type}/{week}",
     "tooltip": {

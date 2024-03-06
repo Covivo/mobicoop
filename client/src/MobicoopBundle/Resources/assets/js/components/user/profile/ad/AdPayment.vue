@@ -17,7 +17,7 @@
               color="primary"
               rounded
               :outlined="outlined"
-              :disabled="disabled"
+              :disabled="isDisabled"
               @click="action()"
               v-on="(isDriver === false) ? on : {}"
             >
@@ -26,10 +26,10 @@
           </template>
           <span>{{ displayTooltips }}</span>
         </v-tooltip>
-      </v-col>         
+      </v-col>
     </v-row>
   </v-container>
-</template>      
+</template>
 <script>
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ad/AdPayment/";
 
@@ -75,6 +75,10 @@ export default {
       type: Boolean,
       default: false
     },
+    freeCarpooling: {
+      type: Boolean,
+      default: false
+    }
   },
   data(){
     return {
@@ -88,12 +92,19 @@ export default {
     },
     status() {
       return this.getStatus(this.paymentStatus);
-    },  
+    },
     displayPaymentStatus(){
+      if (this.freeCarpooling) {
+        return this.$t('freeCarpoolingLabel')
+      }
+
       return (this.isDriver) ? this.$t('driver.'+this.status) : (this.paymentElectronicActive) ? this.$t('passenger.'+this.status) : this.$t('passenger.pendingElectronicNotActive');
     },
     displayTooltips(){
       return (this.paymentElectronicActive) ? this.$t('tooltip.paymentElectronicActive') : this.$t('tooltip.paymentElectronicNotActive')
+    },
+    isDisabled() {
+      return this.disabled || this.freeCarpooling
     },
     type(){
       return (this.isDriver) ? 2 : 1;
@@ -105,9 +116,9 @@ export default {
   methods:{
     getStatus(paymentStatus){
       switch (this.paymentStatus) {
-      case 1: 
+      case 1:
         return "pending";
-      default: 
+      default:
         this.disabled = true;
         return "paid";
       }
