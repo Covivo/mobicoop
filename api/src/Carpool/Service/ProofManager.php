@@ -1204,6 +1204,8 @@ class ProofManager
 
                     $this->entityManager->persist($carpoolProof);
                     $this->entityManager->flush();
+                    $event = new CarpoolProofCreatedEvent($carpoolProof);
+                    $this->eventDispatcher->dispatch(CarpoolProofCreatedEvent::NAME, $event);
                 }
             } else {
                 // regular, we need to create a carpool item for each day between fromDate (or the ask fromDate if it's after the given fromDate) and toDate
@@ -1370,6 +1372,8 @@ class ProofManager
 
                             $this->entityManager->persist($carpoolProof);
                             $this->entityManager->flush();
+                            $event = new CarpoolProofCreatedEvent($carpoolProof);
+                            $this->eventDispatcher->dispatch(CarpoolProofCreatedEvent::NAME, $event);
                         }
                     }
 
