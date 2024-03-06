@@ -48,7 +48,5 @@ final class MassCommunicationHookDataPersister implements ContextAwareDataPersis
         return $this->campaignManager->handleUnsubscribeHook($data, $this->request);
     }
 
-    public function remove($data, array $context = [])
-    {
-    }
+    public function remove($data, array $context = []) {}
 }
