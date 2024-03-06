@@ -334,7 +334,7 @@
                       v-model="form.date"
                       :label="$t('birthDate.placeholder')+` *`"
                       readonly
-                      :rules="[ form.birthdayRules.checkIfAdult, form.birthdayRules.required ]"
+                      :rules="[ form.birthdayRules.checkIfHaveAge, form.birthdayRules.required ]"
                       required
                       v-on="on"
                     />
@@ -348,6 +348,23 @@
                     @change="save"
                   />
                 </v-menu>
+                <div v-if="isUnder18">
+                  <h2>{{ $t("parentalConsent.title") }}</h2>
+                  <p>{{ $t("parentalConsent.explanation") }}</p>
+                  <v-text-field
+
+                    id="legalGuardianEmail"
+                    v-model="form.legalGuardianEmail"
+                    :rules="form.legalGuardianEmailRules"
+                    :label="$t('legalGuardianEmail.placeholder') + ` *`"
+                    name="legalGuardianEmail"
+                    required
+                    aria-required="true"
+                    :aria-label="$t('legalGuardianEmail.placeholder')"
+                    :loading="loadingCheckEmailAldreadyTaken"
+                    @focusout="checkEmail"
+                  />
+                </div>
                 <v-row
                   justify="center"
                   align="center"
@@ -387,23 +404,6 @@
                 class="pb-2"
                 @submit.prevent
               >
-                <div v-if="isUnder18">
-                  <h2>{{ $t("parentalConsent.title") }}</h2>
-                  <p>{{ $t("parentalConsent.explanation") }}</p>
-                  <v-text-field
-
-                    id="legalGuardianEmail"
-                    v-model="form.legalGuardianEmail"
-                    :rules="form.legalGuardianEmailRules"
-                    :label="$t('legalGuardianEmail.placeholder') + ` *`"
-                    name="legalGuardianEmail"
-                    required
-                    aria-required="true"
-                    :aria-label="$t('legalGuardianEmail.placeholder')"
-                    :loading="loadingCheckEmailAldreadyTaken"
-                    @focusout="checkEmail"
-                  />
-                </div>
                 <!-- hometown -->
                 <geocomplete
                   :uri="geoSearchUrl"
@@ -969,7 +969,7 @@ export default {
   methods: {
     maxDate() {
       let maxDate = new Date();
-      maxDate.setFullYear(maxDate.getFullYear() - this.ageMin);
+      maxDate.setFullYear(maxDate.getFullYear() - 10);
       return maxDate.toISOString().substr(0, 10);
     },
     selectedGeo(address) {
@@ -978,11 +978,6 @@ export default {
     save(date) {
       this.$refs.menu.save(date);
     },
-    // checkAge() {
-    //   if (moment().diff(this.form.age, 'year') < 18 ) {
-    //     this.isUnder18 = true;
-    //   }
-    // },
     validate: function(e) {
       this.loading = true;
       maxios
@@ -1145,7 +1140,9 @@ export default {
       return this.form.email && this.form.password && this.form.telephone != null
     },
     step2Valid() {
-      if (this.birthDateDisplay){
+      if (this.birthDateDisplay && this.isUnder18){
+        return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null && this.form.legalGuardianEmail !=null
+      } else if (this.birthDateDisplay) {
         return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null
       } else {
         return this.form.familyName && this.form.givenName && this.form.gender != null
