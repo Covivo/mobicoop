@@ -1926,6 +1926,15 @@ class User implements UserInterface, EquatableInterface
      */
     private $parentalConsentDate;
 
+    /**
+     * Indicate if the user need the parental consent.
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     *
+     * @var bool
+     */
+    private $needParentalConsent = false;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -4313,6 +4322,22 @@ class User implements UserInterface, EquatableInterface
     public function setParentalConsentDate(?\DateTimeInterface $parentalConsentDate): self
     {
         $this->parentalConsentDate = $parentalConsentDate;
+
+        return $this;
+    }
+
+    public function getNeedParentalConsent(): bool
+    {
+        if (!is_null($this->getLegalGuardianEmail()) && is_null($this->getParentalConsentDate())) {
+            $this->setNeedParentalConsent(true);
+        }
+
+        return $this->needParentalConsent;
+    }
+
+    public function setNeedParentalConsent(bool $needParentalConsent): self
+    {
+        $this->needParentalConsent = $needParentalConsent;
 
         return $this;
     }
