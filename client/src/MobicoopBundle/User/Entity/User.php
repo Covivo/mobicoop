@@ -595,7 +595,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     /**
      * Indicate if the user need the parental consent.
      *
-     * @var bool
+     * @var null|bool
      */
     private $needParentalConsent;
 
@@ -1775,12 +1775,12 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
-    public function getNeedParentalConsent(): bool
+    public function getNeedParentalConsent(): ?bool
     {
         return $this->needParentalConsent;
     }
 
-    public function setNeedParentalConsent(bool $needParentalConsent): self
+    public function setNeedParentalConsent(?bool $needParentalConsent): self
     {
         $this->needParentalConsent = $needParentalConsent;
 

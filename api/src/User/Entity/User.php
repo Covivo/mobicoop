@@ -1931,7 +1931,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Groups({"aRead","aWrite","readUser","write"})
      *
-     * @var bool
+     * @var null|bool
      */
     private $needParentalConsent = false;
 
@@ -4326,7 +4326,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getNeedParentalConsent(): bool
+    public function getNeedParentalConsent(): ?bool
     {
         if (!is_null($this->getLegalGuardianEmail()) && is_null($this->getParentalConsentDate())) {
             $this->setNeedParentalConsent(true);
@@ -4335,7 +4335,7 @@ class User implements UserInterface, EquatableInterface
         return $this->needParentalConsent;
     }
 
-    public function setNeedParentalConsent(bool $needParentalConsent): self
+    public function setNeedParentalConsent(?bool $needParentalConsent): self
     {
         $this->needParentalConsent = $needParentalConsent;
 
