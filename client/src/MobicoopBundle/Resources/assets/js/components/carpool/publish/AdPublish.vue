@@ -242,6 +242,7 @@
                 :init-destination="destination"
                 :init-regular="regular"
                 :init-role="role"
+                :both-role-enabled="bothRoleEnabled"
                 @change="searchChanged"
               />
             </v-stepper-content>
@@ -961,6 +962,14 @@ export default {
       type: Boolean,
       default: false
     },
+    defaultRoleToPublish: {
+      type: Number,
+      default:null
+    },
+    bothRoleEnabled: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -977,7 +986,7 @@ export default {
       disableNextButton: false,
       disconnected: false,
       distance: 0,
-      driver: true,
+      driver: (this.defaultRoleToPublish && this.defaultRoleToPublish == 2) ? false : true,
       duration: 0,
       initSchedule: null,
       initWaypoints: [],
@@ -992,7 +1001,7 @@ export default {
       origin: this.initOrigin,
       outwardDate: this.initDate,
       outwardTime: this.initTime,
-      passenger: true,
+      passenger: (this.defaultRoleToPublish && this.defaultRoleToPublish == 1) ? false : true,
       pointsToMap:[],
       price: null,
       priceForbidden: false,
@@ -1003,7 +1012,7 @@ export default {
       returnTime: null,
       returnTimeIsValid: true,
       returnTrip: null,
-      role: null,
+      role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
       route: null,
       schedules: null,
       seats : this.defaultSeatNumber,

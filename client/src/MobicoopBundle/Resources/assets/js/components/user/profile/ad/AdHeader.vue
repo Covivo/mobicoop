@@ -192,6 +192,7 @@
           outlined
           show-unpaid
           :payment-electronic-active="paymentElectronicActive"
+          :free-carpooling="freeCarpooling"
           @activePanel="activePanel()"
         />
       </v-col>
@@ -332,6 +333,10 @@ export default {
       type: Number,
       default: 0
     },
+    freeCarpooling: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

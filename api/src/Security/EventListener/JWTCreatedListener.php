@@ -92,7 +92,15 @@ class JWTCreatedListener
 
                     break;
             }
+
+            if (!is_null($user->getLegalGuardianEmail()) && is_null($user->getParentalConsentDate())) {
+                $expiration = new \DateTime('+30 seconds');
+
+                $payload = $event->getData();
+                $payload['exp'] = $expiration->getTimestamp();
+            }
         }
+
         $event->setData($payload);
 
         $header = $event->getHeader();

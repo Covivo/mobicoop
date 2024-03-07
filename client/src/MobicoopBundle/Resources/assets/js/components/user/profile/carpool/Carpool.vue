@@ -18,6 +18,7 @@
       :payment-week="ad.paymentItemWeek"
       :unpaid-date="ad.unpaidDate"
       :payment-electronic-active="paymentElectronicActive"
+      :free-carpooling="isCarpoolingFree"
       @activePanel="activePanel()"
     />
 
@@ -98,7 +99,10 @@ export default {
         return this.ad.driver.askFrequency;
       }
       return this.ad.frequency;
-    }
+    },
+    isCarpoolingFree() {
+      return this.ad && this.ad.driver && this.ad.driver.price === 0;
+    },
   },
   methods: {
     activePanel() {
