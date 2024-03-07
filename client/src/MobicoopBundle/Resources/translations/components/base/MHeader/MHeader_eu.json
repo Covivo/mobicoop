@@ -31,5 +31,12 @@
             "route": "/utilisateur/inscription",
             "label": "Izen ematea"
         }
+    },
+    "dialog":{
+      "parentalConsent": {
+        "title": "Autorisation parentale requise.",
+        "content": "<p>L’autorisation parentale n’a pas encore été donnée par ton responsable légal dont l’adresse email que tu as communiquée est <b>{legalGuardianEmail}</b>. </br>Si cette adresse email est incorrecte, tu peux nous contacter via <b>le formulaire de contact</b>. </br>Dès que ton responsable légal aura donné son autorisation, tu pourras te connecter et utiliser le service ! </br>À bientôt !</p>",
+        "buttonLabel": "Fermer et se déconnecter"
+      }
     }
 }
