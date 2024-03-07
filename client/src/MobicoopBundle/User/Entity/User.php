@@ -580,6 +580,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var null|string the email of the user's legal guardian
      *
      * @Assert\Email()
+     *
      * @Groups({"post","put"})
      */
     private $legalGuardianEmail;
@@ -590,6 +591,13 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @Groups({"post","put"})
      */
     private $parentalConsentDate;
+
+    /**
+     * Indicate if the user need the parental consent.
+     *
+     * @var bool
+     */
+    private $needParentalConsent;
 
     public function __construct($id = null, $status = null)
     {
@@ -1767,6 +1775,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getNeedParentalConsent(): bool
+    {
+        return $this->needParentalConsent;
+    }
+
+    public function setNeedParentalConsent(bool $needParentalConsent): self
+    {
+        $this->needParentalConsent = $needParentalConsent;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1828,6 +1848,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'phoneCode' => $this->getPhoneCode(),
             'legalGuardianEmail' => $this->getLegalGuardianEmail(),
             'parentalConsentDate' => $this->getParentalConsentDate(),
+            'needParentalConsent' => $this->getNeedParentalConsent(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
