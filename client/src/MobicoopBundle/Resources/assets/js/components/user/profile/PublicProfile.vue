@@ -214,8 +214,8 @@ export default {
   },
   data(){
     return{
-      publicProfile:null,
-      loading:true,
+      publicProfile: null,
+      loading: true,
       locale: localStorage.getItem("X-LOCALE")
     }
   },
@@ -280,6 +280,12 @@ export default {
     }
   },
   watch:{
+    userId: function (newUserId, oldUserId) {
+      if (newUserId !== oldUserId) {
+        this.loading = true
+        this.getPublicProfile()
+      }
+    },
     refresh(){
       if(this.refresh){
         this.getPublicProfile();
