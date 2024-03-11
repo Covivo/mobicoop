@@ -111,6 +111,7 @@
           :frequency="frequency"
           :payment-item-id="carpooler.payment.itemId"
           :payment-electronic-active="paymentElectronicActive"
+          :free-carpooling="freeCarpooling"
         />
       </v-col>
     </v-row>
@@ -166,6 +167,10 @@ export default {
       type: Boolean,
       default: false
     },
+    freeCarpooling: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
