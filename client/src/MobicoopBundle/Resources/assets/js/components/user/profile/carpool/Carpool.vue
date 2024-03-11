@@ -101,7 +101,7 @@ export default {
       return this.ad.frequency;
     },
     isCarpoolingFree() {
-      return this.ad && this.ad.driver && this.ad.driver.price === 0;
+      return this.ad && this.ad.driver && (this.ad.driver.price === '0' || this.ad.driver.price === 0);
     },
   },
   methods: {
