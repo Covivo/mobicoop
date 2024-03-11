@@ -50,6 +50,7 @@
         :show-carpooler="showCarpooler"
         :payment-electronic-active="paymentElectronicActive"
         :communities="ad.communities ? ad.communities : []"
+        :free-carpooling="isCarpoolingFree"
       />
     </v-card-actions>
   </v-card>

@@ -75,6 +75,7 @@
               :frequency="carpooler.askFrequency"
               :user="user"
               :payment-electronic-active="paymentElectronicActive"
+              :free-carpooling="freeCarpooling"
             />
             <v-divider
               v-if="index < carpoolers.length - 1"
@@ -125,6 +126,10 @@ export default {
     communities:{
       type: Array,
       default: () => []
+    },
+    freeCarpooling: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
