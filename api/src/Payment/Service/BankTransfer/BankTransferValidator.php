@@ -38,9 +38,9 @@ use Psr\Log\LoggerInterface;
  */
 class BankTransferValidator
 {
-    public const HEADERS_USER_ID = ['id_usager', 'userId'];
+    public const HEADERS_USER_ID = ['id_usager', 'userId', 'user_id'];
     public const HEADERS_AMOUNT = ['amount', 'montant'];
-    public const HEADERS_TERRITORY_ID = ['territoryId', 'id_territoire', 'territoryId(opt)'];
+    public const HEADERS_TERRITORY_ID = ['territoryId', 'id_territoire', 'territoryId(opt)', 'territory_id'];
     public const HEADERS_CARPOOL_PROOF_ID = ['carpoolProofId', 'carpool_proof_id', 'carpoolProofId(opt)'];
 
     public const HEADERS = [
