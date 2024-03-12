@@ -233,6 +233,15 @@ user_sign_up_validation:
     token: ""
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
 
+user_sign_up_with_referral:
+  path:
+    fr: /utilisateur/inscription/reference/{referral}
+    en: /user/signup/referral/{referral}
+    nl: /user/signup/referral/{referral}
+  defaults:
+    token: ""
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
+
 # user update address
 user_homeAddress_update:
   path:
