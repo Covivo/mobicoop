@@ -976,6 +976,7 @@ export default {
             idFacebook: this.form.idFacebook,
             newsSubscription: this.form.newsSubscription,
             community: this.selectedCommunity ? this.selectedCommunity : null,
+            referral: this.referral
           },
           {
             headers: {
