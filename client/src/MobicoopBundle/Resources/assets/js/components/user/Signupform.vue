@@ -1001,6 +1001,7 @@ export default {
             newsSubscription: this.form.newsSubscription,
             legalGuardianEmail: this.form.legalGuardianEmail ? this.form.legalGuardianEmail : null,
             community: this.selectedCommunity ? this.selectedCommunity : null,
+            referral: this.referral
           },
           {
             headers: {
