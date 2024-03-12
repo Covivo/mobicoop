@@ -7,7 +7,7 @@
         "search": {
             "widgetRoute": "event/{id}/recherche/covoiturage",
             "route": "covoiturage/recherche",
-            "label": "Bilatu"
+            "label": "Bilatu kotxe partekatzea"
         },
         "publish": {
             "route": "covoiturage/recherche/poster",
