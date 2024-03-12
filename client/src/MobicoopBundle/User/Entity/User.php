@@ -602,6 +602,8 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     /**
      * Signup referral if there is any.
      *
+     * @Groups({"post"})
+     *
      * @var null|string
      */
     private $referral;
