@@ -729,6 +729,10 @@ export default {
     phoneCodes: {
       type: Array,
       default: () => []
+    },
+    referral: {
+      type: String,
+      default: ''
     }
   },
   data() {
