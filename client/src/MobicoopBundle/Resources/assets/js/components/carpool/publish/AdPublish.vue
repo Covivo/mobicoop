@@ -719,7 +719,6 @@
       </v-btn>
 
       <v-tooltip
-        v-if="valid"
         bottom
       >
         <template v-slot:activator="{on}">
@@ -737,7 +736,7 @@
             </v-btn>
           </div>
         </template>
-        <span>{{ $t('stepper.buttons.notValid') }}</span>
+        <span v-html="getTooltip" />
       </v-tooltip>
     </v-row>
 
@@ -1202,6 +1201,30 @@ export default {
     },
     itemsSeatNumber() {
       return [...Array(this.seatNumber+1).keys()].slice(1);
+    },
+    getTooltip() {
+      switch (true) {
+      case !this.isUpdated:
+        return this.$t('stepper.buttons.unUpdated')
+      case this.priceForbidden:
+        return this.$t('stepper.buttons.unacceptableParticipation')
+      case this.distance<=0 || this.duration<=0 || !this.origin || !this.destination || !this.route:
+        return this.$t('stepper.buttons.incorrectRouteDefinition')
+      case !this.regular && !(this.outwardDate && this.outwardTime):
+        return this.$t('stepper.buttons.punctualOutwardDate')
+      case !this.regular && this.returnTrip && !(this.returnDate && this.returnTime):
+        return this.$t('stepper.buttons.punctualReturnTripOutwardDate')
+      case this.regular && !this.schedules:
+        return this.$t('stepper.buttons.regularSchedules')
+      case this.isValidUpdate && this.oldUpdateObject == null:
+        return this.$t('stepper.buttons.dataProcessing')
+      case !this.checkboxDrivingLicence && this.driver && this.specificTerms:
+      case !this.checkboxEmployer && this.driver && this.specificTerms:
+      case !this.checkboxInssurance && this.driver && this.specificTerms:
+        return this.$t('stepper.buttons.requirments')
+
+      default: return this.$t('stepper.buttons.notValid');
+      }
     }
   },
   watch: {
