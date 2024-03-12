@@ -719,6 +719,7 @@
       </v-btn>
 
       <v-tooltip
+        v-if="isMainBtnDisplayed"
         bottom
       >
         <template v-slot:activator="{on}">
@@ -1225,6 +1226,13 @@ export default {
 
       default: return this.$t('stepper.buttons.notValid');
       }
+    },
+    isMainBtnDisplayed() {
+      return (
+        (this.step === 7 && this.driver && this.step !== 5 && !this.solidaryExclusive)
+        || (this.step === 5 && !this.driver && !this.solidaryExclusive)
+        || (this.step === 6 && this.solidaryExclusive)
+      )
     }
   },
   watch: {
