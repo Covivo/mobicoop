@@ -257,8 +257,16 @@ class UserController extends AbstractController
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator, ?int $id = null, ?int $eventId = null, ?int $communityId = null, ?string $redirect = null)
-    {
+    public function userSignUp(
+        UserManager $userManager,
+        Request $request,
+        TranslatorInterface $translator,
+        ?int $id = null,
+        ?int $eventId = null,
+        ?int $communityId = null,
+        ?string $redirect = null,
+        ?string $referral = null
+    ) {
         $this->denyAccessUnlessGranted('register');
 
         $user = new User();
@@ -364,6 +372,7 @@ class UserController extends AbstractController
             'gendersList' => $this->gendersList,
             'specificTerms' => $this->specificTerms,
             'phoneCodes' => $this->phoneCodes,
+            'referral' => $referral,
         ]);
     }
 
@@ -499,7 +508,7 @@ class UserController extends AbstractController
 
         $this->userManager->sendValidationEmail($user);
 
-        return new response(json_encode('emailSend'));
+        return new Response(json_encode('emailSend'));
     }
 
     /**
