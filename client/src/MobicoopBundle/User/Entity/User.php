@@ -576,6 +576,13 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $gratuityNotifications;
 
+    /**
+     * Signup referral if there is any.
+     *
+     * @var null|string
+     */
+    private $referral;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1728,6 +1735,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getReferral(): ?string
+    {
+        return $this->referral;
+    }
+
+    public function setReferral(?string $referral): self
+    {
+        $this->referral = $referral;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1787,6 +1806,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'gratuity' => $this->hasGratuity(),
             'gratuityNotifications' => $this->getGratuityNotifications(),
             'phoneCode' => $this->getPhoneCode(),
+            'referral' => $this->getReferral(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

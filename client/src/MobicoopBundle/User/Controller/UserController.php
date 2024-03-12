@@ -329,6 +329,10 @@ class UserController extends AbstractController
                 $user->setCommunityId($data['community']);
             }
 
+            if (!is_null($data['referral']) && '' !== trim($data['referral'])) {
+                $user->setReferral($data['referral']);
+            }
+
             // create user in database
             $data = $userManager->createUser($user);
             $reponseofmanager = $this->handleManagerReturnValue($data);
