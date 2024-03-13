@@ -34,6 +34,7 @@ _Include any extra information or considerations for reviewers._
 
 ### Code Review
 
+-   [ ] The target branch of the MR and the `Version Cible` field in redmine are the same.
 -   [ ] Code is easily readable.
 -   [ ] Commit are all related to MR and well written (Atomic commit).
 -   [ ] No useless logging or debugging code.
