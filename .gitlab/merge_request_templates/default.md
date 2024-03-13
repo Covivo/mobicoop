@@ -23,7 +23,7 @@ _Include any extra information or considerations for reviewers._
 ### Merge Request
 
 -   [ ] Target branch identified.
--   [ ] Code based on last version of target branch.
+-   [ ] Code based on last version of target branch (i.e. do a `git clone origin dev` localy in your branch if it came from `dev` before asking for a MR. You'll reduce the risks for conflicts)
 -   [ ] Description filled.
 -   [ ] Impact on other project codebase identified.
 -   [ ] Test run in gitlab pipeline and locally.
