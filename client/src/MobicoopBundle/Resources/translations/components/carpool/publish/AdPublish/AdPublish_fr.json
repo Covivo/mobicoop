@@ -84,8 +84,8 @@
         }
     },
     "messageFirstAd": {
-        "signUpDone": "Bravo {givenName} ! Votre inscription est terminée",
-        "alert": "Maintenant, pour être alerté de nouvelles annonces correspondant à votre trajet le plus fréquent, publier sans attendre votre première annonce de trajet régulier afin de pouvoir covoiturer rapidement."
+        "signUpDone": "Bravo {givenName}, votre inscription est terminée!",
+        "alert": "Publiez sans attendre vos trajets, quotidiens ou ponctuels, que vous soyez un passager ou un conducteur . Il est important de publier ses trajets sur l'interface afin d'être tenu au courant des covoiturages correspondants à votre besoin."
     },
     "messageSolidaryExclusiveAd": {
         "message": " Cette annonce sera une annonce de covoiturage solidaire exclusif, si vous maintenez l'option ci-dessous. Elle ne sera visible alors que par les opérateurs solidaires pour vous mettre en relation avec un demandeur solidaire. Si vous décochez cette option, votre annonce deviendra une annonce ordinaire visible à la fois par les autres covoitureurs et les opérateurs solidaires.",
