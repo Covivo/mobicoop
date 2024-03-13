@@ -1,7 +1,5 @@
 _Replace italic text by your own description_
 
-## Feature Merge Request
-
 ### Why this Merge Request
 
 _This merge request addresses, and describe the problem or user story being addressed._
@@ -24,32 +22,14 @@ _Include any extra information or considerations for reviewers._
 
 ### Merge Request
 
-- [ ] Target branch identified.
-- [ ] Code based on last version of target branch.
-- [ ] Description filled.
-- [ ] Impact on other project codebase identified.
-- [ ] Documentation reflects the changes made.
-- [ ] Test run in gitlab pipeline and locally.
-- [ ] One or more reviewer is defined
+-   [ ] Target branch identified.
+-   [ ] Code based on last version of target branch.
+-   [ ] Description filled.
+-   [ ] Impact on other project codebase identified.
+-   [ ] Test run in gitlab pipeline and locally.
 
 ### Code Review
 
-- [ ] Code follows project coding guidelines.
-- [ ] Code follows project designed architecture.
-- [ ] Code is easily readable.
-- [ ] Everything new have an explicit and pertinent name (variable, method, file ...)
-- [ ] No redundant/duplicate code (unless explain by architecture choice)
-- [ ] Commit are all related to MR and well written (Atomic commit).
-- [ ] New code is tested and covered by automated test.
-- [ ] No useless logging or debugging code.
-- [ ] No code can be replaced by library or framework code.
-
-### TODO before merge
-
-- [ ] _add any task here_
-- [ ] ...
-
-### TODO after merge
-
-- [ ] _add any task here_
-- [ ] ...
+-   [ ] Code is easily readable.
+-   [ ] Commit are all related to MR and well written (Atomic commit).
+-   [ ] No useless logging or debugging code.
