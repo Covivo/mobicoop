@@ -56,6 +56,14 @@
           <h1>{{ $t("title") }}</h1>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col>
+          <ReferralHeader
+            v-if="referral"
+            :referral="referral"
+          />
+        </v-col>
+      </v-row>
       <v-row
         v-if="!consent"
         justify="center"
@@ -613,6 +621,7 @@ import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/SignUp/";
 import MFacebookAuth from "@components/user/MFacebookAuth";
 import SsoLogins from '@components/user/SsoLogins';
+import ReferralHeader from '@components/user/SignUp/ReferralHeader';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -631,7 +640,8 @@ export default {
     Geocomplete,
     MFacebookAuth,
     CommunityHelp,
-    SsoLogins
+    SsoLogins,
+    ReferralHeader
   },
   props: {
     geoSearchUrl: {
