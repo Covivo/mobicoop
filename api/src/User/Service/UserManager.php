@@ -150,6 +150,8 @@ class UserManager
 
     private $geoTools;
 
+    private $authorizedReferrals;
+
     /**
      * @var PseudonymizationManager
      */
@@ -209,7 +211,8 @@ class UserManager
         $userMinAge,
         BookingManager $bookingManager,
         bool $carpoolStandardEnabled,
-        SsoAccountRepository $ssoAccountRepository
+        SsoAccountRepository $ssoAccountRepository,
+        array $authorizedReferrals
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -256,6 +259,7 @@ class UserManager
         $this->bookingManager = $bookingManager;
         $this->carpoolStandardEnabled = $carpoolStandardEnabled;
         $this->ssoAccountRepository = $ssoAccountRepository;
+        $this->authorizedReferrals = $authorizedReferrals;
     }
 
     /**
@@ -350,6 +354,12 @@ class UserManager
      */
     public function registerUser(User $user, bool $encodePassword = true, bool $isSolidary = false, ?SsoUser $ssoUser = null)
     {
+        if (!is_null($user->getReferral()) && '' !== trim($user->getReferral())) {
+            if (!in_array($user->getReferral(), $this->authorizedReferrals)) {
+                $user->setReferral(null);
+            }
+        }
+
         // we check if the user is on the scammer list
         $this->checkIfScammer($user);
         //  we check if the user is not underaged
@@ -1738,7 +1748,7 @@ class UserManager
     {
         foreach ($user->getSsoAccounts() as $ssoAccount) {
             /**
-             * @var ssoAccount $ssoAccount
+             * @var SsoAccount $ssoAccount
              */
             if ($ssoAccount->getSsoProvider() == $ssoUser->getProvider()) {
                 $ssoAccount->setSsoId($ssoUser->getSub());
