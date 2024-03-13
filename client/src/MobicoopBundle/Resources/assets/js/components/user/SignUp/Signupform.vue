@@ -56,14 +56,6 @@
           <h1>{{ $t("title") }}</h1>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>
-          <ReferralHeader
-            v-if="referral"
-            :referral="referral"
-          />
-        </v-col>
-      </v-row>
       <v-row
         v-if="!consent"
         justify="center"
@@ -115,6 +107,20 @@
             :href="$t('rgpd.link.route')"
           >{{ $t('rgpd.link.label') }}
           </a>
+        </v-col>
+      </v-row>
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col
+          cols="8"
+          align="center"
+        >
+          <ReferralHeader
+            v-if="referral"
+            :referral="referral"
+          />
         </v-col>
       </v-row>
       <v-row
