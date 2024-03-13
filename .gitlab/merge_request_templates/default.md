@@ -27,6 +27,10 @@ _Include any extra information or considerations for reviewers._
 -   [ ] Description filled.
 -   [ ] Impact on other project codebase identified.
 -   [ ] Test run in gitlab pipeline and locally.
+-   [ ] Need to add a .env variable (possibilty also in twig.yaml) in every client checked.
+-   [ ] Need to adapt overloaded components (MHeader, MFooter...) in every client checked.
+-   [ ] Add something to do in the [met-mep file](https://docs.google.com/document/d/1U3edMGP6MrqX5fApMnx2hfTvMG-Xd6v9PpDVFR37UVE/edit) checked.
+-   [ ] Every migrations has been tested on local environnement
 
 ### Code Review
 
