@@ -115,7 +115,6 @@
       >
         <v-col
           cols="8"
-          align="center"
         >
           <ReferralHeader
             v-if="referral"
