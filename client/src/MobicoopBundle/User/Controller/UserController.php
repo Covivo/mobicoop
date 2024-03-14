@@ -1847,6 +1847,13 @@ class UserController extends AbstractController
         return new JsonResponse($this->ceeSubscriptionManager->myEecSubscriptionsEligibility());
     }
 
+    public function parentalConsentRequest(string $email)
+    {
+        return $this->render('@Mobicoop/user/parentalConsent.html.twig', [
+            'legalGuardianEmail' => $email,
+        ]);
+    }
+
     private function mobileRedirect(string $host, string $path, array $params)
     {
         $redirectUri = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');

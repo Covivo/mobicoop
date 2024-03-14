@@ -399,6 +399,15 @@ user_update_alert:
     nl: /user/alert/update
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAlert
 
+# parental consent
+parental_consent_request:
+  path:
+    fr: /utilisateur/autorisation-parentale/{email}
+    en: /user/parental-consent/{email}
+    nl: /user/parental-consent/{email}
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::parentalConsentRequest
+
+
 # messages
 user_message_list:
   path:
