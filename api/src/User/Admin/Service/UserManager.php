@@ -36,6 +36,7 @@ use App\Geography\Ressource\Point;
 use App\Geography\Service\PointSearcher;
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
+use App\User\Event\AskParentalConsentEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Repository\UserRepository;
@@ -282,6 +283,11 @@ class UserManager
         if (!is_null($user->getTelephone())) {
             $event = new UserDelegateRegisteredPasswordSendEvent($user);
             $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+        }
+
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $event = new AskParentalConsentEvent($user);
+            $this->eventDispatcher->dispatch(AskParentalConsentEvent::NAME, $event);
         }
 
         return $user;
