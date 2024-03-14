@@ -21,26 +21,60 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces\DTO\CarpoolProof;
+namespace App\Mapper\Interfaces\DTO\CarpoolProof;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class DriverDto extends IdentityDto
+class WaypointDTO
 {
     /**
-     * @var int
+     * @var float
      */
-    private $_revenue;
+    private $_lat;
 
-    public function getRevenue(): ?int
+    /**
+     * @var float
+     */
+    private $_lon;
+
+    /**
+     * @var \DateTimeInterface
+     */
+    private $_datetime;
+
+    public function getLat(): ?float
     {
-        return $this->_revenue;
+        return $this->_lat;
     }
 
-    public function setRevenue(?int $revenue): self
+    public function setLat(?float $lat): self
     {
-        $this->_revenue = $revenue;
+        $this->_lat = $lat;
+
+        return $this;
+    }
+
+    public function getLon(): ?float
+    {
+        return $this->_lon;
+    }
+
+    public function setLon(?float $lon): self
+    {
+        $this->_lon = $lon;
+
+        return $this;
+    }
+
+    public function getDatetime(): ?\DateTimeInterface
+    {
+        return $this->_datetime;
+    }
+
+    public function setDatetime(?\DateTimeInterface $datetime): self
+    {
+        $this->_datetime = $datetime;
 
         return $this;
     }

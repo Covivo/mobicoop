@@ -21,12 +21,12 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces\DTO\CarpoolProof;
+namespace App\Mapper\Interfaces\DTO\CarpoolProof;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class PassengerDto extends IdentityDto
+class PassengerDTO extends IdentityDTO
 {
     /**
      * @var int

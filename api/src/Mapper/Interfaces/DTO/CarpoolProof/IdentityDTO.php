@@ -21,60 +21,94 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces\DTO\CarpoolProof;
+namespace App\Mapper\Interfaces\DTO\CarpoolProof;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class WaypointDto
+class IdentityDTO
 {
     /**
-     * @var float
+     * @var int
      */
-    private $_lat;
+    private $_id;
 
     /**
-     * @var float
+     * @var string
      */
-    private $_lon;
+    private $_givenName;
+
+    /**
+     * @var string
+     */
+    private $_lastName;
+
+    /**
+     * @var string
+     */
+    private $_phone;
 
     /**
      * @var \DateTimeInterface
      */
-    private $_datetime;
+    private $_birthDate;
 
-    public function getLat(): ?float
+    public function getId(): ?int
     {
-        return $this->_lat;
+        return $this->_id;
     }
 
-    public function setLat(?float $lat): self
+    public function setId(?int $id): self
     {
-        $this->_lat = $lat;
+        $this->_id = $id;
 
         return $this;
     }
 
-    public function getLon(): ?float
+    public function getGivenName(): ?string
     {
-        return $this->_lon;
+        return $this->_givenName;
     }
 
-    public function setLon(?float $lon): self
+    public function setGivenName(?string $givenName): self
     {
-        $this->_lon = $lon;
+        $this->_givenName = $givenName;
 
         return $this;
     }
 
-    public function getDatetime(): ?\DateTimeInterface
+    public function getLastName(): ?string
     {
-        return $this->_datetime;
+        return $this->_lastName;
     }
 
-    public function setDatetime(?\DateTimeInterface $datetime): self
+    public function setLastName(?string $lastName): self
     {
-        $this->_datetime = $datetime;
+        $this->_lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->_phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->_phone = $phone;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->_birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->_birthDate = $birthDate;
 
         return $this;
     }

@@ -28,4 +28,141 @@ use App\ExternalService\Interfaces\DTO\DTO;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class CarpoolProofDTO implements DTO {}
+class CarpoolProofDTO implements DTO
+{
+    /**
+     * @var int
+     */
+    private $_id;
+
+    /**
+     * @var PassengerDTO
+     */
+    private $_passenger;
+
+    /**
+     * @var DriverDTO
+     */
+    private $_driver;
+
+    /**
+     * @var ?WaypointDTO
+     */
+    private $_pickUpPassenger;
+
+    /**
+     * @var ?WaypointDTO
+     */
+    private $_pickUpDriver;
+
+    /**
+     * @var ?WaypointDTO
+     */
+    private $_dropOffDriver;
+
+    /**
+     * @var ?WaypointDTO
+     */
+    private $_dropOffPassenger;
+
+    /**
+     * @var int
+     */
+    private $_distance;
+
+    public function getId(): ?int
+    {
+        return $this->_id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->_id = $id;
+
+        return $this;
+    }
+
+    public function getPassenger(): ?PassengerDTO
+    {
+        return $this->_passenger;
+    }
+
+    public function setPassenger(?PassengerDTO $passenger): self
+    {
+        $this->_passenger = $passenger;
+
+        return $this;
+    }
+
+    public function getDriver(): ?DriverDTO
+    {
+        return $this->_driver;
+    }
+
+    public function setDriver(?DriverDTO $driver): self
+    {
+        $this->_driver = $driver;
+
+        return $this;
+    }
+
+    public function getPickUpPassenger(): ?WaypointDTO
+    {
+        return $this->_pickUpPassenger;
+    }
+
+    public function setPickUpPassenger(?WaypointDTO $pickUpPassenger): self
+    {
+        $this->_pickUpPassenger = $pickUpPassenger;
+
+        return $this;
+    }
+
+    public function getPickUpDriver(): ?WaypointDTO
+    {
+        return $this->_pickUpDriver;
+    }
+
+    public function setPickUpDriver(?WaypointDTO $pickUpDriver): self
+    {
+        $this->_pickUpDriver = $pickUpDriver;
+
+        return $this;
+    }
+
+    public function getDropOffPassenger(): ?WaypointDTO
+    {
+        return $this->_dropOffPassenger;
+    }
+
+    public function setDropOffPassenger(?WaypointDTO $dropOffPassenger): self
+    {
+        $this->_dropOffPassenger = $dropOffPassenger;
+
+        return $this;
+    }
+
+    public function getDropOffDriver(): ?WaypointDTO
+    {
+        return $this->_dropOffDriver;
+    }
+
+    public function setDropOffDriver(?WaypointDTO $dropOffDriver): self
+    {
+        $this->_dropOffDriver = $dropOffDriver;
+
+        return $this;
+    }
+
+    public function getDistance(): ?int
+    {
+        return $this->_distance;
+    }
+
+    public function setDistance(?int $distance): self
+    {
+        $this->_distance = $distance;
+
+        return $this;
+    }
+}

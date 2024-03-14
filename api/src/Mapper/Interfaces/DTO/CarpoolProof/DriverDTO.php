@@ -21,14 +21,27 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Interfaces\DTO;
+namespace App\Mapper\Interfaces\DTO\CarpoolProof;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-interface DTO
+class DriverDTO extends IdentityDTO
 {
-    // public function getId(): ?int;
+    /**
+     * @var int
+     */
+    private $_revenue;
 
-    // public function setId(?int $id): self;
+    public function getRevenue(): ?int
+    {
+        return $this->_revenue;
+    }
+
+    public function setRevenue(?int $revenue): self
+    {
+        $this->_revenue = $revenue;
+
+        return $this;
+    }
 }
