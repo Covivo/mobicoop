@@ -1,0 +1,34 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+    <table align="center" style="border-spacing:0;text-align:left;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
+    <tr>
+        <td>
+            <p>Bonjour,</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>[Votre fille/Votre fils] <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.familyName|capitalize}}</b>. ([née/né] le {{context.user.birthDate|date("d/m/Y")}}) souhaite s'inscrire sur la plateforme NOM_PLATEFORME pour faciliter ses déplacements.</p>
+            <p>[Votre fille/Votre fils] <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.familyName|capitalize}}</b> [mineure/mineur], son inscription a été bloquée et [elle/il] a indiqué votre adresse email afin d'obtenir votre autorisation parentale à son utilisation du service.</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Pour donner votre autorisation parentale à ce que {{context.user.givenName|capitalize}} utilise {{api_env('EMAILS_PLATFORM_NAME')}}, il vous suffit de copier le code ci-dessous dans un court formulaire accessible via le bouton "Donner son autorisation parentale". Ce court formulaire vous donnera accès aux bonnes pratiques recommandées pour l'usage des services de {{api_env('EMAILS_PLATFORM_NAME')}}.</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><b>Code d'autorisation parentale :</b>{{context.user.parentalConsentToken}}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>En vous remerciant,</p>
+            <p>L'équipe {{api_env('EMAILS_PLATFORM_NAME')}}.</p>
+        </td>
+    </tr>
+    </table>
+{% endblock %}
