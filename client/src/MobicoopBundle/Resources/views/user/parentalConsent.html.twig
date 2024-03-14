@@ -1,0 +1,14 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}
+  {% trans from 'ui' %}user.parentalConsent.title{% endtrans %} - {{ app_name }}
+{% endblock %}
+{% block stylesheets %}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
+{% endblock %}
+{% block main %}
+
+<Parental-consent
+  legal-guardian-email="{{ legalGuardianEmail }}"
+/>
+{% endblock %}
