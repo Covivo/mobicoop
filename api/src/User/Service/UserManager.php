@@ -571,6 +571,10 @@ class UserManager
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
 
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $user->setParentalConsentToken($this->createShortToken());
+        }
+
         // return the user
         return $user;
     }

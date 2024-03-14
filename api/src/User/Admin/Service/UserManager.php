@@ -231,11 +231,14 @@ class UserManager
         }
 
         // create token to validate regisration
-        $user->setEmailToken($this->userManager->createToken($user));
+        $user->setEmailToken($this->userManager->createShortToken());
 
         // create token to unsubscribe from the instance news
         $user->setUnsubscribeToken($this->userManager->createToken($user));
 
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $user->setParentalConsentToken($this->userManager->createShortToken());
+        }
         // check if identity is validated manually
         if ($user->hasVerifiedIdentity()) {
             $user->setIdentityStatus(IdentityProof::STATUS_ACCEPTED);
