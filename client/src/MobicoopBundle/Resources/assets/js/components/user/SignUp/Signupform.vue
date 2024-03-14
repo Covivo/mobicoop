@@ -430,7 +430,7 @@
                 />
                 <!-- community -->
                 <v-row
-                  v-if="communityShow"
+                  v-if="communityShow && !referral"
                   class="text-justify pb-5"
                 >
                   <community-help
@@ -439,7 +439,7 @@
                 </v-row>
 
                 <v-autocomplete
-                  v-if="communityShow"
+                  v-if="communityShow && !referral"
                   v-model="selectedCommunity"
                   :items="communities"
                   outlined
