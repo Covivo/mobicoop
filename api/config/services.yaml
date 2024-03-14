@@ -416,6 +416,7 @@ services:
   App\Communication\Service\PushToCertifiedJourney\PushToCertifiedJourneyManager:
     arguments:
       $timeMargin: "%env(int:PUSH_CARPOOL_START_TIME_MARGIN)%"
+      $serverUtcTimeDiff: "%env(int:SERVER_UTC_TIME_DIFF)%"
 
   App\Communication\Controller\:
     resource: "../src/Communication/Controller"

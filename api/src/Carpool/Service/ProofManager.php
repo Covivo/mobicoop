@@ -904,8 +904,8 @@ class ProofManager
 
     public function proofSameDeviceCheck(CarpoolProof $proof)
     {
-        if (!is_null($proof->getDriverPhoneUniqueId() && !is_null($proof->getPassengerPhoneUniqueId()) && $proof->getDriverPhoneUniqueId() == $proof->getPassengerPhoneUniqueId())) {
-            $proof->setStatus(CarpoolProof::STATUS_INVALID_SPLITTED_TRIP);
+        if (!is_null($proof->getDriverPhoneUniqueId()) && !is_null($proof->getPassengerPhoneUniqueId()) && $proof->getDriverPhoneUniqueId() == $proof->getPassengerPhoneUniqueId()) {
+            $proof->setStatus(CarpoolProof::STATUS_INVALID_DUPLICATE_DEVICE);
             $this->entityManager->persist($proof);
             $this->entityManager->flush();
 

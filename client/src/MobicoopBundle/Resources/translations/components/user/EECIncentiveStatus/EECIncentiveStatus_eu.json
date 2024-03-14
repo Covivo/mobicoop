@@ -83,7 +83,7 @@
         "paymentStandard": "Versement: 50€ dès le 1<sup>er</sup> trajet."
       },
       "SD": {
-        "intro": "<span class=\"font-weight-bold\">Votre premier trajet de moins de 80 km a été réalisé en 2023&nbsp;?</span> Vous bénéficierez d’une prime de 100€ si vos preuves de covoiturage sont validées par le Registre de Preuve de Covoiturage.",
+        "intro": "<span class=\"font-weight-bold\">Votre premier trajet de moins de 80 km a été réalisé en 2024 ?</span> Vous bénéficierez d’une prime de 100€ si, sous 3 mois, vous réalisez au moins 10 trajets certifiés par le Registre de Preuve de Covoiturage (vérification de la \"classe C\" de vos trajets disponible via votre export de covoiturages acceptés).",
         "expiredText": "La période légale de 3 mois pour compléter vos trajets courte distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant.",
         "paymentImproved": "Versement: 25€ au 1<sup>er</sup> trajet, 75€ au 10<sup>e</sup>.",
         "paymentStandard": "Versement: 50€ dès le 1<sup>er</sup> trajet."
@@ -101,7 +101,7 @@
       "carpool": {
         "title": "Réaliser un trajet",
         "texts": {
-          "default": "Vous devez réaliser un covoiturage avec un passager. Pour qu’il soit pris en compte pour la prime, il devra être certifié par une preuve de covoiturage&nbsp;:<ol><li>Numéros de téléphone validés pour  le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Identités bancaires (RIB + pièce d’identité en cours de validité) données par le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Points de départ et d'arrivée certifiés par le conducteur <span class=\"font-weight-bold\">ET</span> le passager avec la géolocalisation activée.</li></ol>",
+          "default": "<p>Vous devez réaliser un covoiturage en tant que conducteur. Pour qu’il soit pris en compte pour la prime, il devra être certifié par une preuve de covoiturage&nbsp;:</p><ol><li>Numéros de téléphone validés pour  le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Identités bancaires (RIB + pièce d’identité en cours de validité) données par le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Points de départ et d'arrivée certifiés par le conducteur <span class=\"font-weight-bold\">ET</span> le passager avec la géolocalisation activée.</li></ol><p>En respectant ces étapes, votre trajet sera validé par le Registre de Preuve de Covoiturage en \"classe C\" (<span class=\"font-italic\">détails disponibles via votre export de covoiturages acceptés</span>).</p>",
           "success": "Votre covoiturage a bien été enregistré. Afin de recevoir votre prime, assurez-vous d’avoir bien renseigné votre numéro de téléphone, votre pièce d’identité et votre RIB.<br /><span class=\"font-weight-bold\">Attention</span> : votre passager doit également renseigner son numéro de téléphone, sa pièce d’identité et son RIB.",
           "error": "Votre preuve de covoiturage n’est pas conforme.<ul><li>Le passager n’a pas validé son numéro de téléphone.</li><li>Le passager n’a pas complété son identité bancaire (RIB et pièce d’identité).</li><li>Il manque une certification géolocalisée d’un point de prise en charge ou de dépose du passager ou conducteur.</li><li>Les certifications géolocalisées du point de prise en charge ou du point de dépose étaient trop espacées entre le passager et le conducteur.</li><li>Une erreur technique est intervenue dans la communication avec le Registre de Preuve de Covoiturage.</li></ul>"
         },
@@ -125,7 +125,7 @@
       "payAndValidate": {
         "title": "Valider paiement et preuve",
         "texts": {
-          "default": "Votre passager doit payer électroniquement le covoiturage. Une fois votre trajet effectué, votre preuve de covoiturage est automatiquement envoyé au Registre de Preuve de Covoiturage pour validation.<br />Votre prime vous sera reversée une fois cette preuve validée et le paiement électronique reçu.",
+          "default": "<p>Votre passager doit payer électroniquement le covoiturage.<br />Une fois votre trajet effectué, votre preuve de covoiturage est automatiquement envoyée au Registre de Preuve de Covoiturage pour validation. Votre trajet doit être de \"classe C\" pour être comptabilisé en vue de la prime (<span class=\"font-italic\">détails disponibles via votre export de covoiturages acceptés</span>).<br />Une fois cette preuve validée et le paiement électronique reçu, la prime vous sera reversée sous 3 mois.</p>",
           "success": "Bravo, votre passager a bien payé le covoiturage et  la preuve du covoiturage a  été réalisée&nbsp;!<br />Elle a été envoyée au Registre de Preuve de Covoiturage, où elle est cours de validation.",
           "error": "Votre passager n’a pas payé électroniquement le covoiturage ou alors votre preuve de covoiturage n’a pas été validée par le Registre de Preuve de Covoiturage."
         },

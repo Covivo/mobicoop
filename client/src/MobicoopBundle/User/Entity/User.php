@@ -576,6 +576,29 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $gratuityNotifications;
 
+    /**
+     * @var null|string the email of the user's legal guardian
+     *
+     * @Assert\Email()
+     *
+     * @Groups({"post","put"})
+     */
+    private $legalGuardianEmail;
+
+    /**
+     * @var null|\DateTimeInterface Date of the parental consent
+     *
+     * @Groups({"post","put"})
+     */
+    private $parentalConsentDate;
+
+    /**
+     * Indicate if the user need the parental consent.
+     *
+     * @var null|bool
+     */
+    private $needParentalConsent;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1728,6 +1751,42 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getLegalGuardianEmail(): ?string
+    {
+        return $this->legalGuardianEmail;
+    }
+
+    public function setLegalGuardianEmail(?string $legalGuardianEmail): self
+    {
+        $this->legalGuardianEmail = $legalGuardianEmail;
+
+        return $this;
+    }
+
+    public function getParentalConsentDate(): ?\DateTimeInterface
+    {
+        return $this->parentalConsentDate;
+    }
+
+    public function setParentalConsentDate(?\DateTimeInterface $parentalConsentDate): self
+    {
+        $this->parentalConsentDate = $parentalConsentDate;
+
+        return $this;
+    }
+
+    public function getNeedParentalConsent(): ?bool
+    {
+        return $this->needParentalConsent;
+    }
+
+    public function setNeedParentalConsent(?bool $needParentalConsent): self
+    {
+        $this->needParentalConsent = $needParentalConsent;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1787,6 +1846,9 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'gratuity' => $this->hasGratuity(),
             'gratuityNotifications' => $this->getGratuityNotifications(),
             'phoneCode' => $this->getPhoneCode(),
+            'legalGuardianEmail' => $this->getLegalGuardianEmail(),
+            'parentalConsentDate' => $this->getParentalConsentDate(),
+            'needParentalConsent' => $this->getNeedParentalConsent(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

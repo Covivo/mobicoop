@@ -7,6 +7,7 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\Communication\Service\NotificationManager;
 use App\Communication\Service\PushToCertifiedJourney\PushEvents\PushBeforeCarpoolEndEvent;
 use App\Communication\Service\PushToCertifiedJourney\PushEvents\PushBeforeCarpoolStartEvent;
+use App\Service\Date\DateService as DateDateService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PushToCertifiedJourneyManager
@@ -36,17 +37,24 @@ class PushToCertifiedJourneyManager
      */
     protected $_timeMargin;
 
+    /**
+     * @var int
+     */
+    private $_serverUtcTimeDiff;
+
     public function __construct(
         NotificationManager $notificationManager,
         AskRepository $askRepository,
         CarpoolProofRepository $carpoolProofRepository,
-        int $timeMargin
+        int $timeMargin,
+        int $serverUtcTimeDiff = DateDateService::SERVER_UTC_TIME_DIFF
     ) {
         $this->_notificationManager = $notificationManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_askRepository = $askRepository;
 
         $this->_timeMargin = $timeMargin;
+        $this->_serverUtcTimeDiff = $serverUtcTimeDiff;
     }
 
     /**
@@ -62,13 +70,13 @@ class PushToCertifiedJourneyManager
 
     protected function _pushBeforeCarpoolStart(): void
     {
-        $event = new PushBeforeCarpoolStartEvent($this->_notificationManager, $this->_interval, $this->_askRepository);
+        $event = new PushBeforeCarpoolStartEvent($this->_notificationManager, $this->_interval, $this->_askRepository, $this->_serverUtcTimeDiff);
         $event->execute();
     }
 
     protected function _pushBeforeCarpoolEnd(): void
     {
-        $event = new PushBeforeCarpoolEndEvent($this->_notificationManager, $this->_interval, $this->_carpoolProofRepository, $this->_timeMargin);
+        $event = new PushBeforeCarpoolEndEvent($this->_notificationManager, $this->_interval, $this->_carpoolProofRepository, $this->_timeMargin, $this->_serverUtcTimeDiff);
         $event->execute();
     }
 

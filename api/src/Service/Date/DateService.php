@@ -17,9 +17,16 @@ class DateService
     public const INTERVAL_ADD = 'add';
     public const INTERVAL_SUB = 'sub';
 
-    public static function getNow(): \DateTime
+    public const SERVER_UTC_TIME_DIFF = 1;
+
+    public static function getNow(int $serverUtcTimeDiff = self::SERVER_UTC_TIME_DIFF): \DateTime
     {
-        return new \DateTime();
+        return static::addTimediffBetweenServerAndUtc(new \DateTime(), $serverUtcTimeDiff);
+    }
+
+    public static function addTimediffBetweenServerAndUtc(\DateTimeInterface $date, int $duration = self::SERVER_UTC_TIME_DIFF): \DateTime
+    {
+        return $date->add(new \DateInterval('PT'.$duration.'H'));
     }
 
     public static function getDateAccordingFutureInterval(string $baseTime, int $interval, \DateTimeInterface $referenceDate = null): \DateTime
