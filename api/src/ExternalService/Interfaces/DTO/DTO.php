@@ -28,7 +28,7 @@ namespace App\ExternalService\Interfaces\DTO;
  */
 interface DTO
 {
-    // public function getId(): ?int;
+    public function getId(): ?int;
 
-    // public function setId(?int $id): self;
+    public function setId(?int $id);
 }

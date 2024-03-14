@@ -75,7 +75,7 @@ class CarpoolProofDTO implements DTO
         return $this->_id;
     }
 
-    public function setId(?int $id): self
+    public function setId(?int $id)
     {
         $this->_id = $id;
 
