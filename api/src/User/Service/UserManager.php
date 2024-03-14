@@ -65,6 +65,7 @@ use App\User\Entity\SsoAccount;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Entity\UserNotification;
+use App\User\Event\AskParentalConsentEvent;
 use App\User\Event\SsoAssociationEvent;
 use App\User\Event\SsoAuthenticationEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
@@ -388,6 +389,11 @@ class UserManager
                     $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
                 }
             }
+        }
+
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $event = new AskParentalConsentEvent($user);
+            $this->eventDispatcher->dispatch(AskParentalConsentEvent::NAME, $event);
         }
 
         //  we dispatch the gamification event associated
