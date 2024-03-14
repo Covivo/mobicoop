@@ -31,6 +31,7 @@ use App\Communication\Service\NotificationManager;
 use App\DataProvider\Entity\RezopouceProvider;
 use App\User\Admin\Service\UserManager as AdminUserManager;
 use App\User\Entity\IdentityProof;
+use App\User\Event\AskParentalConsentEvent;
 use App\User\Event\AutoUnsubscribedEvent;
 use App\User\Event\ConfirmedCarpoolerEvent;
 use App\User\Event\IdentityProofModeratedEvent;
@@ -119,6 +120,7 @@ class UserSubscriber implements EventSubscriberInterface
             TooLongInactivityFirstWarningEvent::NAME => 'onTooLongInactivityFirstWarning',
             TooLongInactivityLastWarningEvent::NAME => 'onTooLongInactivityLastWarning',
             AutoUnsubscribedEvent::NAME => 'onAutoUnsubscribedEvent',
+            AskParentalConsentEvent::NAME => 'onAskParentalEvent',
         ];
     }
 
@@ -260,5 +262,10 @@ class UserSubscriber implements EventSubscriberInterface
     public function onAutoUnsubscribedEvent(AutoUnsubscribedEvent $event)
     {
         $this->notificationManager->notifies(AutoUnsubscribedEvent::NAME, $event->getUser());
+    }
+
+    public function onAskParentalEvent(AskParentalConsentEvent $event)
+    {
+        $this->notificationManager->notifies(AskParentalConsentEvent::NAME, $event->getUser(), $event->getUser());
     }
 }
