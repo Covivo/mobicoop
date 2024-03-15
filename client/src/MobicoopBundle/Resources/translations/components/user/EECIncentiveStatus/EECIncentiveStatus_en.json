@@ -208,9 +208,9 @@
     "success": "La souscription aux aides a été effectuée.",
     "failed": "La souscription aux aides a échouée.",
     "errors": {
-      "eec_user_sso_request_error": "Il y a eu un problème prendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
-      "eec_user_sso_account_incomplete": "Il y a eu un problème prendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
-      "eec_user_sso_unknowned": "Il y a eu un problème prendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
+      "eec_user_sso_request_error": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
+      "eec_user_sso_account_incomplete": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
+      "eec_user_sso_unknowned": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
       "eec_subscriptionType_unallowed": "Le type d'incitation demandé n'est pas disponible.",
       "eec_subscriptionType_long_allready_subscribed": "Vous avez déjà souscrit à l'incitation longue distance.",
       "eec_subscriptionType_short_allready_subscribed": "Vous avez déjà souscrit à l'incitation courte distance.",
