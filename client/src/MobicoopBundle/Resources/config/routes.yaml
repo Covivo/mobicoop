@@ -2105,3 +2105,25 @@ post_external_booking:
     en: /booking/request
     nl: /booking/request
   controller: Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\BookingController::postBooking
+
+###########################
+# user under 18 routes #
+###########################
+
+# get the user under 18 linked to parental consent(POST) (AJAX json)
+get_user_under_18:
+  methods: [POST]
+  path:
+    fr: /user/under18
+    en: /user/under18
+    nl: /user/under18
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getUserUnder18
+
+# give the parental consent(POST) (AJAX json)
+give_parental_consent:
+  methods: [POST]
+  path:
+    fr: /user/giveParentalConsent
+    en: /user/giveParentalConsent
+    nl: /user/giveParentalConsent
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::giveParentalConsent  
