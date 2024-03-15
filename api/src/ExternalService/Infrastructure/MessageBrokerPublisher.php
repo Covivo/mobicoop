@@ -33,7 +33,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class MessageDataSender extends BrokerPublisher
+class MessageBrokerPublisher extends BrokerPublisher
 {
     private const AUTHORIZED_CONTEXTS = [
         'CarpoolProof' => 'carpool.proof',

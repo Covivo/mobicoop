@@ -24,7 +24,7 @@ namespace App\ExternalService\Core\Application\Service;
 
 use App\ExternalService\Core\Application\Exception\ContextNotProvidedException;
 use App\ExternalService\Core\Application\Service\MessageDataSender as ServiceMessageDataSender;
-use App\ExternalService\Infrastructure\MessageDataSender;
+use App\ExternalService\Infrastructure\MessageBrokerPublisher;
 use App\Mapper\Interfaces\DTO\CarpoolProof\CarpoolProofDTO;
 use PHPUnit\Framework\TestCase;
 
@@ -39,7 +39,7 @@ class MessageDataSenderTest extends TestCase
 
     public function setUp(): void
     {
-        $messageDataSender = $this->getMockBuilder(MessageDataSender::class)
+        $messageDataSender = $this->getMockBuilder(MessageBrokerPublisher::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;

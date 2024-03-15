@@ -623,12 +623,13 @@ services:
       $username: "%env(string:BROKER_USERNAME)%"
       $password: "%env(string:BROKER_PASSWORD)%"
 
-  mobicoop.externalservice.infrastructure.message_data_sender:
-    class: App\ExternalService\Infrastructure\MessageDataSender
+  mobicoop.externalservice.infrastructure.message_broker_publisher:
+    class: App\ExternalService\Infrastructure\MessageBrokerPublisher
 
   mobicoop.externalservice.core.application.service.message_data_sender:
     class: App\ExternalService\Core\Application\Service\MessageDataSender
-    arguments: ["@mobicoop.externalservice.infrastructure.message_data_sender"]
+    arguments:
+      ["@mobicoop.externalservice.infrastructure.message_broker_publisher"]
 
   # Fixtures Basic
   App\DataFixtures\BasicFixtures:
