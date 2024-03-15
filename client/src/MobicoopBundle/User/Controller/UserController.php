@@ -1591,7 +1591,10 @@ class UserController extends AbstractController
         if ($this->getUser()) {
             $result = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
 
-            if (preg_match('/(E|e)rror/', $result->getType())) {
+            if (
+                !$result instanceof User
+                && preg_match('/(E|e)rror/', $result->getType())
+            ) {
                 $responseData['eecSsoAuthError'] = $result->getDescription();
             }
         }
