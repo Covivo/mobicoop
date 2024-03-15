@@ -48,10 +48,8 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         $response = $this->getToken($code);
         $content = json_decode($response->getContent());
 
-        if (
-            Response::HTTP_OK != $response->getStatusCode()
-        ) {
-            throw new \LogicException('Error getUserProfile');
+        if (Response::HTTP_OK != $response->getStatusCode()) {
+            throw new \LogicException('Error eec.user.sso.request.error');
         }
 
         if (
@@ -81,13 +79,13 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
                 || is_null($ssoUser->getLastname())
                 || is_null($ssoUser->getEmail()))
             ) {
-                throw new \LogicException('Not enough infos about the User');
+                throw new \LogicException('Error eec.user.sso.account.incomplete');
             }
 
             return $ssoUser;
         }
 
-        throw new \LogicException('Error getUserProfile');
+        throw new \LogicException('Error eec.user.sso.unknowned');
     }
 
     public function getAppToken(): Response
