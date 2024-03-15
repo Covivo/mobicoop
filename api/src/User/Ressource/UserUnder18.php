@@ -71,7 +71,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "user_under_18_get_by_uuid"={
  *             "method"="GET",
  *             "normalization_context"={"groups"={"read"}},
- *             "path"="/userUnder18s/{test}",
+ *             "path"="/userUnder18s/{id}",
  *             "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
@@ -130,12 +130,12 @@ class UserUnder18
         }
     }
 
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(string $id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
 
