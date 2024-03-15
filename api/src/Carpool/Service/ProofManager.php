@@ -39,10 +39,6 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\WaypointRepository;
 use App\Carpool\Ressource\ClassicProof;
 use App\DataProvider\Service\RpcApiManager;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\DriverDto;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\PassengerDto;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\WaypointDto;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\AddressCompleter;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
@@ -913,64 +909,6 @@ class ProofManager
         }
 
         return true;
-    }
-
-    public function buildCarpoolProofDto(CarpoolProof $carpoolProof): CarpoolProofDto
-    {
-        $carpoolProofDto = new CarpoolProofDto();
-        $carpoolProofDto->setId($carpoolProof->getId());
-        $carpoolProofDto->setDistance($carpoolProof->getDistance());
-
-        $passengerDto = new PassengerDto();
-        $passengerDto->setId($carpoolProof->getPassenger()->getId());
-        $passengerDto->setGivenName($carpoolProof->getPassenger()->getGivenName());
-        $passengerDto->setLastName($carpoolProof->getPassenger()->getFamilyName());
-        $passengerDto->setBirthDate($carpoolProof->getPassenger()->getBirthDate());
-        $passengerDto->setPhone($carpoolProof->getPassenger()->getTelephone());
-        $passengerDto->setSeats($carpoolProof->getAsk()->getCriteria()->getSeatsPassenger());
-        $passengerDto->setContribution((int) round($carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice() * 100, 0));
-        $carpoolProofDto->setPassenger($passengerDto);
-
-        $driverDto = new DriverDto();
-        $driverDto->setId($carpoolProof->getDriver()->getId());
-        $driverDto->setGivenName($carpoolProof->getDriver()->getGivenName());
-        $driverDto->setLastName($carpoolProof->getDriver()->getFamilyName());
-        $driverDto->setBirthDate($carpoolProof->getDriver()->getBirthDate());
-        $driverDto->setPhone($carpoolProof->getDriver()->getTelephone());
-        $driverDto->setRevenue((int) round($carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice() * 100, 0));
-        $carpoolProofDto->setDriver($driverDto);
-
-        if (!is_null($carpoolProof->getPickUpPassengerAddress()) && !is_null($carpoolProof->getPickUpPassengerDate())) {
-            $pickUpPassenger = new WaypointDto();
-            $pickUpPassenger->setLat($carpoolProof->getPickUpPassengerAddress()->getLatitude());
-            $pickUpPassenger->setLon($carpoolProof->getPickUpPassengerAddress()->getLongitude());
-            $pickUpPassenger->setDatetime($carpoolProof->getPickUpPassengerDate());
-            $carpoolProofDto->setPickUpPassenger($pickUpPassenger);
-        }
-
-        if (!is_null($carpoolProof->getPickUpDriverAddress()) && !is_null($carpoolProof->getPickUpDriverDate())) {
-            $pickUpDriver = new WaypointDto();
-            $pickUpDriver->setLat($carpoolProof->getPickUpDriverAddress()->getLatitude());
-            $pickUpDriver->setLon($carpoolProof->getPickUpDriverAddress()->getLongitude());
-            $pickUpDriver->setDatetime($carpoolProof->getPickUpDriverDate());
-            $carpoolProofDto->setPickUpDriver($pickUpDriver);
-        }
-        if (!is_null($carpoolProof->getDropOffDriverAddress()) && !is_null($carpoolProof->getDropOffDriverDate())) {
-            $dropOffDriver = new WaypointDto();
-            $dropOffDriver->setLat($carpoolProof->getDropOffDriverAddress()->getLatitude());
-            $dropOffDriver->setLon($carpoolProof->getDropOffDriverAddress()->getLongitude());
-            $dropOffDriver->setDatetime($carpoolProof->getDropOffDriverDate());
-            $carpoolProofDto->setDropOffPassenger($dropOffDriver);
-        }
-        if (!is_null($carpoolProof->getDropOffPassengerAddress()) && !is_null($carpoolProof->setDropOffPassenger())) {
-            $dropOffPassenger = new WaypointDto();
-            $dropOffPassenger->setLat($carpoolProof->getDropOffPassengerAddress()->getLatitude());
-            $dropOffPassenger->setLon($carpoolProof->getDropOffPassengerAddress()->getLongitude());
-            $dropOffPassenger->setDatetime($carpoolProof->getDropOffPassengerDate());
-            $carpoolProofDto->setDropOffPassenger($dropOffPassenger);
-        }
-
-        return $carpoolProofDto;
     }
 
     /**
