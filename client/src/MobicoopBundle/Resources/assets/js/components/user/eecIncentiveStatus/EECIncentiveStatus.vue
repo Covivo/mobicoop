@@ -147,14 +147,14 @@ export default {
     afterEECSubscriptionValidation() {
       if (this.isAfterEecSubscription) {
         switch (true) {
-        case null !== this.subscriptions.longDistanceSubscription.journeys && null !== this.subscriptions.shortDistanceSubscription.journeys:
+        case this.subscriptions.longDistanceSubscription && this.subscriptions.shortDistanceSubscription:
           this.snackbar.color = 'success';
           this.snackbar.text = this.$t('EEC-subscription-snackbar.success');
           break;
-        case null === this.subscriptions.longDistanceSubscription.journeys && null !== this.subscriptions.shortDistanceSubscription.journeys:
+        case !this.subscriptions.longDistanceSubscription && this.subscriptions.shortDistanceSubscription:
           this.snackbar.text = this.$t('EEC-subscription-snackbar.longDistanceFailed');
           break;
-        case null !== this.subscriptions.longDistanceSubscription.journeys && null === this.subscriptions.shortDistanceSubscription.journeys:
+        case this.subscriptions.longDistanceSubscription && !this.subscriptions.shortDistanceSubscription:
           this.snackbar.text = this.$t('EEC-subscription-snackbar.shortDistanceFailed');
           break;
         default:
