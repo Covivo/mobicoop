@@ -605,17 +605,17 @@ services:
   # External Service
   App\ExternalService\Infrastructure\BrokerPublisher:
     arguments:
-      $uri: "%env(string:BROKER_URI)%"
-      $port: "%env(int:BROKER_PORT)%"
-      $username: "%env(string:BROKER_USERNAME)%"
-      $password: "%env(string:BROKER_PASSWORD)%"
+      $uri: "%env(string:EXTERNAL_SERVICE_BROKER_URI)%"
+      $port: "%env(int:EXTERNAL_SERVICE_BROKER_PORT)%"
+      $username: "%env(string:EXTERNAL_SERVICE_BROKER_USERNAME)%"
+      $password: "%env(string:EXTERNAL_SERVICE_BROKER_PASSWORD)%"
 
   App\Mapper\Command\CarpoolProofListeningCommand:
     arguments:
-      $uri: "%env(string:BROKER_URI)%"
-      $port: "%env(int:BROKER_PORT)%"
-      $username: "%env(string:BROKER_USERNAME)%"
-      $password: "%env(string:BROKER_PASSWORD)%"
+      $uri: "%env(string:EXTERNAL_SERVICE_BROKER_URI)%"
+      $port: "%env(int:EXTERNAL_SERVICE_BROKER_PORT)%"
+      $username: "%env(string:EXTERNAL_SERVICE_BROKER_USERNAME)%"
+      $password: "%env(string:EXTERNAL_SERVICE_BROKER_PASSWORD)%"
 
   mobicoop.externalservice.infrastructure.message_broker_publisher:
     class: App\ExternalService\Infrastructure\MessageBrokerPublisher
