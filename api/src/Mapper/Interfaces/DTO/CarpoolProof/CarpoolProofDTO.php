@@ -28,12 +28,9 @@ use App\ExternalService\Interfaces\DTO\DTO;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class CarpoolProofDTO implements DTO
+class CarpoolProofDTO extends DTO
 {
-    /**
-     * @var int
-     */
-    private $_id;
+    public const CONTEXT = 'carpool.proof';
 
     /**
      * @var PassengerDTO
@@ -69,18 +66,6 @@ class CarpoolProofDTO implements DTO
      * @var int
      */
     private $_distance;
-
-    public function getId(): ?int
-    {
-        return $this->_id;
-    }
-
-    public function setId(?int $id)
-    {
-        $this->_id = $id;
-
-        return $this;
-    }
 
     public function getPassenger(): ?PassengerDTO
     {

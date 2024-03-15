@@ -26,9 +26,39 @@ namespace App\ExternalService\Interfaces\DTO;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-interface DTO
+abstract class DTO
 {
-    public function getId(): ?int;
+    /**
+     * @var int
+     */
+    private $_id;
 
-    public function setId(?int $id);
+    /**
+     * @var string
+     */
+    private $_context;
+
+    public function getId(): ?int
+    {
+        return $this->_id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->_id = $id;
+
+        return $this;
+    }
+
+    public function getContext(): string
+    {
+        return $this->_context;
+    }
+
+    public function setContext(string $context): self
+    {
+        $this->_context = $context;
+
+        return $this;
+    }
 }
