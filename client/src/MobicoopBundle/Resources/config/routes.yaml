@@ -393,9 +393,9 @@ user_update_alert:
 # parental consent
 parental_consent_request:
   path:
-    fr: /utilisateur/autorisation-parentale/{email}
-    en: /user/parental-consent/{email}
-    nl: /user/parental-consent/{email}
+    fr: /utilisateur/autorisation-parentale/{uuid}
+    en: /user/parental-consent/{uuid}
+    nl: /user/parental-consent/{uuid}
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::parentalConsentRequest
 
 
