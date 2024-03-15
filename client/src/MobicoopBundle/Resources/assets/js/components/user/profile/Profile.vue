@@ -89,6 +89,7 @@
                   :carpool-settings-display="carpoolSettingsDisplay"
                   :cee-display="ceeDisplay"
                   :is-after-eec-subscription="isAfterEecSubscription"
+                  :eec-sso-auth-error="eecSsoAuthError"
                   :api-uri="apiUri"
                   :genders-list="gendersList"
                   :eec-instance="eecInstance"
@@ -307,6 +308,10 @@ export default {
     isAfterEecSubscription: {
       type: Boolean,
       default: false
+    },
+    eecSsoAuthError: {
+      type: String,
+      default: null
     },
     apiUri: {
       type: String,
