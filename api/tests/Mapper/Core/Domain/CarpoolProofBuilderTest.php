@@ -21,11 +21,10 @@
  *    LICENSE
  */
 
-namespace App\Mapper\Interfaces;
+namespace App\Mapper\Core\Domain\Builder;
 
-use App\Carpool\Event\CarpoolProofCreatedEvent;
+use App\Carpool\Entity\CarpoolProof;
 use App\ExternalService\Interfaces\DTO\DTO;
-use App\Mapper\Core\Domain\Builder\CarpoolProofBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -33,13 +32,13 @@ use PHPUnit\Framework\TestCase;
  *
  * @coversDefaultClass
  */
-class CarpoolProofTest extends TestCase
+class CarpoolProofBuilderTest extends TestCase
 {
-    private $_carpoolProof;
+    private $_carpoolProofBuilder;
 
     public function setUp(): void
     {
-        $this->_carpoolProof = new CarpoolProof(new CarpoolProofBuilder());
+        $this->_carpoolProofBuilder = new CarpoolProofBuilder();
     }
 
     /**
@@ -47,11 +46,11 @@ class CarpoolProofTest extends TestCase
      */
     public function testMapReturnsADTO()
     {
-        $carpoolProofCreatedEvent = $this->getMockBuilder(CarpoolProofCreatedEvent::class)
+        $carpoolProof = $this->getMockBuilder(CarpoolProof::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
-        $this->assertInstanceOf(DTO::class, $this->_carpoolProof->map($carpoolProofCreatedEvent));
+        $this->assertInstanceOf(DTO::class, $this->_carpoolProofBuilder->build($carpoolProof));
     }
 }

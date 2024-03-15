@@ -1058,7 +1058,7 @@ services:
 
   # Mapper
   mobicoop.mapper.carpoolproofbuilder:
-    class: App\Mapper\Core\Domain\Builder\CarpoolProof
+    class: App\Mapper\Core\Domain\Builder\CarpoolProofBuilder
 
   App\Mapper\Interfaces\CarpoolProof:
     arguments: ["@mobicoop.mapper.carpoolproofbuilder"]

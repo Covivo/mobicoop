@@ -27,7 +27,7 @@ use App\ExternalService\Interfaces\DTO\DTO;
 use App\Mapper\Core\Application\Ports\BuilderPort;
 use App\Mapper\Interfaces\DTO\CarpoolProof\CarpoolProofDTO;
 
-class CarpoolProof implements BuilderPort
+class CarpoolProofBuilder implements BuilderPort
 {
     public function build(object $object): DTO
     {
