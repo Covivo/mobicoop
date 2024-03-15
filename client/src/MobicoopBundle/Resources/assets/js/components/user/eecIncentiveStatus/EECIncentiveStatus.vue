@@ -6,12 +6,13 @@
     <v-snackbar
       v-model="snackbar.displayed"
       :color="snackbar.color"
+      :multi-line="true"
       top
     >
-      {{ snackbar.text }}
+      <p v-html="snackbar.text" />
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="black"
+          color="white"
           text
           v-bind="attrs"
           @click="snackbar.displayed = false"
@@ -155,14 +156,8 @@ export default {
           this.snackbar.color = 'success';
           this.snackbar.text = this.$t('EEC-subscription-snackbar.success');
           break;
-        case !this.subscriptions.longDistanceSubscription && this.subscriptions.shortDistanceSubscription:
-          this.snackbar.text = this.$t('EEC-subscription-snackbar.longDistanceFailed');
-          break;
-        case this.subscriptions.longDistanceSubscription && !this.subscriptions.shortDistanceSubscription:
-          this.snackbar.text = this.$t('EEC-subscription-snackbar.shortDistanceFailed');
-          break;
         default:
-          this.snackbar.text = this.$t('EEC-subscription-snackbar.failed');
+          this.snackbar.text = `<p class="font-weight-bold">${this.$t('EEC-subscription-snackbar.failed')}</p><p>${this.eecSsoAuthError}</p>`;
           break;
         }
 
