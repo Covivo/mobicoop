@@ -54,8 +54,10 @@ class UserUpdateSso
 
         $ssoUser = $this->_ssoManager->getSsoUserProfile($params->ssoProvider, $params->ssoId, $params->baseSiteUri, $params->redirectUri);
 
-        // if ($ssoUser->getEmail() === $user->getEmail()) {
-        return $this->_userManager->updateUserSsoProperties($user, $ssoUser);
-        // }
+        try {
+            return $this->_userManager->updateUserSsoProperties($user, $ssoUser);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
