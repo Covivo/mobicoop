@@ -23,10 +23,8 @@
 
 namespace App\ExternalService\Interfaces;
 
-use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
-use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
-use App\ExternalService\Interfaces\Builder\CarpoolProofEntityBuilder;
-use App\ExternalService\Interfaces\DTO\CarpoolProof\CarpoolProofDto;
+use App\ExternalService\Core\Application\Service\MessageDataSender;
+use App\Mapper\Interfaces\DTO\CarpoolProof\CarpoolProofDTO;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -34,25 +32,19 @@ use PHPUnit\Framework\TestCase;
  *
  * @coversDefaultClass
  */
-class SendProofTest extends TestCase
+class MessageSendTest extends TestCase
 {
-    private $_sendProof;
+    private $_messageSend;
 
     public function setUp(): void
     {
-        $carpoolProofSender = $this->getMockBuilder(CarpoolProofSender::class)
+        $messageDataSender = $this->getMockBuilder(MessageDataSender::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
-        $carpoolProofSender->method('send')->willReturn('OK');
+        $messageDataSender->method('send')->willReturn('OK');
 
-        $carpoolProofEntityBuilder = $this->getMockBuilder(CarpoolProofEntityBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $carpoolProofEntityBuilder->method('build')->willReturn(new CarpoolProofEntity());
-
-        $this->_sendProof = new SendProof($carpoolProofSender, $carpoolProofEntityBuilder);
+        $this->_messageSend = new MessageSend($messageDataSender);
     }
 
     /**
@@ -60,11 +52,8 @@ class SendProofTest extends TestCase
      */
     public function testSendReturnsOk()
     {
-        $carpoolProofDto = $this->getMockBuilder(CarpoolProofDto::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $carpoolProofDto = new CarpoolProofDTO();
 
-        $this->assertEquals($this->_sendProof->send($carpoolProofDto), 'OK');
+        $this->assertEquals($this->_messageSend->send($carpoolProofDto), 'OK');
     }
 }
