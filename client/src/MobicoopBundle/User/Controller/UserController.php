@@ -1582,14 +1582,20 @@ class UserController extends AbstractController
             'eec' => 1,
         ];
 
-        if ($this->getUser()) {
-            $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
-        }
-
-        return $this->redirectToRoute('user_profile_update', [
+        $responseData = [
             'tabDefault' => 'mon-profil',
             'afterEECSubscription' => true,
-        ]);
+        ];
+
+        if ($this->getUser()) {
+            $result = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
+
+            if (preg_match('/(E|e)rror/', $result->getType())) {
+                $responseData['eecSsoAuthError'] = $result->getDescription();
+            }
+        }
+
+        return $this->redirectToRoute('user_profile_update', $responseData);
     }
 
     public function userReturnConnectSsoMobile(Request $request)
