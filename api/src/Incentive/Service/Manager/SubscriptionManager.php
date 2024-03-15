@@ -400,19 +400,19 @@ class SubscriptionManager extends MobConnectManager
     protected function _createSubscription(string $subscriptionType): void
     {
         if (!Subscription::isTypeAllowed($subscriptionType)) {
-            throw new \LogicException('Error eec.subscriptionType.unallowed');
+            throw new \LogicException('eec_subscriptionType_unallowed');
         }
 
         if (!$this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()) {
-            throw new \LogicException('Error eec.subscriptionType.'.$subscriptionType.'.closed');
+            throw new \LogicException('eec_subscriptionType_'.$subscriptionType.'_closed');
         }
 
         if (!is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())) {
-            throw new \LogicException('Error eec.subscriptionType.'.$subscriptionType.'.allready.subscribed');
+            throw new \LogicException('eec_subscriptionType_'.$subscriptionType.'_allready.subscribed');
         }
 
         if (!$this->isDriverAccountReadyForSubscription($subscriptionType)) {
-            throw new \LogicException('Error eec.subscriptionType.'.$subscriptionType.'.unready');
+            throw new \LogicException('eec_subscriptionType_'.$subscriptionType.'_unready');
         }
 
         $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);

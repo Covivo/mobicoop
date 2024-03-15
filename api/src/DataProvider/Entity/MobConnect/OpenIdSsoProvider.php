@@ -49,7 +49,7 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         $content = json_decode($response->getContent());
 
         if (Response::HTTP_OK != $response->getStatusCode()) {
-            throw new \LogicException('Error eec.user.sso.request.error');
+            throw new \LogicException('eec_user_sso_request_error');
         }
 
         if (
@@ -79,13 +79,13 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
                 || is_null($ssoUser->getLastname())
                 || is_null($ssoUser->getEmail()))
             ) {
-                throw new \LogicException('Error eec.user.sso.account.incomplete');
+                throw new \LogicException('eec_user_sso_account_incomplete');
             }
 
             return $ssoUser;
         }
 
-        throw new \LogicException('Error eec.user.sso.unknowned');
+        throw new \LogicException('eec_user_sso_unknowned');
     }
 
     public function getAppToken(): Response
