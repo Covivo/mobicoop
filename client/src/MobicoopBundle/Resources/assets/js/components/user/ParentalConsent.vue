@@ -10,7 +10,7 @@
         xl="6"
         align="center"
       >
-        <h1>Accord parental</h1>
+        <h1>Autorisation parentale</h1>
       </v-col>
     </v-row>
     <v-row
@@ -37,6 +37,7 @@
             <v-btn
               ref="button"
               rounded
+              :disabled="formButtondisabled"
               class="my-13 mr-12"
               color="secondary"
               @click="getUserUnder18"
@@ -130,7 +131,7 @@ export default {
     }
   },
   props: {
-    legalGuardianEmail:{
+    uuid:{
       type: String,
       default:null
     }
@@ -148,6 +149,9 @@ export default {
     };
   },
   computed: {
+    formButtondisabled() {
+      return !this.form.parentalConsentToken;
+    },
     consentDisabled() {
       if (this.showForm && this.checkbox1 && this.checkbox2 && this.checkbox3 && this.checkbox4){
         return false;
