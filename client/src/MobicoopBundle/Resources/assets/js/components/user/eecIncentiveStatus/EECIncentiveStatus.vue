@@ -157,7 +157,7 @@ export default {
           this.snackbar.text = this.$t('EEC-subscription-snackbar.success');
           break;
         default:
-          this.snackbar.text = `<p class="font-weight-bold">${this.$t('EEC-subscription-snackbar.failed')}</p><p>${this.eecSsoAuthError}</p>`;
+          this.snackbar.text = `<p class="font-weight-bold">${this.$t('EEC-subscription-snackbar.failed')}</p><p>${this.$t(`EEC-subscription-snackbar.${this.eecSsoAuthError}`)}</p>`;
           break;
         }
 
