@@ -26,7 +26,7 @@ namespace App\Mapper\Interfaces\DTO\CarpoolProof;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class WaypointDTO
+class WaypointDTO implements \JsonSerializable
 {
     /**
      * @var float
@@ -77,5 +77,15 @@ class WaypointDTO
         $this->_datetime = $datetime;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'lat' => $this->getLat(),
+                'lon' => $this->getLon(),
+                'datetime' => $this->getDatetime(),
+            ];
     }
 }

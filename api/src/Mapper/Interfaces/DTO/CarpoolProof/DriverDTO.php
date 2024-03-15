@@ -26,7 +26,7 @@ namespace App\Mapper\Interfaces\DTO\CarpoolProof;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class DriverDTO extends IdentityDTO
+class DriverDTO extends IdentityDTO implements \JsonSerializable
 {
     /**
      * @var int
@@ -43,5 +43,18 @@ class DriverDTO extends IdentityDTO
         $this->_revenue = $revenue;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id' => $this->getId(),
+                'givenName' => $this->getGivenName(),
+                'lastName' => $this->getLastName(),
+                'phone' => $this->getPhone(),
+                'birthDate' => $this->getBirthDate(),
+                'revenue' => $this->getRevenue(),
+            ];
     }
 }

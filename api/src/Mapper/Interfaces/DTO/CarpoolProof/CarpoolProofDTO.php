@@ -28,7 +28,7 @@ use App\ExternalService\Interfaces\DTO\DTO;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class CarpoolProofDTO extends DTO
+class CarpoolProofDTO extends DTO implements \JsonSerializable
 {
     public const CONTEXT = 'CarpoolProof';
 
@@ -154,5 +154,20 @@ class CarpoolProofDTO extends DTO
         $this->_distance = $distance;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id' => $this->getId(),
+                'passenger' => $this->getPassenger(),
+                'driver' => $this->getDriver(),
+                'pickUpPassenger' => $this->getPickUpPassenger(),
+                'pickUpDriver' => $this->getPickUpDriver(),
+                'dropOffPassenger' => $this->getDropOffPassenger(),
+                'dropOffDriver' => $this->getDropOffDriver(),
+                'distance' => $this->getDistance(),
+            ];
     }
 }
