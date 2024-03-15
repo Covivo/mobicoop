@@ -50,15 +50,5 @@ abstract class DTO
         return $this;
     }
 
-    public function getContext(): string
-    {
-        return $this->_context;
-    }
-
-    public function setContext(string $context): self
-    {
-        $this->_context = $context;
-
-        return $this;
-    }
+    abstract public function getContext(): string;
 }

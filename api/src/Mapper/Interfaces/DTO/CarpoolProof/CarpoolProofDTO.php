@@ -67,6 +67,11 @@ class CarpoolProofDTO extends DTO
      */
     private $_distance;
 
+    public function getContext(): string
+    {
+        return self::CONTEXT;
+    }
+
     public function getPassenger(): ?PassengerDTO
     {
         return $this->_passenger;
