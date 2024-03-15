@@ -27,12 +27,22 @@ use App\Mapper\Interfaces\DTO\CarpoolProof\WaypointDTO;
 
 class Waypoint
 {
-    public static function getWaypointDto(): WaypointDTO
+    public static function getOriginWaypointDto(): WaypointDTO
     {
         $pickUpDriverDto = new WaypointDTO();
-        $pickUpDriverDto->setLat(18.0146548);
-        $pickUpDriverDto->setLon(6.0146548);
+        $pickUpDriverDto->setLat(48.6937223);
+        $pickUpDriverDto->setLon(6.1834097);
         $pickUpDriverDto->setDatetime(\DateTime::createFromFormat('Ymd H:i:s', '20240801 12:00:00'));
+
+        return $pickUpDriverDto;
+    }
+
+    public static function getDestinationWaypointDto(): WaypointDTO
+    {
+        $pickUpDriverDto = new WaypointDTO();
+        $pickUpDriverDto->setLat(48.7145001);
+        $pickUpDriverDto->setLon(6.2611518);
+        $pickUpDriverDto->setDatetime(\DateTime::createFromFormat('Ymd H:i:s', '20240801 12:17:00'));
 
         return $pickUpDriverDto;
     }

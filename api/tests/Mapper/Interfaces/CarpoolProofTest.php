@@ -26,6 +26,7 @@ namespace App\Mapper\Interfaces;
 use App\Carpool\Event\CarpoolProofCreatedEvent;
 use App\ExternalService\Interfaces\DTO\DTO;
 use App\Mapper\Core\Domain\Builder\CarpoolProofBuilder;
+use App\Tests\Mapper\Mock\CarpoolProof as MockCarpoolProof;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -47,10 +48,7 @@ class CarpoolProofTest extends TestCase
      */
     public function testMapReturnsADTO()
     {
-        $carpoolProofCreatedEvent = $this->getMockBuilder(CarpoolProofCreatedEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $carpoolProofCreatedEvent = new CarpoolProofCreatedEvent(MockCarpoolProof::getCarpoolProof());
 
         $this->assertInstanceOf(DTO::class, $this->_carpoolProof->map($carpoolProofCreatedEvent));
     }

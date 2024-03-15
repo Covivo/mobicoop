@@ -33,16 +33,16 @@ use App\Mapper\Interfaces\DTO\CarpoolProof\WaypointDTO;
 
 class CarpoolProofBuilder implements BuilderPort
 {
-    public function build(CarpoolProof $carpoolProof): DTO
+    public function build(object $object): DTO
     {
-        return $this->_buildCarpoolProofDto($carpoolProof);
+        return $this->_buildCarpoolProofDto($object);
     }
 
     private function _buildCarpoolProofDto(CarpoolProof $carpoolProof): CarpoolProofDTO
     {
         $carpoolProofDto = new CarpoolProofDTO();
         $carpoolProofDto->setId($carpoolProof->getId());
-        $carpoolProofDto->setDistance($carpoolProof->getDistance());
+        $carpoolProofDto->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
 
         $passengerDto = new PassengerDTO();
         $passengerDto->setId($carpoolProof->getPassenger()->getId());
@@ -83,7 +83,7 @@ class CarpoolProofBuilder implements BuilderPort
             $dropOffDriver->setLat($carpoolProof->getDropOffDriverAddress()->getLatitude());
             $dropOffDriver->setLon($carpoolProof->getDropOffDriverAddress()->getLongitude());
             $dropOffDriver->setDatetime($carpoolProof->getDropOffDriverDate());
-            $carpoolProofDto->setDropOffPassenger($dropOffDriver);
+            $carpoolProofDto->setDropOffDriver($dropOffDriver);
         }
         if (!is_null($carpoolProof->getDropOffPassengerAddress()) && !is_null($carpoolProof->getDropOffPassengerDate())) {
             $dropOffPassenger = new WaypointDTO();

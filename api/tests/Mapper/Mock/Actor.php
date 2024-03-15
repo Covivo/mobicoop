@@ -31,7 +31,8 @@ class Actor
     public static function getDriverDto(): DriverDTO
     {
         $driverDto = new DriverDTO();
-        $driverDto->setRevenue(5);
+        $driverDto->setId(1);
+        $driverDto->setRevenue(500);
         $driverDto->setGivenName('Jean-Michel');
         $driverDto->setLastName('Jefaisdestests');
         $driverDto->setBirthDate(\DateTime::createFromFormat('d/m/Y', '03/02/1982'));
@@ -43,11 +44,12 @@ class Actor
     public static function getPassengerDto(): PassengerDTO
     {
         $passengerDto = new PassengerDTO();
-        $passengerDto->setContribution(5);
+        $passengerDto->setId(2);
+        $passengerDto->setContribution(500);
         $passengerDto->setGivenName('Francis-Patrick');
         $passengerDto->setLastName('Cesttoujoursuntest');
-        $passengerDto->setBirthDate(\DateTime::createFromFormat('d/m/Y', '03/02/1982'));
-        $passengerDto->setPhone('0303030303');
+        $passengerDto->setBirthDate(\DateTime::createFromFormat('d/m/Y', '20/12/1983'));
+        $passengerDto->setPhone('0606060606');
 
         return $passengerDto;
     }
