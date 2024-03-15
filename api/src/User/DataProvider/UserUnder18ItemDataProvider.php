@@ -49,10 +49,7 @@ final class UserUnder18ItemDataProvider implements ItemDataProviderInterface, Re
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?UserUnder18
     {
-        var_dump('ici');
-
-        exit;
-        $userUnder18Manager = $this->userUnder18Manager->getUserUnder18byUuid($context['filters']['id']);
+        $userUnder18Manager = $this->userUnder18Manager->getUserUnder18byUuid($context['filters']['uuid']);
         if (is_null($userUnder18Manager)) {
             throw new \LogicException('User not found found');
         }
