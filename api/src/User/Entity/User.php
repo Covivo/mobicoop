@@ -1931,9 +1931,18 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"readUser","write"})
+     * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $parentalConsentToken;
+
+    /**
+     * @var null|string Token for parental consent
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $parentalConsentUuid;
 
     /**
      * Indicate if the user need the parental consent.
@@ -4343,6 +4352,18 @@ class User implements UserInterface, EquatableInterface
     public function setParentalConsentToken(?string $parentalConsentToken): self
     {
         $this->parentalConsentToken = $parentalConsentToken;
+
+        return $this;
+    }
+
+    public function getParentalConsentUuid(): ?string
+    {
+        return $this->parentalConsentUuid;
+    }
+
+    public function setParentalConsentUuid(?string $parentalConsentUuid): self
+    {
+        $this->parentalConsentUuid = $parentalConsentUuid;
 
         return $this;
     }
