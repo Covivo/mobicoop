@@ -1824,10 +1824,10 @@ class UserController extends AbstractController
         return new JsonResponse($this->ceeSubscriptionManager->myEecSubscriptionsEligibility());
     }
 
-    public function parentalConsentRequest(string $email)
+    public function parentalConsentRequest(string $uuid)
     {
         return $this->render('@Mobicoop/user/parentalConsent.html.twig', [
-            'legalGuardianEmail' => $email,
+            'uuid' => $uuid,
         ]);
     }
 
