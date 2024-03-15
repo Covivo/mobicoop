@@ -23,7 +23,6 @@
 
 namespace App\Mapper\Core\Domain\Builder;
 
-use App\Carpool\Entity\CarpoolProof;
 use App\ExternalService\Interfaces\DTO\DTO;
 use App\Tests\Mapper\Mock\CarpoolProof as MockCarpoolProof;
 use PHPUnit\Framework\TestCase;
@@ -47,12 +46,7 @@ class CarpoolProofBuilderTest extends TestCase
      */
     public function testBuildReturnsADTO()
     {
-        $carpoolProof = $this->getMockBuilder(CarpoolProof::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $this->assertInstanceOf(DTO::class, $this->_carpoolProofBuilder->build($carpoolProof));
+        $this->assertInstanceOf(DTO::class, $this->_carpoolProofBuilder->build(MockCarpoolProof::getCarpoolProof()));
     }
 
     /**
@@ -60,11 +54,6 @@ class CarpoolProofBuilderTest extends TestCase
      */
     public function testBuildReturnsTheRightCarpoolProofDTO()
     {
-        $carpoolProof = $this->getMockBuilder(CarpoolProof::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
         $this->assertEquals(MockCarpoolProof::getCarpoolProofDto(), $this->_carpoolProofBuilder->build(MockCarpoolProof::getCarpoolProof()));
     }
 }
