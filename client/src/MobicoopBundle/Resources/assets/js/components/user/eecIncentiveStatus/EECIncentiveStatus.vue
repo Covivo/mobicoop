@@ -6,7 +6,8 @@
     <v-snackbar
       v-model="snackbar.displayed"
       :color="snackbar.color"
-      :multi-line="true"
+      :multi-line="multiLine"
+      :timeout="snackbar.timeout"
       top
     >
       <p v-html="snackbar.text" />
@@ -107,7 +108,9 @@ export default {
       snackbar: {
         color: 'error',
         displayed: false,
+        multiLine: false,
         text: null,
+        timeout: 5000,
       },
     }
   },
@@ -152,16 +155,23 @@ export default {
     afterEECSubscriptionValidation() {
       if (this.isAfterEecSubscription) {
         switch (true) {
-        case this.subscriptions.longDistanceSubscription && this.subscriptions.shortDistanceSubscription:
-          this.snackbar.color = 'success';
-          this.snackbar.text = this.$t('EEC-subscription-snackbar.success');
-          break;
+        case this.eecInstance.ldAvailable && this.eecInstance.sdAvailable && (!this.subscriptions.longDistanceSubscription || !this.subscriptions.longDistanceSubscription):
+        case this.eecInstance.ldAvailable && !this.subscriptions.longDistanceSubscription:
+        case this.eecInstance.sdAvailable && !this.subscriptions.shortDistanceSubscription:
+          this.snackbar.multiLine = true
+          this.snackbar.text = `<p class="font-weight-bold">${this.$t('EEC-subscription-snackbar.failed')}</p><p>${this.$t(`EEC-subscription-snackbar.errors.${this.eecSsoAuthError}`)}</p>`
+          this.snackbar.timeout = -1
+          break
+
         default:
-          this.snackbar.text = `<p class="font-weight-bold">${this.$t('EEC-subscription-snackbar.failed')}</p><p>${this.$t(`EEC-subscription-snackbar.${this.eecSsoAuthError}`)}</p>`;
-          break;
+          this.snackbar.color = 'success'
+          this.snackbar.multiLine = false
+          this.snackbar.text = this.$t('EEC-subscription-snackbar.success')
+          this.snackbar.timeout = 5000
+          break
         }
 
-        this.snackbar.displayed = true;
+        this.snackbar.displayed = true
       }
     }
   },
