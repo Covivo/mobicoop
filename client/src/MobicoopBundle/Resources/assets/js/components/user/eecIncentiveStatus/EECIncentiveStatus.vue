@@ -85,6 +85,10 @@ export default {
       type: Boolean,
       default: false
     },
+    eecSsoAuthError: {
+      type: String,
+      default: null
+    },
     apiUri: {
       type: String,
       default: null
