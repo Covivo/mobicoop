@@ -398,18 +398,29 @@ class SubscriptionManager extends MobConnectManager
 
     /**
      * STEP 5 - Create a subscription from it's type.
+     *
+     * @throws \LogicException
      */
     protected function _createSubscription(string $subscriptionType): void
     {
-        if (
-            Subscription::isTypeAllowed($subscriptionType)
-            && $this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()
-            && is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())
-            && $this->isDriverAccountReadyForSubscription($subscriptionType)
-        ) {
-            $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
-            $stage->execute();
+        if (!Subscription::isTypeAllowed($subscriptionType)) {
+            throw new \LogicException('Error eec.subscriptionType.unallowed');
         }
+
+        if (!$this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()) {
+            throw new \LogicException('Error eec.subscriptionType.'.$subscriptionType.'.closed');
+        }
+
+        if (!is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())) {
+            throw new \LogicException('Error eec.subscriptionType.'.$subscriptionType.'.allready.subscribed');
+        }
+
+        if (!$this->isDriverAccountReadyForSubscription($subscriptionType)) {
+            throw new \LogicException('Error eec.subscriptionType.'.$subscriptionType.'.unready');
+        }
+
+        $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
+        $stage->execute();
     }
 
     /**
