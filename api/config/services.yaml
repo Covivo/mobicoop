@@ -616,7 +616,7 @@ services:
       $username: "%env(string:BROKER_USERNAME)%"
       $password: "%env(string:BROKER_PASSWORD)%"
 
-  App\ExternalService\Command\CarpoolProofListeningCommand:
+  App\Mapper\Command\CarpoolProofListeningCommand:
     arguments:
       $uri: "%env(string:BROKER_URI)%"
       $port: "%env(int:BROKER_PORT)%"

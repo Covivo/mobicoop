@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ExternalService\Command;
+namespace App\Mapper\Command;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Symfony\Component\Console\Command\Command;
@@ -26,7 +26,7 @@ class CarpoolProofListeningCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:external-service:carpool-proof-listening')
+            ->setName('app:mapper:carpool-proof-listening')
             ->setDescription('Listening for proofs by external service.')
             ->setHelp('Listening for proofs by external service.')
         ;
