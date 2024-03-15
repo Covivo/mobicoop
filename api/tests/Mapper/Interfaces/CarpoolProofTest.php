@@ -25,6 +25,7 @@ namespace App\Mapper\Interfaces;
 
 use App\Carpool\Event\CarpoolProofCreatedEvent;
 use App\ExternalService\Interfaces\DTO\DTO;
+use App\Mapper\Core\Domain\Builder\CarpoolProof as CarpoolProofBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -38,7 +39,7 @@ class CarpoolProofTest extends TestCase
 
     public function setUp(): void
     {
-        $this->_carpoolProof = new CarpoolProof();
+        $this->_carpoolProof = new CarpoolProof(new CarpoolProofBuilder());
     }
 
     /**

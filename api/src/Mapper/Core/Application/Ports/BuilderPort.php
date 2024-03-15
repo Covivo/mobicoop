@@ -21,31 +21,14 @@
  *    LICENSE
  */
 
-namespace App\Mapper\Interfaces;
+namespace App\Mapper\Core\Application\Ports;
 
-use App\Carpool\Event\CarpoolProofCreatedEvent;
 use App\ExternalService\Interfaces\DTO\DTO;
-use App\Mapper\Core\Application\Ports\BuilderPort;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class CarpoolProof implements EventSubscriberInterface
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+interface BuilderPort
 {
-    private $_carpoolProofBuilder;
-
-    public function __construct(BuilderPort $carpoolProofBuilder)
-    {
-        $this->_carpoolProofBuilder = $carpoolProofBuilder;
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            CarpoolProofCreatedEvent::NAME => 'map',
-        ];
-    }
-
-    public function map(CarpoolProofCreatedEvent $carpoolProofCreatedEvent): DTO
-    {
-        return $this->_carpoolProofBuilder->build($carpoolProofCreatedEvent->getCarpoolProof());
-    }
+    public function build(object $object): DTO;
 }
