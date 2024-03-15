@@ -22,10 +22,10 @@
 
 namespace App\ExternalService\Core\Application\Service;
 
-use App\ExternalService\Core\Application\Exception\CarpoolProofContextNotProvidedException;
-use App\ExternalService\Core\Application\Ports\DataSenderPort;
-use App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender;
-use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
+use App\ExternalService\Core\Application\Exception\ContextNotProvidedException;
+use App\ExternalService\Core\Application\Service\MessageDataSender as ServiceMessageDataSender;
+use App\ExternalService\Infrastructure\MessageDataSender;
+use App\Mapper\Interfaces\DTO\CarpoolProof\CarpoolProofDTO;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -33,19 +33,19 @@ use PHPUnit\Framework\TestCase;
  *
  * @coversDefaultClass
  */
-class CarpoolProofSenderTest extends TestCase
+class MessageDataSenderTest extends TestCase
 {
-    private $_carpoolProofSender;
+    private $_dataSender;
 
     public function setUp(): void
     {
-        $dataSenderPort = $this->getMockBuilder(DataSenderPort::class)
+        $messageDataSender = $this->getMockBuilder(MessageDataSender::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
-        $dataSenderPort->method('send')->willReturn('OK');
+        $messageDataSender->method('send')->willReturn('OK');
 
-        $this->_carpoolProofSender = new CarpoolProofSender($dataSenderPort);
+        $this->_dataSender = new ServiceMessageDataSender($messageDataSender);
     }
 
     /**
@@ -53,13 +53,8 @@ class CarpoolProofSenderTest extends TestCase
      */
     public function testSendReturnOk()
     {
-        $carpoolProofEntity = $this->getMockBuilder(CarpoolProofEntity::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $carpoolProofEntity->method('getContext')->willReturn('CarpoolProof');
-
-        $this->assertEquals($this->_carpoolProofSender->send($carpoolProofEntity), 'OK');
+        $carpoolProofDTO = new CarpoolProofDTO();
+        $this->assertEquals($this->_dataSender->send($carpoolProofDTO), 'OK');
     }
 
     /**
@@ -67,13 +62,12 @@ class CarpoolProofSenderTest extends TestCase
      */
     public function testEntityWithoutDomainRaisesException()
     {
-        $this->expectException(CarpoolProofContextNotProvidedException::class);
+        $this->expectException(ContextNotProvidedException::class);
 
-        $carpoolProofEntity = $this->getMockBuilder(CarpoolProofEntity::class)
+        $carpoolProofDTO = $this->getMockBuilder(CarpoolProofDTO::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
-
-        $this->_carpoolProofSender->send($carpoolProofEntity);
+        $this->_dataSender->send($carpoolProofDTO);
     }
 }
