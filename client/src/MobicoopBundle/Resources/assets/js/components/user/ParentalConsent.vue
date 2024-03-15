@@ -118,8 +118,9 @@
   </v-container>
 </template>
 <script>
+import maxios from "@utils/maxios";
 
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/MFacebookAuth/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/ParentalConsent/";
 
 export default {
   i18n: {
@@ -146,6 +147,7 @@ export default {
       checkbox2: false,
       checkbox3: false,
       checkbox4: false,
+      user: null
     };
   },
   computed: {
@@ -197,10 +199,37 @@ export default {
       };
     },
   },
+  created() {
+    this.getUserUnder18();
+  },
   methods: {
     getUserUnder18() {
+      let params = {
+        'uuid':this.uuid
+      }
+      maxios.post(this.$t("getUserUnder18Url"), params)
+        .then(res => {
+          console.log(res.data);
+          this.user = res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       this.showForm = true;
-    }
+    },
+    giveParentalConsent(){
+      let params = {
+        'uuid':this.uuid,
+        'token':this.form.parentalConsentToken
+      }
+      maxios.post(this.$t("giveParentalConsentUrl"), params)
+        .then(res => {
+          this.user = res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   }
 };
 </script>
