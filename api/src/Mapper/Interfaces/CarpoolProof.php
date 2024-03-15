@@ -24,17 +24,18 @@
 namespace App\Mapper\Interfaces;
 
 use App\Carpool\Event\CarpoolProofCreatedEvent;
-use App\ExternalService\Interfaces\DTO\DTO;
 use App\Mapper\Core\Application\Ports\BuilderPort;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CarpoolProof implements EventSubscriberInterface
 {
     private $_carpoolProofBuilder;
+    private $_externalServiceEnabled;
 
-    public function __construct(BuilderPort $carpoolProofBuilder)
+    public function __construct(BuilderPort $carpoolProofBuilder, bool $externalServiceEnabled)
     {
         $this->_carpoolProofBuilder = $carpoolProofBuilder;
+        $this->_externalServiceEnabled = $externalServiceEnabled;
     }
 
     public static function getSubscribedEvents()
@@ -44,8 +45,14 @@ class CarpoolProof implements EventSubscriberInterface
         ];
     }
 
-    public function map(CarpoolProofCreatedEvent $carpoolProofCreatedEvent): DTO
+    public function map(CarpoolProofCreatedEvent $carpoolProofCreatedEvent): ?string
     {
-        return $this->_carpoolProofBuilder->build($carpoolProofCreatedEvent->getCarpoolProof());
+        if (!$this->_externalServiceEnabled) {
+            return null;
+        }
+
+        $this->_carpoolProofBuilder->build($carpoolProofCreatedEvent->getCarpoolProof());
+
+        return 'OK';
     }
 }
