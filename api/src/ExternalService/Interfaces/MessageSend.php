@@ -38,7 +38,7 @@ class MessageSend
         $this->_messageDataSender = $messageDataSender;
     }
 
-    public function send(DTO $dto)
+    public function send(DTO $dto): string
     {
         return $this->_messageDataSender->send($dto);
     }

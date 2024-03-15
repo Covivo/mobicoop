@@ -24,6 +24,7 @@
 namespace App\Mapper\Interfaces;
 
 use App\Carpool\Event\CarpoolProofCreatedEvent;
+use App\ExternalService\Interfaces\MessageSend;
 use App\Mapper\Core\Application\Ports\BuilderPort;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -31,11 +32,13 @@ class CarpoolProof implements EventSubscriberInterface
 {
     private $_carpoolProofBuilder;
     private $_externalServiceEnabled;
+    private $_messageSend;
 
-    public function __construct(BuilderPort $carpoolProofBuilder, bool $externalServiceEnabled)
+    public function __construct(BuilderPort $carpoolProofBuilder, MessageSend $messageSend, bool $externalServiceEnabled)
     {
         $this->_carpoolProofBuilder = $carpoolProofBuilder;
         $this->_externalServiceEnabled = $externalServiceEnabled;
+        $this->_messageSend = $messageSend;
     }
 
     public static function getSubscribedEvents()
@@ -51,8 +54,6 @@ class CarpoolProof implements EventSubscriberInterface
             return null;
         }
 
-        $this->_carpoolProofBuilder->build($carpoolProofCreatedEvent->getCarpoolProof());
-
-        return 'OK';
+        return $this->_messageSend->send($this->_carpoolProofBuilder->build($carpoolProofCreatedEvent->getCarpoolProof()));
     }
 }

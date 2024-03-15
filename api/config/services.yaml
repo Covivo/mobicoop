@@ -617,8 +617,12 @@ services:
       $username: "%env(string:EXTERNAL_SERVICE_BROKER_USERNAME)%"
       $password: "%env(string:EXTERNAL_SERVICE_BROKER_PASSWORD)%"
 
-  mobicoop.externalservice.infrastructure.message_broker_publisher:
-    class: App\ExternalService\Infrastructure\MessageBrokerPublisher
+  App\ExternalService\Infrastructure\MessageBrokerPublisher:
+    arguments:
+      $uri: "%env(string:EXTERNAL_SERVICE_BROKER_URI)%"
+      $port: "%env(int:EXTERNAL_SERVICE_BROKER_PORT)%"
+      $username: "%env(string:EXTERNAL_SERVICE_BROKER_USERNAME)%"
+      $password: "%env(string:EXTERNAL_SERVICE_BROKER_PASSWORD)%"
 
   mobicoop.externalservice.core.application.service.message_data_sender:
     class: App\ExternalService\Core\Application\Service\MessageDataSender
@@ -1052,7 +1056,9 @@ services:
     class: App\Mapper\Core\Domain\Builder\CarpoolProofBuilder
 
   App\Mapper\Interfaces\CarpoolProof:
-    arguments: ["@mobicoop.mapper.carpoolproofbuilder"]
+    arguments:
+      $carpoolProofBuilder: "@mobicoop.mapper.carpoolproofbuilder"
+      $externalServiceEnabled: "%env(bool:EXTERNAL_SERVICE_ENABLED)%"
 
   # Match
   App\Match\Controller\:

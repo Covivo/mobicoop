@@ -39,6 +39,11 @@ class MessageBrokerPublisher extends BrokerPublisher
         'CarpoolProof' => 'carpool.proof',
     ];
 
+    public function __construct(string $uri, int $port, string $username, string $password)
+    {
+        parent::__construct($uri, $port, $username, $password);
+    }
+
     public function send(DTO $data): string
     {
         if (!isset(self::AUTHORIZED_CONTEXTS[$data->getContext()])) {
