@@ -38,35 +38,35 @@ class UserUnder18 implements ResourceInterface, \JsonSerializable
      *
      * @ApiProperty(identifier=true)
      *
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $id;
 
     /**
      * @var string The User parentalConsentUuid
      *
-     * @Groups({"write", "read"})
+     * @Groups({"post", "get"})
      */
     private $uuid;
 
     /**
      * @var string The User parentalConsentToken
      *
-     * @Groups({"write"})
+     * @Groups({"post"})
      */
     private $token;
 
     /**
      * @var string The User givenname
      *
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $givenName;
 
     /**
      * @var string The User familyname
      *
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $familyName;
 
