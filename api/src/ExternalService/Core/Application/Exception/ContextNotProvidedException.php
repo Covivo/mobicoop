@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2024, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,21 +21,9 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Core\Domain\Entity;
+namespace App\ExternalService\Core\Application\Exception;
 
-abstract class AbstractEntity
+class ContextNotProvidedException extends \LogicException
 {
-    private $_context;
-
-    public function getContext(): ?string
-    {
-        return $this->_context;
-    }
-
-    public function setContext(?string $context): self
-    {
-        $this->_context = $context;
-
-        return $this;
-    }
+    public const MESSAGE = 'Context not provided';
 }

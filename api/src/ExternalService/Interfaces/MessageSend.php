@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,25 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Core\Application\Exception;
+namespace App\ExternalService\Interfaces;
 
-class CarpoolProofContextNotProvidedException extends \LogicException
+use App\ExternalService\Core\Application\Service\MessageDataSender;
+use App\ExternalService\Interfaces\DTO\DTO;
+
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class MessageSend
 {
-    public const MESSAGE = 'Context not provided';
+    private $_messageDataSender;
+
+    public function __construct(MessageDataSender $messageDataSender)
+    {
+        $this->_messageDataSender = $messageDataSender;
+    }
+
+    public function send(DTO $dto)
+    {
+        return $this->_messageDataSender->send($dto);
+    }
 }

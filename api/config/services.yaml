@@ -623,16 +623,12 @@ services:
       $username: "%env(string:BROKER_USERNAME)%"
       $password: "%env(string:BROKER_PASSWORD)%"
 
-  mobicoop.externalservice.fanout_broker_data_sender:
-    class: App\ExternalService\Infrastructure\FanoutBrokerDataSender
+  mobicoop.externalservice.infrastructure.message_data_sender:
+    class: App\ExternalService\Infrastructure\MessageDataSender
 
-  mobicoop.externalservice.carpool_proof.carpool_proof_sender:
-    class: App\ExternalService\Core\Application\Service\CarpoolProof\CarpoolProofSender
-    arguments: ["@mobicoop.externalservice.fanout_broker_data_sender"]
-
-  mobicoop.externalservice.send_proof:
-    class: App\ExternalService\Interfaces\SendProof
-    arguments: ["@mobicoop.externalservice.carpool_proof.carpool_proof_sender"]
+  mobicoop.externalservice.core.application.service.message_data_sender:
+    class: App\ExternalService\Core\Application\Service\MessageDataSender
+    arguments: ["@mobicoop.externalservice.infrastructure.message_data_sender"]
 
   # Fixtures Basic
   App\DataFixtures\BasicFixtures:

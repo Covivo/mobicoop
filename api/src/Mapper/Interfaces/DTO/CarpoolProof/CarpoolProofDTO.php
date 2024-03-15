@@ -30,7 +30,7 @@ use App\ExternalService\Interfaces\DTO\DTO;
  */
 class CarpoolProofDTO extends DTO
 {
-    public const CONTEXT = 'carpool.proof';
+    public const CONTEXT = 'CarpoolProof';
 
     /**
      * @var PassengerDTO

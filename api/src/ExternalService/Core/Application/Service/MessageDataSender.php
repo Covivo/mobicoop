@@ -20,13 +20,13 @@
  *    LICENSE
  */
 
-namespace App\ExternalService\Core\Application\Service\CarpoolProof;
+namespace App\ExternalService\Core\Application\Service;
 
-use App\ExternalService\Core\Application\Exception\CarpoolProofContextNotProvidedException;
+use App\ExternalService\Core\Application\Exception\ContextNotProvidedException;
 use App\ExternalService\Core\Application\Ports\DataSenderPort;
-use App\ExternalService\Core\Domain\Entity\CarpoolProof\CarpoolProofEntity;
+use App\ExternalService\Interfaces\DTO\DTO;
 
-class CarpoolProofSender
+class MessageDataSender
 {
     private $_dataSender;
 
@@ -35,12 +35,12 @@ class CarpoolProofSender
         $this->_dataSender = $dataSender;
     }
 
-    public function send(CarpoolProofEntity $carpoolProofEntity): string
+    public function send(DTO $dto): string
     {
-        if (is_null($carpoolProofEntity->getContext()) || '' == trim($carpoolProofEntity->getContext())) {
-            throw new CarpoolProofContextNotProvidedException(CarpoolProofContextNotProvidedException::MESSAGE);
+        if (is_null($dto->getContext()) || '' == trim($dto->getContext())) {
+            throw new ContextNotProvidedException(ContextNotProvidedException::MESSAGE);
         }
 
-        return $this->_dataSender->send($carpoolProofEntity);
+        return $this->_dataSender->send($dto);
     }
 }

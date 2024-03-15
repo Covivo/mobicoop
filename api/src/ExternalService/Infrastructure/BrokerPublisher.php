@@ -23,24 +23,21 @@
 
 namespace App\ExternalService\Infrastructure;
 
-use App\ExternalService\Infrastructure\Exception\BrokerConnectionException;
-use App\ExternalService\Infrastructure\Exception\BrokerMissingParamException;
-use App\ExternalService\Infrastructure\Exception\BrokerPublishException;
+use App\ExternalService\Core\Application\Ports\DataSenderPort;
+use App\ExternalService\Interfaces\DTO\DTO;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BrokerPublisher
+abstract class BrokerPublisher implements DataSenderPort
 {
+    protected $_connection;
+    protected $_channel;
     private $_uri;
     private $_port;
     private $_username;
     private $_password;
-
-    private $_connection;
-    private $_channel;
 
     public function __construct(string $uri, int $port, string $username, string $password)
     {
@@ -50,85 +47,17 @@ class BrokerPublisher
         $this->_password = $password;
     }
 
-    public function sendMessage(string $channel, $data): string
-    {
-        if ('' == trim($channel)) {
-            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_CHANNEL);
-        }
-
-        if (is_null($data)) {
-            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_DATA);
-        }
-
-        try {
-            $this->_connect();
-        } catch (\Exception $e) {
-            throw new BrokerConnectionException(BrokerConnectionException::MESSAGE.PHP_EOL.$e->getMessage());
-        }
-
-        try {
-            $this->_publish($channel, $data);
-        } catch (\Exception $e) {
-            throw new BrokerPublishException(BrokerPublishException::MESSAGE.PHP_EOL.$e->getMessage());
-        }
-
-        $this->_close();
-
-        return 'OK';
-    }
-
-    public function sendTopicMessage(string $topic, string $routingKey, $data): string
-    {
-        if ('' == trim($topic)) {
-            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_TOPIC);
-        }
-        if ('' == trim($routingKey)) {
-            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_ROUTING_KEY);
-        }
-        if (is_null($data)) {
-            throw new BrokerMissingParamException(BrokerMissingParamException::MESSAGE_MISSING_DATA);
-        }
-
-        try {
-            $this->_connect();
-        } catch (\Exception $e) {
-            throw new BrokerConnectionException(BrokerConnectionException::MESSAGE.PHP_EOL.$e->getMessage());
-        }
-
-        try {
-            $this->_publishByTopic($topic, $routingKey, $data);
-        } catch (\Exception $e) {
-            throw new BrokerPublishException(BrokerPublishException::MESSAGE.PHP_EOL.$e->getMessage());
-        }
-
-        $this->_close();
-
-        return 'OK';
-    }
-
-    private function _publish(string $channel, $data)
-    {
-        $this->_channel->exchange_declare($channel, 'fanout', false, false, false);
-        $msg = new AMQPMessage(json_encode($data));
-        $this->_channel->basic_publish($msg, $channel);
-    }
-
-    private function _publishByTopic(string $topic, string $routingKey, $data)
-    {
-        $this->_channel->exchange_declare($topic, 'topic', false, false, false);
-        $msg = new AMQPMessage(json_encode($data));
-        $this->_channel->basic_publish($msg, $topic, $routingKey);
-    }
-
-    private function _connect()
+    public function connect()
     {
         $this->_connection = new AMQPStreamConnection($this->_uri, $this->_port, $this->_username, $this->_password);
         $this->_channel = $this->_connection->channel();
     }
 
-    private function _close()
+    public function close()
     {
         $this->_channel->close();
         $this->_connection->close();
     }
+
+    abstract public function send(DTO $data): string;
 }
