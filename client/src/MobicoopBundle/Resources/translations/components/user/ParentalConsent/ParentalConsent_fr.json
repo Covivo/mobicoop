@@ -1,0 +1,4 @@
+{
+  "getUserUnder18Url": "/user/under18",
+  "giveParentalConsentUrl": "/user/giveParentalConsent"
+}
