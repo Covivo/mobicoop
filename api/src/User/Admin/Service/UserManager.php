@@ -239,6 +239,7 @@ class UserManager
 
         if (!is_null($user->getLegalGuardianEmail())) {
             $user->setParentalConsentToken($this->userManager->createShortToken());
+            $user->setParentalConsentUuid($this->userManager->_generateUuid());
         }
         // check if identity is validated manually
         if ($user->hasVerifiedIdentity()) {
