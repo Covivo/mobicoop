@@ -1570,7 +1570,7 @@ class UserController extends AbstractController
 
     /**
      * Return page after a SSO Login from mobConnect
-     * Url is something like /user/sso/cee-incentive?state=mobConnect&code=1.
+     * Url is something like /user/sso/eec-incentive?state=mobConnect&code=1.
      */
     public function userReturnConnectSSOMobConnect(Request $request)
     {
