@@ -207,8 +207,7 @@
   "EEC-subscription-snackbar": {
     "success": "La souscription aux aides a été effectuée.",
     "failed": "La souscription aux aides a échouée.",
-    "longDistanceFailed": "La souscription à l'aide pour les trajets longue distance n'a pas pu être réalisée.",
-    "shortDistanceFailed": "La souscription à l'aide pour les trajets courte distance n'a pas pu être réalisée."
+    "Error getUserProfile": "Il y a eu un problème prendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop."
   },
   "EEC-eligibility": {
     "alert": {
