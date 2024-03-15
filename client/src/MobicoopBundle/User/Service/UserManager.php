@@ -39,6 +39,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserUnder18;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -989,6 +990,20 @@ class UserManager
         $response = $this->dataProvider->patch($user->getId(), 'updateSso', $params);
 
         return $response->getValue();
+    }
+
+    public function getUserUnder18(string $uuid)
+    {
+        return $this->dataProvider->getItem(UserUnder18::DEFAULT_ID, ['uuid' => $uuid]);
+    }
+
+    public function giveParentalConsent(string $uuid, string $token)
+    {
+        $userUnder18 = new UserUnder18();
+        $userUnder18->setUuid($uuid);
+        $userUnder18->setToken($token);
+
+        return $this->dataProvider->post($userUnder18, 'giveParentalConsent');
     }
 
     /**
