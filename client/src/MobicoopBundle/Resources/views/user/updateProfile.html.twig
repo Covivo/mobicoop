@@ -29,6 +29,7 @@
     :user="{{app.user|json_encode}}"
     :cee-display="{{ ceeDisplay ? " true" : "false" }}"
     :is-after-eec-subscription="{{ isAfterEECSubscription ? " true" : "false" }}"
+    :eec-sso-auth-error="{{ eecSsoAuthError|json_encode }}"
     :genders-list="{{ gendersList|json_encode }}"
     :eec-instance="{{ eecInstance|json_encode }}"
     :phone-codes="{{ phoneCodes|json_encode }}"

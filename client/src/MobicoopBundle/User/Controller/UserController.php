@@ -613,6 +613,7 @@ class UserController extends AbstractController
             'ceeDisplay' => $this->ceeDisplay,
             'error' => $error,
             'isAfterEECSubscription' => $isAfterEECSubscription,
+            'eecSsoAuthError' => $request->get('eecSsoAuthError'),                  // @var null|string
             'paymentElectronicActive' => $this->paymentElectronicActive,
             'selectedTab' => $tab,
             'showReviews' => $user->isUserReviewsActive(),
