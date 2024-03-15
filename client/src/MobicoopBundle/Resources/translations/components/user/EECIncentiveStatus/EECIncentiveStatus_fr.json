@@ -206,7 +206,7 @@
   "EEC-form": "prime-covoiturage",
   "EEC-subscription-snackbar": {
     "success": "La souscription aux aides a été effectuée.",
-    "failed": "La souscription aux aides a échouée.",
+    "failed": "La souscription aux aides a échoué.",
     "errors": {
       "eec_user_sso_request_error": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
       "eec_user_sso_account_incomplete": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
