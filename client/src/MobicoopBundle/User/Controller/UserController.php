@@ -1854,6 +1854,40 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * retrive userUnder18
+     * AJAX.
+     */
+    public function getUserUnder18(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            if ($data['uuid']) {
+                $response = $this->userManager->getUserUnder18($data['uuid']);
+
+                return new JsonResponse($response->getValue());
+            }
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
+     * give parental consent
+     * AJAX.
+     */
+    public function giveParentalConsent(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            return new JsonResponse($this->userManager->giveParentalConsent($data['uuid'], $data['token']));
+        }
+
+        return new JsonResponse();
+    }
+
     private function mobileRedirect(string $host, string $path, array $params)
     {
         $redirectUri = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
