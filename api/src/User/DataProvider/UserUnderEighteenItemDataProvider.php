@@ -44,7 +44,7 @@ final class UserUnderEighteenItemDataProvider implements ItemDataProviderInterfa
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return UserUnderEighteen::class === $resourceClass && 'user_under_Eighteen_get_by_uuid' == $operationName;
+        return UserUnderEighteen::class === $resourceClass && 'userUnderEighteenGetByUuid' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?UserUnderEighteen

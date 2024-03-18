@@ -996,7 +996,7 @@ class UserManager
     {
         $this->dataProvider->setClass(UserUnderEighteen::class);
 
-        return $this->dataProvider->getItem(UserUnderEighteen::DEFAULT_ID, ['uuid' => $uuid]);
+        return $this->dataProvider->getSpecialItem(UserUnderEighteen::DEFAULT_ID, 'uuid', ['uuid' => $uuid]);
     }
 
     public function giveParentalConsent(string $uuid, string $token)
