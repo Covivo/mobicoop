@@ -549,6 +549,17 @@ class Community
     private $nbMembers;
 
     /**
+     * Quantified objective of the number of members to reach.
+     *
+     * @var null|int if null, the objective has not been defined
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"comment": "Quantified objective of the number of members to reach."})
+     *
+     * @Groups({"aRead","aWrite","readCommunity","listCommunities"})
+     */
+    private $goalMembers;
+
+    /**
      * @var null|array Store the MapAds of the community
      *
      * @Groups({"readCommunityUser","write","results","existsCommunity"})
@@ -1160,5 +1171,25 @@ class Community
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    /**
+     * Get if null, the objective has not been defined.
+     */
+    public function getGoalMembers(): ?int
+    {
+        return $this->goalMembers;
+    }
+
+    /**
+     * Set if null, the objective has not been defined.
+     *
+     * @param null|int $goalMembers if null, the objective has not been defined
+     */
+    public function setGoalMembers(?int $goalMembers): self
+    {
+        $this->goalMembers = $goalMembers;
+
+        return $this;
     }
 }
