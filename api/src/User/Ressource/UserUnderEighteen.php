@@ -68,11 +68,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  "tags"={"Users"}
  *              }
  *          },
- *          "userUnderEighteenGetByUuid"={
+ *          "getUserUnderEighteenByToken"={
  *             "method"="GET",
  *             "normalization_context"={"groups"={"read"}},
  *             "denormalization_context"={"groups"={"write"}},
- *             "path"="/user_under_eighteens/{id}/uuid",
+ *             "path"="/user_under_eighteens/{id}/token",
  *             "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
