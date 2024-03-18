@@ -1840,10 +1840,17 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
-            if ($data['uuid']) {
-                $response = $this->userManager->getUserUnderEighteen($data['uuid']);
+            if ($data['token']) {
+                $response = $this->userManager->getUserUnderEighteen($data['token']);
 
-                return new JsonResponse($response->getValue());
+                if (200 == $response->getCode()) {
+                    return new JsonResponse($response->getValue());
+                }
+
+                return new JsonResponse(
+                    ['error' => $response->getValue()->getDescription()],
+                    $response->getCode()
+                );
             }
         }
 
@@ -1859,7 +1866,16 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
-            return new JsonResponse($this->userManager->giveParentalConsent($data['uuid'], $data['token']));
+            $response = $this->userManager->giveParentalConsent($data['uuid'], $data['token']);
+
+            if (200 == $response->getCode()) {
+                return new JsonResponse($response->getValue());
+            }
+
+            return new JsonResponse(
+                ['error' => $response->getValue()->getDescription()],
+                $response->getCode()
+            );
         }
 
         return new JsonResponse();
