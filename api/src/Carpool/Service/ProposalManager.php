@@ -203,7 +203,7 @@ class ProposalManager
      */
     public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
-        $this->logger->info('ProposalManager : treatProposal '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        // $this->logger->info('ProposalManager : treatProposal '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         // set min and max times
         $proposal = $this->setMinMax($proposal);
@@ -215,11 +215,11 @@ class ProposalManager
         $proposal = $this->setPrices($proposal);
 
         if ($persist) {
-            $this->logger->info('ProposalManager : start persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('ProposalManager : start persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $this->entityManager->persist($proposal);
             $this->entityManager->flush();
 
-            $this->logger->info('ProposalManager : end persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('ProposalManager : end persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         }
 
         // matching analyze
@@ -235,11 +235,11 @@ class ProposalManager
         }
 
         if ($persist) {
-            $this->logger->info('ProposalManager : start persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('ProposalManager : start persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
             $this->entityManager->flush();
-            $this->logger->info('ProposalManager : end persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('ProposalManager : end persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
             //  we dispatch gamification event associated
             if (!$proposal->isPrivate() && Proposal::TYPE_RETURN != $proposal->getType()) {
@@ -314,7 +314,7 @@ class ProposalManager
                         $event = new AskAdDeletedEvent($ask, $deleter->getId());
                         $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
-                    // Ask user is passenger
+                // Ask user is passenger
                 } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
                     // TO DO check if the deletion is just before 24h and in that case send an other email
                     // /** @var Criteria $criteria */
