@@ -54,7 +54,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "method"="POST",
  *              "denormalization_context"={"groups"={"write"}},
  *              "normalization_context"={"groups"={"read"}},
- *              "path"="/userUnder18s/giveParentalConsent",
+ *              "path"="/userUnderEighteens/giveParentalConsent",
  *              "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
@@ -68,10 +68,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  "tags"={"Users"}
  *              }
  *          },
- *          "user_under_18_get_by_uuid"={
+ *          "user_under_eighteen_get_by_uuid"={
  *             "method"="GET",
  *             "normalization_context"={"groups"={"read"}},
- *             "path"="/userUnder18s/{id}",
+ *             "denormalization_context"={"groups"={"write"}},
+ *             "path"="/userUnderEighteens/{id}",
  *             "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
@@ -81,7 +82,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class UserUnder18
+class UserUnderEighteen
 {
     public const DEFAULT_ID = 999999999999;
 
