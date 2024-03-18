@@ -569,6 +569,7 @@
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
       :is-after-eec-subscription="isAfterEecSubscription"
+      :eec-sso-auth-error="eecSsoAuthError"
       :api-uri="apiUri"
       :platform="platform"
       @changeTab="changeTab"
@@ -805,6 +806,10 @@ export default {
     isAfterEecSubscription: {
       type: Boolean,
       default: false
+    },
+    eecSsoAuthError: {
+      type: String,
+      default: null
     },
     apiUri: {
       type: String,

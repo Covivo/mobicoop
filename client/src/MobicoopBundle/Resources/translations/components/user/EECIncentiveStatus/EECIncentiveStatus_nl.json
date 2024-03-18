@@ -206,9 +206,17 @@
   "EEC-form": "prime-covoiturage",
   "EEC-subscription-snackbar": {
     "success": "La souscription aux aides a été effectuée.",
-    "failed": "La souscription aux aides a échouée.",
-    "longDistanceFailed": "La souscription à l'aide pour les trajets longue distance n'a pas pu être réalisée.",
-    "shortDistanceFailed": "La souscription à l'aide pour les trajets courte distance n'a pas pu être réalisée."
+    "failed": "La souscription aux aides a échoué.",
+    "errors": {
+      "eec_user_sso_request_error": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
+      "eec_user_sso_account_incomplete": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
+      "eec_user_sso_unknowned": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
+      "eec_subscriptionType_unallowed": "Le type d'incitation demandé n'est pas disponible.",
+      "eec_subscriptionType_long_allready_subscribed": "Vous avez déjà souscrit à l'incitation longue distance.",
+      "eec_subscriptionType_short_allready_subscribed": "Vous avez déjà souscrit à l'incitation courte distance.",
+      "eec_subscription_long_unfinalized": "La demande de souscription pour l'incitation courte distance n'a pas aboutie.",
+      "eec_subscription_short_unfinalized": "La demande de souscription pour l'incitation longue distance n'a pas aboutie."
+    }
   },
   "EEC-eligibility": {
     "alert": {

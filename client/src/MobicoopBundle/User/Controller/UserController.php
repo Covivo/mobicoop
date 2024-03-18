@@ -613,6 +613,7 @@ class UserController extends AbstractController
             'ceeDisplay' => $this->ceeDisplay,
             'error' => $error,
             'isAfterEECSubscription' => $isAfterEECSubscription,
+            'eecSsoAuthError' => $request->get('eecSsoAuthError'),                  // @var null|string
             'paymentElectronicActive' => $this->paymentElectronicActive,
             'selectedTab' => $tab,
             'showReviews' => $user->isUserReviewsActive(),
@@ -1570,7 +1571,7 @@ class UserController extends AbstractController
 
     /**
      * Return page after a SSO Login from mobConnect
-     * Url is something like /user/sso/cee-incentive?state=mobConnect&code=1.
+     * Url is something like /user/sso/eec-incentive?state=mobConnect&code=1.
      */
     public function userReturnConnectSSOMobConnect(Request $request)
     {
@@ -1583,14 +1584,23 @@ class UserController extends AbstractController
             'eec' => 1,
         ];
 
-        if ($this->getUser()) {
-            $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
-        }
-
-        return $this->redirectToRoute('user_profile_update', [
+        $responseData = [
             'tabDefault' => 'mon-profil',
             'afterEECSubscription' => true,
-        ]);
+        ];
+
+        if ($this->getUser()) {
+            $result = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
+
+            if (
+                !$result instanceof User
+                && preg_match('/(E|e)rror/', $result->getType())
+            ) {
+                $responseData['eecSsoAuthError'] = $result->getDescription();
+            }
+        }
+
+        return $this->redirectToRoute('user_profile_update', $responseData);
     }
 
     public function userReturnConnectSsoMobile(Request $request)

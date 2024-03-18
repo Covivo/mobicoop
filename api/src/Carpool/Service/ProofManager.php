@@ -629,8 +629,8 @@ class ProofManager
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
             // uncomment the following to anonymize driver addresses used in the proof
-                // $carpoolProof->setOriginDriverAddress(null);
-                // $carpoolProof->setDestinationDriverAddress(null);
+            // $carpoolProof->setOriginDriverAddress(null);
+            // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
                 $carpoolProof->setPassenger(null);
                 // uncomment the following to anonymize passenger addresses used in the proof
