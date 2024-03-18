@@ -1,4 +1,30 @@
 {
-  "getUserUnder18Url": "/user/underEighteen",
-  "giveParentalConsentUrl": "/user/giveParentalConsent"
+  "title": "Autorisation parentale",
+  "checkboxes":{
+    "label": "Lu et approuvé",
+    "1": "Je, responsable légal.e du.de la mineur.e {givenName} {familyName} déclare autoriser ce.cette mineur.e de plus de 14 ans dont j’ai la responsabilité à utiliser {platformName}. J’ai bien noté que ce.cette mineur.e reste sous mon entière responsabilité.",
+    "2": "En aucun cas, {platformName}, opérateur de la plateforme, ainsi que les collectivités partenaires de {platformName} ne pourront être tenues responsables pour quelque dommage que ce soit.",
+    "3": "Je m’engage à bien expliquer au.à la mineur.e dont j’ai la responsabilité le fonctionnement du dispositif et notamment à attirer son attention sur les conseils pour réussir ses déplacements dans la FAQ et les Bonnes Pratiques.",
+    "4": "{platformName} se réserve le droit de me contacter.</br>En donnant mon autorisation parentale, je m'engage à respecter chaque paragraphe de celle-ci."
+  },
+  "buttons": {
+    "giveParentalConsent": {
+      "label": "Donner son autorisation parentale"
+    },
+    "confirmParentalConsentGiven": {
+      "label": "Je confirme donner mon autorisation parentale"
+    },
+    "dialogParentalConsentGiven":{
+      "label": "Quitter le formulaire",
+      "route": "/"
+    }
+  },
+  "getUserUnderEighteenUrl": "/user/underEighteen",
+  "giveParentalConsentUrl": "/user/giveParentalConsent",
+  "dialogParentalConsentGiven":{
+    "title": "Autorisation parentale donnée.",
+    "content": "Votre autorisation parentale a bien été prise en compte. </br>Votre enfant {givenName} {familyName} a maintenant accès à la plateforme {platformName}!"
+  },
+  "errorWhenGetUser": "<p>Code non reconnu. Assurez vous d'avoir saisi le bon code. </br> Si le problème persiste vous pouvez nous contacter via <a style='color:white' href='/contact'><b>ce formulaire</b></a></p>",
+  "errorWhenGiveParentalConsent": "<p>Une erreur est survenue, veuillez essayer à nouveau.</br> Si le problème persiste vous pouvez nous contacter via <a style='color:white' href='/contact'><b>ce formulaire</b></a></p>"
 }
