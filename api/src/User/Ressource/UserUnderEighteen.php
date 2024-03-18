@@ -54,7 +54,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "method"="POST",
  *              "denormalization_context"={"groups"={"write"}},
  *              "normalization_context"={"groups"={"read"}},
- *              "path"="/userUnderEighteens/giveParentalConsent",
+ *              "path"="/user_under_eighteens/giveParentalConsent",
  *              "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
@@ -68,11 +68,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  "tags"={"Users"}
  *              }
  *          },
- *          "user_under_eighteen_get_by_uuid"={
+ *          "userUnderEighteenGetByUuid"={
  *             "method"="GET",
  *             "normalization_context"={"groups"={"read"}},
  *             "denormalization_context"={"groups"={"write"}},
- *             "path"="/userUnderEighteens/{id}",
+ *             "path"="/user_under_eighteens/{id}/uuid",
  *             "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
