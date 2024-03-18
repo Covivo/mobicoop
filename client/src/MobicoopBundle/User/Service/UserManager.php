@@ -992,11 +992,11 @@ class UserManager
         return $response->getValue();
     }
 
-    public function getUserUnderEighteen(string $uuid)
+    public function getUserUnderEighteen(string $token)
     {
         $this->dataProvider->setClass(UserUnderEighteen::class);
 
-        return $this->dataProvider->getSpecialItem(UserUnderEighteen::DEFAULT_ID, 'uuid', ['uuid' => $uuid]);
+        return $this->dataProvider->getSpecialItem(UserUnderEighteen::DEFAULT_ID, 'token', ['token' => $token]);
     }
 
     public function giveParentalConsent(string $uuid, string $token)
