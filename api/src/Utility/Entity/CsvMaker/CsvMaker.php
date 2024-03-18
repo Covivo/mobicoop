@@ -132,6 +132,7 @@ class CsvMaker
         foreach ($this->_queryResults as $result) {
             if ($header) {
                 fputcsv($file, array_keys($result), self::CSV_DELIMITER);
+                fputcsv($file, $result, self::CSV_DELIMITER);
                 $header = false;
 
                 continue;
