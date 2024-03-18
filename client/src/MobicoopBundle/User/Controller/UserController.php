@@ -1832,16 +1832,16 @@ class UserController extends AbstractController
     }
 
     /**
-     * retrive userUnder18
+     * retrive userUnderEighteen
      * AJAX.
      */
-    public function getUserUnder18(Request $request)
+    public function getUserUnderEighteen(Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
             if ($data['uuid']) {
-                $response = $this->userManager->getUserUnder18($data['uuid']);
+                $response = $this->userManager->getUserUnderEighteen($data['uuid']);
 
                 return new JsonResponse($response->getValue());
             }

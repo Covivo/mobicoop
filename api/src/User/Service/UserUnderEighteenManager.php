@@ -24,15 +24,15 @@
 namespace App\User\Service;
 
 use App\User\Repository\UserRepository;
-use App\User\Ressource\UserUnder18;
+use App\User\Ressource\UserUnderEighteen;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Unser under 18 manager service.
+ * Unser under Eighteen manager service.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class UserUnder18Manager
+class UserUnderEighteenManager
 {
     private $userRepository;
     private $entityManager;
@@ -43,7 +43,7 @@ class UserUnder18Manager
         $this->entityManager = $entityManager;
     }
 
-    public function getUserUnder18byUuid(string $uuid)
+    public function getUserUnderEighteenbyUuid(string $uuid)
     {
         $user = $this->userRepository->findOneBy(['parentalConsentUuid' => $uuid]);
 
@@ -51,16 +51,16 @@ class UserUnder18Manager
             throw new \LogicException('User not found', 1);
         }
 
-        $userUnder18 = new UserUnder18();
-        $userUnder18->setGivenName($user->getGivenName());
-        $userUnder18->setFamilyName($user->getFamilyName());
+        $userUnderEighteen = new UserUnderEighteen();
+        $userUnderEighteen->setGivenName($user->getGivenName());
+        $userUnderEighteen->setFamilyName($user->getFamilyName());
 
-        return $userUnder18;
+        return $userUnderEighteen;
     }
 
-    public function giveParentalConsent(UserUnder18 $userUnder18)
+    public function giveParentalConsent(UserUnderEighteen $userUnderEighteen)
     {
-        $user = $this->userRepository->findOneBy(['parentalConsentUuid' => $userUnder18->getUuid(), 'parentalConsentToken' => $userUnder18->getToken()]);
+        $user = $this->userRepository->findOneBy(['parentalConsentUuid' => $userUnderEighteen->getUuid(), 'parentalConsentToken' => $userUnderEighteen->getToken()]);
         if (is_null($user)) {
             throw new \LogicException('User not found, the parental consent failed', 1);
         }
@@ -69,6 +69,6 @@ class UserUnder18Manager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return $userUnder18;
+        return $userUnderEighteen;
     }
 }

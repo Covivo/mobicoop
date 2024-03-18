@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class UserUnder18 implements ResourceInterface, \JsonSerializable
+class UserUnderEighteen implements ResourceInterface, \JsonSerializable
 {
     public const DEFAULT_ID = 999999999999;
 

@@ -23,29 +23,29 @@
 namespace App\User\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\User\Ressource\UserUnder18;
-use App\User\Service\UserUnder18Manager;
+use App\User\Ressource\UserUnderEighteen;
+use App\User\Service\UserUnderEighteenManager;
 use Symfony\Component\Security\Core\Security;
 
-final class UserUnder18DataPersister implements ContextAwareDataPersisterInterface
+final class UserUnderEighteenDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
-    private $userUnder18Manager;
+    private $userUnderEighteenManager;
 
-    public function __construct(Security $security, UserUnder18Manager $userUnder18Manager)
+    public function __construct(Security $security, UserUnderEighteenManager $userUnderEighteenManager)
     {
         $this->security = $security;
-        $this->userUnder18Manager = $userUnder18Manager;
+        $this->userUnderEighteenManager = $userUnderEighteenManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof UserUnder18 && isset($context['collection_operation_name']) && 'giveParentalConsent' == $context['collection_operation_name'];
+        return $data instanceof UserUnderEighteen && isset($context['collection_operation_name']) && 'giveParentalConsent' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
-        return $this->userUnder18Manager->giveParentalConsent($data);
+        return $this->userUnderEighteenManager->giveParentalConsent($data);
     }
 
     public function remove($data, array $context = [])
