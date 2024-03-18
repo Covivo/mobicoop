@@ -3,6 +3,22 @@
     id="scroll-target"
     fluid
   >
+    <v-snackbar
+      v-model="snackbar"
+      color="error"
+      top
+      timeout="20000"
+      vertical
+    >
+      <p v-html="errorDisplay" />
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
+      >
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
     <v-row justify="center">
       <v-col
         cols="12"
@@ -10,10 +26,11 @@
         xl="6"
         align="center"
       >
-        <h1>Autorisation parentale</h1>
+        <h1>{{ $t('title') }}</h1>
       </v-col>
     </v-row>
     <v-row
+      v-if="!user"
       justify="center"
       align="center"
     >
@@ -21,31 +38,28 @@
         cols="4"
         align="center"
       >
-        <v-form>
-          <v-text-field
-            id="parentalConsentToken"
-            v-model="form.parentalConsentToken"
-            :rules="form.givenNameRules"
-            label="Code"
-            required
-          />
-          <v-row
-            justify="center"
-            align="center"
-            class="mb-25"
+        <v-text-field
+          id="parentalConsentToken"
+          v-model="parentalConsentToken"
+          label="Code"
+          required
+        />
+        <v-row
+          justify="center"
+          align="center"
+          class="mb-25"
+        >
+          <v-btn
+            ref="button"
+            rounded
+            :disabled="formButtondisabled"
+            class="my-13 mr-12"
+            color="secondary"
+            @click="getUserUnder18"
           >
-            <v-btn
-              ref="button"
-              rounded
-              :disabled="formButtondisabled"
-              class="my-13 mr-12"
-              color="secondary"
-              @click="getUserUnder18"
-            >
-              Acceder au formulaire
-            </v-btn>
-          </v-row>
-        </v-form>
+            {{ $t('buttons.giveParentalConsent.label') }}
+          </v-btn>
+        </v-row>
       </v-col>
     </v-row>
     <v-row
@@ -60,39 +74,38 @@
       >
         <v-row v-if="showCheckbox1">
           <v-col>
-            <p>Je, responsable légal.e du.de la mineur.e Prénom NOM déclare autoriser ce.cette mineur.e de plus de 14 ans dont j’ai la responsabilité à utiliser Mobicoop. J’ai bien noté que ce.cette mineur.e reste sous mon entière responsabilité.</p>
+            <p>{{ $t('checkboxes.1',{'givenName':user.givenName, 'familyName': user.familyName, 'platformName':platformName}) }}</p>
             <v-checkbox
               v-model="checkbox1"
-              label="Lu et approuvé"
+              :label="$t('checkboxes.label')"
               required
             />
           </v-col>
         </v-row>
         <v-row v-if="showCheckbox2">
           <v-col>
-            <p>En aucun cas, la SCIC Mobicoop, opérateur de la plateforme, ainsi que les collectivités partenaires de Mobicoop ne pourront être tenues responsables pour quelque dommage que ce soit.</p>
+            <p>{{ $t('checkboxes.2',{'platformName':platformName}) }}</p>
             <v-checkbox
               v-model="checkbox2"
-              label="Lu et approuvé"
+              :label="$t('checkboxes.label')"
             />
           </v-col>
         </v-row>
         <v-row v-if="showCheckbox3">
           <v-col>
-            <p>Je m’engage à bien expliquer au.à la mineur.e dont j’ai la responsabilité le fonctionnement du dispositif et notamment à attirer son attention sur les conseils pour réussir ses déplacements dans la FAQ et les Bonnes Pratiques. </p>
+            <p>{{ $t('checkboxes.3') }}</p>
             <v-checkbox
               v-model="checkbox3"
-              label="Lu et approuvé"
+              :label="$t('checkboxes.label')"
             />
           </v-col>
         </v-row>
         <v-row v-if="showCheckbox4">
           <v-col>
-            <p>Mobicoop se réserve le droit de me contacter.</p>
-            <p>En donnant mon autorisation parentale, je m'engage à respecter chaque paragraphe de celle-ci.</p>
+            <p v-html="$t('checkboxes.4',{'platformName':platformName})" />
             <v-checkbox
               v-model="checkbox4"
-              label="Lu et approuvé"
+              :label="$t('checkboxes.label')"
             />
           </v-col>
         </v-row>
@@ -108,13 +121,38 @@
             class="my-13 mr-12"
             :disabled="consentDisabled"
             color="secondary"
-            @click="validate"
+            @click="giveParentalConsent"
           >
-            Je confirme donner mon autorisation parentale
+            {{ $t('buttons.confirmParentalConsentGiven.label') }}
           </v-btn>
         </v-row>
       </v-col>
     </v-row>
+    <v-dialog
+      v-model="activeDialog"
+      persistent
+      max-width="900"
+    >
+      <v-card>
+        <v-card-title
+          class="text-h5 justify-center"
+        >
+          {{ dialog.title }}
+        </v-card-title>
+        <v-card-text v-html="dialog.content" />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="secondary"
+            primary
+            rounded
+            :href="dialog.buttonRoute"
+          >
+            {{ dialog.buttonLabel }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -135,24 +173,35 @@ export default {
     uuid:{
       type: String,
       default:null
-    }
+    },
+    platformName:{
+      type: String,
+      default:'Mobicoop'
+    },
   },
   data() {
     return {
-      form: {
-        parentalConsentToken: null
-      },
+      parentalConsentToken: null,
       showForm: false,
       checkbox1: false,
       checkbox2: false,
       checkbox3: false,
       checkbox4: false,
-      user: null
+      user: null,
+      activeDialog: false,
+      dialog: {
+        title: '',
+        content: '',
+        buttonLabel: '',
+        buttonAction: null
+      },
+      errorDisplay: "",
+      snackbar:false
     };
   },
   computed: {
     formButtondisabled() {
-      return !this.form.parentalConsentToken;
+      return !this.parentalConsentToken || this.showForm == true;
     },
     consentDisabled() {
       if (this.showForm && this.checkbox1 && this.checkbox2 && this.checkbox3 && this.checkbox4){
@@ -176,8 +225,7 @@ export default {
     },
     showCheckbox4() {
       return (this.showForm && this.checkbox1 && this.checkbox2 && this.checkbox3);
-    },
-
+    }
   },
   watch: {
     checkbox1() {
@@ -199,37 +247,48 @@ export default {
       };
     },
   },
-  created() {
-    this.getUserUnder18();
-  },
   methods: {
     getUserUnder18() {
       let params = {
-        'uuid':this.uuid
+        'token':this.parentalConsentToken
       }
-      maxios.post(this.$t("getUserUnder18Url"), params)
+      maxios.post(this.$t("getUserUnderEighteenUrl"), params)
         .then(res => {
-          console.log(res.data);
           this.user = res.data;
+          this.showForm = true;
         })
         .catch((error) => {
-          console.log(error);
+          this.treatErrorMessage(this.$t('errorWhenGetUser'))
+          console.error(error);
         });
-      this.showForm = true;
     },
     giveParentalConsent(){
       let params = {
         'uuid':this.uuid,
-        'token':this.form.parentalConsentToken
+        'token':this.parentalConsentToken
       }
       maxios.post(this.$t("giveParentalConsentUrl"), params)
         .then(res => {
           this.user = res.data;
+          this.dialogSuccess();
         })
         .catch((error) => {
+          this.treatErrorMessage(this.$t('errorWhenGiveParentalConsent'))
           console.log(error);
         });
     },
+    dialogSuccess() {
+      this.activeDialog = true;
+      this.dialog.title = this.$t('dialogParentalConsentGiven.title');
+      this.dialog.content = this.$t('dialogParentalConsentGiven.content',{'givenName':this.user.givenName, 'familyName':this.user.givenName, 'platformName':this.platformName});
+      this.dialog.buttonLabel= this.$t('buttons.dialogParentalConsentGiven.label');
+      this.dialog.buttonRoute= this.$t('buttons.dialogParentalConsentGiven.route');
+    },
+    treatErrorMessage(errorMessage) {
+      this.errorDisplay = errorMessage;
+      this.snackbar= true;
+      this.parentalConsentToken = null;
+    }
   }
 };
 </script>
