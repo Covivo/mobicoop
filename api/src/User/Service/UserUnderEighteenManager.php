@@ -43,10 +43,9 @@ class UserUnderEighteenManager
         $this->entityManager = $entityManager;
     }
 
-    public function getUserUnderEighteenbyUuid(string $uuid)
+    public function getUserUnderEighteenByToken(string $token)
     {
-        $user = $this->userRepository->findOneBy(['parentalConsentUuid' => $uuid]);
-
+        $user = $this->userRepository->findOneBy(['parentalConsentToken' => $token]);
         if (is_null($user)) {
             throw new \LogicException('User not found', 1);
         }
