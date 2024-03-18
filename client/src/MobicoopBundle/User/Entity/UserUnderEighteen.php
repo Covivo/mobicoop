@@ -36,8 +36,6 @@ class UserUnderEighteen implements ResourceInterface, \JsonSerializable
     /**
      * @var int The id of this Block
      *
-     * @ApiProperty(identifier=true)
-     *
      * @Groups({"get"})
      */
     private $id;
