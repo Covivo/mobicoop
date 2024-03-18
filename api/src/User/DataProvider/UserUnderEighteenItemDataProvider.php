@@ -25,35 +25,35 @@ namespace App\User\DataProvider;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\User\Entity\User;
-use App\User\Ressource\UserUnder18;
-use App\User\Service\UserUnder18Manager;
+use App\User\Ressource\UserUnderEighteen;
+use App\User\Service\UserUnderEighteenManager;
 
 /**
- * Item data provider for getting User under 18.
+ * Item data provider for getting User under Eighteen.
  *
  * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
  */
-final class UserUnder18ItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class UserUnderEighteenItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $userUnder18Manager;
+    private $userUnderEighteenManager;
 
-    public function __construct(UserUnder18Manager $userUnder18Manager)
+    public function __construct(UserUnderEighteenManager $userUnderEighteenManager)
     {
-        $this->userUnder18Manager = $userUnder18Manager;
+        $this->userUnderEighteenManager = $userUnderEighteenManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return UserUnder18::class === $resourceClass && 'user_under_18_get_by_uuid' == $operationName;
+        return UserUnderEighteen::class === $resourceClass && 'user_under_Eighteen_get_by_uuid' == $operationName;
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?UserUnder18
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?UserUnderEighteen
     {
-        $userUnder18Manager = $this->userUnder18Manager->getUserUnder18byUuid($context['filters']['uuid']);
-        if (is_null($userUnder18Manager)) {
+        $userUnderEighteenManager = $this->userUnderEighteenManager->getUserUnderEighteenbyUuid($context['filters']['uuid']);
+        if (is_null($userUnderEighteenManager)) {
             throw new \LogicException('User not found found');
         }
 
-        return $userUnder18Manager;
+        return $userUnderEighteenManager;
     }
 }
