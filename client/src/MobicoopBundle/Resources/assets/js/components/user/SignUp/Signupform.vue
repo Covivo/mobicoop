@@ -115,6 +115,19 @@
       >
         <v-col
           cols="8"
+        >
+          <ReferralHeader
+            v-if="referral"
+            :referral="referral"
+          />
+        </v-col>
+      </v-row>
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col
+          cols="8"
           align="center"
         >
           <v-stepper
@@ -417,7 +430,7 @@
                 />
                 <!-- community -->
                 <v-row
-                  v-if="communityShow"
+                  v-if="communityShow && !referral"
                   class="text-justify pb-5"
                 >
                   <community-help
@@ -426,7 +439,7 @@
                 </v-row>
 
                 <v-autocomplete
-                  v-if="communityShow"
+                  v-if="communityShow && !referral"
                   v-model="selectedCommunity"
                   :items="communities"
                   outlined
@@ -613,6 +626,7 @@ import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/SignUp/";
 import MFacebookAuth from "@components/user/MFacebookAuth";
 import SsoLogins from '@components/user/SsoLogins';
+import ReferralHeader from '@components/user/SignUp/ReferralHeader';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -631,7 +645,8 @@ export default {
     Geocomplete,
     MFacebookAuth,
     CommunityHelp,
-    SsoLogins
+    SsoLogins,
+    ReferralHeader
   },
   props: {
     geoSearchUrl: {
@@ -729,6 +744,10 @@ export default {
     phoneCodes: {
       type: Array,
       default: () => []
+    },
+    referral: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -997,6 +1016,7 @@ export default {
             newsSubscription: this.form.newsSubscription,
             legalGuardianEmail: this.form.legalGuardianEmail ? this.form.legalGuardianEmail : null,
             community: this.selectedCommunity ? this.selectedCommunity : null,
+            referral: this.referral
           },
           {
             headers: {
