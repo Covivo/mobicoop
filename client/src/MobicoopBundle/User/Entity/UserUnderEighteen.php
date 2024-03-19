@@ -68,6 +68,20 @@ class UserUnderEighteen implements ResourceInterface, \JsonSerializable
      */
     private $familyName;
 
+    /**
+     * @var null|\DateTimeInterface Date of the parental consent
+     *
+     * @Groups({"get"})
+     */
+    private $parentalConsentDate;
+
+    /**
+     * @var null|int The gender of the user (1=female, 2=male, 3=nc)
+     *
+     * @Groups({"get"})
+     */
+    private $gender;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -136,6 +150,30 @@ class UserUnderEighteen implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getParentalConsentDate(): ?\DateTimeInterface
+    {
+        return $this->parentalConsentDate;
+    }
+
+    public function setParentalConsentDate(?\DateTimeInterface $parentalConsentDate): self
+    {
+        $this->parentalConsentDate = $parentalConsentDate;
+
+        return $this;
+    }
+
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    public function setGender($gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return [
@@ -143,6 +181,8 @@ class UserUnderEighteen implements ResourceInterface, \JsonSerializable
             'token' => $this->getToken(),
             'givenName' => $this->getGivenName(),
             'familyName' => $this->getFamilyName(),
+            'gender' => $this->getGender(),
+            'parentalConsentDate' => $this->getParentalConsentDate(),
         ];
     }
 }
