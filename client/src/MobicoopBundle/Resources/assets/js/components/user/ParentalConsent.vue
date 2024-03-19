@@ -74,7 +74,7 @@
       >
         <v-row v-if="showCheckbox1">
           <v-col>
-            <p>{{ textCheckBox1 }}</p>
+            <p>{{ textCheckbox1 }}</p>
             <v-checkbox
               v-model="checkbox1"
               :label="$t('checkboxes.label')"
@@ -84,7 +84,7 @@
         </v-row>
         <v-row v-if="showCheckbox2">
           <v-col>
-            <p>{{ textCheckBox2 }}</p>
+            <p>{{ textCheckbox2 }}</p>
             <v-checkbox
               v-model="checkbox2"
               :label="$t('checkboxes.label')"
@@ -93,7 +93,7 @@
         </v-row>
         <v-row v-if="showCheckbox3">
           <v-col>
-            <p>{{ textCheckBox3 }}</p>
+            <p>{{ textCheckbox3 }}</p>
             <v-checkbox
               v-model="checkbox3"
               :label="$t('checkboxes.label')"
@@ -102,7 +102,7 @@
         </v-row>
         <v-row v-if="showCheckbox4">
           <v-col>
-            <p v-html="textCheckBox4" />
+            <p v-html="textCheckbox4" />
             <v-checkbox
               v-model="checkbox4"
               :label="$t('checkboxes.label')"
@@ -197,10 +197,10 @@ export default {
       },
       errorDisplay: "",
       snackbar:false,
-      textCheckBox1: '',
+      textCheckbox1: '',
       textCheckbox2: '',
-      textCheckBox3: '',
-      textCheckBox4: ''
+      textCheckbox3: '',
+      textCheckbox4: ''
     };
   },
   computed: {
@@ -297,22 +297,22 @@ export default {
     selectCheckboxText(gender) {
       switch (gender) {
       case 1:
-        this.textCheckBox1 = this.$t('checkboxes.female.1',{'givenName':this.user.givenName, 'familyName': this.user.familyName, 'platformName':this.platformName});
-        this.textCheckBox2 = this.$t('checkboxes.female.2',{'platformName':this.platformName});
-        this.textCheckBox3 = this.$t('checkboxes.female.3');
-        this.textCheckBox4 = this.$t('checkboxes.female.4',{'platformName':this.platformName});
+        this.textCheckbox1 = this.$t('checkboxes.female.1',{'givenName':this.user.givenName, 'familyName': this.user.familyName, 'platformName':this.platformName});
+        this.textCheckbox2 = this.$t('checkboxes.female.2',{'platformName':this.platformName});
+        this.textCheckbox3 = this.$t('checkboxes.female.3');
+        this.textCheckbox4 = this.$t('checkboxes.female.4',{'platformName':this.platformName});
         break;
       case 2:
-        this.textCheckBox1 = this.$t('checkboxes.male.1',{'givenName':this.user.givenName, 'familyName': this.user.familyName, 'platformName':this.platformName});
-        this.textCheckBox2 = this.$t('checkboxes.male.2',{'platformName':this.platformName});
-        this.textCheckBox3 = this.$t('checkboxes.male.3');
-        this.textCheckBox4 = this.$t('checkboxes.male.4',{'platformName':this.platformName});
+        this.textCheckbox1 = this.$t('checkboxes.male.1',{'givenName':this.user.givenName, 'familyName': this.user.familyName, 'platformName':this.platformName});
+        this.textCheckbox2 = this.$t('checkboxes.male.2',{'platformName':this.platformName});
+        this.textCheckbox3 = this.$t('checkboxes.male.3');
+        this.textCheckbox4 = this.$t('checkboxes.male.4',{'platformName':this.platformName});
         break;
       default:
-        this.textCheckBox1 = this.$t('checkboxes.other.1',{'givenName':this.user.givenName, 'familyName': this.user.familyName, 'platformName':this.platformName});
-        this.textCheckBox2 = this.$t('checkboxes.other.2',{'platformName':this.platformName});
-        this.textCheckBox3 = this.$t('checkboxes.other.3');
-        this.textCheckBox4 = this.$t('checkboxes.other.4',{'platformName':this.platformName});
+        this.textCheckbox1 = this.$t('checkboxes.other.1',{'givenName':this.user.givenName, 'familyName': this.user.familyName, 'platformName':this.platformName});
+        this.textCheckbox2 = this.$t('checkboxes.other.2',{'platformName':this.platformName});
+        this.textCheckbox3 = this.$t('checkboxes.other.3');
+        this.textCheckbox4 = this.$t('checkboxes.other.4',{'platformName':this.platformName});
         break;
       }
 
