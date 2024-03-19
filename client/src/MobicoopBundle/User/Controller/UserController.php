@@ -1891,7 +1891,7 @@ class UserController extends AbstractController
 
             $response = $this->userManager->giveParentalConsent($data['uuid'], $data['token']);
 
-            if (200 == $response->getCode()) {
+            if (201 == $response->getCode()) {
                 return new JsonResponse($response->getValue());
             }
 
