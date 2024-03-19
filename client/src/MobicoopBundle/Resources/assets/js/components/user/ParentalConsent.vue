@@ -74,7 +74,7 @@
       >
         <v-row v-if="showCheckbox1">
           <v-col>
-            <p>{{ $t('checkboxes.1',{'givenName':user.givenName, 'familyName': user.familyName, 'platformName':platformName}) }}</p>
+            <p>{{ textCheckBox1 }}</p>
             <v-checkbox
               v-model="checkbox1"
               :label="$t('checkboxes.label')"
@@ -84,7 +84,7 @@
         </v-row>
         <v-row v-if="showCheckbox2">
           <v-col>
-            <p>{{ $t('checkboxes.2',{'platformName':platformName}) }}</p>
+            <p>{{ textCheckBox2 }}</p>
             <v-checkbox
               v-model="checkbox2"
               :label="$t('checkboxes.label')"
@@ -93,7 +93,7 @@
         </v-row>
         <v-row v-if="showCheckbox3">
           <v-col>
-            <p>{{ $t('checkboxes.3') }}</p>
+            <p>{{ textCheckBox3 }}</p>
             <v-checkbox
               v-model="checkbox3"
               :label="$t('checkboxes.label')"
@@ -102,7 +102,7 @@
         </v-row>
         <v-row v-if="showCheckbox4">
           <v-col>
-            <p v-html="$t('checkboxes.4',{'platformName':platformName})" />
+            <p v-html="textCheckBox4" />
             <v-checkbox
               v-model="checkbox4"
               :label="$t('checkboxes.label')"
@@ -196,7 +196,11 @@ export default {
         buttonAction: null
       },
       errorDisplay: "",
-      snackbar:false
+      snackbar:false,
+      textCheckBox1: '',
+      textCheckbox2: '',
+      textCheckBox3: '',
+      textCheckBox4: ''
     };
   },
   computed: {
@@ -255,6 +259,7 @@ export default {
       maxios.post(this.$t("getUserUnderEighteenUrl"), params)
         .then(res => {
           this.user = res.data;
+          this.selectCheckboxText(this.user.gender);
           this.showForm = true;
         })
         .catch((error) => {
@@ -288,6 +293,29 @@ export default {
       this.errorDisplay = errorMessage;
       this.snackbar= true;
       this.parentalConsentToken = null;
+    },
+    selectCheckboxText(gender) {
+      switch (gender) {
+      case 1:
+        this.textCheckBox1 = this.$t('checkboxes.female.1',{'givenName':this.user.givenName, 'familyName': this.user.familyName, 'platformName':this.platformName});
+        this.textCheckBox2 = this.$t('checkboxes.female.2',{'platformName':this.platformName});
+        this.textCheckBox3 = this.$t('checkboxes.female.3');
+        this.textCheckBox4 = this.$t('checkboxes.female.4',{'platformName':this.platformName});
+        break;
+      case 2:
+        this.textCheckBox1 = this.$t('checkboxes.male.1',{'givenName':this.user.givenName, 'familyName': this.user.familyName, 'platformName':this.platformName});
+        this.textCheckBox2 = this.$t('checkboxes.male.2',{'platformName':this.platformName});
+        this.textCheckBox3 = this.$t('checkboxes.male.3');
+        this.textCheckBox4 = this.$t('checkboxes.male.4',{'platformName':this.platformName});
+        break;
+      default:
+        this.textCheckBox1 = this.$t('checkboxes.other.1',{'givenName':this.user.givenName, 'familyName': this.user.familyName, 'platformName':this.platformName});
+        this.textCheckBox2 = this.$t('checkboxes.other.2',{'platformName':this.platformName});
+        this.textCheckBox3 = this.$t('checkboxes.other.3');
+        this.textCheckBox4 = this.$t('checkboxes.other.4',{'platformName':this.platformName});
+        break;
+      }
+
     }
   }
 };
