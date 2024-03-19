@@ -1361,6 +1361,7 @@ services:
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
       $userMinAge: "%env(int:USER_MIN_AGE)%"
       $carpoolStandardEnabled: "%env(bool:CARPOOL_STANDARD_ENABLED)%"
+      $authorizedReferrals: "%env(json:SIGNUP_AUTHORIZED_REFERRALS)%"
 
   App\User\Interoperability\Service\UserManager:
     arguments:
