@@ -2,9 +2,9 @@
   "title": "Autorisation parentale",
   "checkboxes":{
     "label": "Lu et approuvé",
-    "1": "Je, responsable légal.e du.de la mineur.e {givenName} {familyName} déclare autoriser ce.cette mineur.e de plus de 14 ans dont j’ai la responsabilité à utiliser {platformName}. J’ai bien noté que ce.cette mineur.e reste sous mon entière responsabilité.",
+    "1": "Je, responsable légal·e du·de la mineur·e {givenName} {familyName} déclare autoriser ce·cette mineur·e de plus de 14 ans dont j’ai la responsabilité à utiliser {platformName}. J’ai bien noté que ce.cette mineur·e reste sous mon entière responsabilité.",
     "2": "En aucun cas, {platformName}, opérateur de la plateforme, ainsi que les collectivités partenaires de {platformName} ne pourront être tenues responsables pour quelque dommage que ce soit.",
-    "3": "Je m’engage à bien expliquer au.à la mineur.e dont j’ai la responsabilité le fonctionnement du dispositif et notamment à attirer son attention sur les conseils pour réussir ses déplacements dans la FAQ et les Bonnes Pratiques.",
+    "3": "Je m’engage à bien expliquer au.à la mineur·e dont j’ai la responsabilité le fonctionnement du dispositif et notamment à attirer son attention sur les conseils pour réussir ses déplacements dans la FAQ et les Bonnes Pratiques.",
     "4": "{platformName} se réserve le droit de me contacter.</br>En donnant mon autorisation parentale, je m'engage à respecter chaque paragraphe de celle-ci."
   },
   "buttons": {
