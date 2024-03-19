@@ -53,6 +53,8 @@ class UserUnderEighteenManager
         $userUnderEighteen = new UserUnderEighteen();
         $userUnderEighteen->setGivenName($user->getGivenName());
         $userUnderEighteen->setFamilyName($user->getFamilyName());
+        $userUnderEighteen->setGender($user->getGender());
+        $userUnderEighteen->setParentalConsentDate($user->getParentalConsentDate());
 
         return $userUnderEighteen;
     }
