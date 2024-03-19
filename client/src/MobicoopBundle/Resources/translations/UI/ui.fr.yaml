@@ -16,6 +16,8 @@ user:
     title: "Messagerie"
   password_recovery:
     title: "Récupération du mot de passe"
+  parental_consent:
+    title: "Autorisation parentale"  
 carpool:
   ad_create:
     title: "Publier une annonce de covoiturage"
