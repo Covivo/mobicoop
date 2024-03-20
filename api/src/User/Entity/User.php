@@ -4391,6 +4391,8 @@ class User implements UserInterface, EquatableInterface
     public function setNeedParentalConsent(?bool $needParentalConsent): self
     {
         $this->needParentalConsent = $needParentalConsent;
+
+        return $this;
     }
 
     public function getReferral(): ?string
