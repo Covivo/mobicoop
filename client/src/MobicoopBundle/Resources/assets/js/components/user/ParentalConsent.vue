@@ -123,7 +123,7 @@
             color="secondary"
             @click="giveParentalConsent"
           >
-            {{ $t('buttons.confirmParentalConsentGiven.label') }}
+            {{ $t('buttons.confirmParentalConsent.label') }}
           </v-btn>
         </v-row>
       </v-col>
@@ -131,7 +131,7 @@
     <v-dialog
       v-model="activeDialog"
       persistent
-      max-width="900"
+      max-width="600"
     >
       <v-card>
         <v-card-title
@@ -157,7 +157,7 @@
 </template>
 <script>
 import maxios from "@utils/maxios";
-
+import moment from "moment";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/ParentalConsent/";
 
 export default {
@@ -259,8 +259,12 @@ export default {
       maxios.post(this.$t("getUserUnderEighteenUrl"), params)
         .then(res => {
           this.user = res.data;
-          this.selectCheckboxText(this.user.gender);
-          this.showForm = true;
+          if (this.user.parentalConsentDate != null) {
+            this.dialogParentalConsentAlreadyGiven(this.user)
+          } else {
+            this.selectCheckboxText(this.user.gender);
+            this.showForm = true;
+          }
         })
         .catch((error) => {
           this.treatErrorMessage(this.$t('errorWhenGetUser'))
@@ -274,20 +278,27 @@ export default {
       }
       maxios.post(this.$t("giveParentalConsentUrl"), params)
         .then(res => {
-          this.user = res.data;
-          this.dialogSuccess();
+          this.dialogSuccess(this.user);
         })
         .catch((error) => {
           this.treatErrorMessage(this.$t('errorWhenGiveParentalConsent'))
           console.log(error);
         });
     },
-    dialogSuccess() {
+    dialogSuccess(user) {
       this.activeDialog = true;
-      this.dialog.title = this.$t('dialogParentalConsentGiven.title');
-      this.dialog.content = this.$t('dialogParentalConsentGiven.content',{'givenName':this.user.givenName, 'familyName':this.user.givenName, 'platformName':this.platformName});
-      this.dialog.buttonLabel= this.$t('buttons.dialogParentalConsentGiven.label');
-      this.dialog.buttonRoute= this.$t('buttons.dialogParentalConsentGiven.route');
+      this.dialog.title = this.$t('dialogParentalConsentSuccess.title');
+      this.dialog.content = this.$t('dialogParentalConsentSuccess.content',{'givenName':user.givenName, 'familyName':user.familyName, 'platformName':this.platformName});
+      this.dialog.buttonLabel= this.$t('buttons.dialogParentalConsentSuccess.label');
+      this.dialog.buttonRoute= this.$t('buttons.dialogParentalConsentSuccess.route');
+    },
+    dialogParentalConsentAlreadyGiven(user) {
+      this.activeDialog = true;
+      let parentalConsentDate = moment(user.parentalConsentDate.date).format(this.$t("i18n.date.format"));
+      this.dialog.title = this.$t('dialogParentalConsentAlreadyGiven.title');
+      this.dialog.content = this.$t('dialogParentalConsentAlreadyGiven.content',{'givenName':user.givenName, 'familyName':user.familyName, 'consentDate':parentalConsentDate});
+      this.dialog.buttonLabel= this.$t('buttons.dialogParentalConsentAlreadyGiven.label');
+      this.dialog.buttonRoute= this.$t('buttons.dialogParentalConsentAlreadyGiven.route');
     },
     treatErrorMessage(errorMessage) {
       this.errorDisplay = errorMessage;
