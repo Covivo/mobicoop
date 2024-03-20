@@ -10,14 +10,32 @@
       timeout="20000"
       vertical
     >
-      <p v-html="errorDisplay" />
-      <v-btn
-        color="white"
-        text
-        @click="snackbar = false"
+      <v-row
+        justify="center"
+        align="center"
       >
-        <v-icon>mdi-close-circle-outline</v-icon>
-      </v-btn>
+        <v-col
+          align="center"
+          cols="12"
+        >
+          <p v-html="errorDisplay" />
+        </v-col>
+      </v-row>
+      <v-row class="mt-n8 mb-n8 mr-n8">
+        <v-col
+          v-col
+          cols="12"
+          align="end"
+        >
+          <v-btn
+            color="white"
+            text
+            @click="snackbar = false"
+          >
+            <v-icon>mdi-close-circle-outline</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-snackbar>
     <v-row justify="center">
       <v-col
