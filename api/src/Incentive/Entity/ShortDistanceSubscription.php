@@ -957,6 +957,7 @@ class ShortDistanceSubscription extends Subscription
         $this->setHonorCertificateProofTimestampSigningTime(null);
         $this->setStatus(null);
         $this->setVerificationDate(null);
+        $this->setBonusStatus(self::BONUS_STATUS_PENDING);
 
         return $this;
     }
@@ -978,7 +979,7 @@ class ShortDistanceSubscription extends Subscription
         return
             !is_null($this->getCommitmentProofJourney())
             && !is_null($this->getCommitmentProofJourney()->getCarpoolProof())
-            && $this->getCommitmentProofJourney()->getCarpoolProof()->isEECCompliant();
+            && CarpoolProofValidator::isEecCompliant($this->getCommitmentProofJourney()->getCarpoolProof());
     }
 
     public static function getAvailableDefinitions(): array

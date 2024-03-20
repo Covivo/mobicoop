@@ -80,12 +80,20 @@
             "previous": "Précédent",
             "publish_ad": "Publier mon annonce",
             "update_ad": "Modifier mon annonce",
-            "notValid": "Vous devez être loggué pour publier une annonce et avoir fournis toutes les informations du trajet"
+            "notValid": "Vous devez être loggué pour publier une annonce et avoir fournis toutes les informations du trajet",
+            "unUpdated": "Votre demande n'a pas été modifiée. Il n'y a rien à enregistrer",
+            "unacceptableParticipation": "Le prix de votre trajet, dépasse le seuil maximum fixé par notre plateforme (0,50€/km). Votre trajet ne peut être sauvegardé",
+            "incorrectRouteDefinition": "La définition de votre trajet est incorrecte",
+            "punctualOutwardDate": "La date et/ou l'horaire de votre trajet n'a pas été renseigné correctement",
+            "punctualReturnTripOutwardDate": "La date et/ou l'horaire de votre trajet retour n'a pas été renseigné correctement",
+            "regularSchedules": "Vous n'avez pas planifié votre trajet régulier",
+            "dataProcessing": "Le traitement des données est en cours...",
+            "requirments": "Les options obligatoires n'ont pas été validées"
         }
     },
     "messageFirstAd": {
-        "signUpDone": "Bravo {givenName} ! Votre inscription est terminée",
-        "alert": "Maintenant, pour être alerté de nouvelles annonces correspondant à votre trajet le plus fréquent, publier sans attendre votre première annonce de trajet régulier afin de pouvoir covoiturer rapidement."
+        "signUpDone": "Bravo {givenName}, votre inscription est terminée!",
+        "alert": "Publiez sans attendre vos trajets, quotidiens ou ponctuels, que vous soyez un passager ou un conducteur . Il est important de publier ses trajets sur l'interface afin d'être tenu au courant des covoiturages correspondants à votre besoin."
     },
     "messageSolidaryExclusiveAd": {
         "message": " Cette annonce sera une annonce de covoiturage solidaire exclusif, si vous maintenez l'option ci-dessous. Elle ne sera visible alors que par les opérateurs solidaires pour vous mettre en relation avec un demandeur solidaire. Si vous décochez cette option, votre annonce deviendra une annonce ordinaire visible à la fois par les autres covoitureurs et les opérateurs solidaires.",

@@ -473,7 +473,7 @@
                         !carpoolRoleSelected
                     "
                     color="secondary"
-                    :disabled="carpoolDisabled || lResult.initiatedAsk == true || lResult.pendingAsk == true"
+                    :disabled="carpoolDisabled || lResult.initiatedAsk == true || lResult.pendingAsk == true || (outwardTrip.length == 0 && returnTrip.length ==0)"
                     :loading="carpoolLoading"
                     @click="carpoolConfirmRegular(1)"
                   >
@@ -490,7 +490,7 @@
                         !carpoolRoleSelected
                     "
                     color="secondary"
-                    :disabled="carpoolDisabled || lResult.initiatedAsk == true || lResult.pendingAsk == true"
+                    :disabled="carpoolDisabled || lResult.initiatedAsk == true || lResult.pendingAsk == true || (outwardTrip.length == 0 && returnTrip.length ==0)"
                     :loading="carpoolLoading"
                     @click="carpoolConfirmRegular(2)"
                   >
@@ -520,7 +520,6 @@
                     "
                     color="secondary"
                     :disabled="carpoolDisabled || lResult.initiatedAsk == true || lResult.pendingAsk == true"
-                    :loading="carpoolLoading"
                     @click="carpoolConfirm(2)"
                   >
                     {{ $t("carpoolAsPassenger") }}

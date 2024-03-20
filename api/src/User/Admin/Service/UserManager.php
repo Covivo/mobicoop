@@ -26,6 +26,7 @@ namespace App\User\Admin\Service;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
+use App\Communication\Entity\Medium;
 use App\Community\Entity\Community;
 use App\DataProvider\Entity\RezopouceProvider;
 use App\Event\Entity\Event;
@@ -39,6 +40,7 @@ use App\User\Entity\User;
 use App\User\Event\AskParentalConsentEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
+use App\User\Repository\UserNotificationRepository;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager as ServiceUserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -69,6 +71,7 @@ class UserManager
     private $rzpLogin;
     private $rzpPassword;
     private $userDelegateEmailBase;
+    private $userNotificationRepository;
 
     /**
      * Constructor.
@@ -94,7 +97,8 @@ class UserManager
         string $rzpUri,
         string $rzpLogin,
         string $rzpPassword,
-        string $userDelegateEmailBase
+        string $userDelegateEmailBase,
+        UserNotificationRepository $userNotificationRepository
     ) {
         $this->entityManager = $entityManager;
         $this->authItemRepository = $authItemRepository;
@@ -112,6 +116,7 @@ class UserManager
         $this->rzpLogin = $rzpLogin;
         $this->rzpPassword = $rzpPassword;
         $this->userDelegateEmailBase = $userDelegateEmailBase;
+        $this->userNotificationRepository = $userNotificationRepository;
     }
 
     private function __getLocalityCode(string $search): ?int
@@ -390,6 +395,15 @@ class UserManager
             }
         }
 
+        if (in_array('telephone', array_keys($fields))) {
+            if ($fields['telephone'] !== $user->getOldTelephone()) {
+                $user->setPhoneToken(null);
+                $user->setPhoneValidatedDate(null);
+                // deactivate sms notification since the phone is new
+                $this->deActivateSmsNotification($user);
+            }
+        }
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -584,6 +598,22 @@ class UserManager
         }
 
         return null;
+    }
+
+    /**
+     * set sms notification to non active when phone change or is removed.
+     */
+    public function deActivateSmsNotification(User $user)
+    {
+        $userNotifications = $this->userNotificationRepository->findUserNotifications($user->getId());
+        foreach ($userNotifications as $userNotification) {
+            if (Medium::MEDIUM_SMS == $userNotification->getNotification()->getMedium()->getId()) {
+                $userNotification->setActive(false);
+                $userNotification->setUser($user);
+                $this->entityManager->persist($userNotification);
+            }
+        }
+        $this->entityManager->flush();
     }
 
     /**

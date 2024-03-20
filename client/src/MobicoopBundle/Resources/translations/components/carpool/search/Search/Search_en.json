@@ -20,7 +20,7 @@
             "route": "carpool/search/post"
         },
         "search": {
-            "label": "Search",
+            "label": "Find a carpool",
             "route": "carpool/search",
             "widgetRoute": "event/{id}/search/carpooling"
         },

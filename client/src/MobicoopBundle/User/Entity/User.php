@@ -606,6 +606,15 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $needParentalConsent;
 
+    /**
+     * Signup referral if there is any.
+     *
+     * @Groups({"post"})
+     *
+     * @var null|string
+     */
+    private $referral;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1802,6 +1811,16 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setNeedParentalConsent(?bool $needParentalConsent): self
     {
         $this->needParentalConsent = $needParentalConsent;
+    }
+
+    public function getReferral(): ?string
+    {
+        return $this->referral;
+    }
+
+    public function setReferral(?string $referral): self
+    {
+        $this->referral = $referral;
 
         return $this;
     }
@@ -1869,6 +1888,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'parentalConsentDate' => $this->getParentalConsentDate(),
             'parentalConsentToken' => $this->getParentalConsentToken(),
             'needParentalConsent' => $this->getNeedParentalConsent(),
+            'referral' => $this->getReferral(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

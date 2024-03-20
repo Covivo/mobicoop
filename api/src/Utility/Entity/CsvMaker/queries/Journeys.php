@@ -25,6 +25,9 @@ namespace App\Utility\Entity\CsvMaker\queries;
 use App\Carpool\Entity\Ask;
 use App\Utility\Interfaces\MultipleQueriesInterface;
 
+/**
+ * ONLY VALID JOURNEYS.
+ */
 class Journeys implements MultipleQueriesInterface
 {
     private $_multipleQueries;
@@ -33,7 +36,7 @@ class Journeys implements MultipleQueriesInterface
     {
         $this->_multipleQueries = [];
 
-        $this->_multipleQueries[] = 'CREATE TEMPORARY TABLE journeys (
+        $this->_multipleQueries[] = 'CREATE TEMPORARY TABLE export_csv_journeys (
             journeyId int NOT NULL,
             adId int NOT NULL,
             userId int NOT NULL,
@@ -43,16 +46,36 @@ class Journeys implements MultipleQueriesInterface
             end_validity_date DATETIME NOT NULL,
             journeytype varchar(10) NOT NULL,
             frequency varchar(10) NOT NULL,
-            origin_lat decimal(10,6) NOT NULL,
-            origin_lon decimal(10,6) NOT NULL,
-            destination_lat decimal(10,6) NOT NULL,
-            destination_lon decimal(10,6) NOT NULL,
-            price decimal(10,6) NOT NULL,
+            origin_lat decimal(10, 6) NOT NULL,
+            origin_lon decimal(10, 6) NOT NULL,
+            destination_lat decimal(10, 6) NOT NULL,
+            destination_lon decimal(10, 6) NOT NULL,
+            price decimal(10, 6) NOT NULL,
+            ssoProvider varchar(255) NOT NULL,
+            usr_external_id varchar(255) NOT NULL,
             PRIMARY KEY(journeyId, adId, userId)
         );';
 
         $this->_multipleQueries[] = '
-        INSERT IGNORE INTO journeys (journeyId, adId, userId, role, origin, destination, end_validity_date, journeytype, frequency, origin_lat, origin_lon, destination_lat, destination_lon, price)
+        INSERT
+            IGNORE INTO export_csv_journeys (
+                journeyId,
+                adId,
+                userId,
+                role,
+                origin,
+                destination,
+                end_validity_date,
+                journeytype,
+                frequency,
+                origin_lat,
+                origin_lon,
+                destination_lat,
+                destination_lon,
+                price,
+                ssoProvider,
+                usr_external_id
+            )
         SELECT
             ask.id as "journeyId",
             pr.id as "adId",
@@ -80,7 +103,9 @@ class Journeys implements MultipleQueriesInterface
             ao.longitude AS "origin_lon",
             ad.latitude AS "destination_lat",
             ad.longitude AS "destination_lon",
-            c.driver_computed_price as "price"
+            c.driver_computed_price as "price",
+            ssa.sso_provider as ssoProvider,
+            ssa.sso_id as usr_external_id
         FROM
             ask
             inner join matching m on ask.matching_id = m.id
@@ -96,12 +121,40 @@ class Journeys implements MultipleQueriesInterface
             inner join address ad on ad.id = wd.address_id
             inner join criteria c on c.id = ask.criteria_id
             inner join proposal pr on m.proposal_request_id = pr.id
+            LEFT JOIN `sso_account` ssa on ssa.user_id = pr.user_id
+            AND ssa.id IN (
+                SELECT
+                    ssa.id
+                FROM
+                    `sso_account` ssa
+                WHERE
+                    ssa.sso_provider IS NULL
+                    OR ssa.sso_provider <> "mobConnect"
+            )
         where
             ask.status in ('.Ask::STATUS_ACCEPTED_AS_DRIVER.', '.Ask::STATUS_ACCEPTED_AS_PASSENGER.')
             and COALESCE(c.to_date, c.from_date) >= NOW()';
 
         $this->_multipleQueries[] = '
-            INSERT IGNORE INTO journeys (journeyId, adId, userId, role, origin, destination, end_validity_date, journeytype, frequency, origin_lat, origin_lon, destination_lat, destination_lon, price)
+            INSERT
+                IGNORE INTO export_csv_journeys (
+                    journeyId,
+                    adId,
+                    userId,
+                    role,
+                    origin,
+                    destination,
+                    end_validity_date,
+                    journeytype,
+                    frequency,
+                    origin_lat,
+                    origin_lon,
+                    destination_lat,
+                    destination_lon,
+                    price,
+                    ssoProvider,
+                    usr_external_id
+                )
                 SELECT
                 ask.id as "journeyId",
                 po.id as "adId",
@@ -129,7 +182,9 @@ class Journeys implements MultipleQueriesInterface
                 ao.longitude AS "origin_lon",
                 ad.latitude AS "destination_lat",
                 ad.longitude AS "destination_lon",
-                c.driver_computed_price as "price"
+                c.driver_computed_price as "price",
+                ssa.sso_provider as ssoProvider,
+                ssa.sso_id as usr_external_id
             FROM
                 ask
                 inner join matching m on ask.matching_id = m.id
@@ -145,16 +200,27 @@ class Journeys implements MultipleQueriesInterface
                 inner join address ad on ad.id = wd.address_id
                 inner join criteria c on c.id = ask.criteria_id
                 inner join proposal po on m.proposal_offer_id = po.id
+            LEFT JOIN `sso_account` ssa on ssa.user_id = po.user_id
+            AND ssa.id IN (
+                SELECT
+                    ssa.id
+                FROM
+                    `sso_account` ssa
+                WHERE
+                    ssa.sso_provider IS NULL
+                    OR ssa.sso_provider <> "mobConnect"
+            )
             where
                 ask.status in ('.Ask::STATUS_ACCEPTED_AS_DRIVER.', '.Ask::STATUS_ACCEPTED_AS_PASSENGER.')
                 and COALESCE(c.to_date, c.from_date) >= NOW()';
 
         $this->_multipleQueries[] = '
-            select
+        select
             *
         from
-            journeys
-        order by journeyId asc;';
+            export_csv_journeys
+        order by
+            journeyId asc;';
     }
 
     public function getMultipleQueries(): array

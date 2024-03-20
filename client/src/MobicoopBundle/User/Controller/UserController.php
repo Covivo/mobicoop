@@ -257,8 +257,16 @@ class UserController extends AbstractController
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator, ?int $id = null, ?int $eventId = null, ?int $communityId = null, ?string $redirect = null)
-    {
+    public function userSignUp(
+        UserManager $userManager,
+        Request $request,
+        TranslatorInterface $translator,
+        ?int $id = null,
+        ?int $eventId = null,
+        ?int $communityId = null,
+        ?string $redirect = null,
+        ?string $referral = null
+    ) {
         $this->denyAccessUnlessGranted('register');
 
         $user = new User();
@@ -322,6 +330,10 @@ class UserController extends AbstractController
                 $user->setCommunityId($data['community']);
             }
 
+            if (!is_null($data['referral']) && '' !== trim($data['referral'])) {
+                $user->setReferral($data['referral']);
+            }
+
             // create user in database
             $data = $userManager->createUser($user);
             $reponseofmanager = $this->handleManagerReturnValue($data);
@@ -364,6 +376,7 @@ class UserController extends AbstractController
             'gendersList' => $this->gendersList,
             'specificTerms' => $this->specificTerms,
             'phoneCodes' => $this->phoneCodes,
+            'referral' => $referral,
         ]);
     }
 
@@ -499,7 +512,7 @@ class UserController extends AbstractController
 
         $this->userManager->sendValidationEmail($user);
 
-        return new response(json_encode('emailSend'));
+        return new Response(json_encode('emailSend'));
     }
 
     /**
@@ -613,6 +626,7 @@ class UserController extends AbstractController
             'ceeDisplay' => $this->ceeDisplay,
             'error' => $error,
             'isAfterEECSubscription' => $isAfterEECSubscription,
+            'eecSsoAuthError' => $request->get('eecSsoAuthError'),                  // @var null|string
             'paymentElectronicActive' => $this->paymentElectronicActive,
             'selectedTab' => $tab,
             'showReviews' => $user->isUserReviewsActive(),
@@ -1570,7 +1584,7 @@ class UserController extends AbstractController
 
     /**
      * Return page after a SSO Login from mobConnect
-     * Url is something like /user/sso/cee-incentive?state=mobConnect&code=1.
+     * Url is something like /user/sso/eec-incentive?state=mobConnect&code=1.
      */
     public function userReturnConnectSSOMobConnect(Request $request)
     {
@@ -1583,14 +1597,23 @@ class UserController extends AbstractController
             'eec' => 1,
         ];
 
-        if ($this->getUser()) {
-            $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
-        }
-
-        return $this->redirectToRoute('user_profile_update', [
+        $responseData = [
             'tabDefault' => 'mon-profil',
             'afterEECSubscription' => true,
-        ]);
+        ];
+
+        if ($this->getUser()) {
+            $result = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
+
+            if (
+                !$result instanceof User
+                && preg_match('/(E|e)rror/', $result->getType())
+            ) {
+                $responseData['eecSsoAuthError'] = $result->getDescription();
+            }
+        }
+
+        return $this->redirectToRoute('user_profile_update', $responseData);
     }
 
     public function userReturnConnectSsoMobile(Request $request)

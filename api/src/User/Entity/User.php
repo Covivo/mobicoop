@@ -1953,6 +1953,17 @@ class User implements UserInterface, EquatableInterface
      */
     private $needParentalConsent = false;
 
+    /**
+     * Signup referral if there is any.
+     *
+     * @ORM\Column(type="string", length=50, nullable=true)
+     *
+     * @Groups({"aRead","readUser", "write"})
+     *
+     * @var null|string
+     */
+    private $referral;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -4380,6 +4391,16 @@ class User implements UserInterface, EquatableInterface
     public function setNeedParentalConsent(?bool $needParentalConsent): self
     {
         $this->needParentalConsent = $needParentalConsent;
+    }
+
+    public function getReferral(): ?string
+    {
+        return $this->referral;
+    }
+
+    public function setReferral(?string $referral): self
+    {
+        $this->referral = $referral;
 
         return $this;
     }

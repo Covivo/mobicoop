@@ -26,5 +26,13 @@
     "snackbar1": "U hebt een telefoonnummer ingevoerd. Laat het nummer verifiëren door een verificatiecode te verzenden via de pagina",
     "snackbar3" : "Merci de confirmer votre adresse email en cliquant sur le lien reçu par email",
     "subtitle": "Een gebruiksvriendelijke en solidaire carpooldienst in de buurt.<br />Vind vanaf nu uw carpooling en bied uw traject aan.",
-    "title": "Vrije carpooling, </br>zonder commissie en coöperatief"
+    "title": "Vrije carpooling, </br>zonder commissie en coöperatief",
+    "mobConnect-snackbar": {
+      "close-btn": "Fermer",
+      "text": {
+        "base": "L'inscription à la prime CEE",
+        "success": "a bien été effectué",
+        "error": "a echoué"
+      }
+    }
 }

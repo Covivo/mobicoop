@@ -973,6 +973,7 @@ class LongDistanceSubscription extends Subscription
         $this->setHonorCertificateProofTimestampSigningTime(null);
         $this->setStatus(null);
         $this->setVerificationDate(null);
+        $this->setBonusStatus(self::BONUS_STATUS_PENDING);
 
         return $this;
     }

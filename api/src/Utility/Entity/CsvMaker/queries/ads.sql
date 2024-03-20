@@ -53,7 +53,9 @@ SELECT
             or c.passenger is null
         ) THEN c.driver_computed_rounded_price
         ELSE 'unknown'
-    END AS 'price'
+    END AS 'price',
+    ssa.sso_provider as ssoProvider,
+    ssa.sso_id as usr_external_id
 FROM
     proposal p
     INNER JOIN criteria c ON c.id = p.criteria_id
@@ -67,6 +69,16 @@ FROM
     )
     INNER JOIN address ad ON ad.id = wd.address_id
     INNER JOIN address aa ON aa.id = wa.address_id
+    LEFT JOIN `sso_account` ssa on ssa.user_id = p.user_id
+    AND ssa.id IN (
+        SELECT
+            ssa.id
+        FROM
+            `sso_account` ssa
+        WHERE
+            ssa.sso_provider IS NULL
+            OR ssa.sso_provider <> 'mobConnect'
+    )
 WHERE
     p.private = 0
     AND (

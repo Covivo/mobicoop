@@ -10,6 +10,7 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\EecEligibility;
@@ -86,6 +87,7 @@ class SubscriptionManager extends MobConnectManager
         TimestampTokenManager $timestampTokenManager,
         CarpoolItemRepository $carpoolItemRepository,
         CarpoolProofRepository $carpoolProofRepository,
+        LongDistanceJourneyRepository $longDistanceJourneyRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
         UserRepository $userRepository
@@ -95,6 +97,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolItemRepository = $carpoolItemRepository;
         $this->_carpoolProofRepository = $carpoolProofRepository;
+        $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
         $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
         $this->_shortDistanceSubscriptionRepository = $shortDistanceSubscriptionRepository;
         $this->_userRepository = $userRepository;
@@ -336,13 +339,6 @@ class SubscriptionManager extends MobConnectManager
 
             return;
         }
-
-        $users = $users = $this->_userRepository->findUsersCeeSubscribed();
-
-        foreach ($users as $user) {
-            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $user, $subscriptionType);
-            $stage->execute();
-        }
     }
 
     /**
@@ -398,18 +394,28 @@ class SubscriptionManager extends MobConnectManager
 
     /**
      * STEP 5 - Create a subscription from it's type.
+     *
+     * @throws \LogicException
      */
     protected function _createSubscription(string $subscriptionType): void
     {
-        if (
-            Subscription::isTypeAllowed($subscriptionType)
-            && $this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()
-            && is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())
-            && $this->isDriverAccountReadyForSubscription($subscriptionType)
-        ) {
-            $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
-            $stage->execute();
+        if (!Subscription::isTypeAllowed($subscriptionType)) {
+            throw new \LogicException('eec_subscriptionType_unallowed');
         }
+
+        if (!is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())) {
+            throw new \LogicException('eec_subscriptionType_'.$subscriptionType.'_allready.subscribed');
+        }
+
+        if (
+            !$this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()
+            || !$this->isDriverAccountReadyForSubscription($subscriptionType)
+        ) {
+            return;
+        }
+
+        $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
+        $stage->execute();
     }
 
     /**

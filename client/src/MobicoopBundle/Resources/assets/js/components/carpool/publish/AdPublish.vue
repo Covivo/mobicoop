@@ -101,7 +101,7 @@
         xl="8"
       >
         <v-alert type="info">
-          <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
+          <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}</p>
           <p>{{ $t("messageFirstAd.alert") }}</p>
         </v-alert>
       </v-col>
@@ -242,6 +242,7 @@
                 :init-destination="destination"
                 :init-regular="regular"
                 :init-role="role"
+                :both-role-enabled="bothRoleEnabled"
                 @change="searchChanged"
               />
             </v-stepper-content>
@@ -718,7 +719,7 @@
       </v-btn>
 
       <v-tooltip
-        v-if="valid"
+        v-if="isMainBtnDisplayed"
         bottom
       >
         <template v-slot:activator="{on}">
@@ -736,7 +737,7 @@
             </v-btn>
           </div>
         </template>
-        <span>{{ $t('stepper.buttons.notValid') }}</span>
+        <span v-html="getTooltip" />
       </v-tooltip>
     </v-row>
 
@@ -961,6 +962,14 @@ export default {
       type: Boolean,
       default: false
     },
+    defaultRoleToPublish: {
+      type: Number,
+      default:null
+    },
+    bothRoleEnabled: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -977,7 +986,7 @@ export default {
       disableNextButton: false,
       disconnected: false,
       distance: 0,
-      driver: true,
+      driver: (this.defaultRoleToPublish && this.defaultRoleToPublish == 2) ? false : true,
       duration: 0,
       initSchedule: null,
       initWaypoints: [],
@@ -992,7 +1001,7 @@ export default {
       origin: this.initOrigin,
       outwardDate: this.initDate,
       outwardTime: this.initTime,
-      passenger: true,
+      passenger: (this.defaultRoleToPublish && this.defaultRoleToPublish == 1) ? false : true,
       pointsToMap:[],
       price: null,
       priceForbidden: false,
@@ -1003,7 +1012,7 @@ export default {
       returnTime: null,
       returnTimeIsValid: true,
       returnTrip: null,
-      role: null,
+      role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
       route: null,
       schedules: null,
       seats : this.defaultSeatNumber,
@@ -1193,6 +1202,37 @@ export default {
     },
     itemsSeatNumber() {
       return [...Array(this.seatNumber+1).keys()].slice(1);
+    },
+    getTooltip() {
+      switch (true) {
+      case !this.isUpdated:
+        return this.$t('stepper.buttons.unUpdated')
+      case this.priceForbidden:
+        return this.$t('stepper.buttons.unacceptableParticipation')
+      case this.distance<=0 || this.duration<=0 || !this.origin || !this.destination || !this.route:
+        return this.$t('stepper.buttons.incorrectRouteDefinition')
+      case !this.regular && !(this.outwardDate && this.outwardTime):
+        return this.$t('stepper.buttons.punctualOutwardDate')
+      case !this.regular && this.returnTrip && !(this.returnDate && this.returnTime):
+        return this.$t('stepper.buttons.punctualReturnTripOutwardDate')
+      case this.regular && !this.schedules:
+        return this.$t('stepper.buttons.regularSchedules')
+      case this.isValidUpdate && this.oldUpdateObject == null:
+        return this.$t('stepper.buttons.dataProcessing')
+      case !this.checkboxDrivingLicence && this.driver && this.specificTerms:
+      case !this.checkboxEmployer && this.driver && this.specificTerms:
+      case !this.checkboxInssurance && this.driver && this.specificTerms:
+        return this.$t('stepper.buttons.requirments')
+
+      default: return this.$t('stepper.buttons.notValid');
+      }
+    },
+    isMainBtnDisplayed() {
+      return (
+        (this.step === 7 && this.driver && this.step !== 5 && !this.solidaryExclusive)
+        || (this.step === 5 && !this.driver && !this.solidaryExclusive)
+        || (this.step === 6 && this.solidaryExclusive)
+      )
     }
   },
   watch: {

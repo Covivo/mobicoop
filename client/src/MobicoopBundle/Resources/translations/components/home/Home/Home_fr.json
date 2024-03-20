@@ -31,8 +31,8 @@
       "close-btn": "Fermer",
       "text": {
         "base": "L'inscription à la prime CEE",
-        "success": "a bien été effectuée",
-        "error": "a echouée"
+        "success": "a bien été effectué",
+        "error": "a echoué"
       }
     }
 }
