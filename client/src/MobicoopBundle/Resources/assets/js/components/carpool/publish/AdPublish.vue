@@ -1094,13 +1094,14 @@ export default {
       // regular schedules validation
       if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
 
+      // Price to high. Forbidden to post
+      if(this.priceForbidden) return false;
+
       // Step 2 regular schedule no return without outward
       if(this.regular && this.schedules){
         return this.isOutwardSchedulesValid();
       }
 
-      // Price to high. Forbidden to post
-      if(this.priceForbidden) return false;
       // We are in update mode and initialization is not finished yet
       if (this.isValidUpdate && this.oldUpdateObject == null) return false;
       // update mode and there are no changes
