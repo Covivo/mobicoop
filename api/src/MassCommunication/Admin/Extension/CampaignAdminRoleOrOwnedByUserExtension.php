@@ -19,24 +19,23 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Admin\Extension;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Auth\Service\AuthManager;
 use App\MassCommunication\Entity\Campaign;
 use Doctrine\ORM\QueryBuilder;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
-use App\Auth\Service\AuthManager;
-use App\User\Entity\User;
 
 final class CampaignAdminRoleOrOwnedByUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $authManager;
     private $security;
-
 
     public function __construct(Security $security, AuthManager $authManager, LoggerInterface $logger)
     {
@@ -46,7 +45,7 @@ final class CampaignAdminRoleOrOwnedByUserExtension implements QueryCollectionEx
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($resourceClass == Campaign::class && $operationName === 'ADMIN_get') {
+        if (Campaign::class == $resourceClass && 'ADMIN_get' === $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
