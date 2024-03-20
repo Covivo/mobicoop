@@ -45,10 +45,10 @@
   },
   "dialogParentalConsentAlreadyGiven":{
     "title": "Autorisation parentale déjà donnée.",
-    "content": "<p>Le <b>{consentDate}</b> vous avez déjà donné votre autorisation parentale pour votre enfant <b>{givenName} {familyName}</b>. </br> S'il s'agit d'une erreur vous pouvez nous contacter via <a href='/contact'><b>ce formulaire</b></a>.</p>"
+    "content": "<p>Vous avez déjà donné votre autorisation parentale pour votre enfant <b>{givenName} {familyName}</b> le <b>{consentDate}</b> vous avez déjà donné votre autorisation parentale pour votre enfant <b>{givenName} {familyName}</b>. </br>Votre enfant <b>{givenName} {familyName}</b> a déjà accès à la plateforme <b>{platformName}</b>.</p>"
   },
-  "errorWhenGetUser": "<p>Code non reconnu. Assurez vous d'avoir saisi le bon code. </br> Si le problème persiste vous pouvez nous contacter via <a style='color:white' href='/contact'><b>ce formulaire</b></a></p>",
-  "errorWhenGiveParentalConsent": "<p>Une erreur est survenue, veuillez essayer à nouveau.</br> Si le problème persiste vous pouvez nous contacter via <a style='color:white' href='/contact'><b>ce formulaire</b></a></p>",
+  "errorWhenGetUser": "<p>Code non reconnu. Assurez vous d'avoir saisi le bon code. </br> Si le problème persiste vous pouvez nous contacter via <a style='color:white' href='/contact'><b>le formulaire de contact</b></a></p>",
+  "errorWhenGiveParentalConsent": "<p>Une erreur est survenue, veuillez essayer à nouveau.</br> Si le problème persiste vous pouvez nous contacter via <a style='color:white' href='/contact'><b>le formulaire de contact</b></a></p>",
   "i18n": {
     "date": {
         "format": "DD/MM/YYYY"
