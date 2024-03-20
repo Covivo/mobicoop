@@ -1097,6 +1097,11 @@ export default {
       // Price to high. Forbidden to post
       if(this.priceForbidden) return false;
 
+      // Specifics terms
+      if(!this.checkboxDrivingLicence && this.driver && this.specificTerms) return false;
+      if(!this.checkboxEmployer && this.driver && this.specificTerms) return false;
+      if(!this.checkboxInssurance && this.driver && this.specificTerms) return false;
+
       // Step 2 regular schedule no return without outward
       if(this.regular && this.schedules){
         return this.isOutwardSchedulesValid();
@@ -1106,10 +1111,6 @@ export default {
       if (this.isValidUpdate && this.oldUpdateObject == null) return false;
       // update mode and there are no changes
       if (!this.isUpdated ) return false;
-
-      if(!this.checkboxDrivingLicence && this.driver && this.specificTerms) return false;
-      if(!this.checkboxEmployer && this.driver && this.specificTerms) return false;
-      if(!this.checkboxInssurance && this.driver && this.specificTerms) return false;
 
       // validation ok
       return true;
