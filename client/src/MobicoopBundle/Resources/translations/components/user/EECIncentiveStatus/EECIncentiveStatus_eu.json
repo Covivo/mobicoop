@@ -113,7 +113,8 @@
             },
             {
               "title": "Certifier un covoiturage",
-              "href": "/"
+              "dialogTitle": "Certification géolocalisée de trajet",
+              "dialogContent": "<p>Pour certifier un trajet afin de la comptabiliser pour la prime CEE, il faut utiliser un téléphone mobile.</p><p>Activer la géolocalisation au moment du départ et de la dépose du covoiturage depuis l’application NOM_PLATEFORME. Au moment de la montée du passager dans le véhicule du conducteur, passager et conducteurs doivent cliquer sur « certifier prise en charge » depuis la page Covoiturages acceptés de votre appli. Puis à la fin du trajet, chacun doit aussi cliquer sur « certifier dépose ».</p>"
             },
             {
               "title": "Nous contacter",
@@ -237,7 +238,8 @@
       "close-btn": {
         "text": "Fermer"
       }
-    }
+    },
+    "close-btn": "Fermer"
   },
   "expirationText": "Vous avez jusqu’au {date} pour réaliser les trajets restants.",
   "shortExpiredText": "La période légale de 3 mois pour compléter vos trajets courte distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant.",
