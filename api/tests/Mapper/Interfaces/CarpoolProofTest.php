@@ -24,6 +24,8 @@
 namespace App\Mapper\Interfaces;
 
 use App\Carpool\Event\CarpoolProofCreatedEvent;
+use App\ExternalService\Core\Application\Service\MessageDataSender;
+use App\ExternalService\Interfaces\MessageSend;
 use App\Mapper\Core\Domain\Builder\CarpoolProofBuilder;
 use App\Tests\Mapper\Mock\CarpoolProof as MockCarpoolProof;
 use PHPUnit\Framework\TestCase;
@@ -40,8 +42,15 @@ class CarpoolProofTest extends TestCase
 
     public function setUp(): void
     {
-        $this->_carpoolProof = new CarpoolProof(new CarpoolProofBuilder(), true);
-        $this->_carpoolProofDisabled = new CarpoolProof(new CarpoolProofBuilder(), false);
+        $messageDataSender = $this->getMockBuilder(MessageDataSender::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $messageDataSender->method('send')->willReturn('OK');
+        $messageSend = new MessageSend($messageDataSender);
+
+        $this->_carpoolProof = new CarpoolProof(new CarpoolProofBuilder(), $messageSend, true);
+        $this->_carpoolProofDisabled = new CarpoolProof(new CarpoolProofBuilder(), $messageSend, false);
     }
 
     /**
