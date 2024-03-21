@@ -104,7 +104,7 @@ class LongDistanceSubscription extends Subscription
     /**
      * @var LongDistanceJourney
      *
-     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceJourney", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceJourney", cascade={"persist", "remove"}, orphanRemoval=true)
      *
      * @ORM\JoinColumn(nullable=true)
      *
