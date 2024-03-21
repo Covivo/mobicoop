@@ -59,7 +59,9 @@ class RecommitSubscription extends Stage
     {
         $commitClassName = 'App\\Incentive\\Service\\Stage\\Commit'.$this->_shortcutName.'Subscription';
         $stage = new $commitClassName($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE);
-        $stage->execute();
+        if (!$stage->execute()) {
+            return;
+        }
 
         $validateClassName = 'App\\Incentive\\Service\\Stage\\Validate'.$this->_shortcutName.'Subscription';
         $stage = new $validateClassName($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE);
