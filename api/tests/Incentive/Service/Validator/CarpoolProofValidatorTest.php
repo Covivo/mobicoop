@@ -61,6 +61,32 @@ class CarpoolProofValidatorTest extends TestCase
     /**
      * @test
      */
+    public function isCarpoolProofDataCompleteBool()
+    {
+        $this->assertIsBool(CarpoolProofValidator::isCarpoolProofDataComplete($this->_carpoolProof));
+    }
+
+    /**
+     * @test
+     */
+    public function isCarpoolProofDataCompleteFalse()
+    {
+        $this->assertFalse(CarpoolProofValidator::isCarpoolProofDataComplete($this->_carpoolProof));
+    }
+
+    /**
+     * @test
+     */
+    public function isCarpoolProofDataCompleteTrue()
+    {
+        $this->assertTrue(CarpoolProofValidator::isCarpoolProofDataComplete($this->_carpoolProofEecCompliant));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
     public function isCarpoolProofStatusEecCompliantBool()
     {
         $this->assertIsBool(CarpoolProofValidator::isCarpoolProofStatusEecCompliant($this->_carpoolProof));
