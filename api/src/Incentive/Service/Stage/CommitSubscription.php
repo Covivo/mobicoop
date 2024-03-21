@@ -24,7 +24,7 @@ abstract class CommitSubscription extends UpdateSubscription
      */
     protected $_carpoolProof;
 
-    protected function _commitSubscription()
+    protected function _commitSubscription(): bool
     {
         $httpQueryParams = $this->_getCommitmentParams();
 
@@ -59,7 +59,7 @@ abstract class CommitSubscription extends UpdateSubscription
 
         $this->_em->flush();
 
-        return $journey;
+        return true;
     }
 
     private function _getCommitmentParams(): array
