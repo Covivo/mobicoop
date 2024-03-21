@@ -101,7 +101,7 @@ class ShortDistanceSubscription extends Subscription
     /**
      * @var null|ShortDistanceJourney
      *
-     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", cascade={"persist", "remove"}, orphanRemoval=true)
      *
      * @ORM\JoinColumn(nullable=true)
      *
