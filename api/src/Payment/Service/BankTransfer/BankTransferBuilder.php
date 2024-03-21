@@ -73,7 +73,7 @@ class BankTransferBuilder
         $this->_bankTransferValidator->valid($this->_batchId);
 
         $bankTransfer = new BankTransfer();
-        $bankTransfer->setAmount($this->_bankTransferValidator->getAmount());
+        $bankTransfer->setAmount(str_replace(',', '.', $this->_bankTransferValidator->getAmount()));
         $bankTransfer->setRecipient($this->_bankTransferValidator->getRecipient());
         $bankTransfer->setTerritory($this->_bankTransferValidator->getTerritory());
         $bankTransfer->setCarpoolProof($this->_bankTransferValidator->getCarpoolProof());

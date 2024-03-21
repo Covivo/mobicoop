@@ -32,27 +32,41 @@ class UsersTerritories implements MultipleQueriesInterface
     {
         $this->_multipleQueries = [];
 
-        $this->_multipleQueries[] = 'CREATE TEMPORARY TABLE user_territory (
+        $this->_multipleQueries[] = 'CREATE TEMPORARY TABLE export_csv_user_territory (
             user_id int NOT NULL,
             territory_id int NOT NULL,
             territory_name varchar(100) NOT NULL,
             admin_level int(11) NOT NULL,
+            ssoProvider varchar(255) NOT NULL,
+            usr_external_id varchar(255) NOT NULL,
             PRIMARY KEY(user_id, territory_id)
         );';
 
         $this->_multipleQueries[] = '
         INSERT
-            IGNORE INTO user_territory (user_id, territory_id, territory_name, admin_level)
+            IGNORE INTO export_csv_user_territory (user_id, territory_id, territory_name, admin_level, ssoProvider, usr_external_id)
         SELECT
             user.id,
             territory_id,
             homeTerritory.name,
-            homeTerritory.admin_level
+            homeTerritory.admin_level,
+            ssa.sso_provider as ssoProvider,
+            ssa.sso_id as usr_external_id
         FROM
             user
             inner join address as homeAddress on homeAddress.user_id = user.id
             inner join address_territory as homeAddressTerritory on homeAddress.id = homeAddressTerritory.address_id
             inner join territory as homeTerritory on homeTerritory.id = homeAddressTerritory.territory_id
+            LEFT JOIN `sso_account` ssa on ssa.user_id = user.id
+            AND ssa.id IN (
+                SELECT
+                    ssa.id
+                FROM
+                    `sso_account` ssa
+                WHERE
+                    ssa.sso_provider IS NULL
+                    OR ssa.sso_provider <> "mobConnect"
+            )
         WHERE
             homeAddress.id in (
                 SELECT
@@ -67,12 +81,14 @@ class UsersTerritories implements MultipleQueriesInterface
 
         $this->_multipleQueries[] = '
         INSERT
-            IGNORE INTO user_territory (user_id, territory_id, territory_name, admin_level)
+            IGNORE INTO export_csv_user_territory (user_id, territory_id, territory_name, admin_level, ssoProvider, usr_external_id)
         SELECT
             user.id,
             territory_id,
             destination_territory.name,
-            destination_territory.admin_level
+            destination_territory.admin_level,
+            ssa.sso_provider as ssoProvider,
+            ssa.sso_id as usr_external_id
         FROM
             user
             inner join proposal ON user.id = proposal.user_id
@@ -81,6 +97,16 @@ class UsersTerritories implements MultipleQueriesInterface
             inner join address as destination_address on destination_waypoint.address_id = destination_address.id
             inner join address_territory as destination_address_territory on destination_address_territory.address_id = destination_address.id
             inner join territory as destination_territory on destination_address_territory.territory_id = destination_territory.id
+            LEFT JOIN `sso_account` ssa on ssa.user_id = user.id
+            AND ssa.id IN (
+                SELECT
+                    ssa.id
+                FROM
+                    `sso_account` ssa
+                WHERE
+                    ssa.sso_provider IS NULL
+                    OR ssa.sso_provider <> "mobConnect"
+            )
         WHERE
             destination_waypoint.id in (
                 select
@@ -97,12 +123,14 @@ class UsersTerritories implements MultipleQueriesInterface
 
         $this->_multipleQueries[] = '
         INSERT
-            IGNORE INTO user_territory (user_id, territory_id, territory_name, admin_level)
+            IGNORE INTO export_csv_user_territory (user_id, territory_id, territory_name, admin_level, ssoProvider, usr_external_id)
         SELECT
             user.id,
             territory_id,
             ask_destination_territory.name,
-            ask_destination_territory.admin_level
+            ask_destination_territory.admin_level,
+            ssa.sso_provider as ssoProvider,
+            ssa.sso_id as usr_external_id
         FROM
             user
             inner join ask on ask.user_id = user.id
@@ -110,6 +138,16 @@ class UsersTerritories implements MultipleQueriesInterface
             inner join address as ask_address on ask_destination_waypoint.address_id = ask_address.id
             inner join address_territory as ask_destination_address_territory on ask_destination_address_territory.address_id = ask_address.id
             inner join territory as ask_destination_territory on ask_destination_address_territory.territory_id = ask_destination_territory.id
+            LEFT JOIN `sso_account` ssa on ssa.user_id = user.id
+            AND ssa.id IN (
+                SELECT
+                    ssa.id
+                FROM
+                    `sso_account` ssa
+                WHERE
+                    ssa.sso_provider IS NULL
+                    OR ssa.sso_provider <> "mobConnect"
+            )
         where
             ask_destination_waypoint.id in (
                 select
@@ -126,7 +164,7 @@ class UsersTerritories implements MultipleQueriesInterface
             select
             *
         from
-            user_territory;';
+            export_csv_user_territory;';
     }
 
     public function getMultipleQueries(): array

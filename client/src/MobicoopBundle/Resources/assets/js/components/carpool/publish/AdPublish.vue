@@ -101,7 +101,7 @@
         xl="8"
       >
         <v-alert type="info">
-          <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
+          <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}</p>
           <p>{{ $t("messageFirstAd.alert") }}</p>
         </v-alert>
       </v-col>
