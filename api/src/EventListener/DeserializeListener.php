@@ -19,29 +19,30 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\EventListener;
 
+use ApiPlatform\Core\EventListener\DeserializeListener as DecoratedListener;
+use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
 use ApiPlatform\Core\Util\RequestAttributesExtractor;
 use Symfony\Component\HttpFoundation\Request;
-use ApiPlatform\Core\EventListener\DeserializeListener as DecoratedListener;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
  * To deserialize form-data request
- * i.e. /rdex/connections POST
+ * i.e. /rdex/connections POST.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class DeserializeListener
 {
+    public const AUTHORIZED_FORM_URL = ['/rdex/connections'];
+    public const URLS_FOR_ID_REMOVAL = ['/campaigns/unsubscribe'];
     private $decorated;
     private $denormalizer;
     private $serializerContextBuilder;
-
-    const AUTHORIZED_FORM_URL = ['/rdex/connections'];
 
     public function __construct(DenormalizerInterface $denormalizer, SerializerContextBuilderInterface $serializerContextBuilder, DecoratedListener $decorated)
     {
@@ -60,7 +61,23 @@ final class DeserializeListener
         if ('form' === $request->getContentType() && in_array($request->getPathInfo(), self::AUTHORIZED_FORM_URL)) {
             $this->denormalizeFormRequest($request);
         } else {
+            $this->_removeIdOfOriginalPostRequestBody($request);
             $this->decorated->onKernelRequest($event);
+        }
+    }
+
+    private function _removeIdOfOriginalPostRequestBody(Request $request): void
+    {
+        if ('POST' == $request->getMethod() && in_array($request->getPathInfo(), self::URLS_FOR_ID_REMOVAL)) {
+            $body = json_decode($request->getContent(), true);
+            unset($body['id']);
+            $query = $request->query->all();
+            $requestParameters = $request->request->all();
+            $attributes = $request->attributes->all();
+            $cookies = $request->cookies->all();
+            $files = $request->files->all();
+            $server = $request->server->all();
+            $request->initialize($query, $requestParameters, $attributes, $cookies, $files, $server, json_encode($body));
         }
     }
 

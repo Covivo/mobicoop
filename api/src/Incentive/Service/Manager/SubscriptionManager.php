@@ -17,6 +17,8 @@ use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Provider\JourneyProvider;
+use App\Incentive\Service\Provider\SubscriptionProvider;
+use App\Incentive\Service\Stage\AutoRecommitSubscription;
 use App\Incentive\Service\Stage\CreateSubscription;
 use App\Incentive\Service\Stage\ProofInvalidate;
 use App\Incentive\Service\Stage\ProofRecovery;
@@ -263,6 +265,31 @@ class SubscriptionManager extends MobConnectManager
         $stage->execute();
     }
 
+    public function autoRecommitSubscriptions(): void
+    {
+        // Processing subscriptions that simply need to be reset
+        $sdSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(), true);
+        $ldSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(), true);
+
+        foreach (array_merge($sdSubscriptions, $ldSubscriptions) as $subscription) {
+            $this->resetSubscription($subscription);
+        }
+
+        // Processing subscriptions that need to be recommit
+        $sdSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited());
+        $ldSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited());
+
+        foreach (array_merge($sdSubscriptions, $ldSubscriptions) as $subscription) {
+            $this->recommitSubscription($subscription);
+        }
+    }
+
+    public function recommitSubscription($subscription): void
+    {
+        $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
+        $stage->execute();
+    }
+
     /**
      * STEP 17 - Validate a subscription.
      *
@@ -311,13 +338,6 @@ class SubscriptionManager extends MobConnectManager
             $stage->execute();
 
             return;
-        }
-
-        $users = $users = $this->_userRepository->findUsersCeeSubscribed();
-
-        foreach ($users as $user) {
-            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $user, $subscriptionType);
-            $stage->execute();
         }
     }
 
@@ -383,7 +403,7 @@ class SubscriptionManager extends MobConnectManager
             && is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())
             && $this->isDriverAccountReadyForSubscription($subscriptionType)
         ) {
-            $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_driver, $subscriptionType);
+            $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
             $stage->execute();
         }
     }

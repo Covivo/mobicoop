@@ -1,4 +1,5 @@
 {
+    "freeCarpoolingLabel": "Covoiturage gratuit: ne peut être payé",
     "driver": {
         "paid": "Déjà payé",
         "pending": "Valider le paiement"

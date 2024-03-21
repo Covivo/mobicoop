@@ -53,7 +53,7 @@
         class="text-h6 text-right"
         :class="solidaryExclusive ? 'warning--text' : ''"
       >
-        {{ price ? price +'€' : '' }}
+        {{ price ? Math.max(0,price) +'€' : '' }}
         <v-tooltip
           slot="append"
           right

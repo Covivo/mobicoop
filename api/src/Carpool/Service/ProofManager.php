@@ -699,13 +699,28 @@ class ProofManager
 
             $result = $this->provider->postCollection($proof, $this->provider::RESSOURCE_POST);
             $this->logger->info('Result of the send for proof #'.$proof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
-            if (200 == $result->getCode()) {
-                $proof->setStatus(CarpoolProof::STATUS_SENT);
-                ++$nbSent;
-            } elseif (409 == $result->getCode()) {
-                $proof->setStatus(CarpoolProof::STATUS_SENT);
-            } else {
-                $proof->setStatus(CarpoolProof::STATUS_ERROR);
+
+            switch ($result) {
+                case 200 == $result->getCode():
+                    $proof->setStatus(CarpoolProof::STATUS_SENT);
+                    ++$nbSent;
+
+                    break;
+
+                case 409 == $result->getCode():
+                    $proof->setStatus(CarpoolProof::STATUS_SENT);
+
+                    break;
+
+                case 0 == $result->getCode():
+                    $proof->setStatus(CarpoolProof::STATUS_RPC_NOT_REACHABLE);
+
+                    break;
+
+                default:
+                    $proof->setStatus(CarpoolProof::STATUS_ERROR);
+
+                    break;
             }
             $this->entityManager->persist($proof);
         }
@@ -804,12 +819,27 @@ class ProofManager
             ) {
                 $result = $this->provider->postCollection($carpoolProof, $this->provider::RESSOURCE_POST);
                 $this->logger->info('Result of the send for proof #'.$carpoolProof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
-                if (200 == $result->getCode()) {
-                    $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
-                } elseif (409 == $result->getCode()) {
-                    $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
-                } else {
-                    $carpoolProof->setStatus(CarpoolProof::STATUS_ERROR);
+
+                switch ($result) {
+                    case 200 == $result->getCode():
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
+
+                        break;
+
+                    case 409 == $result->getCode():
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
+
+                        break;
+
+                    case 0 == $result->getCode():
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_RPC_NOT_REACHABLE);
+
+                        break;
+
+                    default:
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_ERROR);
+
+                        break;
                 }
                 $this->entityManager->persist($carpoolProof);
             }
@@ -1289,6 +1319,6 @@ class ProofManager
         $this->entityManager->flush();
 
         // we return all the pending proofs
-        return $this->carpoolProofRepository->findBy(['status' => CarpoolProof::STATUS_PENDING]);
+        return $this->carpoolProofRepository->findBy(['status' => [CarpoolProof::STATUS_PENDING, CarpoolProof::STATUS_RPC_NOT_REACHABLE]]);
     }
 }

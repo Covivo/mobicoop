@@ -28,6 +28,7 @@ abstract class Log
     public const TYPE_JOURNEY_RECOVERING = 5;       // Manual journeys recovering
     public const TYPE_TOKEN_UPDATE = 8;             // Manuel token update
 
+    public const TYPE_TIMESTAMP = 8;
     public const TYPE_TIMESTAMP_SUBSCRIPTION = 5;   // Timestamp for subscription - Step 5 of the mobConnect process
     public const TYPE_TIMESTAMP_COMMITMENT = 6;     // Timestamp for commitment -   Step 9 of the mobConnect process
     public const TYPE_TIMESTAMP_ATTESTATION = 7;    // Timestamp for attestation -  Step 17 of the mobConnect process

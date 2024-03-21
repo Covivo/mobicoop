@@ -203,7 +203,7 @@ class ProposalManager
      */
     public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
-        $this->logger->info('ProposalManager : treatProposal '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        // $this->logger->info('ProposalManager : treatProposal '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         // set min and max times
         $proposal = $this->setMinMax($proposal);
@@ -215,11 +215,11 @@ class ProposalManager
         $proposal = $this->setPrices($proposal);
 
         if ($persist) {
-            $this->logger->info('ProposalManager : start persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('ProposalManager : start persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $this->entityManager->persist($proposal);
             $this->entityManager->flush();
 
-            $this->logger->info('ProposalManager : end persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('ProposalManager : end persist before creating matchings'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         }
 
         // matching analyze
@@ -235,11 +235,11 @@ class ProposalManager
         }
 
         if ($persist) {
-            $this->logger->info('ProposalManager : start persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('ProposalManager : start persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
             $this->entityManager->flush();
-            $this->logger->info('ProposalManager : end persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('ProposalManager : end persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
             //  we dispatch gamification event associated
             if (!$proposal->isPrivate() && Proposal::TYPE_RETURN != $proposal->getType()) {
@@ -434,8 +434,6 @@ class ProposalManager
 
     /**
      * Create matchings for multiple proposals at once.
-     *
-     * @param array $proposals The proposals to treat
      *
      * @return array The proposals treated
      */
@@ -979,8 +977,8 @@ class ProposalManager
     private function setPrices(Proposal $proposal)
     {
         if ($proposal->getCriteria()->getDirectionDriver()) {
-            $proposal->getCriteria()->setDriverComputedPrice((string) ((int) $proposal->getCriteria()->getDirectionDriver()->getDistance() * (float) $proposal->getCriteria()->getPriceKm() / 1000));
-            $proposal->getCriteria()->setDriverComputedRoundedPrice((string) $this->formatDataManager->roundPrice((float) $proposal->getCriteria()->getDriverComputedPrice(), $proposal->getCriteria()->getFrequency()));
+            $proposal->getCriteria()->setDriverComputedPrice(max(0, (string) ((int) $proposal->getCriteria()->getDirectionDriver()->getDistance() * (float) $proposal->getCriteria()->getPriceKm() / 1000)));
+            $proposal->getCriteria()->setDriverComputedRoundedPrice(max(0, (string) $this->formatDataManager->roundPrice((float) $proposal->getCriteria()->getDriverComputedPrice(), $proposal->getCriteria()->getFrequency())));
         }
         if ($proposal->getCriteria()->getDirectionPassenger()) {
             $proposal->getCriteria()->setPassengerComputedPrice((string) ((int) $proposal->getCriteria()->getDirectionPassenger()->getDistance() * (float) $proposal->getCriteria()->getPriceKm() / 1000));
@@ -1258,7 +1256,7 @@ class ProposalManager
                         $criteria->setSunMaxTime($maxTime);
                     }
                     if ($criteria->getDirectionDriver()) {
-                        $criteria->setDriverComputedPrice((string) ((int) $criteria->getDirectionDriver()->getDistance() * (float) $criteria->getPriceKm() / 1000));
+                        $criteria->setDriverComputedPrice(max(0, (string) ((int) $criteria->getDirectionDriver()->getDistance() * (float) $criteria->getPriceKm() / 1000)));
                         $criteria->setDriverComputedRoundedPrice((string) $this->formatDataManager->roundPrice((float) $criteria->getDriverComputedPrice(), $criteria->getFrequency()));
                     }
                     if ($criteria->getDirectionPassenger()) {

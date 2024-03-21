@@ -18,6 +18,7 @@
       :payment-week="ad.paymentItemWeek"
       :unpaid-date="ad.unpaidDate"
       :payment-electronic-active="paymentElectronicActive"
+      :free-carpooling="isCarpoolingFree"
       @activePanel="activePanel()"
     />
 
@@ -49,6 +50,7 @@
         :show-carpooler="showCarpooler"
         :payment-electronic-active="paymentElectronicActive"
         :communities="ad.communities ? ad.communities : []"
+        :free-carpooling="isCarpoolingFree"
       />
     </v-card-actions>
   </v-card>
@@ -98,7 +100,10 @@ export default {
         return this.ad.driver.askFrequency;
       }
       return this.ad.frequency;
-    }
+    },
+    isCarpoolingFree() {
+      return this.ad && this.ad.driver && (this.ad.driver.price === '0' || this.ad.driver.price === 0);
+    },
   },
   methods: {
     activePanel() {

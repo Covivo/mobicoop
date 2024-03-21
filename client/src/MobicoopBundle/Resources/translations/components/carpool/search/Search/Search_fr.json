@@ -20,7 +20,7 @@
             "route": "covoiturage/recherche/poster"
         },
         "search": {
-            "label": "Rechercher",
+            "label": "Rechercher un covoiturage",
             "route": "covoiturage/recherche",
             "widgetRoute": "event/{id}/recherche/covoiturage"
         },

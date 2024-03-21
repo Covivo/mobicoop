@@ -7,7 +7,7 @@
         "search": {
             "widgetRoute": "event/{id}/recherche/covoiturage",
             "route": "covoiturage/recherche",
-            "label": "Zoeken"
+            "label": "Zoek een carpool"
         },
         "publish": {
             "route": "covoiturage/recherche/poster",

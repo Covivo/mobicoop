@@ -25,6 +25,7 @@
             :seat-number = "{{ seatNumber }}"
             :community-ids="{{ communityIds | json_encode }}"
             :default-digital-clock="{{ defaultDigitalClock ? 'true' : 'false' }}"
+            :both-role-enabled="{{ bothRoleEnabled ? "true" : "false" }}"
     />
 
 {% endblock %}

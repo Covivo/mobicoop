@@ -491,30 +491,6 @@ class UserExport
      */
     public function setGender(?string $gender): self
     {
-        if (!in_array($gender, User::GENDERS)) {
-            throw new \LogicException('Gender is not defined');
-        }
-
-        switch ($gender) {
-            case User::GENDER_FEMALE:
-                $gender = 'Femme';
-
-                break;
-
-            case User::GENDER_MALE:
-                $gender = 'Homme';
-
-                break;
-
-            case User::GENDER_OTHER:
-                $gender = 'Autre';
-
-                break;
-
-            default:
-                $gender = 'Sans';
-        }
-
         $this->gender = $gender;
 
         return $this;

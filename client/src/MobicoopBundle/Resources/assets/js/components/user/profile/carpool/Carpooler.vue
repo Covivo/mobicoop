@@ -98,7 +98,7 @@
         class="font-weight-bold primary--text text-h5 text-right"
         :class="{'text-h6 ml-n6': $vuetify.breakpoint.mdAndDown}"
       >
-        {{ carpooler.price }}€
+        {{ Math.max(0,carpooler.price) }}€
       </v-col>
       <v-col
         v-if="carpooler.payment.itemId !== null || carpooler.payment.status == 4"
@@ -111,6 +111,7 @@
           :frequency="frequency"
           :payment-item-id="carpooler.payment.itemId"
           :payment-electronic-active="paymentElectronicActive"
+          :free-carpooling="freeCarpooling"
         />
       </v-col>
     </v-row>
@@ -166,6 +167,10 @@ export default {
       type: Boolean,
       default: false
     },
+    freeCarpooling: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {

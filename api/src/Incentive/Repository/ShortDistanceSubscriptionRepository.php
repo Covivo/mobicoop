@@ -27,4 +27,26 @@ class ShortDistanceSubscriptionRepository extends SubscriptionRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function getSubscriptionsReadyToBeRecommited(): array
+    {
+        $qb = $this->_repository->createQueryBuilder('s');
+
+        $qb
+            ->join('s.commitmentProofJourney', 'j')
+            ->join('j.carpoolProof', 'cp')
+            ->join('cp.ask', 'a')
+            ->join('a.criteria', 'c')
+            ->where('s.status IS NULL')
+            ->andWhere('c.fromDate < :now')
+            ->andWhere('cp.status != :proofStatus OR cp.type != :proofType')
+            ->setParameters([
+                'now' => new \DateTime(),
+                'proofStatus' => CarpoolProof::STATUS_VALIDATED,
+                'proofType' => CarpoolProof::TYPE_HIGH,
+            ])
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
 }

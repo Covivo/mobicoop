@@ -10,6 +10,7 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Service\Manager\TimestampTokenManager;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class CommitSubscription extends UpdateSubscription
 {
@@ -25,12 +26,16 @@ abstract class CommitSubscription extends UpdateSubscription
 
     protected function _commitSubscription()
     {
-        $httpResponse = $this->_apiProvider->patchSubscription($this->_subscription, $this->_getCommitmentParams());
+        $httpQueryParams = $this->_getCommitmentParams();
 
-        $this->_subscription->addLog($httpResponse, Log::TYPE_COMMITMENT);
+        try {
+            $this->_apiProvider->patchSubscription($this->_subscription, $httpQueryParams);
+        } catch (HttpException $exception) {
+            $this->_subscription->addLog($exception, Log::TYPE_COMMITMENT, $httpQueryParams);
 
-        if ($this->_apiProvider->hasRequestErrorReturned($httpResponse)) {
-            return null;
+            $this->_em->flush();
+
+            return;
         }
 
         $this->_subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
