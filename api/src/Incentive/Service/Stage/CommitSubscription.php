@@ -35,7 +35,7 @@ abstract class CommitSubscription extends UpdateSubscription
 
             $this->_em->flush();
 
-            return;
+            return false;
         }
 
         $this->_subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
