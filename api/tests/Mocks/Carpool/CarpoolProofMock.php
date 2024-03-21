@@ -4,6 +4,7 @@ namespace App\Tests\Mocks\Carpool;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
+use App\Geography\Entity\Address;
 
 class CarpoolProofMock
 {
@@ -11,6 +12,10 @@ class CarpoolProofMock
     {
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setAsk($ask);
+        $carpoolProof->setPickUpDriverAddress(new Address());
+        $carpoolProof->setPickUpDriverDate(new \DateTime());
+        $carpoolProof->setDropOffDriverAddress(new Address());
+        $carpoolProof->setDropOffDriverDate(new \DateTime());
         $carpoolProof->setType(CarpoolProof::TYPE_HIGH);
         $carpoolProof->setStatus(CarpoolProof::STATUS_VALIDATED);
         $carpoolProof->setPickUpDriverDate(new \DateTime());

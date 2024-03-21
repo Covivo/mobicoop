@@ -23,10 +23,10 @@ class CommitLDSubscription extends CommitSubscription
         $this->_build();
     }
 
-    public function execute()
+    public function execute(): bool
     {
         if (is_null($this->_proposal)) {
-            return;
+            return false;
         }
 
         return $this->_commitSubscription();
