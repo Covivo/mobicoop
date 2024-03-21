@@ -6,6 +6,7 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
+use App\Incentive\Validator\CarpoolProofValidator;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CommitSDSubscription extends CommitSubscription
@@ -23,8 +24,12 @@ class CommitSDSubscription extends CommitSubscription
         $this->_build();
     }
 
-    public function execute()
+    public function execute(): bool
     {
-        $this->_commitSubscription();
+        if (CarpoolProofValidator::isCarpoolProofDataComplete($this->_carpoolProof)) {
+            return false;
+        }
+
+        return $this->_commitSubscription();
     }
 }
