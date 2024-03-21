@@ -25,8 +25,20 @@ class CarpoolProofValidator
     public static function isEecCompliant(CarpoolProof $carpoolProof): bool
     {
         return
-            self::isCarpoolProofStatusEecCompliant($carpoolProof)
+            self::isCarpoolProofDataComplete($carpoolProof)
+            && self::isCarpoolProofStatusEecCompliant($carpoolProof)
             && self::isCarpoolProofTypeEecCompliant($carpoolProof);
+    }
+
+    public static function isCarpoolProofDataComplete(CarpoolProof $carpoolProof): bool
+    {
+        return
+            !is_null($carpoolProof->getPickUpDriverAddress())
+            && !is_null($carpoolProof->getPickUpDriverDate())
+            && !is_null($carpoolProof->getDropOffDriverAddress())
+            && !is_null($carpoolProof->getDropOffDriverDate())
+            && !is_null($carpoolProof->getStatus())
+            && !is_null($carpoolProof->getType());
     }
 
     public static function isCarpoolProofStatusEecCompliant(CarpoolProof $carpoolProof): bool
