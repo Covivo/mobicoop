@@ -610,7 +610,7 @@ class Structure
     /**
      * @var null|ArrayCollection The Territories linked to this Structure
      *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory", inversedBy="structures")
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
      *
      * @Groups({"aRead","readSolidary","writeSolidary"})
      *
