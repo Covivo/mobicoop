@@ -406,7 +406,7 @@ class Solidary
      *               The proposal is set as nullable but is in fact mandatory : we create the solidary record *before* the proposal for technical reasons.
      *               The proposal will then be set a short time after the solidary record is created.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="solidaries")
      *
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
@@ -1839,6 +1839,7 @@ class Solidary
             // original and proposal frequency are the same
             return $this->getProposal()->getCriteria()->getFrequency();
         }
+
         // original frequency is punctual, but proposal frequency is regular => flexible
         return Criteria::FREQUENCY_FLEXIBLE;
     }
