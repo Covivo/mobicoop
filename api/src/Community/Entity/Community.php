@@ -428,7 +428,7 @@ class Community
      *
      * @ApiProperty(push=true)
      *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="communities")
      *
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
