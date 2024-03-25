@@ -137,7 +137,7 @@ class Waypoint
      *
      * @Assert\NotBlank
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="waypoint", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="waypoint", cascade={"persist"})
      *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      *
