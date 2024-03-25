@@ -432,7 +432,7 @@ class Solidary
     /**
      * @var null|ArrayCollection the special needs for this solidary record
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist"}, inversedBy="solidaries")
      *
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
      *
