@@ -432,7 +432,7 @@ class Solidary
     /**
      * @var null|ArrayCollection the special needs for this solidary record
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist"}, inversedBy="solidaries")
      *
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
      *
@@ -1839,6 +1839,7 @@ class Solidary
             // original and proposal frequency are the same
             return $this->getProposal()->getCriteria()->getFrequency();
         }
+
         // original frequency is punctual, but proposal frequency is regular => flexible
         return Criteria::FREQUENCY_FLEXIBLE;
     }
