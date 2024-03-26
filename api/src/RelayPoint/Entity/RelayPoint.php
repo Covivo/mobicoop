@@ -369,7 +369,7 @@ class RelayPoint
     /**
      * @var null|Community the community of the relay point
      *
-     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
+     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community", inversedBy="relayPoints")
      *
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      *
