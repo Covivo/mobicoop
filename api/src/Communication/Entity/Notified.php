@@ -19,29 +19,28 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Communication\Entity\Notification;
-use App\User\Entity\User;
-use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use App\Community\Entity\Community;
+use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A notification to send for a user.
  *
  * @ORM\Entity()
+ *
  * @ORM\HasLifecycleCallbacks
  * ApiResource(
  *      attributes={
@@ -84,134 +83,164 @@ use App\Community\Entity\Community;
  */
 class Notified
 {
-    const STATUS_SENT = 1;
-    const STATUS_RECEIVED = 2;
-    const STATUS_READ = 3;
+    public const STATUS_SENT = 1;
+    public const STATUS_RECEIVED = 2;
+    public const STATUS_READ = 3;
 
     /**
-     * @var int The id of this notified.
+     * @var int the id of this notified
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups("read")
      */
     private $id;
 
     /**
-     * @var bool The status of the notified (sent/received/read).
+     * @var bool the status of the notified (sent/received/read)
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"read","write"})
      */
     private $status;
 
     /**
-     * @var Notification The notification.
+     * @var Notification the notification
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Notification")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $notification;
 
     /**
-     * @var User The user.
+     * @var User the user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="notifieds")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $user;
 
     /**
-     * @var \DateTimeInterface Creation date of the notification.
+     * @var \DateTimeInterface creation date of the notification
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups("read")
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the notification.
+     * @var \DateTimeInterface updated date of the notification
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups("read")
      */
     private $updatedDate;
 
     /**
-     * @var \DateTimeInterface Sent date of the notification.
+     * @var \DateTimeInterface sent date of the notification
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $sentDate;
 
     /**
-     * @var \DateTimeInterface Received date of the notification.
+     * @var \DateTimeInterface received date of the notification
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $receivedDate;
 
     /**
-     * @var \DateTimeInterface Read date of the notification.
+     * @var \DateTimeInterface read date of the notification
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $readDate;
 
     /**
-     * @var Proposal The proposal if the notified is linked to a proposal.
+     * @var Proposal the proposal if the notified is linked to a proposal
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="notifieds")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $proposal;
 
     /**
-     * @var Community The community if the notified is linked to a community.
+     * @var Community the community if the notified is linked to a community
      *
-     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="notifieds")
+     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $community;
 
     /**
-     * @var Matching The matching if the notified is linked to a matching.
+     * @var Matching the matching if the notified is linked to a matching
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="notifieds")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $matching;
 
     /**
-     * @var AskHistory The askHistory if the notified is linked to an askHistory.
+     * @var AskHistory the askHistory if the notified is linked to an askHistory
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\AskHistory", inversedBy="notifieds")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $askHistory;
 
     /**
-     * @var Recipient The recipient if the notified is linked to a recipient.
+     * @var Recipient the recipient if the notified is linked to a recipient
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Recipient", inversedBy="notifieds")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $recipient;
@@ -225,7 +254,7 @@ class Notified
     {
         return $this->status;
     }
-    
+
     public function setStatus(?int $status)
     {
         $this->status = $status;
@@ -235,11 +264,11 @@ class Notified
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -247,11 +276,11 @@ class Notified
     {
         return $this->notification;
     }
-    
+
     public function setNotification(?Notification $notification): self
     {
         $this->notification = $notification;
-        
+
         return $this;
     }
 
@@ -384,7 +413,7 @@ class Notified
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -394,6 +423,6 @@ class Notified
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }
