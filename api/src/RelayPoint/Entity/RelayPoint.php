@@ -400,7 +400,7 @@ class RelayPoint
     /**
      * @var null|RelayPointImport relay point imported in the platform
      *
-     * @ORM\OneToMany(targetEntity="\App\Import\Entity\RelayPointImport", mappedBy="relay")
+     * @ORM\OneToOne(targetEntity="\App\Import\Entity\RelayPointImport", mappedBy="relay")
      */
     private $relayPointImport;
 
