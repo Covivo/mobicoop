@@ -380,7 +380,7 @@ class RelayPoint
     /**
      * @var null|Structure the solidary structure of the relay point
      *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="relayPoints")
      *
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      *
