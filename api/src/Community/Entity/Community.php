@@ -443,7 +443,7 @@ class Community
      *
      * @Assert\NotBlank(groups={"write"})
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true, inversedBy="community")
      *
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
