@@ -19,71 +19,76 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Gamification\Interfaces\GamificationNotificationInterface;
-use App\Geography\Entity\Territory;
-use App\Image\Entity\Image;
 use App\User\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A Reward of a Badge to a User
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*
-* @ORM\Entity
-* @ORM\HasLifecycleCallbacks
-* @ApiResource(
-*     attributes={
-*          "force_eager"=false,
-*          "normalization_context"={"groups"={"readGamification"}, "enable_max_depth"="true"}
-*     },
-*     collectionOperations={
-*          "get"={
-*              "security"="is_granted('reject',object)",
-*              "swagger_context" = {
-*                  "summary"="Not implemented",
-*                  "tags"={"Gamification"}
-*               }
-*           }
-*      },
-*      itemOperations={
-*          "get"={
-*              "security"="is_granted('reject',object)",
-*              "swagger_context" = {
-*                  "summary"="Not implemented",
-*                  "tags"={"Gamification"}
-*              }
-*          },
-*          "tagAsNotified"={
-*              "method"="GET",
-*              "path"="/rewards/{id}/tagAsNotified",
-*              "normalization_context"={"groups"={"tagAsNotified"}},
-*              "swagger_context" = {
-*                  "summary"="Tag a Reward as notified to the User",
-*                  "tags"={"Gamification"}
-*              }
-*          },
-*      }
-* )
-*/
+ * Gamification : A Reward of a Badge to a User.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
+ * @ORM\Entity
+ *
+ * @ORM\HasLifecycleCallbacks
+ *
+ * @ApiResource(
+ *     attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readGamification"}, "enable_max_depth"="true"}
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Not implemented",
+ *                  "tags"={"Gamification"}
+ *               }
+ *           }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Not implemented",
+ *                  "tags"={"Gamification"}
+ *              }
+ *          },
+ *          "tagAsNotified"={
+ *              "method"="GET",
+ *              "path"="/rewards/{id}/tagAsNotified",
+ *              "normalization_context"={"groups"={"tagAsNotified"}},
+ *              "swagger_context" = {
+ *                  "summary"="Tag a Reward as notified to the User",
+ *                  "tags"={"Gamification"}
+ *              }
+ *          },
+ *      }
+ * )
+ */
 class Reward implements GamificationNotificationInterface
 {
     /**
      * @var int The Reward's id
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"readGamification","tagAsNotified"})
+     *
      * @MaxDepth(1)
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -91,8 +96,10 @@ class Reward implements GamificationNotificationInterface
     /**
      * @var Badge Reward's Badge
      *
-     * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="badges")
+     * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="rewards")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"readGamification","writeGamification"})
      */
     private $badge;
@@ -101,7 +108,9 @@ class Reward implements GamificationNotificationInterface
      * @var User The User who has been rewarded by a Badge
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="rewards")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"readGamification","writeGamification"})
      */
     private $user;
@@ -110,6 +119,7 @@ class Reward implements GamificationNotificationInterface
      * @var \DateTimeInterface Reward's creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readGamification"})
      */
     private $createdDate;
@@ -118,6 +128,7 @@ class Reward implements GamificationNotificationInterface
      * @var \DateTimeInterface Reward's update date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readGamification"})
      */
     private $updatedDate;
@@ -126,14 +137,13 @@ class Reward implements GamificationNotificationInterface
      * @var \DateTimeInterface Reward's notified date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readGamification","tagAsNotified"})
      */
     private $notifiedDate;
 
-    public function __construct()
-    {
-    }
-    
+    public function __construct() {}
+
     public function getId(): ?int
     {
         return $this->id;
@@ -215,7 +225,7 @@ class Reward implements GamificationNotificationInterface
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -225,6 +235,6 @@ class Reward implements GamificationNotificationInterface
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }
