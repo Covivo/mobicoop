@@ -1,54 +1,54 @@
 {
-    "titleCoordinates": "1. Bank details",
-    "textInfo": "To receive online payments, you must fill in all the information below.",
-    "titleAddress": "2. Full address",
-    "textAddress": "Please search for your complete address (number, street name, etc.) and not only your place of residence.",
-    "textAddressDetails": "The following fields will be filled in thanks to the search above. Please check the information matches.",
-    "titleAlreadyRegistered": "My bank details",
-    "form": {
-        "label": {
-            "iban": "IBAN",
-            "bic": "BIC",
-            "address": {
-                "check": "Search for your full address",
-                "houseNumber":"Number",
-                "street":"Street",
-                "postalCode":"Postal code",
-                "addressLocality":"City"
-            }
-        },
-        "tooltip": {
-            "iban": "Enter your IBAN without spaces"
-        },
-        "errors": {
-            "iban": "The IBAN number must be valid",
-            "ibanRequired": "IBAN number is required",
-            "bic": "BIC number must be valid",
-            "bicRequired": "BIC number is required",
-            "streetRequired": "The number and the street are mandatory",
-            "postalCodeRequired": "The postal code is mandatory",
-            "addressLocalityRequired": "The city is required",
-            "houseNumberRequired": "The house number is required"
-        }
-    },
-    "register": "Save",
-    "modalSuppr": {
-        "title": "Delete the bank details?",
-        "line1": "Your bank details will be deleted.",
-        "line2": "You will no longer be able to receive electronic payments.",
-        "line3": "Do you confirm this action?",
-        "yes": "Yes",
-        "no": "No"
-    },
-    "uri": {
-        "getCoordinates": "/user/bank-details",
-        "deleteCoordinates": "/user/bank-details/delete",
-        "addCoordinates": "/user/bank-details/add"
-    },
-    "error": "An error has occurred",
-    "msg": {
-      "bank-account": {
-        "create": "Les coordonnées bancaires ont bien été enregistrées et votre adresse de résidence mise à jour."
+  "titleCoordinates": "1. Bank details",
+  "textInfo": "To receive online payments, you must fill in all the information below.",
+  "titleAddress": "2. Full address",
+  "textAddress": "Please check and update your complete address if needed (number, street name, etc.) and not only your place of residence.",
+  "textAddressDetails": "The following fields will be filled in thanks to the search above. Please check the information matches.",
+  "titleAlreadyRegistered": "My bank details",
+  "form": {
+    "label": {
+      "iban": "IBAN",
+      "bic": "BIC",
+      "address": {
+        "check": "Search for your full address",
+        "houseNumber": "Number",
+        "street": "Street",
+        "postalCode": "Postal code",
+        "addressLocality": "City"
       }
+    },
+    "tooltip": {
+      "iban": "Enter your IBAN without spaces"
+    },
+    "errors": {
+      "iban": "The IBAN number must be valid",
+      "ibanRequired": "IBAN number is required",
+      "bic": "BIC number must be valid",
+      "bicRequired": "BIC number is required",
+      "streetRequired": "The number and the street are mandatory",
+      "postalCodeRequired": "The postal code is mandatory",
+      "addressLocalityRequired": "The city is required",
+      "houseNumberRequired": "The house number is required"
     }
+  },
+  "register": "Save",
+  "modalSuppr": {
+    "title": "Delete the bank details?",
+    "line1": "Your bank details will be deleted.",
+    "line2": "You will no longer be able to receive electronic payments.",
+    "line3": "Do you confirm this action?",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "uri": {
+    "getCoordinates": "/user/bank-details",
+    "deleteCoordinates": "/user/bank-details/delete",
+    "addCoordinates": "/user/bank-details/add"
+  },
+  "error": "An error has occurred",
+  "msg": {
+    "bank-account": {
+      "create": "Les coordonnées bancaires ont bien été enregistrées et votre adresse de résidence mise à jour."
+    }
+  }
 }

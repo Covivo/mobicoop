@@ -1,54 +1,54 @@
 {
-    "titleCoordinates": "1. Coordonnées bancaires",
-    "textInfo": "Pour recevoir des paiements en ligne, il est nécessaire de renseigner l'ensemble des informations ci-dessous.",
-    "titleAddress": "2. Adresse complète",
-    "textAddress": "Merci de rechercher votre adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
-    "textAddressDetails": "Les champs suivant vont se remplir grâce à la recherche ci-dessus. Merci de vérifier la conformité des informations.",
-    "titleAlreadyRegistered": "Mes coordonnées bancaires",
-    "form": {
-        "label": {
-            "iban": "IBAN",
-            "bic": "BIC",
-            "address": {
-                "check":"Recherchez votre adresse complète",
-                "houseNumber":"N°",
-                "street":"Rue",
-                "postalCode":"Code postal",
-                "addressLocality":"Ville"
-            }
-        },
-        "tooltip": {
-            "iban": "Renseignez votre IBAN sans espace"
-        },
-        "errors": {
-            "iban": "Le numéro IBAN doit être valide",
-            "ibanRequired": "Le numéro IBAN est obligatoire",
-            "bic": "Le numéro BIC doit être valide",
-            "bicRequired": "Le numéro BIC est obligatoire",
-            "streetRequired": "Le numéro et la rue sont obligatoires",
-            "postalCodeRequired": "Le code postale est obligatoire",
-            "addressLocalityRequired": "La ville est obligatoire",
-            "houseNumberRequired": "Le numéro de maison est obligatoire"
-        }
-    },
-    "register": "Enregistrer",
-    "modalSuppr": {
-        "title": "Suppression des coordonnées bancaires ?",
-        "line1": "Vos coordonnées bancaires vont-être supprimée.",
-        "line2": "Vous ne serez plus en mesure de recevoir de paiement électronique.",
-        "line3": "Confirmez-vous cette action ?",
-        "yes": "oui",
-        "no": "non"
-    },
-    "uri": {
-        "getCoordinates": "/utilisateur/coordonnees-bancaires",
-        "deleteCoordinates": "/utilisateur/coordonnees-bancaires/supprimer",
-        "addCoordinates": "/utilisateur/coordonnees-bancaires/ajouter"
-    },
-    "error": "Une erreur est survenue",
-    "msg": {
-      "bank-account": {
-        "create": "Les coordonnées bancaires ont bien été enregistrées et votre adresse de résidence mise à jour."
+  "titleCoordinates": "1. Coordonnées bancaires",
+  "textInfo": "Pour recevoir des paiements en ligne, il est nécessaire de renseigner l'ensemble des informations ci-dessous.",
+  "titleAddress": "2. Adresse complète",
+  "textAddress": "Merci de vérifier et éventuellement de modifier votre adresse ci-dessous pour qu’elle soit à la fois correcte et complète (numéro, nom de rue, ...)",
+  "textAddressDetails": "Les champs suivant vont se remplir grâce à la recherche ci-dessus. Merci de vérifier la conformité des informations.",
+  "titleAlreadyRegistered": "Mes coordonnées bancaires",
+  "form": {
+    "label": {
+      "iban": "IBAN",
+      "bic": "BIC",
+      "address": {
+        "check": "Recherchez votre adresse complète",
+        "houseNumber": "N°",
+        "street": "Rue",
+        "postalCode": "Code postal",
+        "addressLocality": "Ville"
       }
+    },
+    "tooltip": {
+      "iban": "Renseignez votre IBAN sans espace"
+    },
+    "errors": {
+      "iban": "Le numéro IBAN doit être valide",
+      "ibanRequired": "Le numéro IBAN est obligatoire",
+      "bic": "Le numéro BIC doit être valide",
+      "bicRequired": "Le numéro BIC est obligatoire",
+      "streetRequired": "Le numéro et la rue sont obligatoires",
+      "postalCodeRequired": "Le code postale est obligatoire",
+      "addressLocalityRequired": "La ville est obligatoire",
+      "houseNumberRequired": "Le numéro de maison est obligatoire"
     }
+  },
+  "register": "Enregistrer",
+  "modalSuppr": {
+    "title": "Suppression des coordonnées bancaires ?",
+    "line1": "Vos coordonnées bancaires vont-être supprimée.",
+    "line2": "Vous ne serez plus en mesure de recevoir de paiement électronique.",
+    "line3": "Confirmez-vous cette action ?",
+    "yes": "oui",
+    "no": "non"
+  },
+  "uri": {
+    "getCoordinates": "/utilisateur/coordonnees-bancaires",
+    "deleteCoordinates": "/utilisateur/coordonnees-bancaires/supprimer",
+    "addCoordinates": "/utilisateur/coordonnees-bancaires/ajouter"
+  },
+  "error": "Une erreur est survenue",
+  "msg": {
+    "bank-account": {
+      "create": "Les coordonnées bancaires ont bien été enregistrées et votre adresse de résidence mise à jour."
+    }
+  }
 }
