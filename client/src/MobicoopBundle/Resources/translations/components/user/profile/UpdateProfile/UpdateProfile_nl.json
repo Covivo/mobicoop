@@ -4,7 +4,8 @@
   "yes": "ja",
   "save": "Opslaan",
   "homeTown": {
-    "label": "Gemeente waar u woont"
+    "label": "Gemeente waar u woont",
+    "hint": "Your home address will make your ad publications and researchs easier."
   },
   "birthDay": {
     "errors": {
