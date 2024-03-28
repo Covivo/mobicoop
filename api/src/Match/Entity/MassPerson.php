@@ -37,7 +37,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A mass matching person, imported from a mass matching file.
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -64,122 +66,159 @@ class MassPerson
 {
     /**
      * @var int the id of this person
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"mass","massCompute"})
      */
     private $id;
 
     /**
      * @var null|string the given id of the person
+     *
      * @ORM\Column(type="string", length=255)
+     *
      * @Assert\NotBlank(groups={"mass"})
+     *
      * @Groups({"mass","massCompute"})
      */
     private $givenId;
 
     /**
      * @var null|string the first name of the person
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $givenName;
 
     /**
      * @var null|string the family name of the person
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $familyName;
 
     /**
      * @var null|\DateTimeInterface the birth date of the person
+     *
      * @ORM\Column(type="date", nullable=true)
      */
     private $birthDate;
 
     /**
      * @var null|int The gender of the person (1=female, 2=male, 3=nc)
+     *
      * @ORM\Column(type="smallint", nullable=true)
      */
     private $gender;
 
     /**
      * @var null|string the email address of the person
+     *
      * @ORM\Column(type="string", length=512, nullable=true)
      */
     private $email;
 
     /**
      * @var null|string the telephone number of the person
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $telephone;
 
     /**
      * @var Address the personal address of the person
+     *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Assert\NotBlank(groups={"mass"})
+     *
      * @Assert\Valid
+     *
      * @Groups({"mass","massCompute"})
      */
     private $personalAddress;
 
     /**
      * @var Address the work address of the person
+     *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Assert\NotBlank(groups={"mass"})
+     *
      * @Assert\Valid
+     *
      * @Groups({"mass","massCompute"})
      */
     private $workAddress;
 
     /**
      * @var int the total distance of the direction in meter
+     *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $distance;
 
     /**
      * @var int the total duration of the direction in milliseconds
+     *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $duration;
 
     /**
      * @var float the minimum longitude of the bounding box of the direction
+     *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $bboxMinLon;
 
     /**
      * @var float the minimum latitude of the bounding box of the direction
+     *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $bboxMinLat;
 
     /**
      * @var float the maximum longitude of the bounding box of the direction
+     *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $bboxMaxLon;
 
     /**
      * @var float the maximum latitude of the bounding box of the direction
+     *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $bboxMaxLat;
 
     /**
      * @var null|int the initial bearing of the direction in degrees
+     *
      * @ORM\Column(type="integer",nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $bearing;
@@ -188,8 +227,11 @@ class MassPerson
      * @var Mass the original mass file of the person
      *
      * @Assert\NotBlank
+     *
      * @ORM\ManyToOne(targetEntity="\App\Match\Entity\Mass", cascade={"persist"}, inversedBy="persons")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @MaxDepth(1)
      */
     private $mass;
@@ -198,7 +240,9 @@ class MassPerson
      * @var null|ArrayCollection the potential matchings if the person is driver
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson1", cascade={"persist"})
+     *
      * @MaxDepth(1)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $matchingsAsDriver;
@@ -207,7 +251,9 @@ class MassPerson
      * @var null|ArrayCollection the potential matchings if the person is passenger
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson2", cascade={"persist"})
+     *
      * @MaxDepth(1)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $matchingsAsPassenger;
@@ -216,7 +262,9 @@ class MassPerson
      * @var null|\DateTimeInterface the outward time
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $outwardTime;
@@ -225,7 +273,9 @@ class MassPerson
      * @var null|\DateTimeInterface the return time
      *
      * @Assert\Time()
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $returnTime;
@@ -234,7 +284,9 @@ class MassPerson
      * @var bool the person accepts to be a driver
      *
      * @Assert\Type("bool")
+     *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $driver;
@@ -243,7 +295,9 @@ class MassPerson
      * @var bool the person accepts to be a passenger
      *
      * @Assert\Type("bool")
+     *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"mass","massCompute"})
      */
     private $passenger;
@@ -252,6 +306,7 @@ class MassPerson
      * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $createdDate;
@@ -260,6 +315,7 @@ class MassPerson
      * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $updatedDate;
@@ -267,9 +323,12 @@ class MassPerson
     /**
      * @var null|User The User created based on this MassPerson
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
+     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @MaxDepth(1)
+     *
      * @Groups({"read"})
      */
     private $user;
@@ -278,8 +337,11 @@ class MassPerson
      * @var null|Proposal The Proposal created based on this MassPerson journey (only the outward for round trip)
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @MaxDepth(1)
+     *
      * @Groups({"read"})
      */
     private $proposal;
@@ -288,7 +350,9 @@ class MassPerson
      * @var null|ArrayCollection The MassPTJourneys linked to this mass person
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPTJourney", mappedBy="massPerson", cascade={"persist"})
+     *
      * @MaxDepth(1)
+     *
      * @Groups({"pt"})
      */
     private $massPTJourneys;
