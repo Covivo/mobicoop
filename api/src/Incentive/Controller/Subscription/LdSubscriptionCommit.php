@@ -22,11 +22,13 @@ class LdSubscriptionCommit extends SubscriptionCommit
 
         $pushOnlyMode = boolval($this->_request->get('push_only'));
 
+        $noResetMode = boolval($this->_request->get('no_reset'));
+
         if ($subscription->getUser()->getId() != $proposal->getUser()->getId()) {
             throw new BadRequestHttpException('A journey can initiate a subscription only if the user associated with the subscription is the one who posted the trip');
         }
 
-        $this->_subscriptionManager->commitSubscription($subscription, $proposal, $pushOnlyMode);
+        $this->_subscriptionManager->commitSubscription($subscription, $proposal, $pushOnlyMode, $noResetMode);
 
         return $subscription;
     }
