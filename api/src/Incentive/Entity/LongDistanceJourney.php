@@ -44,7 +44,7 @@ class LongDistanceJourney extends Journey
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", inversedBy="longDistanceJourneys")
+     * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", inversedBy="longDistanceJourneys", cascade={"persist"})
      */
     private $subscription;
 

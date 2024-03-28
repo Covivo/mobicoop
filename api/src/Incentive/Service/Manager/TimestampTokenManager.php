@@ -77,6 +77,8 @@ class TimestampTokenManager extends MobConnectManager
 
     public function getMobTimestampToken($subscription): MobConnectSubscriptionTimestampsResponse
     {
+        $this->_setCurrentSubscription($subscription);
+
         $this->setDriver($subscription->getUser());
 
         return $this->_getTimestamps();
