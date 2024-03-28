@@ -484,7 +484,6 @@ export default {
         if (item.postalCode) text += item.postalCode + ', ';
       }
       if (item.type == 'user') {
-        if (this.showName) text += item.name + ', ';
         if (item.houseNumber) text += item.houseNumber + ', ';
         if (item.streetName) text += item.streetName + ', ';
         if (this.showName && item.postalCode) text += item.postalCode + ', ';
