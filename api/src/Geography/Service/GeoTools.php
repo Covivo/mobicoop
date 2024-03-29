@@ -28,9 +28,7 @@ use App\User\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class InvalidParameterException extends \Exception
-{
-}
+class InvalidParameterException extends \Exception {}
 
 /**
  * Geographical tools.
@@ -119,6 +117,7 @@ class GeoTools
                 $dLon = 2 * pi() + $dLon;
             }
         }
+
         // return the angle, normalized
         return (rad2deg(atan2($dLon, $dPhi)) + 360) % 360;
     }
@@ -251,6 +250,9 @@ class GeoTools
         // street address
         $streetAddressFound = false;
         if (isset($this->params['displayStreetAddress']) && 'true' === trim($this->params['displayStreetAddress'])) {
+            if ('' !== trim($address->getHouseNumber())) {
+                $displayLabelTab[0][] = $address->getHouseNumber();
+            }
             if ('' !== trim($address->getStreetAddress())) {
                 $streetAddressFound = true;
                 $displayLabelTab[0][] = $address->getStreetAddress();
@@ -405,6 +407,7 @@ class GeoTools
         } else {
             $resultList = [$pointList[0], $pointList[$totalPoints - 1]];
         }
+
         // Return the result
         return $resultList;
     }
