@@ -53,8 +53,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * An event : a social occasion or activity.
  *
  * @ORM\Entity()
+ *
  * @ORM\Table(indexes={@ORM\Index(name="FULL_TEXT_NAME", columns={"name"}, flags={"fulltext"})})
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -185,6 +188,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *      }
  * )
+ *
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate", "name", "toDate","createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(DateFilter::class, properties={"toDate","fromDate"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
@@ -203,9 +207,13 @@ class Event
      * @var int the id of this event
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"aRead","readEvent", "read" })
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -214,6 +222,7 @@ class Event
      * @var string the name of the event
      *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $name;
@@ -229,6 +238,7 @@ class Event
      * @var int the status of the event (active/inactive)
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $status;
@@ -237,6 +247,7 @@ class Event
      * @var bool Private event. Should be filtered when event list is publicly displayed.
      *
      * @ORM\Column(type="boolean", options={"default":0})
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $private;
@@ -245,6 +256,7 @@ class Event
      * @var string the short description of the event
      *
      * @ORM\Column(type="string", length=512, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $description;
@@ -253,6 +265,7 @@ class Event
      * @var string the full description of the event
      *
      * @ORM\Column(type="text", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $fullDescription;
@@ -261,7 +274,9 @@ class Event
      * @var \DateTimeInterface the starting date of the event
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $fromDate;
@@ -270,7 +285,9 @@ class Event
      * @var \DateTimeInterface the ending date of the event
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $toDate;
@@ -279,6 +296,7 @@ class Event
      * @var bool use the time for the starting and ending date of the event
      *
      * @ORM\Column(type="boolean")
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $useTime;
@@ -287,6 +305,7 @@ class Event
      * @var string the information url for the event
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $url;
@@ -309,9 +328,13 @@ class Event
      * @var User the creator of the event
      *
      * @ApiProperty(push=true)
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     *
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="events")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"readEvent","write"})
+     *
      * @MaxDepth(1)
      */
     private $user;
@@ -320,9 +343,13 @@ class Event
      * @var App the app creator of the event
      *
      * @ApiProperty(push=true)
+     *
      * @ORM\ManyToOne(targetEntity="App\App\Entity\App")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"readEvent","write"})
+     *
      * @MaxDepth(1)
      */
     private $app;
@@ -331,8 +358,11 @@ class Event
      * @var Event Event related for the proposal
      *
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="event")
+     *
      * @Groups({"readEvent","write"})
+     *
      * @ApiSubresource(maxDepth=1)
+     *
      * @MaxDepth(1)
      */
     private $proposals;
@@ -341,10 +371,15 @@ class Event
      * @var Address the address of the event
      *
      * @ApiProperty(push=true)
+     *
      * @Assert\NotBlank
+     *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist"}, orphanRemoval=true)
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"aRead","aWrite","readEvent","write"})
+     *
      * @MaxDepth(1)
      */
     private $address;
@@ -353,15 +388,20 @@ class Event
      * @var ArrayCollection the images of the event
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist"})
+     *
      * @ORM\OrderBy({"position" = "ASC"})
+     *
      * @Groups("readEvent")
+     *
      * @MaxDepth(1)
+     *
      * @ApiSubresource(maxDepth=1)
      */
     private $images;
 
     /**
      * @var string Url of the default Avatar for an event
+     *
      * @Groups("readEvent")
      */
     private $defaultAvatar;
@@ -370,6 +410,7 @@ class Event
      * @var string the id of this external event
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readEvent","write"})
      */
     private $externalId;
@@ -378,6 +419,7 @@ class Event
      * @var string the source of the external event
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readEvent","write"})
      */
     private $externalSource;
@@ -386,36 +428,42 @@ class Event
      * @var string the url of the image of the external event
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readEvent","write"})
      */
     private $externalImageUrl;
 
     /**
      * @var string The creator
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $creator;
 
     /**
      * @var int The creator id
+     *
      * @Groups({"aRead","aWrite", "readEvent"})
      */
     private $creatorId;
 
     /**
      * @var null|string The creator avatar
+     *
      * @Groups({"aRead"})
      */
     private $creatorAvatar;
 
     /**
      * @var null|string The event main image
+     *
      * @Groups("aRead")
      */
     private $image;
 
     /**
      * @var null|string The event avatar
+     *
      * @Groups("aRead")
      */
     private $avatar;
@@ -431,21 +479,27 @@ class Event
      * @var Community Community linked to the event
      *
      * @ApiProperty(push=true)
+     *
      * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"readEvent","write", "aRead", "aWrite"})
+     *
      * @MaxDepth(1)
      */
     private $community;
 
     /**
      * @var null|int The community id
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $communityId;
 
     /**
      * @var string The community name
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $communityName;

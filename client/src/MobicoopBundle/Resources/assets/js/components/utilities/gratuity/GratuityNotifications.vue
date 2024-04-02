@@ -1,9 +1,7 @@
 <template>
   <div v-if="userGratuityNotifications">
     <GratuityNotification
-      v-for="userGratuityNotification in userGratuityNotifications"
-      :key="userGratuityNotification.id"
-      :user-gratuity-notification="userGratuityNotification"
+      :user-gratuity-notification="userGratuityNotifications[0]"
     />
   </div>
 </template>

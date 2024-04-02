@@ -25,6 +25,7 @@ class SubscriptionCommitCommand extends EecCommand
             ->addOption('subscription', null, InputOption::VALUE_REQUIRED, 'The subscription ID')
             ->addOption('journey', null, InputOption::VALUE_REQUIRED, 'Depending on the case, the ID of the Proposal or the CarpoolProof')
             ->addOption('pushOnly', null, InputOption::VALUE_NONE, 'Indicates whether the trip should be saved in BDD or only pushed to moB')
+            ->addOption('noReset', null, InputOption::VALUE_NONE, 'The subscription will not be reset and no journeys will be deleted. Can be used when there is no engagement path in error.')
         ;
     }
 
@@ -62,7 +63,7 @@ class SubscriptionCommitCommand extends EecCommand
             throw new NotFoundHttpException('The requested Proposal was not found');
         }
 
-        $this->_subscriptionManager->commitSubscription($subscription, $proposal, $this->_currentInput->getOption('pushOnly'));
+        $this->_subscriptionManager->commitSubscription($subscription, $proposal, $this->_currentInput->getOption('pushOnly'), $this->_currentInput->getOption('noReset'));
     }
 
     private function _commitSDSubscription()
@@ -82,6 +83,6 @@ class SubscriptionCommitCommand extends EecCommand
             throw new NotFoundHttpException('The requested CarpoolProof was not found');
         }
 
-        $this->_subscriptionManager->commitSubscription($subscription, $carpoolProof, $this->_currentInput->getOption('pushOnly'));
+        $this->_subscriptionManager->commitSubscription($subscription, $carpoolProof, $this->_currentInput->getOption('pushOnly'), $this->_currentInput->getOption('noReset'));
     }
 }
