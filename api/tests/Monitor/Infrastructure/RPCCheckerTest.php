@@ -2,6 +2,7 @@
 
 namespace App\Monitor\Infrastructure;
 
+use App\DataProvider\Service\CurlDataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,7 +16,7 @@ class RPCCheckerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->_rpcChecker = new RPCChecker();
+        $this->_rpcChecker = new RPCChecker(new CurlDataProvider(RPCChecker::RPC_URI));
     }
 
     /**

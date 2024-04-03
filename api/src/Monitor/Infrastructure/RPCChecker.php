@@ -23,12 +23,29 @@
 
 namespace App\Monitor\Infrastructure;
 
+use App\DataProvider\Service\CurlDataProvider;
 use App\Monitor\Core\Application\Port\Checker;
 
 class RPCChecker implements Checker
 {
+    public const RPC_URI_SUFFIX = '/v3/journeys';
+    private $_curlDataProvider;
+    private $_headers = [];
+
+    public function __construct(CurlDataProvider $curlDataProvider, string $rpcUri, string $rpcToken)
+    {
+        $this->_curlDataProvider = $curlDataProvider;
+        $this->_curlDataProvider->setUrl($rpcUri.self::RPC_URI_SUFFIX);
+        $this->_headers = [
+            'Authorization: Bearer '.$rpcToken,
+            'Content-Type: application/json',
+        ];
+    }
+
     public function check(): string
     {
+        var_dump($this->_curlDataProvider->get(['status' => 'ok', 'start' => '2024-02-01T01:04:30.004Z'], $this->_headers));
+
         return 'ok';
     }
 }

@@ -1098,12 +1098,16 @@ services:
     tags:
       - { name: monolog.logger, channel: matcherV3 }
 
-  mobicoop.monitor.infrastructure.rpc_checker:
-    class: App\Monitor\Infrastructure\RPCChecker
+  App\Monitor\Infrastructure\RPCChecker:
+    tags:
+      - { name: mobicoop.monitor.infrastructure.rpc_checker }
+    arguments:
+      $rpcUri: "%env(string:CARPOOL_PROOF_URI)%"
+      $rpcToken: "%env(string:CARPOOL_PROOF_TOKEN)%"
 
   mobicoop.monitor.core.application.service.proof_checker:
     class: App\Monitor\Core\Application\Service\ProofChecker
-    arguments: ["@mobicoop.monitor.infrastructure.rpc_checker"]
+    arguments: ["!tagged mobicoop.monitor.infrastructure.rpc_checker"]
 
   # Payment
   App\Payment\Command\UnpaidReminderCommand:
