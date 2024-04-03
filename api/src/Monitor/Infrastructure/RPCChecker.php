@@ -31,7 +31,7 @@ class RPCChecker implements Checker
 {
     public const RPC_URI_SUFFIX = '/v3/journeys';
     public const RPC_PROOF_STATUS = 'ok';
-    public const PAST_DAYS = '50';
+    public const PAST_DAYS = '5';
 
     public const CHECKED = 'OK';
     public const NOT_CHECKED = 'KO';
