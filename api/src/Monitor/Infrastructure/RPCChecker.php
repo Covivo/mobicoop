@@ -23,12 +23,18 @@
 
 namespace App\Monitor\Infrastructure;
 
+use App\DataProvider\Entity\Response;
 use App\DataProvider\Service\CurlDataProvider;
 use App\Monitor\Core\Application\Port\Checker;
 
 class RPCChecker implements Checker
 {
     public const RPC_URI_SUFFIX = '/v3/journeys';
+    public const PAST_DAYS = '50';
+
+    public const CHECKED = 'OK';
+    public const NOT_CHECKED = 'KO';
+
     private $_curlDataProvider;
     private $_headers = [];
 
@@ -44,8 +50,27 @@ class RPCChecker implements Checker
 
     public function check(): string
     {
-        var_dump($this->_curlDataProvider->get(['status' => 'ok', 'start' => '2024-02-01T01:04:30.004Z'], $this->_headers));
+        $params = ['status' => 'ok'];
+        $params['start'] = $this->_computeMinDate();
 
-        return 'ok';
+        return $this->_determineResult($this->_curlDataProvider->get($params, $this->_headers));
+    }
+
+    private function _determineResult(Response $response): string
+    {
+        $return = self::NOT_CHECKED;
+        if (is_string($response->getValue()) && count(json_decode($response->getValue(), true)) > 0) {
+            $return = self::CHECKED;
+        }
+
+        return $return;
+    }
+
+    private function _computeMinDate(): string
+    {
+        $minDate = new \DateTime('now');
+        $minDate->modify('-'.self::PAST_DAYS.' day');
+
+        return $minDate->format('Y-m-d\\TH:i:s\\Z');
     }
 }
