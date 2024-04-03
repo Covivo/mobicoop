@@ -14,16 +14,16 @@ use PHPUnit\Framework\TestCase;
 class RPCCheckerTest extends TestCase
 {
     private $_rpcChecker;
+    private $_curlDataProvider;
 
     public function setUp(): void
     {
-        $curlDataProvider = $this->getMockBuilder(CurlDataProvider::class)
+        $this->_curlDataProvider = $this->getMockBuilder(CurlDataProvider::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
-        $curlDataProvider->method('get')->willReturn(new Response(200));
 
-        $this->_rpcChecker = new RPCChecker($curlDataProvider, '', '');
+        $this->_rpcChecker = new RPCChecker($this->_curlDataProvider, '', '');
     }
 
     /**
@@ -39,6 +39,16 @@ class RPCCheckerTest extends TestCase
      */
     public function testCheckReturnsOk()
     {
-        $this->assertEquals('ok', $this->_rpcChecker->check());
+        $this->_curlDataProvider->method('get')->willReturn(new Response(200, '[{"operator_journey_id":"TestMobicoop3_76785"}]'));
+        $this->assertEquals('OK', $this->_rpcChecker->check());
+    }
+
+    /**
+     * @test
+     */
+    public function testCheckReturnsKo()
+    {
+        $this->_curlDataProvider->method('get')->willReturn(new Response(200));
+        $this->assertEquals('KO', $this->_rpcChecker->check());
     }
 }
