@@ -45,7 +45,7 @@ final class ProofChecker implements CollectionDataProviderInterface, RestrictedD
 
     public function getCollection(string $resourceClass, ?string $operationName = null)
     {
-        var_dump('provide !');
+        var_dump($this->_rpcChecker->check());
 
         exit;
     }
