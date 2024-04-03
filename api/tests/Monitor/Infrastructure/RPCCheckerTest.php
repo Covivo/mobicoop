@@ -16,7 +16,7 @@ class RPCCheckerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->_rpcChecker = new RPCChecker(new CurlDataProvider(RPCChecker::RPC_URI));
+        $this->_rpcChecker = new RPCChecker(new CurlDataProvider(), '', '');
     }
 
     /**
