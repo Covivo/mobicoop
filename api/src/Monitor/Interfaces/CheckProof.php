@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
@@ -20,8 +20,36 @@
  *    Licence MOBICOOP described in the file
  *    LICENSE
  */
-// constructeur prend en paramètre un implémentation de Checher.php
 
-namespace App\Monitor\Core\Application\Service;
+namespace App\Monitor\Interfaces;
 
-class ProofChecker {}
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+/**
+ * @ApiResource(
+ *     attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writePayment"}}
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Monitor"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Monitor"}
+ *              }
+ *          }
+ *      }
+ * )
+ *
+ *  @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class CheckProof {}
