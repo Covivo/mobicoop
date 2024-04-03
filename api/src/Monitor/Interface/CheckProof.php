@@ -1,1 +1,0 @@
-// ressource API platform
