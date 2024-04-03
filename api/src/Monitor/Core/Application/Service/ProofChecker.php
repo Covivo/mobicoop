@@ -28,6 +28,7 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Monitor\Core\Application\Port\Checker;
 use App\Monitor\Interfaces\CheckProof;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class ProofChecker implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -43,8 +44,8 @@ final class ProofChecker implements CollectionDataProviderInterface, RestrictedD
         return CheckProof::class === $resourceClass && 'get' == $operationName;
     }
 
-    public function getCollection(string $resourceClass, ?string $operationName = null)
+    public function getCollection(string $resourceClass, ?string $operationName = null): JsonResponse
     {
-        return $this->_rpcChecker->check();
+        return new JsonResponse($this->_rpcChecker->check(), 200, [], true);
     }
 }

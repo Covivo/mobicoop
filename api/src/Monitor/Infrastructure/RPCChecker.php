@@ -33,8 +33,8 @@ class RPCChecker implements Checker
     public const RPC_PROOF_STATUS = 'ok';
     public const PAST_DAYS = '5';
 
-    public const CHECKED = 'OK';
-    public const NOT_CHECKED = 'KO';
+    public const CHECKED = ['message' => 'OK'];
+    public const NOT_CHECKED = ['message' => 'KO'];
 
     private $_curlDataProvider;
     private $_headers = [];
@@ -64,7 +64,7 @@ class RPCChecker implements Checker
             $return = self::CHECKED;
         }
 
-        return $return;
+        return json_encode($return);
     }
 
     private function _computeMinDate(): string

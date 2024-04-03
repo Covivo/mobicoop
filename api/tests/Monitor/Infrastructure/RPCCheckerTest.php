@@ -40,7 +40,7 @@ class RPCCheckerTest extends TestCase
     public function testCheckReturnsOk()
     {
         $this->_curlDataProvider->method('get')->willReturn(new Response(200, '[{"operator_journey_id":"TestMobicoop3_76785"}]'));
-        $this->assertEquals('OK', $this->_rpcChecker->check());
+        $this->assertEquals('{"message":"OK"}', $this->_rpcChecker->check());
     }
 
     /**
@@ -49,6 +49,6 @@ class RPCCheckerTest extends TestCase
     public function testCheckReturnsKo()
     {
         $this->_curlDataProvider->method('get')->willReturn(new Response(200));
-        $this->assertEquals('KO', $this->_rpcChecker->check());
+        $this->assertEquals('{"message":"KO"}', $this->_rpcChecker->check());
     }
 }
