@@ -25,4 +25,10 @@ namespace App\Monitor\Infrastructure;
 
 use App\Monitor\Core\Application\Port\Checker;
 
-class RPCChecker implements Checker {}
+class RPCChecker implements Checker
+{
+    public function check(): string
+    {
+        return 'ok';
+    }
+}
