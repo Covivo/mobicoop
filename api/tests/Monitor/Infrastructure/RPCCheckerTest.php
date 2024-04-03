@@ -2,6 +2,7 @@
 
 namespace App\Monitor\Infrastructure;
 
+use App\DataProvider\Entity\Response;
 use App\DataProvider\Service\CurlDataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +17,13 @@ class RPCCheckerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->_rpcChecker = new RPCChecker(new CurlDataProvider(), '', '');
+        $curlDataProvider = $this->getMockBuilder(CurlDataProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $curlDataProvider->method('get')->willReturn(new Response(200));
+
+        $this->_rpcChecker = new RPCChecker($curlDataProvider, '', '');
     }
 
     /**
