@@ -24,4 +24,21 @@
 
 namespace App\Monitor\Core\Application\Service;
 
-class ProofChecker {}
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Monitor\Interfaces\CheckProof;
+
+final class ProofChecker implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+{
+    public function supports(string $resourceClass, ?string $operationName = null, array $context = []): bool
+    {
+        return CheckProof::class === $resourceClass && 'get' == $operationName;
+    }
+
+    public function getCollection(string $resourceClass, ?string $operationName = null)
+    {
+        var_dump('provide !');
+
+        exit;
+    }
+}

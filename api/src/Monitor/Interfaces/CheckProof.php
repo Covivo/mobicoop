@@ -28,6 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     routePrefix="/monitor",
  *     attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},
@@ -35,7 +36,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     collectionOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Monitor"}
  *              }
@@ -43,6 +43,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      },
  *      itemOperations={
  *          "get"={
+ *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Monitor"}
  *              }
