@@ -1,0 +1,1 @@
+// Implémentation de Checker.php
