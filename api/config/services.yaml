@@ -1098,6 +1098,13 @@ services:
     tags:
       - { name: monolog.logger, channel: matcherV3 }
 
+  mobicoop.monitor.infrastructure.rpc_checker:
+    class: App\Monitor\Infrastructure\RPCChecker
+
+  mobicoop.monitor.core.application.service.proof_checker:
+    class: App\Monitor\Core\Application\Service\ProofChecker
+    arguments: ["@mobicoop.monitor.infrastructure.rpc_checker"]
+
   # Payment
   App\Payment\Command\UnpaidReminderCommand:
     tags:

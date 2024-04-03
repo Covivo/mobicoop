@@ -26,10 +26,18 @@ namespace App\Monitor\Core\Application\Service;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Monitor\Core\Application\Port\Checker;
 use App\Monitor\Interfaces\CheckProof;
 
 final class ProofChecker implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    private $_rpcChecker;
+
+    public function __construct(Checker $rpcChecker)
+    {
+        $this->_rpcChecker = $rpcChecker;
+    }
+
     public function supports(string $resourceClass, ?string $operationName = null, array $context = []): bool
     {
         return CheckProof::class === $resourceClass && 'get' == $operationName;
