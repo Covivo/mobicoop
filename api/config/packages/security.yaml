@@ -151,6 +151,12 @@ security:
             stateless: true
             anonymous: true    
 
+        # firewall for RDEX external requests
+        monitorCheckProofs:
+            pattern:  ^/monitor/check_proofs
+            stateless: true
+            anonymous: true
+
         # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|js)/
@@ -180,4 +186,7 @@ security:
         - { path: ^/mango-kyc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/campaigns/unsubscribe, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST] }
         - { path: ^/carpool_standard/from_external/bookings, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST, PUT] }
+        - { path: ^/monitor/check_proofs, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [GET] }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+
+
