@@ -428,7 +428,7 @@ class UserManager
      * @param SolidaryUser $solidaryUser The SolidaryUser
      * @param Structure    $structure    The Structure (if there is no Structure, we take the admin's one)
      */
-    public function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser, Structure $structure = null): SolidaryUser
+    public function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser, ?Structure $structure = null): SolidaryUser
     {
         $solidaryUserstructure = null;
         if (!is_null($structure)) {
@@ -1682,7 +1682,7 @@ class UserManager
      *
      * @return null|User
      */
-    public function getPaymentProfile(User $user = null)
+    public function getPaymentProfile(?User $user = null)
     {
         if (is_null($user)) {
             $user = $this->userRepository->findOneBy(['email' => $this->security->getUser()->getUsername()]);
@@ -2006,9 +2006,9 @@ class UserManager
      *
      * @return User
      */
-    public function updateLanguage(User $user)
+    public function updateLanguage(User $user, string $code): User
     {
-        $language = $this->languageRepository->findOneBy(['code' => $user->getLanguage()->getCode()]);
+        $language = $this->languageRepository->findOneBy(['code' => $code]);
         $user->setLanguage($language);
 
         $this->entityManager->persist($user);
