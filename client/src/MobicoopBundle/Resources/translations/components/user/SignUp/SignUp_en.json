@@ -51,7 +51,8 @@
     }
   },
   "homeTown": {
-    "placeholder": "Place of residence"
+    "placeholder": "Home address",
+    "hint": "Your home address will make your ad publications and researchs easier."
   },
   "email": {
     "placeholder": "Email",

@@ -20,7 +20,7 @@
           :user="user"
           :init-regular="dataRegular"
           :init-destination="defaultDestination"
-          :init-origin="defaultOrigin"
+          :init-origin="origin"
           :punctual-date-optional="punctualDateOptional"
           :show-destination="showDestination"
           :iswidget="isWidget"
@@ -293,7 +293,7 @@ export default {
       dataRegular: this.regular,
       date: this.defaultOutwardDate,
       time: this.defaultOutwardTime,
-      origin: this.defaultOrigin,
+      origin: this.determineOrigin(),
       destination: this.defaultDestination,
       locale: localStorage.getItem("X-LOCALE"),
       role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
@@ -374,6 +374,17 @@ export default {
         window.location.href=this.$t("buttons.shareAnAd.route");
       }
     },
+    determineOrigin: function(){
+      if(this.defaultOrigin){
+        return this.defaultOrigin;
+      }
+
+      if(this.user && this.user.homeAddress){
+        return this.user.homeAddress
+      }
+
+      return null;
+    }
   },
 };
 </script>

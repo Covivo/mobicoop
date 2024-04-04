@@ -519,8 +519,9 @@
               :palette="geoCompletePalette"
               :chip="geoCompleteChip"
               :show-name="false"
-              :restrict="['locality']"
+              :restrict="['housenumber', 'street']"
               :label="$t('homeTown.label')"
+              :hint="$t('homeTown.hint')"
               :address="homeAddress"
               @address-selected="homeAddressSelected"
             />

@@ -107,6 +107,7 @@
                 :chip="geoCompleteChip"
                 :restrict="['housenumber', 'street']"
                 :label="$t('form.label.address.check')"
+                :address="(user.homeAddress) ? user.homeAddress : null"
                 @address-selected="addressSelected"
                 @clear="clearAddress"
               />
@@ -423,6 +424,9 @@ export default {
   },
   mounted() {
     this.getBankCoordinates();
+    if(this.user.homeAddress){
+      this.addressSelected(this.user.homeAddress);
+    }
   },
   methods: {
     getBankCoordinates() {
