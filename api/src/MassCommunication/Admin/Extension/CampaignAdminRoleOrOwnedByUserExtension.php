@@ -28,6 +28,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Auth\Service\AuthManager;
 use App\MassCommunication\Entity\Campaign;
+use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
@@ -59,7 +60,7 @@ final class CampaignAdminRoleOrOwnedByUserExtension implements QueryCollectionEx
     {
         $user = $this->security->getUser();
 
-        if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
+        if (($user instanceof User) || $this->authManager->isAuthorized('ROLE_ADMIN')) {
             return;
         }
 

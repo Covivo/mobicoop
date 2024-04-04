@@ -31,7 +31,7 @@ class SolidarySubscriber implements EventSubscriberInterface
         }
 
         $solidary = $event->getSolidary();
-
+        $solidary->getSolidaryUserStructure()->getSolidaryUser()->setUser($event->getuser());
         if (!is_null($solidary->getSolidaryUserstructure()) && !is_null($solidary->getSolidaryUserstructure()->getStructure())) {
             $operators = array_map(function ($operate) {
                 return $operate->getUser();

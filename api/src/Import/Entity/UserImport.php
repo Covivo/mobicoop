@@ -35,7 +35,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  * A user imported from an external system.
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -95,9 +97,13 @@ class UserImport
      * @var int the id of this imported user
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups("read")
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -105,9 +111,12 @@ class UserImport
     /**
      * @var null|User user imported in the platform
      *
-     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist"}, inversedBy="import")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $user;
@@ -116,6 +125,7 @@ class UserImport
      * @var null|string the identifier of the external system
      *
      * @ORM\Column(type="string", length=255, nullable=false)
+     *
      * @Groups({"read","write"})
      */
     private $origin;
@@ -124,6 +134,7 @@ class UserImport
      * @var int import status
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"read","write"})
      */
     private $status;
@@ -132,6 +143,7 @@ class UserImport
      * @var \DateTimeInterface creation date of the user import
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"read","write"})
      */
     private $createdDate;
@@ -140,6 +152,7 @@ class UserImport
      * @var \DateTimeInterface update date of the user import
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $updatedDate;
@@ -148,6 +161,7 @@ class UserImport
      * @var \DateTimeInterface start date of the user treatment
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $treatmentUserStartDate;
@@ -156,6 +170,7 @@ class UserImport
      * @var \DateTimeInterface end date of the user treatment
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $treatmentUserEndDate;
@@ -164,6 +179,7 @@ class UserImport
      * @var \DateTimeInterface start date of the journey treatment
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $treatmentJourneyStartDate;
@@ -172,6 +188,7 @@ class UserImport
      * @var \DateTimeInterface end date of the journey treatment
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $treatmentJourneyEndDate;
@@ -180,6 +197,7 @@ class UserImport
      * @var null|string the user id in the external system
      *
      * @ORM\Column(type="string", length=255, nullable=false)
+     *
      * @Groups({"read","write"})
      */
     private $userExternalId;
@@ -330,7 +348,7 @@ class UserImport
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -340,6 +358,6 @@ class UserImport
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

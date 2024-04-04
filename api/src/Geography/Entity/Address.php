@@ -414,7 +414,7 @@ class Address implements \JsonSerializable
     /**
      * @var null|Waypoint the waypoint of the address
      *
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", mappedBy="address")
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Waypoint", mappedBy="address")
      */
     private $waypoint;
 

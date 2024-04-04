@@ -250,9 +250,9 @@ class SubscriptionManager extends MobConnectManager
      * @param CarpoolProof|Proposal                              $referenceObject
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public function commitSubscription($subscription, $referenceObject, bool $pushOnlyMode = false): void
+    public function commitSubscription($subscription, $referenceObject, bool $pushOnlyMode = false, bool $noResetMode = false): void
     {
-        if ($subscription->isCommited()) {
+        if (!$noResetMode && $subscription->isCommited()) {
             $stage = new ResetSubscription($this->_em, $subscription);
             $stage->execute();
         }
