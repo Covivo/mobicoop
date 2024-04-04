@@ -78,7 +78,8 @@
     "placeholder": "E-mail"
   },
   "homeTown": {
-    "placeholder": "Gemeente waar u woont"
+    "placeholder": "Gemeente waar u woont",
+    "hint": "Votre adresse de domicile facilitera notamment vos publications d'annonce et vos recherches"
   },
   "birthDay": {
     "errors": {

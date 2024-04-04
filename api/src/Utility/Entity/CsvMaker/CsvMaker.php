@@ -132,6 +132,11 @@ class CsvMaker
         foreach ($this->_queryResults as $result) {
             if ($header) {
                 fputcsv($file, array_keys($result), self::CSV_DELIMITER);
+
+                if (isset($this->_csvExports[$this->_service]['anonymize']) && $this->_csvExports[$this->_service]['anonymize']) {
+                    $result = $this->_dataAnonymizer->anonymize($result);
+                }
+
                 fputcsv($file, $result, self::CSV_DELIMITER);
                 $header = false;
 

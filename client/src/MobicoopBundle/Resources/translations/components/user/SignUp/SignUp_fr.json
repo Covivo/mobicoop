@@ -51,7 +51,8 @@
     }
   },
   "homeTown": {
-    "placeholder": "Commune de résidence"
+    "placeholder": "Adresse de domicile",
+    "hint": "Votre adresse de domicile facilitera notamment vos publications d'annonce et vos recherches"
   },
   "email": {
     "placeholder": "Email",

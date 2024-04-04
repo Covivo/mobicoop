@@ -78,7 +78,8 @@
     "placeholder": "Helbide elektronikoa"
   },
   "homeTown": {
-    "placeholder": "Bizileku herria"
+    "placeholder": "Bizileku herria",
+    "hint": "Votre adresse de domicile facilitera notamment vos publications d'annonce et vos recherches"
   },
   "birthDay": {
     "errors": {

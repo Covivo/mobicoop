@@ -149,7 +149,7 @@
               />
               <v-divider />
 
-              <!--STEP 3 hometown - Community - checkbox-->
+              <!--STEP 3 home address - Community - checkbox-->
               <v-stepper-step
                 :step="3"
               />
@@ -408,7 +408,7 @@
               </v-form>
             </v-stepper-content>
 
-            <!--STEP 3 hometown - community - ckeckbox-->
+            <!--STEP 3 home address - community - ckeckbox-->
             <v-stepper-content :step="3">
               <v-form
                 id="step3"
@@ -417,15 +417,16 @@
                 class="pb-2"
                 @submit.prevent
               >
-                <!-- hometown -->
+                <!-- home address -->
                 <geocomplete
                   :uri="geoSearchUrl"
                   :results-order="geoCompleteResultsOrder"
                   :palette="geoCompletePalette"
                   :chip="geoCompleteChip"
-                  :restrict="['locality']"
+                  :restrict="['housenumber', 'street']"
                   :label="$t('homeTown.placeholder')"
                   :required="requiredHomeAddress"
+                  :hint="$t('homeTown.hint')"
                   @address-selected="selectedGeo"
                 />
                 <!-- community -->

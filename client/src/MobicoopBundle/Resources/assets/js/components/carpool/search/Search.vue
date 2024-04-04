@@ -20,7 +20,7 @@
           :user="user"
           :init-regular="dataRegular"
           :init-destination="defaultDestination"
-          :init-origin="defaultOrigin"
+          :init-origin="origin"
           :punctual-date-optional="punctualDateOptional"
           :show-destination="showDestination"
           :iswidget="isWidget"
@@ -293,7 +293,7 @@ export default {
       dataRegular: this.regular,
       date: this.defaultOutwardDate,
       time: this.defaultOutwardTime,
-      origin: this.defaultOrigin,
+      origin: this.defaultOrigin ? this.defaultOrigin : this.user.homeAddress ? this.user.homeAddress : null,
       destination: this.defaultDestination,
       locale: localStorage.getItem("X-LOCALE"),
       role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
