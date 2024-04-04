@@ -369,7 +369,7 @@ class RelayPoint
     /**
      * @var null|Community the community of the relay point
      *
-     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
+     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community", inversedBy="relayPoints")
      *
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      *
@@ -380,7 +380,7 @@ class RelayPoint
     /**
      * @var null|Structure the solidary structure of the relay point
      *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="relayPoints")
      *
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      *
@@ -400,7 +400,7 @@ class RelayPoint
     /**
      * @var null|RelayPointImport relay point imported in the platform
      *
-     * @ORM\OneToMany(targetEntity="\App\Import\Entity\RelayPointImport", mappedBy="relay")
+     * @ORM\OneToOne(targetEntity="\App\Import\Entity\RelayPointImport", mappedBy="relay")
      */
     private $relayPointImport;
 

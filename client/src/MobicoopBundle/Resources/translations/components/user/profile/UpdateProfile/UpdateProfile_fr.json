@@ -191,7 +191,8 @@
     }
   },
   "homeTown": {
-    "label": "Commune de résidence"
+    "label": "Adresse de domicile",
+    "hint": "Votre adresse de domicile facilitera notamment vos publications d'annonce et vos recherches"
   },
   "drivingLicenceNumber": {
     "label": "Numéro de permis de conduire"

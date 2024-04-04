@@ -519,7 +519,7 @@ class Mass
     /**
      * @var Community The community created after the migration of this mass users
      *
-     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
+     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
      *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      *

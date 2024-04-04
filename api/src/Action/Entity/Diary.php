@@ -19,24 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use App\Solidary\Entity\Solidary;
 // use ApiPlatform\Core\Annotation\ApiResource;
+use App\Solidary\Entity\SolidarySolution;
+use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Action\Entity\Action;
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Entity\SolidarySolution;
-use App\User\Entity\User;
 
 /**
  * Diary for a user.
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
  * ApiResource(
  *      attributes={
@@ -51,99 +51,123 @@ use App\User\Entity\User;
 class Diary
 {
     /**
-     * @var int $id The id of this diary action.
+     * @var int the id of this diary action
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"read","readUser","readSolidary"})
      */
     private $id;
 
     /**
-     * @var Action The action.
+     * @var Action the action
      *
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"read","write","readUser","readSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $action;
 
     /**
-     * @var string A comment about the action.
+     * @var string a comment about the action
      *
      * @ORM\Column(type="text", nullable=true)
+     *
      * @Groups({"read","write","readUser"})
      */
     private $comment;
 
     /**
-     * @var int|null The progression in percent if the action can be related to a solidary record.
-     * Duplicated from the action entity, to keep the original value if the progression changes in the action entity.
+     * @var null|int The progression in percent if the action can be related to a solidary record.
+     *               Duplicated from the action entity, to keep the original value if the progression changes in the action entity.
      *
      * @ORM\Column(type="decimal", precision=6, scale=2)
+     *
      * @Groups({"read","write","readUser"})
      */
     private $progression;
-        
+
     /**
-     * @var User The user related with the action.
+     * @var User the user related with the action
      *
      * @Assert\NotBlank
+     *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="diaries")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"read"})
+     *
      * @MaxDepth(1)
      */
     private $user;
 
     /**
      * @var User The Author of the action.
-     * Can be the user itself or an admin (i.e. register from front)
+     *           Can be the user itself or an admin (i.e. register from front)
      *
      * @Assert\NotBlank
+     *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="diariesAuthor")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"read"})
+     *
      * @MaxDepth(1)
      */
     private $author;
 
     /**
-     * @var Solidary|null The solidary record if the action concerns a solidary record.
+     * @var null|Solidary the solidary record if the action concerns a solidary record
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary")
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary", inversedBy="diaries")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"read","write", "readSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidary;
 
     /**
-     * @var SolidarySolution|null The solidary solution if the action concerns a solidary record solution.
+     * @var null|SolidarySolution the solidary solution if the action concerns a solidary record solution
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidarySolution")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"read","write", "readSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidarySolution;
 
     /**
-     * @var \DateTimeInterface Creation date of the diary action.
+     * @var \DateTimeInterface creation date of the diary action
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups("read")
      */
     private $createdDate;
 
     /**
      * @var \DateTimeInterface Updated date of the diary action.
-     * Special need for this entity : we need to know the last action made in a diary for a solidary record, so we have to know the last date between createdDate and updatedDate.
-     * To do so, we will use the updatedDate, so it is mandatory and will be populated with the createdDate at insert time.
+     *                         Special need for this entity : we need to know the last action made in a diary for a solidary record, so we have to know the last date between createdDate and updatedDate.
+     *                         To do so, we will use the updatedDate, so it is mandatory and will be populated with the createdDate at insert time.
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups("read")
      */
     private $updatedDate;
@@ -157,11 +181,11 @@ class Diary
     {
         return $this->action;
     }
-    
+
     public function setAction(?Action $action): self
     {
         $this->action = $action;
-        
+
         return $this;
     }
 
@@ -169,11 +193,11 @@ class Diary
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -188,7 +212,7 @@ class Diary
 
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -197,7 +221,7 @@ class Diary
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -209,7 +233,7 @@ class Diary
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
-        
+
         return $this;
     }
 
@@ -217,11 +241,11 @@ class Diary
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
+
         return $this;
     }
 
@@ -229,11 +253,11 @@ class Diary
     {
         return $this->solidarySolution;
     }
-    
+
     public function setSolidarySolution(?SolidarySolution $solidarySolution): self
     {
         $this->solidarySolution = $solidarySolution;
-        
+
         return $this;
     }
 
@@ -270,7 +294,7 @@ class Diary
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
         $this->setUpdatedDate($this->getCreatedDate());
     }
 
@@ -281,6 +305,6 @@ class Diary
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

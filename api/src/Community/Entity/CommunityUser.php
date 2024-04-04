@@ -42,12 +42,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Additional properties could be added so we need this entity (could be useless without extra properties => if so it would be a 'classic' manytomany relation).
  *
  * @ORM\Entity
+ *
  * @UniqueEntity(
  *     fields={"community", "user"},
  *     errorPath="user",
  *     message="This user already asked to join this community."
  * )
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -163,6 +166,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
  * @ApiFilter(SearchFilter::class, properties={"community":"exact","user":"exact"})
  * @ApiFilter(OrderFilter::class, properties={"id","status","givenName","familyName","user.givenName","acceptedDate","createdDate","refusedDate"}, arguments={"orderParameterName"="order"})
@@ -178,8 +182,11 @@ class CommunityUser
      * @var int the id of this community user
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"aRead","readCommunity","readCommunityUser","readUserAdmin","readUser"})
      */
     private $id;
@@ -188,10 +195,15 @@ class CommunityUser
      * @var Community the community
      *
      * @ApiProperty(push=true)
+     *
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
+     *
      * @MaxDepth(1)
+     *
      * @Assert\NotBlank
      */
     private $community;
@@ -200,10 +212,15 @@ class CommunityUser
      * @var User the user
      *
      * @ApiProperty(push=true)
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="communityUsers")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readUserAdmin"})
+     *
      * @MaxDepth(1)
+     *
      * @Assert\NotBlank
      */
     private $user;
@@ -212,6 +229,7 @@ class CommunityUser
      * @var int the status of the membership
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","readUserAdmin"})
      */
     private $status;
@@ -220,7 +238,9 @@ class CommunityUser
      * @var User the user that validates/invalidates the registration
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     *
      * @Groups({"readCommunityUser","write"})
+     *
      * @MaxDepth(1)
      */
     private $admin;
@@ -229,6 +249,7 @@ class CommunityUser
      * @var \DateTimeInterface creation date of the community user
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"aRead","readCommunityUser","write"})
      */
     private $createdDate;
@@ -244,6 +265,7 @@ class CommunityUser
      * @var \DateTimeInterface accepted date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"aRead","readCommunity","readCommunityUser","write"})
      */
     private $acceptedDate;
@@ -252,6 +274,7 @@ class CommunityUser
      * @var \DateTimeInterface refusal date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"aRead","readCommunityUser","write"})
      */
     private $refusedDate;
@@ -259,55 +282,62 @@ class CommunityUser
     /**
      * @var \DateTimeInterface last activity date
      *
-     *
      * @Groups({"aRead"})
      */
     private $lastActivityDate;
 
     /**
      * @var string the login to join the community if the community is secured
+     *
      * @Groups("write")
      */
     private $login;
 
     /**
      * @var string the password to join the community if the community is secured
+     *
      * @Groups("write")
      */
     private $password;
 
     /**
      * @var bool if the user is also the creator of the community
+     *
      * @Groups("readCommunityUser")
      */
     private $creator;
 
     /**
      * @var string The username of the member
+     *
      * @Groups("aRead")
      */
     private $username;
 
     /**
      * @var string The givenName of the member
+     *
      * @Groups("aRead")
      */
     private $givenName;
 
     /**
      * @var string The familyName of the member
+     *
      * @Groups("aRead")
      */
     private $familyName;
 
     /**
      * @var null|string The member avatar
+     *
      * @Groups({"aRead"})
      */
     private $avatar;
 
     /**
      * @var bool The member accepts emailing
+     *
      * @Groups("aRead")
      */
     private $newsSubscription;
@@ -319,13 +349,12 @@ class CommunityUser
      */
     private $adType;
 
-        /**
+    /**
      * @var int user id
      *
      * @Groups("aRead")
      */
     private $userId;
-
 
     public function getId(): ?int
     {
@@ -490,6 +519,7 @@ class CommunityUser
 
         return null;
     }
+
     public function getLastActivityDate(): ?\DateTimeInterface
     {
         return $this->getUser()->getLastActivityDate();
