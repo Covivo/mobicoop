@@ -293,7 +293,7 @@ export default {
       dataRegular: this.regular,
       date: this.defaultOutwardDate,
       time: this.defaultOutwardTime,
-      origin: this.defaultOrigin ? this.defaultOrigin : this.user.homeAddress ? this.user.homeAddress : null,
+      origin: this.determineOrigin(),
       destination: this.defaultDestination,
       locale: localStorage.getItem("X-LOCALE"),
       role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
@@ -374,6 +374,17 @@ export default {
         window.location.href=this.$t("buttons.shareAnAd.route");
       }
     },
+    determineOrigin: function(){
+      if(this.defaultOrigin){
+        return this.defaultOrigin;
+      }
+
+      if(this.user && this.user.homeAddress){
+        return this.user.homeAddress
+      }
+
+      return null;
+    }
   },
 };
 </script>
