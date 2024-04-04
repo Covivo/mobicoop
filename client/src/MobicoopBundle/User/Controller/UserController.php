@@ -853,6 +853,7 @@ class UserController extends AbstractController
             $homeAddress->setStreetAddress(isset($data['streetAddress']) ? $data['streetAddress'] : null);
             $homeAddress->setSubLocality(isset($data['subLocality']) ? $data['subLocality'] : null);
             $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
+            $homeAddress->setHouseNumber(isset($data['houseNumber']) ? $data['houseNumber'] : null);
             $homeAddress->setHome(true);
 
             if (null == $data['id']) {
@@ -890,7 +891,7 @@ class UserController extends AbstractController
      *
      * @param null|mixed $askId
      */
-    public function mailBox($askId = null, UserManager $userManager, Request $request, InternalMessageManager $messageManager, int $msgId = null)
+    public function mailBox($askId = null, UserManager $userManager, Request $request, InternalMessageManager $messageManager, ?int $msgId = null)
     {
         $user = $userManager->getLoggedUser();
 

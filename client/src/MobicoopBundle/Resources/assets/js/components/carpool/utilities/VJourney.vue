@@ -127,7 +127,7 @@ export default {
     },
     displayLabel(waypoint){
 
-      if(waypoint.address.displayLabel){
+      if(waypoint.address.displayLabel && waypoint.address.displayLabel.length > 0){
         this.lineBreak = true;
         return waypoint.address.displayLabel.join(" ");
       }
@@ -140,6 +140,9 @@ export default {
         }
         else if(waypoint.address.streetAddress){
           return ' - ' + waypoint.address.streetAddress;
+        }
+        else if(waypoint.address.street){
+          return ' - ' + waypoint.address.street;
         }
       }
       return "";

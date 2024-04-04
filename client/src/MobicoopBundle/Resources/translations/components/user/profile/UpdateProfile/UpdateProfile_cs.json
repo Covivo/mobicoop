@@ -1,147 +1,203 @@
 {
   "titles": {
-    "personnalInfos": "Osobní údaje",
-    "password": "Heslo",
-    "deleteAccount": "Smazat můj účet"
+    "personnalInfos": "Personal information",
+    "password": "Password",
+    "deleteAccount": "Delete my account"
   },
   "snackBar": {
-    "profileUpdated": "Váš profil byl aktualizován!",
-    "errorProfileUpdate": "Chyba, váš profil nebyl aktualizován.",
-    "phoneAlreadyVerified": "Telefon je již zkontrolován.",
-    "phoneUpdate": "Chyba telefonu nebyla zkontrolována.",
-    "phoneValidated": "Váš telefon byl zkontrolován.",
-    "unknown": "Ověřovací kód je chybný.",
-    "tokenOk": "Ověřovací kód byl odeslán.",
-    "tokenError": "Chyba, kód nebyl odeslán",
-    "emailOk": "Ověřovací e-mail byl odeslán.",
-    "emailError": "Chybný e-mail nebyl odeslán"
+    "profileUpdated": "Your profile has been updated!",
+    "errorProfileUpdate": "Error, your profile hasn't been updated.",
+    "phoneValidated": "Your telephone number has been verified.",
+    "unknown": "Your validation code is incorrect.",
+    "tokenOk": "The validation code has been sent.",
+    "tokenError": "Error, the code has not been sent",
+    "emailOk": "The validation email has been sent.",
+    "emailError": "Error the email has not been sent",
+    "phoneUpdate": "Error your telephone number has not been verified.",
+    "phoneAlreadyVerified": "Your telephone number is already verified."
   },
   "avatar": {
-    "label": "Nový obrázek",
-    "size": "Překročili jste maximální velikost avatara",
+    "label": "New photo",
+    "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+    "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
+    "minPxSize": "Minimum size {size}x{size}px",
+    "maxMbSize": "maximum weight {size} Mb",
     "delete": {
-      "label": "Odstranit obrázek",
-      "route": "/utilisateur/profil/avatar/supprimer"
-    },
-    "mbSize": "Překročili jste maximální velikost avatara (Max {size} Mb)."
+      "route": "/user/profile/avatar/delete",
+      "label": "Delete the image"
+    }
   },
   "route": {
-    "update": "/utilisateur/profil/modifier",
-    "supprimer": "/utilisateur/profil/supprimer"
+    "update": "/user/profile/update",
+    "supprimer": "/user/profile/delete"
   },
   "news": {
+    "label": "News of the {platform} service (useful information for carpooling, and new services or new features)",
     "confirmation": {
-      "title": "Potvrzení o zrušení registrace",
-      "content": "Upozorňujeme, že odhlášením z odběru těchto novinek již nebudete dostávat žádné informace o všech následujících tématech:<br><ul><li>nové funkce a služby platformy</li><li>sdílení zpráv ve vaší oblasti </li><li>novinky z vašich komunit</li><li>personalizovaná podpora</li></ul><br>Opravdu se chcete odhlásit?"
+      "content": "Please note, by unsubscribing from these service news, you will no longer receive any information on all of the following:<br><ul><li>new platform features and services</li><li>carpooling news from your region</li><li>news from your communities</li><li>personalized support</li></ul><br>Are you sure you want to unsubscribe?",
+      "title": "Confirmation of ending subscription"
     },
-    "label": "Novinky ze služby {platform} (užitečné informace pro spolujízdu a nové služby nebo nové funkce)",
-    "tooltip": "Novinkami služby jsou e-maily, jejichž jediným účelem je informovat vás o vývoji služby a povzbudit vás ke spolujízdě. Například aktualizace platformy nebo e-maily od referenta komunity, do které patříte. Tyto informace se mohou týkat aktualizací platformy. Prostřednictvím těchto e-mailů nedochází ke komerčnímu oslovování."
+    "tooltip": "The news of the service are emails that used only to keep you informed of the changes to the service and promote your practice of carpooling. Such as updates to the platform or emails from the referent of a community to which you belong. This information may concern updates to the platform. No commercial solicitation is made via these emails."
   },
   "gratuity": {
     "label": "Gratuity programme"
   },
-  "phoneDisplay": {
-    "label": {
-      "general": "Viditelnost mého telefonního čísla :",
-      "restricted": "Viditelné pouze po přijetí spolujízdy, a to pouze účastníky",
-      "all": "Viditelné od okamžiku zveřejnění inzerátu všemi registrovanými uživateli"
-    }
-  },
-  "phone": {
-    "label": "Mobilní telefon",
+  "email": {
+    "label": "Email",
     "errors": {
-      "valid": "Telefonní číslo musí být platné"
+      "valid": "The email address must be in the correct format"
     },
     "tooltips": {
-      "verified": "Vaše mobilní číslo je ověřeno",
-      "notVerified": "Vaše mobilní číslo není ověřeno"
+      "verified": "Your email address is verified",
+      "notVerified": "Your email address is not verified"
     },
     "buttons": {
       "label": {
-        "generateToken": "Odeslání ověřovacího kódu",
-        "generateNewToken": "Odeslání nového kódu",
-        "validate": "Ověřit"
+        "generateEmail": "Send a verification email",
+        "generateEmailAgain": "Send a verification email"
       }
     },
-    "validation": {
-      "label": "Váš ověřovací kód",
-      "route": "/utilisateur/telephone/validation"
-    },
-    "token": {
-      "route": "/utilisateur/telephone/token",
-      "inputError": "Validační kód se skládá ze 4 číslic."
-    },
-    "i18n": {
-      "date": {
-        "format": {
-          "fullDate": "ddd Do MMMM YYYY",
-          "shortDate": "DD/MM/YYYY",
-          "computeDate": "YYYY-MM-DD"
-        }
+    "verificationRoute": "/user/email/validation/"
+  },
+  "givenName": {
+    "label": "First name"
+  },
+  "familyName": {
+    "label": "Name"
+  },
+  "gender": {
+    "label": "Gender",
+    "values": [
+      {
+        "label": "Mrs/Ms",
+        "value": 1
       },
-      "time": {
-        "format": {
-          "hourMinute": "HH[h]mm"
-        }
+      {
+        "label": "Mr",
+        "value": 2
+      },
+      {
+        "label": "Other",
+        "value": 3
       }
+    ]
+  },
+  "birthDay": {
+    "label": "Date of birth",
+    "errors": {
+      "required": "Date of birth is required",
+      "notadult": "You must be 16 years old to register on the platform"
     }
   },
-  "dialog": {
-    "titles": {
-      "deleteAccount": "Odstranění účtu",
-      "deletionImpossible": "Odstranění účtu není možné"
-    },
-    "content": {
-      "errorEvents": "Jako autor události, která se teprve blíží,<br/> nemůžete smazat svůj účet, pokud jste jejím autorem nebo se událost teprve chystá.<br/> <a href=/contact>Kontaktujte technickou podporu</ a> změnit autora události nebo požádat o její smazání nebo počkat, až událost projde.",
-      "errorCommunities": "Jako referrer komunity nemůžete smazat svůj účet, pokud jste refererem.<br/> <a href=/contact>Kontaktujte technickou podporu</a> a změňte referrera nebo tuto komunitu smažte. <br/>",
-      "deleteAccount": "Opravdu chcete smazat svůj účet?<br/> Tato akce je nevratná.<br/> Bude to mít následující důsledky:<br/> - smažte všechna svá osobní data<br/>- smažte všechny své zprávy vyměněné s jinými uživateli<br/>- anonymizujte se v archivech spolujízdy ostatních spolujízdy<br/>- smažte všechna dosud aktivní oznámení o spolujízdě, která máte<br/>- odmítněte všechny probíhající žádosti o spolujízdu<br/> - zrušit všechny plánované spolujízdy<br/><br/>Potvrzujete?"
-    },
-    "buttons": {
-      "confirmDelete": "Potvrzuji smazání",
-      "close": "Zavřít"
-    }
+  "homeTown": {
+    "label": "Home address",
+    "hint": "Your home address will make your ad publications and researchs easier."
   },
+  "drivingLicenceNumber": {
+    "label": "Driving licence number"
+  },
+  "save": "Register",
+  "yes": "Yes",
+  "no": "No",
   "dialogEmail": {
-    "title": "Změnili jste e-mailovou adresu",
-    "content": "<p>Změnili jste svou e-mailovou adresu.</p><p>Pokud budete pokračovat, bude vám zaslán e-mail s ověřením vaší e-mailové adresy a budete odhlášeni.</p><p>Chcete pokračovat?</p>",
+    "title": "You have changed your email address",
+    "content": "<p>You have changed your email address.</p><p>If you continue, an email validating your email address will be sent to you, and you will be logged out.</p><p>Do you want to continue?</p>",
     "buttons": {
-      "confirmUpdate": "Měním svou e-mailovou adresu",
-      "cancelUpdate": "Zrušit"
+      "confirmUpdate": "I am changing my email address",
+      "cancelUpdate": "Cancel"
     }
   },
-  "buttons": {
-    "supprimerAccount": "Smazat můj účet"
-  },
-  "address": {
-    "update": {
-      "label": "Registrační adresa",
-      "route": "/utilisateur/profil/modifier/adresse"
-    }
-  },
-  "communities": {
-    "route": "/user/communities/owned"
+  "savedCo2": "You have saved {savedCo2} t of",
+  "publicProfile": {
+    "title": "Public profile",
+    "see": "View public profile",
+    "close": "Close"
   },
   "events": {
     "route": "/user/events/created"
   },
-  "email": {
-    "label": "E-mail",
-    "errors": {
-      "valid": "E-mailová adresa musí být ve správném formátu"
+  "communities": {
+    "route": "/user/communities/owned"
+  },
+  "address": {
+    "update": {
+      "route": "/user/profile/change/address",
+      "label": "Save address"
+    }
+  },
+  "buttons": {
+    "supprimerAccount": "Delete my account"
+  },
+  "dialog": {
+    "buttons": {
+      "close": "Close",
+      "confirmDelete": "I confirm the deletion"
     },
-    "tooltips": {
-      "verified": "Vaše e-mailová adresa je ověřena",
-      "notVerified": "Vaše e-mailová adresa není ověřena"
+    "content": {
+      "errorCommunities": "As a referrer of a community you cannot delete your account as long as you are a referrer.<br/> <a href=/contact>Contact Technical Support</a> to change your referrer or delete that community. <br/>",
+      "errorEvents": "As the author of an event that is still to come,<br/> you cannot delete your account while you are the author of the event or while it is still to come.<br/> <a href=/contact>Contact Technical Support</a> to change the author of the event or ask for it to be deleted, or wait until the event has passed.",
+      "deleteAccount": "Are you sure you want to delete your account? <br/> This action is irreversible.<br/> It will result in :<br/> - deleting all your personal data <br/>- deleting all your messages exchanged with other users <br/>- making you anonymous in the carpooling archives of other carpoolers <br/>- delete all still active carpool proposals you have <br/>- decline all current carpool requests <br/>- cancel all planned carpools <br/><br/>Do you confirm?"
+    },
+    "titles": {
+      "deletionImpossible": "Unable to delete your account",
+      "deleteAccount": "Delete your account"
+    }
+  },
+  "phone": {
+    "checkValidity": {
+      "url": "/utilisateur/verif/telephone",
+      "error": "This phone number is not valid"
+    },
+    "i18n": {
+      "time": {
+        "format": {
+          "hourMinute": "HH[h]mm"
+        }
+      },
+      "date": {
+        "format": {
+          "computeDate": "YYYY-MM-DD",
+          "shortDate": "DD/MM/YYYY",
+          "fullDate": "ddd Do MMMM YYYY"
+        }
+      }
+    },
+    "token": {
+      "inputError": "The validation code consists of 4 digits.",
+      "route": "/user/phone/token"
+    },
+    "validation": {
+      "route": "/user/phone/validation",
+      "label": "Your validation code"
     },
     "buttons": {
       "label": {
-        "generateEmail": "Odeslání ověřovacího e-mailu",
-        "generateEmailAgain": "Opětovné odeslání ověřovacího e-mailu"
+        "validate": "Validate",
+        "generateNewToken": "Send a new code",
+        "generateToken": "Send a verification code"
       }
     },
-    "verificationRoute": "/utilisateur/email/validation"
+    "tooltips": {
+      "notVerified": "Your mobile number is not verified",
+      "verified": "Your mobile number is verified"
+    },
+    "errors": {
+      "valid": "The phone number must be valid"
+    },
+    "label": "Mobile phone"
   },
-  "givenName": {
-    "label": "Jméno"
+  "phoneDisplay": {
+    "label": {
+      "all": "Visible on posting the proposal, by all subscribers",
+      "restricted": "Visible only after accepting the carpooling , only by participants",
+      "general": "Visibility of my telephone number:"
+    }
+  },
+  "urlGetSsoServices": "/user/getSsoService",
+  "ssoDeleteAccountWarning": "Votre compte est lié au service {service}. Pour supprimer votre compte vous devez vous y rendre et utiliser la fonctionnalité prévue à cet effet.",
+  "eec-incentive": "prime-covoiturage",
+  "checkDrivingLicenceNumber": {
+    "url": "/user/check/driverlicencenumber",
+    "error": "Numéro de permis de conduire invalide"
   }
 }
