@@ -29,7 +29,7 @@ use App\Monitor\Core\Application\Port\Checker;
 
 class RPCChecker implements Checker
 {
-    public const RPC_URI_SUFFIX = '/v3/journeys';
+    public const RPC_URI_SUFFIX = 'v3/journeys';
     public const RPC_PROOF_STATUS = 'ok';
     public const PAST_DAYS = '5';
 
