@@ -14,7 +14,7 @@ abstract class SubscriptionValidator
     {
         return
             is_null($subscription->getStatus())
-            && static::isCommitmentJourneyEecCompliant($subscription);
+            && !static::isCommitmentJourneyEecCompliant($subscription);
     }
 
     /**
