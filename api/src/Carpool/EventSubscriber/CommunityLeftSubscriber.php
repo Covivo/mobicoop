@@ -23,7 +23,9 @@
 
 namespace App\Carpool\EventSubscriber;
 
+use App\Carpool\Repository\ProposalRepository;
 use App\Community\Event\CommunityLeftEvent;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -31,6 +33,15 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class CommunityLeftSubscriber implements EventSubscriberInterface
 {
+    private $_entityManager;
+    private $_proposalRepository;
+
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository)
+    {
+        $this->_entityManager = $entityManager;
+        $this->_proposalRepository = $proposalRepository;
+    }
+
     public static function getSubscribedEvents()
     {
         return [
@@ -40,8 +51,15 @@ class CommunityLeftSubscriber implements EventSubscriberInterface
 
     public function _onCommunityLeftEvent(CommunityLeftEvent $event)
     {
-        echo "ouais l'event!";
-
-        exit;
+        $proposals = $this->_proposalRepository->findBy(['user' => $event->getUser(), 'private' => false]);
+        foreach ($proposals as $proposal) {
+            foreach ($proposal->getCommunities() as $community) {
+                if ($community->getId() == $event->getCommunity()->getId()) {
+                    $proposal->removeCommunity($community);
+                    $this->_entityManager->persist($proposal);
+                    $this->_entityManager->flush();
+                }
+            }
+        }
     }
 }
