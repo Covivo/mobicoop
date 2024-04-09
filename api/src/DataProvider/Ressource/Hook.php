@@ -19,29 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A payment hook
+ * A payment hook.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Hook
 {
-    const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = '999999999999';
 
-    const STATUS_FAILED = 0;
-    const STATUS_SUCCESS = 1;
-    const STATUS_DELAYED = 2;
-    const STATUS_REFUSED = 3;
-    const STATUS_OUTDATED_RESSOURCE = 4;
+    public const STATUS_FAILED = 0;
+    public const STATUS_SUCCESS = 1;
+    public const STATUS_DELAYED = 2;
+    public const STATUS_REFUSED = 3;
+    public const STATUS_OUTDATED_RESSOURCE = 4;
 
     /**
      * @var int The id of this pay in
@@ -59,7 +57,7 @@ class Hook
     private $eventType;
 
     /**
-     * @var int The ressource id (from the payment provider) of this pay in
+     * @var string The ressource id (from the payment provider) of this pay in
      *
      * @Groups({"readPayment"})
      */
@@ -99,7 +97,7 @@ class Hook
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -111,19 +109,19 @@ class Hook
     public function setEventType(string $eventType): self
     {
         $this->eventType = $eventType;
-        
+
         return $this;
     }
-    
-    public function getRessourceId(): ?int
+
+    public function getRessourceId(): ?string
     {
         return $this->ressourceId;
     }
 
-    public function setRessourceId(int $ressourceId): self
+    public function setRessourceId(string $ressourceId): self
     {
         $this->ressourceId = $ressourceId;
-        
+
         return $this;
     }
 
@@ -135,7 +133,7 @@ class Hook
     public function setDate(int $date): self
     {
         $this->date = $date;
-        
+
         return $this;
     }
 
@@ -147,7 +145,7 @@ class Hook
     public function setSecurityToken(string $securityToken): self
     {
         $this->securityToken = $securityToken;
-        
+
         return $this;
     }
 
