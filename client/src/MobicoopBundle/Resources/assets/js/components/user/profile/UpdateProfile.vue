@@ -1063,6 +1063,7 @@ export default {
     homeAddressSelected(address){
       this.homeAddress = address;
       this.disabledAddress = false;
+      // this.$emit('updateUser', {"homeAddress": this.homeAddress})
     },
     save (date) {
       this.$refs.menu.save(date)
@@ -1142,6 +1143,7 @@ export default {
           this.homeAddress = res.data;
           this.loadingAddress = false;
           this.disabledAddress = true;
+          this.$emit('updateUser', {"homeAddress": this.homeAddress})
         });
     },
     avatarDelete () {
