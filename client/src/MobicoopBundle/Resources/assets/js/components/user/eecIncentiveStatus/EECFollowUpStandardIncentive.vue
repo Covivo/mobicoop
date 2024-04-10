@@ -170,6 +170,10 @@ export default {
       type: Number,
       default: 0
     },
+    platform: {
+      type: String,
+      default: ""
+    },
   },
   data() {
     const _this = this;
@@ -268,7 +272,7 @@ export default {
                 target: {
                   "type": "dialog",
                   "title": this.$t('improvedIncentive.panels.carpool.actions.error[1].dialogTitle'),
-                  "content": this.$t('improvedIncentive.panels.carpool.actions.error[1].dialogContent')
+                  "content": this.$t('improvedIncentive.panels.carpool.actions.error[1].dialogContent', {platform: this.platform})
                 }
               },
               {
