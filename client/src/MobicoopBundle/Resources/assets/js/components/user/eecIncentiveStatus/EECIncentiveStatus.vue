@@ -34,6 +34,7 @@
         v-else
         :eec-instance="eecInstance"
         :eec-subscriptions="subscriptions"
+        :platform="platform"
         @changeTab="changeTab"
       />
     </div>

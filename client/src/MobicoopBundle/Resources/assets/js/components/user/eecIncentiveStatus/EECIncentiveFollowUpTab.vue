@@ -45,6 +45,7 @@
                 :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
+                :platform="platform"
               />
             </v-tab-item>
             <v-tab-item>
@@ -63,6 +64,7 @@
                 :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
+                :platform="platform"
               />
             </v-tab-item>
           </v-tabs-items>
@@ -84,6 +86,7 @@
               :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
               :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
               :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
+              :platform="platform"
             />
           </div>
           <div v-else-if="isLdAvailable">
@@ -102,6 +105,7 @@
               :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
               :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
               :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
+              :platform="platform"
             />
           </div>
         </div>
@@ -149,6 +153,10 @@ export default {
     eecSubscriptions: {
       type: Object,
       default: () => ({})
+    },
+    platform: {
+      type: String,
+      default: ""
     },
   },
   data() {
