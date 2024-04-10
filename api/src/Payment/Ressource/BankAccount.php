@@ -107,7 +107,7 @@ class BankAccount
     public const DEFAULT_ID = '999999999999';
 
     /**
-     * @var int The id of this bank account
+     * @var string The id of this bank account
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readPayment"})
@@ -206,7 +206,7 @@ class BankAccount
         $this->id = self::DEFAULT_ID;
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
