@@ -110,9 +110,8 @@
           <v-row
             align="center"
             class="mx-0"
-          >
-            {{ dialogContent }}
-          </v-row>
+            v-html="dialogContent"
+          />
         </v-card-text>
         <v-card-actions>
           <v-row class="d-flex justify-end mx-0 pr-3 pb-3">
