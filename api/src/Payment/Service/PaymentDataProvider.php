@@ -255,7 +255,7 @@ class PaymentDataProvider
     /**
      * Get a User on the payment provider platform.
      */
-    public function getUser(int $identifier)
+    public function getUser(string $identifier)
     {
         $this->checkPaymentConfiguration();
 
