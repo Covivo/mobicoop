@@ -2,7 +2,10 @@
 
 namespace App\Incentive\Service\Stage;
 
+use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\Incentive\Entity\Log\Log;
+use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
@@ -19,6 +22,11 @@ class VerifySubscription extends Stage
      * @var LongDistanceSubscription|ShortDistanceSubscription
      */
     protected $_subscription;
+
+    /**
+     * @var MobConnectSubscriptionVerifyResponse
+     */
+    private $_httpResponse;
 
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
@@ -44,7 +52,9 @@ class VerifySubscription extends Stage
 
         if ($this->_subscription->isReadyToVerify()) {
             try {
-                $httpResponse = $this->_apiProvider->verifySubscription($this->_subscription);
+                $this->_httpResponse = $this->_apiProvider->verifySubscription($this->_subscription);
+
+                $this->_updateSubscription();
             } catch (HttpException $exception) {
                 $this->_subscription->addLog($exception, Log::TYPE_VERIFY);
                 $this->_subscription->setStatus(self::STATUS_ERROR);
@@ -54,17 +64,58 @@ class VerifySubscription extends Stage
                 return;
             }
 
-            $this->_subscription->setStatus($httpResponse->getStatus());
-
-            $this->_subscription->setBonusStatus(
-                self::STATUS_VALIDATED === $this->_subscription->getStatus()
-                ? Subscription::BONUS_STATUS_OK
-                : Subscription::BONUS_STATUS_NO
-            );
-
-            $this->_subscription->setVerificationDate(new \DateTime());
-
             $this->_em->flush();
         }
+    }
+
+    /**
+     * @return LongDistanceSubscription|ShortDistanceSubscription
+     */
+    private function _updateSubscription()
+    {
+        $this->_subscription->setStatus($this->_httpResponse->getStatus());
+        $this->_subscription->setVerificationDate(new \DateTime());
+
+        switch ($this->_subscription->getStatus()) {
+            case self::STATUS_VALIDATED:
+                $this->_updateSubscriptionWhenValidated();
+
+                break;
+
+            case self::STATUS_REJECTED:
+                $this->_updateSubscriptionWhenRejected();
+
+                break;
+        }
+
+        return $this->_subscription;
+    }
+
+    /**
+     * @return LongDistanceSubscription|ShortDistanceSubscription
+     */
+    private function _updateSubscriptionWhenValidated()
+    {
+        $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_OK);
+
+        return $this->_subscription;
+    }
+
+    /**
+     * @return LongDistanceSubscription|ShortDistanceSubscription
+     */
+    private function _updateSubscriptionWhenRejected()
+    {
+        if (array_key_exists('rejectionReason', $this->_httpResponse->getContent())) {
+            $this->_subscription->setRejectReason($this->_httpResponse->getContent()['rejectionReason']);
+        }
+
+        if (array_key_exists('comments', $this->_httpResponse->getContent())) {
+            $this->_subscription->setComment($this->_httpResponse->getContent()['comments']);
+        }
+
+        $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_NO);
+
+        return $this->_subscription;
     }
 }

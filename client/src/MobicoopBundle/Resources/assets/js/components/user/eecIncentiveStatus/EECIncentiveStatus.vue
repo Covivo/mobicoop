@@ -6,7 +6,7 @@
     <v-snackbar
       v-model="snackbar.displayed"
       :color="snackbar.color"
-      :multi-line="multiLine"
+      :multi-line="snackbar.multiLine"
       :timeout="snackbar.timeout"
       top
     >
@@ -34,6 +34,7 @@
         v-else
         :eec-instance="eecInstance"
         :eec-subscriptions="subscriptions"
+        :platform="platform"
         @changeTab="changeTab"
       />
     </div>

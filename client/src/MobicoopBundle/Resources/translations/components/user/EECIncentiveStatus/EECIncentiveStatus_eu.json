@@ -114,7 +114,7 @@
             {
               "title": "Certifier un covoiturage",
               "dialogTitle": "Certification géolocalisée de trajet",
-              "dialogContent": "<p>Pour certifier un trajet afin de la comptabiliser pour la prime CEE, il faut utiliser un téléphone mobile.</p><p>Activer la géolocalisation au moment du départ et de la dépose du covoiturage depuis l’application NOM_PLATEFORME. Au moment de la montée du passager dans le véhicule du conducteur, passager et conducteurs doivent cliquer sur « certifier prise en charge » depuis la page Covoiturages acceptés de votre appli. Puis à la fin du trajet, chacun doit aussi cliquer sur « certifier dépose ».</p>"
+              "dialogContent": "<p>Pour certifier un trajet afin de la comptabiliser pour la prime CEE, il faut utiliser un téléphone mobile.</p><p>Activer la géolocalisation au moment du départ et de la dépose du covoiturage depuis l’application {platform}. Au moment de la montée du passager dans le véhicule du conducteur, passager et conducteurs doivent cliquer sur «&nbsp;certifier prise en charge&nbsp;» depuis la page Covoiturages acceptés de votre appli. Puis à la fin du trajet, chacun doit aussi cliquer sur «&nbsp;certifier dépose&nbsp;».</p>"
             },
             {
               "title": "Nous contacter",

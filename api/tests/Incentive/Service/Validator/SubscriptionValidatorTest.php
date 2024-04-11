@@ -67,7 +67,7 @@ class SubscriptionValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider dataSusbcriptionsNotEecCompliant
+     * @dataProvider dataSusbcriptionsEecCompliant
      *
      * @test
      *
@@ -79,7 +79,7 @@ class SubscriptionValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider dataSusbcriptionsEecCompliant
+     * @dataProvider dataSusbcriptionsNotEecCompliant
      *
      * @test
      *
