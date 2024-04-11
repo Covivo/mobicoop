@@ -44,23 +44,25 @@ final class CampaignAdminRoleOrOwnedByUserExtension implements QueryCollectionEx
         $this->authManager = $authManager;
     }
 
-    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?string $operationName = null)
     {
         if (Campaign::class == $resourceClass && 'ADMIN_get' === $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
-    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
+    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, ?string $operationName = null, array $context = [])
     {
-        $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        if (Campaign::class == $resourceClass && 'ADMIN_get' === $operationName) {
+            $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        }
     }
 
-    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
+    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, ?string $operationName = null, array $identifiers = [], array $context = []): void
     {
         $user = $this->security->getUser();
 
-        if (($user instanceof User) || $this->authManager->isAuthorized('ROLE_ADMIN')) {
+        if (!($user instanceof User) || $this->authManager->isAuthorized('ROLE_ADMIN')) {
             return;
         }
 
