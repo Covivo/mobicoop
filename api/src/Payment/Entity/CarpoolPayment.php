@@ -136,7 +136,7 @@ class CarpoolPayment
     private $carpoolItems;
 
     /**
-     * @var int the transaction id of this payment if there is an online part
+     * @var null|string the transaction id of this payment if there is an online part
      *
      * @ORM\Column(type="bigint", nullable=true)
      */
@@ -287,12 +287,12 @@ class CarpoolPayment
         return $this;
     }
 
-    public function getTransactionId(): ?int
+    public function getTransactionId(): ?string
     {
         return $this->transactionId;
     }
 
-    public function setTransactionId(int $transactionId): self
+    public function setTransactionId(?string $transactionId): self
     {
         $this->transactionId = $transactionId;
 
