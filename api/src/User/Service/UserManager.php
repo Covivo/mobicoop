@@ -72,6 +72,7 @@ use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
 use App\User\Event\UserDeleteAccountWasPassengerEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
+use App\User\Event\UserHomeAddressUpdateEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
 use App\User\Event\UserRegisteredEvent;
@@ -636,6 +637,8 @@ class UserManager
             $emailUpdate = true;
         }
 
+        $homeAddressUpdate = $user->getHomeAddress() != $user->getOldHomeAddress();
+
         // we add/remove structures associated to user
         if (!is_null($user->getSolidaryStructures())) {
             // We initialize an arry with the ids of the user's structures
@@ -718,6 +721,11 @@ class UserManager
             $action = $this->actionRepository->findOneBy(['name' => 'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
+
+        if ($homeAddressUpdate) {
+            $event = new UserHomeAddressUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserHomeAddressUpdateEvent::NAME, $event);
         }
 
         // return the user
@@ -2003,8 +2011,6 @@ class UserManager
 
     /**
      * Update user's language.
-     *
-     * @return User
      */
     public function updateLanguage(User $user, string $code): User
     {
