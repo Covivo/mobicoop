@@ -160,7 +160,7 @@ export default {
         case this.eecInstance.ldAvailable && !this.subscriptions.longDistanceSubscription:
         case this.eecInstance.sdAvailable && !this.subscriptions.shortDistanceSubscription:
           this.snackbar.multiLine = true
-          this.snackbar.text = `<p class="font-weight-bold">${this.$t('EEC-subscription-snackbar.failed')}</p><p>${this.$t(`EEC-subscription-snackbar.errors.${this.eecSsoAuthError}`)}</p>`
+          this.snackbar.text = `<p class="font-weight-bold">${this.$t('EEC-subscription-snackbar.failed')}</p><p>${this.getSnackbarText()}</p>`
           this.snackbar.timeout = -1
           break
 
@@ -174,6 +174,11 @@ export default {
 
         this.snackbar.displayed = true
       }
+    },
+    getSnackbarText() {
+      return this.eecSsoAuthError === 'eec_user_not_france_connected'
+        ? `${this.$t(`EEC-subscription-snackbar.errors.${this.eecSsoAuthError}`, {document: `${this.apiUri}eec/documents/compte_moB_existant_mais_non_connecte_a_France_Connect_V1.pdf`, contact: 'https://moncomptemobilite.fr/contact'})}`
+        : `${this.$t(`EEC-subscription-snackbar.errors.${this.eecSsoAuthError}`)}`
     }
   },
 };
