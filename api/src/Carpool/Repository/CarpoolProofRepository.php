@@ -403,9 +403,10 @@ class CarpoolProofRepository
      *
      * @return null|CarpoolProof The carpool proof found or null if not found
      */
-    public function findLastCarpoolProof()
+    public function findLastCarpoolProof(): ?CarpoolProof
     {
         $query = $this->repository->createQueryBuilder('cp')
+            ->where('cp.id = 99999')
             ->orderBy('cp.createdDate', 'DESC')
             ->setMaxResults(1)
         ;
