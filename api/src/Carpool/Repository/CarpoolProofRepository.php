@@ -63,7 +63,7 @@ class CarpoolProofRepository
         return $this->repository->find($id);
     }
 
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -123,7 +123,7 @@ class CarpoolProofRepository
      *
      * @return CarpoolProof[] The carpool proofs found
      */
-    public function findByTypesAndPeriod(array $types, \DateTime $startDate, \DateTime $endDate, array $status = null)
+    public function findByTypesAndPeriod(array $types, \DateTime $startDate, \DateTime $endDate, ?array $status = null)
     {
         $startDate->setTime(0, 0);
         $endDate->setTime(23, 59, 59, 999);
@@ -396,5 +396,29 @@ class CarpoolProofRepository
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Find the last CarpoolProof generated.
+     * can apply a delta written in standard DateTime modify delta i.e '+2 day'.
+     *
+     * @return null|CarpoolProof The carpool proof found or null if not found
+     */
+    public function findLastCarpoolProof(?string $delta = null): ?CarpoolProof
+    {
+        $query = $this->repository->createQueryBuilder('cp');
+
+        if (!is_null($delta)) {
+            $minDate = new \DateTime();
+            $minDate->modify($delta);
+            $query->where('cp.createdDate <= :minDate');
+            $query->setParameter('minDate', $minDate->format('Y-m-d').' 23:59:59');
+        }
+
+        $query->orderBy('cp.createdDate', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

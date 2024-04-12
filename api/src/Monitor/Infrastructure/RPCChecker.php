@@ -23,7 +23,6 @@
 
 namespace App\Monitor\Infrastructure;
 
-use App\DataProvider\Entity\Response;
 use App\DataProvider\Service\CurlDataProvider;
 use App\Monitor\Core\Application\Port\Checker;
 
@@ -37,11 +36,13 @@ class RPCChecker implements Checker
     public const NOT_CHECKED = ['message' => 'KO'];
 
     private $_curlDataProvider;
+    private $_carpoolProofService;
     private $_headers = [];
 
-    public function __construct(CurlDataProvider $curlDataProvider, string $rpcUri, string $rpcToken)
+    public function __construct(CurlDataProvider $curlDataProvider, CarpoolProofService $carpoolProofService, string $rpcUri, string $rpcToken)
     {
         $this->_curlDataProvider = $curlDataProvider;
+        $this->_carpoolProofService = $carpoolProofService;
         $this->_curlDataProvider->setUrl($rpcUri.self::RPC_URI_SUFFIX);
         $this->_headers = [
             'Authorization: Bearer '.$rpcToken,
@@ -54,23 +55,34 @@ class RPCChecker implements Checker
         $params = ['status' => self::RPC_PROOF_STATUS];
         $params['start'] = $this->_computeMinDate();
 
-        return $this->_determineResult($this->_curlDataProvider->get($params, $this->_headers));
+        return $this->_determineResult($params);
     }
 
-    private function _determineResult(Response $response): string
+    private function _determineResult(array $params): string
     {
+        if (is_null($params['start'])) {
+            return json_encode(self::CHECKED);
+        }
+
         $return = self::NOT_CHECKED;
-        if (is_string($response->getValue()) && is_countable($response->getValue()) && count(json_decode($response->getValue(), true)) > 0) {
+        $response = $this->_curlDataProvider->get($params, $this->_headers);
+
+        if (is_string($response->getValue()) && is_countable(json_decode($response->getValue(), true)) && count(json_decode($response->getValue(), true)) > 0) {
             $return = self::CHECKED;
         }
 
         return json_encode($return);
     }
 
-    private function _computeMinDate(): string
+    private function _computeMinDate(): ?string
     {
-        $minDate = new \DateTime('now');
-        $minDate->modify('-'.self::PAST_DAYS.' day');
+        $lastCarpoolProof = $this->_carpoolProofService->getLastCarpoolProof('-'.self::PAST_DAYS.' day');
+        if (is_null($lastCarpoolProof)) {
+            return null;
+        }
+
+        $minDate = $lastCarpoolProof->getCreatedDate();
+        $minDate->modify('+'.self::PAST_DAYS.' day');
 
         return $minDate->format('Y-m-d\\TH:i:s\\Z');
     }
