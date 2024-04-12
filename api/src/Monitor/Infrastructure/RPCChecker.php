@@ -60,7 +60,7 @@ class RPCChecker implements Checker
     private function _determineResult(Response $response): string
     {
         $return = self::NOT_CHECKED;
-        if (is_string($response->getValue()) && is_countable($response->getValue()) && count(json_decode($response->getValue(), true)) > 0) {
+        if (is_string($response->getValue()) && is_countable(json_decode($response->getValue(), true)) && count(json_decode($response->getValue(), true)) > 0) {
             $return = self::CHECKED;
         }
 
