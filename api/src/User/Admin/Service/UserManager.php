@@ -39,6 +39,7 @@ use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
+use App\User\Event\UserPhoneUpdateEvent;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager as ServiceUserManager;
@@ -391,6 +392,9 @@ class UserManager
                 $user->setPhoneValidatedDate(null);
                 // deactivate sms notification since the phone is new
                 $this->deActivateSmsNotification($user);
+
+                $eecEvent = new UserPhoneUpdateEvent($user);
+                $this->eventDispatcher->dispatch(UserPhoneUpdateEvent::NAME, $eecEvent);
             }
         }
 

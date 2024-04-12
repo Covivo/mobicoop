@@ -75,6 +75,7 @@ use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use App\User\Event\UserHomeAddressUpdateEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
+use App\User\Event\UserPhoneUpdateEvent;
 use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Event\UserUpdatedSelfEvent;
@@ -714,6 +715,9 @@ class UserManager
             $action = $this->actionRepository->findOneBy(['name' => 'user_phone_updated']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+
+            $eecEvent = new UserPhoneUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserPhoneUpdateEvent::NAME, $event);
         }
 
         //  we dispatch the gamification event associated
