@@ -9,10 +9,13 @@ use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
 use App\Incentive\Service\Manager\AuthManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
+use App\Incentive\Validator\UserValidator;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
+use App\User\Event\UserDrivingLicenceNumberUpdateEvent;
 use App\User\Event\UserHomeAddressUpdateEvent;
+use App\User\Event\UserPhoneUpdateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -61,7 +64,9 @@ class MobConnectListener implements EventSubscriberInterface
             FirstLongDistanceJourneyPublishedEvent::NAME => 'onFirstLongDistanceJourneyPublished',
             FirstShortDistanceJourneyPublishedEvent::NAME => 'onFirstShortDistanceJourneyPublished',
             SsoAssociationEvent::NAME => 'onUserAssociated',
+            UserDrivingLicenceNumberUpdateEvent::NAME => 'onDrivingLicenceNumberUpdated',
             UserHomeAddressUpdateEvent::NAME => 'onUserHomeAddressUpdated',
+            UserPhoneUpdateEvent::NAME => 'onUserPhoneUpdated',
         ];
     }
 
@@ -134,12 +139,24 @@ class MobConnectListener implements EventSubscriberInterface
         $this->_subscriptionManager->invalidateProof($event->getCarpoolProof());
     }
 
+    public function onDrivingLicenceNumberUpdated(UserDrivingLicenceNumberUpdateEvent $event)
+    {
+        if (UserValidator::hasUserEECSubscribed($event->getUser())) {
+        }
+    }
+
     public function onUserHomeAddressUpdated(UserHomeAddressUpdateEvent $event)
     {
         $user = $event->getUser();
 
-        if (!is_null($user->getShortDistanceSubscription()) || !is_null($user->getLongDistanceSubscription())) {
+        if (UserValidator::hasUserEECSubscribed($user)) {
             $this->_subscriptionManager->updateSubscriptionsAddress($user);
+        }
+    }
+
+    public function onUserPhoneUpdated(UserPhoneUpdateEvent $event)
+    {
+        if (UserValidator::hasUserEECSubscribed($event->getUser())) {
         }
     }
 }
