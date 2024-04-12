@@ -400,14 +400,22 @@ class CarpoolProofRepository
 
     /**
      * Find the last CarpoolProof generated.
+     * can apply a delta written in standard DateTime modify delta i.e '+2 day'.
      *
      * @return null|CarpoolProof The carpool proof found or null if not found
      */
-    public function findLastCarpoolProof(): ?CarpoolProof
+    public function findLastCarpoolProof(?string $delta = null): ?CarpoolProof
     {
-        $query = $this->repository->createQueryBuilder('cp')
-            ->where('cp.id = 99999')
-            ->orderBy('cp.createdDate', 'DESC')
+        $query = $this->repository->createQueryBuilder('cp');
+
+        if (!is_null($delta)) {
+            $minDate = new \DateTime();
+            $minDate->modify($delta);
+            $query->where('cp.createdDate <= :minDate');
+            $query->setParameter('minDate', $minDate->format('Y-m-d').' 23:59:59');
+        }
+
+        $query->orderBy('cp.createdDate', 'DESC')
             ->setMaxResults(1)
         ;
 

@@ -76,7 +76,7 @@ class RPCChecker implements Checker
 
     private function _computeMinDate(): ?string
     {
-        $lastCarpoolProof = $this->_carpoolProofService->getLastCarpoolProof();
+        $lastCarpoolProof = $this->_carpoolProofService->getLastCarpoolProof('-'.self::PAST_DAYS.' day');
         if (is_null($lastCarpoolProof)) {
             return null;
         }

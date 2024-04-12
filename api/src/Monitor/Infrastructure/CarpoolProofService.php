@@ -35,8 +35,8 @@ class CarpoolProofService
         $this->_carpoolProofRepository = $carpoolProofRepository;
     }
 
-    public function getLastCarpoolProof(): ?CarpoolProof
+    public function getLastCarpoolProof(?string $delta = null): ?CarpoolProof
     {
-        return $this->_carpoolProofRepository->findLastCarpoolProof();
+        return $this->_carpoolProofRepository->findLastCarpoolProof($delta);
     }
 }
