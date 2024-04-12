@@ -39,6 +39,7 @@ use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
+use App\User\Event\UserDrivingLicenceNumberUpdateEvent;
 use App\User\Event\UserPhoneUpdateEvent;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Repository\UserRepository;
@@ -384,6 +385,11 @@ class UserManager
             } else {
                 $user->setCardLetter(false);
             }
+        }
+
+        if (in_array('drivingLicenceNumber', array_keys($fields)) && $fields['drivingLicenceNumber'] !== $user->getOldDrivingLicenceNumber()) {
+            $eecEvent = new UserDrivingLicenceNumberUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserDrivingLicenceNumberUpdateEvent::NAME, $eecEvent);
         }
 
         if (in_array('telephone', array_keys($fields))) {

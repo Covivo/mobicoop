@@ -71,6 +71,7 @@ use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
 use App\User\Event\UserDeleteAccountWasPassengerEvent;
+use App\User\Event\UserDrivingLicenceNumberUpdateEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use App\User\Event\UserHomeAddressUpdateEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
@@ -638,6 +639,7 @@ class UserManager
             $emailUpdate = true;
         }
 
+        $drivingLicenceNumberUpdate = $user->getDrivingLicenceNumber() != $user->getOldDrivingLicenceNumber();
         $homeAddressUpdate = $user->getHomeAddress() != $user->getOldHomeAddress();
 
         // we add/remove structures associated to user
@@ -728,8 +730,13 @@ class UserManager
         }
 
         if ($homeAddressUpdate) {
-            $event = new UserHomeAddressUpdateEvent($user);
-            $this->eventDispatcher->dispatch(UserHomeAddressUpdateEvent::NAME, $event);
+            $eecEvent = new UserHomeAddressUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserHomeAddressUpdateEvent::NAME, $eecEvent);
+        }
+
+        if ($drivingLicenceNumberUpdate) {
+            $eecEvent = new UserDrivingLicenceNumberUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserDrivingLicenceNumberUpdateEvent::NAME, $eecEvent);
         }
 
         // return the user
