@@ -136,6 +136,10 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onUserHomeAddressUpdated(UserHomeAddressUpdateEvent $event)
     {
-        $this->_subscriptionManager->updateSubscriptionsAddress($event->getUser());
+        $user = $event->getUser();
+
+        if (!is_null($user->getShortDistanceSubscription()) || !is_null($user->getLongDistanceSubscription())) {
+            $this->_subscriptionManager->updateSubscriptionsAddress($user);
+        }
     }
 }

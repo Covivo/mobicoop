@@ -244,10 +244,7 @@ class AddressManager
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
 
             $user = $address->getUser();
-            if (
-                !is_null($user)
-                && (!is_null($user->getShortDistanceSubscription()) || !is_null($user->getLongDistanceSubscription()))
-            ) {
+            if (!is_null($user)) {
                 $event = new UserHomeAddressUpdateEvent($user);
                 $this->eventDispatcher->dispatch(UserHomeAddressUpdateEvent::NAME, $event);
             }
