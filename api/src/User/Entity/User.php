@@ -916,6 +916,13 @@ class User implements UserInterface, EquatableInterface
     private $drivingLicenceNumber;
 
     /**
+     * @var null|string the old driving licence number of the user when it was updated
+     *
+     * @Groups({"readUser", "write"})
+     */
+    private $oldDrivingLicenceNumber;
+
+    /**
      * @var null|int the maximum detour duration (in seconds) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
@@ -4309,6 +4316,18 @@ class User implements UserInterface, EquatableInterface
     public function setOldHomeAddress(?Address $oldHomeAddress): self
     {
         $this->oldHomeAddress = $oldHomeAddress;
+
+        return $this;
+    }
+
+    public function getOldDrivingLicenceNumber(): ?string
+    {
+        return $this->oldDrivingLicenceNumber;
+    }
+
+    public function setOldDrivingLicenceNumber(?string $oldDrivingLicenceNumber): self
+    {
+        $this->oldDrivingLicenceNumber = $oldDrivingLicenceNumber;
 
         return $this;
     }

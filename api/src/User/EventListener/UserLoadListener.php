@@ -57,9 +57,10 @@ class UserLoadListener
 
         if ($user instanceof User) {
             // keep the phone number in case of update
-            $user->setOldTelephone($user->getTelephone());
+            $user->setOldDrivingLicenceNumber($user->getDrivingLicenceNumber());
             $user->setOldEmail($user->getEmail());
             $user->setOldHomeAddress($user->getHomeAddress());
+            $user->setOldTelephone($user->getTelephone());
 
             $images = $user->getImages();
             foreach ($sizes as $size) {
