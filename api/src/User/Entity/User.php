@@ -62,6 +62,7 @@ use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
+use App\Payment\Entity\PaymentProfile;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
@@ -4229,6 +4230,13 @@ class User implements UserInterface, EquatableInterface
     public function getPaymentProfiles()
     {
         return $this->paymentProfiles;
+    }
+
+    public function addPaymentProfile(PaymentProfile $paymentProfile): self
+    {
+        $this->paymentProfiles->add($paymentProfile);
+
+        return $this;
     }
 
     /**

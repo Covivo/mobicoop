@@ -2,12 +2,17 @@
 
 namespace App\Incentive\Service\Validator;
 
+use App\Geography\Entity\Address;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Service\Definition\SdImproved;
 use App\Incentive\Validator\SubscriptionValidator;
+use App\Payment\Entity\PaymentProfile;
 use App\Tests\Mocks\Incentive\LdSubscriptionMock;
 use App\Tests\Mocks\Incentive\SdSubscriptionMock;
+use App\User\Entity\User;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -121,6 +126,321 @@ class SubscriptionValidatorTest extends TestCase
     public function canPropertyBePatchedTrue(string $property)
     {
         $this->assertTrue(SubscriptionValidator::canPropertyBePatched($property));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function isSubscriptionValidatedBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::isSubscriptionValidated(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionValidatedFalse()
+    {
+        $this->assertFalse(SubscriptionValidator::isSubscriptionValidated(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionValidatedTrue()
+    {
+        $subscription = SdSubscriptionMock::getNewSubscription();
+        $subscription->setStatus(Subscription::STATUS_VALIDATED);
+
+        $this->assertTrue(SubscriptionValidator::isSubscriptionValidated($subscription));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function hasSubscriptionExpiredBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::hasSubscriptionExpired(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function hasSubscriptionExpiredFalse()
+    {
+        $this->assertFalse(SubscriptionValidator::hasSubscriptionExpired(SdSubscriptionMock::getNewSubscription()));
+        $this->assertFalse(SubscriptionValidator::hasSubscriptionExpired(SdSubscriptionMock::getCommitedSubscription()));
+
+        $now = new \DateTime();
+
+        $subscription = SdSubscriptionMock::getCompleteValidatedSubscription();
+        $subscription->setExpirationDate($now->sub(new \DateInterval('P'.($subscription->getValidityPeriodDuration() - 2).'M')));
+    }
+
+    /**
+     * @test
+     */
+    public function hasSubscriptionExpiredTrue()
+    {
+        $now = new \DateTime();
+
+        $subscription = SdSubscriptionMock::getCompleteValidatedSubscription();
+        $subscription->setExpirationDate($now->sub(new \DateInterval('P'.($subscription->getValidityPeriodDuration() + 2).'M')));
+
+        $this->assertTrue(SubscriptionValidator::hasSubscriptionExpired($subscription));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function isSubscriptionStreetAddressValidBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::isSubscriptionStreetAddressValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionStreetAddressValidFalse()
+    {
+        $homeAddress = new Address();
+        $homeAddress->setAddressLocality('Nancy');
+        $homeAddress->setPostalCode('54000');
+        $homeAddress->setCounty('France');
+
+        $user = new User();
+        $user->setGivenName(md5(rand()));
+        $user->setFamilyName(md5(rand()));
+        $user->setDrivingLicenceNumber(md5(rand()));
+        $user->setTelephone(md5(rand()));
+        $user->setEmail(md5(rand()));
+        $user->setHomeAddress($homeAddress);
+
+        $subscription = new ShortDistanceSubscription(
+            $user,
+            md5(rand()),
+            new SdImproved()
+        );
+
+        $this->assertFalse(SubscriptionValidator::isSubscriptionStreetAddressValid($subscription));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionStreetAddressValidTrue()
+    {
+        $this->assertTrue(SubscriptionValidator::isSubscriptionStreetAddressValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function isSubscriptionPostalCodeValidBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::isSubscriptionPostalCodeValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionPostalCodeValidFalse()
+    {
+        $homeAddress = new Address();
+        $homeAddress->setHouseNumber('5');
+        $homeAddress->setStreetAddress('rue de la monnaie');
+        $homeAddress->setAddressLocality('Nancy');
+        $homeAddress->setCounty('France');
+
+        $user = new User();
+        $user->setGivenName(md5(rand()));
+        $user->setFamilyName(md5(rand()));
+        $user->setDrivingLicenceNumber(md5(rand()));
+        $user->setTelephone(md5(rand()));
+        $user->setEmail(md5(rand()));
+        $user->setHomeAddress($homeAddress);
+
+        $subscription = new ShortDistanceSubscription(
+            $user,
+            md5(rand()),
+            new SdImproved()
+        );
+
+        $this->assertFalse(SubscriptionValidator::isSubscriptionPostalCodeValid($subscription));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionPostalCodeValidTrue()
+    {
+        $this->assertTrue(SubscriptionValidator::isSubscriptionPostalCodeValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function isSubscriptionAddressLocalityValidBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::isSubscriptionAddressLocalityValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionAddressLocalityValidFalse()
+    {
+        $homeAddress = new Address();
+        $homeAddress->setHouseNumber('5');
+        $homeAddress->setStreetAddress('rue de la monnaie');
+        $homeAddress->setPostalCode('54000');
+        $homeAddress->setCounty('France');
+
+        $user = new User();
+        $user->setGivenName(md5(rand()));
+        $user->setFamilyName(md5(rand()));
+        $user->setDrivingLicenceNumber(md5(rand()));
+        $user->setTelephone(md5(rand()));
+        $user->setEmail(md5(rand()));
+        $user->setHomeAddress($homeAddress);
+
+        $subscription = new ShortDistanceSubscription(
+            $user,
+            md5(rand()),
+            new SdImproved()
+        );
+
+        $this->assertFalse(SubscriptionValidator::isSubscriptionAddressLocalityValid($subscription));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionAddressLocalityValidTrue()
+    {
+        $this->assertTrue(SubscriptionValidator::isSubscriptionAddressLocalityValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function isSubscriptionAddressValidBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::isSubscriptionAddressValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionAddressValidFalse()
+    {
+        $homeAddress = new Address();
+        $homeAddress->setHouseNumber('5');
+        $homeAddress->setStreetAddress('rue de la monnaie');
+        $homeAddress->setAddressLocality('Nancy');
+        $homeAddress->setCounty('France');
+
+        $user = new User();
+        $user->setGivenName(md5(rand()));
+        $user->setFamilyName(md5(rand()));
+        $user->setDrivingLicenceNumber(md5(rand()));
+        $user->setTelephone(md5(rand()));
+        $user->setEmail(md5(rand()));
+        $user->setHomeAddress($homeAddress);
+
+        $subscription = new ShortDistanceSubscription(
+            $user,
+            md5(rand()),
+            new SdImproved()
+        );
+
+        $this->assertFalse(SubscriptionValidator::isSubscriptionAddressValid($subscription));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionAddressValidTrue()
+    {
+        $this->assertTrue(SubscriptionValidator::isSubscriptionAddressValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function areTokensAvailableBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::areTokensAvailable(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function areTokensAvailableFalse()
+    {
+        $this->assertFalse(SubscriptionValidator::areTokensAvailable(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function areTokensAvailableTrue()
+    {
+        $subscription = SdSubscriptionMock::getNewSubscription();
+        $subscription->setIncentiveProofTimestampToken(md5(rand()));
+        $subscription->setIncentiveProofTimestampSigningTime(new \DateTime());
+        $subscription->setCommitmentProofTimestampToken(md5(rand()));
+        $subscription->setCommitmentProofTimestampSigningTime(new \DateTime());
+        $subscription->setHonorCertificateProofTimestampToken(md5(rand()));
+        $subscription->setHonorCertificateProofTimestampSigningTime(new \DateTime());
+
+        $this->assertTrue(SubscriptionValidator::areTokensAvailable($subscription));
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @test
+     */
+    public function isSubscriptionPaymentProfileAvailableBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::isSubscriptionPaymentProfileAvailable(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionPaymentProfileAvailableFalse()
+    {
+        $this->assertFalse(SubscriptionValidator::isSubscriptionPaymentProfileAvailable(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionPaymentProfileAvailableTrue()
+    {
+        $subscription = SdSubscriptionMock::getNewSubscription();
+
+        $paymentProfile = new PaymentProfile();
+        $paymentProfile->setUser($subscription->getUser());
+        $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
+
+        $this->assertTrue(SubscriptionValidator::isSubscriptionPaymentProfileAvailable($subscription));
     }
 
     // ---------------------------------------

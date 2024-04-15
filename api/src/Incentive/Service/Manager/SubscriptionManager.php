@@ -38,10 +38,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
 {
-    public const STATUS_ERROR = 'ERROR';
-    public const STATUS_REJECTED = 'REJETEE';
-    public const STATUS_VALIDATED = 'VALIDEE';
-
     public const VERIFICATION_STATUS_PENDING = 0;
     public const VERIFICATION_STATUS_ENDED = 1;
 
