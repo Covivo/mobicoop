@@ -19,10 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Exception;
 
-class OwnerNotFoundException extends \LogicException
-{
-}
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+class OwnerNotFoundException extends NotFoundHttpException {}

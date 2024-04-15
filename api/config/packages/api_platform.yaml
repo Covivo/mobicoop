@@ -225,6 +225,5 @@ api_platform:
         Symfony\Component\Security\Core\Exception\AuthenticationException: 'HTTP_INTERNAL_SERVER_ERROR'
         UnderflowException: 'HTTP_BAD_REQUEST'
         UnexpectedValueException: 'HTTP_BAD_REQUEST'
-        App\Carpool\Exception\DynamicException: 'HTTP_BAD_REQUEST'
         #SoapFault:
         #SodiumException: 'HTTP_BAD_REQUEST'
