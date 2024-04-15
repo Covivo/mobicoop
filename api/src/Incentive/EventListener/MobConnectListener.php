@@ -141,7 +141,10 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onDrivingLicenceNumberUpdated(UserDrivingLicenceNumberUpdateEvent $event)
     {
-        if (UserValidator::hasUserEECSubscribed($event->getUser())) {
+        $user = $event->getUser();
+
+        if (UserValidator::hasUserEECSubscribed($user)) {
+            $this->_subscriptionManager->updateSubscriptionDrivingLicenceNumber($user);
         }
     }
 
@@ -156,7 +159,10 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onUserPhoneUpdated(UserPhoneUpdateEvent $event)
     {
-        if (UserValidator::hasUserEECSubscribed($event->getUser())) {
+        $user = $event->getUser();
+
+        if (UserValidator::hasUserEECSubscribed($user)) {
+            $this->_subscriptionManager->updateSubscriptionPhone($user);
         }
     }
 }

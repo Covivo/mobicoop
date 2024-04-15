@@ -9,6 +9,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
+use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
@@ -20,6 +21,7 @@ use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Provider\SubscriptionProvider;
 use App\Incentive\Service\Stage\AutoRecommitSubscription;
 use App\Incentive\Service\Stage\CreateSubscription;
+use App\Incentive\Service\Stage\PatchSubscription;
 use App\Incentive\Service\Stage\ProofInvalidate;
 use App\Incentive\Service\Stage\ProofRecovery;
 use App\Incentive\Service\Stage\ResetSubscription;
@@ -183,6 +185,18 @@ class SubscriptionManager extends MobConnectManager
         }
 
         $this->_em->flush();
+    }
+
+    public function updateSubscriptionDrivingLicenceNumber(User $user)
+    {
+        $stage = new PatchSubscription($this->_em, $this->_eecInstance, $user, SpecificFields::DRIVING_LICENCE_NUMBER);
+        $stage->execute();
+    }
+
+    public function updateSubscriptionPhone(User $user)
+    {
+        $stage = new PatchSubscription($this->_em, $this->_eecInstance, $user, SpecificFields::PHONE_NUMBER);
+        $stage->execute();
     }
 
     public function updateTimestampTokens(User $user): User
