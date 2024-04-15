@@ -177,7 +177,7 @@ export default {
     },
     getSnackbarText() {
       return this.eecSsoAuthError === 'eec_user_not_france_connected'
-        ? `${this.$t(`EEC-subscription-snackbar.errors.${this.eecSsoAuthError}`, {document: `${this.apiUri}eec/documents/compte_moB_existant_mais_non_connecte_a_France_Connect_V1.pdf`, contact: 'https://moncomptemobilite.fr/contact'})}`
+        ? `${this.$t(`EEC-subscription-snackbar.errors.${this.eecSsoAuthError}`, {document: `https://cloud.fabmob.io/s/rm8zJAF7kwCSNM6`, contact: 'https://moncomptemobilite.fr/contact'})}`
         : `${this.$t(`EEC-subscription-snackbar.errors.${this.eecSsoAuthError}`)}`
     }
   },
