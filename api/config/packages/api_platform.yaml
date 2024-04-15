@@ -194,7 +194,7 @@ api_platform:
         ImagickPixelException: 'HTTP_INTERNAL_SERVER_ERROR'
         ImagickPixelIteratorException:  'HTTP_INTERNAL_SERVER_ERROR'
         IntlException: 'HTTP_BAD_REQUEST'
-        LogicException: 'HTTP_INTERNAL_SERVER_ERROR'
+        LogicException: 418
         App\Community\Exception\CommunityException: 'HTTP_INTERNAL_SERVER_ERROR'
         App\Image\Exception\ImageException: 'HTTP_INTERNAL_SERVER_ERROR'
         App\Image\Exception\OwnerNotFoundException: 'HTTP_INTERNAL_SERVER_ERROR'
