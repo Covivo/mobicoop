@@ -445,6 +445,37 @@ class SubscriptionValidatorTest extends TestCase
 
     // ---------------------------------------
 
+    /**
+     * @test
+     */
+    public function isSubscriptionDrivingLicenceNumberValidBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::isSubscriptionDrivingLicenceNumberValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionDrivingLicenceNumberValidFalse()
+    {
+        $this->assertFalse(SubscriptionValidator::isSubscriptionDrivingLicenceNumberValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @dataProvider dataDrivingLicenceNumber
+     *
+     * @test
+     */
+    public function isSubscriptionDrivingLicenceNumberValidTrue(string $drivingLicenceNumber)
+    {
+        $subscription = SdSubscriptionMock::getNewSubscription();
+        $subscription->setDrivingLicenceNumber($drivingLicenceNumber);
+
+        $this->assertTrue(SubscriptionValidator::isSubscriptionDrivingLicenceNumberValid($subscription));
+    }
+
+    // ---------------------------------------
+
     public function dataSusbcriptionsNotEecCompliant()
     {
         return [
@@ -481,6 +512,16 @@ class SubscriptionValidatorTest extends TestCase
         return [
             [SpecificFields::DRIVING_LICENCE_NUMBER],
             [SpecificFields::PHONE_NUMBER],
+        ];
+    }
+
+    public function dataDrivingLicenceNumber(): array
+    {
+        return [
+            ['051227308989'],
+            ['822146819'],
+            ['123456A'],
+            ['99-X23836'],
         ];
     }
 }

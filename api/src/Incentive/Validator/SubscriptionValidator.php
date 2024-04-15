@@ -6,6 +6,7 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Service\DrivingLicenceService;
 
 abstract class SubscriptionValidator
 {
@@ -158,5 +159,15 @@ abstract class SubscriptionValidator
     public static function canPropertyBePatched(string $property): bool
     {
         return in_array($property, static::ALLOWED_PROPERTIES_TO_PATCH);
+    }
+
+    /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public static function isSubscriptionDrivingLicenceNumberValid($subscription): bool
+    {
+        $validator = new DrivingLicenceService($subscription->getDrivingLicenceNumber());
+
+        return $validator->isDrivingLicenceNumberValid();
     }
 }
