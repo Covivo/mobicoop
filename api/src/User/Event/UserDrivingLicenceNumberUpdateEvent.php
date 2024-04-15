@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class UserDrivingLicenceNumberUpdateEvent extends Event
 {
-    public const NAME = 'user_phone_update';
+    public const NAME = 'user_drivingLicenceNumber_update';
 
     /**
      * @var User
