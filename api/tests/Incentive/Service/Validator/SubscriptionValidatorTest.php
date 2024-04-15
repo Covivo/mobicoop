@@ -476,6 +476,37 @@ class SubscriptionValidatorTest extends TestCase
 
     // ---------------------------------------
 
+    /**
+     * @test
+     */
+    public function isSubscriptionPhoneNumberValidBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::isSubscriptionPhoneNumberValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function isSubscriptionPhoneNumberValidFalse()
+    {
+        $this->assertFalse(SubscriptionValidator::isSubscriptionPhoneNumberValid(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @dataProvider dataPhoneNumber
+     *
+     * @test
+     */
+    public function isSubscriptionPhoneNumberValidTrue(string $phoneNumber)
+    {
+        $subscription = SdSubscriptionMock::getNewSubscription();
+        $subscription->setTelephone($phoneNumber);
+
+        $this->assertTrue(SubscriptionValidator::isSubscriptionPhoneNumberValid($subscription));
+    }
+
+    // ---------------------------------------
+
     public function dataSusbcriptionsNotEecCompliant()
     {
         return [
@@ -522,6 +553,15 @@ class SubscriptionValidatorTest extends TestCase
             ['822146819'],
             ['123456A'],
             ['99-X23836'],
+        ];
+    }
+
+    public function dataPhoneNumber(): array
+    {
+        return [
+            ['+496912345678'],  // Germany
+            ['05 82 16 00 10'], // France - Mobicoop
+            ['63-2-8123-4567'], // Philippines
         ];
     }
 }
