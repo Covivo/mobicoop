@@ -9,7 +9,6 @@ use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
-use App\Incentive\Validator\SubscriptionValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -47,22 +46,20 @@ class VerifySubscription extends Stage
     {
         $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($this->_subscription, Log::TYPE_VERIFY);
 
-        if (SubscriptionValidator::isSubscriptionReadyToVerify($this->_subscription)) {
-            try {
-                $this->_httpResponse = $this->_apiProvider->verifySubscription($this->_subscription);
+        try {
+            $this->_httpResponse = $this->_apiProvider->verifySubscription($this->_subscription);
 
-                $this->_updateSubscription();
-            } catch (HttpException $exception) {
-                $this->_subscription->addLog($exception, Log::TYPE_VERIFY);
-                $this->_subscription->setStatus(Subscription::STATUS_ERROR);
-
-                $this->_em->flush();
-
-                return;
-            }
+            $this->_updateSubscription();
+        } catch (HttpException $exception) {
+            $this->_subscription->addLog($exception, Log::TYPE_VERIFY);
+            $this->_subscription->setStatus(Subscription::STATUS_ERROR);
 
             $this->_em->flush();
+
+            return;
         }
+
+        $this->_em->flush();
     }
 
     /**

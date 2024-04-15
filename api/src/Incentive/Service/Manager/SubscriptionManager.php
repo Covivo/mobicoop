@@ -10,6 +10,7 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Event\SubscriptionNotReadyToVerifyEvent;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
@@ -29,11 +30,13 @@ use App\Incentive\Service\Stage\VerifySubscription;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\Incentive\Validator\CarpoolProofValidator;
+use App\Incentive\Validator\SubscriptionValidator;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
@@ -45,6 +48,11 @@ class SubscriptionManager extends MobConnectManager
      * @var EecInstance
      */
     protected $_eecInstance;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $_eventDispatcher;
 
     /**
      * @var CarpoolItemRepository
@@ -78,6 +86,7 @@ class SubscriptionManager extends MobConnectManager
 
     public function __construct(
         EntityManagerInterface $em,
+        EventDispatcherInterface $eventDispatcher,
         SubscriptionValidation $subscriptionValidation,
         UserValidation $userValidation,
         LoggerService $loggerService,
@@ -91,6 +100,8 @@ class SubscriptionManager extends MobConnectManager
         UserRepository $userRepository
     ) {
         parent::__construct($em, $instanceManager, $loggerService);
+
+        $this->_eventDispatcher = $eventDispatcher;
 
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolItemRepository = $carpoolItemRepository;
@@ -435,7 +446,14 @@ class SubscriptionManager extends MobConnectManager
      */
     protected function _verifySubscription($subscription): void
     {
-        $stage = new VerifySubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
-        $stage->execute();
+        if (SubscriptionValidator::isSubscriptionReadyToVerify($subscription)) {
+            $stage = new VerifySubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
+            $stage->execute();
+
+            return;
+        }
+
+        $event = new SubscriptionNotReadyToVerifyEvent($subscription);
+        $this->_eventDispatcher->dispatch(SubscriptionNotReadyToVerifyEvent::NAME, $event);
     }
 }

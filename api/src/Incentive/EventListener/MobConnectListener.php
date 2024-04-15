@@ -7,6 +7,7 @@ use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
+use App\Incentive\Event\SubscriptionNotReadyToVerifyEvent;
 use App\Incentive\Service\Manager\AuthManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Incentive\Validator\UserValidator;
@@ -64,6 +65,7 @@ class MobConnectListener implements EventSubscriberInterface
             FirstLongDistanceJourneyPublishedEvent::NAME => 'onFirstLongDistanceJourneyPublished',
             FirstShortDistanceJourneyPublishedEvent::NAME => 'onFirstShortDistanceJourneyPublished',
             SsoAssociationEvent::NAME => 'onUserAssociated',
+            SubscriptionNotReadyToVerifyEvent::NAME => 'onIdentifySubscriptionNotRedyToVerify',
             UserDrivingLicenceNumberUpdateEvent::NAME => 'onDrivingLicenceNumberUpdated',
             UserHomeAddressUpdateEvent::NAME => 'onUserHomeAddressUpdated',
             UserPhoneUpdateEvent::NAME => 'onUserPhoneUpdated',
@@ -138,6 +140,8 @@ class MobConnectListener implements EventSubscriberInterface
     {
         $this->_subscriptionManager->invalidateProof($event->getCarpoolProof());
     }
+
+    public function onIdentifySubscriptionNotRedyToVerify(SubscriptionNotReadyToVerifyEvent $event) {}
 
     public function onDrivingLicenceNumberUpdated(UserDrivingLicenceNumberUpdateEvent $event)
     {
