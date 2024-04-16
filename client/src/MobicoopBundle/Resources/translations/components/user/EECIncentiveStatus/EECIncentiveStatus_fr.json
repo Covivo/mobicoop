@@ -209,6 +209,7 @@
     "success": "La souscription aux aides a été effectuée.",
     "failed": "La souscription aux aides a échoué.",
     "errors": {
+      "eec_user_not_france_connected": "Votre compte <span class=\"font-italic\">Mon compte mobilité</span> n'est pas <span class=\"font-italic\">France Connecté</span> et la demande d'incitation CEE n'a pas été réalisée.<br />Pour résoudre ce problème, nous vous invitons à consulter <a href=\"{document}\" target=\"_blank\">ce document</a> ou prendre <a href=\"{contact}\" target=\"_blank\">contact</a> avec le support <span class=\"font-italic\">Mon compte mobilité</span>.",
       "eec_user_sso_request_error": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
       "eec_user_sso_account_incomplete": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
       "eec_user_sso_unknowned": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
