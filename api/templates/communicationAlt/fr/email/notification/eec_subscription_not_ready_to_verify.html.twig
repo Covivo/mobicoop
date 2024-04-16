@@ -27,11 +27,11 @@
                 </tr>
                 <tr>
                     <td>
-                        <p style="font-size:13px;">Dans le traitement de celle-ci, nous avons identifié des données incomplètes ou erronées :</p>
+                        <p style="font-size:13px;">Dans le traitement de celle-ci, nous avons identifié des données incomplètes ou erronées parmi :</p>
                         <ul>
-                            {% if context.pre_verification_error.address %}<li style="font-size:13px;">Votre adresse de domicile</li>{% endif %}
-                            {% if context.pre_verification_error.drivingLicenceNumber %}<li style="font-size:13px;">Votre numéro de permis de conduire</li>{% endif %}
-                            {% if context.pre_verification_error.phoneNumber %}<li style="font-size:13px;">Votre numéro de téléphone</li>{% endif %}
+                            <li style="font-size:13px;">Votre adresse de domicile</li>
+                            <li style="font-size:13px;">Votre numéro de permis de conduire</li>
+                            <li style="font-size:13px;">Votre numéro de téléphone</li>
                         </ul>
                         <p style="font-size:13px;">Nous ne pouvons finaliser le traitement de votre demande tant que les éléments cités ci-dessus n'auront pas été modifiés.</p>
                         <p style="font-size:13px;">Nous vous invitons à effectuer ces corrections depuis la page de <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/mon-profil">votre profil</a>.</p>
