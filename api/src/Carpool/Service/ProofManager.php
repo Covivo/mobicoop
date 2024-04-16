@@ -1307,6 +1307,12 @@ class ProofManager
                             $dropOffDate->modify('+'.$dropOffWaypoint->getDuration().' second');
                             $carpoolProof->setPickUpPassengerDate($pickUpDate);
                             $carpoolProof->setDropOffPassengerDate($dropOffDate);
+
+                            // Check for an already existing carpool proof for this journey base on StartDateDriver and same driver and passenger
+                            if (!is_null($this->carpoolProofRepository->findForDuplicate($carpoolProof))) {
+                                continue;
+                            }
+
                             // Antifraud rpc check before sending
                             $this->proofAntifraudCheck($carpoolProof);
 
