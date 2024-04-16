@@ -253,7 +253,7 @@ class ProofManager
      *
      * @return CarpoolProof The created proof
      */
-    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger, string $driverPhoneUniqueId = null, string $passengerPhoneUniqueId = null)
+    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger, ?string $driverPhoneUniqueId = null, ?string $passengerPhoneUniqueId = null)
     {
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setType($type);
@@ -366,6 +366,13 @@ class ProofManager
         }
         $carpoolProof->setDirection($direction);
 
+        // Check for an already existing carpool proof for this journey base on StartDateDriver and same driver and passenger
+        $duplicateCarpoolProof = $this->carpoolProofRepository->findForDuplicate($carpoolProof);
+
+        if (!is_null($duplicateCarpoolProof)) {
+            return $duplicateCarpoolProof;
+        }
+
         $this->entityManager->persist($carpoolProof);
         $this->entityManager->flush();
 
@@ -392,7 +399,7 @@ class ProofManager
      *
      * @return CarpoolProof The updated proof
      */
-    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance, string $driverPhoneUniqueId = null, string $passengerPhoneUniqueId = null)
+    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance, ?string $driverPhoneUniqueId = null, ?string $passengerPhoneUniqueId = null)
     {
         // search the proof
         if (!$carpoolProof = $this->carpoolProofRepository->find($id)) {
@@ -629,8 +636,8 @@ class ProofManager
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
             // uncomment the following to anonymize driver addresses used in the proof
-                // $carpoolProof->setOriginDriverAddress(null);
-                // $carpoolProof->setDestinationDriverAddress(null);
+            // $carpoolProof->setOriginDriverAddress(null);
+            // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
                 $carpoolProof->setPassenger(null);
                 // uncomment the following to anonymize passenger addresses used in the proof
