@@ -1748,13 +1748,6 @@ class User implements UserInterface, EquatableInterface
     private $homeAddress;
 
     /**
-     * @var null|Address The old user home address when update
-     *
-     * @Groups({"readUser", "write"})
-     */
-    private $oldHomeAddress;
-
-    /**
      * @var null|array The user roles
      *
      * @Groups({"aRead","aWrite"})
@@ -4297,18 +4290,6 @@ class User implements UserInterface, EquatableInterface
     public function setReferral(?string $referral): self
     {
         $this->referral = $referral;
-
-        return $this;
-    }
-
-    public function getOldHomeAddress(): ?Address
-    {
-        return $this->oldHomeAddress;
-    }
-
-    public function setOldHomeAddress(?Address $oldHomeAddress): self
-    {
-        $this->oldHomeAddress = $oldHomeAddress;
 
         return $this;
     }
