@@ -507,6 +507,35 @@ class SubscriptionValidatorTest extends TestCase
 
     // ---------------------------------------
 
+    /**
+     * @test
+     */
+    public function hasBeenVerifiedBool()
+    {
+        $this->assertIsBool(SubscriptionValidator::hasBeenVerified(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function hasBeenVerifiedFalse()
+    {
+        $this->assertFalse(SubscriptionValidator::hasBeenVerified(SdSubscriptionMock::getNewSubscription()));
+    }
+
+    /**
+     * @test
+     */
+    public function hasBeenVerifiedTrue()
+    {
+        $subscription = SdSubscriptionMock::getNewSubscription();
+        $subscription->setStatus(Subscription::STATUS_VALIDATED);
+
+        $this->assertTrue(SubscriptionValidator::hasBeenVerified($subscription));
+    }
+
+    // ---------------------------------------
+
     public function dataSusbcriptionsNotEecCompliant()
     {
         return [
