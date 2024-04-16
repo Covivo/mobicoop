@@ -13,6 +13,7 @@ use App\Incentive\Entity\Log\LongDistanceSubscriptionLog;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Service\Definition\LdImproved;
 use App\Incentive\Service\Definition\LdStandard;
+use App\Incentive\Validator\SubscriptionValidator;
 use App\Service\AddressService;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -643,9 +644,11 @@ class LongDistanceSubscription extends Subscription
 
     public function updateAddress(): self
     {
-        $this->setStreetAddress();
-        $this->setPostalCode();
-        $this->setAddressLocality();
+        if (!SubscriptionValidator::hasExpired($this) && !SubscriptionValidator::hasBeenVerified($this)) {
+            $this->setStreetAddress();
+            $this->setPostalCode();
+            $this->setAddressLocality();
+        }
 
         return $this;
     }

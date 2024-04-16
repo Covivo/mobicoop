@@ -43,6 +43,10 @@ class PatchSubscription extends UpdateSubscription
     public function execute()
     {
         foreach ($this->_subscriptions as $subscription) {
+            if (SubscriptionValidator::hasExpired($subscription) || SubscriptionValidator::hasBeenVerified($subscription)) {
+                return;
+            }
+
             $this->_subscription = $subscription;
 
             $httpQueryParams = $this->_getHttpQueryParams();
