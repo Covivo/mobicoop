@@ -63,7 +63,7 @@ class CarpoolProofRepository
         return $this->repository->find($id);
     }
 
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -123,7 +123,7 @@ class CarpoolProofRepository
      *
      * @return CarpoolProof[] The carpool proofs found
      */
-    public function findByTypesAndPeriod(array $types, \DateTime $startDate, \DateTime $endDate, array $status = null)
+    public function findByTypesAndPeriod(array $types, \DateTime $startDate, \DateTime $endDate, ?array $status = null)
     {
         $startDate->setTime(0, 0);
         $endDate->setTime(23, 59, 59, 999);
@@ -396,5 +396,21 @@ class CarpoolProofRepository
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    public function findForDuplicate(CarpoolProof $proof): ?CarpoolProof
+    {
+        $query = $this->repository->createQueryBuilder('cp')
+            ->where('cp.startDriverDate = :startDriverDate')
+            ->andWhere('(cp.driver = :driver and cp.passenger = :passenger)')
+            ->setParameter('startDriverDate', $proof->getStartDriverDate())
+            ->setParameter('driver', $proof->getDriver())
+            ->setParameter('passenger', $proof->getPassenger())
+            ->addOrderBy('cp.createdDate', 'DESC')
+            ->addOrderBy('cp.id', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 }
