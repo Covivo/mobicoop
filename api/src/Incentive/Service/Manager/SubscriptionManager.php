@@ -5,6 +5,7 @@ namespace App\Incentive\Service\Manager;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\Communication\Service\NotificationManager;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
@@ -65,6 +66,11 @@ class SubscriptionManager extends MobConnectManager
     protected $_carpoolProofRepository;
 
     /**
+     * @var NotificationManager
+     */
+    private $_notificationManager;
+
+    /**
      * @var LongDistanceSubscriptionRepository
      */
     private $_longDistanceSubscriptionRepository;
@@ -87,6 +93,7 @@ class SubscriptionManager extends MobConnectManager
     public function __construct(
         EntityManagerInterface $em,
         EventDispatcherInterface $eventDispatcher,
+        NotificationManager $notificationManager,
         SubscriptionValidation $subscriptionValidation,
         UserValidation $userValidation,
         LoggerService $loggerService,
@@ -102,6 +109,7 @@ class SubscriptionManager extends MobConnectManager
         parent::__construct($em, $instanceManager, $loggerService);
 
         $this->_eventDispatcher = $eventDispatcher;
+        $this->_notificationManager = $notificationManager;
 
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolItemRepository = $carpoolItemRepository;
@@ -414,6 +422,20 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function subscriptionNotReadyToVerify($subscription)
+    {
+        if (
+            !SubscriptionValidator::isAddressValid($subscription)
+            || !SubscriptionValidator::isPhoneNumberValid($subscription)
+            || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription)
+        ) {
+            $this->_notificationManager->notifies('eec_subscription_not_ready_to_verify', $subscription->getUser(), $subscription);
+        }
+    }
+
+    /**
      * STEP 5 - Create a subscription from it's type.
      *
      * @throws \LogicException
@@ -446,7 +468,7 @@ class SubscriptionManager extends MobConnectManager
      */
     protected function _verifySubscription($subscription): void
     {
-        if (SubscriptionValidator::isSubscriptionReadyToVerify($subscription)) {
+        if (SubscriptionValidator::isReadyToVerify($subscription)) {
             $stage = new VerifySubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
             $stage->execute();
 

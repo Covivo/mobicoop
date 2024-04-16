@@ -141,7 +141,10 @@ class MobConnectListener implements EventSubscriberInterface
         $this->_subscriptionManager->invalidateProof($event->getCarpoolProof());
     }
 
-    public function onIdentifySubscriptionNotRedyToVerify(SubscriptionNotReadyToVerifyEvent $event) {}
+    public function onIdentifySubscriptionNotRedyToVerify(SubscriptionNotReadyToVerifyEvent $event)
+    {
+        $this->_subscriptionManager->subscriptionNotReadyToVerify($event->getSubscription());
+    }
 
     public function onDrivingLicenceNumberUpdated(UserDrivingLicenceNumberUpdateEvent $event)
     {
