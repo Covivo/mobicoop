@@ -133,28 +133,28 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function isSubscriptionValidatedBool()
+    public function isValidatedBool()
     {
-        $this->assertIsBool(SubscriptionValidator::isSubscriptionValidated(SdSubscriptionMock::getNewSubscription()));
+        $this->assertIsBool(SubscriptionValidator::isValidated(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionValidatedFalse()
+    public function isValidatedFalse()
     {
-        $this->assertFalse(SubscriptionValidator::isSubscriptionValidated(SdSubscriptionMock::getNewSubscription()));
+        $this->assertFalse(SubscriptionValidator::isValidated(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionValidatedTrue()
+    public function isValidatedTrue()
     {
         $subscription = SdSubscriptionMock::getNewSubscription();
         $subscription->setStatus(Subscription::STATUS_VALIDATED);
 
-        $this->assertTrue(SubscriptionValidator::isSubscriptionValidated($subscription));
+        $this->assertTrue(SubscriptionValidator::isValidated($subscription));
     }
 
     // ---------------------------------------
@@ -162,18 +162,18 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function hasSubscriptionExpiredBool()
+    public function hasExpiredBool()
     {
-        $this->assertIsBool(SubscriptionValidator::hasSubscriptionExpired(SdSubscriptionMock::getNewSubscription()));
+        $this->assertIsBool(SubscriptionValidator::hasExpired(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function hasSubscriptionExpiredFalse()
+    public function hasExpiredFalse()
     {
-        $this->assertFalse(SubscriptionValidator::hasSubscriptionExpired(SdSubscriptionMock::getNewSubscription()));
-        $this->assertFalse(SubscriptionValidator::hasSubscriptionExpired(SdSubscriptionMock::getCommitedSubscription()));
+        $this->assertFalse(SubscriptionValidator::hasExpired(SdSubscriptionMock::getNewSubscription()));
+        $this->assertFalse(SubscriptionValidator::hasExpired(SdSubscriptionMock::getCommitedSubscription()));
 
         $now = new \DateTime();
 
@@ -184,14 +184,14 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function hasSubscriptionExpiredTrue()
+    public function hasExpiredTrue()
     {
         $now = new \DateTime();
 
         $subscription = SdSubscriptionMock::getCompleteValidatedSubscription();
         $subscription->setExpirationDate($now->sub(new \DateInterval('P'.($subscription->getValidityPeriodDuration() + 2).'M')));
 
-        $this->assertTrue(SubscriptionValidator::hasSubscriptionExpired($subscription));
+        $this->assertTrue(SubscriptionValidator::hasExpired($subscription));
     }
 
     // ---------------------------------------
@@ -199,15 +199,15 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function isSubscriptionStreetAddressValidBool()
+    public function isStreetAddressValidBool()
     {
-        $this->assertIsBool(SubscriptionValidator::isSubscriptionStreetAddressValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertIsBool(SubscriptionValidator::isStreetAddressValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionStreetAddressValidFalse()
+    public function isStreetAddressValidFalse()
     {
         $homeAddress = new Address();
         $homeAddress->setAddressLocality('Nancy');
@@ -228,15 +228,15 @@ class SubscriptionValidatorTest extends TestCase
             new SdImproved()
         );
 
-        $this->assertFalse(SubscriptionValidator::isSubscriptionStreetAddressValid($subscription));
+        $this->assertFalse(SubscriptionValidator::isStreetAddressValid($subscription));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionStreetAddressValidTrue()
+    public function isStreetAddressValidTrue()
     {
-        $this->assertTrue(SubscriptionValidator::isSubscriptionStreetAddressValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertTrue(SubscriptionValidator::isStreetAddressValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     // ---------------------------------------
@@ -244,15 +244,15 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function isSubscriptionPostalCodeValidBool()
+    public function isPostalCodeValidBool()
     {
-        $this->assertIsBool(SubscriptionValidator::isSubscriptionPostalCodeValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertIsBool(SubscriptionValidator::isPostalCodeValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionPostalCodeValidFalse()
+    public function isPostalCodeValidFalse()
     {
         $homeAddress = new Address();
         $homeAddress->setHouseNumber('5');
@@ -274,15 +274,15 @@ class SubscriptionValidatorTest extends TestCase
             new SdImproved()
         );
 
-        $this->assertFalse(SubscriptionValidator::isSubscriptionPostalCodeValid($subscription));
+        $this->assertFalse(SubscriptionValidator::isPostalCodeValid($subscription));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionPostalCodeValidTrue()
+    public function isPostalCodeValidTrue()
     {
-        $this->assertTrue(SubscriptionValidator::isSubscriptionPostalCodeValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertTrue(SubscriptionValidator::isPostalCodeValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     // ---------------------------------------
@@ -290,15 +290,15 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function isSubscriptionAddressLocalityValidBool()
+    public function isAddressLocalityValidBool()
     {
-        $this->assertIsBool(SubscriptionValidator::isSubscriptionAddressLocalityValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertIsBool(SubscriptionValidator::isAddressLocalityValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionAddressLocalityValidFalse()
+    public function isAddressLocalityValidFalse()
     {
         $homeAddress = new Address();
         $homeAddress->setHouseNumber('5');
@@ -320,15 +320,15 @@ class SubscriptionValidatorTest extends TestCase
             new SdImproved()
         );
 
-        $this->assertFalse(SubscriptionValidator::isSubscriptionAddressLocalityValid($subscription));
+        $this->assertFalse(SubscriptionValidator::isAddressLocalityValid($subscription));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionAddressLocalityValidTrue()
+    public function isAddressLocalityValidTrue()
     {
-        $this->assertTrue(SubscriptionValidator::isSubscriptionAddressLocalityValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertTrue(SubscriptionValidator::isAddressLocalityValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     // ---------------------------------------
@@ -336,15 +336,15 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function isSubscriptionAddressValidBool()
+    public function isAddressValidBool()
     {
-        $this->assertIsBool(SubscriptionValidator::isSubscriptionAddressValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertIsBool(SubscriptionValidator::isAddressValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionAddressValidFalse()
+    public function isAddressValidFalse()
     {
         $homeAddress = new Address();
         $homeAddress->setHouseNumber('5');
@@ -366,15 +366,15 @@ class SubscriptionValidatorTest extends TestCase
             new SdImproved()
         );
 
-        $this->assertFalse(SubscriptionValidator::isSubscriptionAddressValid($subscription));
+        $this->assertFalse(SubscriptionValidator::isAddressValid($subscription));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionAddressValidTrue()
+    public function isAddressValidTrue()
     {
-        $this->assertTrue(SubscriptionValidator::isSubscriptionAddressValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertTrue(SubscriptionValidator::isAddressValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     // ---------------------------------------
@@ -416,23 +416,23 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function isSubscriptionPaymentProfileAvailableBool()
+    public function isPaymentProfileAvailableBool()
     {
-        $this->assertIsBool(SubscriptionValidator::isSubscriptionPaymentProfileAvailable(SdSubscriptionMock::getNewSubscription()));
+        $this->assertIsBool(SubscriptionValidator::isPaymentProfileAvailable(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionPaymentProfileAvailableFalse()
+    public function isPaymentProfileAvailableFalse()
     {
-        $this->assertFalse(SubscriptionValidator::isSubscriptionPaymentProfileAvailable(SdSubscriptionMock::getNewSubscription()));
+        $this->assertFalse(SubscriptionValidator::isPaymentProfileAvailable(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionPaymentProfileAvailableTrue()
+    public function isPaymentProfileAvailableTrue()
     {
         $subscription = SdSubscriptionMock::getNewSubscription();
 
@@ -440,7 +440,7 @@ class SubscriptionValidatorTest extends TestCase
         $paymentProfile->setUser($subscription->getUser());
         $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
 
-        $this->assertTrue(SubscriptionValidator::isSubscriptionPaymentProfileAvailable($subscription));
+        $this->assertTrue(SubscriptionValidator::isPaymentProfileAvailable($subscription));
     }
 
     // ---------------------------------------
@@ -448,17 +448,17 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function isSubscriptionDrivingLicenceNumberValidBool()
+    public function isDrivingLicenceNumberValidBool()
     {
-        $this->assertIsBool(SubscriptionValidator::isSubscriptionDrivingLicenceNumberValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertIsBool(SubscriptionValidator::isDrivingLicenceNumberValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionDrivingLicenceNumberValidFalse()
+    public function isDrivingLicenceNumberValidFalse()
     {
-        $this->assertFalse(SubscriptionValidator::isSubscriptionDrivingLicenceNumberValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertFalse(SubscriptionValidator::isDrivingLicenceNumberValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
@@ -466,12 +466,12 @@ class SubscriptionValidatorTest extends TestCase
      *
      * @test
      */
-    public function isSubscriptionDrivingLicenceNumberValidTrue(string $drivingLicenceNumber)
+    public function isDrivingLicenceNumberValidTrue(string $drivingLicenceNumber)
     {
         $subscription = SdSubscriptionMock::getNewSubscription();
         $subscription->setDrivingLicenceNumber($drivingLicenceNumber);
 
-        $this->assertTrue(SubscriptionValidator::isSubscriptionDrivingLicenceNumberValid($subscription));
+        $this->assertTrue(SubscriptionValidator::isDrivingLicenceNumberValid($subscription));
     }
 
     // ---------------------------------------
@@ -479,17 +479,17 @@ class SubscriptionValidatorTest extends TestCase
     /**
      * @test
      */
-    public function isSubscriptionPhoneNumberValidBool()
+    public function isPhoneNumberValidBool()
     {
-        $this->assertIsBool(SubscriptionValidator::isSubscriptionPhoneNumberValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertIsBool(SubscriptionValidator::isPhoneNumberValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
      * @test
      */
-    public function isSubscriptionPhoneNumberValidFalse()
+    public function isPhoneNumberValidFalse()
     {
-        $this->assertFalse(SubscriptionValidator::isSubscriptionPhoneNumberValid(SdSubscriptionMock::getNewSubscription()));
+        $this->assertFalse(SubscriptionValidator::isPhoneNumberValid(SdSubscriptionMock::getNewSubscription()));
     }
 
     /**
@@ -497,12 +497,12 @@ class SubscriptionValidatorTest extends TestCase
      *
      * @test
      */
-    public function isSubscriptionPhoneNumberValidTrue(string $phoneNumber)
+    public function isPhoneNumberValidTrue(string $phoneNumber)
     {
         $subscription = SdSubscriptionMock::getNewSubscription();
         $subscription->setTelephone($phoneNumber);
 
-        $this->assertTrue(SubscriptionValidator::isSubscriptionPhoneNumberValid($subscription));
+        $this->assertTrue(SubscriptionValidator::isPhoneNumberValid($subscription));
     }
 
     // ---------------------------------------

@@ -39,19 +39,19 @@ abstract class SubscriptionValidator
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function isSubscriptionReadyToVerify($subscription): bool
+    public static function isReadyToVerify($subscription): bool
     {
         return $subscription instanceof LongDistanceSubscription
-            ? static::isLdSubscriptionReadyToVerify($subscription) : static::isSdSubscriptionReadyToVerify($subscription);
+            ? static::isLdReadyToVerify($subscription) : static::isSdReadyToVerify($subscription);
     }
 
-    public static function isLdSubscriptionReadyToVerify(LongDistanceSubscription $subscription): bool
+    public static function isLdReadyToVerify(LongDistanceSubscription $subscription): bool
     {
         return
-            !static::isSubscriptionValidated($subscription)
-            && !static::hasSubscriptionExpired($subscription)
-            && static::isSubscriptionAddressValid($subscription)
-            && static::isSubscriptionPaymentProfileAvailable($subscription)
+            !static::isValidated($subscription)
+            && !static::hasExpired($subscription)
+            && static::isAddressValid($subscription)
+            && static::isPaymentProfileAvailable($subscription)
             && !$subscription->getJourneys()->isEmpty()
             && !is_null($subscription->getCommitmentProofJourney())
             && !is_null($subscription->getCommitmentProofJourney()->getCarpoolPayment())
@@ -59,13 +59,13 @@ abstract class SubscriptionValidator
             && static::areTokensAvailable($subscription);
     }
 
-    public static function isSdSubscriptionReadyToVerify(ShortDistanceSubscription $subscription): bool
+    public static function isSdReadyToVerify(ShortDistanceSubscription $subscription): bool
     {
         return
-            static::isSubscriptionValidated($subscription)
-            && !static::hasSubscriptionExpired($subscription)
-            && static::isSubscriptionAddressValid($subscription)
-            && static::isSubscriptionPaymentProfileAvailable($subscription)
+            static::isValidated($subscription)
+            && !static::hasExpired($subscription)
+            && static::isAddressValid($subscription)
+            && static::isPaymentProfileAvailable($subscription)
             && !$subscription->getJourneys()->isEmpty()
             && !is_null($subscription->getCommitmentProofJourney())
             && !is_null($subscription->getCommitmentProofJourney()->getCarpoolProof())
@@ -76,7 +76,7 @@ abstract class SubscriptionValidator
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function isSubscriptionPaymentProfileAvailable($subscription): bool
+    public static function isPaymentProfileAvailable($subscription): bool
     {
         return
             !is_null($subscription->getUser())
@@ -100,7 +100,7 @@ abstract class SubscriptionValidator
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function hasSubscriptionExpired($subscription): bool
+    public static function hasExpired($subscription): bool
     {
         $now = new \DateTime('now');
 
@@ -113,18 +113,18 @@ abstract class SubscriptionValidator
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function isSubscriptionAddressValid($subscription): bool
+    public static function isAddressValid($subscription): bool
     {
         return
-            static::isSubscriptionStreetAddressValid($subscription)
-            && static::isSubscriptionPostalCodeValid($subscription)
-            && static::isSubscriptionAddressLocalityValid($subscription);
+            static::isStreetAddressValid($subscription)
+            && static::isPostalCodeValid($subscription)
+            && static::isAddressLocalityValid($subscription);
     }
 
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function isSubscriptionStreetAddressValid($subscription): bool
+    public static function isStreetAddressValid($subscription): bool
     {
         return
             !is_null($subscription->getStreetAddress())
@@ -134,7 +134,7 @@ abstract class SubscriptionValidator
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function isSubscriptionPostalCodeValid($subscription): bool
+    public static function isPostalCodeValid($subscription): bool
     {
         return preg_match('/^((1(A|B))|[0-9]{2})[0-9]{3}$/', $subscription->getPostalCode());
     }
@@ -142,7 +142,7 @@ abstract class SubscriptionValidator
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function isSubscriptionAddressLocalityValid($subscription): bool
+    public static function isAddressLocalityValid($subscription): bool
     {
         return
             !is_null($subscription->getAddressLocality())
@@ -152,7 +152,7 @@ abstract class SubscriptionValidator
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function isSubscriptionValidated($subscription): bool
+    public static function isValidated($subscription): bool
     {
         return Subscription::STATUS_VALIDATED === $subscription->getStatus();
     }
@@ -165,7 +165,7 @@ abstract class SubscriptionValidator
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function isSubscriptionDrivingLicenceNumberValid($subscription): bool
+    public static function isDrivingLicenceNumberValid($subscription): bool
     {
         $validator = new DrivingLicenceService($subscription->getDrivingLicenceNumber());
 
@@ -175,7 +175,7 @@ abstract class SubscriptionValidator
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public static function isSubscriptionPhoneNumberValid($subscription): bool
+    public static function isPhoneNumberValid($subscription): bool
     {
         $converter = new PhoneService($subscription->getTelephone());
 
