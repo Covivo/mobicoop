@@ -369,12 +369,12 @@ class ProofManager
         // Check for an already existing carpool proof for this journey base on StartDateDriver and same driver and passenger
         $duplicateCarpoolProof = $this->carpoolProofRepository->findForDuplicate($carpoolProof);
 
-        if (!is_null($duplicateCarpoolProof)) {
-            return $duplicateCarpoolProof;
+        if (is_null($duplicateCarpoolProof)) {
+            $this->entityManager->persist($carpoolProof);
+            $this->entityManager->flush();
+        } else {
+            $carpoolProof = $duplicateCarpoolProof;
         }
-
-        $this->entityManager->persist($carpoolProof);
-        $this->entityManager->flush();
 
         if ($author->getId() == $passenger->getId()) {
             $event = new CarpoolProofCertifyPickUpEvent($carpoolProof, $driver);
