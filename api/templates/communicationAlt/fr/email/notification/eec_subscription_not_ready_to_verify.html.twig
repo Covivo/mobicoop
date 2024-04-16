@@ -1,0 +1,70 @@
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:22px;" text-align="center" ><b>Votre demande d'aide CEE nécessite votre attention</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                <tr>
+                    <td style="width:70%">
+                        <p style="font-size:13px;">Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</p>
+                        <p style="font-size:13px;">Vous avez effectué auprès de {{ api_env('EMAILS_PLATFORM_NAME') }} une demande de prime CEE.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size:13px;">Dans le traitement de celle-ci, nous avons identifié des données incomplètes ou erronées :</p>
+                        <ul>
+                            {% if context.pre_verification_error.address %}<li style="font-size:13px;">Votre adresse de domicile</li>{% endif %}
+                            {% if context.pre_verification_error.drivingLicenceNumber %}<li style="font-size:13px;">Votre numéro de permis de conduire</li>{% endif %}
+                            {% if context.pre_verification_error.phoneNumber %}<li style="font-size:13px;">Votre numéro de téléphone</li>{% endif %}
+                        </ul>
+                        <p style="font-size:13px;">Nous ne pouvons finaliser le traitement de votre demande tant que les éléments cités ci-dessus n'auront pas été modifiés.</p>
+                        <p style="font-size:13px;">Nous vous invitons à effectuer ces corrections depuis la page de <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/mon-profil">votre profil</a>.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+     <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:13px;">A bientôt sur <a href="{{api_env('EMAILS_PLATFORM_URL')}}" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Mobicoop</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
