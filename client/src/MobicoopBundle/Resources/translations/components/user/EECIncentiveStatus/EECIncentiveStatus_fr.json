@@ -83,7 +83,7 @@
         "paymentStandard": "Versement: 50€ dès le 1<sup>er</sup> trajet."
       },
       "SD": {
-        "intro": "<span class=\"font-weight-bold\">Votre premier trajet de moins de 80 km a été réalisé en 2024 ?</span> Vous bénéficierez d’une prime de 100€ si, sous 3 mois, vous réalisez au moins 10 trajets certifiés par le Registre de Preuve de Covoiturage (vérification de la \"classe C\" de vos trajets disponible via votre export de covoiturages acceptés).",
+        "intro": "<span class=\"font-weight-bold\">Votre premier trajet de moins de 80 km a été réalisé en 2023&nbsp;?</span> Vous bénéficierez d’une prime de 100€ si vos preuves de covoiturage sont validées par le Registre de Preuve de Covoiturage.",
         "expiredText": "La période légale de 3 mois pour compléter vos trajets courte distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant.",
         "paymentImproved": "Versement: 25€ au 1<sup>er</sup> trajet, 75€ au 10<sup>e</sup>.",
         "paymentStandard": "Versement: 50€ dès le 1<sup>er</sup> trajet."
@@ -131,10 +131,12 @@
           "error": "Votre passager n’a pas payé électroniquement le covoiturage ou alors votre preuve de covoiturage n’a pas été validée par le Registre de Preuve de Covoiturage."
         },
         "actions": {
-          "error": [{
-            "title": "Republier une annonce",
-            "href": "/covoiturage/publierannonce"
-          }]
+          "error": [
+            {
+              "title": "Republier une annonce",
+              "href": "/covoiturage/publierannonce"
+            }
+          ]
         }
       },
       "publish": {
@@ -145,14 +147,18 @@
           "error": "Vous ne trouvez pas de passager correspondant à votre trajet ? Pas de panique ! Essayez de modifier l’horaire ou le lieu de prise en charge et/ou de dépose."
         },
         "actions": {
-          "success": [{
-            "title": "Publier une annonce",
-            "href": "/covoiturage/publierannonce"
-          }],
-          "error": [{
-            "title": "Republier une annonce",
-            "href": "/covoiturage/publierannonce"
-          }]
+          "success": [
+            {
+              "title": "Publier une annonce",
+              "href": "/covoiturage/publierannonce"
+            }
+          ],
+          "error": [
+            {
+              "title": "Republier une annonce",
+              "href": "/covoiturage/publierannonce"
+            }
+          ]
         }
       },
       "receive": {
@@ -175,14 +181,18 @@
           "error": "Une erreur est survenue à l’inscription."
         },
         "actions": {
-          "success": [{
-            "title": "Publier une annonce",
-            "href": "/covoiturage/publierannonce"
-          }],
-          "error": [{
-            "title": "Recommencer l’inscription",
-            "href": "/covoiturage/publierannonce"
-          }]
+          "success": [
+            {
+              "title": "Publier une annonce",
+              "href": "/covoiturage/publierannonce"
+            }
+          ],
+          "error": [
+            {
+              "title": "Recommencer l’inscription",
+              "href": "/covoiturage/publierannonce"
+            }
+          ]
         }
       },
       "validate": {
@@ -193,10 +203,12 @@
           "error": "Votre preuve de covoiturage n’a pas été validée par le Registre de Preuve de Covoiturage."
         },
         "actions": {
-          "error": [{
-            "title": "Certifier un nouveau covoiturage",
-            "href": ""
-          }]
+          "error": [
+            {
+              "title": "Certifier un nouveau covoiturage",
+              "href": ""
+            }
+          ]
         }
       }
     }
