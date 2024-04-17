@@ -656,12 +656,12 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Transfer founds bewteen two wallets.
      *
-     * @param int    $debtorIdentifier MangoPay's identifier of the debtor
+     * @param string $debtorIdentifier MangoPay's identifier of the debtor
      * @param Wallet $walletFrom       Wallet of the debtor
      * @param Wallet $walletTo         Wallet of the creditor
      * @param float  $amount           Amount of the transaction
      */
-    public function transferWalletToWallet(int $debtorIdentifier, Wallet $walletFrom, Wallet $walletTo, float $amount, string $tag = ''): ?string
+    public function transferWalletToWallet(string $debtorIdentifier, Wallet $walletFrom, Wallet $walletTo, float $amount, string $tag = ''): ?string
     {
         $body = [
             'AuthorId' => $debtorIdentifier,
@@ -695,7 +695,7 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Trigger a payout from a Wallet to a Bank Account.
      */
-    public function triggerPayout(int $authorIdentifier, Wallet $wallet, BankAccount $bankAccount, float $amount, string $reference = ''): ?string
+    public function triggerPayout(string $authorIdentifier, Wallet $wallet, BankAccount $bankAccount, float $amount, string $reference = ''): ?string
     {
         $body = [
             'AuthorId' => $authorIdentifier,
