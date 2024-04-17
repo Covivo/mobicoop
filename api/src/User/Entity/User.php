@@ -62,6 +62,7 @@ use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
+use App\Payment\Entity\PaymentProfile;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
@@ -916,6 +917,13 @@ class User implements UserInterface, EquatableInterface
     private $drivingLicenceNumber;
 
     /**
+     * @var null|string the old driving licence number of the user when it was updated
+     *
+     * @Groups({"readUser", "write"})
+     */
+    private $oldDrivingLicenceNumber;
+
+    /**
      * @var null|int the maximum detour duration (in seconds) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
@@ -1746,6 +1754,13 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aRead","aWrite","write"})
      */
     private $homeAddress;
+
+    /**
+     * @var null|Address The old user home address when update
+     *
+     * @Groups({"readUser", "write"})
+     */
+    private $oldHomeAddress;
 
     /**
      * @var null|array The user roles
@@ -4217,6 +4232,13 @@ class User implements UserInterface, EquatableInterface
         return $this->paymentProfiles;
     }
 
+    public function addPaymentProfile(PaymentProfile $paymentProfile): self
+    {
+        $this->paymentProfiles->add($paymentProfile);
+
+        return $this;
+    }
+
     /**
      * Get the value of hasAccessToMobAPI.
      */
@@ -4290,6 +4312,30 @@ class User implements UserInterface, EquatableInterface
     public function setReferral(?string $referral): self
     {
         $this->referral = $referral;
+
+        return $this;
+    }
+
+    public function getOldHomeAddress(): ?Address
+    {
+        return $this->oldHomeAddress;
+    }
+
+    public function setOldHomeAddress(?Address $oldHomeAddress): self
+    {
+        $this->oldHomeAddress = $oldHomeAddress;
+
+        return $this;
+    }
+
+    public function getOldDrivingLicenceNumber(): ?string
+    {
+        return $this->oldDrivingLicenceNumber;
+    }
+
+    public function setOldDrivingLicenceNumber(?string $oldDrivingLicenceNumber): self
+    {
+        $this->oldDrivingLicenceNumber = $oldDrivingLicenceNumber;
 
         return $this;
     }

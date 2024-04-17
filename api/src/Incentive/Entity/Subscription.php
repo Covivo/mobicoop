@@ -18,6 +18,10 @@ abstract class Subscription
     public const BONUS_STATUS_NO = 1;
     public const BONUS_STATUS_OK = 2;
 
+    public const STATUS_ERROR = 'ERROR';
+    public const STATUS_REJECTED = 'REJETEE';
+    public const STATUS_VALIDATED = 'VALIDEE';
+
     private const ACTIVE_YEAR_PATTERN = '/^202[3-7]{1}$/';
 
     protected $createdAt;

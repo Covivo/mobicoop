@@ -4,9 +4,9 @@ namespace App\Incentive\Service\Validation;
 
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Entity\Subscription;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Manager\MobConnectManager;
-use App\Incentive\Service\Manager\SubscriptionManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SubscriptionValidation extends Validation
@@ -17,7 +17,7 @@ class SubscriptionValidation extends Validation
     private $_journeyValidation;
 
     /**
-     * @var int
+     * @var \DateTime
      */
     private $_verificationDeadline;
 
@@ -35,7 +35,7 @@ class SubscriptionValidation extends Validation
     public function isSubscriptionValidForTimestampsProcess($subscription): bool
     {
         return
-            SubscriptionManager::STATUS_VALIDATED !== $subscription->getStatus()
+            Subscription::STATUS_VALIDATED !== $subscription->getStatus()
             && (
                 is_null($subscription->getIncentiveProofTimestampToken())
                 || is_null($subscription->getCommitmentProofTimestampToken())
