@@ -354,9 +354,9 @@ export default {
       requiredErrorOrigin: this.$t("origin.error"),
       requiredErrorDestination: this.$t("destination.error"),
       requiredErrorOutwardDate: this.$t("outwardDate.error"),
-      origin: this.initOrigin ? this.initOrigin : this.user.homeAddress ? this.user.homeAddress : null,
+      origin: this.determineOrigin(),
       destination: this.initDestination,
-      customInitOrigin: (this.initOrigin)?this.initOrigin:this.user.homeAddress ? this.user.homeAddress : null,
+      customInitOrigin: this.determineOrigin(),
       customInitDestination: (this.initDestination)?this.initDestination:null,
       valid: false,
       nowDate: new Date().toISOString().slice(0,10),
@@ -494,6 +494,17 @@ export default {
       if (this.dateTimePicker) {
         this.dateTime = (this.date && this.time) ? this.date+' '+this.time : null;
       }
+    },
+    determineOrigin(){
+      if(this.initOrigin){
+        return this.initOrigin;
+      }
+
+      if(this.user && this.user.homeAddress){
+        return this.user.homeAddress
+      }
+
+      return null;
     }
   }
 };

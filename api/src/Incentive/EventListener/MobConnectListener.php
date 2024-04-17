@@ -7,12 +7,16 @@ use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
+use App\Incentive\Event\SubscriptionNotReadyToVerifyEvent;
 use App\Incentive\Service\Manager\AuthManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
+use App\Incentive\Validator\UserValidator;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
+use App\User\Event\UserDrivingLicenceNumberUpdateEvent;
 use App\User\Event\UserHomeAddressUpdateEvent;
+use App\User\Event\UserPhoneUpdateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -61,7 +65,10 @@ class MobConnectListener implements EventSubscriberInterface
             FirstLongDistanceJourneyPublishedEvent::NAME => 'onFirstLongDistanceJourneyPublished',
             FirstShortDistanceJourneyPublishedEvent::NAME => 'onFirstShortDistanceJourneyPublished',
             SsoAssociationEvent::NAME => 'onUserAssociated',
+            SubscriptionNotReadyToVerifyEvent::NAME => 'onIdentifySubscriptionNotRedyToVerify',
+            UserDrivingLicenceNumberUpdateEvent::NAME => 'onDrivingLicenceNumberUpdated',
             UserHomeAddressUpdateEvent::NAME => 'onUserHomeAddressUpdated',
+            UserPhoneUpdateEvent::NAME => 'onUserPhoneUpdated',
         ];
     }
 
@@ -134,8 +141,35 @@ class MobConnectListener implements EventSubscriberInterface
         $this->_subscriptionManager->invalidateProof($event->getCarpoolProof());
     }
 
+    public function onIdentifySubscriptionNotRedyToVerify(SubscriptionNotReadyToVerifyEvent $event)
+    {
+        $this->_subscriptionManager->subscriptionNotReadyToVerify($event->getSubscription());
+    }
+
+    public function onDrivingLicenceNumberUpdated(UserDrivingLicenceNumberUpdateEvent $event)
+    {
+        $user = $event->getUser();
+
+        if (UserValidator::hasUserEECSubscribed($user)) {
+            $this->_subscriptionManager->updateSubscriptionDrivingLicenceNumber($user);
+        }
+    }
+
     public function onUserHomeAddressUpdated(UserHomeAddressUpdateEvent $event)
     {
-        $this->_subscriptionManager->updateSubscriptionsAddress($event->getUser());
+        $user = $event->getUser();
+
+        if (UserValidator::hasUserEECSubscribed($user)) {
+            $this->_subscriptionManager->updateSubscriptionsAddress($user);
+        }
+    }
+
+    public function onUserPhoneUpdated(UserPhoneUpdateEvent $event)
+    {
+        $user = $event->getUser();
+
+        if (UserValidator::hasUserEECSubscribed($user)) {
+            $this->_subscriptionManager->updateSubscriptionPhone($user);
+        }
     }
 }

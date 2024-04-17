@@ -51,4 +51,13 @@ class RPCCheckerTest extends TestCase
         $this->_curlDataProvider->method('get')->willReturn(new Response(200));
         $this->assertEquals('{"message":"KO"}', $this->_rpcChecker->check());
     }
+
+    /**
+     * @test
+     */
+    public function testCheckReturnsKoForUncountableResponse()
+    {
+        $this->_curlDataProvider->method('get')->willReturn(new Response(200, 'this response is uncountable'));
+        $this->assertEquals('{"message":"KO"}', $this->_rpcChecker->check());
+    }
 }

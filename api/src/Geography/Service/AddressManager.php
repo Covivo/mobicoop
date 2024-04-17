@@ -28,6 +28,7 @@ use App\Action\Repository\ActionRepository;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\AddressRepository;
 use App\Geography\Repository\TerritoryRepository;
+use App\User\Event\UserHomeAddressUpdateEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -72,7 +73,7 @@ class AddressManager
      */
     public function createAddressTerritories(Address $address)
     {
-        //$this->logger->info('Address Manager | Create address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // $this->logger->info('Address Manager | Create address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // first we check that the address is not linked yet to territories
         if (0 == count($address->getTerritories())) {
             // we search the territories
@@ -95,7 +96,7 @@ class AddressManager
      */
     public function updateAddressTerritories(Address $address)
     {
-        //$this->logger->info('Address Manager | Update address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // $this->logger->info('Address Manager | Update address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // first we remove all territories
         $address->removeTerritories();
         // then we search the territories
@@ -241,6 +242,12 @@ class AddressManager
             $action = $this->actionRepository->findOneBy(['name' => 'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $address->getUser());
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+
+            $user = $address->getUser();
+            if (!is_null($user)) {
+                $event = new UserHomeAddressUpdateEvent($user);
+                $this->eventDispatcher->dispatch(UserHomeAddressUpdateEvent::NAME, $event);
+            }
         }
 
         return $address;

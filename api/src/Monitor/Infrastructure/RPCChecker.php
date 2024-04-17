@@ -29,9 +29,9 @@ use App\Monitor\Core\Application\Port\Checker;
 
 class RPCChecker implements Checker
 {
-    public const RPC_URI_SUFFIX = '/v3/journeys';
+    public const RPC_URI_SUFFIX = 'v3/journeys';
     public const RPC_PROOF_STATUS = 'ok';
-    public const PAST_DAYS = '5';
+    public const PAST_DAYS = '2';
 
     public const CHECKED = ['message' => 'OK'];
     public const NOT_CHECKED = ['message' => 'KO'];
@@ -60,7 +60,7 @@ class RPCChecker implements Checker
     private function _determineResult(Response $response): string
     {
         $return = self::NOT_CHECKED;
-        if (is_string($response->getValue()) && count(json_decode($response->getValue(), true)) > 0) {
+        if (is_string($response->getValue()) && is_countable($response->getValue()) && count(json_decode($response->getValue(), true)) > 0) {
             $return = self::CHECKED;
         }
 

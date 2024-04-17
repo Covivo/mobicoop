@@ -107,7 +107,7 @@
                 :chip="geoCompleteChip"
                 :restrict="['housenumber', 'street']"
                 :label="$t('form.label.address.check')"
-                :address="(user.homeAddress) ? user.homeAddress : null"
+                :address="form.formAddress"
                 @address-selected="addressSelected"
                 @clear="clearAddress"
               />
@@ -359,6 +359,10 @@ export default {
     geoCompleteChip: {
       type: Boolean,
       default: false
+    },
+    updateCurrentHomeAddress: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -420,6 +424,13 @@ export default {
         return false;
       }
       return true;
+    },
+  },
+  watch:{
+    updateCurrentHomeAddress(value){
+      if(value){
+        this.setCurrentHomeAddress();
+      }
     }
   },
   mounted() {
@@ -429,6 +440,10 @@ export default {
     }
   },
   methods: {
+    setCurrentHomeAddress(){
+      this.form.formAddress = (this.user.homeAddress) ? this.user.homeAddress : null
+      this.$emit('currentHomeAddressSetted');
+    },
     getBankCoordinates() {
       this.loading = true;
       maxios

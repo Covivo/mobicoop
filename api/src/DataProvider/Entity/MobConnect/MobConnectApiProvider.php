@@ -15,6 +15,7 @@ use App\DataProvider\Interfaces\AuthenticationProviderInterface;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
+use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
@@ -58,8 +59,8 @@ class MobConnectApiProvider extends MobConnectProvider
             'incentiveId' => Subscription::TYPE_LONG === $subscriptionType ? $this->_eecInstance->getLdKey() : $this->_eecInstance->getSdKey(),
             'consent' => true,
             'Type de trajet' => Subscription::TYPE_LONG === $subscriptionType ? ['Long'] : ['Court'],
-            'Numéro de permis de conduire' => $user->getDrivingLicenceNumber(),
-            'Numéro de téléphone' => $user->getTelephone(),
+            SpecificFields::DRIVING_LICENCE_NUMBER => $user->getDrivingLicenceNumber(),
+            SpecificFields::PHONE_NUMBER => $user->getTelephone(),
         ];
 
         $this->_createDataProvider(RouteProvider::ROUTE_SUBSCRIPTIONS);

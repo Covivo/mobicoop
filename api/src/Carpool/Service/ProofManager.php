@@ -254,7 +254,7 @@ class ProofManager
      *
      * @return CarpoolProof The created proof
      */
-    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger, string $driverPhoneUniqueId = null, string $passengerPhoneUniqueId = null)
+    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger, ?string $driverPhoneUniqueId = null, ?string $passengerPhoneUniqueId = null)
     {
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setType($type);
@@ -367,10 +367,17 @@ class ProofManager
         }
         $carpoolProof->setDirection($direction);
 
-        $this->entityManager->persist($carpoolProof);
-        $this->entityManager->flush();
-        $event = new CarpoolProofCreatedEvent($carpoolProof);
-        $this->eventDispatcher->dispatch(CarpoolProofCreatedEvent::NAME, $event);
+        // Check for an already existing carpool proof for this journey base on StartDateDriver and same driver and passenger
+        $duplicateCarpoolProof = $this->carpoolProofRepository->findForDuplicate($carpoolProof);
+
+        if (is_null($duplicateCarpoolProof)) {
+            $this->entityManager->persist($carpoolProof);
+            $this->entityManager->flush();
+            $event = new CarpoolProofCreatedEvent($carpoolProof);
+            $this->eventDispatcher->dispatch(CarpoolProofCreatedEvent::NAME, $event);
+        } else {
+            $carpoolProof = $duplicateCarpoolProof;
+        }
 
         if ($author->getId() == $passenger->getId()) {
             $event = new CarpoolProofCertifyPickUpEvent($carpoolProof, $driver);
@@ -395,7 +402,7 @@ class ProofManager
      *
      * @return CarpoolProof The updated proof
      */
-    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance, string $driverPhoneUniqueId = null, string $passengerPhoneUniqueId = null)
+    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance, ?string $driverPhoneUniqueId = null, ?string $passengerPhoneUniqueId = null)
     {
         // search the proof
         if (!$carpoolProof = $this->carpoolProofRepository->find($id)) {
@@ -1305,6 +1312,12 @@ class ProofManager
                             $dropOffDate->modify('+'.$dropOffWaypoint->getDuration().' second');
                             $carpoolProof->setPickUpPassengerDate($pickUpDate);
                             $carpoolProof->setDropOffPassengerDate($dropOffDate);
+
+                            // Check for an already existing carpool proof for this journey base on StartDateDriver and same driver and passenger
+                            if (!is_null($this->carpoolProofRepository->findForDuplicate($carpoolProof))) {
+                                continue;
+                            }
+
                             // Antifraud rpc check before sending
                             $this->proofAntifraudCheck($carpoolProof);
 

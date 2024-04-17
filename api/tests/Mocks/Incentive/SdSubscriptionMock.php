@@ -36,6 +36,9 @@ class SdSubscriptionMock
         $commitmentJourney = $subscription->getCommitmentProofJourney();
         $commitmentJourney->setCarpoolProof($carpoolProof);
 
+        $expirationDate = new \DateTime();
+        $subscription->setExpirationDate($expirationDate->sub(new \DateInterval('P3M')));
+
         return $subscription;
     }
 

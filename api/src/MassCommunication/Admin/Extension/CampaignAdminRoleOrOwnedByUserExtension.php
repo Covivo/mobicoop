@@ -53,14 +53,16 @@ final class CampaignAdminRoleOrOwnedByUserExtension implements QueryCollectionEx
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, ?string $operationName = null, array $context = [])
     {
-        $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        if (Campaign::class == $resourceClass && 'ADMIN_get' === $operationName) {
+            $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        }
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, ?string $operationName = null, array $identifiers = [], array $context = []): void
     {
         $user = $this->security->getUser();
 
-        if (($user instanceof User) || $this->authManager->isAuthorized('ROLE_ADMIN')) {
+        if (!($user instanceof User) || $this->authManager->isAuthorized('ROLE_ADMIN')) {
             return;
         }
 
