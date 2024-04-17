@@ -90,10 +90,8 @@ class PaymentManager
 
     /**
      * Delete a bank account.
-     *
-     * @param int $bankAccountid Id (provider's one) of the Bank account to delete
      */
-    public function deleteBankCoordinates(int $bankAccountid)
+    public function deleteBankCoordinates(string $bankAccountid)
     {
         $this->dataProvider->setClass(BankAccount::class);
 
