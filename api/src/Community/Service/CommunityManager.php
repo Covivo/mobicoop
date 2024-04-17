@@ -199,8 +199,6 @@ class CommunityManager
     /**
      * Check if a community already exists with this name.
      *
-     * @param Community $community
-     *
      * @return null|Community
      */
     public function exists(?string $name)
@@ -286,8 +284,6 @@ class CommunityManager
 
     /**
      * retrive communities owned by a user.
-     *
-     * @return array
      */
     public function getOwnedCommunities(int $userId): ?array
     {
@@ -481,8 +477,7 @@ class CommunityManager
     /**
      * Get the MCommunities.
      *
-     * @param UserInterface $user        The current user
-     * @param mixed         $communities
+     * @param mixed $communities
      *
      * @return array The communities
      */
@@ -492,8 +487,12 @@ class CommunityManager
         $temporaryCommunities = [];
 
         foreach ($communities as $community) {
-            if (Community::DOMAIN_VALIDATION === $community->getValidationType() && str_contains($userEmail, $community->getDomain())) {
-                $temporaryCommunities[] = $community;
+            if (Community::DOMAIN_VALIDATION === $community->getValidationType()) {
+                foreach (explode(';', $community->getDomain()) as $domain) {
+                    if (str_contains($userEmail, $domain)) {
+                        $temporaryCommunities[] = $community;
+                    }
+                }
             } elseif (Community::MANUAL_VALIDATION === $community->getValidationType() || Community::AUTO_VALIDATION === $community->getValidationType()) {
                 $temporaryCommunities[] = $community;
             }
@@ -525,9 +524,6 @@ class CommunityManager
         return null;
     }
 
-    /**
-     * @return Community
-     */
     public function leaveCommunity(Community $community, User $user): ?Community
     {
         $communityUser = $this->communityUserRepository->findBy(['community' => $community, 'user' => $user]);
