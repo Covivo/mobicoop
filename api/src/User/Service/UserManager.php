@@ -65,6 +65,7 @@ use App\User\Entity\SsoAccount;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Entity\UserNotification;
+use App\User\Event\AskParentalConsentEvent;
 use App\User\Event\SsoAssociationEvent;
 use App\User\Event\SsoAuthenticationEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
@@ -403,6 +404,11 @@ class UserManager
             }
         }
 
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $event = new AskParentalConsentEvent($user);
+            $this->eventDispatcher->dispatch(AskParentalConsentEvent::NAME, $event);
+        }
+
         //  we dispatch the gamification event associated
         if ($user->getHomeAddress()) {
             $action = $this->actionRepository->findOneBy(['name' => 'user_home_address_updated']);
@@ -583,6 +589,11 @@ class UserManager
 
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
+
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $user->setParentalConsentToken($this->createShortToken());
+            $user->setParentalConsentUuid($this->_generateUuid());
+        }
 
         // return the user
         return $user;
@@ -2062,6 +2073,25 @@ class UserManager
     public function getUnreadMessageNumberForResponseInsertion(User $user): User
     {
         return $this->getUnreadMessageNumber($user);
+    }
+
+    public function _generateUuid()
+    {
+        // Generate a random string of bytes
+        $bytes = openssl_random_pseudo_bytes(16);
+
+        // Convert the bytes to a hexadecimal string
+        $hex = bin2hex($bytes);
+
+        // Format the hexadecimal string as a UUID
+        return sprintf(
+            '%s-%s-%s-%s-%s',
+            substr($hex, 0, 8),
+            substr($hex, 8, 4),
+            substr($hex, 12, 4),
+            substr($hex, 16, 4),
+            substr($hex, 20, 12)
+        );
     }
 
     private function _attachUserBySso(User $user, SsoUser $ssoUser): User

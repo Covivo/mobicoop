@@ -96,6 +96,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserUnderEighteen;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -396,6 +397,11 @@ class Deserializer
 
             case Incentive::class:
                 return $this->deserializeIncentive($data);
+
+            case UserUnderEighteen::class:
+                return $this->deserializeUserUnderEighteen($data);
+
+                break;
 
             default:
                 break;
@@ -1295,6 +1301,13 @@ class Deserializer
         $incentive = new Incentive();
 
         return $this->autoSet($incentive, $data);
+    }
+
+    private function deserializeUserUnderEighteen(array $data): ?UserUnderEighteen
+    {
+        $userUnderEighteen = new UserUnderEighteen();
+
+        return $this->autoSet($userUnderEighteen, $data);
     }
 
     private function autoSet($object, $data)

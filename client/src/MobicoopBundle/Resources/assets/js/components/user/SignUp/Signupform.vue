@@ -347,7 +347,7 @@
                       v-model="form.date"
                       :label="$t('birthDate.placeholder')+` *`"
                       readonly
-                      :rules="[ form.birthdayRules.checkIfAdult, form.birthdayRules.required ]"
+                      :rules="[ form.birthdayRules.checkIfHaveAge, form.birthdayRules.required ]"
                       required
                       v-on="on"
                     />
@@ -361,6 +361,23 @@
                     @change="save"
                   />
                 </v-menu>
+                <div v-if="isUnder18">
+                  <h2>{{ $t("parentalConsent.title") }}</h2>
+                  <p>{{ $t("parentalConsent.explanation") }}</p>
+                  <v-text-field
+
+                    id="legalGuardianEmail"
+                    v-model="form.legalGuardianEmail"
+                    :rules="form.legalGuardianEmailRules"
+                    :label="$t('legalGuardianEmail.placeholder') + ` *`"
+                    name="legalGuardianEmail"
+                    required
+                    aria-required="true"
+                    :aria-label="$t('legalGuardianEmail.placeholder')"
+                    :loading="loadingCheckEmailAldreadyTaken"
+                    @focusout="checkEmail"
+                  />
+                </div>
                 <v-row
                   justify="center"
                   align="center"
@@ -601,6 +618,7 @@
 
 <script>
 import maxios from "@utils/maxios";
+import moment from "moment";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import CommunityHelp from "@components/community/CommunityHelp";
 
@@ -770,6 +788,11 @@ export default {
           (v) => !!v || this.$t("email.errors.required"),
           (v) => /.+@.+/.test(v) || this.$t("email.errors.valid"),
         ],
+        legalGuardianEmail: null,
+        legalGuardianEmailRules: [
+          (v) => !!v || this.$t("legalGuardianEmail.errors.required"),
+          (v) => /.+@.+/.test(v) || this.$t("legalGuardianEmail.errors.valid"),
+        ],
         givenName: null,
         givenNameRules: [
           (v) => !!v || this.$t("givenName.errors.required"),
@@ -826,16 +849,9 @@ export default {
         birthdayRules: {
           required: (v) =>
             !!v || this.$t("birthDay.errors.required"),
-          checkIfAdult: (value) => {
-            var d1 = new Date();
-            var d2 = new Date(value);
-
-            var diff = (d1.getTime() - d2.getTime()) / 1000;
-            diff /= 60 * 60 * 24;
-
-            var diffYears = Math.abs(Math.floor(diff / 365.24));
+          checkIfHaveAge: (value) => {
             return (
-              diffYears >= this.ageMin || this.$t("birthDay.errors.notadult", {age:this.ageMin})
+              moment().diff(value, 'year') >= this.ageMin || this.$t("birthDay.errors.notadult", {age:this.ageMin})
             );
           },
         },
@@ -857,7 +873,7 @@ export default {
       locale: localStorage.getItem("X-LOCALE"),
       flags: this.phoneCodes,
       cleanedPhoneNumber: null,
-
+      isUnder18: false,
     };
   },
   computed: {
@@ -941,6 +957,14 @@ export default {
     menu(val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
     },
+    'form.date'(){
+      if (moment().diff(this.form.date, 'year') < 18 ) {
+        this.isUnder18 = true;
+      }
+      else {
+        this.isUnder18 = false;
+      }
+    },
     selectedCommunity() {
       this.communities.forEach((community, index) => {
         if (community.id == this.selectedCommunity) {
@@ -965,7 +989,7 @@ export default {
   methods: {
     maxDate() {
       let maxDate = new Date();
-      maxDate.setFullYear(maxDate.getFullYear() - this.ageMin);
+      maxDate.setFullYear(maxDate.getFullYear() - 10);
       return maxDate.toISOString().substr(0, 10);
     },
     selectedGeo(address) {
@@ -991,6 +1015,7 @@ export default {
             address: this.form.homeAddress,
             idFacebook: this.form.idFacebook,
             newsSubscription: this.form.newsSubscription,
+            legalGuardianEmail: this.form.legalGuardianEmail ? this.form.legalGuardianEmail : null,
             community: this.selectedCommunity ? this.selectedCommunity : null,
             referral: this.referral
           },
@@ -1136,7 +1161,9 @@ export default {
       return this.form.email && this.form.password && this.form.telephone != null
     },
     step2Valid() {
-      if (this.birthDateDisplay){
+      if (this.birthDateDisplay && this.isUnder18){
+        return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null && this.form.legalGuardianEmail !=null
+      } else if (this.birthDateDisplay) {
         return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null
       } else {
         return this.form.familyName && this.form.givenName && this.form.gender != null

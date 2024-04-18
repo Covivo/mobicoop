@@ -141,5 +141,16 @@
     },
     "consent": "Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page puis rafraichir la page.",
     "socialServicesUnavailableWithoutConsent": "Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page."
+  },
+  "legalGuardianEmail": {
+    "placeholder": "Email du responsable légal",
+    "errors": {
+      "required": "L'adresse email du responsable légal est requise",
+      "valid": "L'adresse email du responsable légal doit être valide"
+    }
+  },
+  "parentalConsent": {
+    "title": "Autorisation parentale",
+    "explanation": "Comme tu as moins de 18 ans, tu as besoin de l’autorisation de ton responsable légal pour utiliser le service."
   }
 }

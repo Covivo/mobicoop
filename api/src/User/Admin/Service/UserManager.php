@@ -37,6 +37,7 @@ use App\Geography\Ressource\Point;
 use App\Geography\Service\PointSearcher;
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
+use App\User\Event\AskParentalConsentEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDrivingLicenceNumberUpdateEvent;
@@ -238,11 +239,15 @@ class UserManager
         }
 
         // create token to validate regisration
-        $user->setEmailToken($this->userManager->createToken($user));
+        $user->setEmailToken($this->userManager->createShortToken());
 
         // create token to unsubscribe from the instance news
         $user->setUnsubscribeToken($this->userManager->createToken($user));
 
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $user->setParentalConsentToken($this->userManager->createShortToken());
+            $user->setParentalConsentUuid($this->userManager->_generateUuid());
+        }
         // check if identity is validated manually
         if ($user->hasVerifiedIdentity()) {
             $user->setIdentityStatus(IdentityProof::STATUS_ACCEPTED);
@@ -286,6 +291,11 @@ class UserManager
         if (!is_null($user->getTelephone())) {
             $event = new UserDelegateRegisteredPasswordSendEvent($user);
             $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+        }
+
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $event = new AskParentalConsentEvent($user);
+            $this->eventDispatcher->dispatch(AskParentalConsentEvent::NAME, $event);
         }
 
         return $user;
