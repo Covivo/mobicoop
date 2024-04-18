@@ -323,7 +323,7 @@ class MassPerson
     /**
      * @var null|User The User created based on this MassPerson
      *
-     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
      *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      *
