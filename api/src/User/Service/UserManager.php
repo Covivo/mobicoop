@@ -150,6 +150,8 @@ class UserManager
 
     private $geoTools;
 
+    private $authorizedReferrals;
+
     /**
      * @var PseudonymizationManager
      */
@@ -209,7 +211,8 @@ class UserManager
         $userMinAge,
         BookingManager $bookingManager,
         bool $carpoolStandardEnabled,
-        SsoAccountRepository $ssoAccountRepository
+        SsoAccountRepository $ssoAccountRepository,
+        array $authorizedReferrals
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -256,6 +259,7 @@ class UserManager
         $this->bookingManager = $bookingManager;
         $this->carpoolStandardEnabled = $carpoolStandardEnabled;
         $this->ssoAccountRepository = $ssoAccountRepository;
+        $this->authorizedReferrals = $authorizedReferrals;
     }
 
     /**
@@ -350,6 +354,12 @@ class UserManager
      */
     public function registerUser(User $user, bool $encodePassword = true, bool $isSolidary = false, ?SsoUser $ssoUser = null)
     {
+        if (!is_null($user->getReferral()) && '' !== trim($user->getReferral())) {
+            if (!in_array($user->getReferral(), $this->authorizedReferrals)) {
+                $user->setReferral(null);
+            }
+        }
+
         // we check if the user is on the scammer list
         $this->checkIfScammer($user);
         //  we check if the user is not underaged
@@ -418,7 +428,7 @@ class UserManager
      * @param SolidaryUser $solidaryUser The SolidaryUser
      * @param Structure    $structure    The Structure (if there is no Structure, we take the admin's one)
      */
-    public function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser, Structure $structure = null): SolidaryUser
+    public function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser, ?Structure $structure = null): SolidaryUser
     {
         $solidaryUserstructure = null;
         if (!is_null($structure)) {
@@ -1672,7 +1682,7 @@ class UserManager
      *
      * @return null|User
      */
-    public function getPaymentProfile(User $user = null)
+    public function getPaymentProfile(?User $user = null)
     {
         if (is_null($user)) {
             $user = $this->userRepository->findOneBy(['email' => $this->security->getUser()->getUsername()]);
@@ -1738,7 +1748,7 @@ class UserManager
     {
         foreach ($user->getSsoAccounts() as $ssoAccount) {
             /**
-             * @var ssoAccount $ssoAccount
+             * @var SsoAccount $ssoAccount
              */
             if ($ssoAccount->getSsoProvider() == $ssoUser->getProvider()) {
                 $ssoAccount->setSsoId($ssoUser->getSub());
@@ -1996,9 +2006,9 @@ class UserManager
      *
      * @return User
      */
-    public function updateLanguage(User $user)
+    public function updateLanguage(User $user, string $code): User
     {
-        $language = $this->languageRepository->findOneBy(['code' => $user->getLanguage()->getCode()]);
+        $language = $this->languageRepository->findOneBy(['code' => $code]);
         $user->setLanguage($language);
 
         $this->entityManager->persist($user);

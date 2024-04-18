@@ -1107,11 +1107,11 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var null|Language the language of the user
      *
-     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
      *
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
-     * @Groups({"read","readUser","write"})
+     * @Groups({"read","readUser"})
      *
      * @MaxDepth(1)
      */
@@ -1905,6 +1905,17 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write"})
      */
     private $phoneCode;
+
+    /**
+     * Signup referral if there is any.
+     *
+     * @ORM\Column(type="string", length=50, nullable=true)
+     *
+     * @Groups({"aRead","readUser", "write"})
+     *
+     * @var null|string
+     */
+    private $referral;
 
     public function __construct($status = null)
     {
@@ -3331,9 +3342,7 @@ class User implements UserInterface, EquatableInterface
         return $this->email;
     }
 
-    public function eraseCredentials()
-    {
-    }
+    public function eraseCredentials() {}
 
     public function isEqualTo(UserInterface $user)
     {
@@ -4269,6 +4278,18 @@ class User implements UserInterface, EquatableInterface
     public function setGratuity(?bool $gratuity): self
     {
         $this->gratuity = $gratuity;
+
+        return $this;
+    }
+
+    public function getReferral(): ?string
+    {
+        return $this->referral;
+    }
+
+    public function setReferral(?string $referral): self
+    {
+        $this->referral = $referral;
 
         return $this;
     }

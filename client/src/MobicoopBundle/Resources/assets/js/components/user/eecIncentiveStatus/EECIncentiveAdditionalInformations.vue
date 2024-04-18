@@ -58,6 +58,7 @@
         v-if="isTabView"
         :eec-instance="eecInstance"
         :eec-subscriptions="eecSubscriptions"
+        :platform="platform"
       />
       <EECIncentiveFollowUp
         v-else
@@ -106,7 +107,11 @@ export default {
     eecSubscriptions: {
       type: Object,
       default: () => ({})
-    }
+    },
+    platform: {
+      type: String,
+      default: ""
+    },
   },
   data() {
     return {

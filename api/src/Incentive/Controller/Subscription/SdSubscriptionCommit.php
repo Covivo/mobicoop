@@ -17,6 +17,7 @@ class SdSubscriptionCommit extends SubscriptionCommit
         $carpoolProof = $this->_em->getRepository(CarpoolProof::class)->find($this->_request->get('carpool_proof'));
 
         $pushOnlyMode = boolval($this->_request->get('push_only'));
+        $noResetMode = boolval($this->_request->get('no_reset'));
 
         if (is_null($carpoolProof)) {
             throw new NotFoundHttpException('The requested journey (CarpoolProof) was not found');
@@ -26,7 +27,7 @@ class SdSubscriptionCommit extends SubscriptionCommit
             throw new BadRequestHttpException('A journey can initiate a subscription only if the user associated with the subscription is the one who posted the trip');
         }
 
-        $this->_subscriptionManager->commitSubscription($subscription, $carpoolProof, $pushOnlyMode);
+        $this->_subscriptionManager->commitSubscription($subscription, $carpoolProof, $pushOnlyMode, $noResetMode);
 
         return $subscription;
     }

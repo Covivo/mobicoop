@@ -48,7 +48,8 @@
   "yes": "bai",
   "save": "Erregistratu",
   "homeTown": {
-    "label": "Bizilekuaren hiria"
+    "label": "Bizilekuaren hiria",
+    "hint": "Your home address will make your ad publications and researchs easier."
   },
   "birthDay": {
     "errors": {

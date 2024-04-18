@@ -428,7 +428,7 @@ class Community
      *
      * @ApiProperty(push=true)
      *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="communities")
      *
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
@@ -443,7 +443,7 @@ class Community
      *
      * @Assert\NotBlank(groups={"write"})
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true, inversedBy="community")
      *
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
@@ -632,11 +632,11 @@ class Community
     private $userDelegate;
 
     /**
-     * @var int The number of members to reach
+     * @var null|int The number of members to reach
      *
      * @ORM\Column(type="integer", nullable=true)
      *
-     * @Groups({"aRead", "awrite"})
+     * @Groups({"aRead", "aWrite"})
      */
     private $target;
 
@@ -1135,9 +1135,11 @@ class Community
         return $this->target;
     }
 
-    public function setTarget($target)
+    public function setTarget(?int $target): self
     {
         $this->target = $target;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS

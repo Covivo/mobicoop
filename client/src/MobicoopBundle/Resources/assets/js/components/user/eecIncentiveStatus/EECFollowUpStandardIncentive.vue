@@ -73,7 +73,12 @@
               :key="j"
               cols="12"
             >
-              <a :href="action.href">{{ action.title }}</a>
+              <v-btn
+                text
+                @click="onActionDemand(action)"
+              >
+                {{ action.title }}
+              </v-btn>
             </v-col>
           </v-row>
           <v-row v-else-if="panel.error()">
@@ -82,12 +87,44 @@
               :key="j"
               cols="12"
             >
-              <a :href="action.href">{{ action.title }}</a>
+              <v-btn
+                text
+                @click="onActionDemand(action)"
+              >
+                {{ action.title }}
+              </v-btn>
             </v-col>
           </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title v-if="dialogTitle">
+          {{ dialogTitle }}
+        </v-card-title>
+        <v-card-text>
+          <v-row
+            align="center"
+            class="mx-0"
+            v-html="dialogContent"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-row class="d-flex justify-end mx-0 pr-3 pb-3">
+            <v-btn
+              color="primary"
+              @click="dialog = false"
+            >
+              {{ $t('dialogs.close-btn') }}
+            </v-btn>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -133,10 +170,17 @@ export default {
       type: Number,
       default: 0
     },
+    platform: {
+      type: String,
+      default: ""
+    },
   },
   data() {
     const _this = this;
     return  {
+      dialog: false,
+      dialogContent: null,
+      dialogTitle: null,
       panels: {
         subscribe: {
           title: this.$t('improvedIncentive.panels.subscribe.title'),
@@ -225,7 +269,11 @@ export default {
               {
                 active: true,
                 title: this.$t('improvedIncentive.panels.carpool.actions.error[1].title'),
-                href: this.$t('improvedIncentive.panels.carpool.actions.error[1].href')
+                target: {
+                  "type": "dialog",
+                  "title": this.$t('improvedIncentive.panels.carpool.actions.error[1].dialogTitle'),
+                  "content": this.$t('improvedIncentive.panels.carpool.actions.error[1].dialogContent', {platform: this.platform})
+                }
               },
               {
                 active: true,
@@ -336,6 +384,18 @@ export default {
     },
   },
   methods: {
+    onActionDemand(action) {
+      if (action.target && action.target.type && 'dialog' === action.target.type) {
+        this.dialogTitle = action.target.title
+        this.dialogContent = action.target.content
+
+        this.dialog = true
+
+        return
+      }
+
+      location.href = action.href
+    }
   }
 }
 </script>

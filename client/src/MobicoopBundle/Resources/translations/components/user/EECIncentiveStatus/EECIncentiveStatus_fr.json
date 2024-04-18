@@ -101,7 +101,7 @@
       "carpool": {
         "title": "Réaliser un trajet",
         "texts": {
-          "default": "Vous devez réaliser un covoiturage avec un passager. Pour qu’il soit pris en compte pour la prime, il devra être certifié par une preuve de covoiturage&nbsp;:<ol><li>Numéros de téléphone validés pour  le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Identités bancaires (RIB + pièce d’identité en cours de validité) données par le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Points de départ et d'arrivée certifiés par le conducteur <span class=\"font-weight-bold\">ET</span> le passager avec la géolocalisation activée.</li></ol>",
+          "default": "<p>Vous devez réaliser un covoiturage en tant que conducteur. Pour qu’il soit pris en compte pour la prime, il devra être certifié par une preuve de covoiturage&nbsp;:</p><ol><li>Numéros de téléphone validés pour  le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Identités bancaires (RIB + pièce d’identité en cours de validité) données par le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Points de départ et d'arrivée certifiés par le conducteur <span class=\"font-weight-bold\">ET</span> le passager avec la géolocalisation activée.</li></ol><p>En respectant ces étapes, votre trajet sera validé par le Registre de Preuve de Covoiturage en \"classe C\" (<span class=\"font-italic\">détails disponibles via votre export de covoiturages acceptés</span>).</p>",
           "success": "Votre covoiturage a bien été enregistré. Afin de recevoir votre prime, assurez-vous d’avoir bien renseigné votre numéro de téléphone, votre pièce d’identité et votre RIB.<br /><span class=\"font-weight-bold\">Attention</span> : votre passager doit également renseigner son numéro de téléphone, sa pièce d’identité et son RIB.",
           "error": "Votre preuve de covoiturage n’est pas conforme.<ul><li>Le passager n’a pas validé son numéro de téléphone.</li><li>Le passager n’a pas complété son identité bancaire (RIB et pièce d’identité).</li><li>Il manque une certification géolocalisée d’un point de prise en charge ou de dépose du passager ou conducteur.</li><li>Les certifications géolocalisées du point de prise en charge ou du point de dépose étaient trop espacées entre le passager et le conducteur.</li><li>Une erreur technique est intervenue dans la communication avec le Registre de Preuve de Covoiturage.</li></ul>"
         },
@@ -113,7 +113,8 @@
             },
             {
               "title": "Certifier un covoiturage",
-              "href": "/"
+              "dialogTitle": "Certification géolocalisée de trajet",
+              "dialogContent": "<p>Pour certifier un trajet afin de la comptabiliser pour la prime CEE, il faut utiliser un téléphone mobile.</p><p>Activer la géolocalisation au moment du départ et de la dépose du covoiturage depuis l’application {platform}. Au moment de la montée du passager dans le véhicule du conducteur, passager et conducteurs doivent cliquer sur «&nbsp;certifier prise en charge&nbsp;» depuis la page Covoiturages acceptés de votre appli. Puis à la fin du trajet, chacun doit aussi cliquer sur «&nbsp;certifier dépose&nbsp;».</p>"
             },
             {
               "title": "Nous contacter",
@@ -125,15 +126,17 @@
       "payAndValidate": {
         "title": "Valider paiement et preuve",
         "texts": {
-          "default": "Votre passager doit payer électroniquement le covoiturage. Une fois votre trajet effectué, votre preuve de covoiturage est automatiquement envoyé au Registre de Preuve de Covoiturage pour validation.<br />Votre prime vous sera reversée une fois cette preuve validée et le paiement électronique reçu.",
+          "default": "<p>Votre passager doit payer électroniquement le covoiturage.<br />Une fois votre trajet effectué, votre preuve de covoiturage est automatiquement envoyée au Registre de Preuve de Covoiturage pour validation. Votre trajet doit être de \"classe C\" pour être comptabilisé en vue de la prime (<span class=\"font-italic\">détails disponibles via votre export de covoiturages acceptés</span>).<br />Une fois cette preuve validée et le paiement électronique reçu, la prime vous sera reversée sous 3 mois.</p>",
           "success": "Bravo, votre passager a bien payé le covoiturage et  la preuve du covoiturage a  été réalisée&nbsp;!<br />Elle a été envoyée au Registre de Preuve de Covoiturage, où elle est cours de validation.",
           "error": "Votre passager n’a pas payé électroniquement le covoiturage ou alors votre preuve de covoiturage n’a pas été validée par le Registre de Preuve de Covoiturage."
         },
         "actions": {
-          "error": [{
-            "title": "Republier une annonce",
-            "href": "/covoiturage/publierannonce"
-          }]
+          "error": [
+            {
+              "title": "Republier une annonce",
+              "href": "/covoiturage/publierannonce"
+            }
+          ]
         }
       },
       "publish": {
@@ -144,14 +147,18 @@
           "error": "Vous ne trouvez pas de passager correspondant à votre trajet ? Pas de panique ! Essayez de modifier l’horaire ou le lieu de prise en charge et/ou de dépose."
         },
         "actions": {
-          "success": [{
-            "title": "Publier une annonce",
-            "href": "/covoiturage/publierannonce"
-          }],
-          "error": [{
-            "title": "Republier une annonce",
-            "href": "/covoiturage/publierannonce"
-          }]
+          "success": [
+            {
+              "title": "Publier une annonce",
+              "href": "/covoiturage/publierannonce"
+            }
+          ],
+          "error": [
+            {
+              "title": "Republier une annonce",
+              "href": "/covoiturage/publierannonce"
+            }
+          ]
         }
       },
       "receive": {
@@ -174,14 +181,18 @@
           "error": "Une erreur est survenue à l’inscription."
         },
         "actions": {
-          "success": [{
-            "title": "Publier une annonce",
-            "href": "/covoiturage/publierannonce"
-          }],
-          "error": [{
-            "title": "Recommencer l’inscription",
-            "href": "/covoiturage/publierannonce"
-          }]
+          "success": [
+            {
+              "title": "Publier une annonce",
+              "href": "/covoiturage/publierannonce"
+            }
+          ],
+          "error": [
+            {
+              "title": "Recommencer l’inscription",
+              "href": "/covoiturage/publierannonce"
+            }
+          ]
         }
       },
       "validate": {
@@ -192,10 +203,12 @@
           "error": "Votre preuve de covoiturage n’a pas été validée par le Registre de Preuve de Covoiturage."
         },
         "actions": {
-          "error": [{
-            "title": "Certifier un nouveau covoiturage",
-            "href": ""
-          }]
+          "error": [
+            {
+              "title": "Certifier un nouveau covoiturage",
+              "href": ""
+            }
+          ]
         }
       }
     }
@@ -206,9 +219,17 @@
   "EEC-form": "prime-covoiturage",
   "EEC-subscription-snackbar": {
     "success": "La souscription aux aides a été effectuée.",
-    "failed": "La souscription aux aides a échouée.",
-    "longDistanceFailed": "La souscription à l'aide pour les trajets longue distance n'a pas pu être réalisée.",
-    "shortDistanceFailed": "La souscription à l'aide pour les trajets courte distance n'a pas pu être réalisée."
+    "failed": "La souscription aux aides a échoué.",
+    "errors": {
+      "eec_user_sso_request_error": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
+      "eec_user_sso_account_incomplete": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
+      "eec_user_sso_unknowned": "Il y a eu un problème pendant l'association des comptes utilisateur entre France Connect/moBConnect et Mobicoop.",
+      "eec_subscriptionType_unallowed": "Le type d'incitation demandé n'est pas disponible.",
+      "eec_subscriptionType_long_allready_subscribed": "Vous avez déjà souscrit à l'incitation longue distance.",
+      "eec_subscriptionType_short_allready_subscribed": "Vous avez déjà souscrit à l'incitation courte distance.",
+      "eec_subscription_long_unfinalized": "La demande de souscription pour l'incitation courte distance n'a pas aboutie.",
+      "eec_subscription_short_unfinalized": "La demande de souscription pour l'incitation longue distance n'a pas aboutie."
+    }
   },
   "EEC-eligibility": {
     "alert": {
@@ -230,7 +251,8 @@
       "close-btn": {
         "text": "Fermer"
       }
-    }
+    },
+    "close-btn": "Fermer"
   },
   "expirationText": "Vous avez jusqu’au {date} pour réaliser les trajets restants.",
   "shortExpiredText": "La période légale de 3 mois pour compléter vos trajets courte distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant.",

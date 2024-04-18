@@ -519,8 +519,9 @@
               :palette="geoCompletePalette"
               :chip="geoCompleteChip"
               :show-name="false"
-              :restrict="['locality']"
+              :restrict="['housenumber', 'street']"
               :label="$t('homeTown.label')"
+              :hint="$t('homeTown.hint')"
               :address="homeAddress"
               @address-selected="homeAddressSelected"
             />
@@ -569,6 +570,7 @@
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
       :is-after-eec-subscription="isAfterEecSubscription"
+      :eec-sso-auth-error="eecSsoAuthError"
       :api-uri="apiUri"
       :platform="platform"
       @changeTab="changeTab"
@@ -805,6 +807,10 @@ export default {
     isAfterEecSubscription: {
       type: Boolean,
       default: false
+    },
+    eecSsoAuthError: {
+      type: String,
+      default: null
     },
     apiUri: {
       type: String,
@@ -1057,6 +1063,7 @@ export default {
     homeAddressSelected(address){
       this.homeAddress = address;
       this.disabledAddress = false;
+      // this.$emit('updateUser', {"homeAddress": this.homeAddress})
     },
     save (date) {
       this.$refs.menu.save(date)
@@ -1136,6 +1143,7 @@ export default {
           this.homeAddress = res.data;
           this.loadingAddress = false;
           this.disabledAddress = true;
+          this.$emit('updateUser', {"homeAddress": this.homeAddress})
         });
     },
     avatarDelete () {

@@ -719,7 +719,7 @@
       </v-btn>
 
       <v-tooltip
-        v-if="valid"
+        v-if="isMainBtnDisplayed"
         bottom
       >
         <template v-slot:activator="{on}">
@@ -737,7 +737,7 @@
             </v-btn>
           </div>
         </template>
-        <span>{{ $t('stepper.buttons.notValid') }}</span>
+        <span v-html="getTooltip" />
       </v-tooltip>
     </v-row>
 
@@ -1094,21 +1094,23 @@ export default {
       // regular schedules validation
       if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
 
+      // Price to high. Forbidden to post
+      if(this.priceForbidden) return false;
+
+      // Specifics terms
+      if(!this.checkboxDrivingLicence && this.driver && this.specificTerms) return false;
+      if(!this.checkboxEmployer && this.driver && this.specificTerms) return false;
+      if(!this.checkboxInssurance && this.driver && this.specificTerms) return false;
+
       // Step 2 regular schedule no return without outward
       if(this.regular && this.schedules){
         return this.isOutwardSchedulesValid();
       }
 
-      // Price to high. Forbidden to post
-      if(this.priceForbidden) return false;
       // We are in update mode and initialization is not finished yet
       if (this.isValidUpdate && this.oldUpdateObject == null) return false;
       // update mode and there are no changes
       if (!this.isUpdated ) return false;
-
-      if(!this.checkboxDrivingLicence && this.driver && this.specificTerms) return false;
-      if(!this.checkboxEmployer && this.driver && this.specificTerms) return false;
-      if(!this.checkboxInssurance && this.driver && this.specificTerms) return false;
 
       // validation ok
       return true;
@@ -1202,6 +1204,37 @@ export default {
     },
     itemsSeatNumber() {
       return [...Array(this.seatNumber+1).keys()].slice(1);
+    },
+    getTooltip() {
+      switch (true) {
+      case !this.isUpdated:
+        return this.$t('stepper.buttons.unUpdated')
+      case this.priceForbidden:
+        return this.$t('stepper.buttons.unacceptableParticipation')
+      case this.distance<=0 || this.duration<=0 || !this.origin || !this.destination || !this.route:
+        return this.$t('stepper.buttons.incorrectRouteDefinition')
+      case !this.regular && !(this.outwardDate && this.outwardTime):
+        return this.$t('stepper.buttons.punctualOutwardDate')
+      case !this.regular && this.returnTrip && !(this.returnDate && this.returnTime):
+        return this.$t('stepper.buttons.punctualReturnTripOutwardDate')
+      case this.regular && !this.schedules:
+        return this.$t('stepper.buttons.regularSchedules')
+      case this.isValidUpdate && this.oldUpdateObject == null:
+        return this.$t('stepper.buttons.dataProcessing')
+      case !this.checkboxDrivingLicence && this.driver && this.specificTerms:
+      case !this.checkboxEmployer && this.driver && this.specificTerms:
+      case !this.checkboxInssurance && this.driver && this.specificTerms:
+        return this.$t('stepper.buttons.requirments')
+
+      default: return this.$t('stepper.buttons.notValid');
+      }
+    },
+    isMainBtnDisplayed() {
+      return (
+        (this.step === 7 && this.driver && this.step !== 5 && !this.solidaryExclusive)
+        || (this.step === 5 && !this.driver && !this.solidaryExclusive)
+        || (this.step === 6 && this.solidaryExclusive)
+      )
     }
   },
   watch: {

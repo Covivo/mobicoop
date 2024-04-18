@@ -89,6 +89,7 @@
                   :carpool-settings-display="carpoolSettingsDisplay"
                   :cee-display="ceeDisplay"
                   :is-after-eec-subscription="isAfterEecSubscription"
+                  :eec-sso-auth-error="eecSsoAuthError"
                   :api-uri="apiUri"
                   :genders-list="gendersList"
                   :eec-instance="eecInstance"
@@ -139,6 +140,8 @@
                   :geo-complete-palette="geoCompletePalette"
                   :geo-complete-chip="geoCompleteChip"
                   :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
+                  :update-current-home-address="updateCurrentHomeAddress"
+                  @currentHomeAddressSetted="currentHomeAddressSetted"
                 />
               </v-tab-item>
               <v-tab
@@ -308,6 +311,10 @@ export default {
       type: Boolean,
       default: false
     },
+    eecSsoAuthError: {
+      type: String,
+      default: null
+    },
     apiUri: {
       type: String,
       default: null
@@ -330,7 +337,8 @@ export default {
       modelTabsV:(this.tabDefault !== "") ? this.tabDefault : "myAds",
       modelTabsH:(this.selectedTab !== "") ? this.selectedTab : "myAccount",
       publishedAds: {},
-      acceptedAds: {}
+      acceptedAds: {},
+      updateCurrentHomeAddress: false
     }
   },
   computed:{
@@ -361,7 +369,13 @@ export default {
     updateUser(e) {
       for (const property in e) {
         this.user[property] = e[property];
+        if(property=="homeAddress"){
+          this.updateCurrentHomeAddress = true;
+        }
       }
+    },
+    currentHomeAddressSetted(){
+      this.updateCurrentHomeAddress = false;
     }
   }
 }

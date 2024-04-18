@@ -6,12 +6,14 @@
     <v-snackbar
       v-model="snackbar.displayed"
       :color="snackbar.color"
+      :multi-line="snackbar.multiLine"
+      :timeout="snackbar.timeout"
       top
     >
-      {{ snackbar.text }}
+      <p v-html="snackbar.text" />
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="black"
+          color="white"
           text
           v-bind="attrs"
           @click="snackbar.displayed = false"
@@ -32,6 +34,7 @@
         v-else
         :eec-instance="eecInstance"
         :eec-subscriptions="subscriptions"
+        :platform="platform"
         @changeTab="changeTab"
       />
     </div>
@@ -85,6 +88,10 @@ export default {
       type: Boolean,
       default: false
     },
+    eecSsoAuthError: {
+      type: String,
+      default: null
+    },
     apiUri: {
       type: String,
       default: null
@@ -102,7 +109,9 @@ export default {
       snackbar: {
         color: 'error',
         displayed: false,
+        multiLine: false,
         text: null,
+        timeout: 5000,
       },
     }
   },
@@ -147,22 +156,23 @@ export default {
     afterEECSubscriptionValidation() {
       if (this.isAfterEecSubscription) {
         switch (true) {
-        case null !== this.subscriptions.longDistanceSubscription.journeys && null !== this.subscriptions.shortDistanceSubscription.journeys:
-          this.snackbar.color = 'success';
-          this.snackbar.text = this.$t('EEC-subscription-snackbar.success');
-          break;
-        case null === this.subscriptions.longDistanceSubscription.journeys && null !== this.subscriptions.shortDistanceSubscription.journeys:
-          this.snackbar.text = this.$t('EEC-subscription-snackbar.longDistanceFailed');
-          break;
-        case null !== this.subscriptions.longDistanceSubscription.journeys && null === this.subscriptions.shortDistanceSubscription.journeys:
-          this.snackbar.text = this.$t('EEC-subscription-snackbar.shortDistanceFailed');
-          break;
+        case this.eecInstance.ldAvailable && this.eecInstance.sdAvailable && (!this.subscriptions.longDistanceSubscription || !this.subscriptions.longDistanceSubscription):
+        case this.eecInstance.ldAvailable && !this.subscriptions.longDistanceSubscription:
+        case this.eecInstance.sdAvailable && !this.subscriptions.shortDistanceSubscription:
+          this.snackbar.multiLine = true
+          this.snackbar.text = `<p class="font-weight-bold">${this.$t('EEC-subscription-snackbar.failed')}</p><p>${this.$t(`EEC-subscription-snackbar.errors.${this.eecSsoAuthError}`)}</p>`
+          this.snackbar.timeout = -1
+          break
+
         default:
-          this.snackbar.text = this.$t('EEC-subscription-snackbar.failed');
-          break;
+          this.snackbar.color = 'success'
+          this.snackbar.multiLine = false
+          this.snackbar.text = this.$t('EEC-subscription-snackbar.success')
+          this.snackbar.timeout = 5000
+          break
         }
 
-        this.snackbar.displayed = true;
+        this.snackbar.displayed = true
       }
     }
   },

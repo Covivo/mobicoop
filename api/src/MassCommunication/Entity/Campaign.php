@@ -55,6 +55,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
+ *              "security"="is_granted('campaign_list',object)",
  *              "swagger_context" = {
  *                  "tags"={"Mass Communication"}
  *              }

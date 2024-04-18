@@ -43,9 +43,6 @@ class CurlDataProvider
 
     /**
      * Constructor.
-     *
-     * @param string $uri
-     * @param string $resource Resource name for normal resource
      */
     public function __construct(?string $url = null)
     {
@@ -59,7 +56,7 @@ class CurlDataProvider
         $this->_url = $url;
     }
 
-    public function get(array $params = null, array $headers = null, string $body): Response
+    public function get(?array $params = null, ?array $headers = null, ?string $body = null): Response
     {
         try {
             $curl = curl_init();
@@ -81,7 +78,7 @@ class CurlDataProvider
         return new Response();
     }
 
-    public function post(array $headers = null, string $body): Response
+    public function post(?array $headers = null, string $body): Response
     {
         try {
             $curl = curl_init();
@@ -99,7 +96,7 @@ class CurlDataProvider
         return new Response();
     }
 
-    public function delete(array $headers = null): Response
+    public function delete(?array $headers = null): Response
     {
         try {
             $curl = curl_init();
@@ -117,7 +114,7 @@ class CurlDataProvider
         return new Response();
     }
 
-    private function _initRequest($curl, string $method, array $headers = null, string $body = null)
+    private function _initRequest($curl, string $method, ?array $headers = null, ?string $body = null)
     {
         $options = [
             CURLOPT_URL => $this->_url,

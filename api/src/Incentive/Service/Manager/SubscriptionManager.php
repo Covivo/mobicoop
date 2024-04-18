@@ -250,9 +250,9 @@ class SubscriptionManager extends MobConnectManager
      * @param CarpoolProof|Proposal                              $referenceObject
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
      */
-    public function commitSubscription($subscription, $referenceObject, bool $pushOnlyMode = false): void
+    public function commitSubscription($subscription, $referenceObject, bool $pushOnlyMode = false, bool $noResetMode = false): void
     {
-        if ($subscription->isCommited()) {
+        if (!$noResetMode && $subscription->isCommited()) {
             $stage = new ResetSubscription($this->_em, $subscription);
             $stage->execute();
         }
@@ -394,18 +394,28 @@ class SubscriptionManager extends MobConnectManager
 
     /**
      * STEP 5 - Create a subscription from it's type.
+     *
+     * @throws \LogicException
      */
     protected function _createSubscription(string $subscriptionType): void
     {
-        if (
-            Subscription::isTypeAllowed($subscriptionType)
-            && $this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()
-            && is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())
-            && $this->isDriverAccountReadyForSubscription($subscriptionType)
-        ) {
-            $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
-            $stage->execute();
+        if (!Subscription::isTypeAllowed($subscriptionType)) {
+            throw new \LogicException('eec_subscriptionType_unallowed');
         }
+
+        if (!is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())) {
+            throw new \LogicException('eec_subscriptionType_'.$subscriptionType.'_allready.subscribed');
+        }
+
+        if (
+            !$this->_instanceManager->{'is'.ucfirst($subscriptionType).'SubscriptionAvailable'}()
+            || !$this->isDriverAccountReadyForSubscription($subscriptionType)
+        ) {
+            return;
+        }
+
+        $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
+        $stage->execute();
     }
 
     /**

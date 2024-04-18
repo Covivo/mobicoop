@@ -64,7 +64,7 @@ class CreateSubscription extends Stage
                 true
             );
 
-            return;
+            throw new \LogicException('eec_subscription_'.$this->_subscriptionType.'_unfinalized');
         }
 
         $subscriptionClass = 'App\Incentive\Entity\\'.ucfirst($this->_subscriptionType).'DistanceSubscription';

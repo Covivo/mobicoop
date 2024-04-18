@@ -26,7 +26,7 @@ class CommitSDSubscription extends CommitSubscription
 
     public function execute(): bool
     {
-        if (!CarpoolProofValidator::isEecCompliant($this->_carpoolProof)) {
+        if (!CarpoolProofValidator::isCarpoolProofDataComplete($this->_carpoolProof)) {
             return false;
         }
 
