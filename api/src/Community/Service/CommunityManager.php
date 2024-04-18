@@ -38,6 +38,7 @@ use App\Community\Entity\CommunityMembersList;
 use App\Community\Entity\CommunitySecurity;
 use App\Community\Entity\CommunityUser;
 use App\Community\Event\CommunityCreatedEvent;
+use App\Community\Event\CommunityLeftEvent;
 use App\Community\Event\CommunityMembershipPendingEvent;
 use App\Community\Event\CommunityNewMemberEvent;
 use App\Community\Event\CommunityNewMembershipRequestEvent;
@@ -199,8 +200,6 @@ class CommunityManager
     /**
      * Check if a community already exists with this name.
      *
-     * @param Community $community
-     *
      * @return null|Community
      */
     public function exists(?string $name)
@@ -229,7 +228,7 @@ class CommunityManager
      *
      * @return null|Community
      */
-    public function getCommunity(int $communityId, User $user = null)
+    public function getCommunity(int $communityId, ?User $user = null)
     {
         if ($community = $this->communityRepository->find($communityId)) {
             $community->setUrlKey($this->generateUrlKey($community));
@@ -263,7 +262,7 @@ class CommunityManager
             }
         }
 
-        return new mapsAds($mapsAds);
+        return new MapsAds($mapsAds);
     }
 
     /**
@@ -286,8 +285,6 @@ class CommunityManager
 
     /**
      * retrive communities owned by a user.
-     *
-     * @return array
      */
     public function getOwnedCommunities(int $userId): ?array
     {
@@ -481,8 +478,7 @@ class CommunityManager
     /**
      * Get the MCommunities.
      *
-     * @param UserInterface $user        The current user
-     * @param mixed         $communities
+     * @param mixed $communities
      *
      * @return array The communities
      */
@@ -525,9 +521,6 @@ class CommunityManager
         return null;
     }
 
-    /**
-     * @return Community
-     */
     public function leaveCommunity(Community $community, User $user): ?Community
     {
         $communityUser = $this->communityUserRepository->findBy(['community' => $community, 'user' => $user]);
@@ -545,8 +538,12 @@ class CommunityManager
      */
     public function deleteCommunityUser(CommunityUser $communityUser)
     {
+        $user = $communityUser->getUser();
+        $community = $communityUser->getCommunity();
         $this->entityManager->remove($communityUser);
         $this->entityManager->flush();
+        $event = new CommunityLeftEvent($user, $community);
+        $this->eventDispatcher->dispatch(CommunityLeftEvent::NAME, $event);
     }
 
     /**

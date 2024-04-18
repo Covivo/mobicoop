@@ -72,9 +72,12 @@ use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
 use App\User\Event\UserDeleteAccountWasPassengerEvent;
+use App\User\Event\UserDrivingLicenceNumberUpdateEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
+use App\User\Event\UserHomeAddressUpdateEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
+use App\User\Event\UserPhoneUpdateEvent;
 use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Event\UserUpdatedSelfEvent;
@@ -647,6 +650,9 @@ class UserManager
             $emailUpdate = true;
         }
 
+        $drivingLicenceNumberUpdate = $user->getDrivingLicenceNumber() != $user->getOldDrivingLicenceNumber();
+        $homeAddressUpdate = $user->getHomeAddress() != $user->getOldHomeAddress();
+
         // we add/remove structures associated to user
         if (!is_null($user->getSolidaryStructures())) {
             // We initialize an arry with the ids of the user's structures
@@ -722,6 +728,9 @@ class UserManager
             $action = $this->actionRepository->findOneBy(['name' => 'user_phone_updated']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+
+            $eecEvent = new UserPhoneUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserPhoneUpdateEvent::NAME, $event);
         }
 
         //  we dispatch the gamification event associated
@@ -729,6 +738,16 @@ class UserManager
             $action = $this->actionRepository->findOneBy(['name' => 'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
+
+        if ($homeAddressUpdate) {
+            $eecEvent = new UserHomeAddressUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserHomeAddressUpdateEvent::NAME, $eecEvent);
+        }
+
+        if ($drivingLicenceNumberUpdate) {
+            $eecEvent = new UserDrivingLicenceNumberUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserDrivingLicenceNumberUpdateEvent::NAME, $eecEvent);
         }
 
         // return the user
@@ -2014,8 +2033,6 @@ class UserManager
 
     /**
      * Update user's language.
-     *
-     * @return User
      */
     public function updateLanguage(User $user, string $code): User
     {

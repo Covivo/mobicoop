@@ -110,9 +110,8 @@
           <v-row
             align="center"
             class="mx-0"
-          >
-            {{ dialogContent }}
-          </v-row>
+            v-html="dialogContent"
+          />
         </v-card-text>
         <v-card-actions>
           <v-row class="d-flex justify-end mx-0 pr-3 pb-3">
@@ -170,6 +169,10 @@ export default {
     nbValidatedProofs: {
       type: Number,
       default: 0
+    },
+    platform: {
+      type: String,
+      default: ""
     },
   },
   data() {
@@ -269,7 +272,7 @@ export default {
                 target: {
                   "type": "dialog",
                   "title": this.$t('improvedIncentive.panels.carpool.actions.error[1].dialogTitle'),
-                  "content": this.$t('improvedIncentive.panels.carpool.actions.error[1].dialogContent')
+                  "content": this.$t('improvedIncentive.panels.carpool.actions.error[1].dialogContent', {platform: this.platform})
                 }
               },
               {

@@ -140,6 +140,8 @@
                   :geo-complete-palette="geoCompletePalette"
                   :geo-complete-chip="geoCompleteChip"
                   :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
+                  :update-current-home-address="updateCurrentHomeAddress"
+                  @currentHomeAddressSetted="currentHomeAddressSetted"
                 />
               </v-tab-item>
               <v-tab
@@ -335,7 +337,8 @@ export default {
       modelTabsV:(this.tabDefault !== "") ? this.tabDefault : "myAds",
       modelTabsH:(this.selectedTab !== "") ? this.selectedTab : "myAccount",
       publishedAds: {},
-      acceptedAds: {}
+      acceptedAds: {},
+      updateCurrentHomeAddress: false
     }
   },
   computed:{
@@ -366,7 +369,13 @@ export default {
     updateUser(e) {
       for (const property in e) {
         this.user[property] = e[property];
+        if(property=="homeAddress"){
+          this.updateCurrentHomeAddress = true;
+        }
       }
+    },
+    currentHomeAddressSetted(){
+      this.updateCurrentHomeAddress = false;
     }
   }
 }

@@ -58,6 +58,10 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         ) {
             $data = json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', explode('.', $content->access_token)[1]))), true);
 
+            if (!array_key_exists('identity_provider', $data) || 'franceconnect-particulier' !== $data['identity_provider']) {
+                throw new \LogicException('eec_user_not_france_connected');
+            }
+
             $ssoUser = new SsoUser();
             $ssoUser->setSub((isset($data['sub'])) ? $data['sub'] : null);
             $ssoUser->setEmail((isset($data['email'])) ? $data['email'] : null);

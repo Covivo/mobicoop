@@ -13,8 +13,7 @@ use App\Incentive\Entity\Log\LongDistanceSubscriptionLog;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Service\Definition\LdImproved;
 use App\Incentive\Service\Definition\LdStandard;
-use App\Incentive\Service\Manager\SubscriptionManager;
-use App\Incentive\Validator\CarpoolPaymentValidator;
+use App\Incentive\Validator\SubscriptionValidator;
 use App\Service\AddressService;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -645,9 +644,11 @@ class LongDistanceSubscription extends Subscription
 
     public function updateAddress(): self
     {
-        $this->setStreetAddress();
-        $this->setPostalCode();
-        $this->setAddressLocality();
+        if (!SubscriptionValidator::hasExpired($this) && !SubscriptionValidator::hasBeenVerified($this)) {
+            $this->setStreetAddress();
+            $this->setPostalCode();
+            $this->setAddressLocality();
+        }
 
         return $this;
     }
@@ -924,38 +925,6 @@ class LongDistanceSubscription extends Subscription
             !is_null($this->getStreetAddress())
             && !is_null($this->getPostalCode())
             && !is_null($this->getAddressLocality());
-    }
-
-    /**
-     * Returns if the conditions are required for the subscription to be verified:
-     * - Can not be 'VERIFIEE'
-     * - Can not be expired
-     * - A full address must have been provided
-     * - The associated Journeys can not be empty
-     * - The commitment journey must have been defined
-     * - The carpool payment associated with the commitment journey must have been defined
-     * - The carpool payment associated with the commitment journey must be EEC compliant
-     * - The banking identity must be validated
-     * - The different timestamp tokens must be present.
-     */
-    public function isReadyToVerify(): bool
-    {
-        return
-            SubscriptionManager::STATUS_VALIDATED != $this->getStatus()
-            && !$this->hasExpired()
-            && $this->isAddressValid()
-            && !is_null($this->getUser())
-            && $this->getUser()->hasBankingIdentityValidated()
-            && !$this->getJourneys()->isEmpty()
-            && !is_null($this->getCommitmentProofJourney())
-            && !is_null($this->getCommitmentProofJourney()->getCarpoolPayment())
-            && CarpoolPaymentValidator::isEecCompliant($this->getCommitmentProofJourney()->getCarpoolPayment())
-            && !is_null($this->getIncentiveProofTimestampToken())
-            && !is_null($this->getIncentiveProofTimestampSigningTime())
-            && !is_null($this->getCommitmentProofTimestampToken())
-            && !is_null($this->getCommitmentProofTimestampSigningTime())
-            && !is_null($this->getHonorCertificateProofTimestampToken())
-            && !is_null($this->getHonorCertificateProofTimestampSigningTime());
     }
 
     public function reset(): self
