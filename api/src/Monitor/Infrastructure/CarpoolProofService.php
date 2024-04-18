@@ -1,7 +1,7 @@
 <?php
 
-/**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+/*
+ * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,22 @@
  *    LICENSE
  */
 
-namespace App\Community\Exception;
+namespace App\Monitor\Infrastructure;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Repository\CarpoolProofRepository;
 
-class CommunityException extends NotFoundHttpException {}
+class CarpoolProofService
+{
+    private $_carpoolProofRepository;
+
+    public function __construct(CarpoolProofRepository $carpoolProofRepository)
+    {
+        $this->_carpoolProofRepository = $carpoolProofRepository;
+    }
+
+    public function getLastCarpoolProof(?string $delta = null): ?CarpoolProof
+    {
+        return $this->_carpoolProofRepository->findLastCarpoolProof($delta);
+    }
+}

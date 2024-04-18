@@ -19,10 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Exception;
 
-class DynamicException extends \LogicException
-{
-}
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+class DynamicException extends BadRequestHttpException {}

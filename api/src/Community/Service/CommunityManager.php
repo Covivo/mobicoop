@@ -488,8 +488,12 @@ class CommunityManager
         $temporaryCommunities = [];
 
         foreach ($communities as $community) {
-            if (Community::DOMAIN_VALIDATION === $community->getValidationType() && str_contains($userEmail, $community->getDomain())) {
-                $temporaryCommunities[] = $community;
+            if (Community::DOMAIN_VALIDATION === $community->getValidationType()) {
+                foreach (explode(';', $community->getDomain()) as $domain) {
+                    if (str_contains($userEmail, $domain)) {
+                        $temporaryCommunities[] = $community;
+                    }
+                }
             } elseif (Community::MANUAL_VALIDATION === $community->getValidationType() || Community::AUTO_VALIDATION === $community->getValidationType()) {
                 $temporaryCommunities[] = $community;
             }

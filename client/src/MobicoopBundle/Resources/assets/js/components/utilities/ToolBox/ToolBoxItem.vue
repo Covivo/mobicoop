@@ -56,15 +56,17 @@
               </a>
               <br>
             </div>
-            <a
-              :href="personalizedTextLink"
-              :title="personalizedText"
-              style="text-decoration:none;"
-              class="accent--text body-2"
-              download
-            >
-              {{ personalizedText }}</a>
-            <br>
+            <div v-if="personalizedText">
+              <a
+                :href="personalizedTextLink"
+                :title="personalizedText"
+                style="text-decoration:none;"
+                class="accent--text body-2"
+                download
+              >
+                {{ personalizedText }}</a>
+              <br>
+            </div>
             <a
               :href="link1"
               :title="textLogo1"
@@ -153,6 +155,9 @@ export default {
   data() {
     return {
     }
+  },
+  mounted() {
+    console.log(this.title, this.textDownload);
   }
 };
 </script>
