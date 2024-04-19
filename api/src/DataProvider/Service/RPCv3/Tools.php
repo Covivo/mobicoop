@@ -101,6 +101,8 @@ class Tools
 
     public function getFamilyNameTrunc(string $carpoolerType): string
     {
+        // https://tech.covoiturage.beta.gouv.fr/operateurs/cee.html#schema-openapi
+
         $carpooler = $this->_getCarpooler($carpoolerType);
 
         $familynameTrunc = substr($carpooler->getFamilyName(), 0, self::FAMILY_NAME_TRUNC_LEN);
