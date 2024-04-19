@@ -491,7 +491,7 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Get a User to the provider.
      */
-    public function getUser(int $identifier)
+    public function getUser(string $identifier)
     {
         $this->_auth();
 
@@ -963,7 +963,7 @@ class MangoPayProvider implements PaymentProviderInterface
         return $validationDocument;
     }
 
-    public function getKycDocument(int $kycDocumentId)
+    public function getKycDocument(string $kycDocumentId)
     {
         $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl.'kyc/documents/'.$kycDocumentId.'/');

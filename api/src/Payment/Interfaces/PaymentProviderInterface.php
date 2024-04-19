@@ -127,14 +127,14 @@ interface PaymentProviderInterface
     /**
      * Get a document.
      *
-     * @param int $DocumentId Id of the document
+     * @param string $DocumentId Id of the document
      */
-    public function getDocument(int $DocumentId);
+    public function getDocument(string $DocumentId);
 
     /**
      * Get a kyc document.
      *
-     * @param int $KycDocumentId Id of the kyc document
+     * @param string $KycDocumentId Id of the kyc document
      */
-    public function getKycDocument(int $KycDocumentId);
+    public function getKycDocument(string $KycDocumentId);
 }
