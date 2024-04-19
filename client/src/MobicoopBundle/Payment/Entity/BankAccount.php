@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -34,7 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankAccount implements \JsonSerializable
+class BankAccount implements ResourceInterface, \JsonSerializable
 {
     public const STATUS_INACTIVE = 0;
     public const STATUS_ACTIVE = 1;
