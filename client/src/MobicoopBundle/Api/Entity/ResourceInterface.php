@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Entity;
 
@@ -27,10 +27,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Api\Entity;
  * Resource interface.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 interface ResourceInterface
 {
-    public function getId(): ?int;
-    public function setId(int $id);
 }
