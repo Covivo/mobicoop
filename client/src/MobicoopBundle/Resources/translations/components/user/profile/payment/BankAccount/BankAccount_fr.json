@@ -34,7 +34,7 @@
   "register": "Enregistrer",
   "modalSuppr": {
     "title": "Suppression des coordonnées bancaires ?",
-    "line1": "Vos coordonnées bancaires vont-être supprimée.",
+    "line1": "Vos coordonnées bancaires vont être supprimées.",
     "line2": "Vous ne serez plus en mesure de recevoir de paiement électronique.",
     "line3": "Confirmez-vous cette action ?",
     "yes": "oui",
