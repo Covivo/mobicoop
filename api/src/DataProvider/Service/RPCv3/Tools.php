@@ -103,7 +103,7 @@ class Tools
     {
         $carpooler = $this->_getCarpooler($carpoolerType);
 
-        $familynameTrunc = substr($carpooler->getFamilyName(), 0, self::FAMILY_NAME_TRUNC_LEN);
+        $familynameTrunc = substr($this->_familyNameToUppercase($carpooler->getFamilyName()), 0, self::FAMILY_NAME_TRUNC_LEN);
 
         $diff = self::FAMILY_NAME_TRUNC_LEN - strlen($familynameTrunc);
 
