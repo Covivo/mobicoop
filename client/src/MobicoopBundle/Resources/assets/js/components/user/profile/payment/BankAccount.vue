@@ -272,7 +272,7 @@
 
     <v-dialog
       v-model="dialog"
-      max-width="400"
+      max-width="550"
     >
       <v-card>
         <v-card-title class="headline">
