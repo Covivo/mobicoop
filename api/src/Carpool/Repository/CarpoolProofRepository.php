@@ -155,9 +155,9 @@ class CarpoolProofRepository
 
         $query = $this->repository->createQueryBuilder('cp')
             ->where('cp.status in (:status)')
-            ->orWhere('cp.status = :errorStatus AND cp.createdDate >= :date')
+            ->orWhere('cp.status in (:statusTockeck) AND cp.createdDate >= :date')
             ->setParameter('status', $status)
-            ->setParameter('errorStatus', CarpoolProof::STATUS_ERROR)
+            ->setParameter('statusTockeck', [CarpoolProof::STATUS_ERROR, CarpoolProof::STATUS_EXPIRED])
             ->setParameter('date', $date)
         ;
 
