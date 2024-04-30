@@ -92,7 +92,7 @@
       >
         <v-row v-if="showCheckbox1">
           <v-col>
-            <p>{{ textCheckbox1 }}</p>
+            <p v-html="textCheckbox1" />
             <v-checkbox
               v-model="checkbox1"
               :label="$t('checkboxes.label')"
@@ -102,7 +102,7 @@
         </v-row>
         <v-row v-if="showCheckbox2">
           <v-col>
-            <p>{{ textCheckbox2 }}</p>
+            <p v-html="textCheckbox2" />
             <v-checkbox
               v-model="checkbox2"
               :label="$t('checkboxes.label')"
@@ -111,7 +111,7 @@
         </v-row>
         <v-row v-if="showCheckbox3">
           <v-col>
-            <p>{{ textCheckbox3 }}</p>
+            <p v-html="textCheckbox3" />
             <v-checkbox
               v-model="checkbox3"
               :label="$t('checkboxes.label')"
