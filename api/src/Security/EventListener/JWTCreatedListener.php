@@ -48,7 +48,7 @@ class JWTCreatedListener
      */
     private $_em;
 
-    public function __construct(EntityManagerInterface $em, RequestStack $requestStack, AuthManager $authManager, Security $security, userManager $userManager)
+    public function __construct(EntityManagerInterface $em, RequestStack $requestStack, AuthManager $authManager, Security $security, UserManager $userManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->authManager = $authManager;
@@ -98,6 +98,7 @@ class JWTCreatedListener
 
                 $payload = $event->getData();
                 $payload['exp'] = $expiration->getTimestamp();
+                $payload['id'] = $user->getId();
             }
         }
 

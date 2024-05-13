@@ -1942,6 +1942,24 @@ class User implements UserInterface, EquatableInterface
     private $parentalConsentDate;
 
     /**
+     * @var null|string Token for parental consent
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $parentalConsentToken;
+
+    /**
+     * @var null|string Token for parental consent
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $parentalConsentUuid;
+
+    /**
      * Indicate if the user need the parental consent.
      *
      * @Groups({"aRead","aWrite","readUser","write"})
@@ -4353,6 +4371,30 @@ class User implements UserInterface, EquatableInterface
     public function setParentalConsentDate(?\DateTimeInterface $parentalConsentDate): self
     {
         $this->parentalConsentDate = $parentalConsentDate;
+
+        return $this;
+    }
+
+    public function getParentalConsentToken(): ?string
+    {
+        return $this->parentalConsentToken;
+    }
+
+    public function setParentalConsentToken(?string $parentalConsentToken): self
+    {
+        $this->parentalConsentToken = $parentalConsentToken;
+
+        return $this;
+    }
+
+    public function getParentalConsentUuid(): ?string
+    {
+        return $this->parentalConsentUuid;
+    }
+
+    public function setParentalConsentUuid(?string $parentalConsentUuid): self
+    {
+        $this->parentalConsentUuid = $parentalConsentUuid;
 
         return $this;
     }

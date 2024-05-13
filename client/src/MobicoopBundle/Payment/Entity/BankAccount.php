@@ -57,7 +57,7 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     public const SPECIFIC_CASE = 10;
 
     /**
-     * @var int The id of this bank account
+     * @var string The id of this bank account
      */
     private $id;
 
@@ -82,7 +82,9 @@ class BankAccount implements ResourceInterface, \JsonSerializable
      * @var string The iban number of this bank account
      *
      * @Assert\NotBlank
+     *
      * @Assert\Iban
+     *
      * @Groups({"post"})
      */
     private $iban;
@@ -91,7 +93,9 @@ class BankAccount implements ResourceInterface, \JsonSerializable
      * @var string The bic number of this bank account
      *
      * @Assert\NotBlank
+     *
      * @Assert\Bic
+     *
      * @Groups({"post"})
      */
     private $bic;
@@ -149,12 +153,12 @@ class BankAccount implements ResourceInterface, \JsonSerializable
         $this->images = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function setId(int $id)
+    public function setId(string $id)
     {
         $this->id = $id;
     }

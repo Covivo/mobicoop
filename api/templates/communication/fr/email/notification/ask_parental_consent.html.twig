@@ -1,0 +1,47 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+    <table align="center" style="border-spacing:0;text-align:left;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
+    <tr>
+        <td>
+            <p>Bonjour,</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        {% if  context.user.gender == 1 %}
+            <p>Votre fille <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.familyName|capitalize}}</b>. (née le {{context.user.birthDate|date("d/m/Y")}}) souhaite s'inscrire sur la plateforme {{api_env('EMAILS_PLATFORM_NAME')}} pour faciliter ses déplacements.</p>
+            <p>Votre fille <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.familyName|capitalize}}</b> étant mineure, son inscription a été bloquée et elle a indiqué votre adresse email afin d'obtenir votre autorisation parentale à son utilisation du service.</p>
+        {% elseif context.user.gender == 2 %}
+            <p>Votre fils <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.familyName|capitalize}}</b>. (né le {{context.user.birthDate|date("d/m/Y")}}) souhaite s'inscrire sur la plateforme {{api_env('EMAILS_PLATFORM_NAME')}} pour faciliter ses déplacements.</p>
+            <p>Votre fils <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.familyName|capitalize}}</b> étant mineur, son inscription a été bloquée et il a indiqué votre adresse email afin d'obtenir votre autorisation parentale à son utilisation du service.</p>
+        {% else %}
+            <p>Votre enfant <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.familyName|capitalize}}</b>. (né·e le {{context.user.birthDate|date("d/m/Y")}}) souhaite s'inscrire sur la plateforme {{api_env('EMAILS_PLATFORM_NAME')}} pour faciliter ses déplacements.</p>
+            <p>Votre enfant <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.familyName|capitalize}}</b> étant mineur·e, son inscription a été bloquée et il·elle a indiqué votre adresse email afin d'obtenir votre autorisation parentale à son utilisation du service.</p>
+        {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Pour donner votre autorisation parentale à ce que {{context.user.givenName|capitalize}} utilise {{api_env('EMAILS_PLATFORM_NAME')}}, il vous suffit de copier le code ci-dessous dans un court formulaire accessible via le bouton "Donner son autorisation parentale". Ce court formulaire vous donnera accès aux bonnes pratiques recommandées pour l'usage des services de {{api_env('EMAILS_PLATFORM_NAME')}}.</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><b>Code d'autorisation parentale :</b>{{context.user.parentalConsentToken}}</p>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <button type="submit" style="background-color: {{api_env('EMAILS_COLOR_SECONDARY')}}; border: none;  padding: 15px 32px; text-align: center; font-size: 16px; margin: 4px 2px; border-radius: 50px;"><a style="text-decoration: none; color: white;" href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/autorisation-parentale/{{context.user.parentalConsentUuid}}"> Donner son autorisation parentale</a></button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>En vous remerciant,</p>
+            <p>L'équipe {{api_env('EMAILS_PLATFORM_NAME')}}.</p>
+        </td>
+    </tr>
+    </table>
+{% endblock %}

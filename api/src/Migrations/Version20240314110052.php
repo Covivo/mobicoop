@@ -10,23 +10,20 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240326092856 extends AbstractMigration
+final class Version20240314110052 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE mass DROP INDEX IDX_6C035B66FDA7B0BF, ADD UNIQUE INDEX UNIQ_6C035B66FDA7B0BF (community_id)');
-        $this->addSql('ALTER TABLE mass_person DROP INDEX IDX_75908575A76ED395, ADD UNIQUE INDEX UNIQ_75908575A76ED395 (user_id)');
+        $this->addSql('INSERT INTO `action` (`id`, `name`, `position`) VALUES (139, \'ask_parental_consent\', 0);');
+        $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_body`, `user_active_default`, `user_editable`, `active`, `position`) VALUES (174, 139, 2, null, 1, 0, 1, 0);');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
-
-        $this->addSql('ALTER TABLE mass DROP INDEX UNIQ_6C035B66FDA7B0BF, ADD INDEX IDX_6C035B66FDA7B0BF (community_id)');
-        $this->addSql('ALTER TABLE mass_person DROP INDEX UNIQ_75908575A76ED395, ADD INDEX IDX_75908575A76ED395 (user_id)');
     }
 }

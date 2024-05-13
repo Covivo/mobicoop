@@ -498,6 +498,9 @@ class NotificationManager
                     break;
 
                 case User::class:
+                    if (!is_null($recipient->getLegalGuardianEmail())) {
+                        $email->setRecipientEmail($recipient->getLegalGuardianEmail());
+                    }
                     $titleContext = [];
                     $bodyContext = ['user' => $recipient];
 

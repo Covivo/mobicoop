@@ -593,6 +593,13 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $parentalConsentDate;
 
     /**
+     * @var null|string Token for parental consent
+     *
+     * @Groups({"post","put"})
+     */
+    private $parentalConsentToken;
+
+    /**
      * Indicate if the user need the parental consent.
      *
      * @var null|bool
@@ -1782,6 +1789,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getParentalConsentToken(): ?string
+    {
+        return $this->parentalConsentToken;
+    }
+
+    public function setParentalConsentToken(?string $parentalConsentToken): self
+    {
+        $this->parentalConsentToken = $parentalConsentToken;
+
+        return $this;
+    }
+
     public function getNeedParentalConsent(): ?bool
     {
         return $this->needParentalConsent;
@@ -1867,6 +1886,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'phoneCode' => $this->getPhoneCode(),
             'legalGuardianEmail' => $this->getLegalGuardianEmail(),
             'parentalConsentDate' => $this->getParentalConsentDate(),
+            'parentalConsentToken' => $this->getParentalConsentToken(),
             'needParentalConsent' => $this->getNeedParentalConsent(),
             'referral' => $this->getReferral(),
         ];

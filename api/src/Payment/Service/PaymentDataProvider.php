@@ -255,7 +255,7 @@ class PaymentDataProvider
     /**
      * Get a User on the payment provider platform.
      */
-    public function getUser(int $identifier)
+    public function getUser(string $identifier)
     {
         $this->checkPaymentConfiguration();
 
@@ -354,14 +354,14 @@ class PaymentDataProvider
         return $this->providerInstance->uploadValidationDocument($validationDocument);
     }
 
-    public function getDocument(int $validationDocumentId)
+    public function getDocument(string $validationDocumentId)
     {
         $this->checkPaymentConfiguration();
 
         return $this->providerInstance->getDocument($validationDocumentId);
     }
 
-    public function getKycDocument(int $kycDocumentId)
+    public function getKycDocument(string $kycDocumentId)
     {
         $this->checkPaymentConfiguration();
 

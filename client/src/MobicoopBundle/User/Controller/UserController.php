@@ -1848,6 +1848,63 @@ class UserController extends AbstractController
         return new JsonResponse($this->ceeSubscriptionManager->myEecSubscriptionsEligibility());
     }
 
+    public function parentalConsentRequest(string $uuid)
+    {
+        return $this->render('@Mobicoop/user/parentalConsent.html.twig', [
+            'uuid' => $uuid,
+        ]);
+    }
+
+    /**
+     * retrive userUnderEighteen
+     * AJAX.
+     */
+    public function getUserUnderEighteen(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            if ($data['token']) {
+                $response = $this->userManager->getUserUnderEighteen($data['token']);
+
+                if (200 == $response->getCode()) {
+                    return new JsonResponse($response->getValue());
+                }
+
+                return new JsonResponse(
+                    ['error' => $response->getValue()->getDescription()],
+                    $response->getCode()
+                );
+            }
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
+     * give parental consent
+     * AJAX.
+     */
+    public function giveParentalConsent(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            $response = $this->userManager->giveParentalConsent($data['uuid'], $data['token']);
+
+            if (201 == $response->getCode()) {
+                return new JsonResponse($response->getValue());
+            }
+
+            return new JsonResponse(
+                ['error' => $response->getValue()->getDescription()],
+                $response->getCode()
+            );
+        }
+
+        return new JsonResponse();
+    }
+
     private function mobileRedirect(string $host, string $path, array $params)
     {
         $redirectUri = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
