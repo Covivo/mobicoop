@@ -1123,6 +1123,7 @@ export default {
       if(!this.regular && !this.outwardDate) return false;
       if(!this.driver && this.step>4) return false;
       if(this.step>=7) return false;
+      if(this.priceForbidden) return false;
 
       // Specifics by steps
       // Step 2 regular : you have to setup at least one schedule
@@ -1554,7 +1555,7 @@ export default {
           this.price = price;
         }).finally(() => {
           this.loadingPrice = false;
-          this.disableNextButton = false;
+          if(!this.priceForbidden) this.disableNextButton = false;
         })
       }
     },1000),
