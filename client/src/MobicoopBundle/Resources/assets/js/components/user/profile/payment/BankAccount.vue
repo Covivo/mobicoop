@@ -59,6 +59,7 @@
                     :rules="form.rules.ibanRules"
                     required
                     v-on="on"
+                    @blur="removeWhiteSpacesIban"
                   />
                 </template>
                 <span>{{ $t("form.tooltip.iban") }}</span>
@@ -542,6 +543,9 @@ export default {
       this.form.addressDetail.postalCode = null;
       this.form.addressDetail.addressLocality = null;
       this.addressValidation = false;
+    },
+    removeWhiteSpacesIban(){
+      this.form.iban = this.form.iban.replace(/\s+/g, '');
     }
   }
 };
