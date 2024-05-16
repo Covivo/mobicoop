@@ -486,8 +486,7 @@
                     persistent-hint
                     :color="colorPricePerKm"
                     :class="colorPricePerKm + '--text'"
-                    @blur="roundPrice(price, regular ? 2 : 1, true)"
-                    @change="disableNextButton = true;price = Math.abs(price)"
+                    @input="disableNextButton = true;roundPrice(price, regular ? 2 : 1, true);price = Math.abs(price)"
                   />
                 </v-col>
 
@@ -788,6 +787,7 @@ import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/publish/AdPublish/";
 
 import maxios from "@utils/maxios";
+import debounce from "lodash/debounce";
 import { merge, isEmpty, isEqual } from "lodash";
 import moment from 'moment';
 
@@ -1123,6 +1123,7 @@ export default {
       if(!this.regular && !this.outwardDate) return false;
       if(!this.driver && this.step>4) return false;
       if(this.step>=7) return false;
+      if(this.priceForbidden) return false;
 
       // Specifics by steps
       // Step 2 regular : you have to setup at least one schedule
@@ -1532,7 +1533,7 @@ export default {
 
       return postObject;
     },
-    roundPrice (price, frequency, doneByUser = false) {
+    roundPrice: debounce(function (price, frequency, doneByUser = false) {
       if (price >= 0 && frequency > 0) {
         this.loadingPrice = true;
         maxios.post(this.$t('route.roundPrice'), {
@@ -1554,10 +1555,10 @@ export default {
           this.price = price;
         }).finally(() => {
           this.loadingPrice = false;
-          this.disableNextButton = false;
+          if(!this.priceForbidden) this.disableNextButton = false;
         })
       }
-    },
+    },1000),
     countWaypoints () {
       if (!isEmpty(this.initOrigin) && !isEmpty(this.initDestination)) {
         return 2;
