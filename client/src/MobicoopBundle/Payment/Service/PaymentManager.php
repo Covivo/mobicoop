@@ -75,6 +75,8 @@ class PaymentManager
         $bankAccountAddress->setPostalCode(isset($address['postalCode']) ? $address['postalCode'] : null);
         $bankAccountAddress->setAddressCountry(isset($address['addressCountry']) ? $address['addressCountry'] : null);
         $bankAccountAddress->setCountryCode(isset($address['countryCode']) ? $address['countryCode'] : null);
+        $bankAccountAddress->setLatitude(isset($address['latitude']) ? $address['latitude'] : null);
+        $bankAccountAddress->setLongitude(isset($address['longitude']) ? $address['longitude'] : null);
 
         $bankAccount->setAddress($bankAccountAddress);
 
@@ -112,7 +114,7 @@ class PaymentManager
      * @param int    $type      The type of carpools to get (1 = to pay as a passenger, 2 = to collect as a driver)
      * @param string $week      The week number and year
      */
-    public function getPaymentItems(int $frequency, int $type, string $week = null)
+    public function getPaymentItems(int $frequency, int $type, ?string $week = null)
     {
         $params = [
             'frequency' => $frequency,
