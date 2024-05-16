@@ -500,7 +500,7 @@ export default {
         return this.initOrigin;
       }
 
-      if(this.user && this.user.homeAddress){
+      if(this.user && this.user.homeAddress && this.user.homeAddress.latitude && this.user.homeAddress.longitude){
         return this.user.homeAddress
       }
 
