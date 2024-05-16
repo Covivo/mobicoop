@@ -37,8 +37,11 @@ use App\Geography\Ressource\Point;
 use App\Geography\Service\PointSearcher;
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
+use App\User\Event\AskParentalConsentEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
+use App\User\Event\UserDrivingLicenceNumberUpdateEvent;
+use App\User\Event\UserPhoneUpdateEvent;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager as ServiceUserManager;
@@ -236,11 +239,15 @@ class UserManager
         }
 
         // create token to validate regisration
-        $user->setEmailToken($this->userManager->createToken($user));
+        $user->setEmailToken($this->userManager->createShortToken());
 
         // create token to unsubscribe from the instance news
         $user->setUnsubscribeToken($this->userManager->createToken($user));
 
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $user->setParentalConsentToken($this->userManager->createShortToken());
+            $user->setParentalConsentUuid($this->userManager->_generateUuid());
+        }
         // check if identity is validated manually
         if ($user->hasVerifiedIdentity()) {
             $user->setIdentityStatus(IdentityProof::STATUS_ACCEPTED);
@@ -284,6 +291,11 @@ class UserManager
         if (!is_null($user->getTelephone())) {
             $event = new UserDelegateRegisteredPasswordSendEvent($user);
             $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+        }
+
+        if (!is_null($user->getLegalGuardianEmail())) {
+            $event = new AskParentalConsentEvent($user);
+            $this->eventDispatcher->dispatch(AskParentalConsentEvent::NAME, $event);
         }
 
         return $user;
@@ -385,12 +397,20 @@ class UserManager
             }
         }
 
+        if (in_array('drivingLicenceNumber', array_keys($fields)) && $fields['drivingLicenceNumber'] !== $user->getOldDrivingLicenceNumber()) {
+            $eecEvent = new UserDrivingLicenceNumberUpdateEvent($user);
+            $this->eventDispatcher->dispatch(UserDrivingLicenceNumberUpdateEvent::NAME, $eecEvent);
+        }
+
         if (in_array('telephone', array_keys($fields))) {
             if ($fields['telephone'] !== $user->getOldTelephone()) {
                 $user->setPhoneToken(null);
                 $user->setPhoneValidatedDate(null);
                 // deactivate sms notification since the phone is new
                 $this->deActivateSmsNotification($user);
+
+                $eecEvent = new UserPhoneUpdateEvent($user);
+                $this->eventDispatcher->dispatch(UserPhoneUpdateEvent::NAME, $eecEvent);
             }
         }
 

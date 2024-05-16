@@ -5,10 +5,13 @@ namespace App\Incentive\Service\Manager;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\Communication\Service\NotificationManager;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
+use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Event\SubscriptionNotReadyToVerifyEvent;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
@@ -20,6 +23,7 @@ use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Provider\SubscriptionProvider;
 use App\Incentive\Service\Stage\AutoRecommitSubscription;
 use App\Incentive\Service\Stage\CreateSubscription;
+use App\Incentive\Service\Stage\PatchSubscription;
 use App\Incentive\Service\Stage\ProofInvalidate;
 use App\Incentive\Service\Stage\ProofRecovery;
 use App\Incentive\Service\Stage\ResetSubscription;
@@ -27,19 +31,17 @@ use App\Incentive\Service\Stage\VerifySubscription;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
 use App\Incentive\Validator\CarpoolProofValidator;
+use App\Incentive\Validator\SubscriptionValidator;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SubscriptionManager extends MobConnectManager
 {
-    public const STATUS_ERROR = 'ERROR';
-    public const STATUS_REJECTED = 'REJETEE';
-    public const STATUS_VALIDATED = 'VALIDEE';
-
     public const VERIFICATION_STATUS_PENDING = 0;
     public const VERIFICATION_STATUS_ENDED = 1;
 
@@ -47,6 +49,11 @@ class SubscriptionManager extends MobConnectManager
      * @var EecInstance
      */
     protected $_eecInstance;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $_eventDispatcher;
 
     /**
      * @var CarpoolItemRepository
@@ -57,6 +64,11 @@ class SubscriptionManager extends MobConnectManager
      * @var CarpoolProofRepository
      */
     protected $_carpoolProofRepository;
+
+    /**
+     * @var NotificationManager
+     */
+    private $_notificationManager;
 
     /**
      * @var LongDistanceSubscriptionRepository
@@ -80,6 +92,8 @@ class SubscriptionManager extends MobConnectManager
 
     public function __construct(
         EntityManagerInterface $em,
+        EventDispatcherInterface $eventDispatcher,
+        NotificationManager $notificationManager,
         SubscriptionValidation $subscriptionValidation,
         UserValidation $userValidation,
         LoggerService $loggerService,
@@ -93,6 +107,9 @@ class SubscriptionManager extends MobConnectManager
         UserRepository $userRepository
     ) {
         parent::__construct($em, $instanceManager, $loggerService);
+
+        $this->_eventDispatcher = $eventDispatcher;
+        $this->_notificationManager = $notificationManager;
 
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolItemRepository = $carpoolItemRepository;
@@ -183,6 +200,18 @@ class SubscriptionManager extends MobConnectManager
         }
 
         $this->_em->flush();
+    }
+
+    public function updateSubscriptionDrivingLicenceNumber(User $user)
+    {
+        $stage = new PatchSubscription($this->_em, $this->_eecInstance, $user, SpecificFields::DRIVING_LICENCE_NUMBER);
+        $stage->execute();
+    }
+
+    public function updateSubscriptionPhone(User $user)
+    {
+        $stage = new PatchSubscription($this->_em, $this->_eecInstance, $user, SpecificFields::PHONE_NUMBER);
+        $stage->execute();
     }
 
     public function updateTimestampTokens(User $user): User
@@ -393,6 +422,20 @@ class SubscriptionManager extends MobConnectManager
     }
 
     /**
+     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     */
+    public function subscriptionNotReadyToVerify($subscription)
+    {
+        if (
+            !SubscriptionValidator::isAddressValid($subscription)
+            || !SubscriptionValidator::isPhoneNumberValid($subscription)
+            || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription)
+        ) {
+            $this->_notificationManager->notifies('eec_subscription_not_ready_to_verify', $subscription->getUser(), $subscription);
+        }
+    }
+
+    /**
      * STEP 5 - Create a subscription from it's type.
      *
      * @throws \LogicException
@@ -425,7 +468,14 @@ class SubscriptionManager extends MobConnectManager
      */
     protected function _verifySubscription($subscription): void
     {
-        $stage = new VerifySubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
-        $stage->execute();
+        if (SubscriptionValidator::isReadyToVerify($subscription)) {
+            $stage = new VerifySubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
+            $stage->execute();
+
+            return;
+        }
+
+        $event = new SubscriptionNotReadyToVerifyEvent($subscription);
+        $this->_eventDispatcher->dispatch(SubscriptionNotReadyToVerifyEvent::NAME, $event);
     }
 }

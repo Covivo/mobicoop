@@ -39,6 +39,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserUnderEighteen;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -582,9 +583,9 @@ class UserManager
     /**
      * Get the ads of an user.
      *
-     * @return array|object
-     *
      * @throws \ReflectionException
+     *
+     * @return array|object
      */
     public function getAds(bool $isAcceptedCarpools = false)
     {
@@ -989,6 +990,24 @@ class UserManager
         $response = $this->dataProvider->patch($user->getId(), 'updateSso', $params);
 
         return $response->getValue();
+    }
+
+    public function getUserUnderEighteen(string $token)
+    {
+        $this->dataProvider->setClass(UserUnderEighteen::class);
+
+        return $this->dataProvider->getSpecialItem(UserUnderEighteen::DEFAULT_ID, 'token', ['token' => $token]);
+    }
+
+    public function giveParentalConsent(string $uuid, string $token)
+    {
+        $this->dataProvider->setClass(UserUnderEighteen::class);
+
+        $userUnderEighteen = new UserUnderEighteen();
+        $userUnderEighteen->setUuid($uuid);
+        $userUnderEighteen->setToken($token);
+
+        return $this->dataProvider->post($userUnderEighteen, 'giveParentalConsent');
     }
 
     /**

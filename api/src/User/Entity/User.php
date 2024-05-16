@@ -62,6 +62,7 @@ use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
+use App\Payment\Entity\PaymentProfile;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
@@ -916,6 +917,13 @@ class User implements UserInterface, EquatableInterface
     private $drivingLicenceNumber;
 
     /**
+     * @var null|string the old driving licence number of the user when it was updated
+     *
+     * @Groups({"readUser", "write"})
+     */
+    private $oldDrivingLicenceNumber;
+
+    /**
      * @var null|int the maximum detour duration (in seconds) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
@@ -1748,6 +1756,13 @@ class User implements UserInterface, EquatableInterface
     private $homeAddress;
 
     /**
+     * @var null|Address The old user home address when update
+     *
+     * @Groups({"readUser", "write"})
+     */
+    private $oldHomeAddress;
+
+    /**
      * @var null|array The user roles
      *
      * @Groups({"aRead","aWrite"})
@@ -1905,6 +1920,53 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write"})
      */
     private $phoneCode;
+
+    /**
+     * @var null|string the email of the user's legal guardian
+     *
+     * @Assert\Email()
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $legalGuardianEmail;
+
+    /**
+     * @var null|\DateTimeInterface Date of the parental consent
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $parentalConsentDate;
+
+    /**
+     * @var null|string Token for parental consent
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $parentalConsentToken;
+
+    /**
+     * @var null|string Token for parental consent
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $parentalConsentUuid;
+
+    /**
+     * Indicate if the user need the parental consent.
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     *
+     * @var null|bool
+     */
+    private $needParentalConsent = false;
 
     /**
      * Signup referral if there is any.
@@ -4217,6 +4279,13 @@ class User implements UserInterface, EquatableInterface
         return $this->paymentProfiles;
     }
 
+    public function addPaymentProfile(PaymentProfile $paymentProfile): self
+    {
+        $this->paymentProfiles->add($paymentProfile);
+
+        return $this;
+    }
+
     /**
      * Get the value of hasAccessToMobAPI.
      */
@@ -4282,6 +4351,70 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getLegalGuardianEmail(): ?string
+    {
+        return $this->legalGuardianEmail;
+    }
+
+    public function setLegalGuardianEmail(?string $legalGuardianEmail): self
+    {
+        $this->legalGuardianEmail = $legalGuardianEmail;
+
+        return $this;
+    }
+
+    public function getParentalConsentDate(): ?\DateTimeInterface
+    {
+        return $this->parentalConsentDate;
+    }
+
+    public function setParentalConsentDate(?\DateTimeInterface $parentalConsentDate): self
+    {
+        $this->parentalConsentDate = $parentalConsentDate;
+
+        return $this;
+    }
+
+    public function getParentalConsentToken(): ?string
+    {
+        return $this->parentalConsentToken;
+    }
+
+    public function setParentalConsentToken(?string $parentalConsentToken): self
+    {
+        $this->parentalConsentToken = $parentalConsentToken;
+
+        return $this;
+    }
+
+    public function getParentalConsentUuid(): ?string
+    {
+        return $this->parentalConsentUuid;
+    }
+
+    public function setParentalConsentUuid(?string $parentalConsentUuid): self
+    {
+        $this->parentalConsentUuid = $parentalConsentUuid;
+
+        return $this;
+    }
+
+    public function getNeedParentalConsent(): ?bool
+    {
+        if (!is_null($this->getLegalGuardianEmail()) && is_null($this->getParentalConsentDate())) {
+            $this->setNeedParentalConsent(true);
+        }
+
+        return $this->needParentalConsent;
+    }
+
+    public function setNeedParentalConsent(?bool $needParentalConsent): self
+    {
+        $this->needParentalConsent = $needParentalConsent;
+
+        return $this;
+    }
+
     public function getReferral(): ?string
     {
         return $this->referral;
@@ -4290,6 +4423,30 @@ class User implements UserInterface, EquatableInterface
     public function setReferral(?string $referral): self
     {
         $this->referral = $referral;
+
+        return $this;
+    }
+
+    public function getOldHomeAddress(): ?Address
+    {
+        return $this->oldHomeAddress;
+    }
+
+    public function setOldHomeAddress(?Address $oldHomeAddress): self
+    {
+        $this->oldHomeAddress = $oldHomeAddress;
+
+        return $this;
+    }
+
+    public function getOldDrivingLicenceNumber(): ?string
+    {
+        return $this->oldDrivingLicenceNumber;
+    }
+
+    public function setOldDrivingLicenceNumber(?string $oldDrivingLicenceNumber): self
+    {
+        $this->oldDrivingLicenceNumber = $oldDrivingLicenceNumber;
 
         return $this;
     }

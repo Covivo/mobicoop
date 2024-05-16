@@ -42,6 +42,7 @@ import Signupform from '@components/user/SignUp/Signupform'
 import SignupValidation from '@components/user/SignupValidation'
 import UpdateProfile from '@components/user/profile/UpdateProfile'
 import SsoLoginReturn from '@components/user/SsoLoginReturn'
+import ParentalConsent from '@components/user/ParentalConsent'
 
 // SOLIDARITY
 import Solidary from '@components/solidary/Solidary'
@@ -146,4 +147,5 @@ export default {
   MDialog,
   Incentive,
   IncentiveList,
+  ParentalConsent
 }

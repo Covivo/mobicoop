@@ -155,9 +155,9 @@ class CarpoolProofRepository
 
         $query = $this->repository->createQueryBuilder('cp')
             ->where('cp.status in (:status)')
-            ->orWhere('cp.status = :errorStatus AND cp.createdDate >= :date')
+            ->orWhere('cp.status in (:statusTockeck) AND cp.createdDate >= :date')
             ->setParameter('status', $status)
-            ->setParameter('errorStatus', CarpoolProof::STATUS_ERROR)
+            ->setParameter('statusTockeck', [CarpoolProof::STATUS_ERROR, CarpoolProof::STATUS_EXPIRED])
             ->setParameter('date', $date)
         ;
 
@@ -396,6 +396,21 @@ class CarpoolProofRepository
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    public function findForDuplicate(CarpoolProof $proof): ?CarpoolProof
+    {
+        $query = $this->repository->createQueryBuilder('cp')
+            ->where('cp.startDriverDate = :startDriverDate')
+            ->andWhere('(cp.driver = :driver and cp.passenger = :passenger)')
+            ->setParameter('startDriverDate', $proof->getStartDriverDate())
+            ->setParameter('driver', $proof->getDriver())
+            ->setParameter('passenger', $proof->getPassenger())
+            ->addOrderBy('cp.createdDate', 'DESC')
+            ->addOrderBy('cp.id', 'DESC')
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 
     /**

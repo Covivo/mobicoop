@@ -38,6 +38,7 @@ use App\Community\Entity\CommunityMembersList;
 use App\Community\Entity\CommunitySecurity;
 use App\Community\Entity\CommunityUser;
 use App\Community\Event\CommunityCreatedEvent;
+use App\Community\Event\CommunityLeftEvent;
 use App\Community\Event\CommunityMembershipPendingEvent;
 use App\Community\Event\CommunityNewMemberEvent;
 use App\Community\Event\CommunityNewMembershipRequestEvent;
@@ -227,7 +228,7 @@ class CommunityManager
      *
      * @return null|Community
      */
-    public function getCommunity(int $communityId, User $user = null)
+    public function getCommunity(int $communityId, ?User $user = null)
     {
         if ($community = $this->communityRepository->find($communityId)) {
             $community->setUrlKey($this->generateUrlKey($community));
@@ -261,7 +262,7 @@ class CommunityManager
             }
         }
 
-        return new mapsAds($mapsAds);
+        return new MapsAds($mapsAds);
     }
 
     /**
@@ -541,8 +542,12 @@ class CommunityManager
      */
     public function deleteCommunityUser(CommunityUser $communityUser)
     {
+        $user = $communityUser->getUser();
+        $community = $communityUser->getCommunity();
         $this->entityManager->remove($communityUser);
         $this->entityManager->flush();
+        $event = new CommunityLeftEvent($user, $community);
+        $this->eventDispatcher->dispatch(CommunityLeftEvent::NAME, $event);
     }
 
     /**

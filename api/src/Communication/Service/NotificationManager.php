@@ -49,6 +49,9 @@ use App\Community\Entity\CommunityUser;
 use App\DataProvider\Entity\Response;
 use App\Event\Entity\Event;
 use App\ExternalJourney\Ressource\ExternalConnection;
+use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Validator\SubscriptionValidator;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
@@ -495,6 +498,9 @@ class NotificationManager
                     break;
 
                 case User::class:
+                    if (!is_null($recipient->getLegalGuardianEmail())) {
+                        $email->setRecipientEmail($recipient->getLegalGuardianEmail());
+                    }
                     $titleContext = [];
                     $bodyContext = ['user' => $recipient];
 
@@ -711,6 +717,19 @@ class NotificationManager
                 case ExternalConnection::class:
                     $titleContext = [];
                     $bodyContext = ['user' => $recipient, 'externalConnection' => $object];
+
+                    break;
+
+                case LongDistanceSubscription::class:
+                case ShortDistanceSubscription::class:
+                    $bodyContext = [
+                        'user' => $recipient,
+                        'pre_verification_error' => [
+                            'address' => !SubscriptionValidator::isAddressValid($object),
+                            'drivingLicenceNumber' => !SubscriptionValidator::isDrivingLicenceNumberValid($object),
+                            'phoneNumber' => !SubscriptionValidator::isPhoneNumberValid($object),
+                        ],
+                    ];
 
                     break;
 

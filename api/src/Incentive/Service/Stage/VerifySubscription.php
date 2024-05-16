@@ -14,10 +14,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class VerifySubscription extends Stage
 {
-    public const STATUS_ERROR = 'ERROR';
-    public const STATUS_REJECTED = 'REJETEE';
-    public const STATUS_VALIDATED = 'VALIDEE';
-
     /**
      * @var LongDistanceSubscription|ShortDistanceSubscription
      */
@@ -50,22 +46,20 @@ class VerifySubscription extends Stage
     {
         $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($this->_subscription, Log::TYPE_VERIFY);
 
-        if ($this->_subscription->isReadyToVerify()) {
-            try {
-                $this->_httpResponse = $this->_apiProvider->verifySubscription($this->_subscription);
+        try {
+            $this->_httpResponse = $this->_apiProvider->verifySubscription($this->_subscription);
 
-                $this->_updateSubscription();
-            } catch (HttpException $exception) {
-                $this->_subscription->addLog($exception, Log::TYPE_VERIFY);
-                $this->_subscription->setStatus(self::STATUS_ERROR);
-
-                $this->_em->flush();
-
-                return;
-            }
+            $this->_updateSubscription();
+        } catch (HttpException $exception) {
+            $this->_subscription->addLog($exception, Log::TYPE_VERIFY);
+            $this->_subscription->setStatus(Subscription::STATUS_ERROR);
 
             $this->_em->flush();
+
+            return;
         }
+
+        $this->_em->flush();
     }
 
     /**
@@ -77,12 +71,12 @@ class VerifySubscription extends Stage
         $this->_subscription->setVerificationDate(new \DateTime());
 
         switch ($this->_subscription->getStatus()) {
-            case self::STATUS_VALIDATED:
+            case Subscription::STATUS_VALIDATED:
                 $this->_updateSubscriptionWhenValidated();
 
                 break;
 
-            case self::STATUS_REJECTED:
+            case Subscription::STATUS_REJECTED:
                 $this->_updateSubscriptionWhenRejected();
 
                 break;

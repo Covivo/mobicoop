@@ -577,6 +577,36 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $gratuityNotifications;
 
     /**
+     * @var null|string the email of the user's legal guardian
+     *
+     * @Assert\Email()
+     *
+     * @Groups({"post","put"})
+     */
+    private $legalGuardianEmail;
+
+    /**
+     * @var null|\DateTimeInterface Date of the parental consent
+     *
+     * @Groups({"post","put"})
+     */
+    private $parentalConsentDate;
+
+    /**
+     * @var null|string Token for parental consent
+     *
+     * @Groups({"post","put"})
+     */
+    private $parentalConsentToken;
+
+    /**
+     * Indicate if the user need the parental consent.
+     *
+     * @var null|bool
+     */
+    private $needParentalConsent;
+
+    /**
      * Signup referral if there is any.
      *
      * @Groups({"post"})
@@ -1737,6 +1767,54 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getLegalGuardianEmail(): ?string
+    {
+        return $this->legalGuardianEmail;
+    }
+
+    public function setLegalGuardianEmail(?string $legalGuardianEmail): self
+    {
+        $this->legalGuardianEmail = $legalGuardianEmail;
+
+        return $this;
+    }
+
+    public function getParentalConsentDate(): ?\DateTimeInterface
+    {
+        return $this->parentalConsentDate;
+    }
+
+    public function setParentalConsentDate(?\DateTimeInterface $parentalConsentDate): self
+    {
+        $this->parentalConsentDate = $parentalConsentDate;
+
+        return $this;
+    }
+
+    public function getParentalConsentToken(): ?string
+    {
+        return $this->parentalConsentToken;
+    }
+
+    public function setParentalConsentToken(?string $parentalConsentToken): self
+    {
+        $this->parentalConsentToken = $parentalConsentToken;
+
+        return $this;
+    }
+
+    public function getNeedParentalConsent(): ?bool
+    {
+        return $this->needParentalConsent;
+    }
+
+    public function setNeedParentalConsent(?bool $needParentalConsent): self
+    {
+        $this->needParentalConsent = $needParentalConsent;
+
+        return $this;
+    }
+
     public function getReferral(): ?string
     {
         return $this->referral;
@@ -1808,6 +1886,10 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'gratuity' => $this->hasGratuity(),
             'gratuityNotifications' => $this->getGratuityNotifications(),
             'phoneCode' => $this->getPhoneCode(),
+            'legalGuardianEmail' => $this->getLegalGuardianEmail(),
+            'parentalConsentDate' => $this->getParentalConsentDate(),
+            'parentalConsentToken' => $this->getParentalConsentToken(),
+            'needParentalConsent' => $this->getNeedParentalConsent(),
             'referral' => $this->getReferral(),
         ];
 

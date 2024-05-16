@@ -225,6 +225,7 @@ class PaymentProfile
     public function setUser(User $user): self
     {
         $this->user = $user;
+        $user->addPaymentProfile($this);
 
         return $this;
     }

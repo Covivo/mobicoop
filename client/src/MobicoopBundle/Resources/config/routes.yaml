@@ -399,6 +399,15 @@ user_update_alert:
     nl: /user/alert/update
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAlert
 
+# parental consent
+parental_consent_request:
+  path:
+    fr: /utilisateur/autorisation-parentale/{uuid}
+    en: /user/parental-consent/{uuid}
+    nl: /user/parental-consent/{uuid}
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::parentalConsentRequest
+
+
 # messages
 user_message_list:
   path:
@@ -2105,3 +2114,25 @@ post_external_booking:
     en: /booking/request
     nl: /booking/request
   controller: Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\BookingController::postBooking
+
+###########################
+# user under 18 routes #
+###########################
+
+# get the user under 18 linked to parental consent(POST) (AJAX json)
+get_user_under_eighteen:
+  methods: [POST]
+  path:
+    fr: /user/underEighteen
+    en: /user/underEighteen
+    nl: /user/underEighteen
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getUserUnderEighteen
+
+# give the parental consent(POST) (AJAX json)
+give_parental_consent:
+  methods: [POST]
+  path:
+    fr: /user/giveParentalConsent
+    en: /user/giveParentalConsent
+    nl: /user/giveParentalConsent
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::giveParentalConsent  

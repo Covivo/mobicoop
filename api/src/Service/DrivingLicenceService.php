@@ -12,6 +12,7 @@ class DrivingLicenceService
 {
     public const AFTER_1975_PATTERN = '/^[0-9]{12}$/';
     public const BEFORE_1975_PATTERN = '/^[A-Z0-9]{1,15}[0-9]{4}$/';
+    public const OLDEST_PATTERN = '/^[A-Z0-9]{1,15}$/';
     public const FOREIGN_PATTERN = '/^99-.*$/';
 
     /**
@@ -29,6 +30,7 @@ class DrivingLicenceService
         return
             $this->isDrivingLicenceValidSWithPre1975tandard()
             || $this->isDrivingLicenceValidSWithAfter1975tandard()
+            || $this->isDrivingLicenceValidWithOldest()
             || $this->isDrivingLicenceValidSWithForeigntandard();
     }
 
@@ -44,6 +46,14 @@ class DrivingLicenceService
     {
         return preg_match(
             self::AFTER_1975_PATTERN,
+            $this->_drivingLicenceNumber
+        );
+    }
+
+    public function isDrivingLicenceValidWithOldest(): bool
+    {
+        return preg_match(
+            self::OLDEST_PATTERN,
             $this->_drivingLicenceNumber
         );
     }

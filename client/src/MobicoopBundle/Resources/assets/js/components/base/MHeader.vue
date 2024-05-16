@@ -339,6 +339,33 @@
     </v-toolbar>
     <GamificationNotifications :user-gamification-notifications="(user && user.gamificationNotifications) ? user.gamificationNotifications : null" />
     <GratuityNotifications :user-gratuity-notifications="(user && user.gratuityNotifications) ? user.gratuityNotifications : null" />
+    <!-- legal guardian dialog -->
+    <v-dialog
+      v-if="user"
+      v-model="activeLegalGuardianDialog"
+      persistent
+      max-width="900"
+    >
+      <v-card>
+        <v-card-title
+          class="text-h5 justify-center"
+        >
+          {{ $t('dialog.parentalConsent.title') }}
+        </v-card-title>
+        <v-card-text v-html="$t('dialog.parentalConsent.content',{'legalGuardianEmail':user.legalGuardianEmail})" />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="secondary"
+            primary
+            rounded
+            :href="this.$t('buttons.logOut.route')"
+          >
+            {{ $t('dialog.parentalConsent.buttonLabel') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -422,7 +449,8 @@ export default {
       defaultLocale: 'fr',
       dlocale: this.locale,
       imageLink: "/images/pages/home/",
-      textColorClass: "white--text title text-none"
+      textColorClass: "white--text title text-none",
+      activeLegalGuardianDialog: false
     }
   },
   computed:{
@@ -447,6 +475,9 @@ export default {
     this.$store.commit('a/setToken',this.user?.token ? this.user.token : this.token);
     if(this.user){
       localStorage.setItem('X-LOCALE',this.dlocale);
+    }
+    if(this.user?.needParentalConsent) {
+      this.activeLegalGuardianDialog = true;
     }
     this.$root.$i18n.locale = this.dlocale;
   },
