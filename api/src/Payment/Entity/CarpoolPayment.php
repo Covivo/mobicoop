@@ -138,7 +138,7 @@ class CarpoolPayment
     /**
      * @var null|string the transaction id of this payment if there is an online part
      *
-     * @ORM\Column(type="bigint", nullable=true)
+     * @ORM\Column(type="string", length=130, nullable=true)
      */
     private $transactionId;
 
