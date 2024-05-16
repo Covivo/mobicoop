@@ -308,7 +308,7 @@ class Address implements \JsonSerializable
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      *
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readCommunity","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readCommunity","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary","readCommunityAds","writePayment"})
      */
     private $latitude;
 
@@ -317,7 +317,7 @@ class Address implements \JsonSerializable
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      *
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readCommunity","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readCommunity","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary","readCommunityAds","writePayment"})
      */
     private $longitude;
 
