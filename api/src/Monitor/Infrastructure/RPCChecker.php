@@ -43,6 +43,9 @@ class RPCChecker implements Checker
     {
         $this->_curlDataProvider = $curlDataProvider;
         $this->_carpoolProofService = $carpoolProofService;
+        if ('/' !== $rpcUri[strlen($rpcUri) - 1]) {
+            $rpcUri .= '/';
+        }
         $this->_curlDataProvider->setUrl($rpcUri.self::RPC_URI_SUFFIX);
         $this->_headers = [
             'Authorization: Bearer '.$rpcToken,
