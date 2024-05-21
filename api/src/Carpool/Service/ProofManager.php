@@ -1311,6 +1311,8 @@ class ProofManager
                             // Check for an already existing carpool proof for this journey base on StartDateDriver and same driver and passenger
                             // Now useless ? $this->carpoolProofRepository->findByAskAndDate($ask, $curDate) better ?
                             // if (!is_null($this->carpoolProofRepository->findForDuplicate($carpoolProof))) {
+                            //     $continue = false;
+
                             //     continue;
                             // }
 
