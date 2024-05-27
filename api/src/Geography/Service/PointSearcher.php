@@ -68,19 +68,19 @@ class PointSearcher
         array $relayPointParams,
         array $fixerData
     ) {
-        $mobicoopGeocoder = $geocoderFactory->getGeocoder();
+        $geocoder = $geocoderFactory->getGeocoder();
         $this->tokenStorage = $tokenStorage;
         $this->_fixer = new PointGeoFixer($fixerData);
         $user = $security->getUser();
         $userPointProvider = new UserPointProvider($addressRepository, $translator);
         if ($prioritizeCentroid) {
-            $mobicoopGeocoder->setPrioritizeCentroid(
+            $geocoder->setPrioritizeCentroid(
                 $prioritizeCentroid['lon'],
                 $prioritizeCentroid['lat']
             );
         }
         if ($prioritizeBox) {
-            $mobicoopGeocoder->setPrioritizeBox(
+            $geocoder->setPrioritizeBox(
                 $prioritizeBox['minLon'],
                 $prioritizeBox['minLat'],
                 $prioritizeBox['maxLon'],
@@ -88,10 +88,10 @@ class PointSearcher
             );
         }
         if ($prioritizeRegion) {
-            $mobicoopGeocoder->setPrioritizeRegion($prioritizeRegion);
+            $geocoder->setPrioritizeRegion($prioritizeRegion);
         }
         if ($restrictCountry) {
-            $mobicoopGeocoder->setRestrictCountry($restrictCountry);
+            $geocoder->setRestrictCountry($restrictCountry);
         }
         if ($user instanceof User) {
             $userPointProvider->setUser($user);
@@ -102,7 +102,7 @@ class PointSearcher
              */
             foreach ($user->getAddresses() as $address) {
                 if ($address->isHome()) {
-                    $mobicoopGeocoder->setPrioritizeCentroid(
+                    $geocoder->setPrioritizeCentroid(
                         (float) $address->getLongitude(),
                         (float) $address->getLatitude()
                     );
@@ -111,7 +111,7 @@ class PointSearcher
                 }
             }
         }
-        $geocoderPointProvider = new GeocoderPointProvider($mobicoopGeocoder);
+        $geocoderPointProvider = new GeocoderPointProvider($geocoder);
         $geocoderPointProvider->setExclusionTypes($exclusionTypes);
 
         $relayPointPointProvider = new RelayPointPointProvider($relayPointRepository);
