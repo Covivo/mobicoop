@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace App\Geography\Service\Point;
 
 use App\Geography\Ressource\Point;
-use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Geocoder\Geocoder;
 use App\User\Entity\User;
 
 class MobicoopGeocoderPointProvider implements PointProvider, ReversePointProvider
@@ -35,7 +35,7 @@ class MobicoopGeocoderPointProvider implements PointProvider, ReversePointProvid
     protected $maxResults;
     protected $exclusionTypes;
 
-    public function __construct(MobicoopGeocoder $mobicoopGeocoder)
+    public function __construct(Geocoder $mobicoopGeocoder)
     {
         $this->mobicoopGeocoder = $mobicoopGeocoder;
         $this->setMaxResults(0);
