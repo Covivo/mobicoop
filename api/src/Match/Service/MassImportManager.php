@@ -25,7 +25,7 @@ namespace App\Match\Service;
 
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
-use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Geocoder\Geocoder;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\AddressAdapter;
@@ -40,7 +40,6 @@ use App\Match\Exception\MassException;
 use App\Match\Repository\MassPersonRepository;
 use App\Match\Repository\MassRepository;
 use App\Service\FileManager;
-use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -88,8 +87,6 @@ class MassImportManager
 
     /**
      * Constructor.
-     *
-     * @param UserRepository $userRepository
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -99,15 +96,15 @@ class MassImportManager
         LoggerInterface $logger,
         ValidatorInterface $validator,
         GeoTools $geoTools,
-        MobicoopGeocoder $mobicoopGeocoder,
+        Geocoder $mobicoopGeocoder,
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
         EventDispatcherInterface $eventDispatcher,
         array $params,
-        array $prioritizeCentroid = null,
-        array $prioritizeBox = null,
-        string $prioritizeRegion = null,
-        string $restrictCountry = null,
+        ?array $prioritizeCentroid = null,
+        ?array $prioritizeBox = null,
+        ?string $prioritizeRegion = null,
+        ?string $restrictCountry = null,
         array $exclusionTypes = []
     ) {
         if ($prioritizeCentroid) {
@@ -753,6 +750,7 @@ class MassImportManager
                 return $this->getDataFromCsv('.'.$this->params['folder'].$mass->getFileName());
 
                 break;
+
                 // case self::MIMETYPE_JSON:
                 //     return $this->getDataFromJson('.' . $this->params['folder'] . $mass->getFileName());
                 //     break;
@@ -837,6 +835,7 @@ class MassImportManager
                         return $this->getDataFromCsv('.'.$this->params['temp'].$filename, true);
 
                         break;
+
                         // case self::MIMETYPE_JSON:
                         //     return $this->getDataFromJson('.' . $this->params['temp'] . $filename, true);
                         //     break;
@@ -1227,9 +1226,8 @@ class DOMValidator
     /**
      * Validation Class constructor Instantiating DOMDocument.
      *
-     * @param \DOMDocument $handler [description]
-     * @param mixed        $schema
-     * @param mixed        $xml
+     * @param mixed $schema
+     * @param mixed $xml
      */
     public function __construct($schema, $xml)
     {

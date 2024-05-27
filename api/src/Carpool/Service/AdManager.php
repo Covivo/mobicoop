@@ -49,7 +49,7 @@ use App\Event\Exception\EventNotFoundException;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
 use App\Geography\Service\AddressManager;
-use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Geocoder\Geocoder;
 use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
@@ -136,7 +136,7 @@ class AdManager
         AppManager $appManager,
         AntiFraudManager $antiFraudManager,
         UserRepository $userRepository,
-        MobicoopGeocoder $mobicoopGeocoder,
+        Geocoder $mobicoopGeocoder,
         JourneyValidation $journeyValidation
     ) {
         $this->entityManager = $entityManager;

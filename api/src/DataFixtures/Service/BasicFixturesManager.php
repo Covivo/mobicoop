@@ -34,7 +34,7 @@ use App\Event\Entity\Event;
 use App\Event\Repository\EventRepository;
 use App\Gamification\Repository\BadgeRepository;
 use App\Geography\Entity\Address;
-use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Geocoder\Geocoder;
 use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Image\Entity\Icon;
@@ -47,8 +47,6 @@ use App\RelayPoint\Repository\RelayPointRepository;
 use App\RelayPoint\Repository\RelayPointTypeRepository;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
-use DateInterval;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -91,7 +89,7 @@ class BasicFixturesManager
     public function __construct(
         EntityManagerInterface $entityManager,
         UserManager $userManager,
-        MobicoopGeocoder $mobicoopGeocoder,
+        Geocoder $mobicoopGeocoder,
         AdManager $adManager,
         CommunityManager $communityManager,
         IconRepository $iconRepository,
@@ -342,6 +340,7 @@ class BasicFixturesManager
                     $ad->setReturnLimitDate($ad->getOutwardLimitDate());
                 }
             }
+
             // we create the proposal and its related entities
             return $this->adManager->createProposalFromAd($ad);
         }
@@ -380,8 +379,8 @@ class BasicFixturesManager
             $event->setName($tab[3]);
             $event->setDescription($tab[4]);
             $event->setFullDescription($tab[5]);
-            $event->setFromDate(DateTime::createFromFormat('Y-m-d H:i', $tab[6]));
-            $event->setToDate(DateTime::createFromFormat('Y-m-d H:i', $tab[7]));
+            $event->setFromDate(\DateTime::createFromFormat('Y-m-d H:i', $tab[6]));
+            $event->setToDate(\DateTime::createFromFormat('Y-m-d H:i', $tab[7]));
             $event->setUseTime('1' === $tab[8]);
             $event->setUrl($tab[9]);
             $event->setPrivate('1' === $tab[10]);
@@ -663,16 +662,16 @@ class BasicFixturesManager
      *
      * @param string $modifier The modifier
      *
-     * @return DateTime
+     * @return \DateTime
      */
     private function getDateFromModifier(string $modifier)
     {
-        $date = new DateTime();
+        $date = new \DateTime();
 
         switch ($modifier[0]) {
-            case '+': return $date->add(new DateInterval(substr($modifier, 1)));
+            case '+': return $date->add(new \DateInterval(substr($modifier, 1)));
 
-            case '-': return $date->sub(new DateInterval(substr($modifier, 1)));
+            case '-': return $date->sub(new \DateInterval(substr($modifier, 1)));
         }
 
         return $date;

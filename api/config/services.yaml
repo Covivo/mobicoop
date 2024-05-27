@@ -85,6 +85,13 @@ services:
           method: onJWTCreated,
         }
 
+  App\Geography\Service\Geocoder\MobicoopGeocoder:
+    class: 'App\Geography\Service\Geocoder\MobicoopGeocoder'
+    arguments:
+      $uri: "%env(string:MOBICOOP_GEOCODER_URI)%"
+    autowire: false
+    autoconfigure: false
+
   # Article Load Listener
   mobicoop.article.article_load_listener:
     class: App\Article\EventListener\ArticleLoadListener
@@ -216,6 +223,7 @@ services:
 
   App\Carpool\Service\AdManager:
     arguments:
+      $mobicoopGeocoder: '@App\Geography\Service\Geocoder\MobicoopGeocoder'
       $params:
         defaultMarginDuration: "%env(int:CARPOOL_MARGIN_DURATION)%"
         defaultSeatsDriver: "%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%"
@@ -237,6 +245,7 @@ services:
 
   App\Carpool\Service\ProofManager:
     arguments:
+      $mobicoopGeocoder: '@App\Geography\Service\Geocoder\MobicoopGeocoder'
       $provider: "%env(string:CARPOOL_PROOF_PROVIDER)%"
       $duration: "%env(int:CARPOOL_PROOF_RANGE_DURATION)%"
       $minIdentityDistance: "%env(int:CARPOOL_PROOF_MIN_IDENTITY_DISTANCE)%"
@@ -245,6 +254,7 @@ services:
 
   App\Carpool\Service\DynamicManager:
     arguments:
+      $mobicoopGeocoder: '@App\Geography\Service\Geocoder\MobicoopGeocoder'
       $params:
         defaultSeatsDriver: "%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%"
         defaultSeatsPassenger: "%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%"
@@ -259,6 +269,7 @@ services:
 
   App\Carpool\Service\ProposalManager:
     arguments:
+      $mobicoopGeocoder: '@App\Geography\Service\Geocoder\MobicoopGeocoder'
       $params:
         defaultRole: "%env(int:CARPOOL_ROLE)%"
         defaultType: "%env(int:CARPOOL_TYPE)%"
@@ -618,6 +629,7 @@ services:
 
   App\DataFixtures\Service\BasicFixturesManager:
     arguments:
+      $mobicoopGeocoder: '@App\Geography\Service\Geocoder\MobicoopGeocoder'
       $fixturesBasic: "%env(bool:FIXTURES_BASIC)%"
 
   App\DataFixtures\Service\SolidaryFixturesManager:
@@ -706,13 +718,6 @@ services:
       $sigPrioritizeCoordinates: "%env(json:SIG_GEOCODER_PRIORITIZE_COORDINATES)%"
       $sigPrioritizeRegion: "%env(string:SIG_GEOCODER_PRIORITIZE_REGION)%"
       $sigShowVenues: "%env(bool:SIG_GEOCODER_SHOW_VENUES)%"
-
-  App\Geography\Service\Geocoder\MobicoopGeocoder:
-    class: 'App\Geography\Service\Geocoder\MobicoopGeocoder'
-    arguments:
-      $uri: "%env(string:MOBICOOP_GEOCODER_URI)%"
-    autowire: false
-    autoconfigure: false
 
   App\Geography\Service\PointSearcher:
     arguments:
@@ -1047,6 +1052,7 @@ services:
 
   App\Match\Service\MassImportManager:
     arguments:
+      $mobicoopGeocoder: '@App\Geography\Service\Geocoder\MobicoopGeocoder'
       $params: "%mass%"
       $prioritizeCentroid: "%env(json:POINT_SEARCHER_PRIORITIZE_CENTROID)%"
       $prioritizeBox: "%env(json:POINT_SEARCHER_PRIORITIZE_BOX)%"

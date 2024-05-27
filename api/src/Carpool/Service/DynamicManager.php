@@ -46,7 +46,7 @@ use App\Communication\Service\InternalMessageManager;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\AddressCompleter;
-use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Geocoder\Geocoder;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\AddressAdapter;
@@ -90,7 +90,7 @@ class DynamicManager
         ResultManager $resultManager,
         GeoTools $geoTools,
         GeoRouter $geoRouter,
-        MobicoopGeocoder $mobicoopGeocoder,
+        Geocoder $mobicoopGeocoder,
         array $params,
         LoggerInterface $logger,
         MatchingRepository $matchingRepository,

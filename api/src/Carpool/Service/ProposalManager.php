@@ -45,7 +45,7 @@ use App\DataProvider\Entity\MobicoopMatcherProvider;
 use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
-use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Geocoder\Geocoder;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
@@ -117,7 +117,7 @@ class ProposalManager
         InternalMessageManager $internalMessageManager,
         CriteriaRepository $criteriaRepository,
         ActionRepository $actionRepository,
-        MobicoopGeocoder $mobicoopGeocoder,
+        Geocoder $mobicoopGeocoder,
         GeoTools $geoTools,
         MobicoopMatcherProvider $mobicoopMatcherProvider,
         array $params
