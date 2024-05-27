@@ -33,6 +33,8 @@ interface Geocoder
 
     public function setPrioritizeRegion(string $region): void;
 
+    public function setRestrictCountry(string $country): void;
+
     public function setLang(string $lang): void;
 
     public function geocode(string $search): array;
