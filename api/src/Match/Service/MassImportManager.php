@@ -29,7 +29,7 @@ use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\AddressAdapter;
-use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Match\Entity\Candidate;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassData;
@@ -136,7 +136,7 @@ class MassImportManager
         $this->params = $params;
         $this->validator = $validator;
         $this->geoTools = $geoTools;
-        $this->pointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $this->pointProvider = new GeocoderPointProvider($mobicoopGeocoder);
         $this->pointProvider->setExclusionTypes($exclusionTypes);
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;

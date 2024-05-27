@@ -29,7 +29,7 @@ use App\Geography\Ressource\Point;
 use App\Geography\Service\Geocoder\Geocoder;
 use App\User\Entity\User;
 
-class MobicoopGeocoderPointProvider implements PointProvider, ReversePointProvider
+class GeocoderPointProvider implements PointProvider, ReversePointProvider
 {
     protected $mobicoopGeocoder;
     protected $maxResults;

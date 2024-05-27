@@ -48,7 +48,7 @@ use App\Geography\Interfaces\GeorouterInterface;
 use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
-use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Import\Entity\UserImport;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
@@ -96,7 +96,7 @@ class ProposalManager
     private $internalMessageManager;
     private $criteriaRepository;
     private $actionRepository;
-    private $mobicoopGeocoderPointProvider;
+    private $geocoderPointProvider;
     private $geoTools;
     private $mobicoopMatcherProvider;
 
@@ -137,7 +137,7 @@ class ProposalManager
         $this->internalMessageManager = $internalMessageManager;
         $this->criteriaRepository = $criteriaRepository;
         $this->actionRepository = $actionRepository;
-        $this->mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($geocoderFactory->getGeocoder());
+        $this->geocoderPointProvider = new GeocoderPointProvider($geocoderFactory->getGeocoder());
         $this->geoTools = $geoTools;
         $this->mobicoopMatcherProvider = $mobicoopMatcherProvider;
     }
@@ -716,8 +716,8 @@ class ProposalManager
 
     private function getActiveRegularProposalAddressesToRecode(array $addresses): array
     {
-        $this->mobicoopGeocoderPointProvider->setExclusionTypes(['venue', 'street', 'housenumber']);
-        $this->mobicoopGeocoderPointProvider->setMaxResults(1);
+        $this->geocoderPointProvider->setExclusionTypes(['venue', 'street', 'housenumber']);
+        $this->geocoderPointProvider->setMaxResults(1);
         $recoded = [];
         $i = 0;
         foreach ($addresses as $address) {
@@ -725,7 +725,7 @@ class ProposalManager
             if (($i % 100) == 0) {
                 $this->logger->info($i.' addresses checked');
             }
-            $points = $this->mobicoopGeocoderPointProvider->search($address['address_locality']);
+            $points = $this->geocoderPointProvider->search($address['address_locality']);
             if (
                 count($points) > 0
                 && (

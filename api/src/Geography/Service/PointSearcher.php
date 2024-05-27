@@ -29,7 +29,7 @@ use App\Event\Repository\EventRepository;
 use App\Geography\Repository\AddressRepository;
 use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\Point\EventPointProvider;
-use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Geography\Service\Point\RelayPointPointProvider;
 use App\Geography\Service\Point\UserPointProvider;
 use App\RelayPoint\Repository\RelayPointRepository;
@@ -111,8 +111,8 @@ class PointSearcher
                 }
             }
         }
-        $mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
-        $mobicoopGeocoderPointProvider->setExclusionTypes($exclusionTypes);
+        $geocoderPointProvider = new GeocoderPointProvider($mobicoopGeocoder);
+        $geocoderPointProvider->setExclusionTypes($exclusionTypes);
 
         $relayPointPointProvider = new RelayPointPointProvider($relayPointRepository);
         $relayPointPointProvider->setMaxResults($maxRelayPointResults);
@@ -122,7 +122,7 @@ class PointSearcher
         $eventPointProvider->setMaxResults($maxEventResults);
 
         $this->providers = [
-            $mobicoopGeocoderPointProvider,
+            $geocoderPointProvider,
             $relayPointPointProvider,
             $eventPointProvider,
         ];
@@ -131,7 +131,7 @@ class PointSearcher
             $this->providers[] = $userPointProvider;
         }
 
-        $this->reverseProviders = [$mobicoopGeocoderPointProvider];
+        $this->reverseProviders = [$geocoderPointProvider];
     }
 
     public function geocode(string $search): array
