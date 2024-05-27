@@ -120,14 +120,7 @@ class EecEligibility
      *
      * @Groups({"eecEligibility"})
      */
-    private $shortDistanceFullAddress = false;
-
-    /**
-     * @var bool
-     *
-     * @Groups({"eecEligibility"})
-     */
-    private $longDistanceFullAddress = false;
+    private $fullAddress = false;
 
     public function __construct(User $user, $id = null)
     {
@@ -316,28 +309,14 @@ class EecEligibility
         return $this;
     }
 
-    public function hasLongDistanceFulladdress(): bool
+    public function hasFulladdress(): bool
     {
-        return $this->longDistanceFullAddress;
+        return $this->fullAddress;
     }
 
-    public function setLongDistanceFulladdress(bool $longDistanceFullAddress): self
+    public function setFulladdress(bool $fullAddress): self
     {
-        $this->longDistanceFullAddress = $longDistanceFullAddress;
-        $this->setLongDistanceEligibility();
-
-        return $this;
-    }
-
-    public function hasShortDistanceFulladdress(): bool
-    {
-        return $this->shortDistanceFullAddress;
-    }
-
-    public function setShortDistanceFulladdress(bool $shortDistanceFullAddress): self
-    {
-        $this->shortDistanceFullAddress = $shortDistanceFullAddress;
-        $this->setShortDistanceEligibility();
+        $this->fullAddress = $fullAddress;
 
         return $this;
     }
