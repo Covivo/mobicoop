@@ -49,7 +49,8 @@ use App\Event\Exception\EventNotFoundException;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
 use App\Geography\Service\AddressManager;
-use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Geocoder\Geocoder;
+use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
@@ -136,7 +137,7 @@ class AdManager
         AppManager $appManager,
         AntiFraudManager $antiFraudManager,
         UserRepository $userRepository,
-        MobicoopGeocoder $mobicoopGeocoder,
+        GeocoderFactory $geocoderFactory,
         JourneyValidation $journeyValidation
     ) {
         $this->entityManager = $entityManager;
@@ -161,7 +162,7 @@ class AdManager
         $this->appManager = $appManager;
         $this->antiFraudManager = $antiFraudManager;
         $this->userRepository = $userRepository;
-        $this->reversePointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $this->reversePointProvider = new MobicoopGeocoderPointProvider($geocoderFactory->getGeocoder());
         if ($this->params['paymentActiveDate'] = \DateTime::createFromFormat('Y-m-d', $this->params['paymentActive'])) {
             $this->params['paymentActiveDate']->setTime(0, 0);
             $this->params['paymentActive'] = true;

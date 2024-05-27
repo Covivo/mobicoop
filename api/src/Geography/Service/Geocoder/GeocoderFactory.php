@@ -25,19 +25,27 @@ declare(strict_types=1);
 
 namespace App\Geography\Service\Geocoder;
 
-interface Geocoder
+class GeocoderFactory
 {
-    public function setPrioritizeCentroid(float $lon, float $lat): void;
+    /**
+     * @var Geocoder
+     */
+    private $_geocoder;
 
-    public function setPrioritizeBox(float $minLon, float $minLat, float $maxLon, float $maxLat): void;
+    public function __construct(string $type, string $uri)
+    {
+        $this->_geocoder = null;
 
-    public function setPrioritizeRegion(string $region): void;
+        switch ($type) {
+            case 'MobicoopGeocoder':
+                $this->_geocoder = new MobicoopGeocoder($uri);
 
-    public function setRestrictCountry(string $country): void;
+                break;
+        }
+    }
 
-    public function setLang(string $lang): void;
-
-    public function geocode(string $search): array;
-
-    public function reverse(float $lon, float $lat): array;
+    public function getGeocoder(): Geocoder
+    {
+        return $this->_geocoder;
+    }
 }
