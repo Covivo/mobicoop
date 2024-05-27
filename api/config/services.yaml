@@ -708,11 +708,15 @@ services:
       $sigShowVenues: "%env(bool:SIG_GEOCODER_SHOW_VENUES)%"
 
   App\Geography\Service\Geocoder\MobicoopGeocoder:
+    class: 'App\Geography\Service\Geocoder\MobicoopGeocoder'
     arguments:
       $uri: "%env(string:MOBICOOP_GEOCODER_URI)%"
+    autowire: false
+    autoconfigure: false
 
   App\Geography\Service\PointSearcher:
     arguments:
+      $mobicoopGeocoder: '@App\Geography\Service\Geocoder\MobicoopGeocoder'
       $maxRelayPointResults: "%env(int:POINT_SEARCHER_RELAY_POINT_MAX_RESULTS)%"
       $maxEventResults: "%env(int:POINT_SEARCHER_EVENT_MAX_RESULTS)%"
       $maxUserResults: "%env(int:POINT_SEARCHER_USER_MAX_RESULTS)%"
