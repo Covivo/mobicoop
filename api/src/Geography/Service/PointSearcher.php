@@ -29,7 +29,7 @@ use App\Event\Repository\EventRepository;
 use App\Geography\Repository\AddressRepository;
 use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\Point\EventPointProvider;
-use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Geography\Service\Point\RelayPointPointProvider;
 use App\Geography\Service\Point\UserPointProvider;
 use App\RelayPoint\Repository\RelayPointRepository;
@@ -68,19 +68,19 @@ class PointSearcher
         array $relayPointParams,
         array $fixerData
     ) {
-        $mobicoopGeocoder = $geocoderFactory->getGeocoder();
+        $geocoder = $geocoderFactory->getGeocoder();
         $this->tokenStorage = $tokenStorage;
         $this->_fixer = new PointGeoFixer($fixerData);
         $user = $security->getUser();
         $userPointProvider = new UserPointProvider($addressRepository, $translator);
         if ($prioritizeCentroid) {
-            $mobicoopGeocoder->setPrioritizeCentroid(
+            $geocoder->setPrioritizeCentroid(
                 $prioritizeCentroid['lon'],
                 $prioritizeCentroid['lat']
             );
         }
         if ($prioritizeBox) {
-            $mobicoopGeocoder->setPrioritizeBox(
+            $geocoder->setPrioritizeBox(
                 $prioritizeBox['minLon'],
                 $prioritizeBox['minLat'],
                 $prioritizeBox['maxLon'],
@@ -88,10 +88,10 @@ class PointSearcher
             );
         }
         if ($prioritizeRegion) {
-            $mobicoopGeocoder->setPrioritizeRegion($prioritizeRegion);
+            $geocoder->setPrioritizeRegion($prioritizeRegion);
         }
         if ($restrictCountry) {
-            $mobicoopGeocoder->setRestrictCountry($restrictCountry);
+            $geocoder->setRestrictCountry($restrictCountry);
         }
         if ($user instanceof User) {
             $userPointProvider->setUser($user);
@@ -102,7 +102,7 @@ class PointSearcher
              */
             foreach ($user->getAddresses() as $address) {
                 if ($address->isHome()) {
-                    $mobicoopGeocoder->setPrioritizeCentroid(
+                    $geocoder->setPrioritizeCentroid(
                         (float) $address->getLongitude(),
                         (float) $address->getLatitude()
                     );
@@ -111,8 +111,8 @@ class PointSearcher
                 }
             }
         }
-        $mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
-        $mobicoopGeocoderPointProvider->setExclusionTypes($exclusionTypes);
+        $geocoderPointProvider = new GeocoderPointProvider($geocoder);
+        $geocoderPointProvider->setExclusionTypes($exclusionTypes);
 
         $relayPointPointProvider = new RelayPointPointProvider($relayPointRepository);
         $relayPointPointProvider->setMaxResults($maxRelayPointResults);
@@ -122,7 +122,7 @@ class PointSearcher
         $eventPointProvider->setMaxResults($maxEventResults);
 
         $this->providers = [
-            $mobicoopGeocoderPointProvider,
+            $geocoderPointProvider,
             $relayPointPointProvider,
             $eventPointProvider,
         ];
@@ -131,7 +131,7 @@ class PointSearcher
             $this->providers[] = $userPointProvider;
         }
 
-        $this->reverseProviders = [$mobicoopGeocoderPointProvider];
+        $this->reverseProviders = [$geocoderPointProvider];
     }
 
     public function geocode(string $search): array

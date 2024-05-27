@@ -29,15 +29,15 @@ use App\Geography\Ressource\Point;
 use App\Geography\Service\Geocoder\Geocoder;
 use App\User\Entity\User;
 
-class MobicoopGeocoderPointProvider implements PointProvider, ReversePointProvider
+class GeocoderPointProvider implements PointProvider, ReversePointProvider
 {
-    protected $mobicoopGeocoder;
+    protected $geocoder;
     protected $maxResults;
     protected $exclusionTypes;
 
-    public function __construct(Geocoder $mobicoopGeocoder)
+    public function __construct(Geocoder $geocoder)
     {
-        $this->mobicoopGeocoder = $mobicoopGeocoder;
+        $this->geocoder = $geocoder;
         $this->setMaxResults(0);
         $this->setExclusionTypes([]);
     }
@@ -55,14 +55,14 @@ class MobicoopGeocoderPointProvider implements PointProvider, ReversePointProvid
     public function search(string $search, ?User $user = null): array
     {
         return $this->geocoderPointsToPoints(
-            $this->mobicoopGeocoder->geocode($search)
+            $this->geocoder->geocode($search)
         );
     }
 
     public function reverse(float $lon, float $lat): array
     {
         return $this->geocoderPointsToPoints(
-            $this->mobicoopGeocoder->reverse($lon, $lat)
+            $this->geocoder->reverse($lon, $lat)
         );
     }
 

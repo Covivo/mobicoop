@@ -50,7 +50,7 @@ use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\AddressAdapter;
-use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Geography\Service\Point\GeocoderPointProvider;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -114,7 +114,7 @@ class DynamicManager
         $this->internalMessageManager = $internalMessageManager;
         $this->proofManager = $proofManager;
 
-        $this->reversePointProvider = new MobicoopGeocoderPointProvider($geocoderFactory->getGeocoder());
+        $this->reversePointProvider = new GeocoderPointProvider($geocoderFactory->getGeocoder());
         $this->addressCompleter = new AddressCompleter($this->reversePointProvider);
     }
 

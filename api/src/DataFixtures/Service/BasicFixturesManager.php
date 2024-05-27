@@ -36,7 +36,7 @@ use App\Gamification\Repository\BadgeRepository;
 use App\Geography\Entity\Address;
 use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\Point\AddressAdapter;
-use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Image\Entity\Icon;
 use App\Image\Entity\Image;
 use App\Image\Repository\IconRepository;
@@ -103,7 +103,7 @@ class BasicFixturesManager
     ) {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
-        $this->pointProvider = new MobicoopGeocoderPointProvider($geocoderFactory->getGeocoder());
+        $this->pointProvider = new GeocoderPointProvider($geocoderFactory->getGeocoder());
         $this->adManager = $adManager;
         $this->communityManager = $communityManager;
         $this->iconRepository = $iconRepository;
