@@ -29,7 +29,7 @@ use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\AddressAdapter;
-use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Match\Entity\Candidate;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassData;
@@ -107,15 +107,15 @@ class MassImportManager
         ?string $restrictCountry = null,
         array $exclusionTypes = []
     ) {
-        $mobicoopGeocoder = $geocoderFactory->getGeocoder();
+        $geocoder = $geocoderFactory->getGeocoder();
         if ($prioritizeCentroid) {
-            $mobicoopGeocoder->setPrioritizeCentroid(
+            $geocoder->setPrioritizeCentroid(
                 $prioritizeCentroid['lon'],
                 $prioritizeCentroid['lat']
             );
         }
         if ($prioritizeBox) {
-            $mobicoopGeocoder->setPrioritizeBox(
+            $geocoder->setPrioritizeBox(
                 $prioritizeBox['minLon'],
                 $prioritizeBox['minLat'],
                 $prioritizeBox['maxLon'],
@@ -123,10 +123,10 @@ class MassImportManager
             );
         }
         if ($prioritizeRegion) {
-            $mobicoopGeocoder->setPrioritizeRegion($prioritizeRegion);
+            $geocoder->setPrioritizeRegion($prioritizeRegion);
         }
         if ($restrictCountry) {
-            $mobicoopGeocoder->setRestrictCountry($restrictCountry);
+            $geocoder->setRestrictCountry($restrictCountry);
         }
         $this->entityManager = $entityManager;
         $this->massRepository = $massRepository;
@@ -136,7 +136,7 @@ class MassImportManager
         $this->params = $params;
         $this->validator = $validator;
         $this->geoTools = $geoTools;
-        $this->pointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $this->pointProvider = new GeocoderPointProvider($geocoder);
         $this->pointProvider->setExclusionTypes($exclusionTypes);
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
