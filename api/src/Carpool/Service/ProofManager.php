@@ -41,7 +41,6 @@ use App\DataProvider\Service\RpcApiManager;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\AddressCompleter;
 use App\Geography\Service\Geocoder\Geocoder;
-use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
