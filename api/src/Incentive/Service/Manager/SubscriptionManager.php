@@ -6,6 +6,7 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Communication\Service\NotificationManager;
+use App\Geography\Entity\Address;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
@@ -152,6 +153,7 @@ class SubscriptionManager extends MobConnectManager
         $userEligibility->setLongDistancePhoneDoublon($this->_longDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
         $userEligibility->setShortDistanceDrivingLicenceNumberDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('drivingLicenceNumber', $user->getDrivingLicenceNumber()));
         $userEligibility->setShortDistancePhoneDoublon($this->_shortDistanceSubscriptionRepository->getDuplicatePropertiesNumber('telephone', $user->getTelephone()));
+        $userEligibility->setFullAddress($this->_checkIfFullAddress($user->getHomeAddress()));
 
         return $userEligibility;
     }
@@ -477,5 +479,14 @@ class SubscriptionManager extends MobConnectManager
 
         $event = new SubscriptionNotReadyToVerifyEvent($subscription);
         $this->_eventDispatcher->dispatch(SubscriptionNotReadyToVerifyEvent::NAME, $event);
+    }
+
+    private function _checkIfFullAddress(Address $homeAddress)
+    {
+        if (!is_null($homeAddress) && !is_null($homeAddress->getPostalCode()) && !is_null($homeAddress->getAddressLocality())) {
+            return true;
+        }
+
+        return false;
     }
 }
