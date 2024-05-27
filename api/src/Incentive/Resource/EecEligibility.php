@@ -115,6 +115,20 @@ class EecEligibility
      */
     private $shortDistancePhoneDoublon = 0;
 
+    /**
+     * @var bool
+     *
+     * @Groups({"eecEligibility"})
+     */
+    private $shortDistanceFullAddress = false;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"eecEligibility"})
+     */
+    private $longDistanceFullAddress = false;
+
     public function __construct(User $user, $id = null)
     {
         $this->setUser($user);
@@ -297,6 +311,32 @@ class EecEligibility
     public function setShortDistancePhoneDoublon(int $shortDistancePhoneDoublon): self
     {
         $this->shortDistancePhoneDoublon = $shortDistancePhoneDoublon;
+        $this->setShortDistanceEligibility();
+
+        return $this;
+    }
+
+    public function hasLongDistanceFulladdress(): bool
+    {
+        return $this->longDistanceFullAddress;
+    }
+
+    public function setLongDistanceFulladdress(bool $longDistanceFullAddress): self
+    {
+        $this->longDistanceFullAddress = $longDistanceFullAddress;
+        $this->setLongDistanceEligibility();
+
+        return $this;
+    }
+
+    public function hasShortDistanceFulladdress(): bool
+    {
+        return $this->shortDistanceFullAddress;
+    }
+
+    public function setShortDistanceFulladdress(bool $shortDistanceFullAddress): self
+    {
+        $this->shortDistanceFullAddress = $shortDistanceFullAddress;
         $this->setShortDistanceEligibility();
 
         return $this;
