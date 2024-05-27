@@ -27,7 +27,7 @@ namespace App\Geography\Service;
 
 use App\Event\Repository\EventRepository;
 use App\Geography\Repository\AddressRepository;
-use App\Geography\Service\Geocoder\Geocoder;
+use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\Point\EventPointProvider;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Geography\Service\Point\RelayPointPointProvider;
@@ -56,7 +56,7 @@ class PointSearcher
         TranslatorInterface $translator,
         Security $security,
         TokenStorageInterface $tokenStorage,
-        Geocoder $mobicoopGeocoder,
+        GeocoderFactory $geocoderFactory,
         int $maxRelayPointResults,
         int $maxEventResults,
         int $maxUserResults,
@@ -68,6 +68,7 @@ class PointSearcher
         array $relayPointParams,
         array $fixerData
     ) {
+        $mobicoopGeocoder = $geocoderFactory->getGeocoder();
         $this->tokenStorage = $tokenStorage;
         $this->_fixer = new PointGeoFixer($fixerData);
         $user = $security->getUser();

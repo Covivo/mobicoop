@@ -45,7 +45,7 @@ use App\DataProvider\Entity\MobicoopMatcherProvider;
 use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
-use App\Geography\Service\Geocoder\Geocoder;
+use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
@@ -117,7 +117,7 @@ class ProposalManager
         InternalMessageManager $internalMessageManager,
         CriteriaRepository $criteriaRepository,
         ActionRepository $actionRepository,
-        Geocoder $mobicoopGeocoder,
+        GeocoderFactory $geocoderFactory,
         GeoTools $geoTools,
         MobicoopMatcherProvider $mobicoopMatcherProvider,
         array $params
@@ -137,7 +137,7 @@ class ProposalManager
         $this->internalMessageManager = $internalMessageManager;
         $this->criteriaRepository = $criteriaRepository;
         $this->actionRepository = $actionRepository;
-        $this->mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $this->mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($geocoderFactory->getGeocoder());
         $this->geoTools = $geoTools;
         $this->mobicoopMatcherProvider = $mobicoopMatcherProvider;
     }

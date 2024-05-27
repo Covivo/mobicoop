@@ -25,7 +25,7 @@ namespace App\Match\Service;
 
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
-use App\Geography\Service\Geocoder\Geocoder;
+use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\AddressAdapter;
@@ -96,7 +96,7 @@ class MassImportManager
         LoggerInterface $logger,
         ValidatorInterface $validator,
         GeoTools $geoTools,
-        Geocoder $mobicoopGeocoder,
+        GeocoderFactory $geocoderFactory,
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
         EventDispatcherInterface $eventDispatcher,
@@ -107,6 +107,7 @@ class MassImportManager
         ?string $restrictCountry = null,
         array $exclusionTypes = []
     ) {
+        $mobicoopGeocoder = $geocoderFactory->getGeocoder();
         if ($prioritizeCentroid) {
             $mobicoopGeocoder->setPrioritizeCentroid(
                 $prioritizeCentroid['lon'],
