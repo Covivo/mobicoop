@@ -749,6 +749,10 @@ export default {
     referral: {
       type: String,
       default: ''
+    },
+    minorProtectionActivated: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -958,11 +962,13 @@ export default {
       val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
     },
     'form.date'(){
-      if (moment().diff(this.form.date, 'year') < 18 ) {
-        this.isUnder18 = true;
-      }
-      else {
-        this.isUnder18 = false;
+      if (this.minorProtectionActivated) {
+        if (moment().diff(this.form.date, 'year') < 18 ) {
+          this.isUnder18 = true;
+        }
+        else {
+          this.isUnder18 = false;
+        }
       }
     },
     selectedCommunity() {
