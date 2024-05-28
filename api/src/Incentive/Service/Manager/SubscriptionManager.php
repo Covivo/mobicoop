@@ -90,6 +90,8 @@ class SubscriptionManager extends MobConnectManager
      */
     private $_subscriptionValidation;
 
+    private $_eecSendWarningIncompleteProfile;
+
     public function __construct(
         EntityManagerInterface $em,
         EventDispatcherInterface $eventDispatcher,
@@ -104,7 +106,8 @@ class SubscriptionManager extends MobConnectManager
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        bool $eecSendWarningIncompleteProfile
     ) {
         parent::__construct($em, $instanceManager, $loggerService);
 
@@ -121,6 +124,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_subscriptionValidation = $subscriptionValidation;
         $this->_userValidation = $userValidation;
         $this->_eecInstance = $instanceManager->getEecInstance();
+        $this->_eecSendWarningIncompleteProfile = $eecSendWarningIncompleteProfile;
     }
 
     /**
@@ -426,11 +430,10 @@ class SubscriptionManager extends MobConnectManager
      */
     public function subscriptionNotReadyToVerify($subscription)
     {
-        if (
-            !SubscriptionValidator::isAddressValid($subscription)
-            || !SubscriptionValidator::isPhoneNumberValid($subscription)
-            || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription)
-        ) {
+        if ($this->_eecSendWarningIncompleteProfile
+        && (!SubscriptionValidator::isAddressValid($subscription)
+        || !SubscriptionValidator::isPhoneNumberValid($subscription)
+        || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription))) {
             $this->_notificationManager->notifies('eec_subscription_not_ready_to_verify', $subscription->getUser(), $subscription);
         }
     }
