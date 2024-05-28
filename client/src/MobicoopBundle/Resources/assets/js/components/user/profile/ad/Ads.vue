@@ -143,6 +143,23 @@ export default {
   },
   watch: {
     ads() {
+      this.updateAds();
+    }
+  },
+  mounted(){
+    this.updateAds();
+  },
+  methods: {
+    deleteAd(isArchived, id, message) {
+      let type = isArchived ? "archived" : "active";
+      this.localAds[type] = omit(this.localAds[type], id);
+      this.$emit('ad-deleted')
+      setTimeout(() => {
+        this.alert.message = message;
+        this.snackbar = true;
+      }, 2500);
+    },
+    updateAds(){
       this.localAds = this.ads;
       if (this.ads && this.ads.active && this.ads.active.length) {
         this.regularAds = [...this.ads.active];
@@ -156,17 +173,7 @@ export default {
             return new Date(`${a.outwardDate} ${a.outwardTime}`) - new Date(`${b.outwardDate} ${b.outwardTime}`);
           });
       }
-    }
-  },
-  methods: {
-    deleteAd(isArchived, id, message) {
-      let type = isArchived ? "archived" : "active";
-      this.localAds[type] = omit(this.localAds[type], id);
-      this.$emit('ad-deleted')
-      setTimeout(() => {
-        this.alert.message = message;
-        this.snackbar = true;
-      }, 2500);
+
     }
   }
 }
