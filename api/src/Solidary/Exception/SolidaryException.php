@@ -24,11 +24,12 @@ namespace App\Solidary\Exception;
 
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryVolunteer;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryException extends \LogicException
+class SolidaryException extends BadRequestHttpException
 {
     public const INVALID_DATA_PROVIDED = 'Invalid data provided';
     public const NO_ROLE = 'This SolidaryUser has no role';

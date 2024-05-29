@@ -23,10 +23,12 @@
 
 namespace App\Carpool\Exception;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class AntiFraudException extends \LogicException
+class AntiFraudException extends BadRequestHttpException
 {
     public const OK = 'OK';
 

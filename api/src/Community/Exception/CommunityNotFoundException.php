@@ -19,10 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Exception;
 
-class CommunityNotFoundException extends \LogicException
-{
-}
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+class CommunityNotFoundException extends NotFoundHttpException {}
