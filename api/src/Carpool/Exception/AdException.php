@@ -23,7 +23,9 @@
 
 namespace App\Carpool\Exception;
 
-class AdException extends \LogicException
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+class AdException extends BadRequestHttpException
 {
     public const SELF_MATCHING = 'You cannot ask a carpool to yourself';
     public const WRONG_COORDINATES = 'Wrong coordinates';
