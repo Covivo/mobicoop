@@ -19,10 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Exception;
 
-class ProofException extends \LogicException
-{
-}
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+class ProofException extends BadRequestHttpException {}
