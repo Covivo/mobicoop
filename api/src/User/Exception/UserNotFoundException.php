@@ -19,10 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Exception;
 
-class UserNotFoundException extends \LogicException
-{
-}
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+class UserNotFoundException extends NotFoundHttpException {}

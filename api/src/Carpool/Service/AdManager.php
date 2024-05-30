@@ -49,9 +49,9 @@ use App\Event\Exception\EventNotFoundException;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
 use App\Geography\Service\AddressManager;
-use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Geocoder\GeocoderFactory;
 use App\Geography\Service\Point\AddressAdapter;
-use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Service\Validation\JourneyValidation;
 use App\Rdex\Entity\RdexError;
@@ -136,7 +136,7 @@ class AdManager
         AppManager $appManager,
         AntiFraudManager $antiFraudManager,
         UserRepository $userRepository,
-        MobicoopGeocoder $mobicoopGeocoder,
+        GeocoderFactory $geocoderFactory,
         JourneyValidation $journeyValidation
     ) {
         $this->entityManager = $entityManager;
@@ -161,7 +161,7 @@ class AdManager
         $this->appManager = $appManager;
         $this->antiFraudManager = $antiFraudManager;
         $this->userRepository = $userRepository;
-        $this->reversePointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $this->reversePointProvider = new GeocoderPointProvider($geocoderFactory->getGeocoder());
         if ($this->params['paymentActiveDate'] = \DateTime::createFromFormat('Y-m-d', $this->params['paymentActive'])) {
             $this->params['paymentActiveDate']->setTime(0, 0);
             $this->params['paymentActive'] = true;
@@ -181,9 +181,9 @@ class AdManager
      * @param bool   $forceNotUseTime   For to set useTime at false
      * @param string $matchingAlgorithm Version of the matching algorithm
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
@@ -1235,9 +1235,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws \Exception
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1314,9 +1314,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1413,9 +1413,9 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
@@ -1455,9 +1455,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareSchedules($old, $new)
     {
@@ -1585,9 +1585,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {
@@ -1667,7 +1667,7 @@ class AdManager
         float $from_latitude,
         float $to_longitude,
         float $to_latitude,
-        string $frequency = null,
+        ?string $frequency = null,
         ?array $days = null,
         ?array $outward = null
     ) {

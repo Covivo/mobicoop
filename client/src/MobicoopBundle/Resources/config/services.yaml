@@ -270,6 +270,7 @@ services:
       $gendersList: "%env(json:SIGNUP_GENDERS_LIST)%"
       $specificTerms: "%env(bool:SIGNUP_SPECIFIC_TERMS)%"
       $phoneCodes: "%env(json:file:resolve:PHONE_CODES)%"
+      $minorProtectionActivated: "%env(bool:MINOR_PROTECTION_ACTIVATED)%"
     tags: ["controller.service_arguments"]
   Mobicoop\Bundle\MobicoopBundle\User\Service\:
     resource: "@MobicoopBundle/User/Service/*"

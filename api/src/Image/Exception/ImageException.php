@@ -19,10 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Exception;
 
-class ImageException extends \LogicException
-{
-}
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+class ImageException extends BadRequestHttpException {}

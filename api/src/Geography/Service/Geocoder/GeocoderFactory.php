@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2021, MOBICOOP. All rights reserved.
+ * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,18 +21,31 @@
  *    LICENSE
  */
 
-namespace App\Carpool\Exception;
+declare(strict_types=1);
 
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+namespace App\Geography\Service\Geocoder;
 
-/**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-class AntiFraudException extends BadRequestHttpException
+class GeocoderFactory
 {
-    public const OK = 'OK';
+    /**
+     * @var Geocoder
+     */
+    private $_geocoder;
 
-    public const TOO_MANY_AD = 'Too many ad for this date';
-    public const INVALID_TIME = 'the new Ad has a departure time before the arrival of another';
-    public const NOT_ENOUGH_TIME = 'Not enough time between the new ad and the others';
+    public function __construct(string $type, string $uri)
+    {
+        $this->_geocoder = null;
+
+        switch ($type) {
+            case 'MobicoopGeocoder':
+                $this->_geocoder = new MobicoopGeocoder($uri);
+
+                break;
+        }
+    }
+
+    public function getGeocoder(): Geocoder
+    {
+        return $this->_geocoder;
+    }
 }

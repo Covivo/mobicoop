@@ -23,6 +23,6 @@
 
 namespace App\Community\Exception;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class CommunityException extends NotFoundHttpException {}
+class CommunityException extends BadRequestHttpException {}

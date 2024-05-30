@@ -22,10 +22,12 @@
 
 namespace App\CarpoolStandard\Exception;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class CarpoolStandardException extends \LogicException
+class CarpoolStandardException extends BadRequestHttpException
 {
     public const NO_PROVIDER = 'No provider given';
     public const UNSUPPORTED_PROVIDER = 'This provider is not yet supported';

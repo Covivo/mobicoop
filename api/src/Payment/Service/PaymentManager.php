@@ -394,7 +394,7 @@ class PaymentManager
      * @param User    $user        The User to test
      * @param Address $homeAddress Ignore the home address of the user, use this address instead
      */
-    public function checkValidForRegistrationToTheProvider(User $user, Address $homeAddress = null): bool
+    public function checkValidForRegistrationToTheProvider(User $user, ?Address $homeAddress = null): bool
     {
         // If the user already has a profile, we return true
         $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user, false);
@@ -704,7 +704,7 @@ class PaymentManager
                     $carpoolItem->setUnpaidDate(new \DateTime('now'));
 
                 // Unpaid doesn't change the status
-                    // $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
+                // $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
                 } elseif (PaymentItem::DAY_CARPOOLED == $item['status']) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
                     $carpoolItem->setUnpaidDate(null);
@@ -1075,8 +1075,9 @@ class PaymentManager
         // We update the home Address by the bank account address
         if (!is_null($bankAccount->getAddress())) {
             if (!is_null($user->getHomeAddress())) {
-                $user->setHomeAddress(null);
-                $this->entityManager->remove($user->getHomeAddress());
+                $currentHomeAddress = $user->getHomeAddress();
+                $currentHomeAddress->setHome(false);
+                $this->entityManager->persist($currentHomeAddress);
             }
 
             $homeAddress = $bankAccount->getAddress();
@@ -1094,7 +1095,7 @@ class PaymentManager
             // No Payment Profile, we create one
             $identifier = null;
 
-            //RPC we check the user have already a bank account with anotherEmail
+            // RPC we check the user have already a bank account with anotherEmail
             $this->checkExistingPaymentProfile($user);
 
             // First we register the User on the payment provider to get an identifier

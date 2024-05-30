@@ -33,8 +33,33 @@ interface Geocoder
 
     public function setPrioritizeRegion(string $region): void;
 
+    public function setRestrictCountry(string $country): void;
+
     public function setLang(string $lang): void;
 
+    /**
+     * @return array
+     *               [
+     *               'country',
+     *               'country_code',
+     *               'distance',
+     *               'house_number',
+     *               'id',
+     *               'lat',
+     *               'locality',
+     *               'locality_code',
+     *               'lon',
+     *               'macro_region',
+     *               'name',
+     *               'population',
+     *               'postal_code',
+     *               'region',
+     *               'region_code',
+     *               'street_name',
+     *               'type',
+     *               'provider'
+     *               ]
+     * */
     public function geocode(string $search): array;
 
     public function reverse(float $lon, float $lat): array;
