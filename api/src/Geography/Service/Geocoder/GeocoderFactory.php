@@ -44,7 +44,7 @@ class GeocoderFactory
         }
     }
 
-    public function getGeocoder(): Geocoder
+    public function getGeocoder(): ?Geocoder
     {
         return $this->_geocoder;
     }
