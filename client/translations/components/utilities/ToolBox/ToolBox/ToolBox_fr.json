@@ -24,7 +24,7 @@
   "itemsVisual": [
     {
       "title": "Affiche Mobicoop",
-      "image": "images/communication/Vignette_Affiche.jpg",
+      "image": "images/communication/vignette_affiche.png",
       "textLogo1": "40x60",
       "link1": "images/communication/RZM_Affiche_40x60_Print.pdf",
       "textLogo2": "A4",
@@ -34,7 +34,7 @@
     },
     {
       "title": "Flyer Mobicoop",
-      "image": "images/communication/RZM_Flyer_Vignette.jpg",
+      "image": "images/communication/vignette_flyer.png",
       "textLogo1": "Flyer",
       "link1": "images/communication/RZC_Flyer_A5.pdf"
     },
