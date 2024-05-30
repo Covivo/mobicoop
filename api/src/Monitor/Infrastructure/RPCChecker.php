@@ -37,16 +37,18 @@ class RPCChecker implements Checker
 
     private $_curlDataProvider;
     private $_carpoolProofService;
+    private $_rpcUri;
     private $_headers = [];
 
     public function __construct(CurlDataProvider $curlDataProvider, CarpoolProofService $carpoolProofService, string $rpcUri, string $rpcToken)
     {
         $this->_curlDataProvider = $curlDataProvider;
         $this->_carpoolProofService = $carpoolProofService;
-        if ('/' !== $rpcUri[strlen($rpcUri) - 1]) {
-            $rpcUri .= '/';
+        $this->_rpcUri = $rpcUri;
+        if ('' !== trim($this->_rpcUri) && '/' !== $this->_rpcUri[strlen($this->_rpcUri) - 1]) {
+            $this->_rpcUri .= '/';
         }
-        $this->_curlDataProvider->setUrl($rpcUri.self::RPC_URI_SUFFIX);
+        $this->_curlDataProvider->setUrl($this->_rpcUri.self::RPC_URI_SUFFIX);
         $this->_headers = [
             'Authorization: Bearer '.$rpcToken,
             'Content-Type: application/json',
@@ -63,7 +65,7 @@ class RPCChecker implements Checker
 
     private function _determineResult(array $params): string
     {
-        if (is_null($params['start'])) {
+        if (is_null($params['start']) || '' == trim($this->_rpcUri)) {
             return json_encode(self::CHECKED);
         }
 
