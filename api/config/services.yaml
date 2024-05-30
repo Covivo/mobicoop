@@ -969,6 +969,8 @@ services:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
 
   App\Incentive\Service\Manager\SubscriptionManager:
+    arguments:
+      $eecSendWarningIncompleteProfile: "%env(bool:EEC_SEND_WARNING_INCOMPLETE_PROFILE)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
