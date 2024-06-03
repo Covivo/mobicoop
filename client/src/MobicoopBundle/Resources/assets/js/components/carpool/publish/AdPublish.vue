@@ -1268,6 +1268,11 @@ export default {
         this.returnTime = (moment(newValue).isValid()) ? moment(this.ad.returnTime).format("HH:mm") : newValue;
       }
     },
+    destination(newValue, oldValue){
+      console.log("changement destination");
+      console.log(oldValue);
+      console.log(newValue);
+    },
     ad: {
       immediate: true,
       handler () {
@@ -1386,11 +1391,14 @@ export default {
         }
       }
       this.route = route;
-      this.origin = route.origin;
-      this.destination = route.destination;
       this.distance = route.direction ? route.direction.distance : null;
       this.duration = route.direction ? route.direction.duration : null;
       this.selectedCommunities = route.communities ? route.communities : null;
+
+      if(this.step!==1){
+        this.origin = route.origin;
+        this.destination = route.destination;
+      }
     },
     postAd() {
       let postObject = this.buildAdObject();

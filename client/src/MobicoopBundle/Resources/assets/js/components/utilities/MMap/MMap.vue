@@ -462,6 +462,7 @@ export default {
         .catch(err => console.error(err));
     },
     redrawMap: function() {
+      console.log("redrawMap")
       // To redraw the map (when you resize the div you have to redraw the map)
       setTimeout(() => {
         this.$refs.mmap.mapObject.invalidateSize();
@@ -471,7 +472,7 @@ export default {
         this.points.forEach((pointForBound, index) => {
           bounds.push([pointForBound.latLng.lat,pointForBound.latLng.lng]);
         });
-        if (bounds.length === 0){
+        if (bounds.length === 0 && this.territory && this.territory.bounds){
           bounds.push(this.territory.bounds);
         }
         if (bounds.length > 0) {
