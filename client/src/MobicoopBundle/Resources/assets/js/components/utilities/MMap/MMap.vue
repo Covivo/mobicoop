@@ -462,7 +462,6 @@ export default {
         .catch(err => console.error(err));
     },
     redrawMap: function() {
-      console.log("redrawMap")
       // To redraw the map (when you resize the div you have to redraw the map)
       setTimeout(() => {
         this.$refs.mmap.mapObject.invalidateSize();
