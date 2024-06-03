@@ -1386,11 +1386,14 @@ export default {
         }
       }
       this.route = route;
-      this.origin = route.origin;
-      this.destination = route.destination;
       this.distance = route.direction ? route.direction.distance : null;
       this.duration = route.direction ? route.direction.duration : null;
       this.selectedCommunities = route.communities ? route.communities : null;
+
+      if(this.step!==1){
+        this.origin = route.origin;
+        this.destination = route.destination;
+      }
     },
     postAd() {
       let postObject = this.buildAdObject();
