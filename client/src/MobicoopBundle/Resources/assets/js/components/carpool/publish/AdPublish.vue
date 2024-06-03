@@ -1268,11 +1268,6 @@ export default {
         this.returnTime = (moment(newValue).isValid()) ? moment(this.ad.returnTime).format("HH:mm") : newValue;
       }
     },
-    destination(newValue, oldValue){
-      console.log("changement destination");
-      console.log(oldValue);
-      console.log(newValue);
-    },
     ad: {
       immediate: true,
       handler () {
