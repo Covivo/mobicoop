@@ -32,8 +32,6 @@ Mobicoop Platform is the key component of several products defining a comprehens
 
 - **Mobicoop Scope**: the Business Intelligence project on top of the platform
 
-- **Mobicoop Geocoder**: an open source geocoder component
-
 
 
 ## Contributing
