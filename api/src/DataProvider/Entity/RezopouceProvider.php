@@ -27,7 +27,6 @@ use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\RezoPouceTerritory;
 use App\Geography\Entity\RezoPouceTerritoryStatus;
 use App\User\Entity\User;
-use LogicException;
 
 /**
  * Rezopouce API data provider.
@@ -67,7 +66,7 @@ class RezopouceProvider
 
             $this->token = $data['value'];
         } else {
-            throw new LogicException('Error in RZP authentication process');
+            throw new \LogicException('Error in RZP authentication process');
         }
     }
 
@@ -92,7 +91,7 @@ class RezopouceProvider
 
     public function getCommuneTerritory(int $communeCode): ?RezoPouceTerritory
     {
-        $token = $this->__getToken();
+        $this->__getToken();
 
         $dataProvider = new DataProvider($this->uri, str_replace('{id}', $communeCode, self::ROUTE_COMMUNE_IS_MEMBER));
         $response = $dataProvider->getItem([], $this->__buildHeaders());
@@ -112,7 +111,7 @@ class RezopouceProvider
 
     public function sendValidationEmail(User $user)
     {
-        $token = $this->__getToken();
+        $this->__getToken();
 
         $dataProvider = new DataProvider($this->uri, self::ROUTE_WELCOME_EMAIL);
 
