@@ -90,8 +90,6 @@ services:
     arguments:
       $uri: "%env(string:GEOCODER_URI)%"
       $type: "%env(string:GEOCODER_TYPE)%"
-    autowire: false
-    autoconfigure: false
 
   # Article Load Listener
   mobicoop.article.article_load_listener:
