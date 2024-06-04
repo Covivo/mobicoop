@@ -268,7 +268,18 @@
             <!-- Step 3 : route -->
             <v-stepper-content step="3">
               <v-row>
-                <v-col cols="12">
+                <v-col cols="6">
+                  <m-map
+                    ref="mmapRoute"
+                    type-map="adSummary"
+                    :points="pointsToMap"
+                    :ways="directionWay"
+                    :provider="mapProvider"
+                    :url-tiles="urlTiles"
+                    :attribution-copyright="attributionCopyright"
+                  />
+                </v-col>
+                <v-col cols="6">
                   <ad-route
                     :geo-search-url="geoSearchUrl"
                     :geo-route-url="geoRouteUrl"
@@ -281,19 +292,6 @@
                     :init-waypoints="initWaypoints"
                     :community-ids="communityIds"
                     @change="routeChanged"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="12">
-                  <m-map
-                    ref="mmapRoute"
-                    type-map="adSummary"
-                    :points="pointsToMap"
-                    :ways="directionWay"
-                    :provider="mapProvider"
-                    :url-tiles="urlTiles"
-                    :attribution-copyright="attributionCopyright"
                   />
                 </v-col>
               </v-row>
