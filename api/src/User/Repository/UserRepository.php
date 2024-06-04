@@ -378,6 +378,7 @@ class UserRepository
             IF ((SELECT uaa.id FROM user_auth_assignment uaa WHERE uaa.user_id = u.id AND uaa.auth_item_id = 6 GROUP BY uaa.auth_item_id) IS NOT NULL, 'Oui', 'Non') AS roleMassMatch,
             IF ((SELECT uaa.id FROM user_auth_assignment uaa WHERE uaa.user_id = u.id AND uaa.auth_item_id = 7 GROUP BY uaa.auth_item_id) IS NOT NULL, 'Oui', 'Non') AS roleCommunityManager,
             IF ((SELECT uaa.id FROM user_auth_assignment uaa WHERE uaa.user_id = u.id AND uaa.auth_item_id = 8 GROUP BY uaa.auth_item_id) IS NOT NULL, 'Oui', 'Non') AS roleCommunityManagerPublic,
+            IF ((SELECT uaa.id FROM user_auth_assignment uaa WHERE uaa.user_id = u.id AND uaa.auth_item_id = 322 GROUP BY uaa.auth_item_id) IS NOT NULL, 'Oui', 'Non') AS roleSuperCommunityManagerPublic,
             IF ((SELECT uaa.id FROM user_auth_assignment uaa WHERE uaa.user_id = u.id AND uaa.auth_item_id = 9 GROUP BY uaa.auth_item_id) IS NOT NULL, 'Oui', 'Non') AS roleCommunityManagerPrivate,
             IF ((SELECT uaa.id FROM user_auth_assignment uaa WHERE uaa.user_id = u.id AND uaa.auth_item_id = 10 GROUP BY uaa.auth_item_id) IS NOT NULL, 'Oui', 'Non') AS roleSolidaryOperator,
             IF ((SELECT uaa.id FROM user_auth_assignment uaa WHERE uaa.user_id = u.id AND uaa.auth_item_id = 11 GROUP BY uaa.auth_item_id) IS NOT NULL, 'Oui', 'Non') AS roleSolidaryVolunteer,
