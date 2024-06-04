@@ -44,6 +44,7 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Importer
 {
+    private const AUTHORIZED_FILE_ENCODING = ['UTF-8', 'ISO-8859-1', 'ASCII'];
     private const MIME_TYPES = [
         'text/plain',
         'text/csv',
@@ -88,8 +89,8 @@ class Importer
     public function __construct(
         File $file,
         string $filename,
-        object $manager = null,
-        User $requester = null,
+        ?object $manager = null,
+        ?User $requester = null,
         ?object $repository = null,
         ?string $eventProvider = null,
         ?PointSearcher $pointSearcher = null
@@ -168,11 +169,38 @@ class Importer
         return $this->_errors;
     }
 
-    private function _validateFile(): bool
+    private function _validateMimeType(): bool
     {
         if (!in_array($this->_file->getMimeType(), self::MIME_TYPES)) {
             $this->_errors[] = 'Incorrect MIME type';
 
+            return false;
+        }
+
+        return true;
+    }
+
+    private function _validateUtf8Encoded(): bool
+    {
+        $content = file_get_contents($this->_file);
+
+        $encoding = mb_detect_encoding($content, self::AUTHORIZED_FILE_ENCODING, true);
+        if ('UTF-8' !== $encoding) {
+            $this->_errors[] = 'File not in '.implode(', ', self::AUTHORIZED_FILE_ENCODING);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function _validateFile(): bool
+    {
+        if (!$this->_validateMimeType()) {
+            return false;
+        }
+
+        if (!$this->_validateUtf8Encoded()) {
             return false;
         }
 
