@@ -44,7 +44,7 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Importer
 {
-    private const AUTHORIZED_FILE_ENCODING = ['UTF-8', 'ISO-8859-1', 'ASCII'];
+    private const AUTHORIZED_FILE_ENCODING = ['UTF-8'];
     private const MIME_TYPES = [
         'text/plain',
         'text/csv',
@@ -185,7 +185,8 @@ class Importer
         $content = file_get_contents($this->_file);
 
         $encoding = mb_detect_encoding($content, self::AUTHORIZED_FILE_ENCODING, true);
-        if ('UTF-8' !== $encoding) {
+
+        if (!$encoding) {
             $this->_errors[] = 'File not in '.implode(', ', self::AUTHORIZED_FILE_ENCODING);
 
             return false;
