@@ -964,6 +964,18 @@ class AdManager
             $proposal->getProposalLinked()->setUser($this->security->getUser());
         }
 
+        // we remove the self matchings if proposal is is a dynamic proposal
+        // foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+        //     if (($matchingOffer->getProposalOffer()->getUser()->getId() == $this->security->getUser()->getId()) && $matchingOffer->getProposalOffer()->isDynamic()) {
+        //         $proposal->removeMatchingOffer($matchingOffer);
+        //     }
+        // }
+        // foreach ($proposal->getMatchingRequests() as $matchingRequest) {
+        //     if (($matchingRequest->getProposal()->getUser()->getId() == $this->security->getUser()->getId()) && $matchingRequest->getProposal()->isDynamic()) {
+        //         $proposal->removeMatchingRequest($matchingRequest);
+        //     }
+        // }
+
         $this->entityManager->persist($proposal);
         $this->entityManager->flush();
 
@@ -1346,7 +1358,7 @@ class AdManager
             }
             $ad = $this->createAd($ad, true, $withSolidaries, true, false, Ad::MATCHING_ALGORITHM_V3);
             $this->proposalManager->deleteProposal($proposal);
-        // minor update
+            // minor update
         } elseif (
             $oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()
