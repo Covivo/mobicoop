@@ -1398,19 +1398,10 @@ class PaymentManager
      */
     public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
     {
-        if (!file_exists($this->validationDocsPath.''.$validationDocument->getFileName())) {
-            throw new PaymentException(PaymentException::ERROR_UPLOAD);
-        }
-        if (!in_array(strtolower($validationDocument->getExtension()), $this->validationDocsAuthorizedExtensions)) {
-            throw new PaymentException(PaymentException::ERROR_VALIDATION_DOC_BAD_EXTENTION.' ('.implode(',', $this->validationDocsAuthorizedExtensions).')');
-        }
+        $this->_checkMandatoryValidationDocument($validationDocument);
 
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $validationDocument->getUser()]);
-        if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
-            throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
-        }
-        if (null !== $paymentProfiles[0]->getValidationId() && (PaymentProfile::VALIDATION_PENDING === $paymentProfiles[0]->getValidationStatus() || PaymentProfile::VALIDATION_VALIDATED === $paymentProfiles[0]->getValidationStatus())) {
-            throw new PaymentException(PaymentException::ERROR_VALIDATION_DOC_ALREADY_UNDER_REVIEW);
+        if (!is_null($validationDocument->getFile2())) {
+            $this->_checkOptionalValidationDocument($validationDocument);
         }
 
         $validationDocument = $this->paymentProvider->uploadValidationDocument($validationDocument);
@@ -1525,6 +1516,34 @@ class PaymentManager
         $paymentProfile->setRefusalReason($validationDocument->getStatus());
 
         return $paymentProfile;
+    }
+
+    private function _checkMandatoryValidationDocument($validationDocument)
+    {
+        if (!file_exists($this->validationDocsPath.''.$validationDocument->getFileName())) {
+            throw new PaymentException(PaymentException::ERROR_UPLOAD);
+        }
+        if (!in_array(strtolower($validationDocument->getExtension()), $this->validationDocsAuthorizedExtensions)) {
+            throw new PaymentException(PaymentException::ERROR_VALIDATION_DOC_BAD_EXTENTION.' ('.implode(',', $this->validationDocsAuthorizedExtensions).')');
+        }
+
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $validationDocument->getUser()]);
+        if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
+            throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+        }
+        if (null !== $paymentProfiles[0]->getValidationId() && (PaymentProfile::VALIDATION_PENDING === $paymentProfiles[0]->getValidationStatus() || PaymentProfile::VALIDATION_VALIDATED === $paymentProfiles[0]->getValidationStatus())) {
+            throw new PaymentException(PaymentException::ERROR_VALIDATION_DOC_ALREADY_UNDER_REVIEW);
+        }
+    }
+
+    private function _checkOptionalValidationDocument($validationDocument)
+    {
+        if (!file_exists($this->validationDocsPath.''.$validationDocument->getFileName2())) {
+            throw new PaymentException(PaymentException::ERROR_UPLOAD_OPTIONAL);
+        }
+        if (!in_array(strtolower($validationDocument->getExtension2()), $this->validationDocsAuthorizedExtensions)) {
+            throw new PaymentException(PaymentException::ERROR_VALIDATION_OPTIONAL_DOC_BAD_EXTENTION.' ('.implode(',', $this->validationDocsAuthorizedExtensions).')');
+        }
     }
 
     private function _treatOnlineCarpoolPayment(int $carpoolPaymentStatus, CarpoolItem $item, array $onlineReturns): bool
