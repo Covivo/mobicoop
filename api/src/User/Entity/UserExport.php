@@ -327,6 +327,15 @@ class UserExport
      *
      * @Groups({"user-export"})
      *
+     * @SerializedName("Rôle - ROLE_SUPER_COMMUNITY_MANAGER_PUBLIC")
+     */
+    private $roleSuperCommunityManagerPublic = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
      * @SerializedName("Rôle - ROLE_COMMUNITY_MANAGER_PRIVATE")
      */
     private $roleCommunityManagerPrivate = self::FALSE;
@@ -1014,6 +1023,24 @@ class UserExport
     public function setRoleCommunityManagerPublic(string $roleCommunityManagerPublic): self
     {
         $this->roleCommunityManagerPublic = $roleCommunityManagerPublic;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of roleSuperCommunityManagerPublic.
+     */
+    public function getRoleSuperCommunityManagerPublic(): string
+    {
+        return $this->roleSuperCommunityManagerPublic;
+    }
+
+    /**
+     * Set the value of roleSuperCommunityManagerPublic.
+     */
+    public function setRoleSuperCommunityManagerPublic(string $roleSuperCommunityManagerPublic): self
+    {
+        $this->roleSuperCommunityManagerPublic = $roleSuperCommunityManagerPublic;
 
         return $this;
     }

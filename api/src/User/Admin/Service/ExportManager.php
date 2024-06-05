@@ -200,6 +200,7 @@ class ExportManager
         $this->_currentUserExport->setRoleMassMatch($this->_currentUser['roleMassMatch']);
         $this->_currentUserExport->setRoleCommunityManager($this->_currentUser['roleCommunityManager']);
         $this->_currentUserExport->setRoleCommunityManagerPublic($this->_currentUser['roleCommunityManagerPublic']);
+        $this->_currentUserExport->setRoleSuperCommunityManagerPublic($this->_currentUser['roleSuperCommunityManagerPublic']);
         $this->_currentUserExport->setRoleCommunityManagerPrivate($this->_currentUser['roleCommunityManagerPrivate']);
         $this->_currentUserExport->setRoleCommunityManagerPrivate($this->_currentUser['roleSolidaryOperator']);
         $this->_currentUserExport->setRoleSolidaryVolunteer($this->_currentUser['roleSolidaryVolunteer']);
