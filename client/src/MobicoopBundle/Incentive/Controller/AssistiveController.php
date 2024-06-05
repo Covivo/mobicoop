@@ -9,7 +9,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AssistiveController extends AbstractController
@@ -56,7 +55,7 @@ class AssistiveController extends AbstractController
             if (empty($ssoServices)) {
                 $this->_logger->error(self::ERROR_MISSING_PROVIDER);
 
-                throw new UnprocessableEntityHttpException(self::ERROR_MISSING_PROVIDER);
+                return $this->redirectToRoute('home');
             }
 
             $params['activationUri'] = $ssoServices[0]->getUri();
