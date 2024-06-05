@@ -268,19 +268,16 @@ class ResultManager
                             $return = $a->getTime()->format('H') >= $value->format('H');
 
                             break;
-
                             // Filter on Role (driver, passenger, both)
                         case 'role':
                             $return = self::filterByRole($a, $value);
 
                             break;
-
                             // Filter on Gender
                         case 'gender':
                             $return = $a->getCarpooler()->getGender() == $value;
 
                             break;
-
                             // Filter on a Community
                         case 'community':
                             $return = array_key_exists($value, $a->getCommunities());
@@ -742,6 +739,12 @@ class ResultManager
             if (!$withSolidaries && $request->getProposalRequest()->getCriteria()->isSolidary()) {
                 continue;
             }
+            // we exclude own dynamic ad proposals
+            if ($this->security->getUser() instanceof User) {
+                if ($request->getProposalRequest()->getUser()->getId() == $this->security->getUser()->getId() && $request->getProposalRequest()->isDynamic()) {
+                    continue;
+                }
+            }
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
             if (is_null($request->getFilters() && is_null($request->getPickUpDuration()))) {
                 $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
@@ -754,6 +757,12 @@ class ResultManager
             // we exclude the private proposals
             if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
                 continue;
+            }
+            // we exclude own dynamic ad proposals
+            if ($this->security->getUser() instanceof User) {
+                if ($offer->getProposalOffer()->getUser()->getId() == $this->security->getUser()->getId() && $offer->getProposalOffer()->isDynamic()) {
+                    continue;
+                }
             }
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
             if (is_null($offer->getFilters() && is_null($offer->getPickUpDuration()))) {
