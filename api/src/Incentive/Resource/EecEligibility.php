@@ -115,6 +115,13 @@ class EecEligibility
      */
     private $shortDistancePhoneDoublon = 0;
 
+    /**
+     * @var bool
+     *
+     * @Groups({"eecEligibility"})
+     */
+    private $addressFullyCompleted = false;
+
     public function __construct(User $user, $id = null)
     {
         $this->setUser($user);
@@ -298,6 +305,24 @@ class EecEligibility
     {
         $this->shortDistancePhoneDoublon = $shortDistancePhoneDoublon;
         $this->setShortDistanceEligibility();
+
+        return $this;
+    }
+
+    /**
+     * Get the value of addressFullyCompleted.
+     */
+    public function isAddressFullyCompleted(): bool
+    {
+        return $this->addressFullyCompleted;
+    }
+
+    /**
+     * Set the value of addressFullyCompleted.
+     */
+    public function setAddressFullyCompleted(bool $addressFullyCompleted): self
+    {
+        $this->addressFullyCompleted = $addressFullyCompleted;
 
         return $this;
     }
