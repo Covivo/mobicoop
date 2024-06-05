@@ -181,9 +181,9 @@ class AdManager
      * @param bool   $forceNotUseTime   For to set useTime at false
      * @param string $matchingAlgorithm Version of the matching algorithm
      *
-     * @return Ad
-     *
      * @throws \Exception
+     *
+     * @return Ad
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
@@ -964,18 +964,6 @@ class AdManager
             $proposal->getProposalLinked()->setUser($this->security->getUser());
         }
 
-        // we remove the self matchings if proposal is is a dynamic proposal
-        // foreach ($proposal->getMatchingOffers() as $matchingOffer) {
-        //     if (($matchingOffer->getProposalOffer()->getUser()->getId() == $this->security->getUser()->getId()) && $matchingOffer->getProposalOffer()->isDynamic()) {
-        //         $proposal->removeMatchingOffer($matchingOffer);
-        //     }
-        // }
-        // foreach ($proposal->getMatchingRequests() as $matchingRequest) {
-        //     if (($matchingRequest->getProposal()->getUser()->getId() == $this->security->getUser()->getId()) && $matchingRequest->getProposal()->isDynamic()) {
-        //         $proposal->removeMatchingRequest($matchingRequest);
-        //     }
-        // }
-
         $this->entityManager->persist($proposal);
         $this->entityManager->flush();
 
@@ -1247,9 +1235,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @return array
-     *
      * @throws \Exception
+     *
+     * @return array
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1326,9 +1314,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @return Ad
-     *
      * @throws \Exception
+     *
+     * @return Ad
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1358,7 +1346,7 @@ class AdManager
             }
             $ad = $this->createAd($ad, true, $withSolidaries, true, false, Ad::MATCHING_ALGORITHM_V3);
             $this->proposalManager->deleteProposal($proposal);
-            // minor update
+        // minor update
         } elseif (
             $oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()
@@ -1425,9 +1413,9 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
@@ -1467,9 +1455,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function compareSchedules($old, $new)
     {
@@ -1597,9 +1585,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {
