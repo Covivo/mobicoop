@@ -226,6 +226,10 @@ export default {
     send(){
       let sendDocument = new FormData();
       sendDocument.append("document", this.document);
+      if(this.optionalDocument){
+        console.log("optionalDocument")
+        sendDocument.append("optionalDocument", this.optionalDocument);
+      }
       this.loading = true;
       maxios
         .post(this.$t('sendUrl'), sendDocument,
@@ -236,6 +240,7 @@ export default {
           })
         .then(res => {
           this.document = null;
+          this.optionalDocument = null;
           this.loading = false;
           this.currentValidationStatus = 0;
           this.$emit("identityDocumentSent",res.data);

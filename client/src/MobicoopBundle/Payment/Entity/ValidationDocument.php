@@ -19,43 +19,47 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Entity;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * An identity validation document
+ * An identity validation document.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ValidationDocument implements ResourceInterface, \JsonSerializable
 {
-
-
     /**
      * @var int The id of this bank account
      */
     private $id;
 
     /**
-     * @var string|null The iri of this event.
+     * @var null|string the iri of this event
      *
      * @Groups({"post","put"})
      */
     private $iri;
-    
+
     /**
-    * @var File|null
-    * @Groups({"post","put"})
-    */
+     * @var null|File
+     *
+     * @Groups({"post","put"})
+     */
     private $file;
+
+    /**
+     * @var null|File
+     *
+     * @Groups({"post","put"})
+     */
+    private $file2;
 
     /**
      * @var User The document's owner
@@ -64,14 +68,14 @@ class ValidationDocument implements ResourceInterface, \JsonSerializable
      */
     private $user;
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         if ($id) {
             $this->setId($id);
-            $this->setIri("/validation_documents/".$id);
+            $this->setIri('/validation_documents/'.$id);
         }
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -86,7 +90,7 @@ class ValidationDocument implements ResourceInterface, \JsonSerializable
     {
         return $this->iri;
     }
-    
+
     public function setIri($iri)
     {
         $this->iri = $iri;
@@ -96,17 +100,27 @@ class ValidationDocument implements ResourceInterface, \JsonSerializable
     {
         return $this->file;
     }
-    
+
     public function setFile(?File $file)
     {
         $this->file = $file;
+    }
+
+    public function getFile2(): ?File
+    {
+        return $this->file2;
+    }
+
+    public function setFile2(?File $file2)
+    {
+        $this->file2 = $file2;
     }
 
     public function getUser(): ?User
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user)
     {
         $this->user = $user;
@@ -116,9 +130,9 @@ class ValidationDocument implements ResourceInterface, \JsonSerializable
     {
         return
             [
-                'id'                            => $this->getId(),
-                'iri'                           => $this->getIri(),
-                'user'                          => $this->getUser()
+                'id' => $this->getId(),
+                'iri' => $this->getIri(),
+                'user' => $this->getUser(),
             ];
     }
 }
