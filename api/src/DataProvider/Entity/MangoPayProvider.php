@@ -371,7 +371,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *
      * @return string The identifier
      */
-    public function registerUser(User $user, Address $address = null)
+    public function registerUser(User $user, ?Address $address = null)
     {
         // Build the body
         $body['FirstName'] = $user->getGivenName();
@@ -792,15 +792,10 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         // Creation of pages
-        $urlPost = str_replace('{KYCDocId}', $docId, str_replace('{userId}', $identifier, self::ITEM_KYC_CREATE_PAGE));
+        $this->_uploadPage($docId, $identifier, $headers, $validationDocument->getFileName());
 
-        $body = [
-            'File' => base64_encode(file_get_contents($this->validationDocsPath.''.$validationDocument->getFileName())),
-        ];
-        $dataProvider = new DataProvider($this->serverUrl, $urlPost);
-        $response = $dataProvider->postCollection($body, $headers);
-        if (204 !== $response->getCode()) {
-            throw new PaymentException(PaymentException::ERROR_CREATING_DOC_PAGE_TO_PROVIDER);
+        if (!is_null($validationDocument->getFile2())) {
+            $this->_uploadPage($docId, $identifier, $headers, $validationDocument->getFileName2());
         }
 
         // Asking validation
@@ -981,6 +976,20 @@ class MangoPayProvider implements PaymentProviderInterface
             }
         } else {
             throw new PaymentException(PaymentException::ERROR_DOC);
+        }
+    }
+
+    private function _uploadPage(string $docId, string $identifier, array $headers, string $fileName)
+    {
+        $urlPost = str_replace('{KYCDocId}', $docId, str_replace('{userId}', $identifier, self::ITEM_KYC_CREATE_PAGE));
+
+        $body = [
+            'File' => base64_encode(file_get_contents($this->validationDocsPath.''.$fileName)),
+        ];
+        $dataProvider = new DataProvider($this->serverUrl, $urlPost);
+        $response = $dataProvider->postCollection($body, $headers);
+        if (204 !== $response->getCode()) {
+            throw new PaymentException(PaymentException::ERROR_CREATING_DOC_PAGE_TO_PROVIDER);
         }
     }
 
