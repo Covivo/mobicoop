@@ -19,11 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Controller;
 
-use App\Payment\Exception\PaymentException;
 use App\Payment\Ressource\ValidationDocument;
 use App\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,7 +49,15 @@ final class UploadValidationDocumentAction
 
     public function __invoke(Request $request): ?ValidationDocument
     {
-        $uploadedFile = $request->files->get('file');
+        $validationDocument = $this->_treatMandatoryFile($request, 'file');
+        $validationDocument = $this->_treatOptionalFile($request, 'file2', $validationDocument);
+
+        return $this->paymentManager->uploadValidationDocument($validationDocument);
+    }
+
+    private function _treatMandatoryFile(Request $request, string $paramName): ValidationDocument
+    {
+        $uploadedFile = $request->files->get($paramName);
         if (!$uploadedFile) {
             throw new BadRequestHttpException('"file" is required');
         }
@@ -59,13 +66,32 @@ final class UploadValidationDocumentAction
         $validationDocument->setUser($this->security->getUser());
 
         // We need to delete the extension added by vich uploader
-        $validationDocument->setFileName(substr($validationDocument->getFile()->getClientOriginalName(), 0, strrpos($validationDocument->getFile()->getClientOriginalName(), ".")));
+        $validationDocument->setFileName(substr($validationDocument->getFile()->getClientOriginalName(), 0, strrpos($validationDocument->getFile()->getClientOriginalName(), '.')));
         $validationDocument->setExtension(
-            substr($validationDocument->getFile()->getClientOriginalName(), strrpos($validationDocument->getFile()->getClientOriginalName(), ".")+1, strlen($validationDocument->getFile()->getClientOriginalName())-1)
+            substr($validationDocument->getFile()->getClientOriginalName(), strrpos($validationDocument->getFile()->getClientOriginalName(), '.') + 1, strlen($validationDocument->getFile()->getClientOriginalName()) - 1)
         );
 
-        $this->uploadHandler->upload($validationDocument, "file");
+        $this->uploadHandler->upload($validationDocument, 'file');
 
-        return $this->paymentManager->uploadValidationDocument($validationDocument);
+        return $validationDocument;
+    }
+
+    private function _treatOptionalFile(Request $request, string $paramName, ValidationDocument $validationDocument): ValidationDocument
+    {
+        $uploadedFile = $request->files->get($paramName);
+        if (!$uploadedFile) {
+            return $validationDocument;
+        }
+        $validationDocument->setFile2($uploadedFile);
+
+        // We need to delete the extension added by vich uploader
+        $validationDocument->setFileName2(substr($validationDocument->getFile2()->getClientOriginalName(), 0, strrpos($validationDocument->getFile2()->getClientOriginalName(), '.')));
+        $validationDocument->setExtension2(
+            substr($validationDocument->getFile2()->getClientOriginalName(), strrpos($validationDocument->getFile2()->getClientOriginalName(), '.') + 1, strlen($validationDocument->getFile2()->getClientOriginalName()) - 1)
+        );
+
+        $this->uploadHandler->upload($validationDocument, 'file2');
+
+        return $validationDocument;
     }
 }
