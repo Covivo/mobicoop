@@ -1398,7 +1398,9 @@ class PaymentManager
      */
     public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
     {
-        $this->_checkMandatoryValidationDocument($validationDocument);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $validationDocument->getUser()]);
+
+        $this->_checkMandatoryValidationDocument($validationDocument, $paymentProfiles);
 
         if (!is_null($validationDocument->getFile2())) {
             $this->_checkOptionalValidationDocument($validationDocument);
@@ -1518,7 +1520,7 @@ class PaymentManager
         return $paymentProfile;
     }
 
-    private function _checkMandatoryValidationDocument($validationDocument)
+    private function _checkMandatoryValidationDocument(ValidationDocument $validationDocument, array $paymentProfiles)
     {
         if (!file_exists($this->validationDocsPath.''.$validationDocument->getFileName())) {
             throw new PaymentException(PaymentException::ERROR_UPLOAD);
@@ -1527,7 +1529,6 @@ class PaymentManager
             throw new PaymentException(PaymentException::ERROR_VALIDATION_DOC_BAD_EXTENTION.' ('.implode(',', $this->validationDocsAuthorizedExtensions).')');
         }
 
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $validationDocument->getUser()]);
         if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
         }
@@ -1536,7 +1537,7 @@ class PaymentManager
         }
     }
 
-    private function _checkOptionalValidationDocument($validationDocument)
+    private function _checkOptionalValidationDocument(ValidationDocument $validationDocument)
     {
         if (!file_exists($this->validationDocsPath.''.$validationDocument->getFileName2())) {
             throw new PaymentException(PaymentException::ERROR_UPLOAD_OPTIONAL);
