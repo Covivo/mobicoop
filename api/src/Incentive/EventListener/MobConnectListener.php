@@ -112,11 +112,15 @@ class MobConnectListener implements EventSubscriberInterface
         if (
             property_exists($decodeRequest, 'ssoProvider')
             && in_array($decodeRequest->ssoProvider, self::ALLOWED_SSO_PROVIDERS)
-            && property_exists($decodeRequest, 'eec')
-            && (1 === $decodeRequest->eec || true === $decodeRequest)
         ) {
             $this->_authManager->updateAuth($event->getUser(), $event->getSsoUser());
-            $this->_subscriptionManager->createSubscriptions($event->getUser());
+
+            if (
+                property_exists($decodeRequest, 'eec')
+                && (1 === $decodeRequest->eec || true === $decodeRequest)
+            ) {
+                $this->_subscriptionManager->createSubscriptions($event->getUser());
+            }
         }
     }
 
