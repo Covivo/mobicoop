@@ -91,8 +91,10 @@ class CommunityUserRepository
             foreach ($context['filters'] as $filter => $value) {
                 if (!in_array($filter, $excludedFilters)) {
                     switch ($filter) {
+                        case 'lastActivityDate':
                         case 'givenName':
-                        case 'familyName':$query->andWhere('u.'.$filter." like '%".$value."%'");
+                        case 'familyName':
+                            $query->andWhere('u.'.$filter." like '%".$value."%'");
 
                             break;
 
@@ -105,8 +107,10 @@ class CommunityUserRepository
             if (isset($context['filters']['order'])) {
                 foreach ($context['filters']['order'] as $sort => $order) {
                     switch ($sort) {
+                        case 'lastActivityDate':
                         case 'givenName':
-                        case 'familyName':$query->addOrderBy('u.'.$sort, $order);
+                        case 'familyName':
+                            $query->addOrderBy('u.'.$sort, $order);
 
                             break;
 
@@ -153,6 +157,7 @@ class CommunityUserRepository
             foreach ($context['filters'] as $filter => $value) {
                 if (!in_array($filter, $excludedFilters)) {
                     switch ($filter) {
+                        case 'lastActivityDate':
                         case 'givenName':
                         case 'familyName':$query->andWhere('u.'.$filter." like '%".$value."%'");
 
@@ -167,6 +172,7 @@ class CommunityUserRepository
             if (isset($context['filters']['order'])) {
                 foreach ($context['filters']['order'] as $sort => $order) {
                     switch ($sort) {
+                        case 'lastActivityDate':
                         case 'givenName':
                         case 'familyName':$query->addOrderBy('u.'.$sort, $order);
 
