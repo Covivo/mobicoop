@@ -76,7 +76,7 @@ class AssistiveController extends AbstractController
             $data = [
                 'ssoProvider' => $this->_assistiveSsoProvider,
                 'ssoId' => $queryParams['code'],
-                'baseSiteUri' => $request->getScheme().'://'.$request->getHost(),
+                'baseSiteUri' => $request->getScheme().'://'.$request->getHost(),       // In dev mode you need to add the instance port to the baseSiteUri. For example `.':9091'`
                 'eec' => false,
             ];
 
