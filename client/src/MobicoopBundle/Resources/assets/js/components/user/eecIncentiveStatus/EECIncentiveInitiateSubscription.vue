@@ -4,19 +4,15 @@
       flat
       color="grey lighten-4"
     >
-      <v-card-title
-        class="text-center"
-      >
+      <v-card-title class="text-center">
         {{ $t('title') }}
       </v-card-title>
       <v-card-text class="text-center">
-        <h2
-          class="mb-4"
-        >
+        <h2 class="mb-4">
           {{ $t('subtitle') }}
         </h2>
         <p class="font-weight-bold">
-          {{ $t('intro', {eecProvider: eecProvider}) }}
+          {{ $t('intro', { eecProvider: eecProvider }) }}
         </p>
         <p>
           <v-list class="text-left">
@@ -41,9 +37,7 @@
                     offset-x="-2.5"
                     offset-y="5"
                   >
-                    <template
-                      #badge
-                    >
+                    <template #badge>
                       <div
                         style="cursor: pointer"
                         @click="tutorialDialog = true"
@@ -51,9 +45,7 @@
                         <v-icon>mdi-information-variant</v-icon>
                       </div>
                     </template>
-                    <a
-                      @click="$vuetify.goTo('#driving-licence-number', scrollOptions)"
-                    >
+                    <a @click="$vuetify.goTo('#driving-licence-number', scrollOptions)">
                       {{ $t('mandatory2') }}
                     </a>
                   </v-badge>
@@ -66,14 +58,27 @@
                 </v-icon>
               </v-list-item-icon>
             </v-list-item>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>
+                  <a @click="$vuetify.goTo('#user-postalAddress', scrollOptions)">{{ $t('mandatory3') }}</a>
+                </v-list-item-title>
+              </v-list-item-content>
+
+              <v-list-item-icon>
+                <v-icon :color="eligibility.addressFullyCompleted ? 'green' : 'red'">
+                  {{ eligibility.addressFullyCompleted ? 'mdi-check' : 'mdi-close' }}
+                </v-icon>
+              </v-list-item-icon>
+            </v-list-item>
           </v-list>
         </p>
         <p
           class="text-justify"
-          v-html="$t('intro2', {eecPlatform: platform})"
+          v-html="$t('intro2', { eecPlatform: platform })"
         />
         <p class="font-weight-bold">
-          {{ $t('title_list', {eecPlatform: platform, eecProvider: eecProvider}) }}
+          {{ $t('title_list', { eecPlatform: platform, eecProvider: eecProvider }) }}
         </p>
         <p
           v-for="(item, i) in items"
@@ -149,8 +154,8 @@
         </v-card-title>
         <v-card-text>
           <ul class="mt-5">
-            <li v-html="$t('dialogs.tutorial.item-1', {apiUri: apiUri})" />
-            <li v-html="$t('dialogs.tutorial.item-2', {apiUri: apiUri})" />
+            <li v-html="$t('dialogs.tutorial.item-1', { apiUri: apiUri })" />
+            <li v-html="$t('dialogs.tutorial.item-2', { apiUri: apiUri })" />
           </ul>
         </v-card-text>
 
@@ -176,8 +181,8 @@
 import { merge } from "lodash";
 import maxios from "@utils/maxios";
 import SsoLogins from '@components/user/SsoLogins';
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
-import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
+import { messages_en, messages_fr, messages_eu, messages_nl } from "@translations/components/user/EECIncentiveStatus/";
+import { messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl } from "@clientTranslations/components/user/EECIncentiveStatus/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -193,15 +198,15 @@ export default {
       'eu': MessagesMergedEu
     }
   },
-  components:{
+  components: {
     SsoLogins
   },
   props: {
-    confirmedPhoneNumber:{
+    confirmedPhoneNumber: {
       type: Boolean,
       default: false
     },
-    drivingLicenceNumberFilled:{
+    drivingLicenceNumberFilled: {
       type: Boolean,
       default: false
     },
@@ -217,14 +222,14 @@ export default {
   data() {
     return {
       checkboxes: [],
-      checkboxesAllChecked:false,
+      checkboxesAllChecked: false,
       eecPlatform: this.$t('EEC-platform'),
       eecProvider: this.$t('EEC-provider'),
-      items: [this.$t('item1', {eecProvider: this.$t('EEC-provider')}),
-        this.$t('item2', {eecProvider: this.$t('EEC-provider')}),
-        this.$t('item3', {eecProvider: this.$t('EEC-provider')}),
-        this.$t('item4', {eecProvider: this.$t('EEC-provider')}),
-        this.$t('item5', {eecProvider: this.$t('EEC-provider')})
+      items: [this.$t('item1', { eecProvider: this.$t('EEC-provider') }),
+        this.$t('item2', { eecProvider: this.$t('EEC-provider') }),
+        this.$t('item3', { eecProvider: this.$t('EEC-provider') }),
+        this.$t('item4', { eecProvider: this.$t('EEC-provider') }),
+        this.$t('item5', { eecProvider: this.$t('EEC-provider') })
       ],
       eligibility: null,
       loading: false,
@@ -234,16 +239,17 @@ export default {
       tutorialDialog: false,
     }
   },
-  computed:{
-    canSubscribe(){
+  computed: {
+    canSubscribe() {
       return this.confirmedPhoneNumber
         && this.drivingLicenceNumberFilled
         && this.checkboxesAllChecked
         && this.eligibility.longDistanceEligibility
         && this.eligibility.shortDistanceEligibility
+        && this.eligibility.addressFullyCompleted
       ;
     },
-    scrollOptions () {
+    scrollOptions() {
       return {
         duration: 500,
         offset: 100,
@@ -251,10 +257,10 @@ export default {
       }
     },
   },
-  watch:{
-    checkboxes(){
+  watch: {
+    checkboxes() {
       this.checkboxesAllChecked = false;
-      if(this.checkboxes.length == this.items.length){
+      if (this.checkboxes.length == this.items.length) {
         this.checkboxesAllChecked = true;
       }
     },
@@ -263,15 +269,15 @@ export default {
         this.updateStore(this.canSubscribe);
       }
     },
-    checkboxesAllChecked(){
+    checkboxesAllChecked() {
       this.updateStore(this.canSubscribe);
     }
   },
   mounted() {
     this.verifyEECSubscriptionEligibility();
   },
-  methods:{
-    updateStore(status){
+  methods: {
+    updateStore(status) {
       this.$store.commit('sso/setSsoButtonsActiveStatus', {
         ssoId: this.$t('service'),
         status: status
@@ -289,26 +295,26 @@ export default {
 
           switch (true) {
           // Ineligibility for long distance journeys
-          case !this.eligibility.longDistanceEligibility && this.eligibility.longDistanceJourneysNumber > 0 :
+          case !this.eligibility.longDistanceEligibility && this.eligibility.longDistanceJourneysNumber > 0:
             this.alert.text = this.$t('EEC-eligibility.alert.LD-journeys');
             break;
-          // Ineligibility for long distance phone doublon
-          case !this.eligibility.longDistanceEligibility && this.eligibility.longDistancePhoneDoublon > 0 :
+            // Ineligibility for long distance phone doublon
+          case !this.eligibility.longDistanceEligibility && this.eligibility.longDistancePhoneDoublon > 0:
             this.alert.text = this.$t('EEC-eligibility.alert.LD-phone');
             break;
-          // Ineligibility for long distance driving licence doublon
+            // Ineligibility for long distance driving licence doublon
           case !this.eligibility.longDistanceEligibility && this.eligibility.longDistanceDrivingLicenceNumberDoublon > 0:
             this.alert.text = this.$t('EEC-eligibility.alert.LD-driving-licence-number');
             break;
-          // Ineligibility for short distance journeys
-          case !this.eligibility.shortDistanceEligibility && this.eligibility.shortDistanceJourneysNumber > 0 :
+            // Ineligibility for short distance journeys
+          case !this.eligibility.shortDistanceEligibility && this.eligibility.shortDistanceJourneysNumber > 0:
             this.alert.text = this.$t('EEC-eligibility.alert.CD-journeys');
             break;
-          // Ineligibility for short distance phone doublon
-          case !this.eligibility.shortDistanceEligibility && this.eligibility.shortDistancePhoneDoublon > 0 :
+            // Ineligibility for short distance phone doublon
+          case !this.eligibility.shortDistanceEligibility && this.eligibility.shortDistancePhoneDoublon > 0:
             this.alert.text = this.$t('EEC-eligibility.alert.CD-phone');
             break;
-          // Ineligibility for short distance driving licence doublon
+            // Ineligibility for short distance driving licence doublon
           case !this.eligibility.shortDistanceEligibility && this.eligibility.shortDistanceDrivingLicenceNumberDoublon > 0:
             this.alert.text = this.$t('EEC-eligibility.alert.CD-driving-licence-number');
             break;

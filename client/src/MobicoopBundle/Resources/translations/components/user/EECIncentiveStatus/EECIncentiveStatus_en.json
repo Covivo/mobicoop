@@ -4,6 +4,7 @@
   "intro": "Pour bénéficier de la prime de 100€ en partenariat avec {eecProvider}* vous devez :",
   "mandatory1": "Confirmer votre numéro de téléphone",
   "mandatory2": "Renseigner votre numéro de permis de conduire",
+  "mandatory3": "Renseigner votre adresse postale",
   "intro2": "Par ailleurs, une authentification sur moB via FranceConnect est nécessaire. Celle-ci liera votre compte {eecPlatform} à un compte sur moB pour commencer votre demande.<br><a href=\"/article/32\">En savoir plus</a>",
   "title_list": "Cette prime est une aide financière d’incitation à une opération d’économies d’énergie faite en partenariat entre la plateforme {eecPlatform} et {eecProvider}. En tant que bénéficiaire de l’opération d’économies d’énergie, j’atteste sur l’honneur :",
   "items": [
