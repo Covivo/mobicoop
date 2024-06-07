@@ -67,6 +67,7 @@ class DataProvider
         'relayPointFile' => 'getRelayPointFile',
         'relayPointTypeFile' => 'getRelayPointTypeFile',
         'file' => 'getFile',
+        'file2' => 'getFile2',
     ];
 
     // original name property for file-based entities
@@ -98,7 +99,7 @@ class DataProvider
     private $baseSiteUri;
 
     /**
-     * @var JWTToken
+     * @var JwtToken
      */
     private $jwtToken;
     private $refreshToken;
@@ -131,7 +132,7 @@ class DataProvider
      * @param Deserializer     $deserializer      The deserializer
      * @param SessionInterface $session           The session
      */
-    public function __construct(string $uri, string $username, string $emailToken = null, string $passwordToken = null, string $password, string $authPath, string $loginPath, string $loginDelegatePath, string $refreshPath, string $loginTokenPath, string $loginSsoPath, string $tokenId, Deserializer $deserializer, SessionInterface $session, RequestStack $requestStack)
+    public function __construct(string $uri, string $username, ?string $emailToken = null, ?string $passwordToken = null, string $password, string $authPath, string $loginPath, string $loginDelegatePath, string $refreshPath, string $loginTokenPath, string $loginSsoPath, string $tokenId, Deserializer $deserializer, SessionInterface $session, RequestStack $requestStack)
     {
         $this->uri = $uri;
         $this->username = $username;
@@ -179,7 +180,7 @@ class DataProvider
             $cachedToken = $this->cache->getItem($this->tokenId.'.jwt.token');
             if ($cachedToken->isHit()) {
                 /**
-                 * @var JWTToken $jwtToken
+                 * @var JwtToken $jwtToken
                  */
                 $jwtToken = $cachedToken->get();
                 if ($jwtToken && $jwtToken->isValid()) {
@@ -323,7 +324,7 @@ class DataProvider
                 $expiration = new \DateTime('@'.$payload['exp'], new \DateTimeZone('UTC'));
             }
 
-            $this->jwtToken = new JWTToken($tokens['token'], $expiration);
+            $this->jwtToken = new JwtToken($tokens['token'], $expiration);
             $this->refreshToken = $tokens['refreshToken'];
 
             if ($this->private) {
@@ -380,7 +381,7 @@ class DataProvider
      *
      * @return Response the response of the operation
      */
-    public function getItem(int $id, array $params = null): Response
+    public function getItem(int $id, ?array $params = null): Response
     {
         /*
          * deserialization of nested array of objects doesn't work...
@@ -426,7 +427,7 @@ class DataProvider
      *
      * @return Response the response of the operation
      */
-    public function getSpecialItem($id, string $operation, array $params = null, bool $reverseOperationId = false): Response
+    public function getSpecialItem($id, string $operation, ?array $params = null, bool $reverseOperationId = false): Response
     {
         try {
             if (self::RETURN_ARRAY == $this->format) {
@@ -465,7 +466,7 @@ class DataProvider
      *
      * @return Response the response of the operation
      */
-    public function getCollection(array $params = null): Response
+    public function getCollection(?array $params = null): Response
     {
         try {
             if (self::RETURN_JSON == $this->format) {
@@ -765,7 +766,10 @@ class DataProvider
             }
         }
 
-        // var_dump($multipart);die;
+        // var_dump($multipart);
+
+        // exit;
+
         try {
             $headers = $this->getHeaders();
             $clientResponse = $this->client->post($this->resource, [
@@ -785,7 +789,7 @@ class DataProvider
         return new Response();
     }
 
-    public function patch($id, string $operation = null, array $params = null, bool $reverseOperationId = false): Response
+    public function patch($id, ?string $operation = null, ?array $params = null, bool $reverseOperationId = false): Response
     {
         try {
             $headers = $this->getHeaders();
@@ -997,7 +1001,7 @@ class DataProvider
 
                     throw new ApiTokenException('Unable to get an API token.');
                 }
-                // We have a reset password token
+            // We have a reset password token
             } elseif (!is_null($this->passwordToken)) {
                 try {
                     $clientResponse = $this->client->post($this->authLoginPath, [

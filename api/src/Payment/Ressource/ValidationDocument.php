@@ -67,6 +67,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *          }
  *      }
  * )
+ *
  * @Vich\Uploadable
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -89,6 +90,7 @@ class ValidationDocument
      * @var int The id of this document
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"readPayment"})
      */
     private $id;
@@ -143,13 +145,57 @@ class ValidationDocument
     private $mimeType;
 
     /**
+     * @var null|File The second document's file
+     *
+     * @Vich\UploadableField(mapping="validationDocument2", fileNameProperty="fileName2", originalName="originalName2", size="size2", mimeType="mimeType2")
+     */
+    private $file2;
+
+    /**
+     * @var string The second document's filename
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $fileName2;
+
+    /**
+     * @var string The second document's file extension
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $extension2;
+
+    /**
+     * @var string the original second file name of the import
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $originalName2;
+
+    /**
+     * @var int the second document's size in bytes
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $size2;
+
+    /**
+     * @var string the second document's mime type
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $mimeType2;
+
+    /**
      * @var string Payment provider's identifier of this document
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $identifier;
 
     /**
      * @var int The status of the validation document
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $status;
@@ -243,6 +289,68 @@ class ValidationDocument
     public function setMimeType(?string $mimeType)
     {
         $this->mimeType = $mimeType;
+    }
+
+    public function getFile2(): ?File
+    {
+        return $this->file2;
+    }
+
+    public function setFile2(?File $file2)
+    {
+        $this->file2 = $file2;
+    }
+
+    public function getFileName2(): ?string
+    {
+        return $this->fileName2;
+    }
+
+    public function setFileName2(?string $fileName2)
+    {
+        $this->fileName2 = $fileName2;
+    }
+
+    public function getExtension2(): ?string
+    {
+        return $this->extension2;
+    }
+
+    public function setExtension2(?string $extension2)
+    {
+        $this->extension2 = $extension2;
+    }
+
+    public function getOriginalName2(): ?string
+    {
+        return $this->originalName2;
+    }
+
+    public function setOriginalName2(?string $originalName2)
+    {
+        $this->originalName2 = $originalName2;
+    }
+
+    public function getSize2(): ?int
+    {
+        return $this->size2;
+    }
+
+    public function setSize2(?int $size2): self
+    {
+        $this->size2 = $size2;
+
+        return $this;
+    }
+
+    public function getMimeType2(): ?string
+    {
+        return $this->mimeType2;
+    }
+
+    public function setMimeType2(?string $mimeType2)
+    {
+        $this->mimeType2 = $mimeType2;
     }
 
     public function getIdentifier(): ?string

@@ -22,7 +22,9 @@
   "fileInput": {
     "tooltip": "Dokumentua jpg, jpeg, png edo pdf formatuan izan behar da eta ez du 6MB gainditu behar",
     "error": "Dokumentuak ez ditu 6MB gainditu behar",
-    "label": "Nortasun agiri eguneratua"
+    "label": "Recto du document d'identité à jour",
+    "labelOptional": "Verso du document d'identité à jour",
+    "hintOptional": "optionnel"
   },
   "text": "<p>Eguneratua den nortasun agiri bati oinarritua den nortasun egiaztapena (nortasun agiriaren aitzinaldea eta gibelaldea, pasaportea, gidabaimena) legezko betebehar bat da diruaren eskuratzeko. Betebehar hori egina da diru zuritzeen kontra borrokatzeko.</p><p>Ordainketarentzat beharrezkoa den nortasun egiaztapena egiten da, zure profilean sartuak diren izen-deiturak, zure nortasun agirian sartuak direnekin konparatuz. Ondorioz, segurta zaitez informazio zuzenak sartu dituzula zure profilean.</p><p>Nortasun agiri dokumentu baten egiazkotzeko baldintzak irakur ditzakezu gure partaidearen loturan <a target='_blank' href='https://mangopay.com/docs/concepts/users/verification/document-process'>ici</a>.</p>",
   "title": "3. Nortasunaren egiaztatzea"
