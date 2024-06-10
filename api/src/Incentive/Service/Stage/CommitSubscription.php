@@ -54,6 +54,10 @@ abstract class CommitSubscription extends UpdateSubscription
             )
         );
 
+        if (is_null($journey)) {
+            return false;
+        }
+
         $this->_subscription->setCommitmentProofJourney($journey);
         $this->_subscription->setCommitmentProofDate(new \DateTime());
 
