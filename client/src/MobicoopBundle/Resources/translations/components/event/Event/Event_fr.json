@@ -8,6 +8,9 @@
             "label": "Modifier",
             "route": "/evenement/{id}/modifier"
         },
+        "delete": {
+          "label": "Supprimer"
+        },
         "login": {
             "route": "/utilisateur/connexion"
         },
@@ -45,5 +48,9 @@
             "label": "Chercher les covoiturages correspondants"
         }
     },
-    "urlCommunityUser": "/community-user"
+    "urlCommunityUser": "/community-user",
+    "delete": {
+      "route": "/evenement/supprimer",
+      "error": "Une erreur est survenue lors de la suppression de votre événement."
+    }
 }
