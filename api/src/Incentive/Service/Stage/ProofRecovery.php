@@ -3,7 +3,6 @@
 namespace App\Incentive\Service\Stage;
 
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
@@ -70,8 +69,6 @@ class ProofRecovery extends Stage
         // We recover the missing timestamp tokens available at moBConnect
         $this->_subscription = LongDistanceSubscription::TYPE_LONG === $this->_subscriptionType
             ? $this->_user->getLongDistanceSubscription() : $this->_user->getShortDistanceSubscription();
-
-        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($this->_subscription, Log::TYPE_VERIFY);
 
         $this->_recoveryProofs();
     }
