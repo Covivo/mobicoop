@@ -5,11 +5,9 @@ namespace App\Incentive\Service\Stage;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
-use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
-use App\Incentive\Service\DateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Service\Provider\CarpoolItemProvider;
 use App\Incentive\Service\Provider\JourneyProvider;
@@ -23,11 +21,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidateLDSubscription extends ValidateSubscription
 {
-    /**
-     * @var LongDistanceSubscription
-     */
-    protected $_subscription;
-
     /**
      * @var LongDistanceJourneyRepository
      */
@@ -140,10 +133,7 @@ class ValidateLDSubscription extends ValidateSubscription
             return;
         }
 
-        $this->_subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
-
-        $this->_subscription->setExpirationDate(DateService::getExpirationDate($this->_subscription->getValidityPeriodDuration()));
-        $this->_subscription->setCommitmentProofJourney($this->_updateJourney($this->_subscription->getCommitmentProofJourney(), $carpoolItem));
+        $this->_updateSubscription();
 
         $this->_em->flush();
     }
