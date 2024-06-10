@@ -55,6 +55,10 @@ class ValidateLDSubscription extends ValidateSubscription
         foreach (CarpoolItemProvider::getCarpoolItemFromCarpoolPayment($this->_carpoolPayment) as $carpoolItem) {
             $this->_subscription = SubscriptionProvider::getLDSubscriptionFromCarpoolItem($carpoolItem);
 
+            if (is_null($this->_subscription)) {
+                continue;
+            }
+
             $journeyProvider = new JourneyProvider($this->_ldJourneyRepository);
             $journey = $journeyProvider->getJourneyFromCarpoolItem($carpoolItem);
 
@@ -70,7 +74,7 @@ class ValidateLDSubscription extends ValidateSubscription
             $carpoolProof = $carpoolItem->getCarpoolProof();
 
             // Use case where there is not yet a LD journey associated with the carpoolitem
-            if ($this->_subscription->isCommitmentJourney($journey)) {
+            if ($journey && $this->_subscription->isCommitmentJourney($journey)) {
                 $this->_executeForCommitmentJourney($journey, $carpoolItem, $carpoolProof);
 
                 return;
