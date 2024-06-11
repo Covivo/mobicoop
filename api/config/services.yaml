@@ -969,6 +969,7 @@ services:
   App\Incentive\Service\Manager\SubscriptionManager:
     arguments:
       $eecSendWarningIncompleteProfile: "%env(bool:EEC_SEND_WARNING_INCOMPLETE_PROFILE)%"
+      $eecSendWarningIncompleteProfileTime: "%env(int:EEC_SEND_WARNING_INCOMPLETE_PROFILE_TIME)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 

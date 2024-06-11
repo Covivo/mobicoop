@@ -91,7 +91,15 @@ class SubscriptionManager extends MobConnectManager
      */
     private $_subscriptionValidation;
 
+    /**
+     * @var bool
+     */
     private $_eecSendWarningIncompleteProfile;
+
+    /**
+     * @var int
+     */
+    private $_eecSendWarningIncompleteProfileTime;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -108,7 +116,8 @@ class SubscriptionManager extends MobConnectManager
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
         UserRepository $userRepository,
-        bool $eecSendWarningIncompleteProfile
+        bool $eecSendWarningIncompleteProfile,
+        int $eecSendWarningIncompleteProfileTime
     ) {
         parent::__construct($em, $instanceManager, $loggerService);
 
@@ -126,6 +135,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_userValidation = $userValidation;
         $this->_eecInstance = $instanceManager->getEecInstance();
         $this->_eecSendWarningIncompleteProfile = $eecSendWarningIncompleteProfile;
+        $this->_eecSendWarningIncompleteProfileTime = $eecSendWarningIncompleteProfileTime;
     }
 
     /**
@@ -432,10 +442,14 @@ class SubscriptionManager extends MobConnectManager
      */
     public function subscriptionNotReadyToVerify($subscription)
     {
-        if ($this->_eecSendWarningIncompleteProfile
-        && (!SubscriptionValidator::isAddressValid($subscription)
-        || !SubscriptionValidator::isPhoneNumberValid($subscription)
-        || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription))) {
+        if (
+            $this->_eecSendWarningIncompleteProfile
+            && (
+                !SubscriptionValidator::isAddressValid($subscription)
+                || !SubscriptionValidator::isPhoneNumberValid($subscription)
+                || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription)
+            )
+        ) {
             $this->_notificationManager->notifies('eec_subscription_not_ready_to_verify', $subscription->getUser(), $subscription);
         }
     }
