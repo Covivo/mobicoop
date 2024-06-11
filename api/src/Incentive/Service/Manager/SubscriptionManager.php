@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Service\Manager;
 
+use App\Action\Entity\Action;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
@@ -19,6 +20,7 @@ use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\NotificationsPresenceChecker;
 use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Provider\SubscriptionProvider;
 use App\Incentive\Service\Stage\AutoRecommitSubscription;
@@ -442,15 +444,22 @@ class SubscriptionManager extends MobConnectManager
      */
     public function subscriptionNotReadyToVerify($subscription)
     {
+        $notificationPresenceChecker = new NotificationsPresenceChecker(
+            $this->_em,
+            $subscription->getUser(),
+            Action::ACTION_CEE_SUBSCRIPTION_NOT_READY_TO_VERRIFY
+        );
+
         if (
             $this->_eecSendWarningIncompleteProfile
+            && !$notificationPresenceChecker->hasLastNotificationBeenSendAfterDeadline($this->_eecSendWarningIncompleteProfileTime)
             && (
                 !SubscriptionValidator::isAddressValid($subscription)
                 || !SubscriptionValidator::isPhoneNumberValid($subscription)
                 || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription)
             )
         ) {
-            $this->_notificationManager->notifies('eec_subscription_not_ready_to_verify', $subscription->getUser(), $subscription);
+            $this->_notificationManager->notifies(Action::ACTION_CEE_SUBSCRIPTION_NOT_READY_TO_VERRIFY, $subscription->getUser(), $subscription);
         }
     }
 
