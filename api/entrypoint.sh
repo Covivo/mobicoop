@@ -12,5 +12,7 @@ cp config/params/modules.json.dist config/params/modules.json &&
 cp config/params/eecService.json.dist config/params/eecService.json &&
 cp config/params/contacts.json.dist config/params/contacts.json &&
 cp config/params/reminders.json.dist config/params/reminders.json &&
+cp config/params/analytics.json.dist config/params/analytics.json &&
+cp config/publicTransport/providers.json.dist config/publicTransport/providers.json &&
 php bin/console doctrine:database:create --if-not-exists -n &&
 php bin/console doctrine:migrations:migrate -n
