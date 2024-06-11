@@ -77,15 +77,6 @@
     "egulias/email-validator": {
         "version": "2.1.5"
     },
-    "elephantly/kahlan-bundle": {
-        "version": "0.9",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "0.9",
-            "ref": "5b76aed2fb42adad286af195b5b42768c6f3ff4c"
-        }
-    },
     "fabpot/goutte": {
         "version": "v3.2.3"
     },
@@ -106,9 +97,6 @@
     },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
-    },
-    "kahlan/kahlan": {
-        "version": "4.1.8"
     },
     "kriswallsmith/buzz": {
         "version": "v0.15.2"
