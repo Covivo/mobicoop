@@ -81,6 +81,11 @@ class SsoUser
     private $refreshToken;
 
     /**
+     * @var bool
+     */
+    private $franceConnected = false;
+
+    /**
      * @var int
      */
     private $refreshTokenExpiresDuration;
@@ -467,6 +472,24 @@ class SsoUser
     public function setRefreshTokenExpiresDuration(int $refreshTokenExpiresDuration): self
     {
         $this->refreshTokenExpiresDuration = $refreshTokenExpiresDuration;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of franceConnected.
+     */
+    public function isFranceConnected(): bool
+    {
+        return $this->franceConnected;
+    }
+
+    /**
+     * Set the value of franceConnected.
+     */
+    public function setFranceConnected(bool $franceConnected): self
+    {
+        $this->franceConnected = $franceConnected;
 
         return $this;
     }
