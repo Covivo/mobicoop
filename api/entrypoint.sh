@@ -4,7 +4,7 @@ chmod 777 config/jwt/* &&
 cp config/rdex/clients.json.dist config/rdex/clients.json &&
 cp config/rdex/operator.json.dist config/rdex/operator.json &&
 cp config/rdex/providers.json.dist config/rdex/providers.json &&
-cp config/user/domains.json.dist config/user/domains.json &&
+echo "{}" > config/user/domains.json &&
 cp config/user/sso.json.dist config/user/sso.json &&
 cp config/csvExport/csvExport.json.dist config/csvExport/csvExport.json &&
 cp config/params/commands.json.dist config/params/commands.json &&
