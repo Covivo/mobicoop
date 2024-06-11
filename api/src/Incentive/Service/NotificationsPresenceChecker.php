@@ -99,7 +99,10 @@ class NotificationsPresenceChecker
         );
     }
 
-    private function _getLastNotified(): ?Notified
+    /**
+     * @return null|bool|Notified
+     */
+    private function _getLastNotified()
     {
         return end($this->_notified);
     }
