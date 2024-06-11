@@ -453,11 +453,6 @@ class SubscriptionManager extends MobConnectManager
         if (
             $this->_eecSendWarningIncompleteProfile
             && !$notificationPresenceChecker->hasLastNotificationBeenSendAfterDeadline($this->_eecSendWarningIncompleteProfileTime)
-            && (
-                !SubscriptionValidator::isAddressValid($subscription)
-                || !SubscriptionValidator::isPhoneNumberValid($subscription)
-                || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription)
-            )
         ) {
             $this->_notificationManager->notifies(Action::ACTION_CEE_SUBSCRIPTION_NOT_READY_TO_VERRIFY, $subscription->getUser(), $subscription);
         }
@@ -497,13 +492,19 @@ class SubscriptionManager extends MobConnectManager
     protected function _verifySubscription($subscription): void
     {
         if (SubscriptionValidator::isReadyToVerify($subscription)) {
+            if (
+                !SubscriptionValidator::isAddressValid($subscription)
+                || !SubscriptionValidator::isPhoneNumberValid($subscription)
+                || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription)
+            ) {
+                $event = new SubscriptionNotReadyToVerifyEvent($subscription);
+                $this->_eventDispatcher->dispatch(SubscriptionNotReadyToVerifyEvent::NAME, $event);
+
+                return;
+            }
+
             $stage = new VerifySubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
             $stage->execute();
-
-            return;
         }
-
-        $event = new SubscriptionNotReadyToVerifyEvent($subscription);
-        $this->_eventDispatcher->dispatch(SubscriptionNotReadyToVerifyEvent::NAME, $event);
     }
 }
