@@ -335,8 +335,11 @@ class CommunityController extends AbstractController
 
             $params = [
                 'page' => $data['page'],
-                'perPage' => $data['perPage'],
             ];
+
+            if ((int) $data['perPage'] > 0) {
+                $params['perPage'] = $data['perPage'];
+            }
 
             $communityMembersList = $communityManager->communityMembers($data['id'], $params);
 
