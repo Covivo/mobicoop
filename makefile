@@ -37,7 +37,7 @@ fixtures:
 	$(info $(pink)Make ($(os)): Generating fixtures...)
 	$(info $(pink)------------------------------------------------------$(reset))
 	@docker compose -f docker-compose-builder-$(os).yml run --rm fixtures
-
+	@docker compose -f docker-compose-builder-$(os).yml run --rm fixtures-client
 start:
 	$(info Make ($(os)): Starting Mobicoop-platform environment containers.)
 	@docker compose -f docker-compose-$(os).yml up -d
