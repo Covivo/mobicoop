@@ -6,7 +6,6 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Communication\Service\NotificationManager;
-use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
@@ -162,37 +161,6 @@ class SubscriptionManager extends MobConnectManager
         return $userEligibility;
     }
 
-    /**
-     * Set EEC subscription timestamps.
-     */
-    public function setUserSubscriptionTimestamps(string $subscriptionType, int $subscriptionId)
-    {
-        $subscription = self::LONG_SUBSCRIPTION_TYPE === $subscriptionType
-            ? $this->_em->getRepository(LongDistanceSubscription::class)->find($subscriptionId)
-            : $this->_em->getRepository(ShortDistanceSubscription::class)->find($subscriptionId);
-
-        if (is_null($subscription)) {
-            throw new \LogicException('The subscription was not found');
-        }
-
-        if (!$this->_subscriptionValidation->isSubscriptionValidForTimestampsProcess($subscription)) {
-            throw new \LogicException('Subscription cannot be processed at this time');
-        }
-
-        $this->_loggerService->log('Performing the timestamping process');
-        $this->setDriver($subscription->getUser());
-
-        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
-
-        $this->_em->flush();
-
-        $response = 'The timestamping process is complete';
-
-        $this->_loggerService->log($response);
-
-        return $response;
-    }
-
     public function updateSubscriptionsAddress(User $user)
     {
         $this->setDriver($user);
@@ -218,40 +186,6 @@ class SubscriptionManager extends MobConnectManager
     {
         $stage = new PatchSubscription($this->_em, $this->_eecInstance, $user, SpecificFields::PHONE_NUMBER);
         $stage->execute();
-    }
-
-    public function updateTimestampTokens(User $user): User
-    {
-        $this->setDriver($user);
-
-        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
-            $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getLongDistanceSubscription());
-        }
-        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
-            $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getShortDistanceSubscription());
-        }
-
-        $this->_em->flush();
-
-        return $this->getDriver();
-    }
-
-    /**
-     * Set missing subscription timestamps.
-     *
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     *
-     * @return bool Returns if getting tokens was successful
-     */
-    public function setTimestamps($subscription): bool
-    {
-        $this->setDriver($subscription->getUser());
-
-        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
-
-        $this->_em->flush();
-
-        return false;
     }
 
     public function processingVersionTransitionalPeriods()

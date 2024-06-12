@@ -866,6 +866,9 @@ class LongDistanceSubscription extends Subscription
         return $this->commitmentProofJourney;
     }
 
+    /**
+     * Finds the journey, already associated with the subscription, which is already associated with the `Proposal` passed as a parameter.
+     */
     public function getCommitmentProofJourneyFromInitialProposal(Proposal $initialProposal): ?LongDistanceJourney
     {
         $filteredJourneys = array_values(array_filter($this->getJourneys()->toArray(), function (LongDistanceJourney $journey) use ($initialProposal) {
@@ -874,7 +877,34 @@ class LongDistanceSubscription extends Subscription
                 && $journey->getInitialProposal()->getId() === $initialProposal->getId();
         }));
 
-        return empty($filteredJourneys) ? null : $filteredJourneys[0];
+        if (empty($filteredJourneys)) {
+            $journey = $this->getJourneyCorrespondingProposal($initialProposal);
+
+            if (!is_null($journey)) {
+                $journey->setInitialProposal($initialProposal);
+            }
+        }
+
+        return empty($filteredJourneys)
+            ? (!is_null($journey) ? $journey : null)
+            : $filteredJourneys[0];
+    }
+
+    /**
+     * Finds the journey, already associated with the subscription, which, through the use of relational objects, can be identified from the `Proposal` passed as a parameter.
+     */
+    public function getJourneyCorrespondingProposal(Proposal $proposal): ?LongDistanceJourney
+    {
+        $filteredJourneys = array_values(array_filter($this->getJourneys()->toArray(), function (LongDistanceJourney $journey) use ($proposal) {
+            return
+                !is_null($journey->getCarpoolItem())
+                && !is_null($journey->getCarpoolItem()->getAsk())
+                && !is_null($journey->getCarpoolItem()->getAsk()->getMatching())
+                && !is_null($journey->getCarpoolItem()->getAsk()->getMatching()->getProposalOffer())
+                && $proposal->getId() === $journey->getCarpoolItem()->getAsk()->getMatching()->getProposalOffer()->getId();
+        }));
+
+        return !empty($filteredJourneys) ? $filteredJourneys[0] : null;
     }
 
     public function isCommitmentJourney(LongDistanceJourney $journey): bool
@@ -908,7 +938,7 @@ class LongDistanceSubscription extends Subscription
             ) {
                 $this->addLongDistanceJourney($commitmentProofJourney);
             }
-        } else {
+        } elseif (!is_null($this->getCommitmentProofJourney())) {
             $this->getCommitmentProofJourney()->setCarpoolItem(null);
             $this->getCommitmentProofJourney()->setCarpoolPayment(null);
             $this->removeJourney($this->getCommitmentProofJourney());

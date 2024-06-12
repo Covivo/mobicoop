@@ -876,23 +876,9 @@ services:
           command: "app:incentive:subscription-update",
         }
 
-  App\Incentive\Command\UpdateTokenCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-tokens",
-        }
-
   App\Incentive\Command\JourneyRecoveryCommand:
     tags:
       - { name: "console.command", command: "app:incentive:journeys-recovery" }
-
-  App\Incentive\Command\SubscriptionTimestampsCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-timestamps",
-        }
 
   App\Incentive\Command\SubscriptionTimestampsTokenCommand:
     tags:
