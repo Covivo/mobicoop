@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Service\Manager;
 
+use App\Action\Entity\Action;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
@@ -18,6 +19,7 @@ use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\NotificationsPresenceChecker;
 use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Provider\SubscriptionProvider;
 use App\Incentive\Service\Stage\AutoRecommitSubscription;
@@ -90,7 +92,15 @@ class SubscriptionManager extends MobConnectManager
      */
     private $_subscriptionValidation;
 
+    /**
+     * @var bool
+     */
     private $_eecSendWarningIncompleteProfile;
+
+    /**
+     * @var int
+     */
+    private $_eecSendWarningIncompleteProfileTime;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -107,7 +117,8 @@ class SubscriptionManager extends MobConnectManager
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
         UserRepository $userRepository,
-        bool $eecSendWarningIncompleteProfile
+        bool $eecSendWarningIncompleteProfile,
+        int $eecSendWarningIncompleteProfileTime
     ) {
         parent::__construct($em, $instanceManager, $loggerService);
 
@@ -125,6 +136,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_userValidation = $userValidation;
         $this->_eecInstance = $instanceManager->getEecInstance();
         $this->_eecSendWarningIncompleteProfile = $eecSendWarningIncompleteProfile;
+        $this->_eecSendWarningIncompleteProfileTime = $eecSendWarningIncompleteProfileTime;
     }
 
     /**
@@ -366,11 +378,17 @@ class SubscriptionManager extends MobConnectManager
      */
     public function subscriptionNotReadyToVerify($subscription)
     {
-        if ($this->_eecSendWarningIncompleteProfile
-        && (!SubscriptionValidator::isAddressValid($subscription)
-        || !SubscriptionValidator::isPhoneNumberValid($subscription)
-        || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription))) {
-            $this->_notificationManager->notifies('eec_subscription_not_ready_to_verify', $subscription->getUser(), $subscription);
+        $notificationPresenceChecker = new NotificationsPresenceChecker(
+            $this->_em,
+            $subscription->getUser(),
+            Action::ACTION_CEE_SUBSCRIPTION_NOT_READY_TO_VERRIFY
+        );
+
+        if (
+            $this->_eecSendWarningIncompleteProfile
+            && !$notificationPresenceChecker->hasLastNotificationBeenSendAfterDeadline($this->_eecSendWarningIncompleteProfileTime)
+        ) {
+            $this->_notificationManager->notifies(Action::ACTION_CEE_SUBSCRIPTION_NOT_READY_TO_VERRIFY, $subscription->getUser(), $subscription);
         }
     }
 
@@ -408,13 +426,19 @@ class SubscriptionManager extends MobConnectManager
     protected function _verifySubscription($subscription): void
     {
         if (SubscriptionValidator::isReadyToVerify($subscription)) {
+            if (
+                !SubscriptionValidator::isAddressValid($subscription)
+                || !SubscriptionValidator::isPhoneNumberValid($subscription)
+                || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription)
+            ) {
+                $event = new SubscriptionNotReadyToVerifyEvent($subscription);
+                $this->_eventDispatcher->dispatch(SubscriptionNotReadyToVerifyEvent::NAME, $event);
+
+                return;
+            }
+
             $stage = new VerifySubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
             $stage->execute();
-
-            return;
         }
-
-        $event = new SubscriptionNotReadyToVerifyEvent($subscription);
-        $this->_eventDispatcher->dispatch(SubscriptionNotReadyToVerifyEvent::NAME, $event);
     }
 }
