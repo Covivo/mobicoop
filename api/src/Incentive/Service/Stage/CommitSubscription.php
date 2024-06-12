@@ -50,10 +50,14 @@ abstract class CommitSubscription extends UpdateSubscription
             )
             : (
                 $this->_subscription instanceof LongDistanceSubscription
-                ? new LongDistanceJourney($this->_proposal)
+                ? new LongDistanceJourney()
                 : new ShortDistanceJourney($this->_carpoolProof)
             )
         );
+
+        if ($this->_subscription instanceof LongDistanceSubscription && !is_null($this->_proposal)) {
+            $journey->setInitialProposal($this->_proposal);
+        }
 
         if (is_null($journey)) {
             return false;
