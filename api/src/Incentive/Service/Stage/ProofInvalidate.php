@@ -4,6 +4,7 @@ namespace App\Incentive\Service\Stage;
 
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\ShortDistanceJourney;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Validator\SubscriptionValidator;
@@ -16,9 +17,15 @@ class ProofInvalidate extends Stage
      */
     private $_journey;
 
-    public function __construct(EntityManagerInterface $em, TimestampTokenManager $timestampTokenManager, EecInstance $eecInstance, $journey)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        LongDistanceJourneyRepository $longDistanceJourneyRepository,
+        TimestampTokenManager $timestampTokenManager,
+        EecInstance $eecInstance,
+        $journey
+    ) {
         $this->_em = $em;
+        $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
 
         $this->_eecInstance = $eecInstance;
@@ -31,7 +38,7 @@ class ProofInvalidate extends Stage
     {
         if ($this->_subscription->isCommitmentJourney($this->_journey)) {
             if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-                $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_journey);
+                $stage = new AutoRecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_journey);
                 $stage->execute();
 
                 return;

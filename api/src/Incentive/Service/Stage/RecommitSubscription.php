@@ -68,20 +68,20 @@ class RecommitSubscription extends Stage
             : new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE);
 
         if (!$stage->execute()) {
+            exit('Fin de test - Exit après commit stage');
+
             return;
         }
 
         $stage = $this->_subscription instanceof LongDistanceSubscription
             ? new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE)
-            : new ValidateSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE);
+            : new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE);
         $stage->execute();
     }
 
     private function _build(): void
     {
-        $this->_journey = $this->_subscription->getJourneys()->toArray()[0];
-
-        if (!$this->_subscription instanceof LongDistanceSubscription) {
+        if ($this->_subscription instanceof ShortDistanceSubscription) {
             $this->_commitReferenceObject = $this->_validateReferenceObject = $this->_journey->getCarpoolProof();
 
             return;

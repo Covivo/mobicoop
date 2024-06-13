@@ -275,7 +275,7 @@ class SubscriptionManager extends MobConnectManager
             return;
         }
 
-        $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $journey);
+        $stage = new ProofInvalidate($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $journey);
         $stage->execute();
     }
 

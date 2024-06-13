@@ -62,8 +62,7 @@ class ValidateLDSubscription extends ValidateSubscription
             $carpoolProof = $this->_carpoolItem->getCarpoolProof();
 
             if (
-                is_null($this->_subscription)
-                || $this->_subscription->hasExpired()
+                $this->_subscription->hasExpired()
                 || is_null($carpoolProof)
             ) {
                 return;
@@ -90,7 +89,7 @@ class ValidateLDSubscription extends ValidateSubscription
     protected function _executeForStandardJourney(LongDistanceJourney $journey): void
     {
         if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
+            $stage = new AutoRecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
 
             return;
@@ -116,7 +115,7 @@ class ValidateLDSubscription extends ValidateSubscription
 
             case CarpoolProofValidator::isStatusError($carpoolProof):
             case CarpoolProofValidator::isDowngradedType($carpoolProof):
-                $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $journey);
+                $stage = new ProofInvalidate($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $journey);
                 $stage->execute();
 
                 return;

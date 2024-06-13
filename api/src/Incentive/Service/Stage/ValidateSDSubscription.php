@@ -7,6 +7,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
@@ -24,12 +25,14 @@ class ValidateSDSubscription extends ValidateSubscription
 
     public function __construct(
         EntityManagerInterface $em,
+        LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,
         CarpoolProof $carpoolProof,
         bool $pushOnlyMode = false
     ) {
         $this->_em = $em;
+        $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
 
         $this->_eecInstance = $eecInstance;
@@ -89,7 +92,7 @@ class ValidateSDSubscription extends ValidateSubscription
         $journey = $this->_carpoolProof->getMobConnectShortDistanceJourney();
 
         if (!is_null($journey) && SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
+            $stage = new AutoRecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
 
             return;
@@ -112,7 +115,7 @@ class ValidateSDSubscription extends ValidateSubscription
             !CarpoolProofValidator::isEecCompliant($this->_carpoolProof)
             || !CarpoolProofValidator::isCarpoolProofOriginOrDestinationFromFrance($this->_carpoolProof)
         ) {
-            $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription->getCommitmentProofJourney());
+            $stage = new ProofInvalidate($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription->getCommitmentProofJourney());
             $stage->execute();
 
             return;
