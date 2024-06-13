@@ -865,7 +865,7 @@ class ShortDistanceSubscription extends Subscription
         return empty($filteredJourneys) ? null : $filteredJourneys[0];
     }
 
-    public function isCommitmentJourney(ShortDistanceJourney $journey): bool
+    public function isCommitmentJourney(?ShortDistanceJourney $journey = null): bool
     {
         return
             !is_null($this->getCommitmentProofJourney())
