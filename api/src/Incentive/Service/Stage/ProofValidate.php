@@ -59,7 +59,7 @@ class ProofValidate extends ValidateSubscription
                 return;
         }
 
-        $stage = new ValidateSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_carpoolProof, $this->_pushOnlyMode);
+        $stage = new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_carpoolProof, $this->_pushOnlyMode);
         $stage->execute();
     }
 }
