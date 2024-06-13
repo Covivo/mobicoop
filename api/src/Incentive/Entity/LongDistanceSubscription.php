@@ -644,7 +644,7 @@ class LongDistanceSubscription extends Subscription
 
     public function updateAddress(): self
     {
-        if (!SubscriptionValidator::hasExpired($this) && !SubscriptionValidator::hasBeenVerified($this)) {
+        if (!SubscriptionValidator::hasBeenVerified($this)) {
             $this->setStreetAddress();
             $this->setPostalCode();
             $this->setAddressLocality();
