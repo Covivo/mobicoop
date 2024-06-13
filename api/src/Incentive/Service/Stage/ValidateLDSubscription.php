@@ -22,11 +22,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class ValidateLDSubscription extends ValidateSubscription
 {
     /**
-     * @var LongDistanceJourneyRepository
-     */
-    private $_ldJourneyRepository;
-
-    /**
      * @var CarpoolItem
      */
     private $_carpoolItem;

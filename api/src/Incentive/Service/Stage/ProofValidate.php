@@ -15,11 +15,6 @@ class ProofValidate extends ValidateSubscription
      */
     protected $_carpoolProof;
 
-    /**
-     * @var LongDistanceJourneyRepository
-     */
-    protected $_ldJourneyRepository;
-
     public function __construct(
         EntityManagerInterface $em,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
