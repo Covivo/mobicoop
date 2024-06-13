@@ -84,11 +84,7 @@ class ValidateLDSubscription extends ValidateSubscription
                 return;
             }
 
-            if (
-                !$this->_subscription->isComplete()
-                && !$this->_pushOnlyMode
-                && CarpoolProofValidator::isEecCompliant($carpoolProof)
-            ) {
+            if (CarpoolProofValidator::isEecCompliant($carpoolProof)) {
                 $this->_executeForStandardJourney();
 
                 return;
@@ -102,6 +98,10 @@ class ValidateLDSubscription extends ValidateSubscription
             $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
             $stage->execute();
 
+            return;
+        }
+
+        if ($this->_pushOnlyMode || $this->_subscription->isComplete()) {
             return;
         }
 
