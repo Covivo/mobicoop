@@ -31,7 +31,7 @@ class ProofInvalidate extends Stage
     {
         if ($this->_subscription->isCommitmentJourney($this->_journey)) {
             if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-                $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
+                $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_journey);
                 $stage->execute();
 
                 return;

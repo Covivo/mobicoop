@@ -6,6 +6,7 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
@@ -32,7 +33,7 @@ class RecommitSubscription extends Stage
     private $_validateReferenceObject;
 
     /**
-     * @var LongDistanceJourney|ShortDistanceJOurney
+     * @var LongDistanceJourney|ShortDistanceJourney
      */
     private $_journey;
 
@@ -43,14 +44,21 @@ class RecommitSubscription extends Stage
 
     /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     * @param LongDistanceJourney|ShortDistanceJourney           $journey
      */
-    public function __construct(EntityManagerInterface $em, TimestampTokenManager $timestampTokenManager, EecInstance $eecInstance, $subscription)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        TimestampTokenManager $timestampTokenManager,
+        EecInstance $eecInstance,
+        $subscription,
+        $journey
+    ) {
         $this->_em = $em;
         $this->_timestampTokenManager = $timestampTokenManager;
 
         $this->_eecInstance = $eecInstance;
         $this->_subscription = $subscription;
+        $this->_journey = $journey;
 
         $this->_build();
     }

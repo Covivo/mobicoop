@@ -85,17 +85,17 @@ class ValidateLDSubscription extends ValidateSubscription
             }
 
             if (CarpoolProofValidator::isEecCompliant($carpoolProof)) {
-                $this->_executeForStandardJourney();
+                $this->_executeForStandardJourney($journey);
 
                 return;
             }
         }
     }
 
-    protected function _executeForStandardJourney(): void
+    protected function _executeForStandardJourney(LongDistanceJourney $journey): void
     {
         if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
+            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
 
             return;

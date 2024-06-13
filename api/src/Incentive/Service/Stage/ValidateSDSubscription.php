@@ -86,8 +86,10 @@ class ValidateSDSubscription extends ValidateSubscription
 
     protected function _executeForStandardJourney()
     {
-        if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
+        $journey = $this->_carpoolProof->getMobConnectShortDistanceJourney();
+
+        if (!is_null($journey) && SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
+            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
 
             return;
