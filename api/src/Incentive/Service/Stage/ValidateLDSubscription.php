@@ -55,7 +55,7 @@ class ValidateLDSubscription extends ValidateSubscription
         $this->_build();
     }
 
-    public function execute()
+    public function execute(): void
     {
         foreach (CarpoolItemProvider::getCarpoolItemFromCarpoolPayment($this->_carpoolPayment) as $this->_carpoolItem) {
             $this->_subscription = SubscriptionProvider::getLDSubscriptionFromCarpoolItem($this->_carpoolItem);
@@ -63,9 +63,6 @@ class ValidateLDSubscription extends ValidateSubscription
             if (is_null($this->_subscription)) {
                 continue;
             }
-
-            $journeyProvider = new JourneyProvider($this->_ldJourneyRepository);
-            $journey = $journeyProvider->getJourneyFromCarpoolItem($this->_carpoolItem);
 
             $carpoolProof = $this->_carpoolItem->getCarpoolProof();
 
@@ -77,8 +74,11 @@ class ValidateLDSubscription extends ValidateSubscription
                 return;
             }
 
+            $journeyProvider = new JourneyProvider($this->_ldJourneyRepository);
+            $journey = $journeyProvider->getJourneyFromCarpoolItem($this->_carpoolItem);
+
             // Use case where there is not yet a LD journey associated with the carpoolitem
-            if ($journey && $this->_subscription->isCommitmentJourney($journey)) {
+            if ($this->_subscription->isCommitmentJourney($journey)) {
                 $this->_executeForCommitmentJourney($journey, $carpoolProof);
 
                 return;
@@ -87,15 +87,16 @@ class ValidateLDSubscription extends ValidateSubscription
             if (
                 !$this->_subscription->isComplete()
                 && !$this->_pushOnlyMode
-                && is_null($journey)
                 && CarpoolProofValidator::isEecCompliant($carpoolProof)
             ) {
                 $this->_executeForStandardJourney();
+
+                return;
             }
         }
     }
 
-    protected function _executeForStandardJourney()
+    protected function _executeForStandardJourney(): void
     {
         if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
             $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
@@ -112,7 +113,7 @@ class ValidateLDSubscription extends ValidateSubscription
         $this->_em->flush();
     }
 
-    protected function _executeForCommitmentJourney(LongDistanceJourney $journey, CarpoolProof $carpoolProof)
+    protected function _executeForCommitmentJourney(LongDistanceJourney $journey, CarpoolProof $carpoolProof): void
     {
         // Process for commitment journey
         switch (true) {
