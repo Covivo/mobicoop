@@ -19,61 +19,75 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Community Member : necessary infos about a community member
+ * Community Member : necessary infos about a community member.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class CommunityMember
 {
     /**
      * @var int
+     *
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $id;
 
     /**
      * @var string
+     *
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $firstName;
 
     /**
      * @var string
+     *
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $shortFamilyName;
 
     /**
      * @var bool
+     *
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $referrer;
 
     /**
      * @var bool
+     *
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $moderator;
 
     /**
      * @var string
+     *
      * @Groups({"readCommunityMember"})
      */
     private $avatar;
+
+    /**
+     * @var \DateTimeInterface Last user activity date
+     *
+     * @Groups({"readCommunityMember"})
+     */
+    private $lastActivityDate;
 
     public function __construct()
     {
         $this->referrer = false;
         $this->moderator = false;
-        $this->avatar = "";
+        $this->avatar = '';
     }
-    
+
     public function getid(): ?int
     {
         return $this->id;
@@ -121,7 +135,7 @@ class CommunityMember
 
         return $this;
     }
-    
+
     public function isModerator(): ?bool
     {
         return $this->moderator;
@@ -133,7 +147,7 @@ class CommunityMember
 
         return $this;
     }
-    
+
     public function getAvatar(): ?string
     {
         return $this->avatar;
@@ -142,6 +156,18 @@ class CommunityMember
     public function setAvatar(?string $avatar): self
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getLastActivityDate(): ?\DateTimeInterface
+    {
+        return $this->lastActivityDate;
+    }
+
+    public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
+    {
+        $this->lastActivityDate = $lastActivityDate;
 
         return $this;
     }

@@ -54,27 +54,34 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
         return $description;
     }
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?string $operationName = null)
     {
         if ('homeAddressTerritory' != $property) {
             return;
         }
 
-        // we sanitize the value to be sure it's an int and not an iri
-        if (strrpos($value, '/')) {
-            $value = substr($value, strrpos($value, '/') + 1);
-        }
-        // $queryBuilder
-        //     ->leftJoin('u.addresses', 'homeAddress')
-        //     ->join('App\Geography\Entity\Territory', 'homeAddressTerritory')
-        //     ->andWhere(sprintf('homeAddressTerritory.id = %s AND homeAddress.home=1 AND ST_INTERSECTS(homeAddressTerritory.geoJsonDetail,homeAddress.geoJson)=1', $value));
+        if (is_array($value)) {
+            $queryBuilder
+                ->join('u.addresses', 'homeAddress')
+                ->leftJoin('homeAddress.territories', 'hat')
+                ->andWhere('((hat.id in (:value) AND homeAddress.home=1))')
+                ->andWhere('u.status != :status')
+                ->setParameter('status', User::STATUS_PSEUDONYMIZED)
+                ->setParameter('value', $value)
+            ;
+        } else {
+            // we sanitize the value to be sure it's an int and not an iri
+            if (strrpos($value, '/')) {
+                $value = substr($value, strrpos($value, '/') + 1);
+            }
 
-        $queryBuilder
-            ->leftJoin('u.addresses', 'homeAddress')
-            ->leftJoin('homeAddress.territories', 't')
-            ->andWhere(sprintf('t.id = %s AND homeAddress.home=1', $value))
-            ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
-        ;
+            $queryBuilder
+                ->leftJoin('u.addresses', 'homeAddress')
+                ->leftJoin('homeAddress.territories', 't')
+                ->andWhere(sprintf('t.id = %s AND homeAddress.home=1', $value))
+                ->andWhere('u.status != :status')
+                ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ;
+        }
     }
 }

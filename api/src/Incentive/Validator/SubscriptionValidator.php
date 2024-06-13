@@ -50,7 +50,6 @@ abstract class SubscriptionValidator
         return
             !static::isValidated($subscription)
             && !static::hasExpired($subscription)
-            && static::isAddressValid($subscription)
             && static::isPaymentProfileAvailable($subscription)
             && !$subscription->getJourneys()->isEmpty()
             && !is_null($subscription->getCommitmentProofJourney())
@@ -64,7 +63,6 @@ abstract class SubscriptionValidator
         return
             static::isValidated($subscription)
             && !static::hasExpired($subscription)
-            && static::isAddressValid($subscription)
             && static::isPaymentProfileAvailable($subscription)
             && !$subscription->getJourneys()->isEmpty()
             && !is_null($subscription->getCommitmentProofJourney())

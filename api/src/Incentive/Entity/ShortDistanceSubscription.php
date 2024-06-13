@@ -632,7 +632,7 @@ class ShortDistanceSubscription extends Subscription
 
     public function updateAddress(): self
     {
-        if (!SubscriptionValidator::hasExpired($this) && !SubscriptionValidator::hasBeenVerified($this)) {
+        if (!SubscriptionValidator::hasBeenVerified($this)) {
             $this->setStreetAddress();
             $this->setPostalCode();
             $this->setAddressLocality();
@@ -894,7 +894,7 @@ class ShortDistanceSubscription extends Subscription
             ) {
                 $this->addShortDistanceJourney($commitmentProofJourney);
             }
-        } else {
+        } elseif (!is_null($this->getCommitmentProofJourney())) {
             $this->getCommitmentProofJourney()->setCarpoolProof(null);
             $this->removeJourney($this->getCommitmentProofJourney());
         }

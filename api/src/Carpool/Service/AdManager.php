@@ -181,9 +181,9 @@ class AdManager
      * @param bool   $forceNotUseTime   For to set useTime at false
      * @param string $matchingAlgorithm Version of the matching algorithm
      *
-     * @return Ad
-     *
      * @throws \Exception
+     *
+     * @return Ad
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
@@ -1235,9 +1235,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @return array
-     *
      * @throws \Exception
+     *
+     * @return array
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1314,9 +1314,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @return Ad
-     *
      * @throws \Exception
+     *
+     * @return Ad
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1413,9 +1413,9 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
@@ -1455,9 +1455,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function compareSchedules($old, $new)
     {
@@ -1585,9 +1585,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {
@@ -2534,7 +2534,7 @@ class AdManager
                 } elseif (isset($outward[$day]['maxtime'])) {
                     $outwardTime = \DateTime::createFromFormat('H:i:s', $outward[$day]['maxtime'], new \DateTimeZone('UTC'))->format('H:i');
                 } else {
-                    throw new RdexError('No min or max time');
+                    return new RdexError('schedule', RdexError::ERROR_NO_MIN_MAX_TIME, 'No min or max time');
                 }
 
                 $previousKey = array_search($outwardTime, $refTimes);

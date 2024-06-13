@@ -471,7 +471,7 @@ export default {
         this.points.forEach((pointForBound, index) => {
           bounds.push([pointForBound.latLng.lat,pointForBound.latLng.lng]);
         });
-        if (bounds.length === 0){
+        if (bounds.length === 0 && this.territory && this.territory.bounds){
           bounds.push(this.territory.bounds);
         }
         if (bounds.length > 0) {

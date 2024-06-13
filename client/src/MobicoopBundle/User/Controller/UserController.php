@@ -1532,6 +1532,10 @@ class UserController extends AbstractController
                 $document = new ValidationDocument();
                 $document->setFile($request->files->get('document'));
 
+                if (!is_null($request->files->get('optionalDocument'))) {
+                    $document->setFile2($request->files->get('optionalDocument'));
+                }
+
                 return new JsonResponse($this->userManager->sendIdentityValidationDocument($document));
             }
         }

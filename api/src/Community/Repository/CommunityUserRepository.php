@@ -65,13 +65,34 @@ class CommunityUserRepository
     }
 
     /**
+     * @param Community $community The community
+     *
+     * @return array The members
+     */
+    public function findForCommunityNoContext(Community $community): array
+    {
+        $query = $this->repository->createQueryBuilder('cu');
+        $query->where('cu.community = :community')
+            ->andWhere('cu.status = :accepted_as_moderator or cu.status = :accepted_as_member')
+            ->join('cu.user', 'u')
+            ->andWhere('u.status != :pseudonymizedStatus')
+            ->setParameter('community', $community)
+            ->setParameter('accepted_as_moderator', CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
+            ->setParameter('accepted_as_member', CommunityUser::STATUS_ACCEPTED_AS_MEMBER)
+            ->setParameter('pseudonymizedStatus', EntityUser::STATUS_PSEUDONYMIZED)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
      * Find community users for a given community.
      *
      * @param Community $community The community
      *
      * @return array The members
      */
-    public function findForCommunity(Community $community, array $context = [], string $operationName): PaginatorInterface
+    public function findForCommunity(Community $community, array $context = [], string $operationName = ''): PaginatorInterface
     {
         $query = $this->repository->createQueryBuilder('cu');
         $query->where('cu.community = :community')
@@ -91,8 +112,10 @@ class CommunityUserRepository
             foreach ($context['filters'] as $filter => $value) {
                 if (!in_array($filter, $excludedFilters)) {
                     switch ($filter) {
+                        case 'lastActivityDate':
                         case 'givenName':
-                        case 'familyName':$query->andWhere('u.'.$filter." like '%".$value."%'");
+                        case 'familyName':
+                            $query->andWhere('u.'.$filter." like '%".$value."%'");
 
                             break;
 
@@ -105,8 +128,10 @@ class CommunityUserRepository
             if (isset($context['filters']['order'])) {
                 foreach ($context['filters']['order'] as $sort => $order) {
                     switch ($sort) {
+                        case 'lastActivityDate':
                         case 'givenName':
-                        case 'familyName':$query->addOrderBy('u.'.$sort, $order);
+                        case 'familyName':
+                            $query->addOrderBy('u.'.$sort, $order);
 
                             break;
 
@@ -116,12 +141,14 @@ class CommunityUserRepository
             }
         }
 
-        $queryNameGenerator = new QueryNameGenerator();
+        if ('' !== $operationName) {
+            $queryNameGenerator = new QueryNameGenerator();
 
-        foreach ($this->collectionExtensions as $extension) {
-            $extension->applyToCollection($query, $queryNameGenerator, CommunityUser::class, $operationName, $context);
-            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(CommunityUser::class, $operationName)) {
-                return $extension->getResult($query, CommunityUser::class, $operationName);
+            foreach ($this->collectionExtensions as $extension) {
+                $extension->applyToCollection($query, $queryNameGenerator, CommunityUser::class, $operationName, $context);
+                if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(CommunityUser::class, $operationName)) {
+                    return $extension->getResult($query, CommunityUser::class, $operationName);
+                }
             }
         }
 
@@ -153,6 +180,7 @@ class CommunityUserRepository
             foreach ($context['filters'] as $filter => $value) {
                 if (!in_array($filter, $excludedFilters)) {
                     switch ($filter) {
+                        case 'lastActivityDate':
                         case 'givenName':
                         case 'familyName':$query->andWhere('u.'.$filter." like '%".$value."%'");
 
@@ -167,6 +195,7 @@ class CommunityUserRepository
             if (isset($context['filters']['order'])) {
                 foreach ($context['filters']['order'] as $sort => $order) {
                     switch ($sort) {
+                        case 'lastActivityDate':
                         case 'givenName':
                         case 'familyName':$query->addOrderBy('u.'.$sort, $order);
 

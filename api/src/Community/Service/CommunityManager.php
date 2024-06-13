@@ -573,7 +573,7 @@ class CommunityManager
 
     public function getNbMembers(Community $community): int
     {
-        $communityUsers = $this->communityUserRepository->findBy(['community' => $community, 'status' => [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]]);
+        $communityUsers = $this->communityUserRepository->findForCommunityNoContext($community);
 
         return count($communityUsers);
     }
