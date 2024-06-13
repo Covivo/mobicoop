@@ -27,6 +27,11 @@ class ValidateLDSubscription extends ValidateSubscription
     private $_ldJourneyRepository;
 
     /**
+     * @var CarpoolItem
+     */
+    private $_carpoolItem;
+
+    /**
      * @var CarpoolPayment
      */
     private $_carpoolPayment;
@@ -52,30 +57,29 @@ class ValidateLDSubscription extends ValidateSubscription
 
     public function execute()
     {
-        foreach (CarpoolItemProvider::getCarpoolItemFromCarpoolPayment($this->_carpoolPayment) as $carpoolItem) {
-            $this->_subscription = SubscriptionProvider::getLDSubscriptionFromCarpoolItem($carpoolItem);
+        foreach (CarpoolItemProvider::getCarpoolItemFromCarpoolPayment($this->_carpoolPayment) as $this->_carpoolItem) {
+            $this->_subscription = SubscriptionProvider::getLDSubscriptionFromCarpoolItem($this->_carpoolItem);
 
             if (is_null($this->_subscription)) {
                 continue;
             }
 
             $journeyProvider = new JourneyProvider($this->_ldJourneyRepository);
-            $journey = $journeyProvider->getJourneyFromCarpoolItem($carpoolItem);
+            $journey = $journeyProvider->getJourneyFromCarpoolItem($this->_carpoolItem);
+
+            $carpoolProof = $this->_carpoolItem->getCarpoolProof();
 
             if (
                 is_null($this->_subscription)
                 || $this->_subscription->hasExpired()
-                || is_null($carpoolItem->getCarpoolProof())
-                || (!$this->_pushOnlyMode && !is_null($journey))
+                || is_null($carpoolProof)
             ) {
                 return;
             }
 
-            $carpoolProof = $carpoolItem->getCarpoolProof();
-
             // Use case where there is not yet a LD journey associated with the carpoolitem
             if ($journey && $this->_subscription->isCommitmentJourney($journey)) {
-                $this->_executeForCommitmentJourney($journey, $carpoolItem, $carpoolProof);
+                $this->_executeForCommitmentJourney($journey, $carpoolProof);
 
                 return;
             }
@@ -86,12 +90,12 @@ class ValidateLDSubscription extends ValidateSubscription
                 && is_null($journey)
                 && CarpoolProofValidator::isEecCompliant($carpoolProof)
             ) {
-                $this->_executeForStandardJourney($carpoolItem);
+                $this->_executeForStandardJourney();
             }
         }
     }
 
-    protected function _executeForStandardJourney(CarpoolItem $carpoolItem)
+    protected function _executeForStandardJourney()
     {
         if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
             $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
@@ -101,14 +105,14 @@ class ValidateLDSubscription extends ValidateSubscription
         }
 
         $journey = new LongDistanceJourney();
-        $journey = $this->_updateJourney($journey, $carpoolItem);
+        $journey = $this->_updateJourney($journey, $this->_carpoolItem);
 
         $this->_subscription->addLongDistanceJourney($journey);
 
         $this->_em->flush();
     }
 
-    protected function _executeForCommitmentJourney(LongDistanceJourney $journey, CarpoolItem $carpoolItem, CarpoolProof $carpoolProof)
+    protected function _executeForCommitmentJourney(LongDistanceJourney $journey, CarpoolProof $carpoolProof)
     {
         // Process for commitment journey
         switch (true) {
@@ -142,13 +146,13 @@ class ValidateLDSubscription extends ValidateSubscription
         $this->_em->flush();
     }
 
-    private function _updateJourney(LongDistanceJourney $journey, CarpoolItem $carpoolItem): LongDistanceJourney
+    private function _updateJourney(LongDistanceJourney $journey): LongDistanceJourney
     {
         return $journey->updateJourney(
-            $carpoolItem,
+            $this->_carpoolItem,
             $this->_carpoolPayment,
-            $this->getCarpoolersNumber($carpoolItem->getAsk()),
-            $this->getAddressesLocality($carpoolItem)
+            $this->getCarpoolersNumber($this->_carpoolItem->getAsk()),
+            $this->getAddressesLocality($this->_carpoolItem)
         );
     }
 }
