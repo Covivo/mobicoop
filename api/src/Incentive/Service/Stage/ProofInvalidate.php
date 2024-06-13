@@ -6,6 +6,7 @@ use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
+use App\Incentive\Validator\SubscriptionValidator;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ProofInvalidate extends Stage
@@ -29,14 +30,15 @@ class ProofInvalidate extends Stage
     public function execute(): void
     {
         if ($this->_subscription->isCommitmentJourney($this->_journey)) {
+            if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
+                $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
+                $stage->execute();
+
+                return;
+            }
+
             $stage = new ResetSubscription($this->_em, $this->_subscription);
             $stage->execute();
-
-            // If there are other subscription associated journeys, then we declare the 1st one as a new commitment journey
-            if (!$this->_subscription->getJourneys()->isEmpty()) {
-                $stage = new RecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
-                $stage->execute();
-            }
 
             return;
         }
