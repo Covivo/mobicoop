@@ -21,7 +21,6 @@ use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\NotificationsPresenceChecker;
 use App\Incentive\Service\Provider\JourneyProvider;
-use App\Incentive\Service\Stage\AutoRecommitSubscription;
 use App\Incentive\Service\Stage\CreateSubscription;
 use App\Incentive\Service\Stage\PatchSubscription;
 use App\Incentive\Service\Stage\ProofInvalidate;
@@ -242,12 +241,6 @@ class SubscriptionManager extends MobConnectManager
             : 'App\\Incentive\\Service\\Stage\\CommitSDSubscription';
 
         $stage = new $commitClass($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription, $referenceObject, $pushOnlyMode);
-        $stage->execute();
-    }
-
-    public function recommitSubscription($subscription): void
-    {
-        $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
         $stage->execute();
     }
 
