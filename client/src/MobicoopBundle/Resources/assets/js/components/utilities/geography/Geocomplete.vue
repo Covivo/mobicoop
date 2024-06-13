@@ -425,7 +425,7 @@ export default {
     address: {
       immediate: true,
       handler() {
-        this.setSelection();
+        if(this.address) this.setSelection();
       }
     },
     search(val) {

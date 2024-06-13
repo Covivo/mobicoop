@@ -85,6 +85,12 @@ services:
           method: onJWTCreated,
         }
 
+  geocoder_factory:
+    class: 'App\Geography\Service\Geocoder\GeocoderFactory'
+    arguments:
+      $uri: "%env(string:GEOCODER_URI)%"
+      $type: "%env(string:GEOCODER_TYPE)%"
+
   # Article Load Listener
   mobicoop.article.article_load_listener:
     class: App\Article\EventListener\ArticleLoadListener
@@ -216,6 +222,7 @@ services:
 
   App\Carpool\Service\AdManager:
     arguments:
+      $geocoderFactory: "@geocoder_factory"
       $params:
         defaultMarginDuration: "%env(int:CARPOOL_MARGIN_DURATION)%"
         defaultSeatsDriver: "%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%"
@@ -237,6 +244,7 @@ services:
 
   App\Carpool\Service\ProofManager:
     arguments:
+      $geocoderFactory: "@geocoder_factory"
       $provider: "%env(string:CARPOOL_PROOF_PROVIDER)%"
       $duration: "%env(int:CARPOOL_PROOF_RANGE_DURATION)%"
       $minIdentityDistance: "%env(int:CARPOOL_PROOF_MIN_IDENTITY_DISTANCE)%"
@@ -245,6 +253,7 @@ services:
 
   App\Carpool\Service\DynamicManager:
     arguments:
+      $geocoderFactory: "@geocoder_factory"
       $params:
         defaultSeatsDriver: "%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%"
         defaultSeatsPassenger: "%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%"
@@ -259,6 +268,7 @@ services:
 
   App\Carpool\Service\ProposalManager:
     arguments:
+      $geocoderFactory: "@geocoder_factory"
       $params:
         defaultRole: "%env(int:CARPOOL_ROLE)%"
         defaultType: "%env(int:CARPOOL_TYPE)%"
@@ -618,6 +628,7 @@ services:
 
   App\DataFixtures\Service\BasicFixturesManager:
     arguments:
+      $geocoderFactory: "@geocoder_factory"
       $fixturesBasic: "%env(bool:FIXTURES_BASIC)%"
 
   App\DataFixtures\Service\SolidaryFixturesManager:
@@ -707,12 +718,9 @@ services:
       $sigPrioritizeRegion: "%env(string:SIG_GEOCODER_PRIORITIZE_REGION)%"
       $sigShowVenues: "%env(bool:SIG_GEOCODER_SHOW_VENUES)%"
 
-  App\Geography\Service\Geocoder\MobicoopGeocoder:
-    arguments:
-      $uri: "%env(string:MOBICOOP_GEOCODER_URI)%"
-
   App\Geography\Service\PointSearcher:
     arguments:
+      $geocoderFactory: "@geocoder_factory"
       $maxRelayPointResults: "%env(int:POINT_SEARCHER_RELAY_POINT_MAX_RESULTS)%"
       $maxEventResults: "%env(int:POINT_SEARCHER_EVENT_MAX_RESULTS)%"
       $maxUserResults: "%env(int:POINT_SEARCHER_USER_MAX_RESULTS)%"
@@ -959,6 +967,8 @@ services:
       $carpoolProofPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
 
   App\Incentive\Service\Manager\SubscriptionManager:
+    arguments:
+      $eecSendWarningIncompleteProfile: "%env(bool:EEC_SEND_WARNING_INCOMPLETE_PROFILE)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
@@ -1043,6 +1053,7 @@ services:
 
   App\Match\Service\MassImportManager:
     arguments:
+      $geocoderFactory: "@geocoder_factory"
       $params: "%mass%"
       $prioritizeCentroid: "%env(json:POINT_SEARCHER_PRIORITIZE_CENTROID)%"
       $prioritizeBox: "%env(json:POINT_SEARCHER_PRIORITIZE_BOX)%"

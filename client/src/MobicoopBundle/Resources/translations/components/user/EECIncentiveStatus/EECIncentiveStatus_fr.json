@@ -43,7 +43,7 @@
       "progress": "{nb}/3 trajets longs",
       "hints": {
         "hint1": "Trajet payé en ligne",
-        "hint2": "Points de départ et d'arrivée certifiés par le passager et le conducteur avec la géolocalisation activée",
+        "hint2": "Points de départ et d'arrivée certifiés par le passager et le conducteur avec la géolocalisation activée, de leur trajet en France.",
         "hint3": "Numéros de téléphone validés pour passager et conducteur",
         "hint4": "Identités bancaires (RIB et pièce d’identité) distinctes données par passager et conducteur"
       }
@@ -52,7 +52,7 @@
       "header": "Prime courte distance (jusqu'à 80km)",
       "progress": "{nb}/10 trajets courts",
       "hints": {
-        "hint1": "Points de départ et d'arrivée certifiés par le passager et le conducteur avec la géolocalisation activée",
+        "hint1": "Points de départ et d'arrivée certifiés par le passager et le conducteur avec la géolocalisation activée, de leur trajet en France.",
         "hint2": "Numéros de téléphone validés pour passager et conducteur",
         "hint3": "Identités bancaires (RIB et pièce d’identité) distinctes données par passager et conducteur"
       }
@@ -101,7 +101,7 @@
       "carpool": {
         "title": "Réaliser un trajet",
         "texts": {
-          "default": "<p>Vous devez réaliser un covoiturage en tant que conducteur. Pour qu’il soit pris en compte pour la prime, il devra être certifié par une preuve de covoiturage&nbsp;:</p><ol><li>Numéros de téléphone validés pour  le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Identités bancaires (RIB + pièce d’identité en cours de validité) données par le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Points de départ et d'arrivée certifiés par le conducteur <span class=\"font-weight-bold\">ET</span> le passager avec la géolocalisation activée.</li></ol><p>En respectant ces étapes, votre trajet sera validé par le Registre de Preuve de Covoiturage en \"classe C\" (<span class=\"font-italic\">détails disponibles via votre export de covoiturages acceptés</span>).</p>",
+          "default": "<p>Vous devez réaliser un covoiturage en France avec un passager. Pour qu’il soit pris en compte pour la prime, il devra être certifié par une preuve de covoiturage&nbsp;:</p><ol><li>Numéros de téléphone validés pour  le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Identités bancaires (RIB + pièce d’identité en cours de validité) données par le conducteur <span class=\"font-weight-bold\">ET</span> le passager.</li><li>Points de départ et d'arrivée certifiés par le conducteur <span class=\"font-weight-bold\">ET</span> le passager avec la géolocalisation activée.</li></ol><p>En respectant ces étapes, votre trajet sera validé par le Registre de Preuve de Covoiturage en \"classe C\" (<span class=\"font-italic\">détails disponibles via votre export de covoiturages acceptés</span>).</p>",
           "success": "Votre covoiturage a bien été enregistré. Afin de recevoir votre prime, assurez-vous d’avoir bien renseigné votre numéro de téléphone, votre pièce d’identité et votre RIB.<br /><span class=\"font-weight-bold\">Attention</span> : votre passager doit également renseigner son numéro de téléphone, sa pièce d’identité et son RIB.",
           "error": "Votre preuve de covoiturage n’est pas conforme.<ul><li>Le passager n’a pas validé son numéro de téléphone.</li><li>Le passager n’a pas complété son identité bancaire (RIB et pièce d’identité).</li><li>Il manque une certification géolocalisée d’un point de prise en charge ou de dépose du passager ou conducteur.</li><li>Les certifications géolocalisées du point de prise en charge ou du point de dépose étaient trop espacées entre le passager et le conducteur.</li><li>Une erreur technique est intervenue dans la communication avec le Registre de Preuve de Covoiturage.</li></ul>"
         },
@@ -142,7 +142,7 @@
       "publish": {
         "title": "Publier une annonce",
         "texts": {
-          "default": "Publier une annonce pour un trajet de 80km et plus.",
+          "default": "Publier une annonce pour un trajet de 80km et plus en France.",
           "success": "Votre annonce a bien été publiée. Un covoiturage doit maintenant être accepté avec un passager depuis cette annonce.",
           "error": "Vous ne trouvez pas de passager correspondant à votre trajet ? Pas de panique ! Essayez de modifier l’horaire ou le lieu de prise en charge et/ou de dépose."
         },
@@ -247,8 +247,8 @@
   "dialogs": {
     "tutorial": {
       "title": "Où trouver votre numéro de permis ou code NPEH ?",
-      "item-1": "<p>Sur le <span class='font-weight-bold'>nouveau permis</span> au format carte bancaire européen, le numéro de dossier se trouve au verso (au dos de la carte) en haut à gauche au dessus de la puce sur 2 lignes horizontales.</p><p><img src='{apiUri}upload/eec-incentives/images/driving-licence-number-tutorial/new-permis.png'/></p>",
-      "item-2": "<p>Sur le <span class='font-weight-bold'>permis ancien format</span>, le numéro de permis se trouve à l'intérieur sur le premier volet, en dessous de la date d'obtention de votre permis de conduire.</p><p><img src='{apiUri}upload/eec-incentives/images/driving-licence-number-tutorial/old-permis.png'/></p>",
+      "item-1": "<p>Sur le <span class='font-weight-bold'>nouveau permis</span> au format carte bancaire européen, le numéro de dossier se trouve au verso (au dos de la carte) en haut à gauche au dessus de la puce sur 2 lignes horizontales.</p><p><img src='{apiUri}images/driving-licence-number-tutorial/new-permis.png' style='width:250px;height:auto;'/></p>",
+      "item-2": "<p>Sur le <span class='font-weight-bold'>permis ancien format</span>, le numéro de permis se trouve à l'intérieur sur le premier volet, en dessous de la date d'obtention de votre permis de conduire.</p><p><img src='{apiUri}images/driving-licence-number-tutorial/old-permis.png' style='width:250px;height:auto;'/></p>",
       "close-btn": {
         "text": "Fermer"
       }
