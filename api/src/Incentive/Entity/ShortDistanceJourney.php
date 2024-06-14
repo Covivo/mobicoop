@@ -126,7 +126,7 @@ class ShortDistanceJourney extends Journey
      *
      * @var null|CarpoolProof
      *
-     * @ORM\OneToOne(targetEntity=CarpoolProof::class, inversedBy="mobConnectShortDistanceJourney")
+     * @ORM\OneToOne(targetEntity=CarpoolProof::class, inversedBy="mobConnectShortDistanceJourney", cascade={"persist"})
      *
      * @ORM\JoinColumn(nullable=true)
      */

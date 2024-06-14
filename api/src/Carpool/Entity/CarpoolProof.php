@@ -273,7 +273,7 @@ class CarpoolProof
     private $points;
 
     /**
-     * @ORM\OneToOne(targetEntity=ShortDistanceJourney::class, mappedBy="carpoolProof")
+     * @ORM\OneToOne(targetEntity=ShortDistanceJourney::class, mappedBy="carpoolProof", cascade={"persist"})
      */
     private $mobConnectShortDistanceJourney;
 
