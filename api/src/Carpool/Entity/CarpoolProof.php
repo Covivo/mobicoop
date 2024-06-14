@@ -25,7 +25,6 @@ namespace App\Carpool\Entity;
 
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
-use App\Incentive\Entity\ShortDistanceJourney;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
@@ -271,11 +270,6 @@ class CarpoolProof
      * @var null|array The array of points as Address objects. Used to create the geoJsonPoints.
      */
     private $points;
-
-    /**
-     * @ORM\OneToOne(targetEntity=ShortDistanceJourney::class, mappedBy="carpoolProof", cascade={"persist"})
-     */
-    private $mobConnectShortDistanceJourney;
 
     /**
      * @var \DateTimeInterface validated date by RPC (status = ok)
@@ -660,24 +654,6 @@ class CarpoolProof
             }
             $this->setGeoJsonPoints(new LineString($arrayPoints));
         }
-    }
-
-    /**
-     * Get the value of mobConnectShortDistanceJourney.
-     */
-    public function getMobConnectShortDistanceJourney(): ?ShortDistanceJourney
-    {
-        return $this->mobConnectShortDistanceJourney;
-    }
-
-    /**
-     * Set the value of mobConnectShortDistanceJourney.
-     */
-    public function setMobConnectShortDistanceJourney(ShortDistanceJourney $mobConnectShortDistanceJourney): self
-    {
-        $this->mobConnectShortDistanceJourney = $mobConnectShortDistanceJourney;
-
-        return $this;
     }
 
     public function getCarpoolItem(): ?CarpoolItem
