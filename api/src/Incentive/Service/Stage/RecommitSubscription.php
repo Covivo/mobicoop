@@ -68,8 +68,6 @@ class RecommitSubscription extends Stage
             : new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE);
 
         if (!$stage->execute()) {
-            exit('Fin de test - Exit après commit stage');
-
             return;
         }
 
