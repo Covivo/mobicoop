@@ -5,6 +5,7 @@ namespace App\Incentive\Service\Stage;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
+use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
@@ -99,10 +100,16 @@ class ValidateLDSubscription extends ValidateSubscription
             return;
         }
 
-        $journey = new LongDistanceJourney();
-        $journey = $this->_updateJourney($journey, $this->_carpoolItem);
+        if (!$this->_subscription->isComplete()) {
+            $journey = new LongDistanceJourney();
+            $journey = $this->_updateJourney($journey, $this->_carpoolItem);
 
-        $this->_subscription->addLongDistanceJourney($journey);
+            $this->_subscription->addLongDistanceJourney($journey);
+        }
+
+        if ($this->_subscription->isComplete()) {
+            $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
+        }
 
         $this->_em->flush();
     }
