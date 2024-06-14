@@ -18,9 +18,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class RecommitSubscription extends Stage
 {
-    private const LD_SHORTCUT_NAME = 'LD';
-    private const SD_SHORTCUT_NAME = 'SD';
-
     private const PUSH_ONLY_MODE = true;
 
     /**
