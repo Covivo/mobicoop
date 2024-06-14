@@ -71,6 +71,7 @@ class RecommitSubscription extends Stage
         $stage = $this->_subscription instanceof LongDistanceSubscription
             ? new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE)
             : new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE);
+
         $stage->execute();
     }
 

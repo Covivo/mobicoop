@@ -877,26 +877,16 @@ class ShortDistanceSubscription extends Subscription
      */
     public function setCommitmentProofJourney(?ShortDistanceJourney $commitmentProofJourney): self
     {
-        if (!is_null($commitmentProofJourney)) {
-            if (is_array($this->getJourneys())) {
-                $filteredJourneys = array_filter($this->getJourneys(), function ($journey) use ($commitmentProofJourney) {
-                    return $journey->getId() === $commitmentProofJourney->getId();
-                });
-
-                if (empty($filteredJourneys)) {
-                    $this->addShortDistanceJourney($commitmentProofJourney);
-                }
-            }
-
-            if (
-                !is_array($this->getJourneys())
-                && !$this->getJourneys()->contains($commitmentProofJourney)
-            ) {
-                $this->addShortDistanceJourney($commitmentProofJourney);
-            }
-        } elseif (!is_null($this->getCommitmentProofJourney())) {
+        if (!is_null($this->getCommitmentProofJourney())) {
             $this->getCommitmentProofJourney()->setCarpoolProof(null);
             $this->removeJourney($this->getCommitmentProofJourney());
+        }
+
+        if (
+            !is_null($commitmentProofJourney)
+            && !$this->getJourneys()->contains($commitmentProofJourney)
+        ) {
+            $this->addShortDistanceJourney($commitmentProofJourney);
         }
 
         $this->commitmentProofJourney = $commitmentProofJourney;
