@@ -2534,7 +2534,7 @@ class AdManager
                 } elseif (isset($outward[$day]['maxtime'])) {
                     $outwardTime = \DateTime::createFromFormat('H:i:s', $outward[$day]['maxtime'], new \DateTimeZone('UTC'))->format('H:i');
                 } else {
-                    throw new RdexError('No min or max time');
+                    return new RdexError('schedule', RdexError::ERROR_NO_MIN_MAX_TIME, 'No min or max time');
                 }
 
                 $previousKey = array_search($outwardTime, $refTimes);
