@@ -1,0 +1,13 @@
+[
+    {
+        "comment": "only for information",
+        "criteria": {
+            "property1": "value1",
+            "property2": "value2"
+        },
+        "replacement": {
+            "property_to_replace1": "value",
+            "property_to_replace2": 1.107609
+        }
+    }
+]
