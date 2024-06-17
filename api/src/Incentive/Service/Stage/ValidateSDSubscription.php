@@ -89,7 +89,16 @@ class ValidateSDSubscription extends ValidateSubscription
             return;
         }
 
-        if (!$this->_subscription->isComplete()) {
+        //  We only add the journey if
+        //   - the subscription has not expired
+        //   - and if it is not complete
+        //   - and we are not in manual mode
+        //
+        if (
+            !$this->_subscription->hasExpired()
+            && !$this->_subscription->isComplete()
+            && !$this->_pushOnlyMode
+        ) {
             $journey = new ShortDistanceJourney($this->_carpoolProof);
             $journey->updateJourney(
                 $this->_carpoolProof,
