@@ -77,7 +77,7 @@ export default {
   },
   computed:{
     title(){
-      if(this.userId>0){
+      if(this.userId){
         return this.$t('title');
       }
       return this.$t("notConnectedTitle");
