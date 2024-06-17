@@ -1,7 +1,8 @@
 {
-    "urlCommunityDetails": "/covoiturage-communaute/{id}/{urlKey}",
-    "urlCommunityList": "/covoiturage-communaute",
-    "availableCommunities": "Libre diren komunitateak",
-    "getCommunities": "/utilisateur/communautes",
-    "title": "Nire komunitateak"
+  "notConnectedTitle": "Les communautés",
+  "urlCommunityDetails": "/covoiturage-communaute/{id}/{urlKey}",
+  "urlCommunityList": "/covoiturage-communaute",
+  "availableCommunities": "Libre diren komunitateak",
+  "getCommunities": "/utilisateur/communautes",
+  "title": "Nire komunitateak"
 }
