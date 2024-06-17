@@ -48,6 +48,7 @@ class PointSearcher
     private $tokenStorage;
 
     private $_fixer;
+    private $_fixerEnabled;
 
     public function __construct(
         RelayPointRepository $relayPointRepository,
@@ -66,10 +67,12 @@ class PointSearcher
         ?string $restrictCountry = null,
         array $exclusionTypes = [],
         array $relayPointParams,
-        array $fixerData
+        array $fixerData,
+        bool $fixerEnabled
     ) {
         $geocoder = $geocoderFactory->getGeocoder();
         $this->tokenStorage = $tokenStorage;
+        $this->_fixerEnabled = $fixerEnabled;
         $this->_fixer = new PointGeoFixer($fixerData);
         $user = $security->getUser();
         $userPointProvider = new UserPointProvider($addressRepository, $translator);
@@ -145,8 +148,7 @@ class PointSearcher
             $points = array_merge($points, $provider->search(str_replace(['"', "'"], ' ', $search), $user));
         }
 
-        // return $this->_fixer->fix($points);
-        return $points;
+        return $this->_fixerEnabled ? $this->_fixer->fix($points) : $points;
     }
 
     public function reverse(float $lon, float $lat): array
