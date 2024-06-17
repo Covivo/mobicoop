@@ -1,6 +1,5 @@
 <template>
   <v-menu
-    v-if="items.length > 0"
     offset-y
     open-on-hover
   >
@@ -11,7 +10,7 @@
         :class="textColorClass"
         v-on="on"
       >
-        {{ $t('title') }}
+        {{ title }}
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
     </template>
@@ -69,25 +68,35 @@ export default {
     linksColorClass: {
       type: String,
       default: ""
-    } 
+    }
   },
   data(){
     return {
       items: []
     }
   },
-  mounted(){
-    let params = {
-      'userId':this.userId,
+  computed:{
+    title(){
+      if(this.userId>0){
+        return this.$t('title');
+      }
+      return this.$t("notConnectedTitle");
     }
-    maxios.post(this.$t("getCommunities"), params)
-      .then(res => {
-        this.items = res.data;
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
   },
+  mounted(){
+    if(this.userId){
+      let params = {
+        'userId':this.userId,
+      }
+      maxios.post(this.$t("getCommunities"), params)
+        .then(res => {
+          this.items = res.data;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
