@@ -20,7 +20,7 @@
             <p class="d-flex flex-row-reverse">
               <v-btn
                 icon
-                @click="carpoolingIncentiveDialog = false"
+                @click="closeDialog"
               >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -71,12 +71,24 @@ export default {
   },
   data() {
     return {
-      carpoolingIncentiveDialog: true,
+      carpoolingIncentiveDialog: false,
     };
   },
   computed: {
     isEecServiceOpened() {
       return this.eecInstance.available;
+    },
+    currentTextVersionAlreadySeen(){
+      return localStorage.getItem('eecTextVersionSeen') == this.$t('eecTextVersion');
+    }
+  },
+  mounted(){
+    this.carpoolingIncentiveDialog = !this.currentTextVersionAlreadySeen;
+  },
+  methods:{
+    closeDialog(){
+      this.carpoolingIncentiveDialog = false;
+      localStorage.setItem('eecTextVersionSeen',this.$t('eecTextVersion'));
     }
   }
 }
