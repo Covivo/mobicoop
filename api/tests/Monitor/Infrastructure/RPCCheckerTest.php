@@ -34,7 +34,7 @@ class RPCCheckerTest extends TestCase
         $this->_carpoolProof = new CarpoolProof();
         $this->_carpoolProof->setCreatedDate(new \DateTime('now'));
 
-        $this->_rpcChecker = new RPCChecker($this->_curlDataProvider, $this->_carpoolProofService, '', '');
+        $this->_rpcChecker = new RPCChecker($this->_curlDataProvider, $this->_carpoolProofService, 'http://rpcuri.io', 'RPCTOKEN');
     }
 
     /**
