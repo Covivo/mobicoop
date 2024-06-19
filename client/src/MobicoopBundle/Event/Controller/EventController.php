@@ -383,7 +383,7 @@ class EventController extends AbstractController
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            return $this->json($this->eventManager->deleteEvent(12));
+            return $this->json($this->eventManager->deleteEvent($data['eventId']));
         }
     }
 }

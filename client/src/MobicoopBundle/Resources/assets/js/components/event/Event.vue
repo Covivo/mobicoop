@@ -377,8 +377,7 @@ export default {
           }
         })
         .then(function(response) {
-          console.log(response)
-          // window.location.href="/"
+          window.location.href="/"
         })
         .catch(function(error) {
           self.alert = {

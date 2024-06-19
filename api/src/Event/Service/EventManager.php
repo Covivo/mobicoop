@@ -251,4 +251,15 @@ class EventManager
     {
         return $this->eventRepository->getEventsWithAnExternalId();
     }
+
+    /**
+     * Delete an event.
+     *
+     * @param Event $event The event to delete
+     */
+    public function deleteEvent(Event $event)
+    {
+        $this->entityManager->remove($event);
+        $this->entityManager->flush();
+    }
 }

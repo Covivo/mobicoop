@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\DataPersister;
 
@@ -35,19 +35,42 @@ final class EventPostDataPersister implements ContextAwareDataPersisterInterface
     {
         $this->eventManager = $eventManager;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Event && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'post';
+        if ($data instanceof Event) {
+            switch ($context) {
+                case isset($context['collection_operation_name']):
+                    return 'post' == $context['collection_operation_name'];
+
+                    break;
+
+                case isset($context['item_operation_name']):
+                    return 'delete' == $context['item_operation_name'];
+
+                    break;
+
+                default:
+                    return false;
+
+                    break;
+            }
+        } else {
+            return false;
+        }
     }
 
     public function persist($data, array $context = [])
     {
-        return $this->eventManager->createEvent($data);
+        if (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
+            return $this->eventManager->createEvent($data);
+        }
     }
 
     public function remove($data, array $context = [])
     {
-        // call your persistence layer to delete $data
+        if (isset($context['item_operation_name']) && 'delete' == $context['item_operation_name']) {
+            return $this->eventManager->deleteEvent($data);
+        }
     }
 }
