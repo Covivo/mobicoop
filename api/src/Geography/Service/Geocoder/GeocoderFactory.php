@@ -38,6 +38,7 @@ class GeocoderFactory
 
         switch ($type) {
             case 'MobicoopGeocoder':
+            default:
                 $this->_geocoder = new MobicoopGeocoder($uri);
 
                 break;

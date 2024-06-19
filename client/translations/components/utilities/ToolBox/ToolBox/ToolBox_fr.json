@@ -54,13 +54,14 @@
       "title": "A coller près de chez soi",
       "image": "images/communication/thumbnail_a_coller_pres_de_chez_soi.png",
       "textDownload": "> Téléchargez",
-      "downloadLink": "images/communication/Mobicoop_CEE_ParcoursUtilisateurs.png"
+      "downloadLink": "images/communication/Mobicoop-A_coller_pres_de_chez_soi.zip"
     },
     {
       "title": "Comment bénéficier de la prime CEE?",
       "image": "images/communication/logo-cee.png",
       "textLogo1": "CEE",
-      "link1": "images/communication/Mobicoop-A_coller_pres_de_chez_soi.zip"
+      "link1": "images/communication/Mobicoop_CEE_ParcoursUtilisateurs.png",
+      "downloadLink": "images/communication/Mobicoop_CEE_ParcoursUtilisateurs.png"
     },
     {
       "title": "Vidéo de présentation de Mobicoop",

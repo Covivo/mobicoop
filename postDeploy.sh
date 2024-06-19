@@ -41,7 +41,8 @@ declare -a json_files_dist=(
  "${ROOT}/api/config/params/commands.json"\
  "${ROOT}/api/config/csvExport/csvExport.json"\
  "${ROOT}/api/config/params/reminders.json"\
- "${ROOT}/api/config/params/eecService.json"
+ "${ROOT}/api/config/params/eecService.json"\
+ "${ROOT}/api/config/geodata/geopointfix.json"
 )
 
 # if json file does not exist, copy it from .dist file

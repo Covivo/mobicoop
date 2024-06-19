@@ -5,11 +5,9 @@ namespace App\Incentive\Service\Stage;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\ShortDistanceJourney;
-use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Resource\EecInstance;
-use App\Incentive\Service\DateService;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Validator\CarpoolProofValidator;
@@ -19,11 +17,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidateSDSubscription extends ValidateSubscription
 {
-    /**
-     * @var ?ShortDistanceSubscription
-     */
-    protected $_subscription;
-
     /**
      * @var CarpoolProof
      */
@@ -137,11 +130,7 @@ class ValidateSDSubscription extends ValidateSubscription
             return;
         }
 
-        $this->_subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
-
-        $this->_subscription->setExpirationDate(DateService::getExpirationDate($this->_subscription->getValidityPeriodDuration()));
-
-        $this->_subscription->setCommitmentProofJourney($this->_updateJourney($this->_subscription->getCommitmentProofJourney()));
+        $this->_updateSubscription();
     }
 
     private function _updateJourney(ShortDistanceJourney $journey): ShortDistanceJourney

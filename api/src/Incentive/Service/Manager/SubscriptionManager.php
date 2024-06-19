@@ -2,11 +2,11 @@
 
 namespace App\Incentive\Service\Manager;
 
+use App\Action\Entity\Action;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Communication\Service\NotificationManager;
-use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Entity\Subscription;
@@ -19,6 +19,7 @@ use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
+use App\Incentive\Service\NotificationsPresenceChecker;
 use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Provider\SubscriptionProvider;
 use App\Incentive\Service\Stage\AutoRecommitSubscription;
@@ -91,7 +92,15 @@ class SubscriptionManager extends MobConnectManager
      */
     private $_subscriptionValidation;
 
+    /**
+     * @var bool
+     */
     private $_eecSendWarningIncompleteProfile;
+
+    /**
+     * @var int
+     */
+    private $_eecSendWarningIncompleteProfileTime;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -108,7 +117,8 @@ class SubscriptionManager extends MobConnectManager
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
         UserRepository $userRepository,
-        bool $eecSendWarningIncompleteProfile
+        bool $eecSendWarningIncompleteProfile,
+        int $eecSendWarningIncompleteProfileTime
     ) {
         parent::__construct($em, $instanceManager, $loggerService);
 
@@ -126,6 +136,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_userValidation = $userValidation;
         $this->_eecInstance = $instanceManager->getEecInstance();
         $this->_eecSendWarningIncompleteProfile = $eecSendWarningIncompleteProfile;
+        $this->_eecSendWarningIncompleteProfileTime = $eecSendWarningIncompleteProfileTime;
     }
 
     /**
@@ -162,37 +173,6 @@ class SubscriptionManager extends MobConnectManager
         return $userEligibility;
     }
 
-    /**
-     * Set EEC subscription timestamps.
-     */
-    public function setUserSubscriptionTimestamps(string $subscriptionType, int $subscriptionId)
-    {
-        $subscription = self::LONG_SUBSCRIPTION_TYPE === $subscriptionType
-            ? $this->_em->getRepository(LongDistanceSubscription::class)->find($subscriptionId)
-            : $this->_em->getRepository(ShortDistanceSubscription::class)->find($subscriptionId);
-
-        if (is_null($subscription)) {
-            throw new \LogicException('The subscription was not found');
-        }
-
-        if (!$this->_subscriptionValidation->isSubscriptionValidForTimestampsProcess($subscription)) {
-            throw new \LogicException('Subscription cannot be processed at this time');
-        }
-
-        $this->_loggerService->log('Performing the timestamping process');
-        $this->setDriver($subscription->getUser());
-
-        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
-
-        $this->_em->flush();
-
-        $response = 'The timestamping process is complete';
-
-        $this->_loggerService->log($response);
-
-        return $response;
-    }
-
     public function updateSubscriptionsAddress(User $user)
     {
         $this->setDriver($user);
@@ -218,40 +198,6 @@ class SubscriptionManager extends MobConnectManager
     {
         $stage = new PatchSubscription($this->_em, $this->_eecInstance, $user, SpecificFields::PHONE_NUMBER);
         $stage->execute();
-    }
-
-    public function updateTimestampTokens(User $user): User
-    {
-        $this->setDriver($user);
-
-        if (!is_null($this->getDriver()->getLongDistanceSubscription())) {
-            $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getLongDistanceSubscription());
-        }
-        if (!is_null($this->getDriver()->getShortDistanceSubscription())) {
-            $this->_timestampTokenManager->setSubscriptionTimestampTokens($this->getDriver()->getShortDistanceSubscription());
-        }
-
-        $this->_em->flush();
-
-        return $this->getDriver();
-    }
-
-    /**
-     * Set missing subscription timestamps.
-     *
-     * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
-     *
-     * @return bool Returns if getting tokens was successful
-     */
-    public function setTimestamps($subscription): bool
-    {
-        $this->setDriver($subscription->getUser());
-
-        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($subscription, Log::TYPE_VERIFY);
-
-        $this->_em->flush();
-
-        return false;
     }
 
     public function processingVersionTransitionalPeriods()
@@ -432,11 +378,17 @@ class SubscriptionManager extends MobConnectManager
      */
     public function subscriptionNotReadyToVerify($subscription)
     {
-        if ($this->_eecSendWarningIncompleteProfile
-        && (!SubscriptionValidator::isAddressValid($subscription)
-        || !SubscriptionValidator::isPhoneNumberValid($subscription)
-        || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription))) {
-            $this->_notificationManager->notifies('eec_subscription_not_ready_to_verify', $subscription->getUser(), $subscription);
+        $notificationPresenceChecker = new NotificationsPresenceChecker(
+            $this->_em,
+            $subscription->getUser(),
+            Action::ACTION_CEE_SUBSCRIPTION_NOT_READY_TO_VERRIFY
+        );
+
+        if (
+            $this->_eecSendWarningIncompleteProfile
+            && !$notificationPresenceChecker->hasLastNotificationBeenSendAfterDeadline($this->_eecSendWarningIncompleteProfileTime)
+        ) {
+            $this->_notificationManager->notifies(Action::ACTION_CEE_SUBSCRIPTION_NOT_READY_TO_VERRIFY, $subscription->getUser(), $subscription);
         }
     }
 
@@ -474,13 +426,19 @@ class SubscriptionManager extends MobConnectManager
     protected function _verifySubscription($subscription): void
     {
         if (SubscriptionValidator::isReadyToVerify($subscription)) {
+            if (
+                !SubscriptionValidator::isAddressValid($subscription)
+                || !SubscriptionValidator::isPhoneNumberValid($subscription)
+                || !SubscriptionValidator::isDrivingLicenceNumberValid($subscription)
+            ) {
+                $event = new SubscriptionNotReadyToVerifyEvent($subscription);
+                $this->_eventDispatcher->dispatch(SubscriptionNotReadyToVerifyEvent::NAME, $event);
+
+                return;
+            }
+
             $stage = new VerifySubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
             $stage->execute();
-
-            return;
         }
-
-        $event = new SubscriptionNotReadyToVerifyEvent($subscription);
-        $this->_eventDispatcher->dispatch(SubscriptionNotReadyToVerifyEvent::NAME, $event);
     }
 }

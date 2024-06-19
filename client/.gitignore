@@ -351,3 +351,8 @@ cypress/screenshots
 
 # PhoneCodes
 /config/params/phoneCodes.json
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

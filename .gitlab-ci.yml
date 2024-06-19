@@ -10,15 +10,15 @@ variables:
   MYSQL_DATABASE: mobicoop_db
   MYSQL_ROOT_PASSWORD: mobicoop
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
-  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
+  # CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
 
 # Cache modules in between jobs
 cache:
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
   paths: # excluded : not cached
     - .npm
-    - cache/Cypress
-    - /root/.cache/Cypress
+    # - cache/Cypress
+    # - /root/.cache/Cypress
 
 # Name of the stages that can be executed on a pipeline by the runner
 stages:
@@ -170,7 +170,7 @@ test_deploy:
       - tags # job not executed on tags
   artifacts:
     paths:
-      - client/cypress/screenshots
+      # - client/cypress/screenshots
       - client/public/build
       - client/node_modules/
       - client/vendor/
@@ -218,7 +218,7 @@ prod_test_deploy:
   when: manual # /!\ important : job executed manually /!\
   artifacts:
     paths:
-      - client/cypress/screenshots
+      # - client/cypress/screenshots
       - client/public/build
       - client/node_modules/
       - client/vendor/
@@ -263,7 +263,7 @@ staging_deploy:
   when: manual # /!\ important : job executed manually /!\
   artifacts:
     paths:
-      - client/cypress/screenshots
+      # - client/cypress/screenshots
       - client/public/build
       - client/node_modules/
       - client/vendor/
@@ -308,7 +308,7 @@ prod_deploy:
   when: manual # /!\ important : job executed manually /!\
   artifacts:
     paths:
-      - client/cypress/screenshots
+      # - client/cypress/screenshots
       - client/public/build
       - client/node_modules/
       - client/vendor/

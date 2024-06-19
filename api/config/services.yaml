@@ -731,6 +731,7 @@ services:
       $exclusionTypes: "%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%"
       $relayPointParams: "%env(json:POINT_SEARCHER_RELAY_POINT_PARAMETERS)%"
       $fixerData: "%env(json:file:resolve:POINT_SEARCHER_FIXER_DATA)%"
+      $fixerEnabled: "%env(bool:POINT_SEARCHER_FIXER_ENABLE)%"
 
   App\Geography\Service\AddressTerritoryLinkChecker:
     arguments:
@@ -876,23 +877,9 @@ services:
           command: "app:incentive:subscription-update",
         }
 
-  App\Incentive\Command\UpdateTokenCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-tokens",
-        }
-
   App\Incentive\Command\JourneyRecoveryCommand:
     tags:
       - { name: "console.command", command: "app:incentive:journeys-recovery" }
-
-  App\Incentive\Command\SubscriptionTimestampsCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-timestamps",
-        }
 
   App\Incentive\Command\SubscriptionTimestampsTokenCommand:
     tags:
@@ -969,6 +956,7 @@ services:
   App\Incentive\Service\Manager\SubscriptionManager:
     arguments:
       $eecSendWarningIncompleteProfile: "%env(bool:EEC_SEND_WARNING_INCOMPLETE_PROFILE)%"
+      $eecSendWarningIncompleteProfileTime: "%env(int:EEC_SEND_WARNING_INCOMPLETE_PROFILE_TIME)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 

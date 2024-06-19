@@ -44,8 +44,6 @@ class VerifySubscription extends Stage
 
     public function execute()
     {
-        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($this->_subscription, Log::TYPE_VERIFY);
-
         try {
             $this->_httpResponse = $this->_apiProvider->verifySubscription($this->_subscription);
 
@@ -100,13 +98,9 @@ class VerifySubscription extends Stage
      */
     private function _updateSubscriptionWhenRejected()
     {
-        if (array_key_exists('rejectionReason', $this->_httpResponse->getContent())) {
-            $this->_subscription->setRejectReason($this->_httpResponse->getContent()['rejectionReason']);
-        }
+        $this->_subscription->setRejectReason($this->_httpResponse->getContent()->rejectionReason);
 
-        if (array_key_exists('comments', $this->_httpResponse->getContent())) {
-            $this->_subscription->setComment($this->_httpResponse->getContent()['comments']);
-        }
+        $this->_subscription->setComment($this->_httpResponse->getContent()->comments);
 
         $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_NO);
 

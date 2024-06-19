@@ -34,6 +34,6 @@ class JourneyProvider
 
     public function getJourneyFromCarpoolItem(CarpoolItem $carpoolItem): ?LongDistanceJourney
     {
-        return $this->_ldJourneyRepository->findBy(['carpoolItem' => $carpoolItem]);
+        return $this->_ldJourneyRepository->findOneByCarpoolItem($carpoolItem);
     }
 }

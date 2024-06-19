@@ -19,25 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Action\Filter\TypeFilter;
 use App\Gamification\Entity\GamificationAction;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * An action that can be logged and / or trigger notifications.
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read","readUser"}, "enable_max_depth"="true"},
@@ -60,124 +62,142 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          },
  *      }
  * )
+ *
  * @ApiFilter(TypeFilter::class, properties={"type"})
  */
 class Action
 {
-    const TYPE_AUTO = 0;
-    const TYPE_TAKING_ACCOUNT_ASK = 1;
-    const TYPE_SOLUTION_FINDING = 2;
-    const TYPE_FOLLOW_UP_CARPOOL = 3;
-    const TYPE_CLOSING_ASK = 4;
-    const TYPE_FREE = 5;
+    public const TYPE_AUTO = 0;
+    public const TYPE_TAKING_ACCOUNT_ASK = 1;
+    public const TYPE_SOLUTION_FINDING = 2;
+    public const TYPE_FOLLOW_UP_CARPOOL = 3;
+    public const TYPE_CLOSING_ASK = 4;
+    public const TYPE_FREE = 5;
 
-    const SOLIDARY_CREATE = 37;
+    public const SOLIDARY_CREATE = 37;
 
-    const DOMAIN_TYPE_SOLIDARY = "solidary";
+    public const DOMAIN_TYPE_SOLIDARY = 'solidary';
 
-    const TYPE_FILTER = [
-        self::DOMAIN_TYPE_SOLIDARY => [1,2,3,4,5]
+    public const TYPE_FILTER = [
+        self::DOMAIN_TYPE_SOLIDARY => [1, 2, 3, 4, 5],
     ];
 
-    const TYPE_NAME = [
-        self::TYPE_AUTO => "Automatique",
-        self::TYPE_TAKING_ACCOUNT_ASK => "Prise en compte de la demande",
-        self::TYPE_SOLUTION_FINDING => "Recherche de solution",
-        self::TYPE_FOLLOW_UP_CARPOOL => "Suivi du covoiturage",
-        self::TYPE_CLOSING_ASK => "Clôture de la demande",
-        self::TYPE_FREE => "Action libre"
+    public const TYPE_NAME = [
+        self::TYPE_AUTO => 'Automatique',
+        self::TYPE_TAKING_ACCOUNT_ASK => 'Prise en compte de la demande',
+        self::TYPE_SOLUTION_FINDING => 'Recherche de solution',
+        self::TYPE_FOLLOW_UP_CARPOOL => 'Suivi du covoiturage',
+        self::TYPE_CLOSING_ASK => 'Clôture de la demande',
+        self::TYPE_FREE => 'Action libre',
     ];
 
-    const ACTION_SOLIDARY_UPDATE_PROGRESS_MANUALLY = 39;
+    public const ACTION_SOLIDARY_UPDATE_PROGRESS_MANUALLY = 39;
+    public const ACTION_CEE_SUBSCRIPTION_NOT_READY_TO_VERRIFY = 'eec_subscription_not_ready_to_verify';
 
     /**
-     * @var int The id of this action.
+     * @var int the id of this action
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"read","aReadCol"})
      */
     private $id;
 
     /**
-     * @var string Name of the action.
+     * @var string name of the action
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"read","aReadCol","write","readUser"})
      */
     private $name;
 
     /**
-     * @var int The type of this action.
+     * @var int the type of this action
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"read","aReadCol"})
      */
     private $type;
 
     /**
-     * @var string The name of the type of this action.
+     * @var string the name of the type of this action
+     *
      * @Groups("read")
      */
     private $typeName;
 
     /**
-     * @var bool The action has to be logged in the log system.
+     * @var bool the action has to be logged in the log system
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $inLog;
 
     /**
-     * @var bool The action has to be logged in the user action diary.
+     * @var bool the action has to be logged in the user action diary
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $inDiary;
 
     /**
-     * @var int|null The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
+     * @var null|int The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
      *
      * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+     *
      * @Groups({"read","write","aReadCol"})
      */
     private $progression;
 
     /**
-     * @var int Position number in user preferences.
+     * @var int position number in user preferences
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"read","write"})
      */
     private $position;
 
     /**
-     * @var ArrayCollection|null An Action can have multiple GamificationActions related
+     * @var null|ArrayCollection An Action can have multiple GamificationActions related
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\GamificationAction", mappedBy="action", cascade={"persist"})
+     *
      * @Groups({"readUser", "write"})
+     *
      * @MaxDepth(1)
      */
     private $gamificationActions;
 
     /**
      * @var \DateTimeInterface Creation date.
-     * Nullable for now as actions are manually inserted.
+     *                         Nullable for now as actions are manually inserted.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $updatedDate;
@@ -186,14 +206,14 @@ class Action
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
@@ -210,26 +230,27 @@ class Action
     {
         return $this->type;
     }
-    
+
     public function setType(int $type): self
     {
         $this->type = $type;
-        
+
         return $this;
     }
 
     public function getTypeName(): ?string
     {
-        if ($this->getType() !== null) {
+        if (null !== $this->getType()) {
             return self::TYPE_NAME[$this->getType()];
         }
+
         return null;
     }
-    
+
     public function setTypeName(string $typeName): self
     {
         $this->typeName = $typeName;
-        
+
         return $this;
     }
 
@@ -237,11 +258,11 @@ class Action
     {
         return $this->inLog;
     }
-    
+
     public function setInLog(bool $isInLog): self
     {
         $this->inLog = $isInLog;
-        
+
         return $this;
     }
 
@@ -249,11 +270,11 @@ class Action
     {
         return $this->inDiary;
     }
-    
+
     public function setInDiary(bool $isInDiary): self
     {
         $this->inDiary = $isInDiary;
-        
+
         return $this;
     }
 
@@ -330,7 +351,7 @@ class Action
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -338,7 +359,7 @@ class Action
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -348,6 +369,6 @@ class Action
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

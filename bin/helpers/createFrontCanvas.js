@@ -59,7 +59,7 @@ async function createCanvas() {
    * Copy all client files but filters to destination
    */
   const filter = {
-    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress.json', 'cypress', 'build', 'phpunit.xml.dist', 'assets', 'database', 'package-lock.json', 'kahlan-config.php', 'tests', 'package.json', 'README.md'],
+    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress.json', 'cypress', 'build', 'phpunit.xml.dist', 'assets', 'database', 'package-lock.json', 'tests', 'package.json', 'README.md'],
     // extToExclude: ['.lock'],
     filter: function (currentPath) {
       if (this.elementToExclude.includes(path.basename(currentPath))) { return false; }
@@ -180,7 +180,7 @@ async function replaceDataInCanvas() {
 
 /**
  * recursively crawl directory from dir entrypoint & add a gitkeep inside all folders!
- * @param {string} dir 
+ * @param {string} dir
  */
 function crawlDir(dir, replace, ext) {
   fs.readdirSync(dir).forEach(element => {
