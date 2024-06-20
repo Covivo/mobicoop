@@ -58,7 +58,7 @@
                 </v-icon>
               </v-list-item-icon>
             </v-list-item>
-            <v-list-item>
+            <v-list-item v-if="eligibility">
               <v-list-item-content>
                 <v-list-item-title>
                   <a @click="$vuetify.goTo('#user-postalAddress', scrollOptions)">{{ $t('mandatory3') }}</a>
