@@ -273,7 +273,7 @@ class CarpoolItemRepository
         $subscription = $driver->getLongDistanceSubscription();
 
         $allreadyAdded = array_map(function ($journey) {
-            return $journey->getCarpoolItem();
+            return $journey->getCarpoolItem()->getId();
         }, $subscription->getJourneys()->toArray());
 
         $parameters = [
