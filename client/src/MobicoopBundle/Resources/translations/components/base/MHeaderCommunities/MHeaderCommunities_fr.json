@@ -1,7 +1,8 @@
 {
-    "title": "Mes communautés",
-    "getCommunities": "/utilisateur/communautes",
-    "availableCommunities": "Les communautés disponibles",
-    "urlCommunityList": "/covoiturage-communaute",
-    "urlCommunityDetails": "/covoiturage-communaute/{id}/{urlKey}"
+  "title": "Mes communautés",
+  "notConnectedTitle": "Les communautés",
+  "getCommunities": "/utilisateur/communautes",
+  "availableCommunities": "Les communautés disponibles",
+  "urlCommunityList": "/covoiturage-communaute",
+  "urlCommunityDetails": "/covoiturage-communaute/{id}/{urlKey}"
 }

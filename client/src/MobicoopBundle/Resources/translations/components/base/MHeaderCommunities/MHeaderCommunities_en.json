@@ -1,7 +1,8 @@
 {
-    "title": "My communities",
-    "getCommunities": "/user/communities",
-    "availableCommunities": "Available communities",
-    "urlCommunityList": "/carpool-communities",
-    "urlCommunityDetails": "/carpool-community/{id}/{urlKey}"
+  "title": "My communities",
+  "notConnectedTitle": "Communities",
+  "getCommunities": "/user/communities",
+  "availableCommunities": "Available communities",
+  "urlCommunityList": "/carpool-communities",
+  "urlCommunityDetails": "/carpool-community/{id}/{urlKey}"
 }

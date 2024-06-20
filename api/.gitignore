@@ -392,6 +392,9 @@ $RECYCLE.BIN/
 # Csv Export
 /config/csvExport/*.json
 
+# Geopoint fixer
+/config/geodata/*.json
+
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
