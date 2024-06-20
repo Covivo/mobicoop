@@ -13,6 +13,11 @@ abstract class ValidateSubscription extends UpdateSubscription
      */
     protected $_subscription;
 
+    /**
+     * @var bool
+     */
+    protected $_recoveryMode;
+
     protected function _setSubscriptionToken(): void
     {
         if (!is_null($this->_subscription)) {

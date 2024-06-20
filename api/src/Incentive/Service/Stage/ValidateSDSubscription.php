@@ -29,7 +29,8 @@ class ValidateSDSubscription extends ValidateSubscription
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,
         CarpoolProof $carpoolProof,
-        bool $pushOnlyMode = false
+        bool $pushOnlyMode = false,
+        bool $recoveryMode = false
     ) {
         $this->_em = $em;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
@@ -38,13 +39,20 @@ class ValidateSDSubscription extends ValidateSubscription
         $this->_eecInstance = $eecInstance;
         $this->_carpoolProof = $carpoolProof;
         $this->_pushOnlyMode = $pushOnlyMode;
+        $this->_recoveryMode = $recoveryMode;
 
         $this->_build();
     }
 
     public function execute()
     {
-        if (is_null($this->_subscription)) {
+        if (
+            !$this->_recoveryMode
+            && (
+                is_null($this->_subscription)
+                || $this->_subscription->hasExpired()
+            )
+        ) {
             return;
         }
 
@@ -89,25 +97,18 @@ class ValidateSDSubscription extends ValidateSubscription
             return;
         }
 
-        //  We only add the journey if
-        //   - the subscription has not expired
-        //   - and if it is not complete
-        //   - and we are not in manual mode
-        //
-        if (
-            !$this->_subscription->hasExpired()
-            && !$this->_subscription->isComplete()
-            && !$this->_pushOnlyMode
-        ) {
-            $journey = new ShortDistanceJourney($this->_carpoolProof);
-            $journey->updateJourney(
-                $this->_carpoolProof,
-                $this->_eecInstance->getCarpoolProofPrefix().$this->_carpoolProof->getId(),
-                $this->getCarpoolersNumber($this->_carpoolProof->getAsk())
-            );
-
-            $this->_subscription->addShortDistanceJourney($journey);
+        if ($this->_pushOnlyMode || $this->_subscription->isComplete()) {
+            return;
         }
+
+        $journey = new ShortDistanceJourney($this->_carpoolProof);
+        $journey->updateJourney(
+            $this->_carpoolProof,
+            $this->_eecInstance->getCarpoolProofPrefix().$this->_carpoolProof->getId(),
+            $this->getCarpoolersNumber($this->_carpoolProof->getAsk())
+        );
+
+        $this->_subscription->addShortDistanceJourney($journey);
 
         if ($this->_subscription->isComplete()) {
             $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
