@@ -910,7 +910,8 @@ class LongDistanceSubscription extends Subscription
     public function isCommitmentJourney(?LongDistanceJourney $journey = null): bool
     {
         return
-            !is_null($this->getCommitmentProofJourney())
+            $journey
+            && !is_null($this->getCommitmentProofJourney())
             && $this->getCommitmentProofJourney()->getId() === $journey->getId();
     }
 
