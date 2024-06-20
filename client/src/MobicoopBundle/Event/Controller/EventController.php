@@ -51,8 +51,9 @@ class EventController extends AbstractController
     private $mandatoryImage;
     private $defaultNbEventsPerPage;
     private $eventAssociatedToCommunity;
+    private $eventManager;
 
-    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage, int $defaultNbEventsPerPage, array $eventAssociatedToCommunity)
+    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage, int $defaultNbEventsPerPage, array $eventAssociatedToCommunity, EventManager $eventManager)
     {
         $this->router = $router;
         $this->mandatoryDescription = $mandatoryDescription;
@@ -60,6 +61,7 @@ class EventController extends AbstractController
         $this->mandatoryImage = $mandatoryImage;
         $this->defaultNbEventsPerPage = $defaultNbEventsPerPage;
         $this->eventAssociatedToCommunity = $eventAssociatedToCommunity;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -363,5 +365,25 @@ class EventController extends AbstractController
         }
 
         return new JsonResponse(['success' => $success]);
+    }
+
+    /**
+     * Delete an avent.
+     *
+     * @return JsonResponse
+     */
+    public function eventDelete(Request $request)
+    {
+        if ($request->isMethod('DELETE')) {
+            $data = json_decode($request->getContent(), true);
+
+            if (!isset($data['eventId'])) {
+                return new JsonResponse([
+                    'message' => 'error',
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            return $this->json($this->eventManager->deleteEvent($data['eventId']));
+        }
     }
 }
