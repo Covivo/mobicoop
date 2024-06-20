@@ -21,7 +21,8 @@ class ProofValidate extends ValidateSubscription
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,
         CarpoolProof $carpoolProof,
-        bool $pushOnlyMode = false
+        bool $pushOnlyMode = false,
+        bool $recoveryMode = false
     ) {
         $this->_em = $em;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
@@ -30,6 +31,7 @@ class ProofValidate extends ValidateSubscription
         $this->_eecInstance = $eecInstance;
         $this->_carpoolProof = $carpoolProof;
         $this->_pushOnlyMode = $pushOnlyMode;
+        $this->_recoveryMode = $recoveryMode;
     }
 
     public function execute()
@@ -53,13 +55,13 @@ class ProofValidate extends ValidateSubscription
                     return;
                 }
 
-                $stage = new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolPayment, $this->_pushOnlyMode);
+                $stage = new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolPayment, $this->_pushOnlyMode, $this->_recoveryMode);
                 $stage->execute();
 
                 return;
         }
 
-        $stage = new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_carpoolProof, $this->_pushOnlyMode);
+        $stage = new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_carpoolProof, $this->_pushOnlyMode, $this->_recoveryMode);
         $stage->execute();
     }
 }

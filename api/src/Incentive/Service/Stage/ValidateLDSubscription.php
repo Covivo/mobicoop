@@ -38,7 +38,8 @@ class ValidateLDSubscription extends ValidateSubscription
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,
         CarpoolPayment $carpoolPayment,
-        bool $pushOnlyMode = false
+        bool $pushOnlyMode = false,
+        bool $recoveryMode = false
     ) {
         $this->_em = $em;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
@@ -47,6 +48,7 @@ class ValidateLDSubscription extends ValidateSubscription
         $this->_eecInstance = $eecInstance;
         $this->_carpoolPayment = $carpoolPayment;
         $this->_pushOnlyMode = $pushOnlyMode;
+        $this->_recoveryMode = $recoveryMode;
 
         $this->_build();
     }
@@ -63,8 +65,11 @@ class ValidateLDSubscription extends ValidateSubscription
             $carpoolProof = $this->_carpoolItem->getCarpoolProof();
 
             if (
-                $this->_subscription->hasExpired()
-                || is_null($carpoolProof)
+                !$this->_recoveryMode
+                && (
+                    $this->_subscription->hasExpired()
+                    || is_null($carpoolProof)
+                )
             ) {
                 return;
             }
@@ -87,7 +92,7 @@ class ValidateLDSubscription extends ValidateSubscription
         }
     }
 
-    protected function _executeForStandardJourney(LongDistanceJourney $journey): void
+    protected function _executeForStandardJourney(?LongDistanceJourney $journey): void
     {
         if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
             $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
@@ -100,21 +105,10 @@ class ValidateLDSubscription extends ValidateSubscription
             return;
         }
 
-        //  We only add the journey if
-        //   - the subscription has not expired
-        //   - and if it is not complete
-        //   - and we are not in manual mode
-        //
-        if (
-            !$this->_subscription->hasExpired()
-            && !$this->_subscription->isComplete()
-            && !$this->_pushOnlyMode
-        ) {
-            $journey = new LongDistanceJourney();
-            $journey = $this->_updateJourney($journey, $this->_carpoolItem);
+        $journey = new LongDistanceJourney();
+        $journey = $this->_updateJourney($journey, $this->_carpoolItem);
 
-            $this->_subscription->addLongDistanceJourney($journey);
-        }
+        $this->_subscription->addLongDistanceJourney($journey);
 
         if ($this->_subscription->isComplete()) {
             $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
