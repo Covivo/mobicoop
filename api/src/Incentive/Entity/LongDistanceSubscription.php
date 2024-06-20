@@ -907,7 +907,7 @@ class LongDistanceSubscription extends Subscription
         return !empty($filteredJourneys) ? $filteredJourneys[0] : null;
     }
 
-    public function isCommitmentJourney(LongDistanceJourney $journey): bool
+    public function isCommitmentJourney(?LongDistanceJourney $journey = null): bool
     {
         return
             !is_null($this->getCommitmentProofJourney())

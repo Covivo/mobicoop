@@ -2,13 +2,13 @@
 
 namespace App\Incentive\Controller;
 
-use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Incentive\Service\Validation\JourneyValidation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -50,11 +50,12 @@ class TestController extends AbstractController
     }
 
     /**
-     * @Route("/{subscription}")
+     * @Route("/{carpoolProof}")
      */
-    public function test(ShortDistanceSubscription $subscription)
+    public function test(CarpoolProof $carpoolProof)
     {
-        return new JsonResponse($subscription);
+        $event = new CarpoolProofValidatedEvent($carpoolProof);
+        $this->_eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
 
         return new Response('Ok');
     }

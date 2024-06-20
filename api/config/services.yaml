@@ -858,20 +858,6 @@ services:
           command: "app:incentive:subscription-commit",
         }
 
-  App\Incentive\Command\SubscriptionRecommitCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-recommit",
-        }
-
-  App\Incentive\Command\SubscriptionAutoRecommitCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-autorecommit",
-        }
-
   App\Incentive\Command\SubscriptionUpdateCommand:
     tags:
       - {
