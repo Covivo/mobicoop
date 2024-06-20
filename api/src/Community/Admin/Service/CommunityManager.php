@@ -122,6 +122,10 @@ class CommunityManager
             throw new CommunityException('Referrer not found');
         }
 
+        if (!is_null($community->getDomain())) {
+            $community->setDomain(preg_replace('/\s+/', '', $community->getDomain()));
+        }
+
         // persist the community
         $this->entityManager->persist($community);
         $this->entityManager->flush();
