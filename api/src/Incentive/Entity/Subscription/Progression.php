@@ -101,8 +101,7 @@ class Progression
      */
     public function isCarpoolRegistered(): ?bool
     {
-        return
-        (
+        return (
             $this->_subscription instanceof LongDistanceSubscription
             && $this->isFirstCarpoolPublished()
         ) || (

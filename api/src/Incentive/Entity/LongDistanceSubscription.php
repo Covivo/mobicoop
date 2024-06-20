@@ -13,6 +13,7 @@ use App\Incentive\Entity\Log\LongDistanceSubscriptionLog;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Service\Definition\LdImproved;
 use App\Incentive\Service\Definition\LdStandard;
+use App\Incentive\Validator\CarpoolProofValidator;
 use App\Incentive\Validator\SubscriptionValidator;
 use App\Service\AddressService;
 use App\User\Entity\User;
@@ -1011,8 +1012,8 @@ class LongDistanceSubscription extends Subscription
             || (                                                                        // The subscription has been validated but there is no carpoolProof
                 !is_null($this->getCommitmentProofJourney())
                 && is_null($this->getCommitmentProofJourney()->getInitialProposal())
-                && is_null($this->getCommitmentProofJourney()->getInitialProposal()->getMatchingOffers())
-                && empty($this->getCommitmentProofJourney()->getInitialProposal()->getMatchingOffers())
+                && is_null($this->getCommitmentProofJourney()->getInitialProposal()->getMatchingRequests())
+                && empty($this->getCommitmentProofJourney()->getInitialProposal()->getMatchingRequests())
             )
         ) {
             return null;
@@ -1021,7 +1022,7 @@ class LongDistanceSubscription extends Subscription
         $asks = [];
         $carpoolProofs = [];
 
-        foreach ($this->getCommitmentProofJourney()->getInitialProposal()->getMatchingOffers() as $key => $matching) {
+        foreach ($this->getCommitmentProofJourney()->getInitialProposal()->getMatchingRequests() as $key => $matching) {
             $passenger = !is_null($matching->getProposalRequest()) && !is_null($matching->getProposalRequest()->getUser())
                 ? $matching->getProposalRequest()->getUser() : null;
 
@@ -1042,7 +1043,7 @@ class LongDistanceSubscription extends Subscription
                     array_push($asks, $ask);
 
                     foreach ($ask->getCarpoolProofs() as $key => $carpoolProof) {
-                        if ($carpoolProof->isInProgressEecCompliant()) {
+                        if (CarpoolProofValidator::isEecCompliant($carpoolProof)) {
                             array_push($carpoolProofs, $carpoolProof);
                         }
                     }
@@ -1064,7 +1065,7 @@ class LongDistanceSubscription extends Subscription
             && !is_null($this->getCommitmentProofJourney()->getCarpoolItem())
             && !is_null($this->getCommitmentProofJourney()->getCarpoolItem()->getCarpoolProof())
             && $this->getCommitmentProofJourney()->getCarpoolItem()->isEECompliant()
-            && $this->getCommitmentProofJourney()->getCarpoolItem()->getCarpoolProof()->isEECCompliant();
+            && CarpoolProofValidator::isEecCompliant($this->getCommitmentProofJourney()->getCarpoolItem()->getCarpoolProof());
     }
 
     public static function getAvailableDefinitions(): array
