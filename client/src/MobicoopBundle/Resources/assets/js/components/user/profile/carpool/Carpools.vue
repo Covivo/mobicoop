@@ -28,6 +28,7 @@
                   rounded
                   :disabled="disableExportButton"
                   width="175px"
+                  :loading="exportLoading"
                   @click="carpoolExportDialog = true"
                 >
                   {{ $t('export') }}
@@ -234,7 +235,8 @@ export default {
       fromDate: null,
       toDate: null,
       menu: false,
-      menu2: false
+      menu2: false,
+      exportLoading: false
     }
   },
   computed: {
@@ -244,20 +246,24 @@ export default {
   },
   methods:{
     getExport(){
+      this.exportLoading = true;
+      const _this = this;
       let params = {
         'fromDate':this.fromDate,
         'toDate':this.toDate
       }
       maxios.post(this.$t("exportUrl"), params)
         .then(res => {
-          this.fromDate = null;
-          this.toDate = null;
-          this.openFileDownload(res);
+          _this.fromDate = null;
+          _this.toDate = null;
+          _this.openFileDownload(res);
         })
         .catch(function (error) {
-          this.fromDate = null;
-          this.toDate = null;
+          _this.fromDate = null;
+          _this.toDate = null;
           console.error(error);
+        }).finally(function () {
+          _this.exportLoading = false;
         });
     },
     openFileDownload(response){
