@@ -15,6 +15,7 @@ use App\Incentive\Event\SubscriptionNotReadyToVerifyEvent;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
+use App\Incentive\Repository\ShortDistanceJourneyRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
@@ -113,6 +114,7 @@ class SubscriptionManager extends MobConnectManager
         CarpoolProofRepository $carpoolProofRepository,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
+        ShortDistanceJourneyRepository $shortDistanceJourneyRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
         UserRepository $userRepository,
         bool $eecSendWarningIncompleteProfile,
@@ -128,6 +130,7 @@ class SubscriptionManager extends MobConnectManager
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
         $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
+        $this->_shortDistanceJourneyRepository = $shortDistanceJourneyRepository;
         $this->_shortDistanceSubscriptionRepository = $shortDistanceSubscriptionRepository;
         $this->_userRepository = $userRepository;
         $this->_subscriptionValidation = $subscriptionValidation;
@@ -268,7 +271,7 @@ class SubscriptionManager extends MobConnectManager
             return;
         }
 
-        $journeyProvider = new JourneyProvider($this->_longDistanceJourneyRepository);
+        $journeyProvider = new JourneyProvider($this->_longDistanceJourneyRepository, $this->_shortDistanceJourneyRepository);
         $journey = $journeyProvider->getJourneyFromCarpoolProof($carpoolProof);
 
         if (is_null($journey)) {
