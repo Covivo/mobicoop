@@ -142,6 +142,12 @@ class ValidateSDSubscription extends ValidateSubscription
             return;
         }
 
+        $this->_subscription->getCommitmentProofJourney()->updateJourney(
+            $this->_carpoolProof,
+            $this->_eecInstance->getCarpoolProofPrefix().$this->_carpoolProof->getId(),
+            $this->getCarpoolersNumber($this->_carpoolProof->getAsk())
+        );
+
         $this->_updateSubscription();
 
         $this->_em->flush();

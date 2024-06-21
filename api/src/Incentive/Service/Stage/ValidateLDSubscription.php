@@ -99,7 +99,12 @@ class ValidateLDSubscription extends ValidateSubscription
             && !($this->_pushOnlyMode || $this->_subscription->isComplete())
         ) {
             $journey = new LongDistanceJourney();
-            $journey = $this->_updateJourney($journey, $this->_carpoolItem);
+            $journey->updateJourney(
+                $this->_carpoolItem,
+                $this->_carpoolPayment,
+                $this->getCarpoolersNumber($this->_carpoolItem->getAsk()),
+                $this->getAddressesLocality($this->_carpoolItem)
+            );
 
             $this->_subscription->addLongDistanceJourney($journey);
 
@@ -145,18 +150,15 @@ class ValidateLDSubscription extends ValidateSubscription
             return;
         }
 
-        $this->_updateSubscription();
-
-        $this->_em->flush();
-    }
-
-    private function _updateJourney(LongDistanceJourney $journey): LongDistanceJourney
-    {
-        return $journey->updateJourney(
+        $this->_subscription->getCommitmentProofJourney()->updateJourney(
             $this->_carpoolItem,
             $this->_carpoolPayment,
             $this->getCarpoolersNumber($this->_carpoolItem->getAsk()),
             $this->getAddressesLocality($this->_carpoolItem)
         );
+
+        $this->_updateSubscription();
+
+        $this->_em->flush();
     }
 }
