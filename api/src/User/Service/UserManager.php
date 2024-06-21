@@ -1991,6 +1991,8 @@ class UserManager
      * @param Ask   $ask    The Ask
      * @param int   $userId The User id
      * @param mixed $export
+     *
+     * @return int The CO2 emission in grams
      */
     public function computeSavedCo2(Ask $ask, int $userId, $export = false): int
     {
