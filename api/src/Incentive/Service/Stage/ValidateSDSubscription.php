@@ -90,31 +90,30 @@ class ValidateSDSubscription extends ValidateSubscription
     {
         $journey = $this->_em->getRepository(ShortDistanceJourney::class)->findOneBy(['carpoolProof' => $this->_carpoolProof]);
 
+        if (
+            is_null($journey)
+            && !($this->_pushOnlyMode || $this->_subscription->isComplete())
+        ) {
+            $journey = new ShortDistanceJourney($this->_carpoolProof);
+            $journey->updateJourney(
+                $this->_carpoolProof,
+                $this->_eecInstance->getCarpoolProofPrefix().$this->_carpoolProof->getId(),
+                $this->getCarpoolersNumber($this->_carpoolProof->getAsk())
+            );
+
+            $this->_subscription->addShortDistanceJourney($journey);
+
+            if ($this->_subscription->isComplete()) {
+                $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
+            }
+
+            $this->_em->flush();
+        }
+
         if (!is_null($journey) && SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
             $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
-
-            return;
         }
-
-        if ($this->_pushOnlyMode || $this->_subscription->isComplete()) {
-            return;
-        }
-
-        $journey = new ShortDistanceJourney($this->_carpoolProof);
-        $journey->updateJourney(
-            $this->_carpoolProof,
-            $this->_eecInstance->getCarpoolProofPrefix().$this->_carpoolProof->getId(),
-            $this->getCarpoolersNumber($this->_carpoolProof->getAsk())
-        );
-
-        $this->_subscription->addShortDistanceJourney($journey);
-
-        if ($this->_subscription->isComplete()) {
-            $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
-        }
-
-        $this->_em->flush();
     }
 
     protected function _executeForCommitmentJourney()
