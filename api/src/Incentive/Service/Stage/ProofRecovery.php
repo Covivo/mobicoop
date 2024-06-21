@@ -109,7 +109,7 @@ class ProofRecovery extends Stage
                 break;
 
             case $this->_subscription instanceof ShortDistanceSubscription:
-                $carpoolProofs = $this->_carpoolProofRepository->findUserCEEEligibleProof($this->_user, $this->_subscriptionType);
+                $carpoolProofs = $this->_carpoolProofRepository->findUserCEEEligibleProof($this->_user);
 
                 foreach ($carpoolProofs as $carpoolProof) {
                     if (
