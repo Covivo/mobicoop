@@ -6,6 +6,8 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
+use App\Incentive\Service\Provider\CarpoolPaymentProvider;
+use App\Payment\Repository\CarpoolPaymentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ProofValidate extends ValidateSubscription
@@ -17,6 +19,7 @@ class ProofValidate extends ValidateSubscription
 
     public function __construct(
         EntityManagerInterface $em,
+        CarpoolPaymentRepository $carpoolPaymentRepository,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,
@@ -25,6 +28,7 @@ class ProofValidate extends ValidateSubscription
         bool $recoveryMode = false
     ) {
         $this->_em = $em;
+        $this->_carpoolPaymentRepository = $carpoolPaymentRepository;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
 
@@ -49,7 +53,9 @@ class ProofValidate extends ValidateSubscription
                 // Use case for a long distance journey where payment has been made
             case $this->_eecInstance->getLdMinimalDistance() <= $distanceTraveled && !is_null($this->_carpoolProof->getSuccessfullPayment()):
                 $carpoolItem = $this->_carpoolProof->getCarpoolItem();
-                $carpoolPayment = $carpoolItem->getSuccessfullPayment();
+
+                $carpoolPayment = !is_null($carpoolItem)
+                    ? CarpoolPaymentProvider::getCarpoolPaymentFromCarpoolItem($this->_carpoolPaymentRepository, $carpoolItem) : null;
 
                 if (is_null($carpoolItem) || is_null($carpoolPayment)) {
                     return;

@@ -12,6 +12,7 @@ use App\Incentive\Service\Provider\CarpoolPaymentProvider;
 use App\Incentive\Validator\CarpoolPaymentValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
+use App\Payment\Repository\CarpoolPaymentRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -40,6 +41,7 @@ class ProofRecovery extends Stage
     public function __construct(
         EntityManagerInterface $em,
         CarpoolItemRepository $carpoolItemRepository,
+        CarpoolPaymentRepository $carpoolPaymentRepository,
         CarpoolProofRepository $carpoolProofRepository,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
@@ -49,6 +51,7 @@ class ProofRecovery extends Stage
     ) {
         $this->_em = $em;
         $this->_carpoolItemRepository = $carpoolItemRepository;
+        $this->_carpoolPaymentRepository = $carpoolPaymentRepository;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
 
@@ -130,7 +133,7 @@ class ProofRecovery extends Stage
                         return;
                     }
 
-                    $stage = new ProofValidate($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolProof, false, true);
+                    $stage = new ProofValidate($this->_em, $this->_carpoolPaymentRepository, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolProof, false, true);
                     $stage->execute();
                 }
 
