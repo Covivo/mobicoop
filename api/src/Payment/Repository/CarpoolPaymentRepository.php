@@ -176,6 +176,9 @@ class CarpoolPaymentRepository
             ->setParameters($parameters)
         ;
 
-        return $qb2->getQuery()->getOneOrNullResult();
+        $results = $qb2->getQuery()->getResult();
+
+        // It is not possible to determine the exact payment when the journeys are not validated chronologically. It's a bub but we could not fix it
+        return empty($results) ? null : $results[0];
     }
 }
