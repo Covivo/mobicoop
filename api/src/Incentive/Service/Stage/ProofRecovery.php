@@ -101,7 +101,7 @@ class ProofRecovery extends Stage
                         return;
                     }
 
-                    $carpoolPayment = CarpoolPaymentProvider::getCarpoolPaymentFromCarpoolItem($carpoolItem);
+                    $carpoolPayment = CarpoolPaymentProvider::getCarpoolPaymentFromCarpoolItem($this->_carpoolPaymentRepository, $carpoolItem);
 
                     if (!is_null($carpoolPayment) && CarpoolPaymentValidator::isStatusEecCompliant($carpoolPayment)) {
                         $stage = new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolPayment, false, true);
