@@ -28,7 +28,21 @@ class JourneyProvider
 
     public function getJourneyFromCarpoolItem(CarpoolItem $carpoolItem): ?LongDistanceJourney
     {
-        return $this->_ldRepository->findOneByCarpoolItem($carpoolItem);
+        $journey = $this->_ldRepository->findOneByCarpoolItem($carpoolItem);
+
+        if (is_null($journey)) {
+            $initialProposal = !is_null($carpoolItem->getAsk())
+                && !is_null($carpoolItem->getAsk()->getMatching())
+                && !is_null($carpoolItem->getAsk()->getMatching()->getProposalOffer())
+                    ? $carpoolItem->getAsk()->getMatching()->getProposalOffer()
+                    : null;
+
+            if (!is_null($initialProposal)) {
+                $journey = $this->_ldRepository->findOneBy(['initialProposal' => $initialProposal]);
+            }
+        }
+
+        return $journey;
     }
 
     /**
