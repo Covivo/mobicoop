@@ -139,11 +139,8 @@ class LongDistanceJourney extends Journey
      */
     private $initialProposal;
 
-    public function __construct(Proposal $proposal = null)
+    public function __construct()
     {
-        if (!is_null($proposal)) {
-            $this->setInitialProposal($proposal);
-        }
         $this->createdAt = new \DateTime('now');
     }
 

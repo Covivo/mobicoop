@@ -43,6 +43,7 @@
                   v-if="!eventPassed"
                   color="secondary"
                   rounded
+                  :loading="loading"
                   @click="publish"
                 >
                   {{ $t("buttons.publish.label") }}
@@ -51,12 +52,8 @@
                   class="mt-3"
                   color="primary"
                   rounded
-                  :href="
-                    $t('buttons.widget.route', {
-                      id: event.id,
-                      urlKey: event.urlKey
-                    })
-                  "
+                  :loading="loading"
+                  :href="$t('buttons.widget.route', {id: event.id, urlKey: event.urlKey})"
                 >
                   {{ $t("buttons.widget.label") }}
                 </v-btn>
@@ -66,9 +63,21 @@
                   class="mt-3"
                   color="warning"
                   rounded
+                  :loading="loading"
                   :href="$t('buttons.edit.route', { id: event.id })"
                 >
                   {{ $t("buttons.edit.label") }}
+                </v-btn>
+                <br>
+                <v-btn
+                  v-if="user && event.creatorId == user.id"
+                  class="mt-3"
+                  color="error"
+                  :loading="loading"
+                  rounded
+                  @click="deleteEvent"
+                >
+                  {{ $t("buttons.delete.label") }}
                 </v-btn>
                 <report
                   v-if="!user || event.creatorId !== user.id"
@@ -165,6 +174,7 @@ import LoginOrRegisterFirst from "@components/utilities/LoginOrRegisterFirst";
 import MMap from "@components/utilities/MMap/MMap";
 import L from "leaflet";
 import moment from "moment";
+import maxios from "@utils/maxios";
 
 const DATE_FORMAT = "YYYY-MM-DD";
 
@@ -356,6 +366,26 @@ export default {
       } else {
         this.loginOrRegister();
       }
+    },
+
+    deleteEvent() {
+      this.loading = true;
+      maxios
+        .delete(this.$t("delete.route"), {
+          data: {
+            eventId: this.event.id
+          }
+        })
+        .then(function(response) {
+          window.location.href="/"
+        })
+        .catch(function(error) {
+          self.alert = {
+            type: "error",
+            message: self.$t("delete.error")
+          };
+        })
+
     },
 
     showEventProposals() {

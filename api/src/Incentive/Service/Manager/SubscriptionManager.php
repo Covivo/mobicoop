@@ -21,8 +21,6 @@ use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\NotificationsPresenceChecker;
 use App\Incentive\Service\Provider\JourneyProvider;
-use App\Incentive\Service\Provider\SubscriptionProvider;
-use App\Incentive\Service\Stage\AutoRecommitSubscription;
 use App\Incentive\Service\Stage\CreateSubscription;
 use App\Incentive\Service\Stage\PatchSubscription;
 use App\Incentive\Service\Stage\ProofInvalidate;
@@ -246,31 +244,6 @@ class SubscriptionManager extends MobConnectManager
         $stage->execute();
     }
 
-    public function autoRecommitSubscriptions(): void
-    {
-        // Processing subscriptions that simply need to be reset
-        $sdSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(), true);
-        $ldSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited(), true);
-
-        foreach (array_merge($sdSubscriptions, $ldSubscriptions) as $subscription) {
-            $this->resetSubscription($subscription);
-        }
-
-        // Processing subscriptions that need to be recommit
-        $sdSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_shortDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited());
-        $ldSubscriptions = SubscriptionProvider::getSubscriptionsCanBeReset($this->_longDistanceSubscriptionRepository->getSubscriptionsReadyToBeRecommited());
-
-        foreach (array_merge($sdSubscriptions, $ldSubscriptions) as $subscription) {
-            $this->recommitSubscription($subscription);
-        }
-    }
-
-    public function recommitSubscription($subscription): void
-    {
-        $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription);
-        $stage->execute();
-    }
-
     /**
      * STEP 17 - Validate a subscription.
      *
@@ -302,7 +275,7 @@ class SubscriptionManager extends MobConnectManager
             return;
         }
 
-        $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $journey);
+        $stage = new ProofInvalidate($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $journey);
         $stage->execute();
     }
 

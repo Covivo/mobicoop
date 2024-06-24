@@ -37,11 +37,14 @@ ANALYTICS_FILE=${ROOT}/mobicoop-platform/api/config/params/analytics.json
 GEOCOMPLETE_PALETTE_FILE=${ROOT}/config/geocomplete/palette.json
 AUTOMATED_COMMANDS_FILE=${ROOT}/mobicoop-platform/api/config/params/commands.json
 CSV_EXPORT_FILE=${ROOT}/mobicoop-platform/api/config/csvExport/csvExport.json
+SCHEDULES_REMINDERS_FILE=${ROOT}/mobicoop-platform/api/config/params/reminders.json
+EEC_SERVICE_FILE=${ROOT}/mobicoop-platform/api/config/params/eecService.json
+GEO_POINT_FIX_FILE=${ROOT}/mobicoop-platform/api/config/geodata/geopointfix.json
 
 # if json file does not exist, copy it from .dist file
 for json_file in "${RDEX_CLIENTS_FILE}" "${RDEX_OPERATOR_FILE}" "${RDEX_PROVIDERS_FILE}" "${PT_PROVIDERS_FILE}"\
                  "${MODULES_FILE}" "${CONTACTS_FILE}" "${ANALYTICS_FILE}" "${GEOCOMPLETE_PALETTE_FILE}"\
-                 "${AUTOMATED_COMMANDS_FILE}" "${CSV_EXPORT_FILE}"
+                 "${AUTOMATED_COMMANDS_FILE}" "${CSV_EXPORT_FILE}" "${EEC_SERVICE_FILE}" "${SCHEDULES_REMINDERS_FILE}" "${GEO_POINT_FIX_FILE}"
 do
     [ -f "${json_file}" ] || cp "${json_file}.dist" "${json_file}"
 done

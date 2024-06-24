@@ -10,6 +10,7 @@
 /api/config/rdex/*.json
 /api/config/user/*.json
 /api/config/csvExport/*.json
+/api/config/geodata/*.json
 /api/public/robots.txt
 /api/templates/email_client/
 /api/translations_client/

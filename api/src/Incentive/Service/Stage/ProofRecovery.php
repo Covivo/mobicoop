@@ -28,11 +28,6 @@ class ProofRecovery extends Stage
     protected $_carpoolProofRepository;
 
     /**
-     * @var LongDistanceJourneyRepository
-     */
-    protected $_longDistanceJourneyRepository;
-
-    /**
      * @var User
      */
     protected $_user;
@@ -55,7 +50,7 @@ class ProofRecovery extends Stage
         $this->_em = $em;
         $this->_carpoolItemRepository = $carpoolItemRepository;
         $this->_carpoolProofRepository = $carpoolProofRepository;
-        $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
+        $this->_ldJourneyRepository = $longDistanceJourneyRepository;
 
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_eecInstance = $eecInstance;
@@ -106,7 +101,7 @@ class ProofRecovery extends Stage
                     $carpoolPayment = CarpoolPaymentProvider::getCarpoolPaymentFromCarpoolItem($carpoolItem);
 
                     if (!is_null($carpoolPayment) && CarpoolPaymentValidator::isStatusEecCompliant($carpoolPayment)) {
-                        $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolPayment);
+                        $stage = new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolPayment, false, true);
                         $stage->execute();
                     }
                 }
@@ -135,7 +130,7 @@ class ProofRecovery extends Stage
                         return;
                     }
 
-                    $stage = new ProofValidate($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolProof);
+                    $stage = new ProofValidate($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolProof, false, true);
                     $stage->execute();
                 }
 

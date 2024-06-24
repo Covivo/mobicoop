@@ -7,6 +7,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
@@ -24,24 +25,34 @@ class ValidateSDSubscription extends ValidateSubscription
 
     public function __construct(
         EntityManagerInterface $em,
+        LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,
         CarpoolProof $carpoolProof,
-        bool $pushOnlyMode = false
+        bool $pushOnlyMode = false,
+        bool $recoveryMode = false
     ) {
         $this->_em = $em;
+        $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
 
         $this->_eecInstance = $eecInstance;
         $this->_carpoolProof = $carpoolProof;
         $this->_pushOnlyMode = $pushOnlyMode;
+        $this->_recoveryMode = $recoveryMode;
 
         $this->_build();
     }
 
     public function execute()
     {
-        if (is_null($this->_subscription) || $this->_subscription->hasExpired()) {
+        if (
+            !$this->_recoveryMode
+            && (
+                is_null($this->_subscription)
+                || $this->_subscription->hasExpired()
+            )
+        ) {
             return;
         }
 
@@ -53,24 +64,15 @@ class ValidateSDSubscription extends ValidateSubscription
 
         if (CarpoolProofValidator::isCarpoolProofSubscriptionCommitmentProof($this->_subscription, $this->_carpoolProof)) {
             $this->_executeForCommitmentJourney();
-        } else {
-            if (
-                $this->_subscription->isComplete()
-                || $this->_pushOnlyMode
-                || !CarpoolProofValidator::isEecCompliant($this->_carpoolProof)
-                || !CarpoolProofValidator::isCarpoolProofOriginOrDestinationFromFrance($this->_carpoolProof)
-            ) {
-                return;
-            }
 
+            return;
+        }
+
+        if (CarpoolProofValidator::isEecCompliant($this->_carpoolProof)) {
             $this->_executeForStandardJourney();
-        }
 
-        if ($this->_subscription->isComplete()) {
-            $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
+            return;
         }
-
-        $this->_em->flush();
     }
 
     protected function _build()
@@ -86,10 +88,16 @@ class ValidateSDSubscription extends ValidateSubscription
 
     protected function _executeForStandardJourney()
     {
-        if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
+        $journey = $this->_em->getRepository(ShortDistanceJourney::class)->findOneBy(['carpoolProof' => $this->_carpoolProof]);
+
+        if (!is_null($journey) && SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
+            $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
 
+            return;
+        }
+
+        if ($this->_pushOnlyMode || $this->_subscription->isComplete()) {
             return;
         }
 
@@ -99,7 +107,12 @@ class ValidateSDSubscription extends ValidateSubscription
             $this->_eecInstance->getCarpoolProofPrefix().$this->_carpoolProof->getId(),
             $this->getCarpoolersNumber($this->_carpoolProof->getAsk())
         );
+
         $this->_subscription->addShortDistanceJourney($journey);
+
+        if ($this->_subscription->isComplete()) {
+            $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
+        }
 
         $this->_em->flush();
     }
@@ -110,7 +123,7 @@ class ValidateSDSubscription extends ValidateSubscription
             !CarpoolProofValidator::isEecCompliant($this->_carpoolProof)
             || !CarpoolProofValidator::isCarpoolProofOriginOrDestinationFromFrance($this->_carpoolProof)
         ) {
-            $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription->getCommitmentProofJourney());
+            $stage = new ProofInvalidate($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription->getCommitmentProofJourney());
             $stage->execute();
 
             return;
@@ -131,14 +144,7 @@ class ValidateSDSubscription extends ValidateSubscription
         }
 
         $this->_updateSubscription();
-    }
 
-    private function _updateJourney(ShortDistanceJourney $journey): ShortDistanceJourney
-    {
-        return $journey->updateJourney(
-            $this->_carpoolProof,
-            $this->_eecInstance->getCarpoolProofPrefix().$this->_carpoolProof->getId(),
-            $this->getCarpoolersNumber($this->_carpoolProof->getAsk())
-        );
+        $this->_em->flush();
     }
 }
