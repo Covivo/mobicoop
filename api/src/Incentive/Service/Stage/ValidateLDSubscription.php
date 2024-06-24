@@ -96,7 +96,16 @@ class ValidateLDSubscription extends ValidateSubscription
     {
         if (
             is_null($journey)
-            && !($this->_pushOnlyMode || $this->_subscription->isComplete())
+            && (
+                !$this->_pushOnlyMode
+                || (
+                    !$this->_subscription->isComplete()
+                    || (
+                        1 <= $this->_subscription->getMaximumJourneysNumber()
+                        && !SubscriptionValidator::isCommitmentJourneyEecCompliant($this->_subscription)
+                    )
+                )
+            )
         ) {
             $journey = new LongDistanceJourney();
             $journey->updateJourney(
