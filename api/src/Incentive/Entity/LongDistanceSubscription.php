@@ -922,27 +922,17 @@ class LongDistanceSubscription extends Subscription
      */
     public function setCommitmentProofJourney(?LongDistanceJourney $commitmentProofJourney): self
     {
-        if (!is_null($commitmentProofJourney)) {
-            if (is_array($this->getJourneys())) {
-                $filteredJourneys = array_filter($this->getJourneys(), function ($journey) use ($commitmentProofJourney) {
-                    return $journey->getId() === $commitmentProofJourney->getId();
-                });
-
-                if (empty($filteredJourneys)) {
-                    $this->addLongDistanceJourney($commitmentProofJourney);
-                }
-            }
-
-            if (
-                !is_array($this->getJourneys())
-                && !$this->getJourneys()->contains($commitmentProofJourney)
-            ) {
-                $this->addLongDistanceJourney($commitmentProofJourney);
-            }
-        } elseif (!is_null($this->getCommitmentProofJourney())) {
+        if (!is_null($this->getCommitmentProofJourney())) {
             $this->getCommitmentProofJourney()->setCarpoolItem(null);
             $this->getCommitmentProofJourney()->setCarpoolPayment(null);
             $this->removeJourney($this->getCommitmentProofJourney());
+        }
+
+        if (
+            !is_null($commitmentProofJourney)
+            && !$this->getJourneys()->contains($commitmentProofJourney)
+        ) {
+            $this->addLongDistanceJourney($commitmentProofJourney);
         }
 
         $this->commitmentProofJourney = $commitmentProofJourney;
