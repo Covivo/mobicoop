@@ -56,10 +56,9 @@ class NoActivityRelaunch2Command extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $usersIds = $this->userRepository->findUserWithNoAdSinceXDays(self::RELAUNCH_DELAY);
-        if (count($usersIds) > 0) {
-            foreach ($usersIds as $userId) {
-                $user = $this->userRepository->find(intval($userId['id']));
+        $users = $this->userRepository->findUserWithNoAdSinceXDays(self::RELAUNCH_DELAY);
+        if (count($users) > 0) {
+            foreach ($users as $user) {
                 $event = new NoActivityRelaunch2Event($user);
                 $this->eventDispatcher->dispatch(NoActivityRelaunch2Event::NAME, $event);
             }
