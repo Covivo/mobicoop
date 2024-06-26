@@ -28,6 +28,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
+use App\Geography\Controller\TerritoryManagersController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -36,11 +37,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * A geographical territory, represented by a geojson multipolygon.
  *
  * @ORM\Entity
+ *
  * @ORM\Table(indexes={
+ *
  *  @ORM\Index(name="IDX_LATITUDE", columns={"min_latitude", "max_latitude"}),
  *  @ORM\Index(name="IDX_LONGITUDE", columns={"min_longitude", "max_longitude"})
  * })
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -121,14 +126,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  "tags"={"Geography"}
  *              }
  *          },
+ *          "managers"={
+ *              "path"="/admin/territories/{id}/managers",
+ *              "controller"=TerritoryManagersController::class,
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('territory_read',object)"
+ *          },
  *          "ADMIN_get"={
  *              "path"="/admin/territories/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "security"="is_granted('territory_read',object)"
- *          }
+ *          },
  *      }
  * )
+ *
  * @ApiFilter(SearchFilter::class, properties={"id":"exact","name": "partial"})
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  */
@@ -138,8 +151,11 @@ class Territory
      * @var int the id of this territory
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"aRead","read","readSolidary"})
      */
     private $id;
@@ -148,6 +164,7 @@ class Territory
      * @var string the name of the territory
      *
      * @ORM\Column(type="string", length=100)
+     *
      * @Groups({"aRead","read","readSolidary","write"})
      */
     private $name;
@@ -157,6 +174,7 @@ class Territory
      *             /!\ ORM is disabled for performance reasons but TerritoryEventListener avoid the field to be removed on further migrations !
      *
      * ORM\Column(type="multipolygon")
+     *
      * @Groups({"read","write"})
      */
     private $geoJsonDetail;
@@ -166,6 +184,7 @@ class Territory
      *               Source for levels : https://en.wikipedia.org/wiki/List_of_administrative_divisions_by_country
      *
      * @ORM\Column(type="integer", nullable=true))
+     *
      * @Groups({"read","write"})
      */
     private $adminLevel;
@@ -174,6 +193,7 @@ class Territory
      * @var null|float the minimal latitude of the territory
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $minLatitude;
@@ -182,6 +202,7 @@ class Territory
      * @var null|float the maximal latitude of the territory
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $maxLatitude;
@@ -190,6 +211,7 @@ class Territory
      * @var null|float the minimal longitude of the territory
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $minLongitude;
@@ -198,6 +220,7 @@ class Territory
      * @var null|float the maximal longitude of the territory
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $maxLongitude;
@@ -213,6 +236,7 @@ class Territory
      * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $createdDate;
@@ -221,6 +245,7 @@ class Territory
      * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $updatedDate;
@@ -229,6 +254,7 @@ class Territory
      * @var null|ArrayCollection The parent territories of this Territory
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     *
      * @ORM\JoinTable(name="territory_parent",
      *      joinColumns={@ORM\JoinColumn(name="child_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="parent_id", referencedColumnName="id")}
@@ -406,7 +432,7 @@ class Territory
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -416,6 +442,6 @@ class Territory
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }
