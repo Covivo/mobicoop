@@ -85,7 +85,7 @@ class RezopouceProvider
     private function __buildHeaders(): array
     {
         return [
-            'X-Auth-Token' => $this->token,
+            'x-auth-token' => $this->token,
         ];
     }
 
