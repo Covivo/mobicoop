@@ -23,17 +23,28 @@
 
 namespace App\Payment\Repository;
 
+use App\Incentive\Entity\LongDistanceJourney;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 class CarpoolPaymentRepository
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $_em;
+
+    /**
+     * @var EntityRepository
+     */
     private $repository;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
+        $this->_em = $entityManager;
         $this->repository = $entityManager->getRepository(CarpoolPayment::class);
     }
 
@@ -128,5 +139,46 @@ class CarpoolPaymentRepository
         ;
 
         return $query->getQuery()->getResult();
+    }
+
+    public function findOneByCarpoolItem(CarpoolItem $carpoolItem): ?CarpoolPayment
+    {
+        $repository = $this->_em->getRepository(LongDistanceJourney::class);
+
+        $qb1 = $repository->createQueryBuilder('ld');
+        $qb1
+            ->select('cp.id')
+            ->innerJoin('ld.carpoolPayment', 'cp')
+            ->distinct()
+            ->where('ld.carpoolPayment IS NOT NULL')
+        ;
+
+        $carpoolPaymentIds = array_map(function (array $item) {
+            return $item['id'];
+        }, $qb1->getQuery()->getResult());
+
+        $qb2 = $this->repository->createQueryBuilder('cp');
+
+        $parameters = [
+            'carpoolItemId' => $carpoolItem->getId(),
+            'creditorStatus' => CarpoolItem::CREDITOR_STATUS_ONLINE,
+            'paymentIds' => $carpoolPaymentIds,
+            'paymentStatus' => CarpoolPayment::STATUS_SUCCESS,
+        ];
+
+        $qb2
+            ->innerJoin('cp.carpoolItems', 'ci')
+            ->where('ci.id = :carpoolItemId')
+            ->andWhere('ci.creditorStatus = :creditorStatus')
+            ->andWhere('cp.status = :paymentStatus')
+            ->andWhere('cp.transactionId IS NOT NULL')
+            ->andWhere('cp.id NOT IN (:paymentIds)')
+            ->setParameters($parameters)
+        ;
+
+        $results = $qb2->getQuery()->getResult();
+
+        // It is not possible to determine the exact payment when the journeys are not validated chronologically. It's a bub but we could not fix it
+        return empty($results) ? null : $results[0];
     }
 }

@@ -94,27 +94,40 @@ class ValidateLDSubscription extends ValidateSubscription
 
     protected function _executeForStandardJourney(?LongDistanceJourney $journey): void
     {
-        if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
+        if (
+            is_null($journey)
+            && (
+                !$this->_pushOnlyMode
+                || (
+                    !$this->_subscription->isComplete()
+                    || (
+                        1 <= $this->_subscription->getMaximumJourneysNumber()
+                        && !SubscriptionValidator::isCommitmentJourneyEecCompliant($this->_subscription)
+                    )
+                )
+            )
+        ) {
+            $journey = new LongDistanceJourney();
+            $journey->updateJourney(
+                $this->_carpoolItem,
+                $this->_carpoolPayment,
+                $this->getCarpoolersNumber($this->_carpoolItem->getAsk()),
+                $this->getAddressesLocality($this->_carpoolItem)
+            );
+
+            $this->_subscription->addLongDistanceJourney($journey);
+
+            if ($this->_subscription->isComplete()) {
+                $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
+            }
+
+            $this->_em->flush();
+        }
+
+        if (!is_null($journey) && SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
             $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
-
-            return;
         }
-
-        if ($this->_pushOnlyMode || $this->_subscription->isComplete()) {
-            return;
-        }
-
-        $journey = new LongDistanceJourney();
-        $journey = $this->_updateJourney($journey, $this->_carpoolItem);
-
-        $this->_subscription->addLongDistanceJourney($journey);
-
-        if ($this->_subscription->isComplete()) {
-            $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
-        }
-
-        $this->_em->flush();
     }
 
     protected function _executeForCommitmentJourney(LongDistanceJourney $journey, CarpoolProof $carpoolProof): void
@@ -146,18 +159,15 @@ class ValidateLDSubscription extends ValidateSubscription
             return;
         }
 
-        $this->_updateSubscription();
-
-        $this->_em->flush();
-    }
-
-    private function _updateJourney(LongDistanceJourney $journey): LongDistanceJourney
-    {
-        return $journey->updateJourney(
+        $this->_subscription->getCommitmentProofJourney()->updateJourney(
             $this->_carpoolItem,
             $this->_carpoolPayment,
             $this->getCarpoolersNumber($this->_carpoolItem->getAsk()),
             $this->getAddressesLocality($this->_carpoolItem)
         );
+
+        $this->_updateSubscription();
+
+        $this->_em->flush();
     }
 }
