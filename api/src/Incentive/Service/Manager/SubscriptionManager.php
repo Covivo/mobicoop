@@ -15,6 +15,7 @@ use App\Incentive\Event\SubscriptionNotReadyToVerifyEvent;
 use App\Incentive\Interfaces\SubscriptionDefinitionInterface;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Repository\LongDistanceSubscriptionRepository;
+use App\Incentive\Repository\ShortDistanceJourneyRepository;
 use App\Incentive\Repository\ShortDistanceSubscriptionRepository;
 use App\Incentive\Resource\EecEligibility;
 use App\Incentive\Resource\EecInstance;
@@ -25,7 +26,9 @@ use App\Incentive\Service\Stage\CreateSubscription;
 use App\Incentive\Service\Stage\PatchSubscription;
 use App\Incentive\Service\Stage\ProofInvalidate;
 use App\Incentive\Service\Stage\ProofRecovery;
+use App\Incentive\Service\Stage\ProofValidate;
 use App\Incentive\Service\Stage\ResetSubscription;
+use App\Incentive\Service\Stage\ValidateLDSubscription;
 use App\Incentive\Service\Stage\VerifySubscription;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
@@ -34,6 +37,7 @@ use App\Incentive\Validator\SubscriptionValidator;
 use App\Incentive\Validator\UserValidator;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
+use App\Payment\Repository\CarpoolPaymentRepository;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -64,6 +68,11 @@ class SubscriptionManager extends MobConnectManager
      * @var CarpoolProofRepository
      */
     protected $_carpoolProofRepository;
+
+    /**
+     * @var CarpoolPaymentRepository
+     */
+    private $_carpoolPaymentRepository;
 
     /**
      * @var NotificationManager
@@ -110,9 +119,11 @@ class SubscriptionManager extends MobConnectManager
         InstanceManager $instanceManager,
         TimestampTokenManager $timestampTokenManager,
         CarpoolItemRepository $carpoolItemRepository,
+        CarpoolPaymentRepository $carpoolPaymentRepository,
         CarpoolProofRepository $carpoolProofRepository,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         LongDistanceSubscriptionRepository $longDistanceSubscriptionRepository,
+        ShortDistanceJourneyRepository $shortDistanceJourneyRepository,
         ShortDistanceSubscriptionRepository $shortDistanceSubscriptionRepository,
         UserRepository $userRepository,
         bool $eecSendWarningIncompleteProfile,
@@ -125,9 +136,11 @@ class SubscriptionManager extends MobConnectManager
 
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_carpoolItemRepository = $carpoolItemRepository;
+        $this->_carpoolPaymentRepository = $carpoolPaymentRepository;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
         $this->_longDistanceSubscriptionRepository = $longDistanceSubscriptionRepository;
+        $this->_shortDistanceJourneyRepository = $shortDistanceJourneyRepository;
         $this->_shortDistanceSubscriptionRepository = $shortDistanceSubscriptionRepository;
         $this->_userRepository = $userRepository;
         $this->_subscriptionValidation = $subscriptionValidation;
@@ -251,11 +264,14 @@ class SubscriptionManager extends MobConnectManager
      */
     public function validateSubscription($referenceObject, bool $pushOnlyMode = false): void
     {
-        $validateClass = $referenceObject instanceof CarpoolPayment
-            ? 'App\\Incentive\\Service\\Stage\\ValidateLDSubscription'
-            : 'App\\Incentive\\Service\\Stage\\ProofValidate';
+        if ($referenceObject instanceof CarpoolPayment) {
+            $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
+            $stage->execute();
 
-        $stage = new $validateClass($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
+            return;
+        }
+
+        $stage = new ProofValidate($this->_em, $this->_carpoolPaymentRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
         $stage->execute();
     }
 
@@ -268,7 +284,7 @@ class SubscriptionManager extends MobConnectManager
             return;
         }
 
-        $journeyProvider = new JourneyProvider($this->_longDistanceJourneyRepository);
+        $journeyProvider = new JourneyProvider($this->_longDistanceJourneyRepository, $this->_shortDistanceJourneyRepository);
         $journey = $journeyProvider->getJourneyFromCarpoolProof($carpoolProof);
 
         if (is_null($journey)) {
@@ -288,7 +304,7 @@ class SubscriptionManager extends MobConnectManager
                 throw new NotFoundHttpException('The requested user was not found');
             }
 
-            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $user, $subscriptionType);
+            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolPaymentRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $user, $subscriptionType);
             $stage->execute();
 
             return;

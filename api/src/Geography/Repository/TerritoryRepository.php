@@ -23,6 +23,7 @@
 
 namespace App\Geography\Repository;
 
+use App\Auth\Entity\AuthItem;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use App\Geography\Entity\Territory;
@@ -143,5 +144,17 @@ class TerritoryRepository
         }
 
         return $territoriesId;
+    }
+
+    public function findManagers(int $territoryId)
+    {
+        $conn = $this->entityManager->getConnection();
+
+        $sql = 'SELECT u.given_name, u.family_name, u.email FROM user u INNER JOIN user_auth_assignment uaa ON u.id = uaa.user_id AND uaa.territory_id = '.$territoryId.' AND uaa.auth_item_id = '.AuthItem::ROLE_ADMIN;
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 }

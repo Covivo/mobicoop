@@ -318,7 +318,7 @@ class CommunityManager
 
         if (!is_null($community->getDomain())) {
             $community->setValidationType(Community::DOMAIN_VALIDATION);
-            $community->setDomain(trim($community->getDomain()));
+            $community->setDomain(preg_replace('/\s+/', '', $community->getDomain()));
         } else {
             $community->setValidationType(Community::AUTO_VALIDATION);
         }

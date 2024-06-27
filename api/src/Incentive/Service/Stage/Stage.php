@@ -9,10 +9,16 @@ use App\Incentive\Interfaces\StageInterface;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
+use App\Payment\Repository\CarpoolPaymentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 abstract class Stage implements StageInterface
 {
+    /**
+     * @var CarpoolPaymentRepository
+     */
+    protected $_carpoolPaymentRepository;
+
     /**
      * @var LongDistanceJourneyRepository
      */
