@@ -31,6 +31,7 @@ use App\Community\Entity\Community;
 use App\Geography\Service\GeoTools;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
+use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -117,7 +118,7 @@ class ProposalRepository
      * @param bool     $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @param bool     $driversOnly         Exclude the matching proposals as passenger (used for import)
      *
-     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed
+     * @return null|array|mixed|Statement
      */
     public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser = true, bool $driversOnly = false)
     {
@@ -916,7 +917,7 @@ class ProposalRepository
         return $this->repository->find($id);
     }
 
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -982,11 +983,11 @@ class ProposalRepository
      */
     public function findAllForUser(User $user)
     {
-        // first we search the published outward proposals (returns will be included later)
+        // first we search the published proposals
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.user', 'u')
             ->join('p.criteria', 'c')
-            ->where('(p.user = :user)')
+            ->where('(p.user = :user and p.private = 0)')
             ->orderBy('c.fromDate', 'ASC')
             ->setParameter('user', $user)
         ;
@@ -1146,7 +1147,7 @@ class ProposalRepository
      *
      * @return Proposal[]
      */
-    public function findByDate(\DateTime $date, User $user = null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null, array $excludedProposalIds = []): array
+    public function findByDate(\DateTime $date, ?User $user = null, bool $onlyOneWayOrOutward = false, ?int $minDistanceDriver = null, ?int $minDistancePassenger = null, array $excludedProposalIds = []): array
     {
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.criteria', 'c')
@@ -1272,8 +1273,6 @@ class ProposalRepository
      *
      * @param \DateTime $startDate Range start date
      * @param \DateTime $endDate   Range end date
-     *
-     * @return int
      */
     public function countProposalsBetweenCreateDate(\DateTime $startDate, \DateTime $endDate): ?int
     {
@@ -1320,8 +1319,6 @@ class ProposalRepository
 
     /**
      * Count the avalaible ads.
-     *
-     * @return int
      */
     public function countAvailableAds(): ?int
     {
@@ -1412,7 +1409,7 @@ class ProposalRepository
         return $query->getQuery()->getResult();
     }
 
-    public function findPunctualAdWithoutAskSinceXDays(int $nbOfDays = null): ?array
+    public function findPunctualAdWithoutAskSinceXDays(?int $nbOfDays = null): ?array
     {
         $now = (new \DateTime('now'));
         $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
@@ -1462,7 +1459,7 @@ class ProposalRepository
         return $proposals;
     }
 
-    public function findRegularAdWithoutAskSinceXDays(int $nbOfDays = null): ?array
+    public function findRegularAdWithoutAskSinceXDays(?int $nbOfDays = null): ?array
     {
         $now = (new \DateTime('now'));
         $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
