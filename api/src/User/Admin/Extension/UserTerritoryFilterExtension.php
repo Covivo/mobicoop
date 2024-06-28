@@ -86,42 +86,47 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
         }
 
         if (count($territories) > 0) {
-            $users = [];
-            foreach ($territories as $territory) {
-                $homeAddresses = $this->_userRepository->findByHomeAddress($territory);
-                if (!is_null($homeAddresses) && count($homeAddresses) > 0) {
-                    foreach ($homeAddresses as $homeAddresse) {
-                        if (!in_array($homeAddresse['user_id'], $users)) {
-                            $users[] = $homeAddresse['user_id'];
-                        }
-                    }
-                }
-
-                $proposalOriginAddresses = $this->_userRepository->findByProposalOriginTerritory($territory);
-                if (!is_null($proposalOriginAddresses) && count($proposalOriginAddresses) > 0) {
-                    foreach ($proposalOriginAddresses as $proposalOriginAddresse) {
-                        if (!in_array($proposalOriginAddresse['user_id'], $users)) {
-                            $users[] = $proposalOriginAddresse['user_id'];
-                        }
-                    }
-                }
-
-                $proposalDestinationAddresses = $this->_userRepository->findByProposalDestinationTerritory($territory);
-                if (!is_null($proposalDestinationAddresses) && count($proposalDestinationAddresses) > 0) {
-                    foreach ($proposalDestinationAddresses as $proposalDestinationAddresse) {
-                        if (!in_array($proposalDestinationAddresse['user_id'], $users)) {
-                            $users[] = $proposalDestinationAddresse['user_id'];
-                        }
-                    }
-                }
-            }
-
             $rootAlias = $queryBuilder->getRootAliases()[0];
 
             $queryBuilder
                 ->andWhere($rootAlias.'.id in (:usersFilteredByTerritory)')
-                ->setParameter('usersFilteredByTerritory', $users)
+                ->setParameter('usersFilteredByTerritory', $this->getUsers($territories))
             ;
         }
+    }
+
+    private function getUsers(array $territories): array
+    {
+        $users = [];
+        foreach ($territories as $territory) {
+            $homeAddresses = $this->_userRepository->findByHomeAddress($territory);
+            if (!is_null($homeAddresses) && count($homeAddresses) > 0) {
+                foreach ($homeAddresses as $homeAddresse) {
+                    if (!in_array($homeAddresse['user_id'], $users)) {
+                        $users[] = $homeAddresse['user_id'];
+                    }
+                }
+            }
+
+            $proposalOriginAddresses = $this->_userRepository->findByProposalOriginTerritory($territory);
+            if (!is_null($proposalOriginAddresses) && count($proposalOriginAddresses) > 0) {
+                foreach ($proposalOriginAddresses as $proposalOriginAddresse) {
+                    if (!in_array($proposalOriginAddresse['user_id'], $users)) {
+                        $users[] = $proposalOriginAddresse['user_id'];
+                    }
+                }
+            }
+
+            $proposalDestinationAddresses = $this->_userRepository->findByProposalDestinationTerritory($territory);
+            if (!is_null($proposalDestinationAddresses) && count($proposalDestinationAddresses) > 0) {
+                foreach ($proposalDestinationAddresses as $proposalDestinationAddresse) {
+                    if (!in_array($proposalDestinationAddresse['user_id'], $users)) {
+                        $users[] = $proposalDestinationAddresse['user_id'];
+                    }
+                }
+            }
+        }
+
+        return $users;
     }
 }
