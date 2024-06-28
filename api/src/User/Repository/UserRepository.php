@@ -626,11 +626,9 @@ class UserRepository
                         INNER JOIN address AS origin_address ON origin_waypoint.address_id = origin_address.id
                         INNER JOIN address_territory AS origin_address_territory ON origin_address_territory.address_id = origin_address.id
                     WHERE
-                        proposal.private = 0
-                        AND proposal.user_id IS NOT null
-                        AND origin_waypoint.position = 0
-                        AND origin_waypoint.proposal_id IS NOT null
-                        AND origin_address_territory.territory_id = {$territoryId}
+                        origin_address_territory.territory_id = {$territoryId}
+                        AND proposal.id in (select id from proposal where private = 0 and proposal.user_id is not null)
+                        AND origin_waypoint.id in (select id from waypoint where waypoint.position = 0)
                         AND origin_address.id in (select distinct address_territory.address_id from address_territory where address_territory.territory_id = {$territoryId})";
 
         $stmt = $this->entityManager->getConnection()->prepare($query);
@@ -651,11 +649,9 @@ class UserRepository
                         inner join address as destination_address on destination_waypoint.address_id = destination_address.id
                         inner join address_territory as destination_address_territory on destination_address_territory.address_id = destination_address.id
                     WHERE
-                        destination_waypoint.destination = 1
-                        and destination_waypoint.proposal_id is not null
-                        and proposal.private = 0
-                        and proposal.user_id is not null
-                        and destination_address_territory.territory_id = {$territoryId}
+                        destination_address_territory.territory_id = {$territoryId}
+                        AND proposal.id in (select id from proposal where private = 0 and proposal.user_id is not null)
+                        AND destination_waypoint.id in (select id from waypoint where waypoint.destination = 1)
                         AND destination_address.id in (select distinct address_territory.address_id from address_territory where address_territory.territory_id = {$territoryId})";
 
         $stmt = $this->entityManager->getConnection()->prepare($query);
