@@ -76,7 +76,7 @@ class UserRepository
      *
      * @return null|User
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -117,7 +117,7 @@ class UserRepository
      * @param string $type    Type of SolidaryUser (Beneficiary or Volunteer)
      * @param array  $filters Optionnal filters
      */
-    public function findUsersBySolidaryUserType(string $type = null, array $filters = null, Structure $structureAdmin = null): ?array
+    public function findUsersBySolidaryUserType(?string $type = null, ?array $filters = null, ?Structure $structureAdmin = null): ?array
     {
         $this->logger->info('Start findUsersBySolidaryUserType');
 
@@ -207,7 +207,7 @@ class UserRepository
         return $query->getQuery()->getSingleScalarResult();
     }
 
-    public function findUserWithNoAdSinceXDays(int $nbOfDays = null): ?array
+    public function findUserWithNoAdSinceXDays(?int $nbOfDays = null): ?array
     {
         $now = new \DateTime('now');
         $createdDate = $now->modify('- '.$nbOfDays.' days')->format('Y-m-d');
@@ -240,7 +240,7 @@ class UserRepository
         return $query->getQuery()->getResult();
     }
 
-    public function findUserWithOlderThanXDaysAd(int $nbOfDays = null): ?array
+    public function findUserWithOlderThanXDaysAd(?int $nbOfDays = null): ?array
     {
         $now = (new \DateTime('now'));
         $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
@@ -598,5 +598,70 @@ class UserRepository
         ;
 
         return $query->getQuery()->getOneOrNullResult();
+    }
+
+    public function findByHomeAddress(int $territoryId): ?array
+    {
+        $query = "SELECT distinct user_id
+                    FROM address
+                    WHERE address.id in (select distinct address_territory.address_id from address_territory where address_territory.territory_id = {$territoryId})
+                    AND address.home = 1
+                    AND address.user_id is not null";
+
+        $stmt = $this->entityManager->getConnection()->prepare($query);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    public function findByProposalOriginTerritory(int $territoryId): ?array
+    {
+        $query = "SELECT
+                        distinct user.id as user_id
+                    FROM
+                        user
+                        INNER JOIN proposal ON proposal.user_id = user.id
+                        INNER JOIN waypoint AS origin_waypoint ON origin_waypoint.proposal_id = proposal.id
+                        INNER JOIN address AS origin_address ON origin_waypoint.address_id = origin_address.id
+                        INNER JOIN address_territory AS origin_address_territory ON origin_address_territory.address_id = origin_address.id
+                    WHERE
+                        proposal.private = 0
+                        AND proposal.user_id IS NOT null
+                        AND origin_waypoint.position = 0
+                        AND origin_waypoint.proposal_id IS NOT null
+                        AND origin_address_territory.territory_id = {$territoryId}
+                        AND origin_address.id in (select distinct address_territory.address_id from address_territory where address_territory.territory_id = {$territoryId})";
+
+        $stmt = $this->entityManager->getConnection()->prepare($query);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    public function findByProposalDestinationTerritory(int $territoryId): ?array
+    {
+        $query = "SELECT
+                        distinct user.id as user_id
+                    FROM
+                        user
+                        inner join proposal ON user.id = proposal.user_id
+                        inner join waypoint as destination_waypoint ON destination_waypoint.proposal_id = proposal.id
+                        inner join address as destination_address on destination_waypoint.address_id = destination_address.id
+                        inner join address_territory as destination_address_territory on destination_address_territory.address_id = destination_address.id
+                    WHERE
+                        destination_waypoint.destination = 1
+                        and destination_waypoint.proposal_id is not null
+                        and proposal.private = 0
+                        and proposal.user_id is not null
+                        and destination_address_territory.territory_id = {$territoryId}
+                        AND destination_address.id in (select distinct address_territory.address_id from address_territory where address_territory.territory_id = {$territoryId})";
+
+        $stmt = $this->entityManager->getConnection()->prepare($query);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 }

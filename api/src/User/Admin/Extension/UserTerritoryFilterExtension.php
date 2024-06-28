@@ -29,6 +29,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
 use App\User\Entity\User;
+use App\User\Repository\UserRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
@@ -41,28 +42,30 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
 {
     private $security;
     private $authManager;
+    private $_userRepository;
 
-    public function __construct(Security $security, AuthManager $authManager)
+    public function __construct(Security $security, AuthManager $authManager, UserRepository $userRepository)
     {
         $this->security = $security;
         $this->authManager = $authManager;
+        $this->_userRepository = $userRepository;
     }
 
-    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?string $operationName = null)
     {
         if (User::class == $resourceClass && in_array($operationName, ['ADMIN_get', 'ADMIN_associate_campaign', 'ADMIN_send_campaign'])) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
-    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
+    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, ?string $operationName = null, array $context = [])
     {
         if (User::class == $resourceClass && 'ADMIN_get' == $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
         }
     }
 
-    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
+    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, ?string $operationName = null, array $identifiers = [], array $context = []): void
     {
         // concerns only User resource, and User users (not Apps)
         if ((null === $this->security->getUser()) || $this->security->getUser() instanceof App) {
@@ -83,16 +86,41 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
         }
 
         if (count($territories) > 0) {
+            $users = [];
+            foreach ($territories as $territory) {
+                $homeAddresses = $this->_userRepository->findByHomeAddress($territory);
+                if (!is_null($homeAddresses) && count($homeAddresses) > 0) {
+                    foreach ($homeAddresses as $homeAddresse) {
+                        if (!in_array($homeAddresse['user_id'], $users)) {
+                            $users[] = $homeAddresse['user_id'];
+                        }
+                    }
+                }
+
+                $proposalOriginAddresses = $this->_userRepository->findByProposalOriginTerritory($territory);
+                if (!is_null($proposalOriginAddresses) && count($proposalOriginAddresses) > 0) {
+                    foreach ($proposalOriginAddresses as $proposalOriginAddresse) {
+                        if (!in_array($proposalOriginAddresse['user_id'], $users)) {
+                            $users[] = $proposalOriginAddresse['user_id'];
+                        }
+                    }
+                }
+
+                $proposalDestinationAddresses = $this->_userRepository->findByProposalDestinationTerritory($territory);
+                if (!is_null($proposalDestinationAddresses) && count($proposalDestinationAddresses) > 0) {
+                    foreach ($proposalDestinationAddresses as $proposalDestinationAddresse) {
+                        if (!in_array($proposalDestinationAddresse['user_id'], $users)) {
+                            $users[] = $proposalDestinationAddresse['user_id'];
+                        }
+                    }
+                }
+            }
+
             $rootAlias = $queryBuilder->getRootAliases()[0];
+
             $queryBuilder
-                ->leftJoin($rootAlias.'.addresses', 'autfe')
-                ->leftJoin('autfe.territories', 'atutfe')
-                ->leftJoin($rootAlias.'.proposals', 'putfe')
-                ->leftJoin('putfe.waypoints', 'wutfe')
-                ->leftJoin('wutfe.address', 'a2utfe')
-                ->leftJoin('a2utfe.territories', 'awptutfe')
-                ->andWhere('(autfe.home = 1 AND atutfe.id in (:territories)) OR (putfe.private <> 1 AND (wutfe.position = 0 OR wutfe.destination = 1) AND awptutfe.id in (:territories))')
-                ->setParameter('territories', $territories)
+                ->andWhere($rootAlias.'.id in (:usersFilteredByTerritory)')
+                ->setParameter('usersFilteredByTerritory', $users)
             ;
         }
     }
