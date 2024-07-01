@@ -5,6 +5,7 @@ namespace App\Service\Phone;
 class PhoneService
 {
     public const PHONE_PREFIX = '+';
+    public const DEFAULT_INDICATIVE = '33';
 
     /**
      * @var string
@@ -31,7 +32,12 @@ class PhoneService
 
     public function getInternationalPhoneNumber(): string
     {
-        return $this->_prefix.$this->_country->getIndicative().$this->_country->getPhoneNumber();
+        $indicative = $this->_country->getIndicative();
+        if ('' == $indicative) {
+            $indicative = self::DEFAULT_INDICATIVE;
+        }
+
+        return $this->_prefix.$indicative.$this->_country->getPhoneNumber();
     }
 
     public function getTruncatedInternationalPhoneNumber(?int $length = null)
