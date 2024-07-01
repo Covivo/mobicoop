@@ -141,6 +141,8 @@ services:
       $mandatoryImage: "%env(bool:EVENT_MANDATORY_IMAGE)%"
       $defaultNbEventsPerPage: "%env(int:EVENT_DEFAULT_NB_EVENTS_PER_PAGE)%"
       $eventAssociatedToCommunity: "%env(json:EVENT_ASSOCIATED_TO_COMMUNITY)%"
+      $eventWidget: "%env(bool:EVENT_WIDGET)%"
+
 
   Mobicoop\Bundle\MobicoopBundle\Event\Service\:
     resource: "@MobicoopBundle/Event/Service/*"
