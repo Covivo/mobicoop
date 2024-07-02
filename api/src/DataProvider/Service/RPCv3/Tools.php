@@ -292,12 +292,12 @@ class Tools
         return null;
     }
 
-    private function _getInternationalPhone(string $carpoolerType, int $truncLen = null): ?string
+    private function _getInternationalPhone(string $carpoolerType, ?int $truncLen = null): ?string
     {
         $carpooler = $this->_getCarpooler($carpoolerType);
 
         if (!is_null($carpooler)) {
-            $phoneService = new PhoneService($carpooler->getTelephone());
+            $phoneService = new PhoneService($carpooler->getTelephone(), $carpooler->getPhoneCode());
 
             return !is_null($truncLen)
                 ? $phoneService->getTruncatedInternationalPhoneNumber($truncLen)

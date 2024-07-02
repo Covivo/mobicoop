@@ -13,6 +13,11 @@ class PhoneService
     private $_originalPhoneNumber;
 
     /**
+     * @var string
+     */
+    private $_phoneCode;
+
+    /**
      * @var CountryPhoneService
      */
     private $_country;
@@ -22,9 +27,10 @@ class PhoneService
      */
     private $_prefix = self::PHONE_PREFIX;
 
-    public function __construct(string $phoneNumber)
+    public function __construct(string $phoneNumber, string $phoneCode = self::DEFAULT_INDICATIVE)
     {
         $this->_setOriginalPhoneNumber($this->_sanitize($phoneNumber));
+        $this->_setPhoneCode($phoneCode);
         $this->_setCountry();
     }
 
@@ -32,9 +38,9 @@ class PhoneService
 
     public function getInternationalPhoneNumber(): string
     {
-        $indicative = $this->_country->getIndicative();
-        if ('' == $indicative) {
-            $indicative = self::DEFAULT_INDICATIVE;
+        $indicative = $this->_phoneCode;
+        if ('' !== trim($this->_country->getPhoneNumber()) && '+' == substr($this->_country->getPhoneNumber(), 0, 1)) {
+            $indicative = '';
         }
 
         return $this->_prefix.$indicative.$this->_country->getPhoneNumber();
@@ -50,19 +56,22 @@ class PhoneService
         return trim(preg_replace('/[^A-Za-z0-9]/', '', $phoneNumber));
     }
 
-    /**
-     * Set the value of _originalPhoneNumber.
-     */
     private function _setOriginalPhoneNumber(string $originalPhoneNumber): self
     {
-        $this->_originalPhoneNumber = $originalPhoneNumber;
+        if ('' !== trim($originalPhoneNumber)) {
+            ('0' !== substr($originalPhoneNumber, 0, 1)) ? $this->_originalPhoneNumber = '0'.$originalPhoneNumber : $this->_originalPhoneNumber = $originalPhoneNumber;
+        }
 
         return $this;
     }
 
-    /**
-     * Set the value of _country.
-     */
+    private function _setPhoneCode(string $phoneCode): self
+    {
+        $this->_phoneCode = $phoneCode;
+
+        return $this;
+    }
+
     private function _setCountry(): self
     {
         $this->_country = new CountryPhoneService($this->_originalPhoneNumber);
