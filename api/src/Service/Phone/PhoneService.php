@@ -51,7 +51,7 @@ class PhoneService
 
     public function getTruncatedInternationalPhoneNumber(?int $length = null)
     {
-        return substr($this->getInternationalPhoneNumber(), 0, $length + 2);
+        return substr($this->getInternationalPhoneNumber(), 0, $length + strlen($this->_phoneCode));
     }
 
     private function _sanitize(string $phoneNumber): string
