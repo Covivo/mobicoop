@@ -2,6 +2,7 @@
 
 namespace App\User\Admin\Service;
 
+use App\Service\Pipe\AddressLocalityPipe;
 use App\User\Entity\User;
 use App\User\Entity\UserExport;
 use App\User\Repository\UserRepository;
@@ -172,21 +173,21 @@ class ExportManager
         $this->_currentUserExport->setLastActivityDate('' != trim($this->_currentUser['lastActivityDate']) ? new \DateTime($this->_currentUser['lastActivityDate']) : null);
         $this->_currentUserExport->setNewsletterSubscription($this->_currentUser['newsletterSubscription']);
         $this->_currentUserExport->setMaxValidityAnnonceDate('' != trim($this->_currentUser['maxValidityAnnonceDate']) ? new \DateTime($this->_currentUser['maxValidityAnnonceDate']) : null);
-        $this->_currentUserExport->setAddressLocality($this->_currentUser['addressLocality']);
+        $this->_currentUserExport->setAddressLocality(AddressLocalityPipe::prefixSaint($this->_currentUser['addressLocality']));
         $this->_currentUserExport->setSolidaryUser($this->_currentUser['solidaryUser']);
 
         $this->_currentUserExport->setCommunity1($this->_currentUser['community1']);
         $this->_currentUserExport->setCommunity2($this->_currentUser['community2']);
         $this->_currentUserExport->setCommunity3($this->_currentUser['community3']);
 
-        $this->_currentUserExport->setCarpool1OriginLocality($this->_currentUser['carpool1OriginLocality']);
-        $this->_currentUserExport->setCarpool1DestinationLocality($this->_currentUser['carpool1DestinationLocality']);
+        $this->_currentUserExport->setCarpool1OriginLocality(AddressLocalityPipe::prefixSaint($this->_currentUser['carpool1OriginLocality']));
+        $this->_currentUserExport->setCarpool1DestinationLocality(AddressLocalityPipe::prefixSaint($this->_currentUser['carpool1DestinationLocality']));
         $this->_currentUserExport->setCarpool1Frequency($this->_currentUser['carpool1Frequency']);
-        $this->_currentUserExport->setCarpool2OriginLocality($this->_currentUser['carpool2OriginLocality']);
-        $this->_currentUserExport->setCarpool2DestinationLocality($this->_currentUser['carpool2DestinationLocality']);
+        $this->_currentUserExport->setCarpool2OriginLocality(AddressLocalityPipe::prefixSaint($this->_currentUser['carpool2OriginLocality']));
+        $this->_currentUserExport->setCarpool2DestinationLocality(AddressLocalityPipe::prefixSaint($this->_currentUser['carpool2DestinationLocality']));
         $this->_currentUserExport->setCarpool2Frequency($this->_currentUser['carpool2Frequency']);
-        $this->_currentUserExport->setCarpool3OriginLocality($this->_currentUser['carpool3OriginLocality']);
-        $this->_currentUserExport->setCarpool3DestinationLocality($this->_currentUser['carpool3DestinationLocality']);
+        $this->_currentUserExport->setCarpool3OriginLocality(AddressLocalityPipe::prefixSaint($this->_currentUser['carpool3OriginLocality']));
+        $this->_currentUserExport->setCarpool3DestinationLocality(AddressLocalityPipe::prefixSaint($this->_currentUser['carpool3DestinationLocality']));
         $this->_currentUserExport->setCarpool3Frequency($this->_currentUser['carpool3Frequency']);
 
         $this->_currentUserExport->setRezoPouceUse($this->_currentUser['rezopouceUse']);
