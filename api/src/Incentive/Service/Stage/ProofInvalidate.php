@@ -3,7 +3,9 @@
 namespace App\Incentive\Service\Stage;
 
 use App\Incentive\Entity\LongDistanceJourney;
+use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
@@ -35,6 +37,13 @@ class ProofInvalidate extends Stage
 
     public function execute(): void
     {
+        if (
+            ($this->_subscription instanceof LongDistanceSubscription && !$this->_eecInstance->isLdFeaturesAvailable())
+            || ($this->_subscription instanceof ShortDistanceSubscription && !$this->_eecInstance->isSdFeaturesAvailable())
+        ) {
+            return;
+        }
+
         if ($this->_subscription->isCommitmentJourney($this->_journey)) {
             $stage = new ResetSubscription($this->_em, $this->_subscription);
             $stage->execute();
