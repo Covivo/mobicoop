@@ -252,7 +252,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
     }
 
-    protected function getToken($code): ?string
+    protected function getToken($code)
     {
         $body = [
             'grant_type' => 'authorization_code',
