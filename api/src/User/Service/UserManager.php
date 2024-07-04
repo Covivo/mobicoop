@@ -2129,6 +2129,7 @@ class UserManager
         $ssoAccount->setSsoId($ssoUser->getSub());
         $ssoAccount->setSsoProvider($ssoUser->getProvider());
         $ssoAccount->setCreatedBySso(true);
+        $ssoAccount->setIdToken($ssoUser->getIdToken());
 
         $user->addSsoAccount($ssoAccount);
 
