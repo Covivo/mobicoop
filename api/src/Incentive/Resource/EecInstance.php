@@ -5,6 +5,7 @@ namespace App\Incentive\Resource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Incentive\Interfaces\EecProviderInterface;
+use App\Incentive\Resource\Instance\Features;
 use App\Incentive\Resource\Provider\MobConnectProvider;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -137,6 +138,13 @@ class EecInstance
      */
     private $ldMinimalDistance;
 
+    /**
+     * Features configuration.
+     *
+     * @var Features
+     */
+    private $features;
+
     public function __construct(array $instanceConfiguration, ?string $carpoolProofPrefix)
     {
         $this->_build($instanceConfiguration, $carpoolProofPrefix);
@@ -155,6 +163,30 @@ class EecInstance
     public function isAvailable()
     {
         return $this->getAvailable();
+    }
+
+    /**
+     * Returns whether the features for the instance are available.
+     */
+    public function isFeaturesAvailable(): bool
+    {
+        return $this->features->isAvailable();
+    }
+
+    /**
+     * Returns whether the features for the instance are available.
+     */
+    public function isLdFeaturesAvailable(): bool
+    {
+        return $this->isFeaturesAvailable() && $this->features->isLdAvailable();
+    }
+
+    /**
+     * Returns whether the features for the instance are available.
+     */
+    public function isSdFeaturesAvailable(): bool
+    {
+        return $this->features->isAvailable();
     }
 
     public function isLongDistanceSubscriptionAvailable(): bool
@@ -337,6 +369,24 @@ class EecInstance
     }
 
     /**
+     * Get features configuration.
+     */
+    public function getFeatures(): Features
+    {
+        return $this->features;
+    }
+
+    /**
+     * Set features configuration.
+     */
+    public function setFeatures(array $featuresConfiguration): self
+    {
+        $this->features = new Features($featuresConfiguration);
+
+        return $this;
+    }
+
+    /**
      * Set the value of ldMinimalDistance.
      */
     private function setLdMinimalDistance(?int $ldMinimalDistance): self
@@ -428,6 +478,7 @@ class EecInstance
         $this->setTabView($configuration['tabView']);
         $this->setProvider($configuration['provider']);
         $this->setLdMinimalDistance($configuration['subscriptions']['ld']['minimalDistance']);
+        $this->setFeatures($configuration['features']);
 
         $this->carpoolProofPrefix = $carpoolProofPrefix;
 
