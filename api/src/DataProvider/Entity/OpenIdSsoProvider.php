@@ -113,6 +113,8 @@ class OpenIdSsoProvider implements SsoProviderInterface
     private $code;
     private $logger;
 
+    private $_idToken;
+
     public function __construct(
         string $serviceName,
         string $baseSiteUri,
@@ -246,7 +248,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
     }
 
-    protected function getToken($code)
+    protected function getToken($code): ?string
     {
         $body = [
             'grant_type' => 'authorization_code',
@@ -259,6 +261,10 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $response = $dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId, $this->clientSecret]);
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
+
+            if (isset($data['id_token'])) {
+                $this->_idToken = $data['id_token'];
+            }
 
             return $data['access_token'];
         }
