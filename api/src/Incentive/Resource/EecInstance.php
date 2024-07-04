@@ -5,7 +5,7 @@ namespace App\Incentive\Resource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Incentive\Interfaces\EecProviderInterface;
-use App\Incentive\Resource\Instance\Features;
+use App\Incentive\Resource\Instance\EecFeatures;
 use App\Incentive\Resource\Provider\MobConnectProvider;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -79,6 +79,13 @@ class EecInstance
     private $ldExpirationDate;
 
     /**
+     * @var null|bool
+     *
+     * @Groups("readEecInstance")
+     */
+    private $ldProgressVisualization = true;
+
+    /**
      * @var bool
      *
      * @Groups("readEecInstance")
@@ -91,6 +98,13 @@ class EecInstance
      * @Groups({"readEecInstance"})
      */
     private $sdExpirationDate;
+
+    /**
+     * @var null|bool
+     *
+     * @Groups("readEecInstance")
+     */
+    private $sdProgressVisualization = true;
 
     /**
      * @var null|string
@@ -141,7 +155,7 @@ class EecInstance
     /**
      * Features configuration.
      *
-     * @var Features
+     * @var EecFeatures
      */
     private $features;
 
@@ -371,7 +385,7 @@ class EecInstance
     /**
      * Get features configuration.
      */
-    public function getFeatures(): Features
+    public function getFeatures(): EecFeatures
     {
         return $this->features;
     }
@@ -381,7 +395,53 @@ class EecInstance
      */
     public function setFeatures(array $featuresConfiguration): self
     {
-        $this->features = new Features($featuresConfiguration);
+        $this->features = new EecFeatures($featuresConfiguration);
+
+        return $this;
+    }
+
+    /**
+     * Get the value of ldProgressVisualization.
+     */
+    public function getLdProgressVisualization(): ?bool
+    {
+        return $this->ldProgressVisualization;
+    }
+
+    public function isLdProgressVisualization(): ?bool
+    {
+        return $this->getLdProgressVisualization();
+    }
+
+    /**
+     * Set the value of ldProgressVisualization.
+     */
+    public function setLdProgressVisualization(?bool $ldProgressVisualization): self
+    {
+        $this->ldProgressVisualization = $ldProgressVisualization;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sdProgressVisualization.
+     */
+    public function getSdProgressVisualization(): ?bool
+    {
+        return $this->sdProgressVisualization;
+    }
+
+    public function isSdProgressVisualization(): ?bool
+    {
+        return $this->getSdProgressVisualization();
+    }
+
+    /**
+     * Set the value of sdProgressVisualization.
+     */
+    public function setSdProgressVisualization(?bool $sdProgressVisualization): self
+    {
+        $this->sdProgressVisualization = $sdProgressVisualization;
 
         return $this;
     }
@@ -472,7 +532,9 @@ class EecInstance
         $this->setKeys($configuration['subscriptions']['ld']['key'], $configuration['subscriptions']['sd']['key']);
         $this->setExpirationDate($configuration['expirationDate']);
         $this->setLdExpirationDate($configuration['subscriptions']['ld']['expirationDate']);
+        $this->setLdProgressVisualization($configuration['subscriptions']['ld']['progressVisualization']);
         $this->setSdExpirationDate($configuration['subscriptions']['sd']['expirationDate']);
+        $this->setSdProgressVisualization($configuration['subscriptions']['sd']['progressVisualization']);
         $this->setAvailable($this->_isServiceOpened());
         $this->setPreviousPeriodWithoutTravel($configuration['previousPeriodWithoutTravel']);
         $this->setTabView($configuration['tabView']);

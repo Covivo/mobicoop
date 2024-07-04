@@ -28,13 +28,17 @@
       "key": null,
       "//expirationDate": "string - The date the subscription is due to expire",
       "expirationDate": "2023-12-31",
-      "minimalDistance": 80000
+      "minimalDistance": 80000,
+      "//progressVisualization": "Specifies whether the viewing block tracking the corresponding invitation is available",
+      "progressVisualization": true
     },
     "sd": {
       "//key": "string - The SD subscription key",
       "key": null,
       "//expirationDate": "string - The date the subscription is due to expire",
-      "expirationDate": null
+      "expirationDate": null,
+      "//progressVisualization": "Specifies whether the viewing block tracking the corresponding invitation is available",
+      "progressVisualization": true
     }
   },
   "//previousPeriodWithoutTravel": "null|int - null if infinite period, 0 if no period, a number that expresses the period in months",

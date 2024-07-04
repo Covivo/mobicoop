@@ -5,7 +5,7 @@ namespace App\Incentive\Resource\Instance;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class Features
+class EecFeatures
 {
     /**
      * @var array
