@@ -1800,6 +1800,11 @@ class UserManager
         $newSsoAccount->setSsoId($ssoUser->getSub());
         $newSsoAccount->setSsoProvider($ssoUser->getProvider());
         $newSsoAccount->setCreatedBySso($createdBySso);
+
+        if (!is_null($ssoUser->getIdToken())) {
+            $newSsoAccount->setIdToken($ssoUser->getIdToken());
+        }
+
         $user->addSsoAccount($newSsoAccount);
 
         $this->entityManager->persist($user);
