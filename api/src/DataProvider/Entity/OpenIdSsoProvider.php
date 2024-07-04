@@ -226,6 +226,10 @@ class OpenIdSsoProvider implements SsoProviderInterface
                 throw new \LogicException('Not enough infos about the User');
             }
 
+            if (!is_null($this->_idToken)) {
+                $ssoUser->setIdToken($this->_idToken);
+            }
+
             return $ssoUser;
         }
 

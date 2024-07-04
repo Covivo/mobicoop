@@ -71,6 +71,11 @@ class SsoUser
     private $accessToken;
 
     /**
+     * @var string
+     */
+    private $idToken;
+
+    /**
      * @var int
      */
     private $accessTokenExpiresDuration;
@@ -432,6 +437,18 @@ class SsoUser
     public function setAccessTokenExpiresDuration(int $accessTokenExpiresDuration): self
     {
         $this->accessTokenExpiresDuration = $accessTokenExpiresDuration;
+
+        return $this;
+    }
+
+    public function getIdToken(): ?string
+    {
+        return $this->idToken;
+    }
+
+    public function setIdToken(string $idToken): self
+    {
+        $this->idToken = $idToken;
 
         return $this;
     }
