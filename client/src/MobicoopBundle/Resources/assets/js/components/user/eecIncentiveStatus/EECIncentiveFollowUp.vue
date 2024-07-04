@@ -19,7 +19,7 @@
           multiple
           flat
         >
-          <v-expansion-panel>
+          <v-expansion-panel v-if="eecInstance && eecInstance.ldProgressVisualization">
             <v-expansion-panel-header class="font-weight-bold pb-0">
               {{ $t('followup.longDistance.header') }}
             </v-expansion-panel-header>
@@ -67,7 +67,7 @@
               </div>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel>
+          <v-expansion-panel v-if="eecInstance && eecInstance.sdProgressVisualization">
             <v-expansion-panel-header class="font-weight-bold pb-0">
               {{ $t('followup.shortDistance.header') }}
             </v-expansion-panel-header>
@@ -167,6 +167,10 @@ export default {
     }
   },
   props: {
+    eecInstance: {
+      type: Object,
+      default: () => ({})
+    },
     longDistanceJourneys:{
       type: Array,
       default: null
