@@ -6,7 +6,7 @@
     "//available": "null|bool - Specifies whether CEE features are available. This parameter is to relate to the `expirationDate` parameter of the instance. This setting enables or disables all features.",
     "available": true,
     "//ldAvailable": "null|bool - Specifies whether CEE LD features are available. This parameter is to relate to the `subscriptions.ld.expirationDate` parameter of the instance. This setting enables or disables LD features only.",
-    "ldAvailable": true,
+    "ldAvailable": false,
     "//sdAvailable": "null|bool - Specifies whether CEE SD features are available. This parameter is to relate to the `subscriptions.sd.expirationDate` parameter of the instance.  This setting enables or disables SD features only.",
     "sdAvailable": true
   },
@@ -27,10 +27,10 @@
       "//key": "string - The LD subscription key",
       "key": null,
       "//expirationDate": "string - The date the subscription is due to expire",
-      "expirationDate": "2023-12-31",
+      "expirationDate": "2024-02-25",
       "minimalDistance": 80000,
       "//progressVisualization": "Specifies whether the viewing block tracking the corresponding invitation is available",
-      "progressVisualization": true
+      "progressVisualization": false
     },
     "sd": {
       "//key": "string - The SD subscription key",
