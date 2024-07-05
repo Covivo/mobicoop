@@ -76,7 +76,7 @@ class SsoAccount
     /**
      * @var null|string current id_token associated for a SSO Account
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=1000, nullable=true)
      *
      * @Groups({"readSsoAccount"})
      */
