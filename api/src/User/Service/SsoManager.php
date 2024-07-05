@@ -122,14 +122,14 @@ class SsoManager
     /**
      * Get the logout routes of the Sso Services.
      */
-    public function logoutSso(): array
+    public function logoutSso(?string $idToken = null): array
     {
         if ($this->ssoServicesActive) {
             $logoutUrls = [];
             foreach ($this->ssoServices as $serviceName => $ssoService) {
                 $provider = $this->getSsoProvider($serviceName);
                 if (!is_null($provider)) {
-                    $logOutUrl = $provider->getLogoutUrl();
+                    $logOutUrl = $provider->getLogoutUrl($idToken);
                     if (!is_null($logOutUrl)) {
                         $logoutUrls[$serviceName] = $logOutUrl;
                     }
@@ -149,7 +149,7 @@ class SsoManager
     {
         foreach ($user->getSsoAccounts() as $ssoAccount) {
             if ($ssoAccount->getSsoProvider() == $ssoProvider) {
-                foreach ($this->logoutSso() as $logOutUrls) {
+                foreach ($this->logoutSso($ssoAccount->getIdToken()) as $logOutUrls) {
                     foreach ($logOutUrls as $provider => $logOutUrl) {
                         return $logOutUrl;
                     }

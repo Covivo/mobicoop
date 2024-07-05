@@ -236,12 +236,15 @@ class OpenIdSsoProvider implements SsoProviderInterface
         throw new \LogicException('Error getUserProfile');
     }
 
-    public function getLogoutUrl(): ?string
+    public function getLogoutUrl(?string $idToken = null): ?string
     {
         $url = null;
         if (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) {
             $url = $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL];
             $url = str_replace('{REDIRECT_URI}', $this->logOutRedirectUri, $url);
+            if (!is_null($idToken)) {
+                $url = str_replace('{ID_TOKEN_HINT}', $this->logOutRedirectUri, $url);
+            }
         }
 
         return $url;
