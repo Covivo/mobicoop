@@ -185,10 +185,12 @@ class OpenIdSsoProvider implements SsoProviderInterface
         // $ssoUser->setEmail('max.sso@yopmail.com');
         // $ssoUser->setFirstname('Max');
         // $ssoUser->setLastname('Sso');
-        // $ssoUser->setProvider('PassMobilite');
+        // $ssoUser->setProvider('mobigo');
         // $ssoUser->setGender(User::GENDER_MALE);
         // $ssoUser->setBirthdate(null);
         // $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
+        // $ssoUser->setIdToken('idtokenilestlong');
+
         // return $ssoUser;
         // end mock data
 
@@ -243,7 +245,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             $url = $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL];
             $url = str_replace('{REDIRECT_URI}', $this->logOutRedirectUri, $url);
             if (!is_null($idToken)) {
-                $url = str_replace('{ID_TOKEN_HINT}', $this->logOutRedirectUri, $url);
+                $url = str_replace('{ID_TOKEN_HINT}', $idToken, $url);
             }
         }
 
