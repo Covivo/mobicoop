@@ -151,7 +151,9 @@ class SsoManager
             if ($ssoAccount->getSsoProvider() == $ssoProvider) {
                 foreach ($this->logoutSso($ssoAccount->getIdToken()) as $logOutUrls) {
                     foreach ($logOutUrls as $provider => $logOutUrl) {
-                        return $logOutUrl;
+                        if ($provider == $ssoProvider) {
+                            return $logOutUrl;
+                        }
                     }
                 }
             }
