@@ -157,4 +157,6 @@ class TerritoryRepository
 
         return $stmt->fetchAll();
     }
+
+    public function findByTerritoryId($territoryId) {}
 }
