@@ -660,4 +660,43 @@ class UserRepository
 
         return $stmt->fetchAll();
     }
+
+    public function findUserWithTerritoryFilter(int $territoryId)
+    {
+        echo 'findUserWithTerritoryFilter'.PHP_EOL;
+
+        $dbConnection = $this->entityManager->getConnection();
+
+        $query = "select
+                distinct address_territory.address_id
+            from
+                address_territory
+            where
+                address_territory.territory_id = {$territoryId}";
+
+        $stmt = $dbConnection->prepare($query);
+
+        $stmt->execute();
+
+        $adressesOfTheTerritory = $stmt->fetchAll();
+        $addresses = [];
+        foreach ($adressesOfTheTerritory as $adresseOfTheTerritory) {
+            $addresses[] = $adresseOfTheTerritory['address_id'];
+        }
+        $adressesOfTheTerritorySerialized = implode("','", $addresses);
+
+        $query = "SELECT distinct user_id
+                    FROM address
+                    WHERE address.id in ('{$adressesOfTheTerritorySerialized}')
+                    AND address.home = 1 and user_id is not null";
+
+        $stmt = $dbConnection->prepare($query);
+        $stmt->execute();
+        $usersHomeAddressTerritory = $stmt->fetchAll();
+
+        var_dump(count($usersHomeAddressTerritory));
+
+        exit;
+        // var_dump("'".implode("','", $adressesOfTheTerritory)."'");
+    }
 }

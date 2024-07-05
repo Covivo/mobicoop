@@ -125,6 +125,7 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
                     }
                 }
             }
+            // $this->_userRepository->findUserWithTerritoryFilter($territory);
         }
 
         return $users;
