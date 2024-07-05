@@ -1,51 +1,55 @@
 {
-    "pause": {
-        "error": {
-            "pause": "Akats bat gertatu da, zure iragarkia ez da pausan ezarria izan.",
-            "unpause": "Akats bat gertatu da, zure iragarkia ez da aktibatua izan",
-			"antifraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
-        },
-        "info": "Kasu iragarkia pausan ezarria da!",
-        "success": {
-            "unpause": "Zure iragarkia aktiboa da orain.",
-            "pause": "Zure iragarkia pausan ezarria da."
-        }
+  "pause": {
+    "error": {
+      "pause": "Akats bat gertatu da, zure iragarkia ez da pausan ezarria izan.",
+      "unpause": "Akats bat gertatu da, zure iragarkia ez da aktibatua izan",
+      "antifraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
     },
-    "update": {
-        "route": "/covoiturage/annonce/{id}/modifier"
-    },
-    "delete": {
-        "dialog": {
-            "validate": "Baieztatu",
-            "cancel": "Ezeztatu",
-            "pending": {
-                "text": "Iragarki honekin lotua(k) d(ir)en eskaera bat edo gehiago jadanik egina(k) izan d(ir)a. Zure ezabatzeak, bidean diren eskaera guziak baztertuko ditu. Ezabatzea erabakitzen baduzu, zein mezu bidali nahi zenieke eskaerak baztertzen dizkiezun autokidei?",
-                "title": "Bederen eskaera bat bada iragarki honentzat"
-            },
-            "accepted": {
-                "text": "Iragarki honekin lotua(k) d(ir)en autokidetza bat edo gehiago jadanik planifikatua(k) izan d(ir)a. Ondorioz, zure iragarki-kentzeak, onartua(k) z(ir)en autokidetza hori(ek) ezeztatuko d(it)u. Zure kentzea baieztatzen baduzu, zein mezu igorri nahi zenieke ezeztatuko diezun autokideei?",
-                "title": "Gutienez autokidetza bat planifikatua izan iragarki honentzat"
-            },
-            "base": {
-                "text": "Iragarkia kentze oro behin betikoa da, segur ote zira iragarki hau kendu nahi duzula?",
-                "title": "Segur ote zira iragarki hau ezabatu nahi duzula?"
-            }
-        },
-        "error": "Huts bat gertatu da zure iragarkia kentzerakoan.",
-        "success": "Zure iragarkia kendua izan da.",
-        "route": "/covoiturage/annonce/supprimer"
-    },
-    "ads": {
-        "tooltips": {
-            "driverOrPassenger": "Berdin zait: gidari edo bidaiari izanen naiz",
-            "passenger": "Bidaiari izanen naiz",
-            "driver": "Gidaria izanen naiz",
-            "notUpdatable": "Update the linked outward ad"
-        },
-        "archived": "Iragarki artxibatuak",
-        "ongoing": "Iragarkiak indarrean dira"
-    },
-    "solidary": {
-      "exclusive": "Elkarbanatze solidario esklusiboaren iragarkia"
+    "info": "Kasu iragarkia pausan ezarria da!",
+    "success": {
+      "unpause": "Zure iragarkia aktiboa da orain.",
+      "pause": "Zure iragarkia pausan ezarria da."
     }
+  },
+  "update": {
+    "route": "/covoiturage/annonce/{id}/modifier",
+    "warningTitle": "Attention, en modifiant votre annonce, ceci entrainera la suppression des :",
+    "warningText": "<ul><li>Covoiturages valides et en cours avec cette annonce</li><li>Conversations liées à cette annonce</li><li>Et de l'historique en lien avec vos covoiturages (Cf. export de preuve)</li></ul>"
+  },
+  "delete": {
+    "dialog": {
+      "validate": "Baieztatu",
+      "cancel": "Ezeztatu",
+      "pending": {
+        "text": "Iragarki honekin lotua(k) d(ir)en eskaera bat edo gehiago jadanik egina(k) izan d(ir)a. Zure ezabatzeak, bidean diren eskaera guziak baztertuko ditu. Ezabatzea erabakitzen baduzu, zein mezu bidali nahi zenieke eskaerak baztertzen dizkiezun autokidei?",
+        "title": "Bederen eskaera bat bada iragarki honentzat"
+      },
+      "accepted": {
+        "text": "Iragarki honekin lotua(k) d(ir)en autokidetza bat edo gehiago jadanik planifikatua(k) izan d(ir)a. Ondorioz, zure iragarki-kentzeak, onartua(k) z(ir)en autokidetza hori(ek) ezeztatuko d(it)u. Zure kentzea baieztatzen baduzu, zein mezu igorri nahi zenieke ezeztatuko diezun autokideei?",
+        "title": "Gutienez autokidetza bat planifikatua izan iragarki honentzat"
+      },
+      "base": {
+        "text": "Iragarkia kentze oro behin betikoa da, segur ote zira iragarki hau kendu nahi duzula?",
+        "title": "Segur ote zira iragarki hau ezabatu nahi duzula?"
+      }
+    },
+    "error": "Huts bat gertatu da zure iragarkia kentzerakoan.",
+    "success": "Zure iragarkia kendua izan da.",
+    "route": "/covoiturage/annonce/supprimer"
+  },
+  "ads": {
+    "tooltips": {
+      "driverOrPassenger": "Berdin zait: gidari edo bidaiari izanen naiz",
+      "passenger": "Bidaiari izanen naiz",
+      "driver": "Gidaria izanen naiz",
+      "notUpdatable": "Update the linked outward ad"
+    },
+    "archived": "Iragarki artxibatuak",
+    "ongoing": "Iragarkiak indarrean dira"
+  },
+  "solidary": {
+    "exclusive": "Elkarbanatze solidario esklusiboaren iragarkia"
+  },
+  "yes": "Modifier mon annonce",
+  "no": "Ne pas la modifier"
 }
