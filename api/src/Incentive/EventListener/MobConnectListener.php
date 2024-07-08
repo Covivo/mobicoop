@@ -142,9 +142,12 @@ class MobConnectListener implements EventSubscriberInterface
                 property_exists($decodeRequest, 'eec')
                 && (1 === $decodeRequest->eec || true === $decodeRequest)
             ) {
-                if (!$ssoUser->isFranceConnected()) {
-                    throw new \LogicException('eec_user_not_france_connected');
-                }
+                // #8134 - Property is not returned for some customer and crashes the incentive request creation process.
+                //         Waiting for a response from moB
+                // if (!$ssoUser->isFranceConnected()) {
+                //     throw new \LogicException('eec_user_not_france_connected');
+                // }
+                // /#8134
 
                 $this->_subscriptionManager->createSubscriptions($event->getUser());
             }
