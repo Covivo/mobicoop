@@ -1111,7 +1111,19 @@ class ProofManager
                      * @var \Datetime $startDate
                      */
                     $startDate = clone $ask->getCriteria()->getFromDate();
-                    $startDate->setTime($ask->getCriteria()->getFromTime()->format('H'), $ask->getCriteria()->getFromTime()->format('i'));
+
+                    $startTime = $ask->getCriteria()->getFromTime();
+                    if (is_null($ask->getCriteria()->getFromTime())) {
+                        if (!is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getFromTime())) {
+                            $startTime = $ask->getMatching()->getProposalRequest()->getCriteria()->getFromTime();
+                        } elseif (!is_null($ask->getMatching()->getProposalOffer()->getCriteria()->getFromTime())) {
+                            $startTime = $ask->getMatching()->getProposalOffer()->getCriteria()->getFromTime();
+                        } else {
+                            continue;
+                        }
+                    }
+
+                    $startDate->setTime($startTime->format('H'), $startTime->format('i'));
                     $carpoolProof->setStartDriverDate($startDate);
 
                     /**
@@ -1128,7 +1140,7 @@ class ProofManager
                      */
                     // we init the pickup date with the start date of the driver
                     $pickUpDate = clone $ask->getCriteria()->getFromDate();
-                    $pickUpDate->setTime($ask->getCriteria()->getFromTime()->format('H'), $ask->getCriteria()->getFromTime()->format('i'));
+                    $pickUpDate->setTime($startTime->format('H'), $startTime->format('i'));
                     // then we add the duration till the pickup point
                     $pickUpDate->modify('+'.$pickUpWaypoint->getDuration().' second');
 

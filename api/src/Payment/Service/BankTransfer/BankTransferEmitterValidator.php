@@ -208,7 +208,7 @@ class BankTransferEmitterValidator
         if ($wallet->getBalance()->getAmount() / 100 < $this->_totalAmount) {
             $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_FUNDS_UNAVAILABLE);
             $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Not enough funds');
-            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] '.$this->_totalAmount.' needed '.$wallet->getBalance()->getAmount().' available.');
+            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] '.$this->_totalAmount.' needed '.($wallet->getBalance()->getAmount() / 100).' available.');
 
             throw new BankTransferException(BankTransferException::FUNDS_UNAVAILABLE);
         }
