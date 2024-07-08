@@ -1,6 +1,15 @@
 {
   "//expirationDate": "string - The date the subscription is due to expire",
   "expirationDate": null,
+  "//features": "string - A specific configuration for the EEC features",
+  "features": {
+    "//available": "null|bool - Specifies whether CEE features are available. This parameter is to relate to the `expirationDate` parameter of the instance. This setting enables or disables all features.",
+    "available": true,
+    "//ldAvailable": "null|bool - Specifies whether CEE LD features are available. This parameter is to relate to the `subscriptions.ld.expirationDate` parameter of the instance. This setting enables or disables LD features only.",
+    "ldAvailable": false,
+    "//sdAvailable": "null|bool - Specifies whether CEE SD features are available. This parameter is to relate to the `subscriptions.sd.expirationDate` parameter of the instance.  This setting enables or disables SD features only.",
+    "sdAvailable": true
+  },
   "provider": {
     "api_uri": "https://api-fabmob.stg.hub.flowbird.io",
     "app_id": null,
@@ -18,14 +27,18 @@
       "//key": "string - The LD subscription key",
       "key": null,
       "//expirationDate": "string - The date the subscription is due to expire",
-      "expirationDate": "2023-12-31",
-      "minimalDistance": 80000
+      "expirationDate": "2024-02-25",
+      "minimalDistance": 80000,
+      "//progressVisualization": "Specifies whether the viewing block tracking the corresponding invitation is available",
+      "progressVisualization": false
     },
     "sd": {
       "//key": "string - The SD subscription key",
       "key": null,
       "//expirationDate": "string - The date the subscription is due to expire",
-      "expirationDate": null
+      "expirationDate": null,
+      "//progressVisualization": "Specifies whether the viewing block tracking the corresponding invitation is available",
+      "progressVisualization": true
     }
   },
   "//previousPeriodWithoutTravel": "null|int - null if infinite period, 0 if no period, a number that expresses the period in months",

@@ -265,9 +265,17 @@ class SubscriptionManager extends MobConnectManager
     public function validateSubscription($referenceObject, bool $pushOnlyMode = false): void
     {
         if ($referenceObject instanceof CarpoolPayment) {
+            if (!$this->_eecInstance->isLdFeaturesAvailable()) {
+                return;
+            }
+
             $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
             $stage->execute();
 
+            return;
+        }
+
+        if (!$this->_eecInstance->isSdFeaturesAvailable()) {
             return;
         }
 
