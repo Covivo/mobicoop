@@ -52,8 +52,9 @@ class EventController extends AbstractController
     private $defaultNbEventsPerPage;
     private $eventAssociatedToCommunity;
     private $eventManager;
+    private $eventWidget;
 
-    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage, int $defaultNbEventsPerPage, array $eventAssociatedToCommunity, EventManager $eventManager)
+    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage, int $defaultNbEventsPerPage, array $eventAssociatedToCommunity, EventManager $eventManager, bool $eventWidget)
     {
         $this->router = $router;
         $this->mandatoryDescription = $mandatoryDescription;
@@ -62,6 +63,7 @@ class EventController extends AbstractController
         $this->defaultNbEventsPerPage = $defaultNbEventsPerPage;
         $this->eventAssociatedToCommunity = $eventAssociatedToCommunity;
         $this->eventManager = $eventManager;
+        $this->eventWidget = $eventWidget;
     }
 
     /**
@@ -255,6 +257,7 @@ class EventController extends AbstractController
             'destination' => $event->getAddress(),
             'searchRoute' => 'covoiturage/recherche',
             'points' => $ways,
+            'eventWidget' => $this->eventWidget,
         ]);
     }
 

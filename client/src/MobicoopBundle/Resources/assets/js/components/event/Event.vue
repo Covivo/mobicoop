@@ -49,6 +49,7 @@
                   {{ $t("buttons.publish.label") }}
                 </v-btn>
                 <v-btn
+                  v-if="eventWidget"
                   class="mt-3"
                   color="primary"
                   rounded
@@ -264,6 +265,10 @@ export default {
       default: false
     },
     dateTimePicker: {
+      type: Boolean,
+      default: false
+    },
+    eventWidget: {
       type: Boolean,
       default: false
     },
