@@ -1022,6 +1022,10 @@ class ProofManager
      */
     private function checkDistinctIdentities(CarpoolProof $carpoolProof): bool
     {
+        if (is_null($carpoolProof->getAsk())) {
+            return false;
+        }
+
         $originsDistantEnough = $destinationsDistantEnough = false;
 
         // The actors' origins
