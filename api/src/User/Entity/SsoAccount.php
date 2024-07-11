@@ -74,6 +74,15 @@ class SsoAccount
     private $ssoId;
 
     /**
+     * @var null|string current id_token associated for a SSO Account
+     *
+     * @ORM\Column(type="string", length=1000, nullable=true)
+     *
+     * @Groups({"readSsoAccount"})
+     */
+    private $idToken;
+
+    /**
      * @var null|string External Provider for a SSO Account
      *
      * @ORM\Column(type="string", length=255)
@@ -138,6 +147,18 @@ class SsoAccount
     public function setSsoId(?string $ssoId): self
     {
         $this->ssoId = $ssoId;
+
+        return $this;
+    }
+
+    public function getIdToken(): ?string
+    {
+        return $this->idToken;
+    }
+
+    public function setIdToken(?string $idToken): self
+    {
+        $this->idToken = $idToken;
 
         return $this;
     }
