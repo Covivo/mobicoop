@@ -2,7 +2,6 @@
 
 namespace App\Tests\Mocks\Incentive;
 
-use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceJourney;
 
 class LdJourneyMock
@@ -19,6 +18,6 @@ class LdJourneyMock
 
     private static function _getLdJourney(): LongDistanceJourney
     {
-        return new LongDistanceJourney(new Proposal());
+        return new LongDistanceJourney();
     }
 }

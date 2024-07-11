@@ -1,9 +1,11 @@
 {
   "title": "3. Kontrola totožnosti",
   "fileInput": {
-    "label": "Aktuální doklad totožnosti",
+    "label": "Recto du document d'identité à jour",
+    "labelOptional": "Verso du document d'identité à jour",
     "error": "Nesprávná platnost dokumentu",
-    "tooltip": "Dokument musí být ve formátu jpg, jpeg, png nebo pdf. Velikost dokumentu musí být větší než 32 Kb a menší než 6 Mb"
+    "tooltip": "Dokument musí být ve formátu jpg, jpeg, png nebo pdf. Velikost dokumentu musí být větší než 32 Kb a menší než 6 Mb",
+    "hintOptional": "optionnel"
   },
   "send": "Odeslat",
   "status": {

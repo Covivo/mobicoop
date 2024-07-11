@@ -318,7 +318,7 @@ class CommunityManager
 
         if (!is_null($community->getDomain())) {
             $community->setValidationType(Community::DOMAIN_VALIDATION);
-            $community->setDomain(trim($community->getDomain()));
+            $community->setDomain(preg_replace('/\s+/', '', $community->getDomain()));
         } else {
             $community->setValidationType(Community::AUTO_VALIDATION);
         }
@@ -573,7 +573,7 @@ class CommunityManager
 
     public function getNbMembers(Community $community): int
     {
-        $communityUsers = $this->communityUserRepository->findBy(['community' => $community, 'status' => [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]]);
+        $communityUsers = $this->communityUserRepository->findForCommunityNoContext($community);
 
         return count($communityUsers);
     }

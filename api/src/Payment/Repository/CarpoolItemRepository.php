@@ -273,8 +273,8 @@ class CarpoolItemRepository
         $subscription = $driver->getLongDistanceSubscription();
 
         $allreadyAdded = array_map(function ($journey) {
-            return $journey->getCarpoolItem();
-        }, $subscription->getJourneys());
+            return $journey->getCarpoolItem()->getId();
+        }, $subscription->getJourneys()->toArray());
 
         $parameters = [
             'country' => Validation::REFERENCE_COUNTRY,

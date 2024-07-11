@@ -49,8 +49,6 @@ abstract class SubscriptionValidator
     {
         return
             !static::isValidated($subscription)
-            && !static::hasExpired($subscription)
-            && static::isAddressValid($subscription)
             && static::isPaymentProfileAvailable($subscription)
             && !$subscription->getJourneys()->isEmpty()
             && !is_null($subscription->getCommitmentProofJourney())
@@ -62,9 +60,7 @@ abstract class SubscriptionValidator
     public static function isSdReadyToVerify(ShortDistanceSubscription $subscription): bool
     {
         return
-            static::isValidated($subscription)
-            && !static::hasExpired($subscription)
-            && static::isAddressValid($subscription)
+            !static::isValidated($subscription)
             && static::isPaymentProfileAvailable($subscription)
             && !$subscription->getJourneys()->isEmpty()
             && !is_null($subscription->getCommitmentProofJourney())

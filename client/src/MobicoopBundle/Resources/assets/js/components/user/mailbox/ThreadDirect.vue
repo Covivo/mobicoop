@@ -95,6 +95,10 @@ export default {
     unreadMessages:{
       type: Number,
       default: 0
+    },
+    idBooking: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -138,6 +142,7 @@ export default {
           avatar:this.avatar,
           name:this.name,
           blockerId:this.blockerId,
+          idBooking:this.idBooking,
           formerUnreadMessages:this.unreadMessages
         }
       );

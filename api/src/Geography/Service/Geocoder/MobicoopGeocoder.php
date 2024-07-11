@@ -31,8 +31,6 @@ use GuzzleHttp\Exception\TransferException;
 
 class MobicoopGeocoder implements Geocoder
 {
-    private const MAX_RESULTS_BY_TYPE = 5;
-    private const MAX_RESULTS_BY_GEOCODER = 5;
     private const SANITIZE = 1;
     private const CONSOLIDATE = 1;
     private const PROXIMITY = 5;
@@ -43,14 +41,14 @@ class MobicoopGeocoder implements Geocoder
     private $client;
     private $params;
 
-    public function __construct(string $uri)
+    public function __construct(string $uri, int $maxResultsByType, int $maxResultsByGeocoder)
     {
         $this->client = new Client([
             'base_uri' => $uri,
         ]);
         $this->params = [
-            'max_results_per_type' => self::MAX_RESULTS_BY_TYPE,
-            'max_results_per_geocoder' => self::MAX_RESULTS_BY_GEOCODER,
+            'max_results_per_type' => $maxResultsByType,
+            'max_results_per_geocoder' => $maxResultsByGeocoder,
             'sanitize' => self::SANITIZE,
             'consolidate' => self::CONSOLIDATE,
             'proximity' => self::PROXIMITY,

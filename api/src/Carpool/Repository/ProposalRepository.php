@@ -195,8 +195,8 @@ class ProposalRepository
         // exclude private proposals
         $query->andWhere('p.private IS NULL or p.private = 0');
 
-        // // exclude paused proposals
-        // $query->andWhere('(p.paused IS NULL or p.paused = 0)');
+        // exclude finished dynamic ad proposals
+        $query->andWhere('(p.finished IS NULL or p.finished = 0)');
 
         // DYNAMIC ADS
         if ($proposal->getCriteria()->isDriver() && $proposal->isDynamic() && $proposal->isActive() && !$proposal->isFinished()) {

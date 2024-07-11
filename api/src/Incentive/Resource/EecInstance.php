@@ -5,6 +5,7 @@ namespace App\Incentive\Resource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Incentive\Interfaces\EecProviderInterface;
+use App\Incentive\Resource\Instance\EecFeatures;
 use App\Incentive\Resource\Provider\MobConnectProvider;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -78,6 +79,13 @@ class EecInstance
     private $ldExpirationDate;
 
     /**
+     * @var null|bool
+     *
+     * @Groups("readEecInstance")
+     */
+    private $ldProgressVisualization = true;
+
+    /**
      * @var bool
      *
      * @Groups("readEecInstance")
@@ -90,6 +98,13 @@ class EecInstance
      * @Groups({"readEecInstance"})
      */
     private $sdExpirationDate;
+
+    /**
+     * @var null|bool
+     *
+     * @Groups("readEecInstance")
+     */
+    private $sdProgressVisualization = true;
 
     /**
      * @var null|string
@@ -137,6 +152,13 @@ class EecInstance
      */
     private $ldMinimalDistance;
 
+    /**
+     * Features configuration.
+     *
+     * @var EecFeatures
+     */
+    private $features;
+
     public function __construct(array $instanceConfiguration, ?string $carpoolProofPrefix)
     {
         $this->_build($instanceConfiguration, $carpoolProofPrefix);
@@ -155,6 +177,30 @@ class EecInstance
     public function isAvailable()
     {
         return $this->getAvailable();
+    }
+
+    /**
+     * Returns whether the features for the instance are available.
+     */
+    public function isFeaturesAvailable(): bool
+    {
+        return $this->features->isAvailable();
+    }
+
+    /**
+     * Returns whether the features for the instance are available.
+     */
+    public function isLdFeaturesAvailable(): bool
+    {
+        return $this->isFeaturesAvailable() && $this->features->isLdAvailable();
+    }
+
+    /**
+     * Returns whether the features for the instance are available.
+     */
+    public function isSdFeaturesAvailable(): bool
+    {
+        return $this->features->isAvailable();
     }
 
     public function isLongDistanceSubscriptionAvailable(): bool
@@ -337,6 +383,70 @@ class EecInstance
     }
 
     /**
+     * Get features configuration.
+     */
+    public function getFeatures(): EecFeatures
+    {
+        return $this->features;
+    }
+
+    /**
+     * Set features configuration.
+     */
+    public function setFeatures(array $featuresConfiguration): self
+    {
+        $this->features = new EecFeatures($featuresConfiguration);
+
+        return $this;
+    }
+
+    /**
+     * Get the value of ldProgressVisualization.
+     */
+    public function getLdProgressVisualization(): ?bool
+    {
+        return $this->ldProgressVisualization;
+    }
+
+    public function isLdProgressVisualization(): ?bool
+    {
+        return $this->getLdProgressVisualization();
+    }
+
+    /**
+     * Set the value of ldProgressVisualization.
+     */
+    public function setLdProgressVisualization(?bool $ldProgressVisualization): self
+    {
+        $this->ldProgressVisualization = $ldProgressVisualization;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sdProgressVisualization.
+     */
+    public function getSdProgressVisualization(): ?bool
+    {
+        return $this->sdProgressVisualization;
+    }
+
+    public function isSdProgressVisualization(): ?bool
+    {
+        return $this->getSdProgressVisualization();
+    }
+
+    /**
+     * Set the value of sdProgressVisualization.
+     */
+    public function setSdProgressVisualization(?bool $sdProgressVisualization): self
+    {
+        $this->sdProgressVisualization = $sdProgressVisualization;
+
+        return $this;
+    }
+
+    /**
      * Set the value of ldMinimalDistance.
      */
     private function setLdMinimalDistance(?int $ldMinimalDistance): self
@@ -422,12 +532,15 @@ class EecInstance
         $this->setKeys($configuration['subscriptions']['ld']['key'], $configuration['subscriptions']['sd']['key']);
         $this->setExpirationDate($configuration['expirationDate']);
         $this->setLdExpirationDate($configuration['subscriptions']['ld']['expirationDate']);
+        $this->setLdProgressVisualization($configuration['subscriptions']['ld']['progressVisualization']);
         $this->setSdExpirationDate($configuration['subscriptions']['sd']['expirationDate']);
+        $this->setSdProgressVisualization($configuration['subscriptions']['sd']['progressVisualization']);
         $this->setAvailable($this->_isServiceOpened());
         $this->setPreviousPeriodWithoutTravel($configuration['previousPeriodWithoutTravel']);
         $this->setTabView($configuration['tabView']);
         $this->setProvider($configuration['provider']);
         $this->setLdMinimalDistance($configuration['subscriptions']['ld']['minimalDistance']);
+        $this->setFeatures($configuration['features']);
 
         $this->carpoolProofPrefix = $carpoolProofPrefix;
 

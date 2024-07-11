@@ -90,6 +90,8 @@ services:
     arguments:
       $uri: "%env(string:GEOCODER_URI)%"
       $type: "%env(string:GEOCODER_TYPE)%"
+      $maxResultsByType: "%env(int:GEOCODER_MAX_RESULTS_BY_TYPE)%"
+      $maxResultsByGeocoder: "%env(int:GEOCODER_MAX_RESULTS_BY_GEOCODER)%"
 
   # Article Load Listener
   mobicoop.article.article_load_listener:
@@ -856,20 +858,6 @@ services:
           command: "app:incentive:subscription-commit",
         }
 
-  App\Incentive\Command\SubscriptionRecommitCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-recommit",
-        }
-
-  App\Incentive\Command\SubscriptionAutoRecommitCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-autorecommit",
-        }
-
   App\Incentive\Command\SubscriptionUpdateCommand:
     tags:
       - {
@@ -877,23 +865,9 @@ services:
           command: "app:incentive:subscription-update",
         }
 
-  App\Incentive\Command\UpdateTokenCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-tokens",
-        }
-
   App\Incentive\Command\JourneyRecoveryCommand:
     tags:
       - { name: "console.command", command: "app:incentive:journeys-recovery" }
-
-  App\Incentive\Command\SubscriptionTimestampsCommand:
-    tags:
-      - {
-          name: "console.command",
-          command: "app:incentive:subscription-timestamps",
-        }
 
   App\Incentive\Command\SubscriptionTimestampsTokenCommand:
     tags:
@@ -970,6 +944,7 @@ services:
   App\Incentive\Service\Manager\SubscriptionManager:
     arguments:
       $eecSendWarningIncompleteProfile: "%env(bool:EEC_SEND_WARNING_INCOMPLETE_PROFILE)%"
+      $eecSendWarningIncompleteProfileTime: "%env(int:EEC_SEND_WARNING_INCOMPLETE_PROFILE_TIME)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 

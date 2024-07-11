@@ -32,14 +32,14 @@ class GeocoderFactory
      */
     private $_geocoder;
 
-    public function __construct(string $type, string $uri)
+    public function __construct(string $type, string $uri, int $maxResultsByType, int $maxResultsByGeocoder)
     {
         $this->_geocoder = null;
 
         switch ($type) {
             case 'MobicoopGeocoder':
             default:
-                $this->_geocoder = new MobicoopGeocoder($uri);
+                $this->_geocoder = new MobicoopGeocoder($uri, $maxResultsByType, $maxResultsByGeocoder);
 
                 break;
         }

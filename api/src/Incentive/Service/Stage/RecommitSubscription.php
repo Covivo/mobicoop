@@ -6,7 +6,9 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Service\Provider\CarpoolPaymentProvider;
@@ -16,9 +18,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class RecommitSubscription extends Stage
 {
-    private const LD_SHORTCUT_NAME = 'LD';
-    private const SD_SHORTCUT_NAME = 'SD';
-
     private const PUSH_ONLY_MODE = true;
 
     /**
@@ -27,54 +26,58 @@ class RecommitSubscription extends Stage
     private $_commitReferenceObject;
 
     /**
-     * @var CarpoolPayment|Proposal
+     * @var CarpoolPayment|CarpoolProof|Proposal
      */
     private $_validateReferenceObject;
 
     /**
-     * @var LongDistanceJourney|ShortDistanceJOurney
+     * @var LongDistanceJourney|ShortDistanceJourney
      */
     private $_journey;
 
     /**
-     * @var string
-     */
-    private $_shortcutName = self::LD_SHORTCUT_NAME;
-
-    /**
      * @param LongDistanceSubscription|ShortDistanceSubscription $subscription
+     * @param LongDistanceJourney|ShortDistanceJourney           $journey
      */
-    public function __construct(EntityManagerInterface $em, TimestampTokenManager $timestampTokenManager, EecInstance $eecInstance, $subscription)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        LongDistanceJourneyRepository $longDistanceJourneyRepository,
+        TimestampTokenManager $timestampTokenManager,
+        EecInstance $eecInstance,
+        $subscription,
+        $journey
+    ) {
         $this->_em = $em;
+        $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
 
         $this->_eecInstance = $eecInstance;
         $this->_subscription = $subscription;
+        $this->_journey = $journey;
 
         $this->_build();
     }
 
     public function execute()
     {
-        $commitClassName = 'App\\Incentive\\Service\\Stage\\Commit'.$this->_shortcutName.'Subscription';
-        $stage = new $commitClassName($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE);
+        $stage = $this->_subscription instanceof LongDistanceSubscription
+            ? new CommitLDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE)
+            : new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE);
+
         if (!$stage->execute()) {
             return;
         }
 
-        $validateClassName = 'App\\Incentive\\Service\\Stage\\Validate'.$this->_shortcutName.'Subscription';
-        $stage = new $validateClassName($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE);
+        $stage = $this->_subscription instanceof LongDistanceSubscription
+            ? new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE)
+            : new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE);
+
         $stage->execute();
     }
 
     private function _build(): void
     {
-        $this->_journey = $this->_subscription->getJourneys()->toArray()[0];
-
-        if (!$this->_subscription instanceof LongDistanceSubscription) {
-            $this->_shortcutName = self::SD_SHORTCUT_NAME;
-
+        if ($this->_subscription instanceof ShortDistanceSubscription) {
             $this->_commitReferenceObject = $this->_validateReferenceObject = $this->_journey->getCarpoolProof();
 
             return;

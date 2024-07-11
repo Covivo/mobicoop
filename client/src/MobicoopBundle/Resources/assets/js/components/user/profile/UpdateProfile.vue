@@ -3,7 +3,7 @@
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
-      :color="(errorUpdate)?'error':'success'"
+      :color="(errorUpdate) ? 'error' : 'success'"
       top
     >
       {{ errorUpdate ? textSnackError : textSnackOk }}
@@ -17,11 +17,11 @@
     </v-snackbar>
 
     <v-alert
-      v-if="savedCo2>0"
+      v-if="savedCo2 > 0"
       type="success"
       outlined
     >
-      {{ $t('savedCo2',{savedCo2:savedCo2}) }} CO<sup>2</sup>
+      {{ $t('savedCo2', { savedCo2: savedCo2 }) }} CO<sup>2</sup>
     </v-alert>
 
     <!-- Main form -->
@@ -49,12 +49,8 @@
         </v-card-title>
         <v-card-text>
           <!-- Email -->
-          <v-row
-            no-gutters
-          >
-            <v-col
-              :cols="email && emailVerified ? '12' : '6'"
-            >
+          <v-row no-gutters>
+            <v-col :cols="email && emailVerified ? '12' : '6'">
               <v-text-field
                 v-model="email"
                 :label="$t('email.label')"
@@ -99,7 +95,8 @@
                 :loading="loadingEmail"
                 @click="sendValidationEmail"
               >
-                {{ !emailSended ? $t('email.buttons.label.generateEmail') : $t('email.buttons.label.generateEmailAgain') }}
+                {{ !emailSended ? $t('email.buttons.label.generateEmail') : $t('email.buttons.label.generateEmailAgain')
+                }}
               </v-btn>
             </v-col>
           </v-row>
@@ -121,13 +118,12 @@
                 item-text="code"
                 clearable
                 :rules="phoneCodeRules"
-
                 name="phoneCode"
               >
-                <template v-slot:item="{item}">
+                <template v-slot:item="{ item }">
                   <v-list-item>
                     <v-list-item-action>
-                      <span :class="['fi fi-'+item.country]" />
+                      <span :class="['fi fi-' + item.country]" />
                     </v-list-item-action>
                     <v-list-item-content>
                       <v-list-item-title>
@@ -138,12 +134,10 @@
                   <v-divider class="mt-1" />
                 </template>
 
-                <template
-                  v-slot:selection="{item}"
-                >
+                <template v-slot:selection="{ item }">
                   <v-list-item class="mt-n6 mb-n6">
                     <v-list-item-action>
-                      <span :class="['ml-n2 fi fi-'+item.country]" />
+                      <span :class="['ml-n2 fi fi-' + item.country]" />
                     </v-list-item-action>
                     <v-list-item-content class="ml-n9">
                       <v-list-item-title>
@@ -154,9 +148,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col
-              :cols="telephone && phoneVerified ? (phoneCode ? '10' : '12') : (phoneCode ? '4' : '6')"
-            >
+            <v-col :cols="telephone && phoneVerified ? (phoneCode ? '10' : '12') : (phoneCode ? '4' : '6')">
               <v-text-field
                 v-model="telephone"
                 :label="$t('phone.label')"
@@ -201,7 +193,8 @@
                 :loading="loadingToken"
                 @click="generateToken"
               >
-                {{ phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken') }}
+                {{ phoneToken == null ? $t('phone.buttons.label.generateToken') :
+                  $t('phone.buttons.label.generateNewToken') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -248,7 +241,7 @@
             <!--NewsSubscription-->
             <v-switch
               v-model="newsSubscription"
-              :label="$t('news.label', {platform:platform})"
+              :label="$t('news.label', { platform: platform })"
               inset
               color="secondary"
               @change="dialog = !newsSubscription"
@@ -286,14 +279,14 @@
                   <v-btn
                     color="primary darken-1"
                     text
-                    @click="dialog=false; newsSubscription=true"
+                    @click="dialog = false; newsSubscription = true"
                   >
                     {{ $t('no') }}
                   </v-btn>
                   <v-btn
                     color="secondary darken-1"
                     text
-                    @click="dialog=false"
+                    @click="dialog = false"
                   >
                     {{ $t('yes') }}
                   </v-btn>
@@ -304,7 +297,7 @@
             <v-switch
               v-if="gratuityActive"
               v-model="gratuitySubscription"
-              :label="$t('gratuity.label', {platform:platform})"
+              :label="$t('gratuity.label', { platform: platform })"
               inset
               color="secondary"
             />
@@ -351,7 +344,7 @@
                   <v-text-field
                     :value="computedBirthdateFormat"
                     :label="$t('birthDay.label')"
-                    :rules="[ birthdayRules.checkIfAdult, birthdayRules.required ]"
+                    :rules="[birthdayRules.checkIfAdult, birthdayRules.required]"
                     readonly
                     v-on="on"
                   />
@@ -402,9 +395,7 @@
                   </v-avatar>
                 </v-col>
               </v-row>
-              <v-row
-                justify="center"
-              >
+              <v-row justify="center">
                 <v-col
                   v-if="!displayFileUpload"
                   class="d-flex justify-center"
@@ -439,7 +430,7 @@
                     :label="$t('avatar.label')"
                     prepend-icon="mdi-image"
                     :change="previewAvatar()"
-                    :hint="$t('avatar.minPxSize', {size: imageMinPxSize})+', '+$t('avatar.maxMbSize', {size: imageMaxMbSize})"
+                    :hint="$t('avatar.minPxSize', { size: imageMinPxSize }) + ', ' + $t('avatar.maxMbSize', { size: imageMaxMbSize })"
                     persistent-hint
                     show-size
                     @change="selectedAvatar"
@@ -450,9 +441,7 @@
           </v-row>
 
           <v-row justify="center">
-            <v-col
-              class="d-flex justify-center"
-            >
+            <v-col class="d-flex justify-center">
               <!--Save Button-->
               <v-btn
                 class="button saveButton"
@@ -503,6 +492,7 @@
 
     <!-- Address form -->
     <v-card
+      id="user-postalAddress"
       flat
       color="grey lighten-4"
       class="mb-8"
@@ -675,10 +665,8 @@
       </v-card-text>
       <v-card-text v-else>
         <v-row>
-          <v-col
-            col="12"
-          >
-            {{ $t('ssoDeleteAccountWarning',{'service':ssoConnection.service}) }}
+          <v-col col="12">
+            {{ $t('ssoDeleteAccountWarning', { 'service': ssoConnection.service }) }}
           </v-col>
         </v-row>
       </v-card-text>
@@ -728,8 +716,8 @@ import ChangePassword from "@components/user/profile/ChangePassword";
 import PublicProfile from "@components/user/profile/PublicProfile";
 import EECIncentiveStatus from "@components/user/eecIncentiveStatus/EECIncentiveStatus";
 import { merge } from "lodash";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/UpdateProfile/";
-import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/profile/UpdateProfile/";
+import { messages_en, messages_fr, messages_eu, messages_nl } from "@translations/components/user/profile/UpdateProfile/";
+import { messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl } from "@clientTranslations/components/user/profile/UpdateProfile/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -865,40 +853,40 @@ export default {
       phoneValidatedDate: this.user.phoneValidatedDate,
       emailValidatedDate: this.user.validatedDate,
       token: null,
-      menu : false,
+      menu: false,
       phoneDisplay: {
         value: this.user.phoneDisplay
       },
-      phoneDisplays:[
-        { value: 1, label: this.$t('phoneDisplay.label.restricted')},
-        { value: 2, label: this.$t('phoneDisplay.label.all')}
+      phoneDisplays: [
+        { value: 1, label: this.$t('phoneDisplay.label.restricted') },
+        { value: 2, label: this.$t('phoneDisplay.label.all') }
       ],
       avatar: null,
       avatarHeight: null,
       avatarWidth: null,
       avatarRules: [
-        v => !v || v.size < this.imageMaxMbSize*1024*1024 || this.$t("avatar.size")+" (Max "+(this.imageMaxMbSize)+"MB)",
+        v => !v || v.size < this.imageMaxMbSize * 1024 * 1024 || this.$t("avatar.size") + " (Max " + (this.imageMaxMbSize) + "MB)",
         v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
         v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
       ],
       tokenRules: [
         v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
       ],
-      birthdayRules : {
-        required:  v => !!v || this.$t("birthDay.errors.required"),
-        checkIfAdult : value =>{
+      birthdayRules: {
+        required: v => !!v || this.$t("birthDay.errors.required"),
+        checkIfAdult: value => {
           var d1 = new Date();
           var d2 = moment(value, "DD/MM/YYYY").toDate();
 
-          var diff =(d1.getTime() - d2.getTime()) / 1000;
+          var diff = (d1.getTime() - d2.getTime()) / 1000;
           diff /= (60 * 60 * 24);
 
-          var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
+          var diffYears = Math.abs(Math.floor(diff / 365.24));
           return diffYears >= 16 || this.$t("birthDay.errors.notadult")
         }
       },
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
-      urlAvatar: this.user.avatars[this.user.avatars.length-1],
+      urlAvatar: this.user.avatars[this.user.avatars.length - 1],
       displayFileUpload: this.user.images.length == 0,
       phoneVerified: null,
       emailVerified: false,
@@ -925,42 +913,42 @@ export default {
       cleanedPhoneNumber: null,
     };
   },
-  computed : {
-    years () {
+  computed: {
+    years() {
       const currentYear = new Date().getFullYear();
       const ageMin = Number(this.ageMin);
       const ageMax = Number(this.ageMax);
-      return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
+      return Array.from({ length: ageMax - ageMin }, (value, index) => (currentYear - ageMin) - index)
     },
-    computedBirthdateFormat () {
+    computedBirthdateFormat() {
       if (this.birthDay) {
         return moment.utc(this.birthDay).format("DD/MM/YYYY");
       }
       return null;
     },
-    savedCo2(){
-      return Number.parseFloat(this.user.savedCo2  / 1000000 ).toPrecision(1);
+    savedCo2() {
+      return Number.parseFloat(this.user.savedCo2 / 1000000).toPrecision(1);
     },
-    isSsoLinked(){
-      if(this.user.ssoId && this.user.ssoProvider){
+    isSsoLinked() {
+      if (this.user.ssoId && this.user.ssoProvider) {
         return true;
       }
       return false;
     },
-    ssoExternalAccountDeletion(){
-      if(this.isSsoLinked){
-        if(this.ssoConnection && this.ssoConnection.externalAccountDeletion){
+    ssoExternalAccountDeletion() {
+      if (this.isSsoLinked) {
+        if (this.ssoConnection && this.ssoConnection.externalAccountDeletion) {
           return true;
         }
       }
       return false;
     },
-    genders(){
+    genders() {
       return this.$t("gender.values").filter((genderItem) => {
         return this.gendersList.includes(parseInt(genderItem.value));
       });
     },
-    gratuityActive(){
+    gratuityActive() {
       return this.$store.getters['grt/isActive'];
     },
     isEecblockDisplayed() {
@@ -977,10 +965,10 @@ export default {
     }
   },
   watch: {
-    menu (val) {
+    menu(val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     },
-    telephone (val) {
+    telephone(val) {
       this.phoneToken = null;
       this.displayPhoneVerification = false;
       this.cleanPhoneNumber();
@@ -997,19 +985,19 @@ export default {
           }
         )
         .then((response) => {
-          if(response.data.valid){
+          if (response.data.valid) {
             this.phoneErrors = [];
           }
-          else{
+          else {
             this.phoneErrors = [this.$t("phone.errors.valid")];
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error(error);
           this.phoneErrors = [this.$t("phone.errors.valid")];
         });
     },
-    phoneCode () {
+    phoneCode() {
       this.phoneToken = null;
       this.displayPhoneVerification = false;
       this.cleanPhoneNumber();
@@ -1026,19 +1014,19 @@ export default {
           }
         )
         .then((response) => {
-          if(response.data.valid){
+          if (response.data.valid) {
             this.phoneErrors = [];
           }
-          else{
+          else {
             this.phoneErrors = [this.$t("phone.errors.valid")];
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error(error);
           this.phoneErrors = [this.$t("phone.errors.valid")];
         });
     },
-    email (val) {
+    email(val) {
       this.emailChanged = true;
     }
   },
@@ -1051,7 +1039,7 @@ export default {
     this.checkVerifiedEmail();
     this.getOwnedCommunities();
     this.getCreatedEvents();
-    if(this.isSsoLinked){
+    if (this.isSsoLinked) {
       this.getSso();
     }
   },
@@ -1060,16 +1048,16 @@ export default {
       this.locale = localStorage.getItem("X-LOCALE");
       moment.locale(this.locale);
     },
-    homeAddressSelected(address){
+    homeAddressSelected(address) {
       this.homeAddress = address;
       this.disabledAddress = false;
       // this.$emit('updateUser', {"homeAddress": this.homeAddress})
     },
-    save (date) {
+    save(date) {
       this.$refs.menu.save(date)
     },
 
-    validate () {
+    validate() {
       if (this.$refs.form.validate()) {
         this.checkForm();
         this.dialogEmail = false;
@@ -1082,10 +1070,10 @@ export default {
         this.validate();
       }
     },
-    cancel () {
+    cancel() {
       window.location.reload();
     },
-    checkForm () {
+    checkForm() {
       this.loading = true;
       let updateUser = new FormData();
       updateUser.append("email", this.email);
@@ -1104,7 +1092,7 @@ export default {
       maxios
         .post(this.$t('route.update'), updateUser,
           {
-            headers:{
+            headers: {
               'content-type': 'multipart/form-data'
             }
           })
@@ -1113,7 +1101,7 @@ export default {
           this.snackbar = true;
           this.loading = false;
           if (this.drivingLicenceNumber && this.user.drivingLicenceNumber != this.drivingLicenceNumber) {
-            this.$emit('updateUser', {"drivingLicenceNumber": this.drivingLicenceNumber})
+            this.$emit('updateUser', { "drivingLicenceNumber": this.drivingLicenceNumber })
           }
           if (this.user.telephone != this.telephone) {
             this.phoneValidatedDate = null;
@@ -1129,13 +1117,13 @@ export default {
           window.location.reload();
         });
     },
-    updateAddress () {
+    updateAddress() {
       this.loadingAddress = true;
       this.homeAddress.id = this.user.homeAddress ? this.user.homeAddress.id : null;
       maxios
         .post(this.$t('address.update.route'), this.homeAddress,
           {
-            headers:{
+            headers: {
               'content-type': 'application/json'
             }
           })
@@ -1143,10 +1131,10 @@ export default {
           this.homeAddress = res.data;
           this.loadingAddress = false;
           this.disabledAddress = true;
-          this.$emit('updateUser', {"homeAddress": this.homeAddress})
+          this.$emit('updateUser', { "homeAddress": this.homeAddress })
         });
     },
-    avatarDelete () {
+    avatarDelete() {
       this.loadingDelete = true;
       maxios
         .get(this.$t('avatar.delete.route'))
@@ -1154,14 +1142,14 @@ export default {
           this.errorUpdate = res.data.state;
           this.displayFileUpload = true;
           this.loadingDelete = false;
-          this.urlAvatar = res.data[res.data.length-1];
+          this.urlAvatar = res.data[res.data.length - 1];
           this.avatarWidth = null;
           this.avatarHeight = null;
         });
     },
     previewAvatar() {
-      if(this.avatar) {
-        let reader  = new FileReader();
+      if (this.avatar) {
+        let reader = new FileReader();
         reader.addEventListener("load", function () {
           this.urlAvatar = reader.result; // UPDATE PREVIEW
         }.bind(this), false);
@@ -1241,27 +1229,27 @@ export default {
           {
             token: this.token,
             telephone: this.telephone
-          },{
-            headers:{
+          }, {
+            headers: {
               'content-type': 'application/json'
             }
           })
         .then(res => {
-          if(!res.data){
+          if (!res.data) {
             this.errorUpdate = true;
             this.textSnackError = this.$t("snackBar.unknown");
             this.snackbar = true;
           }
-          else{
+          else {
             this.phoneVerified = true;
           }
           this.loadingValidatePhone = false;
         })
-        // Todo create "emit" event to refresh the alerts
+      // Todo create "emit" event to refresh the alerts
     },
     getOwnedCommunities() {
       let params = {
-        'userId':this.user.id
+        'userId': this.user.id
       }
       this.disabledOwnedCommunities = true;
       maxios.post(this.$t("communities.route"), params)
@@ -1275,7 +1263,7 @@ export default {
     },
     getCreatedEvents() {
       let params = {
-        'userId':this.user.id
+        'userId': this.user.id
       }
       this.disabledCreatedEvents = true;
       maxios.post(this.$t("events.route"), params)
@@ -1293,26 +1281,26 @@ export default {
     },
     maxDate() {
       let maxDate = new Date();
-      maxDate.setFullYear (maxDate.getFullYear() - this.ageMin);
+      maxDate.setFullYear(maxDate.getFullYear() - this.ageMin);
       return maxDate.toISOString().substr(0, 10);
     },
-    getSso(){
+    getSso() {
       let params = {
-        "service":this.user.ssoProvider
+        "service": this.user.ssoProvider
       }
       maxios.post(this.$t("urlGetSsoServices"), params)
         .then(response => {
-          if(response.data.length > 0){
+          if (response.data.length > 0) {
             this.ssoConnection = response.data[0];
           }
         });
     },
-    changeTab(tab){
+    changeTab(tab) {
       this.$emit('changeTab', tab);
     },
-    checkDrivingLicenceNumber(){
+    checkDrivingLicenceNumber() {
       this.drivingLicenceNumberValid = true;
-      if(this.drivingLicenceNumber){
+      if (this.drivingLicenceNumber) {
         maxios
           .post(
             this.$t("checkDrivingLicenceNumber.url"),
@@ -1326,14 +1314,14 @@ export default {
             }
           )
           .then((response) => {
-            if(response.data.valid){
+            if (response.data.valid) {
               this.drivingLicenceNumberValid = response.data.valid
             }
-            else{
+            else {
               this.drivingLicenceNumberValid = false;
             }
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.error(error);
             this.drivingLicenceNumberValid = false;
           });
@@ -1343,14 +1331,14 @@ export default {
       if (this.phoneCode == null) {
         this.cleanedPhoneNumber = this.telephone;
       } else {
-        this.cleanedPhoneNumber = '+'+this.phoneCode + this.telephone.replace(/^0+/, "");
+        this.cleanedPhoneNumber = '+' + this.phoneCode + this.telephone.replace(/^0+/, "");
       }
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-  #avatar{
-    width:auto !important;
-  }
+#avatar {
+  width: auto !important;
+}
 </style>

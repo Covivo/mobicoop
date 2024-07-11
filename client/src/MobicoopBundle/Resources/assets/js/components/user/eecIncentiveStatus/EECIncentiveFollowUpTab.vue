@@ -19,7 +19,7 @@
             background-color="transparent"
           >
             <v-tab
-              v-for="title in tabs.titles"
+              v-for="title in getTabsTitles"
               :key="title"
             >
               {{ title }}
@@ -29,10 +29,13 @@
             v-model="tabs.tab"
             class="transparent-background"
           >
-            <v-tab-item>
+            <v-tab-item
+              v-for="tab in getAvailableTabs"
+              :key="tab.type"
+            >
               <EECFollowUpImprovedIncentive
-                v-if="isImprovedVersion('SD')"
-                type="SD"
+                v-if="isImprovedVersion(tab.type)"
+                :type="tab.type"
                 :subscription="eecSubscriptions.shortDistanceSubscription"
                 :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
@@ -40,27 +43,8 @@
               />
               <EECFollowUpStandardIncentive
                 v-else
-                type="SD"
+                :type="tab.type"
                 :subscription="eecSubscriptions.shortDistanceSubscription"
-                :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
-                :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
-                :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
-                :platform="platform"
-              />
-            </v-tab-item>
-            <v-tab-item>
-              <EECFollowUpImprovedIncentive
-                v-if="isImprovedVersion('LD')"
-                type="LD"
-                :subscription="eecSubscriptions.longDistanceSubscription"
-                :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
-                :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
-                :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
-              />
-              <EECFollowUpStandardIncentive
-                v-else
-                type="LD"
-                :subscription="eecSubscriptions.longDistanceSubscription"
                 :nb-pending-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-rejected-proofs="eecSubscriptions.nbPendingProofs"
                 :nb-validated-proofs="eecSubscriptions.nbPendingProofs"
@@ -70,7 +54,7 @@
           </v-tabs-items>
         </div>
         <div v-else>
-          <div v-if="isSdAvailable">
+          <div v-if="isSdAvailable && eecInstance.sdProgressVisualization">
             <EECFollowUpImprovedIncentive
               v-if="isImprovedVersion('SD')"
               type="SD"
@@ -89,7 +73,7 @@
               :platform="platform"
             />
           </div>
-          <div v-else-if="isLdAvailable">
+          <div v-else-if="isLdAvailable && eecInstance.ldProgressVisualization">
             <EECFollowUpImprovedIncentive
               v-if="isImprovedVersion('LD')"
               type="LD"
@@ -161,17 +145,23 @@ export default {
   },
   data() {
     return {
-      tabs: {
-        tab: null,
-        titles: [
-          this.$t('followupTab.sd-tab.title'),
-          this.$t('followupTab.ld-tab.title'),
-        ],
-        content: []
-      }
+      tabs: [
+        { title: this.$t('followupTab.sd-tab.title'), type: 'SD'},
+        { title: this.$t('followupTab.ld-tab.title'), type: 'LD'}
+      ]
     }
   },
   computed: {
+    getAvailableTabs() {
+      return this.tabs.filter((tab) => {
+        const property = `${tab.type.toLowerCase()}ProgressVisualization`;
+
+        return this.eecInstance[property];
+      });
+    },
+    getTabsTitles() {
+      return this.getAvailableTabs.map((tab) => tab.title);
+    },
     isTabView() {
       return this.isLdAvailable && this.isSdAvailable                                   // The 2 subscriptions are available
       || (!this.isLdAvailable && this.eecSubscriptions.longDistanceSubscription)        // The LD subscription is not avavailable but the user has susbcribed to

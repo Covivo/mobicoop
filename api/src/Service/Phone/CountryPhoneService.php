@@ -51,6 +51,11 @@ class CountryPhoneService
     public const UA = 'UA';
     public const VA = 'VA';
     public const XK = 'XK';
+    public const GP = 'GP';
+    public const MQ = 'MQ';
+    public const NC = 'NC';
+    public const GY = 'GY';
+    public const PH = 'PH';
 
     public const COUNTRY_PHONE_PREFIX = [
         'GR' => 30,
@@ -69,6 +74,7 @@ class CountryPhoneService
         'PL' => 48,
         'DE' => 49,
         'SE' => 46,
+        'PH' => 63,
         'GI' => 350,
         'PT' => 351,
         'LU' => 352,
@@ -100,6 +106,10 @@ class CountryPhoneService
         'CZ' => 420,
         'SK' => 421,
         'LI' => 423,
+        'GP' => 590,
+        'GY' => 594,
+        'MQ' => 596,
+        'NC' => 687,
     ];
 
     private const PHONE_PATTERN = [
@@ -150,6 +160,11 @@ class CountryPhoneService
         'UA' => null,
         'VA' => null,
         'XK' => null,
+        'GP' => null,
+        'MQ' => null,
+        'GY' => null,
+        'PH' => null,
+        'NC' => null,
     ];
 
     /**

@@ -5,11 +5,10 @@ namespace App\Incentive\Service\Stage;
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
-use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
-use App\Incentive\Service\DateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Service\Provider\CarpoolItemProvider;
 use App\Incentive\Service\Provider\JourneyProvider;
@@ -24,14 +23,9 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class ValidateLDSubscription extends ValidateSubscription
 {
     /**
-     * @var LongDistanceSubscription
+     * @var CarpoolItem
      */
-    protected $_subscription;
-
-    /**
-     * @var LongDistanceJourneyRepository
-     */
-    private $_ldJourneyRepository;
+    private $_carpoolItem;
 
     /**
      * @var CarpoolPayment
@@ -44,7 +38,8 @@ class ValidateLDSubscription extends ValidateSubscription
         TimestampTokenManager $timestampTokenManager,
         EecInstance $eecInstance,
         CarpoolPayment $carpoolPayment,
-        bool $pushOnlyMode = false
+        bool $pushOnlyMode = false,
+        bool $recoveryMode = false
     ) {
         $this->_em = $em;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
@@ -53,65 +48,89 @@ class ValidateLDSubscription extends ValidateSubscription
         $this->_eecInstance = $eecInstance;
         $this->_carpoolPayment = $carpoolPayment;
         $this->_pushOnlyMode = $pushOnlyMode;
+        $this->_recoveryMode = $recoveryMode;
 
         $this->_build();
     }
 
-    public function execute()
+    public function execute(): void
     {
-        foreach (CarpoolItemProvider::getCarpoolItemFromCarpoolPayment($this->_carpoolPayment) as $carpoolItem) {
-            $this->_subscription = SubscriptionProvider::getLDSubscriptionFromCarpoolItem($carpoolItem);
+        foreach (CarpoolItemProvider::getCarpoolItemFromCarpoolPayment($this->_carpoolPayment) as $this->_carpoolItem) {
+            $this->_subscription = SubscriptionProvider::getLDSubscriptionFromCarpoolItem($this->_carpoolItem);
 
-            $journeyProvider = new JourneyProvider($this->_ldJourneyRepository);
-            $journey = $journeyProvider->getJourneyFromCarpoolItem($carpoolItem);
+            if (is_null($this->_subscription)) {
+                continue;
+            }
+
+            $carpoolProof = $this->_carpoolItem->getCarpoolProof();
 
             if (
-                is_null($this->_subscription)
-                || $this->_subscription->hasExpired()
-                || is_null($carpoolItem->getCarpoolProof())
-                || (!$this->_pushOnlyMode && !is_null($journey))
+                !$this->_recoveryMode
+                && (
+                    $this->_subscription->hasExpired()
+                    || is_null($carpoolProof)
+                )
             ) {
                 return;
             }
 
-            $carpoolProof = $carpoolItem->getCarpoolProof();
+            $journeyProvider = new JourneyProvider($this->_ldJourneyRepository);
+            $journey = $journeyProvider->getJourneyFromCarpoolItem($this->_carpoolItem);
 
             // Use case where there is not yet a LD journey associated with the carpoolitem
             if ($this->_subscription->isCommitmentJourney($journey)) {
-                $this->_executeForCommitmentJourney($journey, $carpoolItem, $carpoolProof);
+                $this->_executeForCommitmentJourney($journey, $carpoolProof);
 
                 return;
             }
 
-            if (
-                !$this->_subscription->isComplete()
-                && !$this->_pushOnlyMode
-                && is_null($journey)
-                && CarpoolProofValidator::isEecCompliant($carpoolProof)
-            ) {
-                $this->_executeForStandardJourney($carpoolItem);
+            if (CarpoolProofValidator::isEecCompliant($carpoolProof)) {
+                $this->_executeForStandardJourney($journey);
+
+                return;
             }
         }
     }
 
-    protected function _executeForStandardJourney(CarpoolItem $carpoolItem)
+    protected function _executeForStandardJourney(?LongDistanceJourney $journey): void
     {
-        if (SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-            $stage = new AutoRecommitSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription);
-            $stage->execute();
+        if (
+            is_null($journey)
+            && (
+                !$this->_pushOnlyMode
+                || (
+                    !$this->_subscription->isComplete()
+                    || (
+                        1 <= $this->_subscription->getMaximumJourneysNumber()
+                        && !SubscriptionValidator::isCommitmentJourneyEecCompliant($this->_subscription)
+                    )
+                )
+            )
+        ) {
+            $journey = new LongDistanceJourney();
+            $journey->updateJourney(
+                $this->_carpoolItem,
+                $this->_carpoolPayment,
+                $this->getCarpoolersNumber($this->_carpoolItem->getAsk()),
+                $this->getAddressesLocality($this->_carpoolItem)
+            );
 
-            return;
+            $this->_subscription->addLongDistanceJourney($journey);
+
+            if ($this->_subscription->isComplete()) {
+                $this->_subscription->setBonusStatus(Subscription::BONUS_STATUS_PENDING);
+            }
+
+            $this->_em->flush();
         }
 
-        $journey = new LongDistanceJourney();
-        $journey = $this->_updateJourney($journey, $carpoolItem);
-
-        $this->_subscription->addLongDistanceJourney($journey);
-
-        $this->_em->flush();
+        if (!is_null($journey) && SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
+            $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
+            $stage->execute();
+        }
     }
 
-    protected function _executeForCommitmentJourney(LongDistanceJourney $journey, CarpoolItem $carpoolItem, CarpoolProof $carpoolProof)
+    protected function _executeForCommitmentJourney(LongDistanceJourney $journey, CarpoolProof $carpoolProof): void
     {
         // Process for commitment journey
         switch (true) {
@@ -119,7 +138,7 @@ class ValidateLDSubscription extends ValidateSubscription
 
             case CarpoolProofValidator::isStatusError($carpoolProof):
             case CarpoolProofValidator::isDowngradedType($carpoolProof):
-                $stage = new ProofInvalidate($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $journey);
+                $stage = new ProofInvalidate($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $journey);
                 $stage->execute();
 
                 return;
@@ -140,21 +159,15 @@ class ValidateLDSubscription extends ValidateSubscription
             return;
         }
 
-        $this->_subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_HONOR_CERTIFICATE);
+        $this->_subscription->getCommitmentProofJourney()->updateJourney(
+            $this->_carpoolItem,
+            $this->_carpoolPayment,
+            $this->getCarpoolersNumber($this->_carpoolItem->getAsk()),
+            $this->getAddressesLocality($this->_carpoolItem)
+        );
 
-        $this->_subscription->setExpirationDate(DateService::getExpirationDate($this->_subscription->getValidityPeriodDuration()));
-        $this->_subscription->setCommitmentProofJourney($this->_updateJourney($this->_subscription->getCommitmentProofJourney(), $carpoolItem));
+        $this->_updateSubscription();
 
         $this->_em->flush();
-    }
-
-    private function _updateJourney(LongDistanceJourney $journey, CarpoolItem $carpoolItem): LongDistanceJourney
-    {
-        return $journey->updateJourney(
-            $carpoolItem,
-            $this->_carpoolPayment,
-            $this->getCarpoolersNumber($carpoolItem->getAsk()),
-            $this->getAddressesLocality($carpoolItem)
-        );
     }
 }

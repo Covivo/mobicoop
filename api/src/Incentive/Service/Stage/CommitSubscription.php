@@ -9,7 +9,6 @@ use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription\SpecificFields;
-use App\Incentive\Service\Manager\TimestampTokenManager;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class CommitSubscription extends UpdateSubscription
@@ -38,7 +37,9 @@ abstract class CommitSubscription extends UpdateSubscription
             return false;
         }
 
-        $this->_subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($this->_subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_COMMITMENT);
+        $token = $this->_timestampTokenManager->getLatestToken($this->_subscription);
+        $this->_subscription->setCommitmentProofTimestampToken($token->getTimestampToken());
+        $this->_subscription->setCommitmentProofTimestampSigningTime($token->getSigningTime());
 
         $journey = (
             $this->_pushOnlyMode
@@ -49,10 +50,18 @@ abstract class CommitSubscription extends UpdateSubscription
             )
             : (
                 $this->_subscription instanceof LongDistanceSubscription
-                ? new LongDistanceJourney($this->_proposal)
+                ? new LongDistanceJourney()
                 : new ShortDistanceJourney($this->_carpoolProof)
             )
         );
+
+        if (is_null($journey)) {
+            return false;
+        }
+
+        if ($this->_subscription instanceof LongDistanceSubscription && !is_null($this->_proposal)) {
+            $journey->setInitialProposal($this->_proposal);
+        }
 
         $this->_subscription->setCommitmentProofJourney($journey);
         $this->_subscription->setCommitmentProofDate(new \DateTime());

@@ -1805,6 +1805,14 @@ event_edit:
   requirements:
     id: '\d+'
 
+# delete an event (AJAX)
+event_delete:
+  path:
+    fr: /evenement/supprimer
+    en: /event/delete
+    nl: /event/delete
+  controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventDelete
+
 # report event
 event_report:
   methods: [POST]

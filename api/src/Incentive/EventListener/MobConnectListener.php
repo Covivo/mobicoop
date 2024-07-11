@@ -8,7 +8,9 @@ use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
 use App\Incentive\Event\SubscriptionNotReadyToVerifyEvent;
+use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\AuthManager;
+use App\Incentive\Service\Manager\InstanceManager;
 use App\Incentive\Service\Manager\SubscriptionManager;
 use App\Incentive\Validator\UserValidator;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
@@ -49,11 +51,22 @@ class MobConnectListener implements EventSubscriberInterface
      */
     private $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, AuthManager $authManager, SubscriptionManager $subscriptionManager)
-    {
+    /**
+     * @var EecInstance
+     */
+    private $_eecInstance;
+
+    public function __construct(
+        RequestStack $requestStack,
+        AuthManager $authManager,
+        SubscriptionManager $subscriptionManager,
+        InstanceManager $instanceManager
+    ) {
         $this->_request = $requestStack->getCurrentRequest();
         $this->_authManager = $authManager;
         $this->_subscriptionManager = $subscriptionManager;
+
+        $this->_eecInstance = $instanceManager->getEecInstance();
     }
 
     public static function getSubscribedEvents()
@@ -74,6 +87,10 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onFirstLongDistanceJourneyPublished(FirstLongDistanceJourneyPublishedEvent $event)
     {
+        if (!$this->_eecInstance->isLdFeaturesAvailable()) {
+            return;
+        }
+
         $proposal = $event->getProposal();
 
         $subscription = !is_null($proposal->getUser()) && !is_null($proposal->getUser()->getLongDistanceSubscription())
@@ -89,6 +106,10 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onFirstShortDistanceJourneyPublished(FirstShortDistanceJourneyPublishedEvent $event)
     {
+        if (!$this->_eecInstance->isSdFeaturesAvailable()) {
+            return;
+        }
+
         $carpoolProof = $event->getCarpoolProof();
 
         $subscription = !is_null($carpoolProof->getDriver()) && !is_null($carpoolProof->getDriver()->getShortDistanceSubscription())
@@ -121,9 +142,12 @@ class MobConnectListener implements EventSubscriberInterface
                 property_exists($decodeRequest, 'eec')
                 && (1 === $decodeRequest->eec || true === $decodeRequest)
             ) {
-                if (!$ssoUser->isFranceConnected()) {
-                    throw new \LogicException('eec_user_not_france_connected');
-                }
+                // #8134 - Property is not returned for some customer and crashes the incentive request creation process.
+                //         Waiting for a response from moB
+                // if (!$ssoUser->isFranceConnected()) {
+                //     throw new \LogicException('eec_user_not_france_connected');
+                // }
+                // /#8134
 
                 $this->_subscriptionManager->createSubscriptions($event->getUser());
             }
@@ -135,6 +159,10 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onElectronicPaymentValidated(ElectronicPaymentValidatedEvent $event): void
     {
+        if (!$this->_eecInstance->isLdFeaturesAvailable()) {
+            return;
+        }
+
         $this->_subscriptionManager->validateSubscription($event->getCarpoolPayment());
     }
 

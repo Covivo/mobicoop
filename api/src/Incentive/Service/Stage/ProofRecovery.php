@@ -3,7 +3,6 @@
 namespace App\Incentive\Service\Stage;
 
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
@@ -13,6 +12,7 @@ use App\Incentive\Service\Provider\CarpoolPaymentProvider;
 use App\Incentive\Validator\CarpoolPaymentValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
+use App\Payment\Repository\CarpoolPaymentRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -29,11 +29,6 @@ class ProofRecovery extends Stage
     protected $_carpoolProofRepository;
 
     /**
-     * @var LongDistanceJourneyRepository
-     */
-    protected $_longDistanceJourneyRepository;
-
-    /**
      * @var User
      */
     protected $_user;
@@ -46,6 +41,7 @@ class ProofRecovery extends Stage
     public function __construct(
         EntityManagerInterface $em,
         CarpoolItemRepository $carpoolItemRepository,
+        CarpoolPaymentRepository $carpoolPaymentRepository,
         CarpoolProofRepository $carpoolProofRepository,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
@@ -55,8 +51,9 @@ class ProofRecovery extends Stage
     ) {
         $this->_em = $em;
         $this->_carpoolItemRepository = $carpoolItemRepository;
+        $this->_carpoolPaymentRepository = $carpoolPaymentRepository;
         $this->_carpoolProofRepository = $carpoolProofRepository;
-        $this->_longDistanceJourneyRepository = $longDistanceJourneyRepository;
+        $this->_ldJourneyRepository = $longDistanceJourneyRepository;
 
         $this->_timestampTokenManager = $timestampTokenManager;
         $this->_eecInstance = $eecInstance;
@@ -70,8 +67,6 @@ class ProofRecovery extends Stage
         // We recover the missing timestamp tokens available at moBConnect
         $this->_subscription = LongDistanceSubscription::TYPE_LONG === $this->_subscriptionType
             ? $this->_user->getLongDistanceSubscription() : $this->_user->getShortDistanceSubscription();
-
-        $this->_timestampTokenManager->setMissingSubscriptionTimestampTokens($this->_subscription, Log::TYPE_VERIFY);
 
         $this->_recoveryProofs();
     }
@@ -106,10 +101,10 @@ class ProofRecovery extends Stage
                         return;
                     }
 
-                    $carpoolPayment = CarpoolPaymentProvider::getCarpoolPaymentFromCarpoolItem($carpoolItem);
+                    $carpoolPayment = CarpoolPaymentProvider::getCarpoolPaymentFromCarpoolItem($this->_carpoolPaymentRepository, $carpoolItem);
 
                     if (!is_null($carpoolPayment) && CarpoolPaymentValidator::isStatusEecCompliant($carpoolPayment)) {
-                        $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolPayment);
+                        $stage = new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolPayment, false, true);
                         $stage->execute();
                     }
                 }
@@ -117,7 +112,7 @@ class ProofRecovery extends Stage
                 break;
 
             case $this->_subscription instanceof ShortDistanceSubscription:
-                $carpoolProofs = $this->_carpoolProofRepository->findUserCEEEligibleProof($this->_user, $this->_subscriptionType);
+                $carpoolProofs = $this->_carpoolProofRepository->findUserCEEEligibleProof($this->_user);
 
                 foreach ($carpoolProofs as $carpoolProof) {
                     if (
@@ -138,7 +133,7 @@ class ProofRecovery extends Stage
                         return;
                     }
 
-                    $stage = new ProofValidate($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolProof);
+                    $stage = new ProofValidate($this->_em, $this->_carpoolPaymentRepository, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolProof, false, true);
                     $stage->execute();
                 }
 

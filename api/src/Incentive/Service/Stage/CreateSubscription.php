@@ -75,7 +75,9 @@ class CreateSubscription extends Stage
             DefinitionSelector::getDefinition($this->_subscriptionType)
         );
 
-        $subscription = $this->_timestampTokenManager->setSubscriptionTimestampToken($subscription, TimestampTokenManager::TIMESTAMP_TOKEN_TYPE_INCENTIVE);
+        $token = $this->_timestampTokenManager->getLatestToken($subscription);
+        $subscription->setIncentiveProofTimestampToken($token->getTimestampToken());
+        $subscription->setIncentiveProofTimestampSigningTime($token->getSigningTime());
 
         $this->_em->persist($subscription);
         $this->_em->flush();

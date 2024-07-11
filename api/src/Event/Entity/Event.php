@@ -152,6 +152,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              }
  *          },
  *          "delete"={
+ *              "path"="/events/{id}",
+ *              "method"="DELETE",
  *              "security"="is_granted('event_delete',object)",
  *              "swagger_context" = {
  *                  "tags"={"Events"}

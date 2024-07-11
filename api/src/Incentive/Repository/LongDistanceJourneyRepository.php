@@ -23,6 +23,16 @@ class LongDistanceJourneyRepository
         return $this->_repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
+    public function findOneBy(array $parameters): ?LongDistanceJourney
+    {
+        return $this->_repository->findOneBy($parameters);
+    }
+
+    public function findOneByCarpoolItem(CarpoolItem $carpoolItem): ?LongDistanceJourney
+    {
+        return $this->_repository->findOneBy(['carpoolItem' => $carpoolItem]);
+    }
+
     public function findOneByCarpoolItemOrProposal(?CarpoolItem $carpoolItem, ?Proposal $proposal): ?LongDistanceJourney
     {
         if (is_null($carpoolItem)) {

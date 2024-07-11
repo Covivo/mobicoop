@@ -1,4 +1,4 @@
-version: '2.4'
+version: "2.4"
 services:
   base:
     environment:
@@ -22,7 +22,12 @@ services:
     extends:
       service: base
     working_dir: /var/www/api
-    entrypoint: bash entrypoint.sh 
+    entrypoint: bash entrypoint.sh
+  fixtures-client:
+    extends:
+      service: base
+    working_dir: /var/www/client
+    entrypoint: bash entrypoint.sh
   db-diff:
     extends:
       service: base
