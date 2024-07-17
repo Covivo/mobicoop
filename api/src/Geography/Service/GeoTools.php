@@ -251,7 +251,10 @@ class GeoTools
         $streetAddressFound = false;
         if (isset($this->params['displayStreetAddress']) && 'true' === trim($this->params['displayStreetAddress'])) {
             if ('' !== trim($address->getHouseNumber())) {
-                $displayLabelTab[0][] = $address->getHouseNumber();
+                $houseNumber = trim($address->getHouseNumber());
+                if (!preg_match("/{$houseNumber}/", trim($address->getStreetAddress()))) {
+                    $displayLabelTab[0][] = $houseNumber;
+                }
             }
             if ('' !== trim($address->getStreetAddress())) {
                 $streetAddressFound = true;
