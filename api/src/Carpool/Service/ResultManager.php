@@ -41,6 +41,7 @@ use App\User\Repository\ReviewRepository;
 use App\User\Service\BlockManager;
 use App\User\Service\ReviewManager;
 use Symfony\Component\Security\Core\Security;
+use App\Geography\Service\GeoTools;
 
 /**
  * Result manager service.
@@ -78,6 +79,7 @@ class ResultManager
         ReviewRepository $reviewRepository,
         ReviewManager $reviewManager,
         ProposalRepository $proposalRepository,
+        GeoTools $geoTools,
         bool $userReview,
         int $carpoolNoticeableDetourDurationPercent,
         int $carpoolNoticeableDetourDistancePercent,
@@ -95,7 +97,7 @@ class ResultManager
         $this->carpoolNoticeableDetourDurationPercent = $carpoolNoticeableDetourDurationPercent;
         $this->carpoolNoticeableDetourDistancePercent = $carpoolNoticeableDetourDistancePercent;
         $this->proposalRepository = $proposalRepository;
-        $this->displayLabelBuilder = new DisplayLabelBuilder($carpoolDisplayFieldsOrder);
+        $this->displayLabelBuilder = new DisplayLabelBuilder($carpoolDisplayFieldsOrder, $geoTools);
     }
 
     // set the params
