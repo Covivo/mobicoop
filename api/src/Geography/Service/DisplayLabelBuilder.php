@@ -40,10 +40,12 @@ class DisplayLabelBuilder
     private $_carpoolDisplayFieldsOrder;
     private $_waypoint;
     private $_displayLabel;
+    private $_geoTools;
 
-    public function __construct(array $carpoolDisplayFieldsOrder)
+    public function __construct(array $carpoolDisplayFieldsOrder, ?GeoTools $geoTools = null)
     {
         $this->_carpoolDisplayFieldsOrder = $carpoolDisplayFieldsOrder;
+        $this->_geoTools = $geoTools;
     }
 
     public function buildDisplayLabelFromWaypoint(Waypoint $waypoint): array
@@ -51,6 +53,10 @@ class DisplayLabelBuilder
         $this->_waypoint = $waypoint;
 
         if (0 == count($this->_carpoolDisplayFieldsOrder)) {
+            if (!is_null($this->_geoTools)) {
+                return $this->_geoTools->getDisplayLabel($waypoint->getAddress());
+            }
+
             return [];
         }
 
