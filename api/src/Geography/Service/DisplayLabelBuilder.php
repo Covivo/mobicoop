@@ -42,7 +42,7 @@ class DisplayLabelBuilder
     private $_displayLabel;
     private $_geoTools;
 
-    public function __construct(array $carpoolDisplayFieldsOrder, ?GeoTools $geoTools)
+    public function __construct(array $carpoolDisplayFieldsOrder, ?GeoTools $geoTools = null)
     {
         $this->_carpoolDisplayFieldsOrder = $carpoolDisplayFieldsOrder;
         $this->_geoTools = $geoTools;
