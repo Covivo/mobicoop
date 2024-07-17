@@ -128,7 +128,7 @@
                 icon
                 :disabled="!isUpdatable"
                 :loading="loading"
-                @click="updateAd"
+                @click="dialogWarningUpdate = true"
               >
                 <v-icon class="white--text">
                   mdi-pencil
@@ -238,6 +238,36 @@
         </v-card>
       </v-dialog>
     </v-row>
+    <v-dialog
+      v-model="dialogWarningUpdate"
+      persistent
+      max-width="550"
+    >
+      <v-card>
+        <v-card-title
+          class="text-h5"
+          v-html="$t('update.warningTitle')"
+        />
+        <v-card-text v-html="$t('update.warningText')" />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="secondary"
+            outlined
+            @click="dialogWarningUpdate = false"
+          >
+            {{ $t('no') }}
+          </v-btn>
+          <v-btn
+            color="secondary"
+            @click="updateAd"
+          >
+            {{ $t('yes') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -352,6 +382,7 @@ export default {
         content: "",
         textarea: true
       },
+      dialogWarningUpdate: false,
       deleteMessage: "",
       paused: this.isPaused,
       isUpdatable: this.adType !== 2 ? true : false

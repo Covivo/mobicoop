@@ -182,12 +182,13 @@ class BankTransferValidator
             $this->_status = BankTransfer::STATUS_NO_AMOUNT;
         }
 
-        if (!is_numeric($value)) {
+        $amount = str_replace(',', '.', $value);
+        if (!is_numeric($amount)) {
             $this->_logger->error('[BatchId : '.$this->_batchId.'] Amount must be numeric : '.$value);
             $this->_status = BankTransfer::STATUS_NO_AMOUNT;
         }
 
-        $this->_amount = str_replace(',', '.', $value);
+        $this->_amount = $amount;
     }
 
     private function _checkRecipient()

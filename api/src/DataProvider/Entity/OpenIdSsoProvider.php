@@ -88,7 +88,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::AUTHORIZATION_URL => 'connect/authorize?client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=openid+profile+email+phone&nonce=963378f1-5e39-40b9-95dc-dff120a10694&redirect_uri={REDIRECT_URI}',
             self::TOKEN_URL => 'connect/token',
             self::USERINFOS_URL => 'connect/userinfo',
-            self::LOGOUT_URL => 'connect/endsession?post_logout_redirect_uri={REDIRECT_URI}',
+            self::LOGOUT_URL => 'connect/endsession?id_token_hint={ID_TOKEN_HINT}&post_logout_redirect_uri={REDIRECT_URI}',
         ],
     ];
 
@@ -112,6 +112,8 @@ class OpenIdSsoProvider implements SsoProviderInterface
 
     private $code;
     private $logger;
+
+    private $_idToken;
 
     public function __construct(
         string $serviceName,
@@ -183,10 +185,12 @@ class OpenIdSsoProvider implements SsoProviderInterface
         // $ssoUser->setEmail('max.sso@yopmail.com');
         // $ssoUser->setFirstname('Max');
         // $ssoUser->setLastname('Sso');
-        // $ssoUser->setProvider('PassMobilite');
+        // $ssoUser->setProvider('mobigo');
         // $ssoUser->setGender(User::GENDER_MALE);
         // $ssoUser->setBirthdate(null);
         // $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
+        // $ssoUser->setIdToken('idtokenilestlong');
+
         // return $ssoUser;
         // end mock data
 
@@ -224,18 +228,25 @@ class OpenIdSsoProvider implements SsoProviderInterface
                 throw new \LogicException('Not enough infos about the User');
             }
 
+            if (!is_null($this->_idToken)) {
+                $ssoUser->setIdToken($this->_idToken);
+            }
+
             return $ssoUser;
         }
 
         throw new \LogicException('Error getUserProfile');
     }
 
-    public function getLogoutUrl(): ?string
+    public function getLogoutUrl(?string $idToken = null): ?string
     {
         $url = null;
         if (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) {
             $url = $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL];
             $url = str_replace('{REDIRECT_URI}', $this->logOutRedirectUri, $url);
+            if (!is_null($idToken)) {
+                $url = str_replace('{ID_TOKEN_HINT}', $idToken, $url);
+            }
         }
 
         return $url;
@@ -259,6 +270,10 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $response = $dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId, $this->clientSecret]);
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
+
+            if (isset($data['id_token'])) {
+                $this->_idToken = $data['id_token'];
+            }
 
             return $data['access_token'];
         }
