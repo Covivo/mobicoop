@@ -87,7 +87,7 @@ class RPCChecker implements Checker
         }
 
         $minDate = $lastCarpoolProof->getCreatedDate();
-        $minDate->modify('+'.self::PAST_DAYS.' day');
+//        $minDate->modify('+'.self::PAST_DAYS.' day');
 
         return $minDate->format('Y-m-d\\TH:i:s\\Z');
     }
