@@ -590,7 +590,9 @@ class SubscriptionValidatorTest extends TestCase
         return [
             ['+496912345678'],  // Germany
             ['05 82 16 00 10'], // France - Mobicoop
-            ['63-2-8123-4567'], // Philippines
+            ['+63-2-8123-4567'], // Philippines
+            ['02-8123-4567'], // Philippines
+            ['8123-4567'], // Philippines
         ];
     }
 }
