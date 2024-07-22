@@ -369,9 +369,9 @@ export default {
   computed: {
     computedDateFormat() {
       if (this.dateTimePicker) {
-        return this.dateTime ? moment(this.dateTime, this.$t('defaultDatetime')).format(this.$t("fullDateTime")) : null;
+        return this.dateTime ? moment.utc(this.dateTime, this.$t('defaultDatetime')).format(this.$t("fullDateTime")) : null;
       } else {
-        return this.date ? moment(this.date, this.$t('defaultDate')).format(this.$t("fullDate")) : null;
+        return this.date ? moment.utc(this.date, this.$t('defaultDate')).format(this.$t("fullDate")) : null;
       }
     },
     checkOutwardDate() {
