@@ -664,7 +664,6 @@ export default {
     },
   },
   created:function(){
-    console.log(this.locale);
     // moment.locale(this.locale); // DEFINE DATE LANGUAGE
     this.setData();
   },
