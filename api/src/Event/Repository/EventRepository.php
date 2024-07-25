@@ -24,6 +24,7 @@
 namespace App\Event\Repository;
 
 use App\Event\Entity\Event;
+use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -58,13 +59,18 @@ class EventRepository
     /**
      * Return all events with the given name and status.
      *
-     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The event found
+     * @return null|array|mixed|Statement The event found
      */
-    public function findByNameAndStatus(string $name, int $status)
+    public function findByNameAndStatus(string $name, int $status, bool $onlyActive = false)
     {
         $queryString = "
             SELECT e from App\\Event\\Entity\\Event e
             where (MATCH(e.name) AGAINST('".$name."') > 0) and e.status = ".$status;
+
+        if ($onlyActive) {
+            $now = new \DateTime('now');
+            $queryString .= " AND DATE_FORMAT(e.toDate,'%Y-%m-%d') > '".$now->format('Y-m-d')."'";
+        }
 
         $query = $this->entityManager->createQuery($queryString);
 

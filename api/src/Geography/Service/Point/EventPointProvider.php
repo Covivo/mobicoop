@@ -49,7 +49,7 @@ class EventPointProvider implements PointProvider
     public function search(string $search, ?User $user = null): array
     {
         return $this->eventsToPoints(
-            $this->eventRepository->findByNameAndStatus($search, Event::STATUS_ACTIVE)
+            $this->eventRepository->findByNameAndStatus($search, Event::STATUS_ACTIVE, true)
         );
     }
 
