@@ -84,6 +84,14 @@ class CarpoolProof
         self::STATUS_CANCELED_BY_OPERATOR,
     ];
 
+    public const NOT_SENT_STATUS = [
+        self::STATUS_INVALID_CONCURRENT_SCHEDULES,
+        self::STATUS_INVALID_SPLITTED_TRIP,
+        self::STATUS_INVALID_DUPLICATE_DEVICE,
+        self::STATUS_NOT_SENT_MISSING_PHONE,
+        self::STATUS_RPC_NOT_REACHABLE,
+    ];
+
     /**
      * @var int the id of this proof
      *

@@ -30,7 +30,7 @@ class RPCChecker implements Checker
 {
     public const RPC_URI_SUFFIX = 'v3/journeys';
     public const RPC_PROOF_STATUS = 'ok';
-    public const PAST_DAYS = '2';
+    public const PAST_DAYS = '1';
 
     public const CHECKED = ['message' => 'OK'];
     public const NOT_CHECKED = ['message' => 'KO'];
@@ -87,8 +87,9 @@ class RPCChecker implements Checker
         }
 
         $minDate = $lastCarpoolProof->getCreatedDate();
-        $minDate->modify('+'.self::PAST_DAYS.' day');
+        // $minDate->modify('+'.self::PAST_DAYS.' day');
+        $minDate->setTime(0, 0);
 
-        return $minDate->format('Y-m-d\\TH:i:s\\Z');
+        return $minDate->format('Y-m-d\TH:i:s\Z');
     }
 }

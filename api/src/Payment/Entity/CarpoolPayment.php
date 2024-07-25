@@ -335,7 +335,7 @@ class CarpoolPayment
         return $this;
     }
 
-    public function getCreateCarpoolProfileIdentifier(): ?int
+    public function getCreateCarpoolProfileIdentifier(): ?string
     {
         return $this->createCarpoolProfileIdentifier;
     }

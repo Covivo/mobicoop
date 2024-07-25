@@ -419,7 +419,7 @@ class CarpoolProofRepository
      *
      * @return null|CarpoolProof The carpool proof found or null if not found
      */
-    public function findLastCarpoolProof(?string $delta = null): ?CarpoolProof
+    public function findLastCarpoolProof(?string $delta = null, bool $exludeNotSent = false): ?CarpoolProof
     {
         $query = $this->repository->createQueryBuilder('cp');
 
@@ -428,6 +428,12 @@ class CarpoolProofRepository
             $minDate->modify($delta);
             $query->where('cp.createdDate <= :minDate');
             $query->setParameter('minDate', $minDate->format('Y-m-d').' 23:59:59');
+        }
+
+        if ($exludeNotSent) {
+            $query->andWhere('cp.status not in (:notSentStatus)')
+                ->setParameter('notSentStatus', CarpoolProof::NOT_SENT_STATUS)
+            ;
         }
 
         $query->orderBy('cp.createdDate', 'DESC')
