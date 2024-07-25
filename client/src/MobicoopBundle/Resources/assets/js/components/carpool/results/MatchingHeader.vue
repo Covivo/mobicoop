@@ -98,7 +98,7 @@ export default {
   computed: {
     computedDateFormat() {
       return this.date
-        ? moment(this.date).format(this.$t("fullDate"))
+        ? moment.utc(this.date).format(this.$t("fullDate"))
         : "";
     },
     computedOrigin() {

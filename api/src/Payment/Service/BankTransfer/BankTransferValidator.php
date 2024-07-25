@@ -188,6 +188,10 @@ class BankTransferValidator
             $this->_status = BankTransfer::STATUS_NO_AMOUNT;
         }
 
+        if (0 == (float) $amount) {
+            $this->_status = BankTransfer::STATUS_AMOUNT_AT_ZERO;
+        }
+
         $this->_amount = $amount;
     }
 

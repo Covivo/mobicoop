@@ -135,7 +135,7 @@
                       <span>
                         {{ (route && route.origin) ? displayAddress(route.origin) : '' }}
                       </span>
-                      <v-row />                      
+                      <v-row />
                     </v-col>
                   </v-row>
                 </v-timeline-item>
@@ -315,7 +315,7 @@
                 </v-col>
               </v-row>
             </v-row>
-     
+
             <!-- Days if regular and there is more than one schedule -->
             <v-row
               v-if="regular && schedules!==null && schedules.length > 0"
@@ -665,7 +665,7 @@ export default {
       type: Object,
       default: null
     },
-    // on true display price, seats, user info and message 
+    // on true display price, seats, user info and message
     displayInfo: {
       type: Boolean,
       default: true
@@ -692,41 +692,41 @@ export default {
   computed: {
     computedOutwardDateFormat() {
       return this.outwardDate
-        ? moment(this.outwardDate).format(this.$t("fullDate"))
+        ? moment.utc(this.outwardDate).format(this.$t("fullDate"))
         : "";
     },
     computedReturnDateFormat() {
       return this.returnDate
-        ? moment(this.returnDate).format(this.$t("fullDate"))
+        ? moment.utc(this.returnDate).format(this.$t("fullDate"))
         : "";
     },
     computedOutwardTimeFormat() {
       return (this.outwardDate && this.outwardTime)
-        ? moment(this.outwardDate+' '+this.outwardTime).isValid()
-          ? moment(this.outwardDate+' '+this.outwardTime).format(this.$t("hourMinute"))
-          : moment(this.outwardTime).format(this.$t("hourMinute"))
+        ? moment.utc(this.outwardDate+' '+this.outwardTime).isValid()
+          ? moment.utc(this.outwardDate+' '+this.outwardTime).format(this.$t("hourMinute"))
+          : moment.utc(this.outwardTime).format(this.$t("hourMinute"))
         : null;
     },
     computedDestinationTime() {
       if (this.route && this.route.direction && this.outwardDate && this.outwardTime) {
-        return moment(this.outwardDate+' '+this.outwardTime).isValid()
-          ? moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute"))
-          : moment(this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute")) ;
+        return moment.utc(this.outwardDate+' '+this.outwardTime).isValid()
+          ? moment.utc(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute"))
+          : moment.utc(this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute")) ;
       }
       return null;
     },
     computedReturnOutwardTimeFormat() {
       return (this.hasReturn)
-        ? moment(this.returnDate+' '+this.returnTime).isValid()
-          ? moment(this.returnDate+' '+this.returnTime).format(this.$t("hourMinute"))
-          : moment(this.returnTime).format(this.$t("hourMinute"))
+        ? moment.utc(this.returnDate+' '+this.returnTime).isValid()
+          ? moment.utc(this.returnDate+' '+this.returnTime).format(this.$t("hourMinute"))
+          : moment.utc(this.returnTime).format(this.$t("hourMinute"))
         : null;
     },
     computedReturnDestinationTime() {
       if (this.route && this.route.direction && this.hasReturn) {
-        return moment(this.returnDate+' '+this.returnTime).isValid()
-          ? moment(this.returnDate+' '+this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute"))
-          : moment(this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute"));
+        return moment.utc(this.returnDate+' '+this.returnTime).isValid()
+          ? moment.utc(this.returnDate+' '+this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute"))
+          : moment.utc(this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute"));
       }
       return null;
     },

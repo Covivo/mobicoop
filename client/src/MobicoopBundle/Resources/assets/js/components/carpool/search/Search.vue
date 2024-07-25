@@ -305,12 +305,12 @@ export default {
     },
     dateFormated() {
       return this.date
-        ? moment(this.date).format(this.$t("urlDate"))
+        ? moment.utc(this.date).format(this.$t("urlDate"))
         : null;
     },
     timeFormated() {
       return this.time
-        ? moment(this.time).format(this.$t("urlTime"))
+        ? moment.utc(this.time).format(this.$t("urlTime"))
         : null;
     },
   },
