@@ -40,8 +40,11 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
 
     public const POLICIES_CEE_IMPORT_LIMIT = 1000;
 
-    public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
+    private $_secret;
+
+    public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, string $secret, bool $testMode = false)
     {
+        $this->_secret = $secret;
         parent::__construct($tools, $uri, $token, $prefix, $logger, $testMode);
     }
 
@@ -53,6 +56,7 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
         return [
             'incentive_counterparts' => [],
             'operator_journey_id' => $this->_tools->getOperatorJourneyId(),
+            'operator_trip_id' => $this->_computeOperatorTripId($carpoolProof),
             'operator_class' => $carpoolProof->getType(),
             'incentives' => [],
             'start' => $this->_tools->getStartTimeGeopoint(),
@@ -116,6 +120,21 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
         }
 
         $this->logger->info('Request processing is complete');
+    }
+
+    private function _computeOperatorTripId(CarpoolProof $carpoolProof): string
+    {
+        return $this->_encrypt($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getId().'|'.$carpoolProof->getStartDriverDate()->format('Y-m-d H:i:s'));
+    }
+
+    private function _encrypt(string $token)
+    {
+        $cipher_method = 'aes-128-ctr';
+        $enc_iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher_method));
+        $crypted_token = openssl_encrypt($token, $cipher_method, $this->_secret, 0, $enc_iv).'::'.bin2hex($enc_iv);
+        unset($token, $cipher_method, $enc_iv);
+
+        return $crypted_token;
     }
 
     private function _serializeForCeePolicy(CarpoolProof $carpoolProof): array

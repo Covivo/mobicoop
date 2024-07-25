@@ -44,13 +44,19 @@ class RpcApiManager
      */
     private $_tools;
 
+    /**
+     * @var string
+     */
+    private $_secret;
+
     public function __construct(
         LoggerInterface $logger,
         Tools $tools,
         string $prefix,
         string $rpcApiVersion,
         string $token,
-        string $uri
+        string $uri,
+        string $secret
     ) {
         $this->_logger = $logger;
         $this->_tools = $tools;
@@ -59,6 +65,7 @@ class RpcApiManager
         $this->_rpcApiVersion = $rpcApiVersion;
         $this->_token = $token;
         $this->_uri = $uri;
+        $this->_secret = $secret;
     }
 
     /**
@@ -70,7 +77,7 @@ class RpcApiManager
         ? (
             $this->isVersion(self::RPC_API_V2)
             ? new CarpoolProofGouvProvider($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger)
-            : new CarpoolProofGouvProviderV3($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger)
+            : new CarpoolProofGouvProviderV3($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger, $this->_secret)
         )
         : new CarpoolProofGouvProvider($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger);
     }
