@@ -70,9 +70,11 @@ class GratuityCampaignActionManager
         $this->_user = $user;
         $this->_indexUserGratuityNotifications();
         $territories = $this->_findTerritoriesIdOfAddress($this->_user->getHomeAddress());
-        $campaigns = $this->_gratuityCampaignRepository->findPendingForUserWithTerritories($this->_user, $territories);
-        if (count($campaigns) > 0) {
-            $this->_createGratuityNotifications($campaigns);
+        if (count($territories) > 0) {
+            $campaigns = $this->_gratuityCampaignRepository->findPendingForUserWithTerritories($this->_user, $territories);
+            if (count($campaigns) > 0) {
+                $this->_createGratuityNotifications($campaigns);
+            }
         }
     }
 
