@@ -730,7 +730,7 @@ class UserManager
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
 
             $eecEvent = new UserPhoneUpdateEvent($user);
-            $this->eventDispatcher->dispatch(UserPhoneUpdateEvent::NAME, $event);
+            $this->eventDispatcher->dispatch(UserPhoneUpdateEvent::NAME, $eecEvent);
         }
 
         //  we dispatch the gamification event associated
