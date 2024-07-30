@@ -1969,6 +1969,15 @@ class User implements UserInterface, EquatableInterface
     private $needParentalConsent = false;
 
     /**
+     * Indicate if the user is old enough to post a driver's Ad.
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     *
+     * @var null|bool
+     */
+    private $oldEnoughToDrive = false;
+
+    /**
      * Signup referral if there is any.
      *
      * @ORM\Column(type="string", length=50, nullable=true)
@@ -4447,6 +4456,18 @@ class User implements UserInterface, EquatableInterface
     public function setOldDrivingLicenceNumber(?string $oldDrivingLicenceNumber): self
     {
         $this->oldDrivingLicenceNumber = $oldDrivingLicenceNumber;
+
+        return $this;
+    }
+
+    public function isOldEnoughToDrive(): ?bool
+    {
+        return $this->oldEnoughToDrive;
+    }
+
+    public function setOldEnoughToDrive(?bool $oldEnoughToDrive): self
+    {
+        $this->oldEnoughToDrive = $oldEnoughToDrive;
 
         return $this;
     }
