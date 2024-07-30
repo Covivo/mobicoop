@@ -607,6 +607,13 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $needParentalConsent;
 
     /**
+     * Indicate if the user is old enough to post a driver's Ad.
+     *
+     * @var null|bool
+     */
+    private $oldEnoughToDrive;
+
+    /**
      * Signup referral if there is any.
      *
      * @Groups({"post"})
@@ -1157,9 +1164,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this->email;
     }
 
-    public function eraseCredentials()
-    {
-    }
+    public function eraseCredentials() {}
 
     public function isEqualTo(UserInterface $user)
     {
@@ -1827,6 +1832,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function isOldEnoughToDrive(): ?bool
+    {
+        return $this->oldEnoughToDrive;
+    }
+
+    public function setOldEnoughToDrive(?bool $oldEnoughToDrive): self
+    {
+        $this->oldEnoughToDrive = $oldEnoughToDrive;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1890,6 +1907,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'parentalConsentDate' => $this->getParentalConsentDate(),
             'parentalConsentToken' => $this->getParentalConsentToken(),
             'needParentalConsent' => $this->getNeedParentalConsent(),
+            'isOldEnoughToDrive' => $this->isOldEnoughToDrive(),
             'referral' => $this->getReferral(),
         ];
 
