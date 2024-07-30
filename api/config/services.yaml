@@ -160,6 +160,7 @@ services:
         avatarDefaultFolder: "%env(string:AVATAR_DEFAULT_FOLDER)%"
         userReview: "%env(bool:USER_REVIEW)%"
         identityValidation: "%env(bool:USER_IDENTITY_VALIDATION)%"
+        minAgeToDrive: "%env(int:USER_MIN_AGE_TO_DRIVE)%"
     tags:
       - { name: doctrine.event_listener, event: postLoad }
 

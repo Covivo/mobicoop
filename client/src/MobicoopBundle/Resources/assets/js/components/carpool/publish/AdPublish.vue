@@ -107,6 +107,19 @@
       </v-col>
     </v-row>
     <v-row
+      v-if="!user.oldEnoughToDrive"
+      justify="center"
+    >
+      <v-col
+        cols="7"
+        xl="8"
+      >
+        <v-alert type="info">
+          <p>{{ $t("tooYoungToDrive") }}</p>
+        </v-alert>
+      </v-col>
+    </v-row>
+    <v-row
       v-if="isSearchToSave"
       justify="center"
     >
@@ -242,7 +255,8 @@
                 :init-destination="destination"
                 :init-regular="regular"
                 :init-role="role"
-                :both-role-enabled="bothRoleEnabled"
+                :driver-role-enabled="showDriverRole"
+                :both-role-enabled="showBothRole"
                 @change="searchChanged"
               />
             </v-stepper-content>
@@ -1010,7 +1024,6 @@ export default {
       returnTime: null,
       returnTimeIsValid: true,
       returnTrip: null,
-      role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
       route: null,
       schedules: null,
       seats : this.defaultSeatNumber,
@@ -1234,6 +1247,18 @@ export default {
         || (this.step === 5 && !this.driver && !this.solidaryExclusive)
         || (this.step === 6 && this.solidaryExclusive)
       )
+    },
+    role(){
+      if(!this.showDriverRole && !this.showBothRole){
+        return 2;
+      }
+      return this.defaultRoleToPublish;
+    },
+    showDriverRole(){
+      return this.user.oldEnoughToDrive;
+    },
+    showBothRole(){
+      return this.bothRoleEnabled && this.user.oldEnoughToDrive;
     }
   },
   watch: {
