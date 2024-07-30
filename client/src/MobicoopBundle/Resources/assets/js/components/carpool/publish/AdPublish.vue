@@ -1024,7 +1024,6 @@ export default {
       returnTime: null,
       returnTimeIsValid: true,
       returnTrip: null,
-      role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
       route: null,
       schedules: null,
       seats : this.defaultSeatNumber,
@@ -1248,6 +1247,12 @@ export default {
         || (this.step === 5 && !this.driver && !this.solidaryExclusive)
         || (this.step === 6 && this.solidaryExclusive)
       )
+    },
+    role(){
+      if(!this.showDriverRole && !this.showBothRole){
+        return 2;
+      }
+      return this.defaultRoleToPublish;
     },
     showDriverRole(){
       return this.user.oldEnoughToDrive;
