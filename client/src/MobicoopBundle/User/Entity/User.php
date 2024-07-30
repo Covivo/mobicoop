@@ -1907,7 +1907,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'parentalConsentDate' => $this->getParentalConsentDate(),
             'parentalConsentToken' => $this->getParentalConsentToken(),
             'needParentalConsent' => $this->getNeedParentalConsent(),
-            'isOldEnoughToDrive' => $this->isOldEnoughToDrive(),
+            'oldEnoughToDrive' => $this->isOldEnoughToDrive(),
             'referral' => $this->getReferral(),
         ];
 

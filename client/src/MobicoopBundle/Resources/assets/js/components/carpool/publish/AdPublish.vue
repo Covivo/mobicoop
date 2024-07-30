@@ -107,6 +107,19 @@
       </v-col>
     </v-row>
     <v-row
+      v-if="!user.oldEnoughToDrive"
+      justify="center"
+    >
+      <v-col
+        cols="7"
+        xl="8"
+      >
+        <v-alert type="info">
+          <p>{{ $t("tooYoungToDrive") }}</p>
+        </v-alert>
+      </v-col>
+    </v-row>
+    <v-row
       v-if="isSearchToSave"
       justify="center"
     >

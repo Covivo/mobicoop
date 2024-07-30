@@ -1,134 +1,135 @@
 {
-    "create": {
-        "title": "Publier une annonce",
-        "subtitle": "Commencer votre annonce"
+  "create": {
+    "title": "Publier une annonce",
+    "subtitle": "Commencer votre annonce"
+  },
+  "update": {
+    "title": "Modifier votre annonce",
+    "popup": {
+      "major_update_asks": {
+        "title": "Au moins une demande existe pour cette annonce",
+        "content": "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Votre modification sur des informations essentielles supprimera la version actuelle de votre annonce pour en créer une nouvelle et rejettera donc toutes les demandes en cours.<br>Si vous confirmez votre modification, quel message voulez-vous envoyer aux covoitureurs dont vous rejetez les demandes ?"
+      },
+      "major_update_ads": {
+        "title": "Un usager a déjà repéré votre annonce",
+        "content": "Un usager a déjà repéré votre annonce comme correspondant à un besoin et a pu en être alerté par SMS ou email. Votre modification supprimera la version actuelle de votre annonce pour en créer une nouvelle."
+      },
+      "minor_update_asks": {
+        "title": "Des demandes existent pour cette annonce",
+        "content": "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Les détails de votre modification seront envoyées à tous les usagers ayant fait ces demandes.<br>Confirmez-vous votre modification ?"
+      }
     },
-    "update": {
-        "title": "Modifier votre annonce",
-        "popup": {
-            "major_update_asks": {
-                "title": "Au moins une demande existe pour cette annonce",
-                "content": "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Votre modification sur des informations essentielles supprimera la version actuelle de votre annonce pour en créer une nouvelle et rejettera donc toutes les demandes en cours.<br>Si vous confirmez votre modification, quel message voulez-vous envoyer aux covoitureurs dont vous rejetez les demandes ?"
-            },
-            "major_update_ads": {
-                "title": "Un usager a déjà repéré votre annonce",
-                "content": "Un usager a déjà repéré votre annonce comme correspondant à un besoin et a pu en être alerté par SMS ou email. Votre modification supprimera la version actuelle de votre annonce pour en créer une nouvelle."
-            },
-            "minor_update_asks": {
-                "title": "Des demandes existent pour cette annonce",
-                "content": "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Les détails de votre modification seront envoyées à tous les usagers ayant fait ces demandes.<br>Confirmez-vous votre modification ?"
-            }
-        },
-        "success": "Votre annonce a été modifiée avec succès.",
-        "error": "Une erreur est survenue lors de la modification de votre annonce.",
-        "unavailable": "Vous ne pouvez pas modifier cette annonce.",
-        "informativeMessage": "La modification de votre annonce entrainera l'annulation des covoiturages liés à cette denière."
+    "success": "Votre annonce a été modifiée avec succès.",
+    "error": "Une erreur est survenue lors de la modification de votre annonce.",
+    "unavailable": "Vous ne pouvez pas modifier cette annonce.",
+    "informativeMessage": "La modification de votre annonce entrainera l'annulation des covoiturages liés à cette denière."
+  },
+  "stepper": {
+    "header": {
+      "search_journey": "Commencer votre annonce",
+      "planification": "Planification",
+      "map": "Trajet",
+      "passengers": "Passagers",
+      "participation": "Participation",
+      "message": "Message",
+      "summary": "Récapitulatif"
     },
-    "stepper": {
-        "header": {
-            "search_journey": "Commencer votre annonce",
-            "planification": "Planification",
-            "map": "Trajet",
-            "passengers": "Passagers",
-            "participation": "Participation",
-            "message": "Message",
-            "summary": "Récapitulatif"
+    "content": {
+      "passengers": {
+        "seats": {
+          "question": "J'ai de la place pour ",
+          "passengers": " passager(s)"
         },
-        "content": {
-            "passengers": {
-                "seats": {
-                    "question": "J'ai de la place pour ",
-                    "passengers": " passager(s)"
-                },
-                "luggage": {
-                    "label": "J'ai de la place pour des gros bagages",
-                    "help": "Cochez cette case si votre véhicule peut transporter des gros bagages"
-                },
-                "bike": {
-                    "label": "Je peux transporter un vélo",
-                    "help": "Cochez cette case si votre véhicule peut transporter un vélo"
-                },
-                "backSeats": {
-                    "label": "Maximum 2 personnes à l'arrière",
-                    "help": "Cochez cette case si vous garantissez que les passagers ne seront pas plus de 2 à l'arrière"
-                }
-            },
-            "participation": {
-                "price": "Participation de ",
-                "passengers": " par passager"
-            },
-            "message": {
-                "title": {
-                    "both": "Mon message",
-                    "driver": "Mon message aux passagers",
-                    "passenger": "Mon message aux conducteurs"
-                },
-                "label": "Laissez un message visible par tous dans votre annonce"
-            },
-            "summary": "Récapitulatif",
-            "map": {
-                "myproposal": "Votre proposition de trajet"
-            }
+        "luggage": {
+          "label": "J'ai de la place pour des gros bagages",
+          "help": "Cochez cette case si votre véhicule peut transporter des gros bagages"
         },
-        "driverLicense": {
-            "text": "En publiant mon annonce, je certifie avoir un permis de conduire et une assurance valides et à jour",
-            "link": "(Charte)",
-            "route": "/cgu"
+        "bike": {
+          "label": "Je peux transporter un vélo",
+          "help": "Cochez cette case si votre véhicule peut transporter un vélo"
         },
-        "buttons": {
-            "next": "Suivant",
-            "previous": "Précédent",
-            "publish_ad": "Publier mon annonce",
-            "update_ad": "Modifier mon annonce",
-            "notValid": "Vous devez être loggué pour publier une annonce et avoir fournis toutes les informations du trajet",
-            "unUpdated": "Votre demande n'a pas été modifiée. Il n'y a rien à enregistrer",
-            "unacceptableParticipation": "Le prix de votre trajet, dépasse le seuil maximum fixé par notre plateforme (0,50€/km). Votre trajet ne peut être sauvegardé",
-            "incorrectRouteDefinition": "La définition de votre trajet est incorrecte",
-            "punctualOutwardDate": "La date et/ou l'horaire de votre trajet n'a pas été renseigné correctement",
-            "punctualReturnTripOutwardDate": "La date et/ou l'horaire de votre trajet retour n'a pas été renseigné correctement",
-            "regularSchedules": "Vous n'avez pas planifié votre trajet régulier",
-            "dataProcessing": "Le traitement des données est en cours...",
-            "requirments": "Les options obligatoires n'ont pas été validées"
+        "backSeats": {
+          "label": "Maximum 2 personnes à l'arrière",
+          "help": "Cochez cette case si vous garantissez que les passagers ne seront pas plus de 2 à l'arrière"
         }
+      },
+      "participation": {
+        "price": "Participation de ",
+        "passengers": " par passager"
+      },
+      "message": {
+        "title": {
+          "both": "Mon message",
+          "driver": "Mon message aux passagers",
+          "passenger": "Mon message aux conducteurs"
+        },
+        "label": "Laissez un message visible par tous dans votre annonce"
+      },
+      "summary": "Récapitulatif",
+      "map": {
+        "myproposal": "Votre proposition de trajet"
+      }
     },
-    "messageFirstAd": {
-        "signUpDone": "Bravo {givenName}, votre inscription est terminée!",
-        "alert": "Publiez sans attendre vos trajets, quotidiens ou ponctuels, que vous soyez un passager ou un conducteur . Il est important de publier ses trajets sur l'interface afin d'être tenu au courant des covoiturages correspondants à votre besoin."
+    "driverLicense": {
+      "text": "En publiant mon annonce, je certifie avoir un permis de conduire et une assurance valides et à jour",
+      "link": "(Charte)",
+      "route": "/cgu"
     },
-    "messageSolidaryExclusiveAd": {
-        "message": " Cette annonce sera une annonce de covoiturage solidaire exclusif, si vous maintenez l'option ci-dessous. Elle ne sera visible alors que par les opérateurs solidaires pour vous mettre en relation avec un demandeur solidaire. Si vous décochez cette option, votre annonce deviendra une annonce ordinaire visible à la fois par les autres covoitureurs et les opérateurs solidaires.",
-        "switch": {
-            "label": "Annonce de covoiturage solidaire exclusif"
-        }
-    },
-    "participation": {
-        "mid": "Le prix de votre trajet est supérieur à la moyenne, et vos chances d'être contacté seront donc réduites.",
-        "high": "Le prix de votre trajet, très haut, est au-delà du barème fiscale moyen (0,30€/km) : vos chances d'être contacté seront donc très réduites, il est par ailleurs interdit de proposer des prestations rémunérées de transport qui sortent du cadre du partage de frais en covoiturage.",
-        "forbidden": "Le prix de votre trajet, dépasse le seuil maximum fixé par notre plateforme (0,50€/km). Votre trajet ne pourra pas être publié.",
-        "text": "Les indications de prix indiquées issues de recommandations gouvernementales sont relatives à des trajet privés avec des véhicules privés, elles n’engagent en rien ni les participants, ni la plateforme et ni IBM. L'objectif du service étant uniquement de faciliter la mise en relation entre employé. Plus d'informations sur la <a href='/FAQ'>FAQ</a>."
-    },
-    "messageRoundedPrice": "Nous avons arrondi le tarif de votre annonce afin d'améliorer votre expérience et celle des autres usagers. Merci de votre compréhension.",
-    "route": {
-        "publish": "covoiturage/publierannonce",
-        "update": "covoiturage/annonce/{id}/modifier",
-        "myAds": "/utilisateur/profil/modifier/mes-annonces",
-        "roundPrice": "/prix/arrondir",
-        "cleanOrphans": "/covoiturage/cleanOrphanProposals"
-    },
-    "snackErrorAntiFraud":"Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer.",
-    "snackErrorPublish":"Une erreur est survenue, veuillez réessayer plus tard",
-    "snackErrorDisconnected":"Vous avez été déconnecté du service pour inactivité, merci de bien vouloir vous reconnecter",
-    "yes": "oui",
-    "no": "non",
-    "searchToSave": {
-        "success": "Votre annonce a été sauvegardée avec succès.",
-        "error": "Une erreur est survenue lors de la sauvegarde de votre annonce.",
-        "messageTitle": "Vous avez converti votre recherche en ce début d'annonce.",
-        "message": "Complétez et publiez-la, pour être alerté des prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet."
-    },
-    "checkboxes": {
-      "drivingLicence":"" ,
-      "employer":"",
-      "inssurance":""
+    "buttons": {
+      "next": "Suivant",
+      "previous": "Précédent",
+      "publish_ad": "Publier mon annonce",
+      "update_ad": "Modifier mon annonce",
+      "notValid": "Vous devez être loggué pour publier une annonce et avoir fournis toutes les informations du trajet",
+      "unUpdated": "Votre demande n'a pas été modifiée. Il n'y a rien à enregistrer",
+      "unacceptableParticipation": "Le prix de votre trajet, dépasse le seuil maximum fixé par notre plateforme (0,50€/km). Votre trajet ne peut être sauvegardé",
+      "incorrectRouteDefinition": "La définition de votre trajet est incorrecte",
+      "punctualOutwardDate": "La date et/ou l'horaire de votre trajet n'a pas été renseigné correctement",
+      "punctualReturnTripOutwardDate": "La date et/ou l'horaire de votre trajet retour n'a pas été renseigné correctement",
+      "regularSchedules": "Vous n'avez pas planifié votre trajet régulier",
+      "dataProcessing": "Le traitement des données est en cours...",
+      "requirments": "Les options obligatoires n'ont pas été validées"
     }
+  },
+  "messageFirstAd": {
+    "signUpDone": "Bravo {givenName}, votre inscription est terminée!",
+    "alert": "Publiez sans attendre vos trajets, quotidiens ou ponctuels, que vous soyez un passager ou un conducteur . Il est important de publier ses trajets sur l'interface afin d'être tenu au courant des covoiturages correspondants à votre besoin."
+  },
+  "messageSolidaryExclusiveAd": {
+    "message": " Cette annonce sera une annonce de covoiturage solidaire exclusif, si vous maintenez l'option ci-dessous. Elle ne sera visible alors que par les opérateurs solidaires pour vous mettre en relation avec un demandeur solidaire. Si vous décochez cette option, votre annonce deviendra une annonce ordinaire visible à la fois par les autres covoitureurs et les opérateurs solidaires.",
+    "switch": {
+      "label": "Annonce de covoiturage solidaire exclusif"
+    }
+  },
+  "participation": {
+    "mid": "Le prix de votre trajet est supérieur à la moyenne, et vos chances d'être contacté seront donc réduites.",
+    "high": "Le prix de votre trajet, très haut, est au-delà du barème fiscale moyen (0,30€/km) : vos chances d'être contacté seront donc très réduites, il est par ailleurs interdit de proposer des prestations rémunérées de transport qui sortent du cadre du partage de frais en covoiturage.",
+    "forbidden": "Le prix de votre trajet, dépasse le seuil maximum fixé par notre plateforme (0,50€/km). Votre trajet ne pourra pas être publié.",
+    "text": "Les indications de prix indiquées issues de recommandations gouvernementales sont relatives à des trajet privés avec des véhicules privés, elles n’engagent en rien ni les participants, ni la plateforme et ni IBM. L'objectif du service étant uniquement de faciliter la mise en relation entre employé. Plus d'informations sur la <a href='/FAQ'>FAQ</a>."
+  },
+  "messageRoundedPrice": "Nous avons arrondi le tarif de votre annonce afin d'améliorer votre expérience et celle des autres usagers. Merci de votre compréhension.",
+  "route": {
+    "publish": "covoiturage/publierannonce",
+    "update": "covoiturage/annonce/{id}/modifier",
+    "myAds": "/utilisateur/profil/modifier/mes-annonces",
+    "roundPrice": "/prix/arrondir",
+    "cleanOrphans": "/covoiturage/cleanOrphanProposals"
+  },
+  "snackErrorAntiFraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer.",
+  "snackErrorPublish": "Une erreur est survenue, veuillez réessayer plus tard",
+  "snackErrorDisconnected": "Vous avez été déconnecté du service pour inactivité, merci de bien vouloir vous reconnecter",
+  "yes": "oui",
+  "no": "non",
+  "searchToSave": {
+    "success": "Votre annonce a été sauvegardée avec succès.",
+    "error": "Une erreur est survenue lors de la sauvegarde de votre annonce.",
+    "messageTitle": "Vous avez converti votre recherche en ce début d'annonce.",
+    "message": "Complétez et publiez-la, pour être alerté des prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet."
+  },
+  "checkboxes": {
+    "drivingLicence": "",
+    "employer": "",
+    "inssurance": ""
+  },
+  "tooYoungToDrive": "En raison de votre age vous ne pouvez pas déposer d'annonce conducteur"
 }
