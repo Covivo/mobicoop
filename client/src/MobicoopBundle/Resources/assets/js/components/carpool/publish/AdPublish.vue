@@ -255,6 +255,7 @@
                 :init-destination="destination"
                 :init-regular="regular"
                 :init-role="role"
+                :driver-role-enabled="showDriverRole"
                 :both-role-enabled="showBothRole"
                 @change="searchChanged"
               />
@@ -1247,6 +1248,9 @@ export default {
         || (this.step === 5 && !this.driver && !this.solidaryExclusive)
         || (this.step === 6 && this.solidaryExclusive)
       )
+    },
+    showDriverRole(){
+      return this.user.oldEnoughToDrive;
     },
     showBothRole(){
       return this.bothRoleEnabled && this.user.oldEnoughToDrive;
