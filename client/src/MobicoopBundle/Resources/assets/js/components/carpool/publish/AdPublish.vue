@@ -255,7 +255,7 @@
                 :init-destination="destination"
                 :init-regular="regular"
                 :init-role="role"
-                :both-role-enabled="bothRoleEnabled"
+                :both-role-enabled="showBothRole"
                 @change="searchChanged"
               />
             </v-stepper-content>
@@ -1247,6 +1247,9 @@ export default {
         || (this.step === 5 && !this.driver && !this.solidaryExclusive)
         || (this.step === 6 && this.solidaryExclusive)
       )
+    },
+    showBothRole(){
+      return this.bothRoleEnabled && this.user.oldEnoughToDrive;
     }
   },
   watch: {
