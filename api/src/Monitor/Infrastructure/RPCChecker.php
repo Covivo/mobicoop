@@ -39,6 +39,7 @@ class RPCChecker implements Checker
     private $_curlDataProvider;
     private $_carpoolProofService;
     private $_rpcUri;
+    private $_rpcPrefix;
     private $_headers = [];
 
     private $_minDate;
@@ -48,14 +49,20 @@ class RPCChecker implements Checker
      */
     private $_lastCarpool;
 
-    public function __construct(CurlDataProvider $curlDataProvider, CarpoolProofService $carpoolProofService, string $rpcUri, string $rpcToken)
-    {
+    public function __construct(
+        CurlDataProvider $curlDataProvider,
+        CarpoolProofService $carpoolProofService,
+        string $rpcUri,
+        string $rpcToken,
+        string $rpcPrefix
+    ) {
         $this->_curlDataProvider = $curlDataProvider;
         $this->_carpoolProofService = $carpoolProofService;
         $this->_rpcUri = $rpcUri;
         if ('' !== trim($this->_rpcUri) && '/' !== $this->_rpcUri[strlen($this->_rpcUri) - 1]) {
             $this->_rpcUri .= '/';
         }
+        $this->_rpcPrefix = $rpcPrefix;
         $this->_curlDataProvider->setUrl($this->_rpcUri.self::RPC_URI_SUFFIX);
         $this->_headers = [
             'Authorization: Bearer '.$rpcToken,
@@ -114,7 +121,7 @@ class RPCChecker implements Checker
             return false;
         }
 
-        $uri = $this->_rpcUri.self::RPC_URI_SUFFIX."/Mobicoop_{$this->_lastCarpool->getId()}";
+        $uri = $this->_rpcUri.self::RPC_URI_SUFFIX."/{$this->_rpcPrefix}{$this->_lastCarpool->getId()}";
         $this->_curlDataProvider->setUrl($uri);
         $response = $this->_curlDataProvider->get(null, $this->_headers);
 
