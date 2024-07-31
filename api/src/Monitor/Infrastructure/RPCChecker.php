@@ -23,6 +23,7 @@
 
 namespace App\Monitor\Infrastructure;
 
+use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Service\CurlDataProvider;
 use App\Monitor\Core\Application\Port\Checker;
 
@@ -40,8 +41,12 @@ class RPCChecker implements Checker
     private $_rpcUri;
     private $_headers = [];
 
-    private $_lastCarpoolId;
     private $_minDate;
+
+    /**
+     * @var null|CarpoolProof
+     */
+    private $_lastCarpool;
 
     public function __construct(CurlDataProvider $curlDataProvider, CarpoolProofService $carpoolProofService, string $rpcUri, string $rpcToken)
     {
@@ -84,15 +89,32 @@ class RPCChecker implements Checker
             }
         }
 
-        $return['lastCarpoolProofId'] = $this->_lastCarpoolId;
+        $return['lastCarpoolProofId'] = $this->_lastCarpool->getId();
         $return['minDate'] = $this->_minDate;
 
         return json_encode($return);
     }
 
+    private function _checkProofTooOld(): bool
+    {
+        $yesterday = new \DateTime('now');
+        $yesterday->modify('-'.self::PAST_DAYS.' day');
+        $yesterday->setTime(0, 0);
+
+        if ($this->_lastCarpool->getCreatedDate() < $yesterday) {
+            return true;
+        }
+
+        return false;
+    }
+
     private function _checkOnlyLastProof(): bool
     {
-        $uri = $this->_rpcUri.self::RPC_URI_SUFFIX."/Mobicoop_{$this->_lastCarpoolId}";
+        if ($this->_checkProofTooOld()) {
+            return false;
+        }
+
+        $uri = $this->_rpcUri.self::RPC_URI_SUFFIX."/Mobicoop_{$this->_lastCarpool->getId()}";
         $this->_curlDataProvider->setUrl($uri);
         $response = $this->_curlDataProvider->get(null, $this->_headers);
 
@@ -108,13 +130,12 @@ class RPCChecker implements Checker
 
     private function _computeMinDate()
     {
-        $lastCarpoolProof = $this->_carpoolProofService->getLastCarpoolProof('-'.self::PAST_DAYS.' day');
-        if (is_null($lastCarpoolProof)) {
+        $this->_lastCarpool = $this->_carpoolProofService->getLastCarpoolProof('-'.self::PAST_DAYS.' day');
+        if (is_null($this->_lastCarpool)) {
             return;
         }
-        $this->_lastCarpoolId = $lastCarpoolProof->getId();
 
-        $minDate = $lastCarpoolProof->getCreatedDate();
+        $minDate = $this->_lastCarpool->getCreatedDate();
 
         $minDate->setTime(0, 0);
 
