@@ -78,12 +78,32 @@ class RPCChecker implements Checker
 
         if (is_string($response->getValue()) && is_countable(json_decode($response->getValue(), true)) && count(json_decode($response->getValue(), true)) > 0) {
             $return = self::CHECKED;
+        } else {
+            if ($this->_checkOnlyLastProof()) {
+                $return = self::CHECKED;
+            }
         }
 
         $return['lastCarpoolProofId'] = $this->_lastCarpoolId;
         $return['minDate'] = $this->_minDate;
 
         return json_encode($return);
+    }
+
+    private function _checkOnlyLastProof(): bool
+    {
+        $uri = $this->_rpcUri.self::RPC_URI_SUFFIX."/Mobicoop_{$this->_lastCarpoolId}";
+        $this->_curlDataProvider->setUrl($uri);
+        $response = $this->_curlDataProvider->get(null, $this->_headers);
+
+        if (is_string($response->getValue())
+            && isset(json_decode($response->getValue(), true)['status'])
+            && self::RPC_PROOF_STATUS == json_decode($response->getValue(), true)['status']
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     private function _computeMinDate()
