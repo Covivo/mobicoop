@@ -40,6 +40,9 @@ class RPCChecker implements Checker
     private $_rpcUri;
     private $_headers = [];
 
+    private $_lastCarpoolId;
+    private $_minDate;
+
     public function __construct(CurlDataProvider $curlDataProvider, CarpoolProofService $carpoolProofService, string $rpcUri, string $rpcToken)
     {
         $this->_curlDataProvider = $curlDataProvider;
@@ -58,7 +61,8 @@ class RPCChecker implements Checker
     public function check(): string
     {
         $params = ['status' => self::RPC_PROOF_STATUS];
-        $params['start'] = $this->_computeMinDate();
+        $this->_computeMinDate();
+        $params['start'] = $this->_minDate;
 
         return $this->_determineResult($params);
     }
@@ -76,20 +80,24 @@ class RPCChecker implements Checker
             $return = self::CHECKED;
         }
 
+        $return['lastCarpoolProofId'] = $this->_lastCarpoolId;
+        $return['minDate'] = $this->_minDate;
+
         return json_encode($return);
     }
 
-    private function _computeMinDate(): ?string
+    private function _computeMinDate()
     {
         $lastCarpoolProof = $this->_carpoolProofService->getLastCarpoolProof('-'.self::PAST_DAYS.' day');
         if (is_null($lastCarpoolProof)) {
-            return null;
+            return;
         }
+        $this->_lastCarpoolId = $lastCarpoolProof->getId();
 
         $minDate = $lastCarpoolProof->getCreatedDate();
-        // $minDate->modify('+'.self::PAST_DAYS.' day');
+
         $minDate->setTime(0, 0);
 
-        return $minDate->format('Y-m-d\TH:i:s\Z');
+        $this->_minDate = $minDate->format('Y-m-d\TH:i:s\Z');
     }
 }
