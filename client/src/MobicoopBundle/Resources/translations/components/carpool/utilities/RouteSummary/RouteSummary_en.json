@@ -1,3 +1,4 @@
 {
-    "hourMinute": "HH[h]mm"
+  "hourMinute": "HH[h]mm",
+  "homeAddress": "Home"
 }
