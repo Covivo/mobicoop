@@ -1,55 +1,56 @@
 {
-    "registerUrl": "/utilisateur/inscription/{id}",
-    "loginUrl": "/utilisateur/connexion/{id}",
-    "register": "Izen ematea",
-    "login": "Konexioa",
-    "loginOrRegister": "Konektatu edo izena eman behar duzu segitzeko",
-    "loginOrRegisterTitle": "Konxexio edo izena ematea beharrezkoa da",
-    "tabs": {
-        "ptresults": "Garraio publikoa",
-        "otherCarpools": "Beste autokidetzak",
-        "carpools": "Autokidetzak {platform}"
-    },
-    "snackBar": {
-        "error": "Arazo tekniko baten ondorioz, harremanetan jartzeko eskaera ez da bidalia izan",
-        "success": "Harremanetan jartzeko eskaera igorria izan da"
-    },
-    "alsoIncludePassengers": "Bilaketa honek bidaiari iragarkiak baditu ere",
-    "includePassengers": "Bidaiari iragarkiak ere ikusi",
-    "matchingNumber": "Ez da autokidetza iragarkirik atzeman... | autokidetza iragarki {number} atzeman da| {number} autokidetza iragarki atzeman dira",
-    "AskNewSearch": "Berriz saia zaitez zure bilaketa aldatuz? Beste ibilbide bat?",
-    "newSearch": "Nire bilaketa aldatzen dut",
-    "search3": "Istant bat goaita ezazu...",
-    "search2": "Lasai, menturazko autokide anitz baditugu!",
-    "search": "Bilaketa egiten ari...",
-    "ptSearchUrl": "/transport-public/recherche",
-    "externalJourneyUrl": "/covoiturage/rdexJourney",
-    "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
-    "carpoolMailBoxUrl": "/utilisateur/messages",
-    "contactUrl": "/utilisateur/messages/nouveau",
-    "carpoolUrl": "/covoiturage/demande",
-    "bookingUrl": "/booking/demande",
-    "matchingUrl": "/covoiturage/recherche/matching",
-    "externalUrl": "/covoiturage/annonce/{id}/externe",
-    "proposalUrl": "/covoiturage/annonce/{id}/detail",
-    "title": "Autokidetzen emaitzak {cityA} eta{cityB}-ren artean",
-    "saveSearch": {
-		"route": "/covoiturage/recherche/{id}/enregistrer",
-        "noAd": "Créer une alerte",
-        "noCorrectAd": "Aucune annonce satisfaisante?",
-        "message": "Pour être alerté de prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet, cliquez ci-dessous pour convertir votre recherche en annonce.",
-        "button": {
-            "label": "Créer une alerte"
-        }
-	},
-    "carpoolStandard": {
-        "dialog": {
-            "send": "Contacter",
-            "cancel": "Annuler",
-            "title": "Contacter",
-            "intro": "Cette annonce de covoiturage ne provient pas de {platform} mais du site partenaire {origin}",
-            "instructions": "Merci de compléter ou de modifier le message ci-dessous",
-            "label": "Votre message"
-        }
+  "registerUrl": "/utilisateur/inscription/{id}",
+  "loginUrl": "/utilisateur/connexion/{id}",
+  "register": "Izen ematea",
+  "login": "Konexioa",
+  "loginOrRegister": "Konektatu edo izena eman behar duzu segitzeko",
+  "loginOrRegisterTitle": "Konxexio edo izena ematea beharrezkoa da",
+  "tabs": {
+    "ptresults": "Garraio publikoa",
+    "otherCarpools": "Beste autokidetzak",
+    "carpools": "Autokidetzak {platform}"
+  },
+  "snackBar": {
+    "error": "Arazo tekniko baten ondorioz, harremanetan jartzeko eskaera ez da bidalia izan",
+    "success": "Harremanetan jartzeko eskaera igorria izan da"
+  },
+  "alsoIncludePassengers": "Bilaketa honek bidaiari iragarkiak baditu ere",
+  "includePassengers": "Bidaiari iragarkiak ere ikusi",
+  "matchingNumber": "Ez da autokidetza iragarkirik atzeman... | autokidetza iragarki {number} atzeman da| {number} autokidetza iragarki atzeman dira",
+  "AskNewSearch": "Berriz saia zaitez zure bilaketa aldatuz? Beste ibilbide bat?",
+  "newSearch": "Nire bilaketa aldatzen dut",
+  "search3": "Istant bat goaita ezazu...",
+  "search2": "Lasai, menturazko autokide anitz baditugu!",
+  "search": "Bilaketa egiten ari...",
+  "ptSearchUrl": "/transport-public/recherche",
+  "externalJourneyUrl": "/covoiturage/rdexJourney",
+  "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
+  "carpoolMailBoxUrl": "/utilisateur/messages",
+  "contactUrl": "/utilisateur/messages/nouveau",
+  "carpoolUrl": "/covoiturage/demande",
+  "bookingUrl": "/booking/demande",
+  "matchingUrl": "/covoiturage/recherche/matching",
+  "externalUrl": "/covoiturage/annonce/{id}/externe",
+  "proposalUrl": "/covoiturage/annonce/{id}/detail",
+  "title": "Autokidetzen emaitzak {cityA} eta{cityB}-ren artean",
+  "saveSearch": {
+    "route": "/covoiturage/recherche/{id}/enregistrer",
+    "noAd": "Créer une alerte",
+    "noCorrectAd": "Aucune annonce satisfaisante?",
+    "message": "Pour être alerté de prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet, cliquez ci-dessous pour convertir votre recherche en annonce.",
+    "button": {
+      "label": "Créer une alerte"
     }
+  },
+  "carpoolStandard": {
+    "dialog": {
+      "send": "Contacter",
+      "cancel": "Annuler",
+      "title": "Contacter",
+      "intro": "Cette annonce de covoiturage ne provient pas de {platform} mais du site partenaire {origin}",
+      "instructions": "Merci de compléter ou de modifier le message ci-dessous",
+      "label": "Votre message"
+    }
+  },
+  "homeAddress": "Domicile"
 }

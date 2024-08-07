@@ -611,24 +611,24 @@ export default {
     },
     displayOrigin(){
       if(this.lOrigin && this.lOrigin.name){
-        return this.lOrigin.name;
+        return this.$t(this.lOrigin.name);
       }
       else if(this.lOrigin && this.lOrigin.addressLocality)
       {
-        return this.lOrigin.addressLocality;
+        return this.$t(this.lOrigin.addressLocality);
       } else {
-        return (this.lOrigin) ? this.lOrigin : "";
+        return (this.lOrigin) ? this.$t(this.lOrigin) : "";
       }
     },
     displayDestination(){
       if(this.lDestination && this.lDestination.name){
-        return this.lDestination.name;
+        return this.$t(this.lDestination.name);
       }
       else if(this.lDestination && this.lDestination.addressLocality)
       {
-        return this.lDestination.addressLocality;
+        return this.$t(this.lDestination.addressLocality);
       } else {
-        return (this.lDestination) ? this.lDestination : "";
+        return (this.lDestination) ? this.$t(this.lDestination) : "";
       }
     }
   },
