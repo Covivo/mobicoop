@@ -1089,6 +1089,7 @@ services:
     arguments:
       $rpcUri: "%env(string:CARPOOL_PROOF_URI)%"
       $rpcToken: "%env(string:CARPOOL_PROOF_TOKEN)%"
+      $rpcPrefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
 
   mobicoop.monitor.core.application.service.proof_checker:
     class: App\Monitor\Core\Application\Service\ProofChecker
