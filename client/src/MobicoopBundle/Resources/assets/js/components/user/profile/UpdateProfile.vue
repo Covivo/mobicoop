@@ -21,7 +21,7 @@
       type="success"
       outlined
     >
-      {{ $t('savedCo2', { savedCo2: savedCo2 }) }} CO<sup>2</sup>
+      {{ $t('savedCo2', { savedCo2: savedCo2 }) }} CO<sub>2</sub>
     </v-alert>
 
     <!-- Main form -->

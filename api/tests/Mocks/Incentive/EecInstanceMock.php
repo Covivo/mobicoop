@@ -10,6 +10,11 @@ class EecInstanceMock
     {
         return new EecInstance([
             'expirationDate' => '2023-10-01',
+            'features' => [
+                'available' => true,
+                'ldAvailable' => true,
+                'sdAvailable' => true,
+            ],
             'provider' => [
                 'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
                 'app_id' => null,
@@ -27,10 +32,12 @@ class EecInstanceMock
                     'key' => 'my_ld_key',
                     'expirationDate' => null,
                     'minimalDistance' => 80000,
+                    'progressVisualization' => true,
                 ],
                 'sd' => [
                     'key' => 'my_sd_key',
                     'expirationDate' => null,
+                    'progressVisualization' => true,
                 ],
             ],
             'previousPeriodWithoutTravel' => 3,
@@ -42,6 +49,11 @@ class EecInstanceMock
     {
         return new EecInstance([
             'expirationDate' => null,
+            'features' => [
+                'available' => true,
+                'ldAvailable' => true,
+                'sdAvailable' => true,
+            ],
             'provider' => [
                 'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
                 'app_id' => null,
@@ -59,10 +71,12 @@ class EecInstanceMock
                     'key' => 'my_ld_key',
                     'expirationDate' => '2023-10-01',
                     'minimalDistance' => 80000,
+                    'progressVisualization' => true,
                 ],
                 'sd' => [
                     'key' => 'my_sd_key',
                     'expirationDate' => '2023-10-01',
+                    'progressVisualization' => true,
                 ],
             ],
             'previousPeriodWithoutTravel' => 3,
@@ -74,6 +88,11 @@ class EecInstanceMock
     {
         return new EecInstance([
             'expirationDate' => null,
+            'features' => [
+                'available' => true,
+                'ldAvailable' => true,
+                'sdAvailable' => true,
+            ],
             'provider' => [
                 'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
                 'app_id' => null,
@@ -91,10 +110,12 @@ class EecInstanceMock
                     'key' => 'my_ld_key',
                     'expirationDate' => null,
                     'minimalDistance' => 80000,
+                    'progressVisualization' => true,
                 ],
                 'sd' => [
                     'key' => 'my_sd_key',
                     'expirationDate' => null,
+                    'progressVisualization' => true,
                 ],
             ],
             'previousPeriodWithoutTravel' => 3,
@@ -106,6 +127,11 @@ class EecInstanceMock
     {
         return new EecInstance([
             'expirationDate' => '2027-01-01',
+            'features' => [
+                'available' => true,
+                'ldAvailable' => true,
+                'sdAvailable' => true,
+            ],
             'provider' => [
                 'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
                 'app_id' => null,
@@ -123,10 +149,12 @@ class EecInstanceMock
                     'key' => 'my_ld_key',
                     'expirationDate' => null,
                     'minimalDistance' => 80000,
+                    'progressVisualization' => true,
                 ],
                 'sd' => [
                     'key' => 'my_sd_key',
                     'expirationDate' => null,
+                    'progressVisualization' => true,
                 ],
             ],
             'previousPeriodWithoutTravel' => 3,
@@ -138,6 +166,11 @@ class EecInstanceMock
     {
         return new EecInstance([
             'expirationDate' => null,
+            'features' => [
+                'available' => true,
+                'ldAvailable' => true,
+                'sdAvailable' => true,
+            ],
             'provider' => [
                 'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
                 'app_id' => null,
@@ -155,10 +188,12 @@ class EecInstanceMock
                     'key' => 'my_ld_key',
                     'expirationDate' => '2027-01-01',
                     'minimalDistance' => 80000,
+                    'progressVisualization' => true,
                 ],
                 'sd' => [
                     'key' => 'my_sd_key',
                     'expirationDate' => null,
+                    'progressVisualization' => true,
                 ],
             ],
             'previousPeriodWithoutTravel' => 3,
@@ -170,6 +205,11 @@ class EecInstanceMock
     {
         return new EecInstance([
             'expirationDate' => null,
+            'features' => [
+                'available' => true,
+                'ldAvailable' => true,
+                'sdAvailable' => true,
+            ],
             'provider' => [
                 'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
                 'app_id' => null,
@@ -187,10 +227,12 @@ class EecInstanceMock
                     'key' => 'my_ld_key',
                     'expirationDate' => null,
                     'minimalDistance' => 80000,
+                    'progressVisualization' => true,
                 ],
                 'sd' => [
                     'key' => 'my_sd_key',
                     'expirationDate' => '2027-01-01',
+                    'progressVisualization' => true,
                 ],
             ],
             'previousPeriodWithoutTravel' => 3,

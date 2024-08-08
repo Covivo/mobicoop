@@ -35,7 +35,9 @@
     }
   },
   "update": {
-    "route": "/carpool/proposal/{id}/change"
+    "route": "/carpool/proposal/{id}/change",
+    "warningTitle": "Warning, updating your ad will lead to the suppression of :",
+    "warningText": "<ul><li>Ongoing validated carpool linked to this ad</li><li>Chats linked to this ad</li><li>And the history of the carpools linked (i.e. Carpool proofs export)</li></ul>"
   },
   "pause": {
     "info": "Note: proposal is paused!",
@@ -51,5 +53,7 @@
   },
   "solidary": {
     "exclusive": "Announcement of exclusive solidarity carpooling"
-  }
+  },
+  "yes": "Update the ad",
+  "no": "Don't update it"
 }

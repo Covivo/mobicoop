@@ -199,7 +199,7 @@ export default {
       }
       else{
         if(this.origin.name){
-          return this.origin.name;
+          return this.$t(this.origin.name);
         }
         else if (this.type == 1 && !this.regular) {
           return (this.origin.streetAddress) ? this.origin.streetAddress : this.origin.addressLocality
@@ -218,7 +218,7 @@ export default {
       }
       else{
         if(this.destination.name){
-          return this.destination.name;
+          return this.$t(this.destination.name);
         }
         else if (this.type == 1 && !this.regular) {
           return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality

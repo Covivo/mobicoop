@@ -616,12 +616,12 @@ export default {
   computed: {
     computedOutwardDateFormat() {
       return this.outwardDate
-        ? moment(this.outwardDate).format(this.$t("fullDate"))
+        ? moment.utc(this.outwardDate).format(this.$t("fullDate"))
         : "";
     },
     computedReturnDateFormat() {
       return this.returnDate
-        ? moment(this.returnDate).format(this.$t("fullDate"))
+        ? moment.utc(this.returnDate).format(this.$t("fullDate"))
         : "";
     },
     activeSchedules() {

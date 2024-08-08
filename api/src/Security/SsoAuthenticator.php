@@ -140,7 +140,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
     /**
      * Called when authentication is needed, but it's not sent.
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, ?AuthenticationException $authException = null)
     {
         $data = [
             'message' => 'Authentication Required',

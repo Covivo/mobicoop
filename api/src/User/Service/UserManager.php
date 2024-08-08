@@ -1786,6 +1786,9 @@ class UserManager
                 if (is_null($ssoAccount->getCreatedDate())) {
                     $ssoAccount->setCreatedDate(new \DateTime('now'));
                 }
+                if (!is_null($ssoUser->getIdToken())) {
+                    $ssoAccount->setIdToken($ssoUser->getIdToken());
+                }
                 $this->entityManager->persist($ssoAccount);
                 $this->entityManager->flush();
 
@@ -1800,6 +1803,10 @@ class UserManager
         $newSsoAccount->setSsoId($ssoUser->getSub());
         $newSsoAccount->setSsoProvider($ssoUser->getProvider());
         $newSsoAccount->setCreatedBySso($createdBySso);
+        if (!is_null($ssoUser->getIdToken())) {
+            $newSsoAccount->setIdToken($ssoUser->getIdToken());
+        }
+
         $user->addSsoAccount($newSsoAccount);
 
         $this->entityManager->persist($user);
@@ -2129,6 +2136,7 @@ class UserManager
         $ssoAccount->setSsoId($ssoUser->getSub());
         $ssoAccount->setSsoProvider($ssoUser->getProvider());
         $ssoAccount->setCreatedBySso(true);
+        $ssoAccount->setIdToken($ssoUser->getIdToken());
 
         $user->addSsoAccount($ssoAccount);
 

@@ -121,9 +121,9 @@ class UserManager
         $this->userNotificationRepository = $userNotificationRepository;
     }
 
-    private function __getLocalityCode(string $search): ?int
+    private function __getLocalityCode(float $lon, float $lat): ?int
     {
-        $result = $this->pointSearcher->geocode($search);
+        $result = $this->pointSearcher->reverse($lon, $lat);
         if (isset($result[0]) && $result[0] instanceof Point) {
             return $result[0]->getLocalityCode();
         }
@@ -590,7 +590,7 @@ class UserManager
 
         $searchedLocality = $this->__getHomeAddressLocality($user->getAddresses());
         if (!is_null($searchedLocality)) {
-            $localityCode = $this->__getLocalityCode($searchedLocality);
+            $localityCode = $this->__getLocalityCode($user->getHomeAddress()->getLongitude(), $user->getHomeAddress()->getLatitude());
             $rzpProvider = new RezopouceProvider($this->rzpUri, $this->rzpLogin, $this->rzpPassword);
             $territory = $rzpProvider->getCommuneTerritory($localityCode);
             if (!is_null($territory)) {

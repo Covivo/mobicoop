@@ -368,14 +368,14 @@ class SolidaryManager
                                 if ($this->getSolidary($solidary->getId())->getProgression() == $progression) {
                                     $fullSolidaries[] = $this->getSolidary($solidary->getId());
                                 }
-                            // case without progression
+                                // case without progression
                             } else {
                                 $fullSolidaries[] = $this->getSolidary($solidary->getId());
                             }
                         }
                     }
                 }
-            // case without solidaryUser
+                // case without solidaryUser
             } else {
                 $solidaries = $solidaryUserStructure->getSolidaries();
                 if (!empty($solidaries)) {
@@ -385,7 +385,7 @@ class SolidaryManager
                             if ($this->getSolidary($solidary->getId())->getProgression() == $progression) {
                                 $fullSolidaries[] = $this->getSolidary($solidary->getId());
                             }
-                        // case without progression
+                            // case without progression
                         } else {
                             $fullSolidaries[] = $this->getSolidary($solidary->getId());
                         }
@@ -442,12 +442,11 @@ class SolidaryManager
         $solidary->setSolidaryUserStructure($solidaryUserStructure);
 
         // we set the start progression
-        $solidary->setProgression(0);
 
         if ($solidary->isPassenger()) {
+            $solidary->setProgression(solidary::STATUS_CREATED);
             $this->entityManager->persist($solidary);
             $this->entityManager->flush();
-
             // Create an ad and get the associated proposal
             $ad = $this->createJourneyFromSolidary($solidary, $userId);
             $proposal = $this->proposalRepository->find($ad->getId());
