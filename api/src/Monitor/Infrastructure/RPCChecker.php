@@ -23,6 +23,7 @@
 
 namespace App\Monitor\Infrastructure;
 
+use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Service\CurlDataProvider;
 use App\Monitor\Core\Application\Port\Checker;
 
@@ -38,16 +39,30 @@ class RPCChecker implements Checker
     private $_curlDataProvider;
     private $_carpoolProofService;
     private $_rpcUri;
+    private $_rpcPrefix;
     private $_headers = [];
 
-    public function __construct(CurlDataProvider $curlDataProvider, CarpoolProofService $carpoolProofService, string $rpcUri, string $rpcToken)
-    {
+    private $_minDate;
+
+    /**
+     * @var null|CarpoolProof
+     */
+    private $_lastCarpool;
+
+    public function __construct(
+        CurlDataProvider $curlDataProvider,
+        CarpoolProofService $carpoolProofService,
+        string $rpcUri,
+        string $rpcToken,
+        string $rpcPrefix
+    ) {
         $this->_curlDataProvider = $curlDataProvider;
         $this->_carpoolProofService = $carpoolProofService;
         $this->_rpcUri = $rpcUri;
         if ('' !== trim($this->_rpcUri) && '/' !== $this->_rpcUri[strlen($this->_rpcUri) - 1]) {
             $this->_rpcUri .= '/';
         }
+        $this->_rpcPrefix = $rpcPrefix;
         $this->_curlDataProvider->setUrl($this->_rpcUri.self::RPC_URI_SUFFIX);
         $this->_headers = [
             'Authorization: Bearer '.$rpcToken,
@@ -58,7 +73,8 @@ class RPCChecker implements Checker
     public function check(): string
     {
         $params = ['status' => self::RPC_PROOF_STATUS];
-        $params['start'] = $this->_computeMinDate();
+        $this->_computeMinDate();
+        $params['start'] = $this->_minDate;
 
         return $this->_determineResult($params);
     }
@@ -74,22 +90,62 @@ class RPCChecker implements Checker
 
         if (is_string($response->getValue()) && is_countable(json_decode($response->getValue(), true)) && count(json_decode($response->getValue(), true)) > 0) {
             $return = self::CHECKED;
+        } else {
+            if ($this->_checkOnlyLastProof()) {
+                $return = self::CHECKED;
+            }
         }
+
+        $return['lastCarpoolProofId'] = $this->_lastCarpool->getId();
+        $return['minDate'] = $this->_minDate;
 
         return json_encode($return);
     }
 
-    private function _computeMinDate(): ?string
+    private function _checkProofTooOld(): bool
     {
-        $lastCarpoolProof = $this->_carpoolProofService->getLastCarpoolProof('-'.self::PAST_DAYS.' day');
-        if (is_null($lastCarpoolProof)) {
-            return null;
+        $yesterday = new \DateTime('now');
+        $yesterday->modify('-'.self::PAST_DAYS.' day');
+        $yesterday->setTime(0, 0);
+
+        if ($this->_lastCarpool->getCreatedDate() < $yesterday) {
+            return true;
         }
 
-        $minDate = $lastCarpoolProof->getCreatedDate();
-        // $minDate->modify('+'.self::PAST_DAYS.' day');
+        return false;
+    }
+
+    private function _checkOnlyLastProof(): bool
+    {
+        if ($this->_checkProofTooOld()) {
+            return false;
+        }
+
+        $uri = $this->_rpcUri.self::RPC_URI_SUFFIX."/{$this->_rpcPrefix}{$this->_lastCarpool->getId()}";
+        $this->_curlDataProvider->setUrl($uri);
+        $response = $this->_curlDataProvider->get(null, $this->_headers);
+
+        if (is_string($response->getValue())
+            && isset(json_decode($response->getValue(), true)['status'])
+            && self::RPC_PROOF_STATUS == json_decode($response->getValue(), true)['status']
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function _computeMinDate()
+    {
+        $this->_lastCarpool = $this->_carpoolProofService->getLastCarpoolProof('-'.self::PAST_DAYS.' day');
+        if (is_null($this->_lastCarpool)) {
+            return;
+        }
+
+        $minDate = $this->_lastCarpool->getCreatedDate();
+
         $minDate->setTime(0, 0);
 
-        return $minDate->format('Y-m-d\TH:i:s\Z');
+        $this->_minDate = $minDate->format('Y-m-d\TH:i:s\Z');
     }
 }
