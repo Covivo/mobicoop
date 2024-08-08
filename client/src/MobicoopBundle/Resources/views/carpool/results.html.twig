@@ -1,7 +1,10 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}{% trans with {'CityA': originTitle, 'CityB': destinationTitle} from 'meta' %}meta.results.title{% endtrans %}{% endblock %}
-{% block desc %}{% trans with {'CityA': originTitle, 'CityB': destinationTitle} from 'meta' %}meta.results.description{% endtrans %}{% endblock %}
+{% set translatedOriginTitle = originTitle|trans %}
+{% set translatedDestinationTitle = destinationTitle|trans %}
+
+{% block title %}{% trans with {'CityA': translatedOriginTitle, 'CityB': translatedDestinationTitle} from 'meta' %}meta.results.title{% endtrans %}{% endblock %}
+{% block desc %}{% trans with {'CityA': translatedOriginTitle, 'CityB': translatedDestinationTitle} from 'meta' %}meta.results.description{% endtrans %}{% endblock %}
 
 {% block stylesheets %}
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}#}
