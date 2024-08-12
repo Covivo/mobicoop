@@ -30,6 +30,7 @@
         "laminas/laminas-eventmanager": "^3.2",
         "lexik/jwt-authentication-bundle": "^2.6",
         "liip/imagine-bundle": "^2.1",
+        "lkaybob/php-fcm-v1": "^1.0",
         "mandrill/mandrill": "^1.0",
         "nelmio/cors-bundle": "^1.5 || ^2.0",
         "ocramius/package-versions": "^1.4",
@@ -72,7 +73,11 @@
             "*": "dist"
         },
         "sort-packages": true,
-        "process-timeout": 0
+        "process-timeout": 0,
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/flex": true
+        }
     },
     "autoload": {
         "psr-4": {
