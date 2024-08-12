@@ -43,9 +43,9 @@ class FirebaseProvider implements ProviderInterface
     private $client;
     
 
-    public function __construct()
+    public function __construct($serviceAccount)
     {
-        $this->client = new Client('/var/www/api/config/packages/service_account.json');
+        $this->client = new Client($serviceAccount);
         $this->recipient = new Recipient();
     }
 
