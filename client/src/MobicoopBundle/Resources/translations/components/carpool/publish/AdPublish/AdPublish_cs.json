@@ -54,7 +54,8 @@
       },
       "participation": {
         "price": "Účast v ",
-        "passengers": " na cestujícího"
+        "passengers": " na cestujícího",
+        "details": "La participation est calculée au prorata de la distance covoiturée en cas de paiement en ligne. Dans les autres cas, libre à vous de l'adapter ou d'alterner les tours de conduite."
       },
       "message": {
         "label": "Zanechte v inzerátu zprávu, aby ji všichni viděli"

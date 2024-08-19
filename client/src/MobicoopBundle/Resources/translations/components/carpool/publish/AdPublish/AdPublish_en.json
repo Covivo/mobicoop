@@ -55,7 +55,8 @@
       },
       "participation": {
         "price": "Participation of ",
-        "passengers": " per passenger"
+        "passengers": " per passenger",
+        "details": "Participation is computed proportionally to the carpooled distance for online payment purpose. In other cases, you're free to adapt or alternate drivers."
       },
       "message": {
         "title": {
