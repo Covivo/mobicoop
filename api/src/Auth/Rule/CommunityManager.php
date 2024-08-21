@@ -37,7 +37,6 @@ class CommunityManager implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        var_dump('communityManager');
         /**
          * @var Community $community
          */
@@ -46,14 +45,10 @@ class CommunityManager implements AuthRuleInterface
         $communityUsers = $community->getCommunityUsers();
 
         foreach ($communityUsers as $communityUser) {
-            var_dump($communityUser->getUser()->getId() == $requester->getId() && CommunityUser::STATUS_ACCEPTED_AS_MODERATOR == $communityUser->getStatus());
             if ($communityUser->getUser()->getId() == $requester->getId() && CommunityUser::STATUS_ACCEPTED_AS_MODERATOR == $communityUser->getStatus()) {
-                var_dump('true');
-
                 return true;
             }
         }
-        var_dump('false');
 
         return false;
     }
