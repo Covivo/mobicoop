@@ -19,14 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
+use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 
 /**
- *  Check that the requester is a manager of the related Community
+ *  Check that the requester is a manager of the related Community.
  */
 class CommunityManager implements AuthRuleInterface
 {
@@ -35,10 +37,24 @@ class CommunityManager implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
-        // if (!isset($params['id'])) {
-        //     return false;
-        // }
-        // return $params['id'] == $requester->getId();
+        var_dump('communityManager');
+        /**
+         * @var Community $community
+         */
+        $community = $params['community'];
+
+        $communityUsers = $community->getCommunityUsers();
+
+        foreach ($communityUsers as $communityUser) {
+            var_dump($communityUser->getUser()->getId() == $requester->getId() && CommunityUser::STATUS_ACCEPTED_AS_MODERATOR == $communityUser->getStatus());
+            if ($communityUser->getUser()->getId() == $requester->getId() && CommunityUser::STATUS_ACCEPTED_AS_MODERATOR == $communityUser->getStatus()) {
+                var_dump('true');
+
+                return true;
+            }
+        }
+        var_dump('false');
+
+        return false;
     }
 }
