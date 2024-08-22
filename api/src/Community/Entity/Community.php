@@ -259,7 +259,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *              "path"="/admin/communities/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('community_read',object)",
+ *              "security"="is_granted('admin_community_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
