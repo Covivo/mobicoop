@@ -34,11 +34,11 @@ class CommunityManagerSelf implements AuthRuleInterface
 {
     public function execute($requester, $item, $params)
     {
-        /**
-         * @var Community $community
-         */
-        $community = $params['community'];
+        if (!isset($params['community']) || !($params['community'] instanceof Community)) {
+            return false;
+        }
 
+        $community = $params['community'];
         $communityUsers = $community->getCommunityUsers();
 
         foreach ($communityUsers as $communityUser) {
