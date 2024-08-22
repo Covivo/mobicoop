@@ -40,11 +40,12 @@ class CommunityVoter extends Voter
     public const ADMIN_COMMUNITY_LIST = 'admin_community_list';
     public const ADMIN_COMMUNITY_MEMBERSHIP = 'admin_community_membership';
     public const COMMUNITY_CREATE = 'community_create';
-    public const COMMUNITY_READ = 'community_read_details_self';
+    public const COMMUNITY_READ = 'community_read';
     public const COMMUNITY_UPDATE = 'community_update';
     public const COMMUNITY_DELETE = 'community_delete';
     public const COMMUNITY_LIST = 'community_list';
     public const COMMUNITY_MEMBERSHIP = 'community_membership';
+    public const COMMUNITY_MANAGE = 'community_manage';
 
     private $authManager;
     private $request;
@@ -95,7 +96,7 @@ class CommunityVoter extends Voter
             case self::ADMIN_COMMUNITY_READ:
                 // this voter is used for direct community read, or for community member list, we have to check the type of subject
                 if ($subject instanceof Community) {
-                    return $this->canReadCommunity($subject);
+                    return $this->canAdminReadCommunity($subject);
                 }
                 if ($community = $this->communityRepository->find($this->request->get('id'))) {
                     return $this->canReadCommunity($community);
@@ -127,6 +128,11 @@ class CommunityVoter extends Voter
     private function canReadCommunity(Community $community)
     {
         return $this->authManager->isAuthorized(self::COMMUNITY_READ, ['community' => $community]);
+    }
+
+    private function canAdminReadCommunity(Community $community)
+    {
+        return $this->authManager->isAuthorized(self::COMMUNITY_MANAGE, ['community' => $community]);
     }
 
     private function canUpdateCommunity(Community $community)
