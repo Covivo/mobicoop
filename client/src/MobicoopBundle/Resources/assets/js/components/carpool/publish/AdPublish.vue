@@ -475,6 +475,14 @@
               step="5"
             >
               <v-row
+                align="center"
+                justify="center"
+              >
+                <v-col cols="10">
+                  <p>{{ $t('stepper.content.participation.details') }}</p>
+                </v-col>
+              </v-row>
+              <v-row
                 dense
                 align="center"
                 justify="center"
@@ -492,7 +500,6 @@
                   <v-text-field
                     v-model="price"
                     :disabled="distance<=0"
-                    type="number"
                     suffix="€"
                     :hint="hintPricePerKm"
                     persistent-hint
