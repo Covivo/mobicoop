@@ -56,7 +56,8 @@
       },
       "participation": {
         "passengers": " bidaiarika",
-        "price": "Ondoko(ar)en parte hartzea "
+        "price": "Ondoko(ar)en parte hartzea ",
+        "details": "La participation est calculée au prorata de la distance covoiturée en cas de paiement en ligne. Dans les autres cas, libre à vous de l'adapter ou d'alterner les tours de conduite."
       },
       "passengers": {
         "backSeats": {
