@@ -40,7 +40,7 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col>CO<sup>2</sup> {{ $t('savedCo2', {savedCo2:savedCo2}) }}</v-col>
+                  <v-col>CO<sub>2</sub> {{ $t('savedCo2', {savedCo2:savedCo2}) }}</v-col>
                 </v-row>
               </v-col>
             </v-row>

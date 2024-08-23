@@ -95,7 +95,7 @@ final class MessageCollectionDataPersister implements ContextAwareDataPersisterI
         }
 
         // We check if there is an Ad id. If so, we create the ask.
-        if (null !== $data->getIdProposal() && null !== $data->getIdMatching()) {
+        if (null !== $data->getIdProposal() && null !== $data->getIdMatching() && null == $data->getMessage()) {
             // Create an Ad from the proposal
             $matching = $this->_matchingManager->getMatching($data->getIdMatching());
             $ad = $this->adManager->makeAd($this->proposalManager->get($data->getIdProposal()), $data->getUser()->getId(), false, null, $matching);

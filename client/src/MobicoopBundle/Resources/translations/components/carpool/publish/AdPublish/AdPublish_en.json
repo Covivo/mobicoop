@@ -1,120 +1,122 @@
 {
-    "create": {
-        "title": "Post a proposal",
-        "subtitle": "Start your proposal"
+  "create": {
+    "title": "Post a proposal",
+    "subtitle": "Start your proposal"
+  },
+  "update": {
+    "title": "Change your proposal",
+    "popup": {
+      "major_update_asks": {
+        "title": "At least one request exists for this proposal",
+        "content": "One or more requests have already been made in connection with this proposal. Your change to essential information will remove the current version of your proposal to create a new one and therefore decline all pending requests. <br>If you confirm your change, what message do you want to send to carpoolers whose requests you declined?"
+      },
+      "major_update_ads": {
+        "title": "A user has already spotted your proposal",
+        "content": "A user has already spotted your proposal as matching a need and may have been alerted by text message or email. Your change will delete the current version of your proposal and create a new one."
+      },
+      "minor_update_asks": {
+        "title": "Requests exist for this proposal",
+        "content": "One or more requests have already been made in relation to this proposal. Details of your change will be sent to all users who have made these requests.<br>Do you confirm your change?"
+      }
     },
-    "update": {
-        "title": "Change your proposal",
-        "popup": {
-            "major_update_asks": {
-                "title": "At least one request exists for this proposal",
-                "content": "One or more requests have already been made in connection with this proposal. Your change to essential information will remove the current version of your proposal to create a new one and therefore decline all pending requests. <br>If you confirm your change, what message do you want to send to carpoolers whose requests you declined?"
-            },
-            "major_update_ads": {
-                "title": "A user has already spotted your proposal",
-                "content": "A user has already spotted your proposal as matching a need and may have been alerted by text message or email. Your change will delete the current version of your proposal and create a new one."
-            },
-            "minor_update_asks": {
-                "title": "Requests exist for this proposal",
-                "content": "One or more requests have already been made in relation to this proposal. Details of your change will be sent to all users who have made these requests.<br>Do you confirm your change?"
-            }
-        },
-        "success": "Your proposal has been changed successfully.",
-        "error": "An error occurred while changing your proposal.",
-        "unavailable": "Vous ne pouvez pas modifier cette annonce.",
-        "informativeMessage": "La modification de votre annonce entrainera l'annulation des covoiturages liés à cette denière."
+    "success": "Your proposal has been changed successfully.",
+    "error": "An error occurred while changing your proposal.",
+    "unavailable": "Vous ne pouvez pas modifier cette annonce.",
+    "informativeMessage": "La modification de votre annonce entrainera l'annulation des covoiturages liés à cette denière."
+  },
+  "stepper": {
+    "header": {
+      "search_journey": "Start your proposal",
+      "planification": "Planning",
+      "map": "Route",
+      "passengers": "Passengers",
+      "participation": "Participation",
+      "message": "Message",
+      "summary": "Summary"
     },
-    "stepper": {
-        "header": {
-            "search_journey": "Start your proposal",
-            "planification": "Planning",
-            "map": "Route",
-            "passengers": "Passengers",
-            "participation": "Participation",
-            "message": "Message",
-            "summary": "Summary"
+    "content": {
+      "passengers": {
+        "seats": {
+          "question": "I have room for ",
+          "passengers": " passenger(s)"
         },
-        "content": {
-            "passengers": {
-                "seats": {
-                    "question": "I have room for ",
-                    "passengers": " passenger(s)"
-                },
-                "luggage": {
-                    "label": "I have space for large luggage",
-                    "help": "Check this box if your vehicle can carry large luggage"
-                },
-                "bike": {
-                    "label": "I can transport a bicycle",
-                    "help": "Check this box if your vehicle can carry a bicycle"
-                },
-                "backSeats": {
-                    "label": "Maximum two people in the back",
-                    "help": "Check this box if you guarantee that there will be no more than 2 passengers in the back seat"
-                }
-            },
-            "participation": {
-                "price": "Participation of ",
-                "passengers": " per passenger"
-            },
-            "message": {
-                "title": {
-                    "both": "My message",
-                    "driver": "My message to passengers",
-                    "passenger": "My message to drivers"
-                },
-                "label": "Leave a message visible to everyone in your proposal"
-            },
-            "summary": "Summary",
-            "map": {
-                "myproposal": "Your route proposal"
-            }
+        "luggage": {
+          "label": "I have space for large luggage",
+          "help": "Check this box if your vehicle can carry large luggage"
         },
-        "driverLicense": {
-            "text": "By posting my proposal, I certify that I have a valid and up-to-date driver's license and insurance",
-            "link": "(Charter)",
-            "route": "/gcu"
+        "bike": {
+          "label": "I can transport a bicycle",
+          "help": "Check this box if your vehicle can carry a bicycle"
         },
-        "buttons": {
-            "next": "Next",
-            "previous": "Previous",
-            "publish_ad": "Post my proposal",
-            "update_ad": "Change my proposal",
-            "notValid": "You must be logged in to post a proposal and have provided all the trip information"
+        "backSeats": {
+          "label": "Maximum two people in the back",
+          "help": "Check this box if you guarantee that there will be no more than 2 passengers in the back seat"
         }
+      },
+      "participation": {
+        "price": "Participation of ",
+        "passengers": " per passenger",
+        "details": "Participation is computed proportionally to the carpooled distance for online payment purpose. In other cases, you're free to adapt or alternate drivers."
+      },
+      "message": {
+        "title": {
+          "both": "My message",
+          "driver": "My message to passengers",
+          "passenger": "My message to drivers"
+        },
+        "label": "Leave a message visible to everyone in your proposal"
+      },
+      "summary": "Summary",
+      "map": {
+        "myproposal": "Your route proposal"
+      }
     },
-    "messageFirstAd": {
-        "signUpDone": "Congratulations {givenName}! Your registration is complete",
-        "alert": "Now, to be alerted of new proposals corresponding to your most frequent trip, post your first regular trip proposal without waiting so that you can carpool quickly."
+    "driverLicense": {
+      "text": "By posting my proposal, I certify that I have a valid and up-to-date driver's license and insurance",
+      "link": "(Charter)",
+      "route": "/gcu"
     },
-    "messageSolidaryExclusiveAd": {
-        "message": " This proposal will be an exclusive solidarity carpooling proposal , if you maintain the option below. It will then only be visible to solidarity operators to put you in touch with a solidarity requester. If you uncheck this option, your proposal will become an ordinary proposal visible to both other carpoolers and solidarity operators.",
-        "switch": {
-            "label": "Solidarity carpooling proposal only"
-        }
-    },
-    "participation": {
-        "mid": "The price of your trip is above average, so your chances of being contacted will be reduced.",
-        "high": "The price of your journey, very high, is above the average tax scale (€ 0.30/km): your chances of being contacted will therefore be very reduced, it is moreover forbidden to offer paid transport services that fall outside the framework of sharing expenses in carpooling.",
-        "forbidden": "The price of your journey exceeds the maximum threshold set by our platform (€ 0.50/km). Your journey cannot be posted.",
-        "text": "The price indications given are based on government recommendations for private journeys with private vehicles and are not binding on the participants, the platform or IBM. The objective of the service is only to facilitate the connection between employees. More information in the <a href='/FAQ'>FAQ</a>."
-    },
-    "messageRoundedPrice": "We have rounded up the rate for your proposal to improve your experience and that of other users. Thank you for your understanding.",
-    "route": {
-        "publish": "carpool/postad",
-        "update": "carpool/proposal/{id}/change",
-        "myAds": "/user/profile/update/myAds",
-        "roundPrice": "/price/round",
-        "cleanOrphans": "/covoiturage/cleanOrphanProposals"
-    },
-    "snackErrorAntiFraud": "Journey incompatible with your already published proposals. If your proposal already published on this date is no longer valid, you must pause, change or delete it.",
-    "snackErrorPublish":"Une erreur est survenue, veuillez réessayer plus tard",
-    "yes": "Yes",
-    "no": "No",
-    "searchToSave": {
-        "success": "Votre annonce a été sauvegardée avec succès.",
-        "error": "Une erreur est survenue lors de la sauvegarde de votre annonce.",
-        "messageTitle": "Vous avez converti votre recherche en ce début d'annonce.",
-        "message": "Complétez et publiez-la, pour être alerté des prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet."
+    "buttons": {
+      "next": "Next",
+      "previous": "Previous",
+      "publish_ad": "Post my proposal",
+      "update_ad": "Change my proposal",
+      "notValid": "You must be logged in to post a proposal and have provided all the trip information"
     }
+  },
+  "messageFirstAd": {
+    "signUpDone": "Congratulations {givenName}! Your registration is complete",
+    "alert": "Now, to be alerted of new proposals corresponding to your most frequent trip, post your first regular trip proposal without waiting so that you can carpool quickly."
+  },
+  "messageSolidaryExclusiveAd": {
+    "message": " This proposal will be an exclusive solidarity carpooling proposal , if you maintain the option below. It will then only be visible to solidarity operators to put you in touch with a solidarity requester. If you uncheck this option, your proposal will become an ordinary proposal visible to both other carpoolers and solidarity operators.",
+    "switch": {
+      "label": "Solidarity carpooling proposal only"
+    }
+  },
+  "participation": {
+    "mid": "The price of your trip is above average, so your chances of being contacted will be reduced.",
+    "high": "The price of your journey, very high, is above the average tax scale (€ 0.30/km): your chances of being contacted will therefore be very reduced, it is moreover forbidden to offer paid transport services that fall outside the framework of sharing expenses in carpooling.",
+    "forbidden": "The price of your journey exceeds the maximum threshold set by our platform (€ 0.50/km). Your journey cannot be posted.",
+    "text": "The price indications given are based on government recommendations for private journeys with private vehicles and are not binding on the participants, the platform or IBM. The objective of the service is only to facilitate the connection between employees. More information in the <a href='/FAQ'>FAQ</a>."
+  },
+  "messageRoundedPrice": "We have rounded up the rate for your proposal to improve your experience and that of other users. Thank you for your understanding.",
+  "route": {
+    "publish": "carpool/postad",
+    "update": "carpool/proposal/{id}/change",
+    "myAds": "/user/profile/update/myAds",
+    "roundPrice": "/price/round",
+    "cleanOrphans": "/covoiturage/cleanOrphanProposals"
+  },
+  "snackErrorAntiFraud": "Journey incompatible with your already published proposals. If your proposal already published on this date is no longer valid, you must pause, change or delete it.",
+  "snackErrorPublish": "Une erreur est survenue, veuillez réessayer plus tard",
+  "yes": "Yes",
+  "no": "No",
+  "searchToSave": {
+    "success": "Votre annonce a été sauvegardée avec succès.",
+    "error": "Une erreur est survenue lors de la sauvegarde de votre annonce.",
+    "messageTitle": "Vous avez converti votre recherche en ce début d'annonce.",
+    "message": "Complétez et publiez-la, pour être alerté des prochains résultats voir être contacté par d'autres covoitureurs pour le même trajet."
+  },
+  "tooYoungToDrive": "Because of your age you cannot post driver's ad"
 }

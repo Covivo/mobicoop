@@ -122,6 +122,7 @@
               <v-btn
                 rounded
                 color="primary"
+                :disabled="!createButtonEnabled"
                 :loading="loading"
                 @click="createCommunity"
               >
@@ -217,6 +218,20 @@ export default {
       domainRules: [
         v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.domain.error")
       ]
+    }
+  },
+  computed:{
+    createButtonEnabled(){
+      if(
+        (this.avatarHeight && this.avatarHeight < this.imageMinPxSize) ||
+        (this.avatarWidth && this.avatarWidth < this.imageMinPxSize)
+      ){
+        return false;
+      }
+      if(this.avatar && (this.avatar.size > this.imageMaxMbSize*1024*1024)){
+        return false;
+      }
+      return true;
     }
   },
   methods: {

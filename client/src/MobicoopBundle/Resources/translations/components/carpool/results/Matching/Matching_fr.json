@@ -1,55 +1,56 @@
 {
-    "title": "Résultats de covoiturages entre {cityA} et {cityB}",
-    "proposalUrl": "/covoiturage/annonce/{id}/detail",
-    "externalUrl": "/covoiturage/annonce/{id}/externe",
-    "matchingUrl": "/covoiturage/recherche/matching",
-    "carpoolUrl": "/covoiturage/demande",
-    "bookingUrl": "/booking/demande",
-    "contactUrl": "/utilisateur/messages/nouveau",
-    "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
-    "carpoolMailBoxUrl": "/utilisateur/messages",
-    "externalJourneyUrl": "/covoiturage/rdexJourney",
-    "ptSearchUrl": "/transport-public/recherche",
-    "search": "Recherche en cours...",
-    "search2": "Patience, nous recherchons les trajets compatibles...",
-    "search3": "Encore quelques instants...",
-    "newSearch": "Je modifie ma recherche",
-    "AskNewSearch": "Réessayer en modifiant votre recherche ? Un autre itinéraire ?",
-    "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
-    "includePassengers": "Voir aussi les annonces passager",
-    "alsoIncludePassengers": "Cette recherche contient également les annonces passager",
-    "snackBar": {
-        "success": "La prise de contact a bien été envoyée",
-        "error": "Suite à un problème technique la prise de contact n'a pas pu être envoyée"
-    },
-    "tabs": {
-        "carpools": "Covoiturages {platform}",
-        "otherCarpools": "Autres covoiturages",
-        "ptresults": "Transport en commun"
-    },
-    "loginOrRegisterTitle": "Connexion ou inscription requise",
-    "loginOrRegister": "Vous devez vous connecter ou vous inscrire pour continuer",
-    "login": "Connexion",
-    "register": "Inscription",
-    "loginUrl": "/utilisateur/connexion/{id}",
-    "registerUrl": "/utilisateur/inscription/{id}",
-    "saveSearch": {
-		"route": "/covoiturage/recherche/{id}/enregistrer",
-        "noAd": "Il n'y a pas encore de covoiturage </br> disponible entre {cityA} et {cityB}",
-        "message": "Soyez alerté des demandes des prochains covoiturages en publiant une annonce.",
-        "button": {
-            "label": "Créer une alerte"
-        }
-	},
-    "logoNoResult": "/images/pages/results/logoNoResult.png",
-    "carpoolStandard": {
-        "dialog": {
-            "send": "Contacter",
-            "cancel": "Annuler",
-            "title": "Contacter",
-            "intro": "Cette annonce de covoiturage ne provient pas de {platform} mais du site partenaire {origin}",
-            "instructions": "Merci de compléter ou de modifier le message ci-dessous",
-            "label": "Votre message"
-        }
+  "title": "Résultats de covoiturages entre {cityA} et {cityB}",
+  "proposalUrl": "/covoiturage/annonce/{id}/detail",
+  "externalUrl": "/covoiturage/annonce/{id}/externe",
+  "matchingUrl": "/covoiturage/recherche/matching",
+  "carpoolUrl": "/covoiturage/demande",
+  "bookingUrl": "/booking/demande",
+  "contactUrl": "/utilisateur/messages/nouveau",
+  "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
+  "carpoolMailBoxUrl": "/utilisateur/messages",
+  "externalJourneyUrl": "/covoiturage/rdexJourney",
+  "ptSearchUrl": "/transport-public/recherche",
+  "search": "Recherche en cours...",
+  "search2": "Patience, nous recherchons les trajets compatibles...",
+  "search3": "Encore quelques instants...",
+  "newSearch": "Je modifie ma recherche",
+  "AskNewSearch": "Réessayer en modifiant votre recherche ? Un autre itinéraire ?",
+  "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
+  "includePassengers": "Voir aussi les annonces passager",
+  "alsoIncludePassengers": "Cette recherche contient également les annonces passager",
+  "snackBar": {
+    "success": "La prise de contact a bien été envoyée",
+    "error": "Suite à un problème technique la prise de contact n'a pas pu être envoyée"
+  },
+  "tabs": {
+    "carpools": "Covoiturages {platform}",
+    "otherCarpools": "Autres covoiturages",
+    "ptresults": "Transport en commun"
+  },
+  "loginOrRegisterTitle": "Connexion ou inscription requise",
+  "loginOrRegister": "Vous devez vous connecter ou vous inscrire pour continuer",
+  "login": "Connexion",
+  "register": "Inscription",
+  "loginUrl": "/utilisateur/connexion/{id}",
+  "registerUrl": "/utilisateur/inscription/{id}",
+  "saveSearch": {
+    "route": "/covoiturage/recherche/{id}/enregistrer",
+    "noAd": "Il n'y a pas encore de covoiturage </br> disponible entre {cityA} et {cityB}",
+    "message": "Soyez alerté des demandes des prochains covoiturages en publiant une annonce.",
+    "button": {
+      "label": "Créer une alerte"
     }
+  },
+  "logoNoResult": "/images/pages/results/logoNoResult.png",
+  "carpoolStandard": {
+    "dialog": {
+      "send": "Contacter",
+      "cancel": "Annuler",
+      "title": "Contacter",
+      "intro": "Cette annonce de covoiturage ne provient pas de {platform} mais du site partenaire {origin}",
+      "instructions": "Merci de compléter ou de modifier le message ci-dessous",
+      "label": "Votre message"
+    }
+  },
+  "homeAddress": "Domicile"
 }

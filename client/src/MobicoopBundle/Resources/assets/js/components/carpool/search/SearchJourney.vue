@@ -26,6 +26,7 @@
               @change="roleChanged"
             >
               <v-radio
+                v-if="hasDriverRoleEnabled"
                 :value="1"
                 :label="$t('radio.driver.label')"
                 color="secondary"
@@ -333,6 +334,10 @@ export default {
     bothRoleEnabled: {
       type: Boolean,
       default: true
+    },
+    driverRoleEnabled: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -362,6 +367,7 @@ export default {
       nowDate: new Date().toISOString().slice(0,10),
       ariaLabelDestination : this.$t('ariaLabelDestination'),
       ariaLabelOrgin: this.$t('ariaLabelOrgin'),
+      hasDriverRoleEnabled: this.driverRoleEnabled,
       hasBothRoleEnabled: this.bothRoleEnabled,
 
     };
@@ -369,9 +375,9 @@ export default {
   computed: {
     computedDateFormat() {
       if (this.dateTimePicker) {
-        return this.dateTime ? moment(this.dateTime, this.$t('defaultDatetime')).format(this.$t("fullDateTime")) : null;
+        return this.dateTime ? moment.utc(this.dateTime, this.$t('defaultDatetime')).format(this.$t("fullDateTime")) : null;
       } else {
-        return this.date ? moment(this.date, this.$t('defaultDate')).format(this.$t("fullDate")) : null;
+        return this.date ? moment.utc(this.date, this.$t('defaultDate')).format(this.$t("fullDate")) : null;
       }
     },
     checkOutwardDate() {

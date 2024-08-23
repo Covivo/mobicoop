@@ -1,55 +1,56 @@
 {
-    "loginUrl": "/utilisateur/connexion/{id}",
-    "registerUrl": "/utilisateur/inscription/{id}",
-    "register": "Registreren",
-    "login": "Aanmelden",
-    "loginOrRegister": "U moet zich aanmelden of registreren om verder te gaan",
-    "loginOrRegisterTitle": "Aanmelden of registreren verplicht",
-    "tabs": {
-        "ptresults": "Openbaar vervoer",
-        "otherCarpools": "Andere carpoolings",
-        "carpools": "Carpoolings {platform}"
-    },
-    "snackBar": {
-        "error": "De contactopname kon niet verzonden worden door een technisch probleem",
-        "success": "De contactopname werd verzonden"
-    },
-    "alsoIncludePassengers": "Deze zoekopdracht bevat ook de passagiersadvertenties",
-    "includePassengers": "Ook de advertenties van passagiers weergeven",
-    "matchingNumber": "Geen carpooladvertenties gevonden... | {number} carpooladvertentie gevonden | {number} carpooladvertenties gevonden",
-    "AskNewSearch": "Opnieuw proberen door uw zoekopdracht aan te passen? Een andere reisroute?",
-    "newSearch": "Ik pas mijn zoekopdracht aan",
-    "search3": "Nog een ogenblik geduld...",
-    "search2": "Even geduld, we hebben vele potentiële medecarpoolers!",
-    "search": "Zoeken bezig...",
-    "ptSearchUrl": "/transport-public/recherche",
-    "externalJourneyUrl": "/covoiturage/rdexJourney",
-    "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
-    "carpoolMailBoxUrl": "/utilisateur/messages",
-    "contactUrl": "/utilisateur/messages/nouveau",
-    "carpoolUrl": "/covoiturage/demande",
-    "bookingUrl": "/booking/demande",
-    "matchingUrl": "/covoiturage/recherche/matching",
-    "externalUrl": "/covoiturage/annonce/{id}/externe",
-    "proposalUrl": "/covoiturage/annonce/{id}/detail",
-    "title": "Carpoolresultaten tussen {cityA} en {cityB}",
-    "saveSearch": {
-		"route": "/covoiturage/recherche/{id}/enregistrer",
-        "noAd": "Créer une alerte",
-        "noCorrectAd": "Aucune annonce satisfaisante?",
-        "message": "Pour être alerté de prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet, cliquez ci-dessous pour convertir votre recherche en annonce.",
-        "button": {
-            "label": "Créer une alerte"
-        }
-	},
-    "carpoolStandard": {
-        "dialog": {
-            "send": "Contacter",
-            "cancel": "Annuler",
-            "title": "Contacter",
-            "intro": "Cette annonce de covoiturage ne provient pas de {platform} mais du site partenaire {origin}",
-            "instructions": "Merci de compléter ou de modifier le message ci-dessous",
-            "label": "Votre message"
-        }
+  "loginUrl": "/utilisateur/connexion/{id}",
+  "registerUrl": "/utilisateur/inscription/{id}",
+  "register": "Registreren",
+  "login": "Aanmelden",
+  "loginOrRegister": "U moet zich aanmelden of registreren om verder te gaan",
+  "loginOrRegisterTitle": "Aanmelden of registreren verplicht",
+  "tabs": {
+    "ptresults": "Openbaar vervoer",
+    "otherCarpools": "Andere carpoolings",
+    "carpools": "Carpoolings {platform}"
+  },
+  "snackBar": {
+    "error": "De contactopname kon niet verzonden worden door een technisch probleem",
+    "success": "De contactopname werd verzonden"
+  },
+  "alsoIncludePassengers": "Deze zoekopdracht bevat ook de passagiersadvertenties",
+  "includePassengers": "Ook de advertenties van passagiers weergeven",
+  "matchingNumber": "Geen carpooladvertenties gevonden... | {number} carpooladvertentie gevonden | {number} carpooladvertenties gevonden",
+  "AskNewSearch": "Opnieuw proberen door uw zoekopdracht aan te passen? Een andere reisroute?",
+  "newSearch": "Ik pas mijn zoekopdracht aan",
+  "search3": "Nog een ogenblik geduld...",
+  "search2": "Even geduld, we hebben vele potentiële medecarpoolers!",
+  "search": "Zoeken bezig...",
+  "ptSearchUrl": "/transport-public/recherche",
+  "externalJourneyUrl": "/covoiturage/rdexJourney",
+  "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
+  "carpoolMailBoxUrl": "/utilisateur/messages",
+  "contactUrl": "/utilisateur/messages/nouveau",
+  "carpoolUrl": "/covoiturage/demande",
+  "bookingUrl": "/booking/demande",
+  "matchingUrl": "/covoiturage/recherche/matching",
+  "externalUrl": "/covoiturage/annonce/{id}/externe",
+  "proposalUrl": "/covoiturage/annonce/{id}/detail",
+  "title": "Carpoolresultaten tussen {cityA} en {cityB}",
+  "saveSearch": {
+    "route": "/covoiturage/recherche/{id}/enregistrer",
+    "noAd": "Créer une alerte",
+    "noCorrectAd": "Aucune annonce satisfaisante?",
+    "message": "Pour être alerté de prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet, cliquez ci-dessous pour convertir votre recherche en annonce.",
+    "button": {
+      "label": "Créer une alerte"
     }
+  },
+  "carpoolStandard": {
+    "dialog": {
+      "send": "Contacter",
+      "cancel": "Annuler",
+      "title": "Contacter",
+      "intro": "Cette annonce de covoiturage ne provient pas de {platform} mais du site partenaire {origin}",
+      "instructions": "Merci de compléter ou de modifier le message ci-dessous",
+      "label": "Votre message"
+    }
+  },
+  "homeAddress": "Domicile"
 }

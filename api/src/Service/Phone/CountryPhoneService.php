@@ -56,6 +56,7 @@ class CountryPhoneService
     public const NC = 'NC';
     public const GY = 'GY';
     public const PH = 'PH';
+    public const RE = 'RE';
 
     public const COUNTRY_PHONE_PREFIX = [
         'GR' => 30,
@@ -110,6 +111,7 @@ class CountryPhoneService
         'GY' => 594,
         'MQ' => 596,
         'NC' => 687,
+        'RE' => 262,
     ];
 
     private const PHONE_PATTERN = [
@@ -165,6 +167,7 @@ class CountryPhoneService
         'GY' => null,
         'PH' => null,
         'NC' => null,
+        'RE' => null,
     ];
 
     /**
