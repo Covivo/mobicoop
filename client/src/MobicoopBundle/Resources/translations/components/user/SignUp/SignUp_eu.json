@@ -1,7 +1,7 @@
 {
   "rgpd": {
     "link": {
-      "route": "/cgu",
+      "route": "/protection-donnees",
       "label": "Zure datuen kudeaketaz eta eskubideetaz buruz gehiago jakiteko."
     },
     "infos": "Formulario honetatik biltzen diren argibideak beharrezkoak dira Mobicoop aplikazioak proposatzen dituen zerbitzuen erabiltzeko.",
