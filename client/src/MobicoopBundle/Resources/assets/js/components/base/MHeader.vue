@@ -5,7 +5,8 @@
       role="navigation"
     >
       <v-col
-        cols="2"
+        cols="4"
+        md="2"
         class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
@@ -15,7 +16,8 @@
         >{{ $t('pad.carpool.title') }}</a>
       </v-col>
       <v-col
-        cols="2"
+        cols="4"
+        md="2"
         class="section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
@@ -31,7 +33,8 @@
         >{{ $t('pad.mobility.subtitle') }}</a>
       </v-col>
       <v-col
-        cols="2"
+        cols="4"
+        md="2"
         class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
@@ -41,7 +44,8 @@
         >{{ $t('pad.events.title') }}</a>
       </v-col>
       <v-col
-        cols="2"
+        cols="4"
+        md="2"
         class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
@@ -51,7 +55,8 @@
         >{{ $t('pad.subscribe.title') }}</a>
       </v-col>
       <v-col
-        cols="2"
+        cols="4"
+        md="2"
         class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
@@ -61,7 +66,8 @@
         >{{ $t('pad.blog.title') }}</a>
       </v-col>
       <v-col
-        cols="2"
+        cols="4"
+        md="2"
         class="d-lg-flex social justify-center align-center text-center text-center text-uppercase text-body-2 pa-1 justify-spacebetween"
       >
         <a
