@@ -1,18 +1,34 @@
 <template>
   <div>
-    <v-img
-      :src="`/${$t(`${referral}.bannerUrl`)}`"
-      width="auto"
-      height="150px"
-      contain
-      class="mb-5"
-    />
-    <v-alert
-      type="info"
-      color="primary"
-    >
-      {{ $t(`${referral}.text`) }}
-    </v-alert>
+    <v-row>
+      <v-col cols="6">
+        <v-img
+          :src="`/${$t(`platform.bannerUrl`)}`"
+          width="auto"
+          height="150px"
+          contain
+          class="mb-5"
+        />
+      </v-col>
+      <v-col cols="6">
+        <v-img
+          :src="`/${$t(`${referral}.bannerUrl`)}`"
+          width="auto"
+          height="150px"
+          contain
+          class="mb-5"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-alert
+          type="info"
+          color="primary"
+          v-html="$t(`${referral}.text`)"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 <script>
