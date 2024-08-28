@@ -85,7 +85,7 @@
           class="col-4"
         >
           <SsoLogins
-            v-if="ssoButtonDisplay"
+            v-if="ssoButtonDisplay && !referral"
             :specific-sso-services="specificSsoServices"
             class="justify-self-center"
           />
