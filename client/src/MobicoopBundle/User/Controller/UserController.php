@@ -275,7 +275,7 @@ class UserController extends AbstractController
     ) {
         $this->denyAccessUnlessGranted('register');
 
-        if (!in_array($referral, $this->authorizedReferrals)) {
+        if ('user_sign_up_with_referral' == $request->get('_route') && !in_array($referral, $this->authorizedReferrals)) {
             return $this->redirectToRoute('home');
         }
 
