@@ -114,7 +114,8 @@
         align="center"
       >
         <v-col
-          cols="8"
+          cols="12"
+          md="8"
         >
           <ReferralHeader
             v-if="referral"
@@ -127,7 +128,8 @@
         align="center"
       >
         <v-col
-          cols="8"
+          cols="12"
+          md="8"
           align="center"
         >
           <v-stepper
@@ -185,8 +187,7 @@
 
                 <v-row>
                   <v-col
-                    cols="5"
-                    sm="5"
+                    cols="12"
                     md="4"
                     lg="3"
                     xl="2"
@@ -233,7 +234,12 @@
                       </template>
                     </v-select>
                   </v-col>
-                  <v-col>
+                  <v-col
+                    cols="12"
+                    md="8"
+                    lg="9"
+                    xl="10"
+                  >
                     <v-text-field
                       v-model="form.telephone"
                       :label="$t('phone.placeholder') + ` *`"
@@ -603,7 +609,11 @@
         v-else-if="showFacebookSignUp"
         class="justify-center"
       >
-        <v-col class="col-4 text-center">
+        <v-col
+          cols="12"
+          md="4"
+          class="text-center"
+        >
           <v-alert
             type="info"
             class="text-left"
