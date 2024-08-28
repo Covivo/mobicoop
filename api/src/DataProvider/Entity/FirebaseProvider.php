@@ -39,14 +39,12 @@ use phpFCMv1\Recipient;
  */
 class FirebaseProvider implements ProviderInterface
 {
-    private $recipient;
     private $client;
     
 
     public function __construct($serviceAccount)
     {
         $this->client = new Client($serviceAccount);
-        $this->recipient = new Recipient();
     }
 
     /**
@@ -58,8 +56,9 @@ class FirebaseProvider implements ProviderInterface
         $notification->setNotification($push->getTitle(),$push->getMessage());
         // send the notification
         foreach ($push->getRecipientDeviceIds() as $recipientId){
-            $this->recipient->setSingleREcipient($recipientId);
-            $this->client->build($this->recipient, $notification);
+            $recipient = new Recipient();
+            $recipient->setSingleRecipient($recipientId);
+            $this->client->build($recipient, $notification);
             $this->client -> fire();
         }
         // todo : get the response and treat the bad device ids
