@@ -33,7 +33,10 @@
         class="pa-5"
       >
         <!-- first col -->
-        <v-col cols="3">
+        <v-col
+          cols="12"
+          md="3"
+        >
           <v-card-text class="my-0 py-0 white--text font-weight-bold">
             <span>{{ $t('category.cooperative') }}<span /></span>
           </v-card-text>
@@ -111,7 +114,10 @@
         <!-- end first col -->
 
         <!-- second col -->
-        <v-col cols="3">
+        <v-col
+          cols="12"
+          md="3"
+        >
           <v-card-text class="my-0 py-0 white--text font-weight-bold">
             <span>{{ $t('category.tools') }}<span /></span>
           </v-card-text>
@@ -186,7 +192,10 @@
         <!-- end second col -->
 
         <!-- third col -->
-        <v-col cols="3">
+        <v-col
+          cols="12"
+          md="3"
+        >
           <v-card-text class="my-0 py-0 white--text font-weight-bold">
             <span>{{ $t('category.need') }}<span /></span>
           </v-card-text>
@@ -236,7 +245,8 @@
 
         <!-- fourth col -->
         <v-col
-          cols="1"
+          cols="12"
+          md="1"
           justify="center"
         >
           <v-card-text class="my-0 py-0 white--text text-h6">
@@ -288,11 +298,16 @@
         justify="center"
         align="center"
       >
-        <strong>Mobicoop</strong> <v-chip
-          class="ma-2 black--text"
+        <v-col
+          cols="12"
+          class="text-center"
         >
-          {{ version }}
-        </v-chip> by Mobicoop team. The source code is licensed AGPL3.
+          <strong>Mobicoop</strong> <v-chip
+            class="ma-2 black--text"
+          >
+            {{ version }}
+          </v-chip> by Mobicoop team. The source code is licensed AGPL3.
+        </v-col>
       </v-row>
       <cookies
         :show="showCookies"
