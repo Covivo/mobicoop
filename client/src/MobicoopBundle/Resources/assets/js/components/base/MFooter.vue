@@ -260,6 +260,8 @@
                   contain
                   :src="$t('urlInstagramLogo')"
                   max-width="75px"
+                  height="75px"
+                  width="75px"
                   :alt="$t('logoInstragramAlt')"
                 />
               </a>
@@ -271,6 +273,8 @@
                   contain
                   :src="$t('urlFacebookLogo')"
                   max-width="75px"
+                  height="75px"
+                  width="75px"
                   :alt="$t('logoFacebookAlt')"
                 />
               </a>
@@ -282,6 +286,8 @@
                   contain
                   :src="$t('urlTwitterLogo')"
                   max-width="75px"
+                  height="75px"
+                  width="75px"
                   :alt="$t('logoTwitterAlt')"
                 />
               </a>
