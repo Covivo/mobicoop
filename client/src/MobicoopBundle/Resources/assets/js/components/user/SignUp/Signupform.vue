@@ -537,6 +537,7 @@
                 </v-checkbox>
 
                 <v-btn
+                  v-if="integrateRzp"
                   :href="$t('insteadRZP.href')"
                   block
                   color="primary"
@@ -762,6 +763,10 @@ export default {
       default: ''
     },
     minorProtectionActivated: {
+      type: Boolean,
+      default: false
+    },
+    integrateRzp: {
       type: Boolean,
       default: false
     }
