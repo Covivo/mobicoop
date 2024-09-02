@@ -293,7 +293,6 @@ export default {
       dataRegular: this.regular,
       date: this.defaultOutwardDate,
       time: this.defaultOutwardTime,
-      origin: this.determineOrigin(),
       destination: this.defaultDestination,
       locale: localStorage.getItem("X-LOCALE"),
       role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
@@ -313,6 +312,15 @@ export default {
         ? moment.utc(this.time).format(this.$t("urlTime"))
         : null;
     },
+    origin() {
+      return this.determineOrigin();
+    }
+  },
+  watch:{
+    defaultOrigin(newValue, oldValue){
+      this.determineOrigin();
+    }
+
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
