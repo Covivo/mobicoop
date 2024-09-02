@@ -152,5 +152,9 @@
   "parentalConsent": {
     "title": "Autorisation parentale",
     "explanation": "Comme tu as moins de 18 ans, tu as besoin de l’autorisation de ton responsable légal pour utiliser le service."
+  },
+  "insteadRZP": {
+    "href": "https://m.mobicoop.fr/#/hitchhiking/home",
+    "label": "Plutôt Rezo Pouce ?"
   }
 }
