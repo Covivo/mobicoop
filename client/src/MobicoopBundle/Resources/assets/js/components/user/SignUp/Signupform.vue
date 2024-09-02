@@ -536,6 +536,17 @@
                   </template>
                 </v-checkbox>
 
+                <v-btn
+                  :href="$t('insteadRZP.href')"
+                  block
+                  color="primary"
+                  class="mt-3 mb-5"
+                  outlined
+                  rounded
+                >
+                  {{ $t('insteadRZP.label') }}
+                </v-btn>
+
                 <v-row
                   v-if="emailAlreadyTaken || !phoneNumberValid"
                   justify="center"
