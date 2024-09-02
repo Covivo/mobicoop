@@ -430,15 +430,14 @@ class CommunityManager
         return [];
     }
 
-    public function getMembers(int $communityId, array $context = [], string $operationName): CommunityMembersList
+    public function getMembers(int $communityId, array $context = []): CommunityMembersList
     {
         $communityMembers = [];
 
         $community = $this->communityRepository->find($communityId);
 
         if ($community) {
-            $communityUsers = $this->communityUserRepository->findForCommunity($community, $context, $operationName);
-
+            $communityUsers = $this->communityUserRepository->findForCommunity($community, $context);
             foreach ($communityUsers as $communityUser) {
                 $communityMember = new CommunityMember();
                 $communityMember->setId($communityUser->getUser()->getId());
@@ -460,7 +459,7 @@ class CommunityManager
             }
         }
 
-        return new CommunityMembersList($communityMembers, count($communityMembers));
+        return new CommunityMembersList($communityMembers, count($communityUsers));
     }
 
     // MCommunity management
