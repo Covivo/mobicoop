@@ -62,7 +62,7 @@ final class EmailTokenFilter extends AbstractContextAwareFilter
         $queryBuilder
             ->andWhere('u.emailToken = \''.$value.'\'')
             ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
     }
 }

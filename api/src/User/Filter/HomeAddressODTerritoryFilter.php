@@ -70,10 +70,8 @@ final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
             ->leftJoin('ahaodtf.territories', 'tahaodtf')
             ->andWhere('((tahaodtf.id in (:value) AND phaodtf.private <> 1 AND (whaodtf.position=0 OR whaodtf.destination=1)) OR (thaodtf.id in (:value) AND homeAddress.home=1))')
             ->andWhere('u.status != :status')
-            ->setParameters([
-                'status' => User::STATUS_PSEUDONYMIZED,
-                'value' => $value,
-            ])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
+            ->setParameter('value', $value)
         ;
     }
 }

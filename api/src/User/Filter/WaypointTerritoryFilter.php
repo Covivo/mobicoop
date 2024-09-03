@@ -79,7 +79,7 @@ final class WaypointTerritoryFilter extends AbstractContextAwareFilter
             ->leftJoin('a.territories', 'ta')
             ->andWhere(sprintf('(ta.id = %s AND p.private <> 1)', $value))
             ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
     }
 }
