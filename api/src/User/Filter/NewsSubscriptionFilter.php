@@ -44,10 +44,8 @@ final class NewsSubscriptionFilter extends AbstractContextAwareFilter
         $queryBuilder
             ->andWhere($rootAlias.'.newsSubscription = :param')
             ->andWhere('u.status != :status')
-            ->setParameters([
-                'status' => User::STATUS_PSEUDONYMIZED,
-                'param' => 1 === $value || 'true' === $value,
-            ])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
+            ->setParameter('param', 1 === $value || 'true' === $value)
         ;
     }
 }

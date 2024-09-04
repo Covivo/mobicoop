@@ -80,7 +80,7 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
                 ->leftJoin('homeAddress.territories', 't')
                 ->andWhere(sprintf('t.id = %s AND homeAddress.home=1', $value))
                 ->andWhere('u.status != :status')
-                ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+                ->setParameter('status', User::STATUS_PSEUDONYMIZED)
             ;
         }
     }

@@ -82,7 +82,7 @@ final class DirectionTerritoryFilter extends AbstractContextAwareFilter
             ->leftJoin('dp.territories', 'tp')
             ->andWhere(sprintf('(td.id = %s OR tp.id = %s)', $value, $value))
             ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
     }
 }

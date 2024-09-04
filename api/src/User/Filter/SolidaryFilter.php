@@ -70,7 +70,7 @@ final class SolidaryFilter extends AbstractContextAwareFilter
             ->leftJoin('uaa.authItem', 'ai')
             ->andWhere('ai.id in ('.AuthItem::ROLE_SOLIDARY_BENEFICIARY.','.AuthItem::ROLE_SOLIDARY_VOLUNTEER.')')
             ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
     }
 }

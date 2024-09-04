@@ -82,7 +82,7 @@ final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilte
             ->leftJoin('a.territories', 'ta')
             ->andWhere(sprintf('((ta.id = %s AND p.private <> 1) OR (t.id = %s AND homeAddress.home=1))', $value, $value))
             ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
     }
 }

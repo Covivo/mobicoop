@@ -61,7 +61,7 @@ final class RezoKitFilter extends AbstractContextAwareFilter
 
         $queryBuilder
             ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
 
         if (true === json_decode($value)) {
