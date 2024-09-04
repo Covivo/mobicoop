@@ -536,6 +536,18 @@
                   </template>
                 </v-checkbox>
 
+                <v-btn
+                  v-if="integrateRzp"
+                  :href="$t('insteadRZP.href')"
+                  block
+                  color="primary"
+                  class="mt-3 mb-5"
+                  outlined
+                  rounded
+                >
+                  {{ $t('insteadRZP.label') }}
+                </v-btn>
+
                 <v-row
                   v-if="emailAlreadyTaken || !phoneNumberValid"
                   justify="center"
@@ -751,6 +763,10 @@ export default {
       default: ''
     },
     minorProtectionActivated: {
+      type: Boolean,
+      default: false
+    },
+    integrateRzp: {
       type: Boolean,
       default: false
     }
