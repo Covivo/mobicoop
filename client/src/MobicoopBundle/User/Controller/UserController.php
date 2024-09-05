@@ -102,6 +102,7 @@ class UserController extends AbstractController
     private $specificTerms;
     private $phoneCodes;
     private $minorProtectionActivated;
+    private $authorizedReferrals;
 
     /**
      * Constructor.
@@ -148,7 +149,8 @@ class UserController extends AbstractController
         array $gendersList,
         bool $specificTerms,
         $phoneCodes,
-        bool $minorProtectionActivated
+        bool $minorProtectionActivated,
+        array $authorizedReferrals
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -181,6 +183,7 @@ class UserController extends AbstractController
         $this->specificTerms = $specificTerms;
         $this->phoneCodes = $phoneCodes;
         $this->minorProtectionActivated = $minorProtectionActivated;
+        $this->authorizedReferrals = $authorizedReferrals;
     }
 
     private function __parsePostParams(string $response): array
@@ -271,6 +274,10 @@ class UserController extends AbstractController
         ?string $referral = null
     ) {
         $this->denyAccessUnlessGranted('register');
+
+        if ('user_sign_up_with_referral' == $request->get('_route') && !in_array($referral, $this->authorizedReferrals)) {
+            return $this->redirectToRoute('home');
+        }
 
         $user = new User();
         $address = new Address();
@@ -1057,7 +1064,7 @@ class UserController extends AbstractController
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
-        $response = str_replace('\\n', '<br />', json_encode($completeThread));
+        $response = str_replace('\n', '<br />', json_encode($completeThread));
 
         return new Response($response);
     }

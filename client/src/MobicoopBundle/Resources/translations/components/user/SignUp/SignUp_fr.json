@@ -137,7 +137,7 @@
     "infos": "Les informations recueillies à partir de ce formulaire sont nécessaires à l’utilisation des services proposés par l’application Mobicoop.",
     "link": {
       "label": "Pour en savoir plus sur la gestion de vos données et vos droits.",
-      "route": "/cgu"
+      "route": "/protection-donnees"
     },
     "consent": "Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page puis rafraichir la page.",
     "socialServicesUnavailableWithoutConsent": "Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page."

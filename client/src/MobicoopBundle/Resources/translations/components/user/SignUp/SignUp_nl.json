@@ -3,7 +3,7 @@
     "socialServicesUnavailableWithoutConsent": "Om gebruikt te kunnen worden, moet de functie voor het aanmelden via sociale media aanvaard worden dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
     "consent": "Om u te kunnen aanmelden, moet u zich akkoord verklaard hebben met 'Uw verbinding actief houden' dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
     "link": {
-      "route": "/cgu",
+      "route": "/protection-donnees",
       "label": "Voor meer informatie over het beheer van uw gegevens en uw rechten."
     },
     "infos": "De via dit formulier verzamelde gegevens zijn nodig om gebruik te kunnen maken van de diensten die door de Mobicoop-app worden aangeboden."

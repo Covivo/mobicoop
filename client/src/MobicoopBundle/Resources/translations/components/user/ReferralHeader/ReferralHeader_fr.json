@@ -1,6 +1,9 @@
 {
   "esso": {
-    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam urna nulla, vulputate ut euismod sit amet, tincidunt ut mi. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec in quam mollis, pharetra quam eu, condimentum felis. Suspendisse nec porta magna, id consequat dolor. Phasellus elementum laoreet dapibus. Ut ut hendrerit quam, nec suscipit turpis. Maecenas id aliquet leo. Donec lacinia, odio maximus pellentesque dapibus, orci libero pharetra purus, non hendrerit metus ipsum sit amet est. Mauris facilisis varius eros, vitae pellentesque nibh volutpat mollis.",
+    "text": "<p>Esso vise à favoriser l'adoption d'une conduite plus responsable, en aidant les consommateurs à réduire leurs émissions liées à leurs déplacements, à adopter une conduite plus économique et à trouver des alternatives aux trajets en voiture. C'est ce qu'Esso appelle \"La conduite. Autrement.\"<br />Dans cette perspective, Esso collabore avec Mobicoop, pour inciter davantage de personnes à covoiturer.<br />Inscrivez-vous dès maintenant et effectuez un premier covoiturage sur Mobicoop, comme conducteur ou passager. Vous pourrez ainsi participer au tirage au sort mensuel pour tenter de gagner un vélo électrique ! ( voir <a href='/referrals/20240904-reglement_esso.pdf' alt='' style='color:white;' target='blank_'>conditions de participation dans le règlement</a> et informations complémentaires <a href='https://carburant.esso.fr/fr-fr/laconduiteautrement/trouver-des-alternatives-aux-trajets-en-voiture' alt='Esso La conduite. Autrement.' style='color:white;' target='blank_'>sur le site</a> ).</p>",
     "bannerUrl": "images/referral/esso.png"
+  },
+  "platform": {
+    "bannerUrl": "images/referral/logo_platform.png"
   }
 }

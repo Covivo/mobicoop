@@ -120,7 +120,7 @@
     "infos": "The information collected from this form is necessary for using the services offered by the Mobicoop application.",
     "link": {
       "label": "Learn more about the management of your data and your rights.",
-      "route": "/gcu"
+      "route": "/data-protection"
     },
     "consent": "To be able to login in you must have agreed to \"Keep your connection active\" using the \"Cookie management\" tool accessible from a link at the bottom of the page then refresh the page.",
     "socialServicesUnavailableWithoutConsent": "To be used, the login functionality via social networks must be accepted using the \"Cookie management\" tool accessible from a link at the bottom of the page."

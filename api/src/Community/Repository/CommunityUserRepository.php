@@ -31,6 +31,7 @@ use App\Community\Entity\CommunityUser;
 use App\User\Entity\User as EntityUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class CommunityUserRepository
 {
@@ -92,7 +93,7 @@ class CommunityUserRepository
      *
      * @return array The members
      */
-    public function findForCommunity(Community $community, array $context = [], string $operationName = ''): PaginatorInterface
+    public function findForCommunity(Community $community, array $context = []): Paginator
     {
         $query = $this->repository->createQueryBuilder('cu');
         $query->where('cu.community = :community')
@@ -139,20 +140,17 @@ class CommunityUserRepository
                     }
                 }
             }
-        }
 
-        if ('' !== $operationName) {
-            $queryNameGenerator = new QueryNameGenerator();
-
-            foreach ($this->collectionExtensions as $extension) {
-                $extension->applyToCollection($query, $queryNameGenerator, CommunityUser::class, $operationName, $context);
-                if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(CommunityUser::class, $operationName)) {
-                    return $extension->getResult($query, CommunityUser::class, $operationName);
-                }
+            if (isset($context['filters']['page'], $context['filters']['perPage'])) {
+                $page = $context['filters']['page'];
+                $perPage = $context['filters']['perPage'];
+                $query->setFirstResult(($page - 1) * $perPage)
+                    ->setMaxResults($perPage)
+                ;
             }
         }
 
-        return $query->getQuery()->getResult();
+        return new Paginator($query, true);
     }
 
     /**

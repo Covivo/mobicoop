@@ -143,7 +143,6 @@ services:
       $eventAssociatedToCommunity: "%env(json:EVENT_ASSOCIATED_TO_COMMUNITY)%"
       $eventWidget: "%env(bool:EVENT_WIDGET)%"
 
-
   Mobicoop\Bundle\MobicoopBundle\Event\Service\:
     resource: "@MobicoopBundle/Event/Service/*"
   Mobicoop\Bundle\MobicoopBundle\Event\Security\:
@@ -273,6 +272,7 @@ services:
       $specificTerms: "%env(bool:SIGNUP_SPECIFIC_TERMS)%"
       $phoneCodes: "%env(json:file:resolve:PHONE_CODES)%"
       $minorProtectionActivated: "%env(bool:MINOR_PROTECTION_ACTIVATED)%"
+      $authorizedReferrals: "%env(json:SIGNUP_AUTHORIZED_REFERRALS)%"
     tags: ["controller.service_arguments"]
   Mobicoop\Bundle\MobicoopBundle\User\Service\:
     resource: "@MobicoopBundle/User/Service/*"
