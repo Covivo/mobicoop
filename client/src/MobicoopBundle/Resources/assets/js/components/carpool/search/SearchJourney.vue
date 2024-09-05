@@ -401,6 +401,9 @@ export default {
     initDestination() {
       this.customInitDestination = this.initDestination;
       this.destination = this.initDestination;
+    },
+    origin(newValue, oldValue){
+      this.determineOrigin();
     }
   },
   created() {
