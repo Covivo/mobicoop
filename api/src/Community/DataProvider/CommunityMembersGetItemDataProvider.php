@@ -57,6 +57,6 @@ final class CommunityMembersGetItemDataProvider implements ItemDataProviderInter
 
     public function getItem(string $resourceClass, $id, ?string $operationName = null, array $context = []): CommunityMembersList
     {
-        return $this->communityManager->getMembers($id, $context, $operationName);
+        return $this->communityManager->getMembers($id, $context);
     }
 }
