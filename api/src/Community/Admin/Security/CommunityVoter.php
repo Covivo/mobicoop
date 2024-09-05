@@ -19,32 +19,33 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\Community;
 use App\Community\Repository\CommunityRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class CommunityVoter extends Voter
 {
-    const ADMIN_COMMUNITY_CREATE = 'admin_community_create';
-    const ADMIN_COMMUNITY_READ = 'admin_community_read';
-    const ADMIN_COMMUNITY_UPDATE = 'admin_community_update';
-    const ADMIN_COMMUNITY_DELETE = 'admin_community_delete';
-    const ADMIN_COMMUNITY_LIST = 'admin_community_list';
-    const ADMIN_COMMUNITY_MEMBERSHIP = 'admin_community_membership';
-    const COMMUNITY_CREATE = 'community_create';
-    const COMMUNITY_READ = 'community_read';
-    const COMMUNITY_UPDATE = 'community_update';
-    const COMMUNITY_DELETE = 'community_delete';
-    const COMMUNITY_LIST = 'community_list';
-    const COMMUNITY_MEMBERSHIP= 'community_membership';
+    public const ADMIN_COMMUNITY_CREATE = 'admin_community_create';
+    public const ADMIN_COMMUNITY_READ = 'admin_community_read';
+    public const ADMIN_COMMUNITY_UPDATE = 'admin_community_update';
+    public const ADMIN_COMMUNITY_DELETE = 'admin_community_delete';
+    public const ADMIN_COMMUNITY_LIST = 'admin_community_list';
+    public const ADMIN_COMMUNITY_MEMBERSHIP = 'admin_community_membership';
+    public const COMMUNITY_CREATE = 'community_create';
+    public const COMMUNITY_READ = 'community_read';
+    public const COMMUNITY_UPDATE = 'community_update';
+    public const COMMUNITY_DELETE = 'community_delete';
+    public const COMMUNITY_LIST = 'community_list';
+    public const COMMUNITY_MEMBERSHIP = 'community_membership';
+    public const COMMUNITY_MANAGE = 'community_manage';
 
     private $authManager;
     private $request;
@@ -66,8 +67,8 @@ class CommunityVoter extends Voter
             self::ADMIN_COMMUNITY_UPDATE,
             self::ADMIN_COMMUNITY_DELETE,
             self::ADMIN_COMMUNITY_LIST,
-            self::ADMIN_COMMUNITY_MEMBERSHIP
-            ])) {
+            self::ADMIN_COMMUNITY_MEMBERSHIP,
+        ])) {
             return false;
         }
 
@@ -78,10 +79,11 @@ class CommunityVoter extends Voter
             self::ADMIN_COMMUNITY_UPDATE,
             self::ADMIN_COMMUNITY_DELETE,
             self::ADMIN_COMMUNITY_LIST,
-            self::ADMIN_COMMUNITY_MEMBERSHIP
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Community)) {
+            self::ADMIN_COMMUNITY_MEMBERSHIP,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Community)) {
             return false;
         }
+
         return true;
     }
 
@@ -90,24 +92,31 @@ class CommunityVoter extends Voter
         switch ($attribute) {
             case self::ADMIN_COMMUNITY_CREATE:
                 return $this->canCreateCommunity();
+
             case self::ADMIN_COMMUNITY_READ:
                 // this voter is used for direct community read, or for community member list, we have to check the type of subject
                 if ($subject instanceof Community) {
-                    return $this->canReadCommunity($subject);
+                    return $this->canAdminReadCommunity($subject);
                 }
                 if ($community = $this->communityRepository->find($this->request->get('id'))) {
                     return $this->canReadCommunity($community);
                 }
+
                 return false;
+
             case self::ADMIN_COMMUNITY_UPDATE:
                 return $this->canUpdateCommunity($subject);
+
             case self::ADMIN_COMMUNITY_DELETE:
                 return $this->canDeleteCommunity($subject);
+
             case self::ADMIN_COMMUNITY_LIST:
                 return $this->canListCommunity();
+
             case self::ADMIN_COMMUNITY_MEMBERSHIP:
                 return $this->canAddMember();
         }
+
         throw new \LogicException('This code should not be reached!');
     }
 
@@ -118,17 +127,22 @@ class CommunityVoter extends Voter
 
     private function canReadCommunity(Community $community)
     {
-        return $this->authManager->isAuthorized(self::COMMUNITY_READ, ['community'=>$community]);
+        return $this->authManager->isAuthorized(self::COMMUNITY_READ, ['community' => $community]);
+    }
+
+    private function canAdminReadCommunity(Community $community)
+    {
+        return $this->authManager->isAuthorized(self::COMMUNITY_MANAGE, ['community' => $community]);
     }
 
     private function canUpdateCommunity(Community $community)
     {
-        return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community'=>$community]);
+        return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community' => $community]);
     }
 
     private function canDeleteCommunity(Community $community)
     {
-        return $this->authManager->isAuthorized(self::COMMUNITY_DELETE, ['community'=>$community]);
+        return $this->authManager->isAuthorized(self::COMMUNITY_DELETE, ['community' => $community]);
     }
 
     private function canListCommunity()

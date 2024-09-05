@@ -32,6 +32,7 @@
     </v-card-title>
     <v-data-table
       v-if="!hidden && !loading"
+      disable-sort
       :headers="headers"
       :items="users"
       :search="search"
@@ -48,7 +49,7 @@
     >
       <template v-slot:item.member="{ item }">
         {{ displayUserName(item) }} - <b>{{ displayModerator(item) }}</b><b>{{ displayReferrer(item) }}</b>
-      </template> 
+      </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
@@ -73,7 +74,7 @@
           class="mx-auto"
           width="100%"
           type="list-item-three-line"
-        />        
+        />
       </div>
     </v-card-text>
   </v-card>
@@ -164,7 +165,7 @@ export default {
         "page":this.page,
         "perPage":this.perPage
       }
-      maxios 
+      maxios
         .post(this.$t("urlMembersList"), data)
         .then(res => {
           this.users = res.data.users;

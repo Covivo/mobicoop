@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2024, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -24,18 +24,29 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
+use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 
 /**
  *  Check that the requester is a manager of the related Community.
  */
-class CommunityManager implements AuthRuleInterface
+class CommunityManagerSelf implements AuthRuleInterface
 {
     public function execute($requester, $item, $params)
     {
-        return true;
-        // if (!isset($params['id'])) {
-        //     return false;
-        // }
-        // return $params['id'] == $requester->getId();
+        if (!isset($params['community']) || !($params['community'] instanceof Community)) {
+            return false;
+        }
+
+        $community = $params['community'];
+        $communityUsers = $community->getCommunityUsers();
+
+        foreach ($communityUsers as $communityUser) {
+            if ($communityUser->getUser()->getId() == $requester->getId() && CommunityUser::STATUS_ACCEPTED_AS_MODERATOR == $communityUser->getStatus()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -66,6 +66,9 @@ remove:
 	@docker compose -f docker-compose-$(os).yml rm -f
 
 clean:
+	git checkout dev; git branch --merged | egrep -v "(^\*|dev)" | xargs -r git branch -d
+
+clean-containers:
 	@make -s stop
 	@docker compose -f docker-compose-$(os).yml down -v --rmi all
 	$(info $(pink)------------------------------------------------------)
