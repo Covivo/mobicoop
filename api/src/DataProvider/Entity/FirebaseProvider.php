@@ -25,8 +25,9 @@ namespace App\DataProvider\Entity;
 
 use App\Communication\Entity\Push;
 use App\DataProvider\Interfaces\ProviderInterface;
-use Fcm\FcmClient;
-use Fcm\Push\Notification;
+use phpFCMv1\Client;
+use phpFCMv1\Notification;
+use phpFCMv1\Recipient;
 
 /**
  * Firebase management service.
@@ -37,10 +38,11 @@ use Fcm\Push\Notification;
 class FirebaseProvider implements ProviderInterface
 {
     private $client;
+    
 
-    public function __construct(string $apiToken, string $senderId)
+    public function __construct($serviceAccount)
     {
-        $this->client = new FcmClient($apiToken, $senderId);
+        $this->client = new Client($serviceAccount);
     }
 
     /**
@@ -49,16 +51,15 @@ class FirebaseProvider implements ProviderInterface
     public function postCollection(Push $push)
     {
         $notification = new Notification();
-        $notification
-            ->addRecipient($push->getRecipientDeviceIds())
-            ->setTitle($push->getTitle())
-            ->setBody($push->getMessage());
-            
+        $notification->setNotification($push->getTitle(),$push->getMessage());
         // send the notification
-        $this->client->send($notification);
-    
+        foreach ($push->getRecipientDeviceIds() as $recipientId){
+            $recipient = new Recipient();
+            $recipient->setSingleRecipient($recipientId);
+            $this->client->build($recipient, $notification);
+            $this->client -> fire();
+        }
         // todo : get the response and treat the bad device ids
-
         return new Response();
     }
 

@@ -53,7 +53,7 @@ class PushManager
      * @param string              $apiToken     The api token
      * @param string              $senderId     The sender id
      */
-    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $pushProvider, string $apiToken, string $senderId)
+    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $pushProvider,string $serviceAccount)
     {
         $this->templating = $templating;
         $this->logger = $logger;
@@ -62,8 +62,7 @@ class PushManager
         switch ($pushProvider) {
             case 'Firebase':
             default:
-                $this->pushProvider = new FirebaseProvider($apiToken, $senderId);
-
+                $this->pushProvider = new FirebaseProvider($serviceAccount);
                 break;
         }
     }
