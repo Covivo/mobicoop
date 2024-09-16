@@ -315,8 +315,8 @@ export default {
     }
   },
   watch:{
-    defaultOrigin(newValue, oldValue){
-      this.determineOrigin();
+    defaultOrigin(newValue){
+      this.origin = newValue;
     }
 
   },
@@ -380,7 +380,7 @@ export default {
         window.location.href=this.$t("buttons.shareAnAd.route");
       }
     },
-    determineOrigin: function(){
+    determineOrigin: function(address){
       if(this.defaultOrigin){
         return this.defaultOrigin;
       }

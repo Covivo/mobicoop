@@ -912,11 +912,10 @@ export default {
       return point;
     },
     selectedAsDestination(destination) {
-      // console.error(destination);
       this.selectedDestination = destination;
     },
     selectedAsOrigin(origin) {
-      // console.error(origin);
+      console.log(origin);
       this.selectedOrigin = origin;
     },
     contact: function(data) {
