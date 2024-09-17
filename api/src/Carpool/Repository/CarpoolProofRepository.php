@@ -442,4 +442,22 @@ class CarpoolProofRepository
 
         return $query->getQuery()->getOneOrNullResult();
     }
+
+    public function findLastCarpoolProofOfUser(User $user, ?\DateTime $minDate = null): array
+    {
+        if (is_null($minDate)) {
+            $minDate = new \DateTime();
+            $minDate->setTime(0, 0, 0);
+            $minDate->modify('-1 day');
+        }
+
+        $query = $this->repository->createQueryBuilder('cp');
+        $query->where('cp.driver = :user')
+            ->andWhere('cp.createdDate >= :minDate')
+            ->setParameter('user', $user)
+            ->setParameter('minDate', $minDate)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }

@@ -61,6 +61,8 @@ class CarpoolProof
     public const STATUS_INVALID_DUPLICATE_DEVICE = 15; // proof not sent: passenger and driver phone unique id are indentical
     public const STATUS_NOT_SENT_MISSING_PHONE = 16;
     public const STATUS_RPC_NOT_REACHABLE = 17;     // the rpc is not reachable
+    public const STATUS_DISTANCE_TOO_SHORT = 18;     // the rpc is not reachable
+    public const STATUS_CONCURRENT_DRIVER_JOURNEY = 19;     // the rpc is not reachable
 
     public const ACTOR_DRIVER = 1;
     public const ACTOR_PASSENGER = 2;
@@ -73,6 +75,8 @@ class CarpoolProof
     public const TYPE_UNDETERMINED_DYNAMIC = 'DX';
 
     public const MINIMUM_DISTANCE_GPS_FOR_TYPE_HIGH = 3000; // Minimum distance required between driver/passenger pickUp/dropOff in meters
+    public const MINIMUM_DISTANCE_VALID_JOURNEY = 2000; // Minimum distance required for a journey in meters
+    public const CONCURRENT_DRIVER_JOURNEY_THRESHOLD = 30; // Minimal time between two drivers journey on the same day in minutes
 
     public const ERROR_STATUS = [
         self::STATUS_ERROR,

@@ -38,6 +38,7 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\WaypointRepository;
 use App\Carpool\Ressource\ClassicProof;
 use App\DataProvider\Service\RpcApiManager;
+use App\DataProvider\Service\RPCv3\Tools;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\AddressCompleter;
 use App\Geography\Service\Geocoder\GeocoderFactory;
@@ -82,6 +83,8 @@ class ProofManager
      */
     private $_rpcApiManager;
 
+    private $_tools;
+
     /**
      * Constructor.
      *
@@ -107,6 +110,7 @@ class ProofManager
         PaymentProfileRepository $paymentProfileRepository,
         JourneyValidation $journeyValidation,
         RpcApiManager $rpcApiManager,
+        Tools $tools,
         string $provider,
         int $duration,
         int $minIdentityDistance
@@ -133,6 +137,7 @@ class ProofManager
 
                 break;
         }
+        $this->_tools = $tools;
     }
 
     private function __checkUpgradeToHigh(CarpoolProof $carpoolProof): CarpoolProof
@@ -857,6 +862,8 @@ class ProofManager
 
     public function proofAntifraudCheck(CarpoolProof $proof)
     {
+        $this->_tools->setCurrentCarpoolProof($proof);
+
         if (!$this->proofSameDeviceCheck($proof)) {
             return $proof;
         }
@@ -869,7 +876,50 @@ class ProofManager
             return $proof;
         }
 
+        if (!$this->minimalDistanceCheck($proof)) {
+            return $proof;
+        }
+
+        if (!$this->minimalTimeBetweenDriverJourneyCheck($proof)) {
+            return $proof;
+        }
+
         return $proof;
+    }
+
+    public function minimalTimeBetweenDriverJourneyCheck(CarpoolProof $proof): bool
+    {
+        $lastProofs = $this->carpoolProofRepository->findLastCarpoolProofOfUser($proof->getDriver());
+
+        foreach ($lastProofs as $lastProof) {
+            $interval = $proof->getStartDriverDate()->diff($lastProof->getStartDriverDate());
+            if ($interval->i < CarpoolProof::CONCURRENT_DRIVER_JOURNEY_THRESHOLD && 0 == $interval->days) {
+                // echo 'less than '.CarpoolProof::CONCURRENT_DRIVER_JOURNEY_THRESHOLD.' minutes between current proof ('.$proof->getStartDriverDate()->format('d/m/y H:i:s').') and the old proof id = '.$lastProof->getId().' '.$lastProof->getStartDriverDate()->format('d/m/y H:i:s').PHP_EOL;
+
+                $proof->setStatus(CarpoolProof::STATUS_CONCURRENT_DRIVER_JOURNEY);
+
+                $this->entityManager->persist($proof);
+                $this->entityManager->flush();
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function minimalDistanceCheck(CarpoolProof $proof): bool
+    {
+        if ($this->_tools->getDistance() < CarpoolProof::MINIMUM_DISTANCE_VALID_JOURNEY) {
+            $proof->setStatus(CarpoolProof::STATUS_DISTANCE_TOO_SHORT);
+
+            $this->entityManager->persist($proof);
+            $this->entityManager->flush();
+
+            return false;
+        }
+
+        return true;
     }
 
     public function proofConcurrentSchedulesCheck(CarpoolProof $proof)
@@ -1289,6 +1339,7 @@ class ProofManager
 
                                 break;
                         }
+                        // $carpoolDay = true;
                         if ($carpoolDay) {
                             $carpoolProof = new CarpoolProof();
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
