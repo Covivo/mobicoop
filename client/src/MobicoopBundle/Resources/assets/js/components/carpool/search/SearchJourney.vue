@@ -402,9 +402,6 @@ export default {
       this.customInitDestination = this.initDestination;
       this.destination = this.initDestination;
     },
-    origin(newValue, oldValue){
-      this.determineOrigin();
-    }
   },
   created() {
     this.setMomentLocale();
