@@ -443,6 +443,11 @@ class CarpoolProofRepository
         return $query->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * Find last Carpool Proofs of a user.
+     *
+     * @param null|\DateTime $minDate If null, we set the minDate at yesterday 00:00
+     */
     public function findLastCarpoolProofOfUser(User $user, ?\DateTime $minDate = null): array
     {
         if (is_null($minDate)) {

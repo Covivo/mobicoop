@@ -884,7 +884,30 @@ class ProofManager
             return $proof;
         }
 
+        if (!$this->maximumOperatorTripIdPerDayCheck($proof)) {
+            return $proof;
+        }
+
         return $proof;
+    }
+
+    public function maximumOperatorTripIdPerDayCheck(CarpoolProof $proof): bool
+    {
+        $lastProofs = $this->carpoolProofRepository->findLastCarpoolProofOfUser($proof->getDriver());
+
+        $operatorTripIds = [$this->_tools->computeOperatorTripId($proof)];
+        foreach ($lastProofs as $lastProof) {
+            $operatorTripId = $this->_tools->computeOperatorTripId($lastProof);
+            if (!in_array($operatorTripId, $operatorTripIds)) {
+                $operatorTripIds[] = $operatorTripId;
+            }
+        }
+
+        if (count($operatorTripIds) > CarpoolProof::MAX_OPERATOR_TRIP_IDS) {
+            return false;
+        }
+
+        return true;
     }
 
     public function minimalTimeBetweenDriverJourneyCheck(CarpoolProof $proof): bool
@@ -1339,7 +1362,6 @@ class ProofManager
 
                                 break;
                         }
-                        // $carpoolDay = true;
                         if ($carpoolDay) {
                             $carpoolProof = new CarpoolProof();
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
