@@ -210,7 +210,7 @@
             {{ dialog.title }}
           </v-card-title>
           <v-card-text>
-            <p>{{ dialog.content }}</p>
+            <p v-html="dialog.content" />
             <v-textarea
               v-if="dialog.textarea"
               v-model="deleteMessage"

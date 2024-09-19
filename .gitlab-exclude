@@ -11,6 +11,7 @@
 /api/config/user/*.json
 /api/config/csvExport/*.json
 /api/config/geodata/*.json
+/api/config/packages/service_account.json
 /api/public/robots.txt
 /api/templates/email_client/
 /api/translations_client/

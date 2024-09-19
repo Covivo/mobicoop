@@ -28,6 +28,7 @@ namespace App\Geography\Service;
 use App\Event\Repository\EventRepository;
 use App\Geography\Repository\AddressRepository;
 use App\Geography\Service\Geocoder\GeocoderFactory;
+use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\EventPointProvider;
 use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Geography\Service\Point\RelayPointPointProvider;
@@ -46,6 +47,7 @@ class PointSearcher
     private $providers;
     private $reverseProviders;
     private $tokenStorage;
+    private $addressAdapter;
 
     private $_fixer;
     private $_fixerEnabled;
@@ -58,6 +60,7 @@ class PointSearcher
         Security $security,
         TokenStorageInterface $tokenStorage,
         GeocoderFactory $geocoderFactory,
+        AddressAdapter $addressAdapter,
         int $maxRelayPointResults,
         int $maxEventResults,
         int $maxUserResults,
@@ -135,6 +138,7 @@ class PointSearcher
         }
 
         $this->reverseProviders = [$geocoderPointProvider];
+        $this->addressAdapter = $addressAdapter;
     }
 
     public function geocode(string $search): array
@@ -159,5 +163,16 @@ class PointSearcher
         }
 
         return $points;
+    }
+
+    public function reverseAddressFormated(float $lon, float $lat): array
+    {
+        $points = $this->reverse($lon, $lat);
+
+        foreach ($points as $point) {
+            $addresses[] = $this->addressAdapter->pointToAddress($point);
+        }
+
+        return $addresses;
     }
 }

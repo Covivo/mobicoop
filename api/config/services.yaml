@@ -484,8 +484,7 @@ services:
   App\Communication\Service\PushManager:
     arguments:
       $pushProvider: "%env(resolve:PUSH_PROVIDER)%"
-      $apiToken: "%env(resolve:PUSH_API_TOKEN)%"
-      $senderId: "%env(resolve:PUSH_SENDER_ID)%"
+      $serviceAccount: "%env(resolve:PUSH_SERVICE_ACCOUNT)%"
     tags:
       - { name: monolog.logger, channel: communication }
 
@@ -1083,12 +1082,12 @@ services:
       $rpcApiVersion: "%env(string:RPC_API_VERSION)%"
       $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
       $uri: "%env(string:CARPOOL_PROOF_URI)%"
-      $secret: "%env(string:APP_SECRET)%"
 
   App\DataProvider\Service\RPCv3\Tools:
     arguments:
       $phoneNumberTruncLength: "%env(int:CARPOOL_PROOF_PHONE_TRUNC_LENGTH)%"
       $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $secret: "%env(string:APP_SECRET)%"
 
   App\Carpool\Service\MobicoopMatcher\MobicoopMatcherMatchingBuilder:
     arguments:
