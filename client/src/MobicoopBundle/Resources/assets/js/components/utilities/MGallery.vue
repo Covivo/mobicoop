@@ -8,17 +8,17 @@
       <v-col
         v-for="item in items"
         :key="item.index"
-        class="d-flex child-flex"
-        cols="1"
-        align-self="center"
+        class="text-center d-flex justify-center align-center"
+        :cols="12/nbItems"
       >
         <a
           :href="item.link"
           :aria-label="item.arialabel"
+          class="d-flex justify-center align-center"
         >
           <v-img
             :max-height="maxHeight"
-            :src="path+item.name"
+            :src="path + item.name"
             :alt="item.alt"
             :width="item.width"
             :height="item.height"
@@ -46,6 +46,11 @@ export default {
       default: null
     },
   },
+  computed:{
+    nbItems(){
+      return Object.keys(this.items).length;
+    }
+  }
 }
 
 </script>
