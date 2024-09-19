@@ -17,8 +17,8 @@
         "title": "Er bestaat minstens één geplande carpooling voor deze advertentie"
       },
       "base": {
-        "text": "De verwijdering van een advertentie is steeds definitief. Bent u zeker dat u deze advertentie wilt verwijderen?",
-        "title": "Bent u zeker dat u deze advertentie wilt verwijderen?"
+        "title": "Attention, en supprimant votre annonce, ceci entrainera la suppression des :",
+        "text": "<ul><li>Covoiturages valides et en cours avec cette annonce</li><li>Conversations liées à cette annonce</li><li>Et de l'historique en lien avec vos covoiturages (Cf. export de preuve)</li></ul>"
       }
     },
     "error": "Er heeft zich een fout voorgedaan bij het verwijderen van uw advertentie.",
