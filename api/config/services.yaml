@@ -484,8 +484,7 @@ services:
   App\Communication\Service\PushManager:
     arguments:
       $pushProvider: "%env(resolve:PUSH_PROVIDER)%"
-      $apiToken: "%env(resolve:PUSH_API_TOKEN)%"
-      $senderId: "%env(resolve:PUSH_SENDER_ID)%"
+      $serviceAccount: "%env(resolve:PUSH_SERVICE_ACCOUNT)%"
     tags:
       - { name: monolog.logger, channel: communication }
 
