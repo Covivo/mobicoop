@@ -42,10 +42,13 @@ class Tools
      */
     private $_prefix;
 
-    public function __construct(int $phoneNumberTruncLength, string $prefix)
+    private $_secret;
+
+    public function __construct(int $phoneNumberTruncLength, string $prefix, string $secret)
     {
         $this->_phoneNumberTruncLength = $phoneNumberTruncLength;
         $this->_prefix = $prefix;
+        $this->_secret = $secret;
     }
 
     /**
@@ -259,6 +262,11 @@ class Tools
 
                 break;
         }
+    }
+
+    public function computeOperatorTripId(CarpoolProof $carpoolProof): string
+    {
+        return md5($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getId().'|'.$carpoolProof->getStartDriverDate()->format('Y-m-d H:i:s'));
     }
 
     private function _familyNameToUppercase(?string $familyName): ?string
