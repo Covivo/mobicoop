@@ -6,6 +6,7 @@ mobicoop-platform/api/.env.test.local
 mobicoop-platform/api/.env.prod.local
 mobicoop-platform/api/config/jwt/
 mobicoop-platform/api/config/params/*.json
+mobicoop-platform/api/config/packages/service_account.json
 mobicoop-platform/api/config/publicTransport/*.json
 mobicoop-platform/api/config/rdex/*.json
 mobicoop-platform/api/config/user/*.json
