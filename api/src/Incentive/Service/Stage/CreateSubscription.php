@@ -70,7 +70,7 @@ class CreateSubscription extends Stage
             );
 
             if (APIAuthenticationValidation::isApiAuthenticationError($exception)) {
-                $event = new InvalidAuthenticationEvent($this->_subscription->getUser());
+                $event = new InvalidAuthenticationEvent($this->_user);
                 $this->_eventDispatcher->dispatch(InvalidAuthenticationEvent::NAME, $event);
             }
 
