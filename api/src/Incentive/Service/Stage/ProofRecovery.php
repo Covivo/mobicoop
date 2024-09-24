@@ -15,6 +15,7 @@ use App\Payment\Repository\CarpoolItemRepository;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProofRecovery extends Stage
 {
@@ -45,6 +46,7 @@ class ProofRecovery extends Stage
         CarpoolProofRepository $carpoolProofRepository,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
+        EventDispatcherInterface $eventDispatcher,
         EecInstance $eecInstance,
         User $user,
         string $subscriptionType
@@ -54,8 +56,9 @@ class ProofRecovery extends Stage
         $this->_carpoolPaymentRepository = $carpoolPaymentRepository;
         $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
-
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_eventDispatcher = $eventDispatcher;
+
         $this->_eecInstance = $eecInstance;
 
         $this->_user = $user;
@@ -95,7 +98,7 @@ class ProofRecovery extends Stage
                             return null;
                         }
 
-                        $stage = new CommitLDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription, $proposal);
+                        $stage = new CommitLDSubscription($this->_em, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $subscription, $proposal);
                         $stage->execute();
 
                         return;
@@ -104,7 +107,7 @@ class ProofRecovery extends Stage
                     $carpoolPayment = CarpoolPaymentProvider::getCarpoolPaymentFromCarpoolItem($this->_carpoolPaymentRepository, $carpoolItem);
 
                     if (!is_null($carpoolPayment) && CarpoolPaymentValidator::isStatusEecCompliant($carpoolPayment)) {
-                        $stage = new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolPayment, false, true);
+                        $stage = new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $carpoolPayment, false, true);
                         $stage->execute();
                     }
                 }
@@ -127,13 +130,13 @@ class ProofRecovery extends Stage
                             return null;
                         }
 
-                        $stage = new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription, $carpoolProof);
+                        $stage = new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $subscription, $carpoolProof);
                         $stage->execute();
 
                         return;
                     }
 
-                    $stage = new ProofValidate($this->_em, $this->_carpoolPaymentRepository, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolProof, false, true);
+                    $stage = new ProofValidate($this->_em, $this->_carpoolPaymentRepository, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $carpoolProof, false, true);
                     $stage->execute();
                 }
 

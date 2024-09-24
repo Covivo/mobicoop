@@ -11,6 +11,7 @@ use App\Incentive\Service\MobConnectMessages;
 use App\Incentive\Service\Validation\APIAuthenticationValidation;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CreateSubscription extends Stage
@@ -38,6 +39,7 @@ class CreateSubscription extends Stage
     public function __construct(
         EntityManagerInterface $em,
         TimestampTokenManager $timestampTokenManager,
+        EventDispatcherInterface $eventDispatcher,
         LoggerService $loggerService,
         EecInstance $eecInstance,
         User $user,
@@ -45,6 +47,7 @@ class CreateSubscription extends Stage
     ) {
         $this->_em = $em;
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_eventDispatcher = $eventDispatcher;
         $this->_loggerService = $loggerService;
         $this->_eecInstance = $eecInstance;
 

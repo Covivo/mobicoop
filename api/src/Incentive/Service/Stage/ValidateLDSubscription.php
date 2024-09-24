@@ -19,6 +19,7 @@ use App\Incentive\Validator\SubscriptionValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidateLDSubscription extends ValidateSubscription
@@ -37,6 +38,7 @@ class ValidateLDSubscription extends ValidateSubscription
         EntityManagerInterface $em,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
+        EventDispatcherInterface $eventDispatcher,
         EecInstance $eecInstance,
         CarpoolPayment $carpoolPayment,
         bool $pushOnlyMode = false,
@@ -45,6 +47,7 @@ class ValidateLDSubscription extends ValidateSubscription
         $this->_em = $em;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_eventDispatcher = $eventDispatcher;
 
         $this->_eecInstance = $eecInstance;
         $this->_carpoolPayment = $carpoolPayment;
@@ -126,7 +129,7 @@ class ValidateLDSubscription extends ValidateSubscription
         }
 
         if (!is_null($journey) && SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-            $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
+            $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
         }
     }

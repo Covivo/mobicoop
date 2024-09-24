@@ -258,7 +258,7 @@ class SubscriptionManager extends MobConnectManager
             ? 'App\\Incentive\\Service\\Stage\\CommitLDSubscription'
             : 'App\\Incentive\\Service\\Stage\\CommitSDSubscription';
 
-        $stage = new $commitClass($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription, $referenceObject, $pushOnlyMode);
+        $stage = new $commitClass($this->_em, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $subscription, $referenceObject, $pushOnlyMode);
         $stage->execute();
     }
 
@@ -274,7 +274,7 @@ class SubscriptionManager extends MobConnectManager
                 return;
             }
 
-            $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
+            $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $referenceObject, $pushOnlyMode);
             $stage->execute();
 
             return;
@@ -284,7 +284,7 @@ class SubscriptionManager extends MobConnectManager
             return;
         }
 
-        $stage = new ProofValidate($this->_em, $this->_carpoolPaymentRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
+        $stage = new ProofValidate($this->_em, $this->_carpoolPaymentRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $referenceObject, $pushOnlyMode);
         $stage->execute();
     }
 
@@ -322,7 +322,7 @@ class SubscriptionManager extends MobConnectManager
                 throw new NotFoundHttpException('The requested user was not found');
             }
 
-            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolPaymentRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $user, $subscriptionType);
+            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolPaymentRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $user, $subscriptionType);
             $stage->execute();
 
             return;
@@ -421,7 +421,7 @@ class SubscriptionManager extends MobConnectManager
             return;
         }
 
-        $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
+        $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
         $stage->execute();
     }
 
