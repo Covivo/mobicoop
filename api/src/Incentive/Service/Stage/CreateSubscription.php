@@ -8,6 +8,7 @@ use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Manager\InstanceManager;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Service\MobConnectMessages;
+use App\Incentive\Service\Validation\APIAuthenticationValidation;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -63,6 +64,10 @@ class CreateSubscription extends Stage
                 LoggerService::TYPE_INFO,
                 true
             );
+
+            if (APIAuthenticationValidation::isApiAuthenticationError($exception)) {
+                // Todo - Dispatch the event
+            }
 
             throw new \LogicException('eec_subscription_'.$this->_subscriptionType.'_unfinalized');
         }

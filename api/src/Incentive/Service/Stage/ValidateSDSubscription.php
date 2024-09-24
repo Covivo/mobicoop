@@ -139,6 +139,10 @@ class ValidateSDSubscription extends ValidateSubscription
         } catch (HttpException $exception) {
             $this->_subscription->addLog($exception, Log::TYPE_ATTESTATION, $httpQueryParams);
 
+            if (APIAuthenticationValidation::isApiAuthenticationError($exception)) {
+                // Todo - Dispatch the event
+            }
+
             $this->_em->flush();
 
             return;

@@ -9,6 +9,7 @@ use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Service\Validation\APIAuthenticationValidation;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class CommitSubscription extends UpdateSubscription
@@ -31,6 +32,10 @@ abstract class CommitSubscription extends UpdateSubscription
             $this->_apiProvider->patchSubscription($this->_subscription, $httpQueryParams);
         } catch (HttpException $exception) {
             $this->_subscription->addLog($exception, Log::TYPE_COMMITMENT, $httpQueryParams);
+
+            if (APIAuthenticationValidation::isApiAuthenticationError($exception)) {
+                // Todo - Dispatch the event
+            }
 
             $this->_em->flush();
 
