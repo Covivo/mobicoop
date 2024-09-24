@@ -13,6 +13,7 @@ use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Service\Provider\CarpoolItemProvider;
 use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Provider\SubscriptionProvider;
+use App\Incentive\Service\Validation\APIAuthenticationValidation;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Incentive\Validator\SubscriptionValidator;
 use App\Payment\Entity\CarpoolItem;
@@ -58,7 +59,7 @@ class ValidateLDSubscription extends ValidateSubscription
         foreach (CarpoolItemProvider::getCarpoolItemFromCarpoolPayment($this->_carpoolPayment) as $this->_carpoolItem) {
             $this->_subscription = SubscriptionProvider::getLDSubscriptionFromCarpoolItem($this->_carpoolItem);
 
-            if (is_null($this->_subscription)) {
+            if (is_null($this->_subscription) || !APIAuthenticationValidation::isAuthenticationValid($this->_subscription->getUser())) {
                 continue;
             }
 

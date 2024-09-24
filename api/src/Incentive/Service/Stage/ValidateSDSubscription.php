@@ -11,6 +11,7 @@ use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
+use App\Incentive\Service\Validation\APIAuthenticationValidation;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Incentive\Validator\SubscriptionValidator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -51,6 +52,7 @@ class ValidateSDSubscription extends ValidateSubscription
             && (
                 is_null($this->_subscription)
                 || $this->_subscription->hasExpired()
+                || !APIAuthenticationValidation::isAuthenticationValid($this->_subscription->getUser())
             )
         ) {
             return;
