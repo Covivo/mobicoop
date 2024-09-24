@@ -95,6 +95,13 @@ class MobConnectAuth
      */
     private $updatedAt;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", nullable=false, options={"default": true, "comment": "Specifies whether authentication is valid"})
+     */
+    private $validity = true;
+
     public function __construct(User $user, SsoUser $ssoUser)
     {
         $this->setUser($user);
@@ -282,6 +289,18 @@ class MobConnectAuth
             !is_null($this->getRefreshToken())
             && !is_null($this->getRefreshTokenExpiresDate())
             && $this->getRefreshTokenExpiresDate() > new \DateTime();
+    }
+
+    public function getValidity(): bool
+    {
+        return $this->validity;
+    }
+
+    public function setValidity(bool $validity): self
+    {
+        $this->validity = $validity;
+
+        return $this;
     }
 
     private function getExpirationDateFromDuration(int $duration): \DateTime
