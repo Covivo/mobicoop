@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Service\Stage;
 
+use App\Incentive\Event\InvalidAuthenticationEvent;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Definition\DefinitionSelector;
 use App\Incentive\Service\LoggerService;
@@ -69,7 +70,8 @@ class CreateSubscription extends Stage
             );
 
             if (APIAuthenticationValidation::isApiAuthenticationError($exception)) {
-                // Todo - Dispatch the event
+                $event = new InvalidAuthenticationEvent($this->_subscription->getUser());
+                $this->_eventDispatcher->dispatch(InvalidAuthenticationEvent::NAME, $event);
             }
 
             throw new \LogicException('eec_subscription_'.$this->_subscriptionType.'_unfinalized');

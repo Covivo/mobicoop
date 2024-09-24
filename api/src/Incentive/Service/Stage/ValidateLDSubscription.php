@@ -7,6 +7,7 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Event\InvalidAuthenticationEvent;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
@@ -159,7 +160,8 @@ class ValidateLDSubscription extends ValidateSubscription
             $this->_subscription->addLog($exception, Log::TYPE_ATTESTATION, $httpQueryParams);
 
             if (APIAuthenticationValidation::isApiAuthenticationError($exception)) {
-                // Todo - Dispatch the event
+                $event = new InvalidAuthenticationEvent($this->_subscription->getUser());
+                $this->_eventDispatcher->dispatch(InvalidAuthenticationEvent::NAME, $event);
             }
 
             $this->_em->flush();
