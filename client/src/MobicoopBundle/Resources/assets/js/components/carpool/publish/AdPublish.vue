@@ -480,6 +480,14 @@
               >
                 <v-col cols="10">
                   <p>{{ $t('stepper.content.participation.details') }}</p>
+                  <p v-if="freeCarpool">
+                    <span v-if="freeCarpoolCommunities.length === 1">
+                      {{ $t('freeCarpool.one', { communityName: freeCarpoolCommunities[0].name }) }}
+                    </span>
+                    <span v-else>
+                      {{ $t('freeCarpool.many') }}
+                    </span>
+                  </p>
                 </v-col>
               </v-row>
               <v-row
@@ -1055,6 +1063,7 @@ export default {
       checkboxDrivingLicence: false,
       checkboxEmployer: false,
       checkboxInssurance: false,
+      freeCarpoolCommunities: [],
       freeCarpool: false,
     }
   },
@@ -1435,13 +1444,16 @@ export default {
     },
     setCommunityFreeCarpool(communities) {
       if (this.selectedCommunities) {
-        let freeCarpool = null;
 
         for(let index in this.selectedCommunities) {
-          freeCarpool = communities.find(community => community.id === this.selectedCommunities[index] && community.freeCarpool);
+          const community = communities.find(community => community.id === this.selectedCommunities[index] && community.freeCarpool);
+
+          if (community) {
+            this.freeCarpoolCommunities.push(community);
+          }
         }
 
-        this.freeCarpool = typeof freeCarpool !== "undefined" && freeCarpool != null;
+        this.freeCarpool = this.freeCarpoolCommunities.length > 0;
       }
     },
     postAd() {
