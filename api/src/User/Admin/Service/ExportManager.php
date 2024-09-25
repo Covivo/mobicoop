@@ -188,12 +188,12 @@ class ExportManager
         $this->_currentUserExport->setCarpool2DestinationLocality($this->_currentUser['carpool2DestinationLocality']);
         $this->_currentUserExport->setCarpool2Frequency($this->_currentUser['carpool2Frequency']);
         $this->_currentUserExport->setcarpool2RoleDriver($this->_currentUser['carpool2RoleDriver']);
-        $this->_currentUserExport->setcarpool1RolePassenger($this->_currentUser['carpool2RolePassenger']);
+        $this->_currentUserExport->setcarpool2RolePassenger($this->_currentUser['carpool2RolePassenger']);
         $this->_currentUserExport->setCarpool3OriginLocality($this->_currentUser['carpool3OriginLocality']);
         $this->_currentUserExport->setCarpool3DestinationLocality($this->_currentUser['carpool3DestinationLocality']);
         $this->_currentUserExport->setCarpool3Frequency($this->_currentUser['carpool3Frequency']);
         $this->_currentUserExport->setcarpool3RoleDriver($this->_currentUser['carpool3RoleDriver']);
-        $this->_currentUserExport->setcarpool1RolePassenger($this->_currentUser['carpool3RolePassenger']);
+        $this->_currentUserExport->setcarpool3RolePassenger($this->_currentUser['carpool3RolePassenger']);
 
         $this->_currentUserExport->setRezoPouceUse($this->_currentUser['rezopouceUse']);
         $this->_currentUserExport->setIdentityStatus($this->_currentUser['identityStatus']);
