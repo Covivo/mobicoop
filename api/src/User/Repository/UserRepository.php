@@ -353,12 +353,18 @@ class UserRepository
             ftp.Annonce1_Origine AS carpool1OriginLocality,
             ftp.Annonce1_Destination AS carpool1DestinationLocality,
             ftp.Annonce1_Frequence AS carpool1Frequency,
+            ftp.Annonce1_Role_Conducteur AS carpool1RoleDriver,
+            ftp.Annonce1_Role_Passager AS carpool1RolePassenger,
             ftp.Annonce2_Origine AS carpool2OriginLocality,
             ftp.Annonce2_Destination AS carpool2DestinationLocality,
             ftp.Annonce2_Frequence AS carpool2Frequency,
+            ftp.Annonce2_Role_Conducteur AS carpool2RoleDriver,
+            ftp.Annonce2_Role_Passager AS carpool2RolePassenger,
             ftp.Annonce3_Origine AS carpool3OriginLocality,
             ftp.Annonce3_Destination AS carpool3DestinationLocality,
             ftp.Annonce3_Frequence AS carpool3Frequency,
+            ftp.Annonce3_Role_Conducteur AS carpool3RoleDriver,
+            ftp.Annonce3_Role_Passager AS carpool3RolePassenger,
             ftp.NombreAnnonces AS adNumber,
             ftcu.Communauté1 AS community1,
             ftcu.Communauté2 AS community2,
@@ -452,12 +458,18 @@ class UserRepository
                         GROUP_CONCAT(tp_extended.Annonce1_Origine) AS Annonce1_Origine,
                         GROUP_CONCAT(tp_extended.Annonce1_Destination) AS Annonce1_Destination,
                         GROUP_CONCAT(tp_extended.Annonce1_Frequence) AS Annonce1_Frequence,
+                        GROUP_CONCAT(tp_extended.Annonce1_Role_Conducteur) AS Annonce1_Role_Conducteur,
+                        GROUP_CONCAT(tp_extended.Annonce1_Role_Passager) AS Annonce1_Role_Passager,
                         GROUP_CONCAT(tp_extended.Annonce2_Origine) AS Annonce2_Origine,
                         GROUP_CONCAT(tp_extended.Annonce2_Destination) AS Annonce2_Destination,
                         GROUP_CONCAT(tp_extended.Annonce2_Frequence) AS Annonce2_Frequence,
+                        GROUP_CONCAT(tp_extended.Annonce2_Role_Conducteur) AS Annonce2_Role_Conducteur,
+                        GROUP_CONCAT(tp_extended.Annonce2_Role_Passager) AS Annonce2_Role_Passager,
                         GROUP_CONCAT(tp_extended.Annonce3_Origine) AS Annonce3_Origine,
                         GROUP_CONCAT(tp_extended.Annonce3_Destination) AS Annonce3_Destination,
                         GROUP_CONCAT(tp_extended.Annonce3_Frequence) AS Annonce3_Frequence,
+                        GROUP_CONCAT(tp_extended.Annonce3_Role_Conducteur) AS Annonce3_Role_Conducteur,
+                        GROUP_CONCAT(tp_extended.Annonce3_Role_Passager) AS Annonce3_Role_Passager,
                         MAX(tp_extended.NombreAnnonces) AS NombreAnnonces
                     FROM
                         (SELECT
@@ -465,12 +477,18 @@ class UserRepository
                             CASE WHEN tp.OrdreAnnonce=1 THEN tp.AnnonceOrigine END AS Annonce1_Origine,
                             CASE WHEN tp.OrdreAnnonce=1 THEN tp.AnnonceDestination END AS Annonce1_Destination,
                             CASE WHEN tp.OrdreAnnonce=1 THEN tp.AnnonceFrequence END AS Annonce1_Frequence,
+                            CASE WHEN tp.OrdreAnnonce=1 THEN tp.RoleConducteurAnnonce END AS Annonce1_Role_Conducteur,
+                            CASE WHEN tp.OrdreAnnonce=1 THEN tp.RolePassagerAnnonce END AS Annonce1_Role_Passager,
                             CASE WHEN tp.OrdreAnnonce=2 THEN tp.AnnonceOrigine END AS Annonce2_Origine,
                             CASE WHEN tp.OrdreAnnonce=2 THEN tp.AnnonceDestination END AS Annonce2_Destination,
                             CASE WHEN tp.OrdreAnnonce=2 THEN tp.AnnonceFrequence END AS Annonce2_Frequence,
+                            CASE WHEN tp.OrdreAnnonce=2 THEN tp.RoleConducteurAnnonce END AS Annonce2_Role_Conducteur,
+                            CASE WHEN tp.OrdreAnnonce=1 THEN tp.RolePassagerAnnonce END AS Annonce2_Role_Passager,
                             CASE WHEN tp.OrdreAnnonce=3 THEN tp.AnnonceOrigine END AS Annonce3_Origine,
                             CASE WHEN tp.OrdreAnnonce=3 THEN tp.AnnonceDestination END AS Annonce3_Destination,
                             CASE WHEN tp.OrdreAnnonce=3 THEN tp.AnnonceFrequence END AS Annonce3_Frequence,
+                            CASE WHEN tp.OrdreAnnonce=3 THEN tp.RoleConducteurAnnonce END AS Annonce3_Role_Conducteur,
+                            CASE WHEN tp.OrdreAnnonce=1 THEN tp.RolePassagerAnnonce END AS Annonce3_Role_Passager,
                             max(tp.OrdreAnnonce) AS NombreAnnonces
                         FROM
                             (SELECT
@@ -481,7 +499,9 @@ class UserRepository
                                 CASE c.frequency
                                 WHEN 1 THEN 'Occasionnel'
                                 WHEN 2 THEN 'Régulier'
-                                END AS AnnonceFrequence
+                                END AS AnnonceFrequence,
+                                c.driver as RoleConducteurAnnonce,
+                                c.passenger as RolePassagerAnnonce
                             FROM proposal p
                                 INNER JOIN criteria c ON c.id = p.criteria_id
                                 INNER JOIN waypoint wd ON (wd.proposal_id = p.id AND wd.position=0)
@@ -490,7 +510,7 @@ class UserRepository
                                 INNER JOIN address aa ON aa.id = wa.address_id
                             where p.private=0 AND (p.dynamic!=1 OR p.dynamic IS NULL) AND ((c.frequency=1 AND c.FROM_date > NOW()) OR c.frequency=2 AND c.to_date > NOW())
                             ) AS tp
-                        GROUP BY tp.user_id, Annonce1_Origine, Annonce1_Destination, Annonce1_Frequence, Annonce2_Origine, Annonce2_Destination, Annonce2_Frequence, Annonce3_Origine, Annonce3_Destination, Annonce3_Frequence
+                        GROUP BY tp.user_id, Annonce1_Origine, Annonce1_Destination, Annonce1_Frequence, Annonce1_Role_Conducteur, Annonce1_Role_Passager, Annonce2_Origine, Annonce2_Destination, Annonce2_Frequence, Annonce2_Role_Conducteur, Annonce2_Role_Passager, Annonce3_Origine, Annonce3_Destination, Annonce3_Frequence, Annonce3_Role_Conducteur, Annonce3_Role_Passager
                         ) AS tp_extended
                     GROUP BY tp_extended.user_id
                     )
