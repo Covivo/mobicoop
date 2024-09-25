@@ -4,10 +4,9 @@
     class="mt-5"
     outlined
     type="warning"
-    :prominent="true"
+    prominent
   >
-    Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Suspendisse non nisl sit amet velit
-    hendrerit rutrum. Nullam vel sem. Pellentesque dapibus hendrerit tortor.
+    <p v-html="$t('authenticationAlert.text')" />
   </v-alert>
 </template>
 <script>
