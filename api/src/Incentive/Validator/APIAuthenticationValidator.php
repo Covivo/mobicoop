@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Incentive\Service\Validation;
+namespace App\Incentive\Validator;
 
 use App\User\Entity\User;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-abstract class APIAuthenticationValidation
+abstract class APIAuthenticationValidator
 {
     private const ERROR_PATTERN_VALUES = [
         'Access denied',

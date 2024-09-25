@@ -30,9 +30,9 @@ use App\Incentive\Service\Stage\ProofValidate;
 use App\Incentive\Service\Stage\ResetSubscription;
 use App\Incentive\Service\Stage\ValidateLDSubscription;
 use App\Incentive\Service\Stage\VerifySubscription;
-use App\Incentive\Service\Validation\APIAuthenticationValidation;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
+use App\Incentive\Validator\APIAuthenticationValidator;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Incentive\Validator\SubscriptionValidator;
 use App\Incentive\Validator\UserValidator;
@@ -245,7 +245,7 @@ class SubscriptionManager extends MobConnectManager
      */
     public function commitSubscription($subscription, $referenceObject, bool $pushOnlyMode = false, bool $noResetMode = false): void
     {
-        if (!APIAuthenticationValidation::isAuthenticationValid($subscription->getUser())) {
+        if (!APIAuthenticationValidator::isAuthenticationValid($subscription->getUser())) {
             return;
         }
 
@@ -304,7 +304,7 @@ class SubscriptionManager extends MobConnectManager
             is_null($journey)
             || !$journey->getSubscription()
             || !$journey->getSubscription()->getUser()
-            || !APIAuthenticationValidation::isAuthenticationValid($journey->getSubscription()->getUser())
+            || !APIAuthenticationValidator::isAuthenticationValid($journey->getSubscription()->getUser())
         ) {
             return;
         }

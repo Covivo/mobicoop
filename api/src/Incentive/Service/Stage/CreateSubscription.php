@@ -9,7 +9,7 @@ use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Manager\InstanceManager;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Service\MobConnectMessages;
-use App\Incentive\Service\Validation\APIAuthenticationValidation;
+use App\Incentive\Validator\APIAuthenticationValidator;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -69,7 +69,7 @@ class CreateSubscription extends Stage
                 true
             );
 
-            if (APIAuthenticationValidation::isApiAuthenticationError($exception)) {
+            if (APIAuthenticationValidator::isApiAuthenticationError($exception)) {
                 $event = new InvalidAuthenticationEvent($this->_user);
                 $this->_eventDispatcher->dispatch(InvalidAuthenticationEvent::NAME, $event);
             }

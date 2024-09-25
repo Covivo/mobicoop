@@ -12,7 +12,7 @@ use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
-use App\Incentive\Service\Validation\APIAuthenticationValidation;
+use App\Incentive\Validator\APIAuthenticationValidator;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Incentive\Validator\SubscriptionValidator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -56,7 +56,7 @@ class ValidateSDSubscription extends ValidateSubscription
             && (
                 is_null($this->_subscription)
                 || $this->_subscription->hasExpired()
-                || !APIAuthenticationValidation::isAuthenticationValid($this->_subscription->getUser())
+                || !APIAuthenticationValidator::isAuthenticationValid($this->_subscription->getUser())
             )
         ) {
             return;
@@ -143,7 +143,7 @@ class ValidateSDSubscription extends ValidateSubscription
         } catch (HttpException $exception) {
             $this->_subscription->addLog($exception, Log::TYPE_ATTESTATION, $httpQueryParams);
 
-            if (APIAuthenticationValidation::isApiAuthenticationError($exception)) {
+            if (APIAuthenticationValidator::isApiAuthenticationError($exception)) {
                 $event = new InvalidAuthenticationEvent($this->_subscription->getUser());
                 $this->_eventDispatcher->dispatch(InvalidAuthenticationEvent::NAME, $event);
             }
