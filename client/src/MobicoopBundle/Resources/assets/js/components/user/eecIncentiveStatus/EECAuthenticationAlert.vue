@@ -7,10 +7,20 @@
     prominent
   >
     <p v-html="$t('authenticationAlert.text')" />
+    <p class="text-center mt-10">
+      <SsoLogins
+        :specific-service="$t('service')"
+        :specific-path="$t('specificPath')"
+        :default-buttons-active="true"
+      />
+    </p>
   </v-alert>
 </template>
 <script>
 import { merge } from "lodash";
+
+import SsoLogins from '@components/user/SsoLogins';
+
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
 
@@ -27,6 +37,9 @@ export default {
       'fr': MessagesMergedFr,
       'eu': MessagesMergedEu
     }
+  },
+  components: {
+    SsoLogins
   },
   props: {
     eecSubscriptions: {
