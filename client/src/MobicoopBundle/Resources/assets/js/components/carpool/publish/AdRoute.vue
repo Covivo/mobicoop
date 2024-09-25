@@ -358,7 +358,8 @@ export default {
         waypoints: this.waypoints,
         avoidMotorway: this.avoidMotorway,
         direction: this.direction,
-        communities: this.selectedCommunities
+        selectedCommunities: this.selectedCommunities,
+        communities: this.communities
       });
     },
     addWaypoint() {

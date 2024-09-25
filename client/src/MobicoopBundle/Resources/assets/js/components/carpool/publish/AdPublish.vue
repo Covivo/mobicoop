@@ -1054,7 +1054,8 @@ export default {
       // specific terms
       checkboxDrivingLicence: false,
       checkboxEmployer: false,
-      checkboxInssurance: false
+      checkboxInssurance: false,
+      freeCarpool: false,
     }
   },
   computed: {
@@ -1324,7 +1325,12 @@ export default {
           this.passenger = this.ad.role === 2 || this.ad.role === 3;
         }
       }
-    }
+    },
+    freeCarpool(newValue) {
+      if (newValue) {
+        this.price = 0;
+      }
+    },
   },
   methods: {
     buildPointsToMap: function(){
@@ -1418,11 +1424,24 @@ export default {
       this.route = route;
       this.distance = route.direction ? route.direction.distance : null;
       this.duration = route.direction ? route.direction.duration : null;
-      this.selectedCommunities = route.communities ? route.communities : null;
+      this.selectedCommunities = route.selectedCommunities ? route.selectedCommunities : null;
+
+      this.setCommunityFreeCarpool(route.communities);
 
       if(this.step!==1){
         this.origin = route.origin;
         this.destination = route.destination;
+      }
+    },
+    setCommunityFreeCarpool(communities) {
+      if (this.selectedCommunities) {
+        let freeCarpool = null;
+
+        for(let index in this.selectedCommunities) {
+          freeCarpool = communities.find(community => community.id === this.selectedCommunities[index] && community.freeCarpool);
+        }
+
+        this.freeCarpool = typeof freeCarpool !== "undefined" && freeCarpool != null;
       }
     },
     postAd() {
