@@ -225,6 +225,8 @@ class Community implements ResourceInterface, \JsonSerializable
 
     /**
      * @var bool
+     *
+     * @Groups({"post","put","get"})
      */
     private $freeCarpool = false;
 

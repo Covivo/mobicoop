@@ -73,7 +73,7 @@
             justify="center"
           >
             <v-col cols="6">
-              <v-tooltip left>
+              <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                   <span
                     v-bind="attrs"
@@ -271,6 +271,7 @@ export default {
         newCommunity.append("fullDescription", this.fullDescription);
         newCommunity.append("avatar", this.avatar);
         newCommunity.append("address", JSON.stringify(this.communityAddress));
+        newCommunity.append('freeCarpool', this.freeCarpool);
         if (this.domain) newCommunity.append("domain", this.domain);
 
         maxios
