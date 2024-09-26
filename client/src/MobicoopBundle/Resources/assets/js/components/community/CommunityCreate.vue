@@ -186,6 +186,10 @@ export default {
       type: Boolean,
       default: false
     },
+    communityWithFreeCarpool: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
