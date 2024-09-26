@@ -47,5 +47,6 @@
             "required": "Tous les champs marqués d'une étoile sont requis"
         },
         "image": "L'image n'a pas été enregistrée"
-    }
+    },
+    "freeCarpool": "Proposer la gratuité d'annonce"
 }

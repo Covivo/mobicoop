@@ -47,5 +47,6 @@
             "label": "Create the community"
         }
     },
-    "title": "Create your community"
+    "title": "Create your community",
+    "freeCarpool": "Proposer la gratuité d'annonce"
 }

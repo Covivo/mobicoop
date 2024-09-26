@@ -16,9 +16,7 @@
       </v-btn>
     </v-snackbar>
     <v-container>
-      <v-row
-        justify="center"
-      >
+      <v-row justify="center">
         <v-col
           cols="12"
           md="8"
@@ -70,6 +68,17 @@
               />
             </v-col>
           </v-row>
+          <v-row
+            v-if="communityWithFreeCarpool"
+            justify="center"
+          >
+            <v-col cols="6">
+              <v-switch
+                v-model="freeCarpool"
+                :label="$t('freeCarpool')"
+              />
+            </v-col>
+          </v-row>
           <v-row justify="center">
             <v-col cols="6">
               <geocomplete
@@ -110,7 +119,7 @@
                 accept="image/png, image/jpeg, image/jpg"
                 :label="$t('form.avatar.label')"
                 prepend-icon="mdi-image"
-                :hint="$t('form.avatar.minPxSize', {size: imageMinPxSize})+', '+$t('form.avatar.maxMbSize', {size: imageMaxMbSize})"
+                :hint="$t('form.avatar.minPxSize', { size: imageMinPxSize }) + ', ' + $t('form.avatar.maxMbSize', { size: imageMaxMbSize })"
                 persistent-hint
                 show-size
                 @change="selectedAvatar"
@@ -137,7 +146,7 @@
 </template>
 <script>
 
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/CommunityCreate/";
+import { messages_en, messages_fr, messages_eu, messages_nl } from "@translations/components/community/CommunityCreate/";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import maxios from "@utils/maxios";
 
@@ -147,13 +156,13 @@ export default {
       'en': messages_en,
       'nl': messages_nl,
       'fr': messages_fr,
-      'eu':messages_eu
+      'eu': messages_eu
     },
   },
   components: {
     Geocomplete
   },
-  props:{
+  props: {
     user: {
       type: Object,
       default: null
@@ -191,11 +200,11 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       avatarRules: [
         v => !!v || this.$t("form.avatar.required"),
-        v => !v || v.size < this.imageMaxMbSize*1024*1024 || this.$t("form.avatar.mbSize", { size: this.imageMaxMbSize }),
+        v => !v || v.size < this.imageMaxMbSize * 1024 * 1024 || this.$t("form.avatar.mbSize", { size: this.imageMaxMbSize }),
         v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
         v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
       ],
@@ -221,25 +230,26 @@ export default {
       domain: null,
       domainRules: [
         v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.domain.error")
-      ]
+      ],
+      freeCarpool: false
     }
   },
-  computed:{
-    createButtonEnabled(){
-      if(
+  computed: {
+    createButtonEnabled() {
+      if (
         (this.avatarHeight && this.avatarHeight < this.imageMinPxSize) ||
         (this.avatarWidth && this.avatarWidth < this.imageMinPxSize)
-      ){
+      ) {
         return false;
       }
-      if(this.avatar && (this.avatar.size > this.imageMaxMbSize*1024*1024)){
+      if (this.avatar && (this.avatar.size > this.imageMaxMbSize * 1024 * 1024)) {
         return false;
       }
       return true;
     }
   },
   methods: {
-    addressSelected: function(address) {
+    addressSelected: function (address) {
       this.communityAddress = address;
     },
     createCommunity() {
@@ -255,7 +265,7 @@ export default {
 
         maxios
           .post(this.$t('buttons.create.route'), newCommunity, {
-            headers:{
+            headers: {
               'content-type': 'multipart/form-data'
             }
           })
@@ -297,6 +307,4 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
