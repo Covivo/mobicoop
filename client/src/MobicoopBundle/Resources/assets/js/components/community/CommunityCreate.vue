@@ -73,10 +73,20 @@
             justify="center"
           >
             <v-col cols="6">
-              <v-switch
-                v-model="freeCarpool"
-                :label="$t('freeCarpool')"
-              />
+              <v-tooltip left>
+                <template v-slot:activator="{ on, attrs }">
+                  <span
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-switch
+                      v-model="freeCarpool"
+                      :label="$t('freeCarpool.label')"
+                    />
+                  </span>
+                </template>
+                <span>{{ $t('freeCarpool.tooltip') }}</span>
+              </v-tooltip>
             </v-col>
           </v-row>
           <v-row justify="center">
