@@ -480,7 +480,7 @@
               >
                 <v-col cols="10">
                   <p>{{ $t('stepper.content.participation.details') }}</p>
-                  <p v-if="freeCarpool">
+                  <p v-if="communityWithFreeCarpool && freeCarpool">
                     <span v-if="freeCarpoolCommunities.length === 1">
                       {{ $t('freeCarpool.one', { communityName: freeCarpoolCommunities[0].name }) }}
                     </span>
@@ -996,6 +996,10 @@ export default {
     bothRoleEnabled: {
       type: Boolean,
       default: true
+    },
+    communityWithFreeCarpool: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -1435,7 +1439,9 @@ export default {
       this.duration = route.direction ? route.direction.duration : null;
       this.selectedCommunities = route.selectedCommunities ? route.selectedCommunities : null;
 
-      this.setCommunityFreeCarpool(route.communities);
+      if (this.communityWithFreeCarpool) {
+        this.setCommunityFreeCarpool(route.communities);
+      }
 
       if(this.step!==1){
         this.origin = route.origin;
