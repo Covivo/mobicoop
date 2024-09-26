@@ -206,6 +206,7 @@ class CommunityController extends AbstractController
             'isMember' => $community->isMember(),
             'communityUserDirectMessage' => $this->communityUserDirectMessage,
             'communityWidget' => $this->communityWidget,
+            'freeCarpool' => $community->getFreeCarpool(),
         ]);
     }
 
