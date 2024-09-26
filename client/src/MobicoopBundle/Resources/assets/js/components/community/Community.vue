@@ -39,7 +39,7 @@
             :display-description="true"
           />
           <p v-if="communityWithFreeCarpool && freeCarpool">
-            Sur cette communauté, vos trajets seront gratuits lors de la publication. Vous êtes libre de modifier le prix.
+            {{ $t('freeCarpool') }}
           </p>
           <p>{{ user && user.isCommunityReferrer }}</p>
           <!-- community buttons and map -->
