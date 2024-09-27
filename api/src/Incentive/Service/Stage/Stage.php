@@ -11,6 +11,7 @@ use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class Stage implements StageInterface
 {
@@ -43,6 +44,11 @@ abstract class Stage implements StageInterface
      * @var EecInstance
      */
     protected $_eecInstance;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $_eventDispatcher;
 
     /**
      * @var LongDistanceSubscription|ShortDistanceSubscription

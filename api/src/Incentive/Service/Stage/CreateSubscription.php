@@ -2,14 +2,17 @@
 
 namespace App\Incentive\Service\Stage;
 
+use App\Incentive\Event\InvalidAuthenticationEvent;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Definition\DefinitionSelector;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\Manager\InstanceManager;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Service\MobConnectMessages;
+use App\Incentive\Validator\APIAuthenticationValidator;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CreateSubscription extends Stage
@@ -37,6 +40,7 @@ class CreateSubscription extends Stage
     public function __construct(
         EntityManagerInterface $em,
         TimestampTokenManager $timestampTokenManager,
+        EventDispatcherInterface $eventDispatcher,
         LoggerService $loggerService,
         EecInstance $eecInstance,
         User $user,
@@ -44,6 +48,7 @@ class CreateSubscription extends Stage
     ) {
         $this->_em = $em;
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_eventDispatcher = $eventDispatcher;
         $this->_loggerService = $loggerService;
         $this->_eecInstance = $eecInstance;
 
@@ -63,6 +68,11 @@ class CreateSubscription extends Stage
                 LoggerService::TYPE_INFO,
                 true
             );
+
+            if (APIAuthenticationValidator::isApiAuthenticationError($exception)) {
+                $event = new InvalidAuthenticationEvent($this->_user);
+                $this->_eventDispatcher->dispatch(InvalidAuthenticationEvent::NAME, $event);
+            }
 
             throw new \LogicException('eec_subscription_'.$this->_subscriptionType.'_unfinalized');
         }

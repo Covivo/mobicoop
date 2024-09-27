@@ -91,6 +91,13 @@ class CeeSubscriptions
     private $nbRejectedProofs = 0;
 
     /**
+     * @var bool Specifies whether authentication is valid
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $authenticationValidity = true;
+
+    /**
      * @var User
      */
     private $_user;
@@ -183,6 +190,20 @@ class CeeSubscriptions
         return $this;
     }
 
+    public function getAuthenticationValidity(): bool
+    {
+        return $this->authenticationValidity;
+    }
+
+    public function setAuthenticationValidity(): self
+    {
+        $this->authenticationValidity = $this->_user
+            && $this->_user->getMobConnectAuth()
+            && $this->_user->getMobConnectAuth()->getValidity();
+
+        return $this;
+    }
+
     private function _computeShortDistance()
     {
         foreach ($this->_getEecEligibleProofsShortDistance() as $proof) {
@@ -240,5 +261,7 @@ class CeeSubscriptions
         $this->setLongDistanceSubscription($this->_user->getLongDistanceSubscription());
 
         $this->_computeShortDistance();
+
+        $this->setAuthenticationValidity();
     }
 }

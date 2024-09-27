@@ -257,5 +257,8 @@
   },
   "expirationText": "Vous avez jusqu’au {date} pour réaliser les trajets restants.",
   "shortExpiredText": "La période légale de 3 mois pour compléter vos trajets courte distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant.",
-  "longExpiredText": "La période légale de 3 mois pour compléter vos trajets longue distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant."
+  "longExpiredText": "La période légale de 3 mois pour compléter vos trajets longue distance afin de profiter des 75€ de bonus est close. Mais vous pouvez continuer à faire des économies (et des rencontres!) en covoiturant.",
+  "authenticationAlert": {
+    "text": "La liaison des comptes utilisateurs <span class=\"font-italic\">Mobicoop / Mon compte mobilité / France Connect</span> n'est plus fonctionnelle. Nous ne sommes plus en mesure de mettre à jour votre demande d'incitation.<br>Merci de mettre à jour votre authentification."
+  }
 }

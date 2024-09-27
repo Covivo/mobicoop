@@ -9,6 +9,7 @@ use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Service\Provider\CarpoolPaymentProvider;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProofValidate extends ValidateSubscription
 {
@@ -22,6 +23,7 @@ class ProofValidate extends ValidateSubscription
         CarpoolPaymentRepository $carpoolPaymentRepository,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
+        EventDispatcherInterface $eventDispatcher,
         EecInstance $eecInstance,
         CarpoolProof $carpoolProof,
         bool $pushOnlyMode = false,
@@ -31,6 +33,7 @@ class ProofValidate extends ValidateSubscription
         $this->_carpoolPaymentRepository = $carpoolPaymentRepository;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_eventDispatcher = $eventDispatcher;
 
         $this->_eecInstance = $eecInstance;
         $this->_carpoolProof = $carpoolProof;
@@ -61,13 +64,13 @@ class ProofValidate extends ValidateSubscription
                     return;
                 }
 
-                $stage = new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $carpoolPayment, $this->_pushOnlyMode, $this->_recoveryMode);
+                $stage = new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $carpoolPayment, $this->_pushOnlyMode, $this->_recoveryMode);
                 $stage->execute();
 
                 return;
         }
 
-        $stage = new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_carpoolProof, $this->_pushOnlyMode, $this->_recoveryMode);
+        $stage = new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $this->_carpoolProof, $this->_pushOnlyMode, $this->_recoveryMode);
         $stage->execute();
     }
 }

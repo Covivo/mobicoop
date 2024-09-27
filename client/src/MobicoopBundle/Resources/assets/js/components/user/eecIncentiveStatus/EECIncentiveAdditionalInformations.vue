@@ -1,5 +1,8 @@
 <template>
   <div>
+    <EECAuthenticationAlert
+      :eec-subscriptions="eecSubscriptions"
+    />
     <v-card
       v-if="!hasBankCoordinates || !validatedIdentity"
       flat
@@ -80,6 +83,7 @@ import EECIncentiveFollowUp from '@components/user/eecIncentiveStatus/EECIncenti
 import EECIncentiveFollowUpTab from '@components/user/eecIncentiveStatus/EECIncentiveFollowUpTab';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
+import EECAuthenticationAlert from "./EECAuthenticationAlert.vue";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -98,6 +102,7 @@ export default {
   components:{
     EECIncentiveFollowUp,
     EECIncentiveFollowUpTab,
+    EECAuthenticationAlert,
   },
   props: {
     eecInstance: {

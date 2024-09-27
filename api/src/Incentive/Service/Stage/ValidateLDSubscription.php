@@ -7,17 +7,20 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Event\InvalidAuthenticationEvent;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\Manager\TimestampTokenManager;
 use App\Incentive\Service\Provider\CarpoolItemProvider;
 use App\Incentive\Service\Provider\JourneyProvider;
 use App\Incentive\Service\Provider\SubscriptionProvider;
+use App\Incentive\Validator\APIAuthenticationValidator;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Incentive\Validator\SubscriptionValidator;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidateLDSubscription extends ValidateSubscription
@@ -36,6 +39,7 @@ class ValidateLDSubscription extends ValidateSubscription
         EntityManagerInterface $em,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
+        EventDispatcherInterface $eventDispatcher,
         EecInstance $eecInstance,
         CarpoolPayment $carpoolPayment,
         bool $pushOnlyMode = false,
@@ -44,6 +48,7 @@ class ValidateLDSubscription extends ValidateSubscription
         $this->_em = $em;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_eventDispatcher = $eventDispatcher;
 
         $this->_eecInstance = $eecInstance;
         $this->_carpoolPayment = $carpoolPayment;
@@ -58,7 +63,7 @@ class ValidateLDSubscription extends ValidateSubscription
         foreach (CarpoolItemProvider::getCarpoolItemFromCarpoolPayment($this->_carpoolPayment) as $this->_carpoolItem) {
             $this->_subscription = SubscriptionProvider::getLDSubscriptionFromCarpoolItem($this->_carpoolItem);
 
-            if (is_null($this->_subscription)) {
+            if (is_null($this->_subscription) || !APIAuthenticationValidator::isAuthenticationValid($this->_subscription->getUser())) {
                 continue;
             }
 
@@ -125,7 +130,7 @@ class ValidateLDSubscription extends ValidateSubscription
         }
 
         if (!is_null($journey) && SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-            $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
+            $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
         }
     }
@@ -153,6 +158,11 @@ class ValidateLDSubscription extends ValidateSubscription
             $this->_apiProvider->patchSubscription($this->_subscription, $httpQueryParams);
         } catch (HttpException $exception) {
             $this->_subscription->addLog($exception, Log::TYPE_ATTESTATION, $httpQueryParams);
+
+            if (APIAuthenticationValidator::isApiAuthenticationError($exception)) {
+                $event = new InvalidAuthenticationEvent($this->_subscription->getUser());
+                $this->_eventDispatcher->dispatch(InvalidAuthenticationEvent::NAME, $event);
+            }
 
             $this->_em->flush();
 
