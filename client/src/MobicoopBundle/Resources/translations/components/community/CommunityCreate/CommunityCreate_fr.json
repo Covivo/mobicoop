@@ -47,5 +47,9 @@
             "required": "Tous les champs marqués d'une étoile sont requis"
         },
         "image": "L'image n'a pas été enregistrée"
+    },
+    "freeCarpool": {
+      "label": "Proposer la gratuité d'annonce",
+      "tooltip": "Si l'option est activée, les membres seront incité·e·s à partager des annonces gratuites"
     }
 }

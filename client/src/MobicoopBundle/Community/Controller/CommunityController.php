@@ -43,6 +43,8 @@ class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private const TRUTHY = 'true';
+
     private $createFromFront;
     private $communityUserDirectMessage;
     private $defaultNbCommunitiesPerPage;
@@ -112,6 +114,7 @@ class CommunityController extends AbstractController
                 $community->setAddress($address);
                 $community->addCommunityUser($communityUser);
                 $community->setDomain(!is_null($data->get('domain')) ? trim($data->get('domain')) : null);
+                $community->setFreeCarpool(self::TRUTHY === $data->get('freeCarpool'));
 
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {
@@ -206,6 +209,7 @@ class CommunityController extends AbstractController
             'isMember' => $community->isMember(),
             'communityUserDirectMessage' => $this->communityUserDirectMessage,
             'communityWidget' => $this->communityWidget,
+            'freeCarpool' => $community->getFreeCarpool(),
         ]);
     }
 

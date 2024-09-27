@@ -640,6 +640,15 @@ class Community
      */
     private $target;
 
+    /**
+     * @var bool Specifies whether the default price of an ad is free
+     *
+     * @ORM\Column(type="boolean", nullable=false, options={"default": false, "comment":"Specifies whether the default price of an ad is free"})
+     *
+     * @Groups({"aRead","aWrite","readCommunity","write","listCommunities"})
+     */
+    private $freeCarpool = false;
+
     public function __construct($id = null)
     {
         $this->id = $id;
@@ -1162,5 +1171,25 @@ class Community
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    /**
+     * Get specifies whether the default price of an ad is free.
+     */
+    public function getFreeCarpool(): bool
+    {
+        return $this->freeCarpool;
+    }
+
+    /**
+     * Set specifies whether the default price of an ad is free.
+     *
+     * @param bool $freeCarpool Specifies whether the default price of an ad is free
+     */
+    public function setFreeCarpool(bool $freeCarpool): self
+    {
+        $this->freeCarpool = $freeCarpool;
+
+        return $this;
     }
 }

@@ -92,5 +92,6 @@
             },
             "title": "Request for confirmation"
         }
-    }
+    },
+    "freeCarpool": "Sur cette communauté, vos trajets seront gratuits lors de la publication. Vous êtes libre de modifier le prix."
 }
