@@ -89,6 +89,7 @@ class CarpoolProof
         self::STATUS_FRAUD_ERROR,
         self::STATUS_EXPIRED,
         self::STATUS_CANCELED_BY_OPERATOR,
+        self::STATUS_ANOMALY_ERROR,
     ];
 
     public const NOT_SENT_STATUS = [
