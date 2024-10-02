@@ -800,11 +800,6 @@ class ProofManager
 
                         break;
 
-                    case 'unknown':
-                        $proof->setStatus(CarpoolProof::STATUS_UNKNOWN);
-
-                        break;
-
                     case 'anomaly_error':
                         $proof->setStatus(CarpoolProof::STATUS_ANOMALY_ERROR);
 
