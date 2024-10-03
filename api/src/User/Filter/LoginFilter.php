@@ -62,7 +62,7 @@ final class LoginFilter extends AbstractContextAwareFilter
         $queryBuilder
             ->andWhere('u.email = \''.$value.'\'')
             ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
     }
 }

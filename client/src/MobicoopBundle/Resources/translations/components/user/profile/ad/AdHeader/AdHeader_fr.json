@@ -31,8 +31,8 @@
     "error": "Une erreur est survenue lors de la suppression de votre annonce.",
     "dialog": {
       "base": {
-        "title": "Etes-vous sur de vouloir supprimer cette annonce ?",
-        "text": "Toute suppression d'annonce est définitive, êtes-vous sur de vouloir supprimer cette annonce ?"
+        "title": "Attention, en supprimant votre annonce, ceci entrainera la suppression des :",
+        "text": "<ul><li>Covoiturages valides et en cours avec cette annonce</li><li>Conversations liées à cette annonce</li><li>Et de l'historique en lien avec vos covoiturages (Cf. export de preuve)</li></ul>"
       },
       "accepted": {
         "title": "Il existe au moins un covoiturage planifié pour cette annonce",

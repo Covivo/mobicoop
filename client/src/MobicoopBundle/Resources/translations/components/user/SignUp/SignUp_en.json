@@ -87,7 +87,7 @@
     "error": "Ce numéro de téléphone n'est pas valide"
   },
   "chart": {
-    "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>",
+    "text": "I agree with <a class='primary--text' target='_blank' href='/cgu' aria-label='the platform charter and its data protection policy')> the platform charter and its data protection policy</a>",
     "required": "Validation of the charter is required"
   },
   "newsSubscription": {
@@ -131,5 +131,9 @@
       "textOkAutoValidation": "Your membership request is validated.",
       "textOkManualValidation": "Your membership request has been sent to the referrer. You will be informed by email."
     }
+  },
+  "insteadRZP": {
+    "href": "https://m.mobicoop.fr/#/hitchhiking/home",
+    "label": "Instead Rezo Pouce ?"
   }
 }

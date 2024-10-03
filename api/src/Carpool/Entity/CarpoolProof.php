@@ -61,6 +61,10 @@ class CarpoolProof
     public const STATUS_INVALID_DUPLICATE_DEVICE = 15; // proof not sent: passenger and driver phone unique id are indentical
     public const STATUS_NOT_SENT_MISSING_PHONE = 16;
     public const STATUS_RPC_NOT_REACHABLE = 17;     // the rpc is not reachable
+    public const STATUS_DISTANCE_TOO_SHORT = 18;     // Carpooled journey's distance is too short
+    public const STATUS_CONCURRENT_DRIVER_JOURNEY = 19;     // Too many driver's journey on the same day
+    public const STATUS_MAX_OPERATOR_TRIP_IDS = 20;     // Too many different operator_trip_ids on the same day
+    public const STATUS_ANOMALY_ERROR = 21;
 
     public const ACTOR_DRIVER = 1;
     public const ACTOR_PASSENGER = 2;
@@ -73,6 +77,9 @@ class CarpoolProof
     public const TYPE_UNDETERMINED_DYNAMIC = 'DX';
 
     public const MINIMUM_DISTANCE_GPS_FOR_TYPE_HIGH = 3000; // Minimum distance required between driver/passenger pickUp/dropOff in meters
+    public const MINIMUM_DISTANCE_VALID_JOURNEY = 2000; // Minimum distance required for a journey in meters
+    public const CONCURRENT_DRIVER_JOURNEY_THRESHOLD = 30; // Minimal time between two drivers journey on the same day in minutes
+    public const MAX_OPERATOR_TRIP_IDS = 4; // Max number of different operator_trip_ids on the same day
 
     public const ERROR_STATUS = [
         self::STATUS_ERROR,
@@ -82,6 +89,7 @@ class CarpoolProof
         self::STATUS_FRAUD_ERROR,
         self::STATUS_EXPIRED,
         self::STATUS_CANCELED_BY_OPERATOR,
+        self::STATUS_ANOMALY_ERROR,
     ];
 
     public const NOT_SENT_STATUS = [

@@ -80,7 +80,7 @@ final class IdentityStatusFilter extends AbstractContextAwareFilter
         $queryBuilder
             ->andWhere($where)
             ->andWhere('u.status != :status')
-            ->setParameters(['status' => User::STATUS_PSEUDONYMIZED])
+            ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
     }
 }

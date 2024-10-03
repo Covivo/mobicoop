@@ -542,6 +542,34 @@
                   </template>
                 </v-checkbox>
 
+                <v-checkbox
+                  v-if="referral"
+                  v-model="form.referral"
+                  class="check"
+                  color="primary"
+                  :rules="form.checkboxReferalRules"
+                  required
+                >
+                  <template v-slot:label>
+                    <div
+                      @click.stop
+                      v-html="$t(`${referral}.checkBox.text`)"
+                    />
+                  </template>
+                </v-checkbox>
+
+                <v-btn
+                  v-if="integrateRzp"
+                  :href="$t('insteadRZP.href')"
+                  block
+                  color="primary"
+                  class="mt-3 mb-5"
+                  outlined
+                  rounded
+                >
+                  {{ $t('insteadRZP.label') }}
+                </v-btn>
+
                 <v-row
                   v-if="emailAlreadyTaken || !phoneNumberValid"
                   justify="center"
@@ -635,14 +663,15 @@ import CommunityHelp from "@components/community/CommunityHelp";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/SignUp/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/SignUp/";
+import {messages_en as messages_en_referal, messages_fr as messages_fr_referal, messages_eu as messages_eu_referal, messages_nl as messages_nl_referal} from "@translations/components/user/ReferralHeader/";
 import MFacebookAuth from "@components/user/MFacebookAuth";
 import SsoLogins from '@components/user/SsoLogins';
 import ReferralHeader from '@components/user/SignUp/ReferralHeader';
 
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedNl = merge(messages_nl, messages_client_nl);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
-let MessagesMergedEu = merge(messages_eu, messages_client_eu);
+let MessagesMergedEn = merge(messages_en, messages_client_en, messages_en_referal);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl, messages_nl_referal);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr, messages_fr_referal);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu, messages_eu_referal);
 export default {
   i18n: {
     messages: {
@@ -763,6 +792,10 @@ export default {
     minorProtectionActivated: {
       type: Boolean,
       default: false
+    },
+    integrateRzp: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -879,6 +912,9 @@ export default {
         checkboxSpecificTermsRules: [
           (v) => !!v || this.$t("specificTerms.required"),
         ],
+        checkboxReferalRules: [
+          (v) => !!v || this.$t("referalCheckbox.required"),
+        ],
         idFacebook: null,
         newsSubscription: this.newsSubscriptionDefault
       },
@@ -929,6 +965,9 @@ export default {
         return true;
       }
       if (this.requiredCommunity && !this.selectedCommunity) {
+        return true;
+      }
+      if(this.referral && !this.form.referral){
         return true;
       }
       return false;

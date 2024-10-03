@@ -26,8 +26,8 @@
     "error": "Při mazání inzerátu došlo k chybě.",
     "dialog": {
       "base": {
-        "title": "Opravdu chcete tento inzerát odstranit?",
-        "text": "Všechna odstranění inzerátů jsou konečná, jste si jisti, že chcete tento inzerát odstranit?"
+        "title": "Attention, en supprimant votre annonce, ceci entrainera la suppression des :",
+        "text": "<ul><li>Covoiturages valides et en cours avec cette annonce</li><li>Conversations liées à cette annonce</li><li>Et de l'historique en lien avec vos covoiturages (Cf. export de preuve)</li></ul>"
       },
       "accepted": {
         "title": "Na toto oznámení je naplánována alespoň jedna spolujízda",

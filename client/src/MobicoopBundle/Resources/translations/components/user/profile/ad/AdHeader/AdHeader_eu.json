@@ -29,8 +29,8 @@
         "title": "Gutienez autokidetza bat planifikatua izan iragarki honentzat"
       },
       "base": {
-        "text": "Iragarkia kentze oro behin betikoa da, segur ote zira iragarki hau kendu nahi duzula?",
-        "title": "Segur ote zira iragarki hau ezabatu nahi duzula?"
+        "title": "Attention, en supprimant votre annonce, ceci entrainera la suppression des :",
+        "text": "<ul><li>Covoiturages valides et en cours avec cette annonce</li><li>Conversations liées à cette annonce</li><li>Et de l'historique en lien avec vos covoiturages (Cf. export de preuve)</li></ul>"
       }
     },
     "error": "Huts bat gertatu da zure iragarkia kentzerakoan.",
