@@ -64,6 +64,7 @@ class CarpoolProof
     public const STATUS_DISTANCE_TOO_SHORT = 18;     // Carpooled journey's distance is too short
     public const STATUS_CONCURRENT_DRIVER_JOURNEY = 19;     // Too many driver's journey on the same day
     public const STATUS_MAX_OPERATOR_TRIP_IDS = 20;     // Too many different operator_trip_ids on the same day
+    public const STATUS_ANOMALY_ERROR = 21;
 
     public const ACTOR_DRIVER = 1;
     public const ACTOR_PASSENGER = 2;
@@ -88,6 +89,7 @@ class CarpoolProof
         self::STATUS_FRAUD_ERROR,
         self::STATUS_EXPIRED,
         self::STATUS_CANCELED_BY_OPERATOR,
+        self::STATUS_ANOMALY_ERROR,
     ];
 
     public const NOT_SENT_STATUS = [
