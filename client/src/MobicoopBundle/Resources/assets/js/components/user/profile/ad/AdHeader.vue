@@ -203,10 +203,13 @@
       <v-dialog
         v-model="dialogActive"
         persistent
-        max-width="495"
+        max-width="690"
       >
-        <v-card>
-          <v-card-title class="text-h5">
+        <v-card class="dialog_warning_delete">
+          <v-card-title
+            class="text-h6"
+            style="word-break: break-word"
+          >
             {{ dialog.title }}
           </v-card-title>
           <v-card-text>
@@ -241,11 +244,12 @@
     <v-dialog
       v-model="dialogWarningUpdate"
       persistent
-      max-width="550"
+      max-width="690"
     >
       <v-card>
         <v-card-title
-          class="text-h5"
+          class="text-h6"
+          style="word-break: break-word"
           v-html="$t('update.warningTitle')"
         />
         <v-card-text v-html="$t('update.warningText')" />
