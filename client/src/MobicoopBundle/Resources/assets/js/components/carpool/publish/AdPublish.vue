@@ -1454,7 +1454,7 @@ export default {
         for(let index in this.selectedCommunities) {
           const community = communities.find(community => community.id === this.selectedCommunities[index] && community.freeCarpool);
 
-          if (community) {
+          if (community && this.freeCarpoolCommunities.find(c => c.id === community.id)) {
             this.freeCarpoolCommunities.push(community);
           }
         }
