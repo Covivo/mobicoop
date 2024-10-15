@@ -1289,7 +1289,7 @@ export default {
       (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {
-      calculatePrice();
+      this.calculatePrice();
     },
     route(){
       this.buildPointsToMap();
