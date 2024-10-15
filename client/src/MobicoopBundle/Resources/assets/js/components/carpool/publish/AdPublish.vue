@@ -1289,7 +1289,7 @@ export default {
       (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {
-      let price = Math.round(this.distance * this.pricePerKm * 100)/100;
+      let price = this.freeCarpool ? 0 : Math.round(this.distance * this.pricePerKm * 100) / 100;
       this.roundPrice(price, this.regular ? 2 : 1);
     },
     route(){
