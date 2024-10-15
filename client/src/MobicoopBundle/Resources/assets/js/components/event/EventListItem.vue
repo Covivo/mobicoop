@@ -3,8 +3,8 @@
     <v-row>
       <v-col cols="3">
         <v-img
-          v-if="item.externalImageUrl"
-          :src="item.externalImageUrl ? item.externalImageUrl : '/images/avatarsDefault/avatar.svg'"
+          v-if="item.hasOwnProperty('externalImageUrl')"
+          :src="item.externalImageUrl ? item.externalImageUrl : '/images/avatarsDefault/event.svg'"
           :aspect-ratio="1"
           contain
           width="225"

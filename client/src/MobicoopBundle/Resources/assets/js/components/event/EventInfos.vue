@@ -9,8 +9,8 @@
           align="center"
         >
           <v-img
-            v-if="event.externalImageUrl"
-            :src="event.externalImageUrl"
+            v-if="event.hasOwnProperty('externalImageUrl')"
+            :src="event.externalImageUrl ? event.externalImageUrl : '/images/avatarsDefault/event.svg'"
             width="225"
             height="200"
             :aspect-ratio="1"
