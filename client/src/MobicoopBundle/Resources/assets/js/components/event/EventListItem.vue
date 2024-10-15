@@ -1,15 +1,25 @@
 <template>
   <v-card v-if="item">
     <v-row>
-      <v-col cols="3">
+      <v-col
+        cols="3"
+        class="text-center"
+      >
         <v-img
-          v-if="item.hasOwnProperty('externalImageUrl')"
-          :src="item.externalImageUrl ? item.externalImageUrl : '/images/avatarsDefault/event.svg'"
+          v-if="item.hasOwnProperty('externalImageUrl') && item.externalImageUrl"
+          :src="item.externalImageUrl"
           :aspect-ratio="1"
           contain
           width="225"
           height="200"
         />
+        <v-icon
+          v-else-if="item.hasOwnProperty('externalImageUrl') && !item.externalImageUrl"
+          class="mt-5"
+          x-large
+        >
+          mdi-calendar-month
+        </v-icon>
         <v-img
           v-else
           :src="(item['images'][0]) ? item['images'][0]['versions']['square_250'] : item.community ? item.community.image : item['defaultAvatar']"
