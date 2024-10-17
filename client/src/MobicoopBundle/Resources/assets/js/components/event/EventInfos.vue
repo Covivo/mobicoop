@@ -9,7 +9,7 @@
           align="center"
         >
           <v-img
-            v-if="event.externalImageUrl"
+            v-if="event.hasOwnProperty('externalImageUrl') && event.externalImageUrl"
             :src="event.externalImageUrl"
             width="225"
             height="200"
@@ -17,6 +17,12 @@
             :alt="event.name"
             contain
           />
+          <v-icon
+            v-else-if="event.hasOwnProperty('externalImageUrl') && !event.externalImageUrl"
+            x-large
+          >
+            mdi-calendar-month
+          </v-icon>
           <v-img
             v-else
             :src="(event.images[0]) ? event['images'][0]['versions']['square_250'] : event.community ? event.community.image : urlAltAvatar"

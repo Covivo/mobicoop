@@ -88,6 +88,7 @@ use App\User\Filter\HomeAddressDirectionTerritoryFilter;
 use App\User\Filter\HomeAddressODTerritoryFilter;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\HomeAddressWaypointTerritoryFilter;
+use App\User\Filter\IdentityProofFilter;
 use App\User\Filter\IdentityStatusFilter;
 use App\User\Filter\IsInCommunityFilter;
 use App\User\Filter\LoginFilter;
@@ -670,6 +671,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
+ * @ApiFilter(IdentityProofFilter::class, properties={"identityProofStatus"})
  */
 class User implements UserInterface, EquatableInterface
 {

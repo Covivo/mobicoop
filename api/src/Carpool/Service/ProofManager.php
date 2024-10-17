@@ -693,6 +693,8 @@ class ProofManager
 
         // we check taht we have phone numbers
         foreach ($proofs as $proof) {
+            $this->_tools->setCurrentCarpoolProof($proof);
+
             if (is_null($proof->getDriver()->getTelephone())
                 || '' == trim($proof->getDriver()->getTelephone())
                 || is_null($proof->getPassenger()->getTelephone())
@@ -706,6 +708,13 @@ class ProofManager
              * @var CarpoolProof $proof
              */
             if (CarpoolProof::STATUS_PENDING !== $proof->getStatus()) {
+                continue;
+            }
+
+            $now = new \DateTime();
+            $startDateTime = new \DateTime($this->_tools->getStartTimeGeopoint()['datetime']);
+
+            if ($startDateTime > $now) {
                 continue;
             }
 
