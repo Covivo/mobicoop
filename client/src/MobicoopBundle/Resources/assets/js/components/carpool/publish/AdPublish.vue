@@ -1289,8 +1289,7 @@ export default {
       (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {
-      let price = Math.round(this.distance * this.pricePerKm * 100)/100;
-      this.roundPrice(price, this.regular ? 2 : 1);
+      this.calculatePrice();
     },
     route(){
       this.buildPointsToMap();
@@ -1342,10 +1341,16 @@ export default {
     freeCarpool(newValue) {
       if (newValue) {
         this.price = 0;
+      } else {
+        this.calculatePrice();
       }
     },
   },
   methods: {
+    calculatePrice() {
+      let price = this.freeCarpool ? 0 : Math.round(this.distance * this.pricePerKm * 100) / 100;
+      this.roundPrice(price, this.regular ? 2 : 1);
+    },
     buildPointsToMap: function(){
       this.pointsToMap.length = 0;
       // Set the origin point with custom icon
@@ -1440,6 +1445,9 @@ export default {
       this.selectedCommunities = route.selectedCommunities ? route.selectedCommunities : null;
 
       if (this.communityWithFreeCarpool) {
+        this.freeCarpool = false;
+        this.freeCarpoolCommunities = [];
+
         this.setCommunityFreeCarpool(route.communities);
       }
 
@@ -1450,7 +1458,6 @@ export default {
     },
     setCommunityFreeCarpool(communities) {
       if (this.selectedCommunities) {
-
         for(let index in this.selectedCommunities) {
           const community = communities.find(community => community.id === this.selectedCommunities[index] && community.freeCarpool);
 

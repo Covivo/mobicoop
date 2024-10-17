@@ -26,7 +26,7 @@
     "error": "Při mazání inzerátu došlo k chybě.",
     "dialog": {
       "base": {
-        "title": "Attention, en supprimant votre annonce, ceci entrainera la suppression des :",
+        "title": "Attention, la suppression de votre annonce entrainera la suppression des :",
         "text": "<ul><li>Covoiturages valides et en cours avec cette annonce</li><li>Conversations liées à cette annonce</li><li>Et de l'historique en lien avec vos covoiturages (Cf. export de preuve)</li></ul>"
       },
       "accepted": {
@@ -43,7 +43,7 @@
   },
   "update": {
     "route": "/covoiturage/annonce/{id}/modifier",
-    "warningTitle": "Attention, en modifiant votre annonce, ceci entrainera la suppression des :",
+    "warningTitle": "Attention, la modification de votre annonce entrainera la suppression des :",
     "warningText": "<ul><li>Covoiturages valides et en cours avec cette annonce</li><li>Conversations liées à cette annonce</li><li>Et de l'historique en lien avec vos covoiturages (Cf. export de preuve)</li></ul>"
   },
   "yes": "Modifier mon annonce",
