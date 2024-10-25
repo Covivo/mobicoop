@@ -98,7 +98,6 @@ class JourneyProviderRdex extends JourneyProvider
                 }
                 $day = \DateTime::createFromFormat('Y-m-d', $searchParameters['outward']['mindate']);
                 $searchParameters['outward'][strtolower($day->format('l'))]['mintime'] = $time;
-                $searchParameters['outward'][strtolower($day->format('l'))]['maxtime'] = $time;
             }
         } else {
             // mintime and maxtime for days
