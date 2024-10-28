@@ -37,6 +37,7 @@ use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use App\User\Entity\User;
+use App\User\Service\BlockedCarpoolers;
 use App\User\Service\ReviewManager;
 
 /**
@@ -342,7 +343,10 @@ class MyAdManager
                 }
             }
         }
-        $myAd->setCarpoolers(count($carpoolers));
+
+        $carpoolersFilter = new BlockedCarpoolers($proposal->getUser());
+
+        $myAd->setCarpoolers(count($carpoolersFilter->filterCarpoolers($carpoolers)));
 
         $myAd->setDriver($driver);
         $myAd->setPassengers($passengers);
