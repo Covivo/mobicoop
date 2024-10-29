@@ -28,6 +28,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
+use App\Solidary\Service\TerritoryOperatorManager;
 use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
@@ -42,10 +43,16 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
     private $security;
     private $authManager;
 
-    public function __construct(Security $security, AuthManager $authManager)
+    /**
+     * @var TerritoryOperatorManager
+     */
+    private $_territoryOperatorManager;
+
+    public function __construct(Security $security, AuthManager $authManager, TerritoryOperatorManager $territoryOperatorManager)
     {
         $this->security = $security;
         $this->authManager = $authManager;
+        $this->_territoryOperatorManager = $territoryOperatorManager;
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?string $operationName = null)
@@ -79,6 +86,7 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
                 case 'ADMIN_associate_campaign':
                 case 'ADMIN_send_campaign':
                     $territories = $this->authManager->getTerritoriesForItem('user_list');
+                    $territories = $this->_territoryOperatorManager->getOperatorTerritories();
             }
         }
         if (count($territories) > 0) {

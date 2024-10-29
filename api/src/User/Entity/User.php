@@ -3726,6 +3726,11 @@ class User implements UserInterface, EquatableInterface
         return $this->operates->getValues();
     }
 
+    public function isSolidaryOperator(): bool
+    {
+        return !empty($this->getOperates());
+    }
+
     public function addOperate(Operate $operate): self
     {
         if (!$this->operates->contains($operate)) {
