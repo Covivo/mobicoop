@@ -192,7 +192,7 @@ class CarpoolExportManager
             }
 
             // We set the certification type
-            $carpoolExport->setCertification($carpoolItem->getCarpoolProof());
+            $carpoolExport->setCertification($carpoolItem);
             $carpoolExports[] = $carpoolExport;
         }
 
