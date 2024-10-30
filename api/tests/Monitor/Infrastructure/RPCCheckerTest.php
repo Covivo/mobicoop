@@ -34,7 +34,7 @@ class RPCCheckerTest extends TestCase
         $this->_carpoolProof = new CarpoolProof();
         $this->_carpoolProof->setCreatedDate(new \DateTime('now'));
 
-        $this->_rpcChecker = new RPCChecker($this->_curlDataProvider, $this->_carpoolProofService, 'http://rpcuri.io', 'RPCTOKEN');
+        $this->_rpcChecker = new RPCChecker($this->_curlDataProvider, $this->_carpoolProofService, 'http://rpcuri.io', 'RPCTOKEN', 'Mobicoop_');
     }
 
     /**
@@ -52,7 +52,7 @@ class RPCCheckerTest extends TestCase
     {
         $this->_carpoolProofService->method('getLastCarpoolProof')->willReturn($this->_carpoolProof);
         $this->_curlDataProvider->method('get')->willReturn(new Response(200, '[{"operator_journey_id":"TestMobicoop3_76785"}]'));
-        $this->assertEquals('{"message":"OK"}', $this->_rpcChecker->check());
+        $this->assertEquals($this->_getOkReturn(), $this->_rpcChecker->check());
     }
 
     /**
@@ -62,7 +62,7 @@ class RPCCheckerTest extends TestCase
     {
         $this->_carpoolProofService->method('getLastCarpoolProof')->willReturn($this->_carpoolProof);
         $this->_curlDataProvider->method('get')->willReturn(new Response(200));
-        $this->assertEquals('{"message":"KO"}', $this->_rpcChecker->check());
+        $this->assertEquals($this->_getKoReturn(), $this->_rpcChecker->check());
     }
 
     /**
@@ -72,7 +72,7 @@ class RPCCheckerTest extends TestCase
     {
         $this->_carpoolProofService->method('getLastCarpoolProof')->willReturn($this->_carpoolProof);
         $this->_curlDataProvider->method('get')->willReturn(new Response(200, 'this response is uncountable'));
-        $this->assertEquals('{"message":"KO"}', $this->_rpcChecker->check());
+        $this->assertEquals($this->_getKoReturn(), $this->_rpcChecker->check());
     }
 
     /**
@@ -91,6 +91,20 @@ class RPCCheckerTest extends TestCase
     {
         $this->_carpoolProofService->method('getLastCarpoolProof')->willReturn($this->_carpoolProof);
         $this->_curlDataProvider->method('get')->willReturn(new Response(200));
-        $this->assertEquals('{"message":"KO"}', $this->_rpcChecker->check());
+        $this->assertEquals($this->_getKoReturn(), $this->_rpcChecker->check());
+    }
+
+    private function _getOkReturn(): string
+    {
+        $now = new \DateTime();
+
+        return '{"message":"OK","lastCarpoolProofId":null,"minDate":"'.$now->format('Y-m-d').'T00:00:00Z"}';
+    }
+
+    private function _getKoReturn(): string
+    {
+        $now = new \DateTime();
+
+        return '{"message":"KO","lastCarpoolProofId":null,"minDate":"'.$now->format('Y-m-d').'T00:00:00Z"}';
     }
 }
