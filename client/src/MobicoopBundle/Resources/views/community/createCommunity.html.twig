@@ -17,6 +17,7 @@
       :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
       :geo-complete-palette="{{geoCompletePalette|json_encode}}"
       {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+      :community-with-free-carpool="{{ communityWithFreeCarpool ? "true" : "false" }}"
     >
     </community-create>
 

@@ -42,6 +42,9 @@ class AuthManager extends MobConnectManager
         $mobConnectAuth->setRefreshToken($ssoUser->getRefreshToken());
         $mobConnectAuth->setRefreshTokenExpiresDate($ssoUser->getRefreshTokenExpiresDuration());
 
+        // #8438 - We consider the authentication to be valid again
+        $mobConnectAuth->setValidity(true);
+
         $this->_em->flush();
     }
 

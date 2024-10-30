@@ -62,3 +62,4 @@ twig:
     defaultDigitalClock: "%env(bool:DEFAULT_DIGITAL_CLOCK)%"
     gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
     integrateRzp: "%env(bool:INTEGRATE_RZP)%"
+    communityWithFreeCarpool: "%env(bool:COMMUNITY_WITH_FREE_CARPOOL)%"

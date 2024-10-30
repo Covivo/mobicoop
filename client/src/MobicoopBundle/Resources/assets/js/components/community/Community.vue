@@ -38,6 +38,9 @@
             :url-alt-avatar="urlAltAvatar"
             :display-description="true"
           />
+          <p v-if="communityWithFreeCarpool && freeCarpool">
+            {{ $t('freeCarpool') }}
+          </p>
           <p>{{ user && user.isCommunityReferrer }}</p>
           <!-- community buttons and map -->
           <v-row>
@@ -513,6 +516,14 @@ export default {
       type: Boolean,
       default: false
     },
+    communityWithFreeCarpool: {
+      type: Boolean,
+      default: false
+    },
+    freeCarpool: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

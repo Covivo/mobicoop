@@ -117,5 +117,9 @@
     "messageTitle": "Vous avez converti votre recherche en ce début d'annonce.",
     "message": "Complétez et publiez-la, pour être alerté des prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet."
   },
-  "tooYoungToDrive": "En raison de votre age vous ne pouvez pas déposer d'annonce conducteur"
+  "tooYoungToDrive": "En raison de votre age vous ne pouvez pas déposer d'annonce conducteur",
+  "freeCarpool": {
+    "one": "La communauté {communityName} recommande de publier vos trajets gratuitement pour favoriser l'alternance de rôle. Vous êtes libre de modifier le prix.",
+    "many": "Une ou plusieurs communautés sélectionnées vous encouragent à partager vos trajets gratuitement pour favoriser l'alternance de rôle. Vous êtes libre de modifier le prix."
+  }
 }

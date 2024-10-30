@@ -15,6 +15,7 @@ use App\Incentive\Service\Provider\CarpoolPaymentProvider;
 use App\Incentive\Service\Provider\ProposalProvider;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RecommitSubscription extends Stage
 {
@@ -43,6 +44,7 @@ class RecommitSubscription extends Stage
         EntityManagerInterface $em,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
+        EventDispatcherInterface $eventDispatcher,
         EecInstance $eecInstance,
         $subscription,
         $journey
@@ -50,6 +52,7 @@ class RecommitSubscription extends Stage
         $this->_em = $em;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_eventDispatcher = $eventDispatcher;
 
         $this->_eecInstance = $eecInstance;
         $this->_subscription = $subscription;
@@ -61,16 +64,16 @@ class RecommitSubscription extends Stage
     public function execute()
     {
         $stage = $this->_subscription instanceof LongDistanceSubscription
-            ? new CommitLDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE)
-            : new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE);
+            ? new CommitLDSubscription($this->_em, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE)
+            : new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $this->_subscription, $this->_commitReferenceObject, self::PUSH_ONLY_MODE);
 
         if (!$stage->execute()) {
             return;
         }
 
         $stage = $this->_subscription instanceof LongDistanceSubscription
-            ? new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE)
-            : new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE);
+            ? new ValidateLDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE)
+            : new ValidateSDSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $this->_validateReferenceObject, self::PUSH_ONLY_MODE);
 
         $stage->execute();
     }

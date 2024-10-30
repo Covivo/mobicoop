@@ -7,13 +7,16 @@ use App\Incentive\Entity\Log\Log;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\Subscription;
 use App\Incentive\Entity\Subscription\SpecificFields;
+use App\Incentive\Event\InvalidAuthenticationEvent;
 use App\Incentive\Repository\LongDistanceJourneyRepository;
 use App\Incentive\Resource\EecInstance;
 use App\Incentive\Service\HonourCertificateService;
 use App\Incentive\Service\Manager\TimestampTokenManager;
+use App\Incentive\Validator\APIAuthenticationValidator;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Incentive\Validator\SubscriptionValidator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidateSDSubscription extends ValidateSubscription
@@ -27,6 +30,7 @@ class ValidateSDSubscription extends ValidateSubscription
         EntityManagerInterface $em,
         LongDistanceJourneyRepository $longDistanceJourneyRepository,
         TimestampTokenManager $timestampTokenManager,
+        EventDispatcherInterface $eventDispatcher,
         EecInstance $eecInstance,
         CarpoolProof $carpoolProof,
         bool $pushOnlyMode = false,
@@ -35,6 +39,7 @@ class ValidateSDSubscription extends ValidateSubscription
         $this->_em = $em;
         $this->_ldJourneyRepository = $longDistanceJourneyRepository;
         $this->_timestampTokenManager = $timestampTokenManager;
+        $this->_eventDispatcher = $eventDispatcher;
 
         $this->_eecInstance = $eecInstance;
         $this->_carpoolProof = $carpoolProof;
@@ -51,6 +56,7 @@ class ValidateSDSubscription extends ValidateSubscription
             && (
                 is_null($this->_subscription)
                 || $this->_subscription->hasExpired()
+                || !APIAuthenticationValidator::isAuthenticationValid($this->_subscription->getUser())
             )
         ) {
             return;
@@ -58,7 +64,7 @@ class ValidateSDSubscription extends ValidateSubscription
 
         // There is not commitment journey
         if (is_null($this->_subscription->getCommitmentProofJourney())) {
-            $stage = new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $this->_carpoolProof);
+            $stage = new CommitSDSubscription($this->_em, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $this->_subscription, $this->_carpoolProof);
             $stage->execute();
         }
 
@@ -111,7 +117,7 @@ class ValidateSDSubscription extends ValidateSubscription
         }
 
         if (!is_null($journey) && SubscriptionValidator::canSubscriptionBeRecommited($this->_subscription)) {
-            $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $this->_subscription, $journey);
+            $stage = new RecommitSubscription($this->_em, $this->_ldJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $this->_subscription, $journey);
             $stage->execute();
         }
     }
@@ -136,6 +142,11 @@ class ValidateSDSubscription extends ValidateSubscription
             $this->_apiProvider->patchSubscription($this->_subscription, $httpQueryParams);
         } catch (HttpException $exception) {
             $this->_subscription->addLog($exception, Log::TYPE_ATTESTATION, $httpQueryParams);
+
+            if (APIAuthenticationValidator::isApiAuthenticationError($exception)) {
+                $event = new InvalidAuthenticationEvent($this->_subscription->getUser());
+                $this->_eventDispatcher->dispatch(InvalidAuthenticationEvent::NAME, $event);
+            }
 
             $this->_em->flush();
 

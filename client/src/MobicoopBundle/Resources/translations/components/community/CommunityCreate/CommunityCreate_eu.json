@@ -48,5 +48,9 @@
             "label": "Komunitatearen* izena"
         }
     },
-    "title": "Zure komunitatea sor ezazu"
+    "title": "Zure komunitatea sor ezazu",
+    "freeCarpool": {
+      "label": "Proposer la gratuité d'annonce",
+      "tooltip": "Si l'option est activée, les membres seront incité·e·s à partager des annonces gratuites"
+    }
 }

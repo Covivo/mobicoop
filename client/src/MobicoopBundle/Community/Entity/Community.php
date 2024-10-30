@@ -128,6 +128,7 @@ class Community implements ResourceInterface, \JsonSerializable
      * @var User the creator of the community
      *
      * @Assert\NotBlank
+     *
      * @Groups({"post","put"})
      */
     private $user;
@@ -136,6 +137,7 @@ class Community implements ResourceInterface, \JsonSerializable
      * @var Address the address of the community
      *
      * @Groups({"post","put"})
+     *
      * @Assert\NotBlank(groups={"create","update"})
      */
     private $address;
@@ -202,21 +204,31 @@ class Community implements ResourceInterface, \JsonSerializable
 
     /**
      * @var string the login to join the community if the community is secured
+     *
      * @Groups({"put"})
      */
     private $login;
 
     /**
      * @var string the password to join the community if the community is secured
+     *
      * @Groups({"put"})
      */
     private $password;
 
     /**
      * @var string the community main image
+     *
      * @Groups({"post","put","get"})
      */
     private $image;
+
+    /**
+     * @var bool
+     *
+     * @Groups({"post","put","get"})
+     */
+    private $freeCarpool = false;
 
     public function __construct($id = null)
     {
@@ -463,7 +475,7 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         if (!$this->communityUsers->contains($communityUser)) {
             $this->communityUsers[] = $communityUser;
-            //$communityUser->setCommunity($this);
+            // $communityUser->setCommunity($this);
         }
 
         return $this;
@@ -612,6 +624,25 @@ class Community implements ResourceInterface, \JsonSerializable
             'ads' => $this->getAds(),
             'nbMembers' => $this->getNbMembers(),
             'image' => $this->getImage(),
+            'freecarpool' => $this->getFreeCarpool(),
         ];
+    }
+
+    /**
+     * Get the value of freeCarpool.
+     */
+    public function getFreeCarpool(): bool
+    {
+        return $this->freeCarpool;
+    }
+
+    /**
+     * Set the value of freeCarpool.
+     */
+    public function setFreeCarpool(bool $freeCarpool): self
+    {
+        $this->freeCarpool = $freeCarpool;
+
+        return $this;
     }
 }

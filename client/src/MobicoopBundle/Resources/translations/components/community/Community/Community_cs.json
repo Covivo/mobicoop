@@ -2,5 +2,6 @@
     "leaveCommunity": {
         "button": "Opuštění komunity",
         "route": "/communaute/{id}/quitter"
-    }
+    },
+    "freeCarpool": "Sur cette communauté, vos trajets seront gratuits lors de la publication. Vous êtes libre de modifier le prix."
 }

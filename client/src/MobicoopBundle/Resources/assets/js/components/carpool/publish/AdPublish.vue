@@ -480,6 +480,14 @@
               >
                 <v-col cols="10">
                   <p>{{ $t('stepper.content.participation.details') }}</p>
+                  <p v-if="communityWithFreeCarpool && freeCarpool">
+                    <span v-if="freeCarpoolCommunities.length === 1">
+                      {{ $t('freeCarpool.one', { communityName: freeCarpoolCommunities[0].name }) }}
+                    </span>
+                    <span v-else>
+                      {{ $t('freeCarpool.many') }}
+                    </span>
+                  </p>
                 </v-col>
               </v-row>
               <v-row
@@ -988,6 +996,10 @@ export default {
     bothRoleEnabled: {
       type: Boolean,
       default: true
+    },
+    communityWithFreeCarpool: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -1054,7 +1066,9 @@ export default {
       // specific terms
       checkboxDrivingLicence: false,
       checkboxEmployer: false,
-      checkboxInssurance: false
+      checkboxInssurance: false,
+      freeCarpoolCommunities: [],
+      freeCarpool: false,
     }
   },
   computed: {
@@ -1275,8 +1289,7 @@ export default {
       (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {
-      let price = Math.round(this.distance * this.pricePerKm * 100)/100;
-      this.roundPrice(price, this.regular ? 2 : 1);
+      this.calculatePrice();
     },
     route(){
       this.buildPointsToMap();
@@ -1324,9 +1337,20 @@ export default {
           this.passenger = this.ad.role === 2 || this.ad.role === 3;
         }
       }
-    }
+    },
+    freeCarpool(newValue) {
+      if (newValue) {
+        this.price = 0;
+      } else {
+        this.calculatePrice();
+      }
+    },
   },
   methods: {
+    calculatePrice() {
+      let price = this.freeCarpool ? 0 : Math.round(this.distance * this.pricePerKm * 100) / 100;
+      this.roundPrice(price, this.regular ? 2 : 1);
+    },
     buildPointsToMap: function(){
       this.pointsToMap.length = 0;
       // Set the origin point with custom icon
@@ -1418,11 +1442,31 @@ export default {
       this.route = route;
       this.distance = route.direction ? route.direction.distance : null;
       this.duration = route.direction ? route.direction.duration : null;
-      this.selectedCommunities = route.communities ? route.communities : null;
+      this.selectedCommunities = route.selectedCommunities ? route.selectedCommunities : null;
+
+      if (this.communityWithFreeCarpool) {
+        this.freeCarpool = false;
+        this.freeCarpoolCommunities = [];
+
+        this.setCommunityFreeCarpool(route.communities);
+      }
 
       if(this.step!==1){
         this.origin = route.origin;
         this.destination = route.destination;
+      }
+    },
+    setCommunityFreeCarpool(communities) {
+      if (this.selectedCommunities) {
+        for(let index in this.selectedCommunities) {
+          const community = communities.find(community => community.id === this.selectedCommunities[index] && community.freeCarpool);
+
+          if (community) {
+            this.freeCarpoolCommunities.push(community);
+          }
+        }
+
+        this.freeCarpool = this.freeCarpoolCommunities.length > 0;
       }
     },
     postAd() {

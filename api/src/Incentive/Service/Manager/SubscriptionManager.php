@@ -32,6 +32,7 @@ use App\Incentive\Service\Stage\ValidateLDSubscription;
 use App\Incentive\Service\Stage\VerifySubscription;
 use App\Incentive\Service\Validation\SubscriptionValidation;
 use App\Incentive\Service\Validation\UserValidation;
+use App\Incentive\Validator\APIAuthenticationValidator;
 use App\Incentive\Validator\CarpoolProofValidator;
 use App\Incentive\Validator\SubscriptionValidator;
 use App\Incentive\Validator\UserValidator;
@@ -244,6 +245,10 @@ class SubscriptionManager extends MobConnectManager
      */
     public function commitSubscription($subscription, $referenceObject, bool $pushOnlyMode = false, bool $noResetMode = false): void
     {
+        if (!APIAuthenticationValidator::isAuthenticationValid($subscription->getUser())) {
+            return;
+        }
+
         if (!$noResetMode && $subscription->isCommited()) {
             $stage = new ResetSubscription($this->_em, $subscription);
             $stage->execute();
@@ -253,7 +258,7 @@ class SubscriptionManager extends MobConnectManager
             ? 'App\\Incentive\\Service\\Stage\\CommitLDSubscription'
             : 'App\\Incentive\\Service\\Stage\\CommitSDSubscription';
 
-        $stage = new $commitClass($this->_em, $this->_timestampTokenManager, $this->_eecInstance, $subscription, $referenceObject, $pushOnlyMode);
+        $stage = new $commitClass($this->_em, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $subscription, $referenceObject, $pushOnlyMode);
         $stage->execute();
     }
 
@@ -269,7 +274,7 @@ class SubscriptionManager extends MobConnectManager
                 return;
             }
 
-            $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
+            $stage = new ValidateLDSubscription($this->_em, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $referenceObject, $pushOnlyMode);
             $stage->execute();
 
             return;
@@ -279,7 +284,7 @@ class SubscriptionManager extends MobConnectManager
             return;
         }
 
-        $stage = new ProofValidate($this->_em, $this->_carpoolPaymentRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $referenceObject, $pushOnlyMode);
+        $stage = new ProofValidate($this->_em, $this->_carpoolPaymentRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $referenceObject, $pushOnlyMode);
         $stage->execute();
     }
 
@@ -295,7 +300,12 @@ class SubscriptionManager extends MobConnectManager
         $journeyProvider = new JourneyProvider($this->_longDistanceJourneyRepository, $this->_shortDistanceJourneyRepository);
         $journey = $journeyProvider->getJourneyFromCarpoolProof($carpoolProof);
 
-        if (is_null($journey)) {
+        if (
+            is_null($journey)
+            || !$journey->getSubscription()
+            || !$journey->getSubscription()->getUser()
+            || !APIAuthenticationValidator::isAuthenticationValid($journey->getSubscription()->getUser())
+        ) {
             return;
         }
 
@@ -312,7 +322,7 @@ class SubscriptionManager extends MobConnectManager
                 throw new NotFoundHttpException('The requested user was not found');
             }
 
-            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolPaymentRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eecInstance, $user, $subscriptionType);
+            $stage = new ProofRecovery($this->_em, $this->_carpoolItemRepository, $this->_carpoolPaymentRepository, $this->_carpoolProofRepository, $this->_longDistanceJourneyRepository, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_eecInstance, $user, $subscriptionType);
             $stage->execute();
 
             return;
@@ -411,7 +421,7 @@ class SubscriptionManager extends MobConnectManager
             return;
         }
 
-        $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
+        $stage = new CreateSubscription($this->_em, $this->_timestampTokenManager, $this->_eventDispatcher, $this->_loggerService, $this->_eecInstance, $this->_driver, $subscriptionType);
         $stage->execute();
     }
 

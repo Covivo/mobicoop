@@ -255,6 +255,60 @@ class UserExport
      *
      * @Groups({"user-export"})
      *
+     * @SerializedName("Rôle Conducteur Annonce 1")
+     */
+    private $carpool1RoleDriver;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle Conducteur Annonce 2")
+     */
+    private $carpool2RoleDriver;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle Conducteur Annonce 3")
+     */
+    private $carpool3RoleDriver;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle Passager Annonce 1")
+     */
+    private $carpool1RolePassenger;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle Passager Annonce 2")
+     */
+    private $carpool2RolePassenger;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Rôle Passager Annonce 3")
+     */
+    private $carpool3RolePassenger;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
      * @SerializedName("Rôle - ROLE_SUPER_ADMIN")
      */
     private $roleSuperAdmin = self::FALSE;
@@ -879,6 +933,114 @@ class UserExport
     public function setCarpool3Frequency(?string $carpool3Frequency): self
     {
         $this->carpool3Frequency = $carpool3Frequency;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of carpool1RoleDriver.
+     */
+    public function getcarpool1RoleDriver(): ?string
+    {
+        return $this->carpool1RoleDriver;
+    }
+
+    /**
+     * Set the value of carpool1RoleDriver.
+     */
+    public function setcarpool1RoleDriver(?string $carpool1RoleDriver): self
+    {
+        $this->carpool1RoleDriver = $carpool1RoleDriver;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of carpool2RoleDriver.
+     */
+    public function getcarpool2RoleDriver(): ?string
+    {
+        return $this->carpool2RoleDriver;
+    }
+
+    /**
+     * Set the value of carpool2RoleDriver.
+     */
+    public function setcarpool2RoleDriver(?string $carpool2RoleDriver): self
+    {
+        $this->carpool2RoleDriver = $carpool2RoleDriver;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of carpool3RoleDriver.
+     */
+    public function getcarpool3RoleDriver(): ?string
+    {
+        return $this->carpool3RoleDriver;
+    }
+
+    /**
+     * Set the value of carpool3RoleDriver.
+     */
+    public function setcarpool3RoleDriver(?string $carpool3RoleDriver): self
+    {
+        $this->carpool3RoleDriver = $carpool3RoleDriver;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of carpool1RolePassenger.
+     */
+    public function getcarpool1RolePassenger(): ?string
+    {
+        return $this->carpool1RolePassenger;
+    }
+
+    /**
+     * Set the value of carpool1RolePassenger.
+     */
+    public function setcarpool1RolePassenger(?string $carpool1RolePassenger): self
+    {
+        $this->carpool1RolePassenger = $carpool1RolePassenger;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of carpool2RolePassenger.
+     */
+    public function getcarpool2RolePassenger(): ?string
+    {
+        return $this->carpool2RolePassenger;
+    }
+
+    /**
+     * Set the value of carpool2RolePassenger.
+     */
+    public function setcarpool2RolePassenger(?string $carpool2RolePassenger): self
+    {
+        $this->carpool2RolePassenger = $carpool2RolePassenger;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of carpool3RolePassenger.
+     */
+    public function getcarpool3RolePassenger(): ?string
+    {
+        return $this->carpool3RolePassenger;
+    }
+
+    /**
+     * Set the value of carpool3RolePassenger.
+     */
+    public function setcarpool3RolePassenger(?string $carpool3RolePassenger): self
+    {
+        $this->carpool3RolePassenger = $carpool3RolePassenger;
 
         return $this;
     }
