@@ -16,10 +16,10 @@ class EecInstanceMock
                 'sdAvailable' => true,
             ],
             'provider' => [
-                'api_uri' => 'https://api-fabmob.stg.hub.flowbird.io',
+                'api_uri' => '',
                 'app_id' => null,
                 'app_secret' => null,
-                'authentication_uri' => 'https://idp-fabmob.stg.hub.flowbird.io/',
+                'authentication_uri' => '',
                 'auto_create_account' => false,
                 'client_id' => null,
                 'client_secret' => null,
