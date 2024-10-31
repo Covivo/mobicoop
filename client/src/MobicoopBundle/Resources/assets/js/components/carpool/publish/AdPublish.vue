@@ -1338,12 +1338,11 @@ export default {
         }
       }
     },
-    freeCarpool(newValue) {
-      if (newValue) {
-        this.price = 0;
-      } else {
-        this.calculatePrice();
+    freeCarpool() {
+      if (!this.freeCarpool) {
+        this.pricePerKm = this.defaultPriceKm;
       }
+      this.calculatePrice();
     },
   },
   methods: {
@@ -1444,12 +1443,10 @@ export default {
       this.duration = route.direction ? route.direction.duration : null;
       this.selectedCommunities = route.selectedCommunities ? route.selectedCommunities : null;
 
-      if (this.communityWithFreeCarpool) {
-        this.freeCarpool = false;
-        this.freeCarpoolCommunities = [];
+      this.freeCarpool = false;
+      this.freeCarpoolCommunities = [];
 
-        this.setCommunityFreeCarpool(route.communities);
-      }
+      this.setCommunityFreeCarpool(route.communities);
 
       if(this.step!==1){
         this.origin = route.origin;
