@@ -73,6 +73,7 @@ class ProposalMatcher
     private $logger;
     private $formatDataManager;
     private $params;
+    private $userMinAgeToDrive;
 
     /**
      * Constructor.
@@ -90,6 +91,7 @@ class ProposalMatcher
         static::$maxDetourDurationPercent = $params['maxDetourDurationPercent'];
         static::$minCommonDistanceCheck = $params['minCommonDistanceCheck'];
         static::$minCommonDistancePercent = $params['minCommonDistancePercent'];
+        $this->userMinAgeToDrive = $params['userMinAgeToDrive'];
     }
 
     /**
@@ -114,6 +116,9 @@ class ProposalMatcher
             if ($matching->getProposalOffer() === $proposal) {
                 $proposal->addMatchingRequest($matching);
             } else {
+                if ($this->_isUnderAgedToDrive($matching->getProposalOffer()->getUser()->getBirthDate())) {
+                    continue;
+                }
                 $proposal->addMatchingOffer($matching);
             }
         }
@@ -1522,6 +1527,16 @@ class ProposalMatcher
     public static function getMinCommonDistancePercent(): int
     {
         return static::$minCommonDistancePercent;
+    }
+
+    private function _isUnderAgedToDrive(\DateTime $birthDate): bool
+    {
+        $age = $birthDate->diff(new \DateTime())->y;
+        if ($age < $this->userMinAgeToDrive) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
