@@ -244,6 +244,7 @@ services:
     arguments:
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
       $carpoolDisplayFieldsOrder: "%env(json:CARPOOL_DISPLAY_FIELDS_ORDER)%"
+      $userMinAgeToDrive: "%env(int:USER_MIN_AGE_TO_DRIVE)%"
 
   App\Carpool\Service\ProofManager:
     arguments:
@@ -298,6 +299,7 @@ services:
         maxDetourDurationPercent: "%env(int:ALGORITHM_MAX_DETOUR_DURATION_PERCENT)%"
         minCommonDistanceCheck: "%env(int:ALGORITHM_MIN_COMMON_DISTANCE_CHECK)%"
         minCommonDistancePercent: "%env(int:ALGORITHM_MIN_COMMON_DISTANCE_PERCENT)%"
+        userMinAgeToDrive: "%env(int:USER_MIN_AGE_TO_DRIVE)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 

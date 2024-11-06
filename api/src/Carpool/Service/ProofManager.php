@@ -813,6 +813,11 @@ class ProofManager
                         $proof->setStatus(CarpoolProof::STATUS_ANOMALY_ERROR);
 
                         break;
+
+                    case 'anomaly_error':
+                        $proof->setStatus(CarpoolProof::STATUS_ANOMALY_ERROR);
+
+                        break;
                 }
                 ++$nbChecked;
             } else {
