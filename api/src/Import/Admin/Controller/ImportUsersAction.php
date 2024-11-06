@@ -43,6 +43,6 @@ final class ImportUsersAction
 
         $importer = new Importer($request->files->get('file'), $request->get('filename'), $importManager, $security->getUser(), null, null, $pointSearcher);
 
-        return $importer->importUsers(filter_var($request->get('columnHeadersFirstLine'), FILTER_VALIDATE_BOOLEAN));
+        return $importer->importUsers(filter_var($request->get('columnHeadersFirstLine'), FILTER_VALIDATE_BOOLEAN), filter_var($request->get('forceDisableValidation'), FILTER_VALIDATE_BOOLEAN));
     }
 }

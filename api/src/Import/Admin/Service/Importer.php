@@ -106,7 +106,7 @@ class Importer
         $this->_pointSearcher = $pointSearcher;
     }
 
-    public function importUsers(bool $columnHeadersFirstLine = false): Import
+    public function importUsers(bool $columnHeadersFirstLine = false, bool $forceDisableValidation = false): Import
     {
         set_time_limit(self::TIME_LIMIT);
         $this->_columnHeadersFirstLine = $columnHeadersFirstLine;
@@ -114,7 +114,9 @@ class Importer
         if (!$this->_validateFile()) {
             return $this->_buildImport(self::USER_ENTITY);
         }
-        $this->_validateLines(new UserLineImportValidator());
+        if (!$forceDisableValidation) {
+            $this->_validateLines(new UserLineImportValidator());
+        }
         if (0 == count($this->_errors)) {
             $this->_populateTable(new UserImportPopulator($this->_manager, $this->_requester, $this->_pointSearcher));
         }
@@ -122,7 +124,7 @@ class Importer
         return $this->_buildImport(self::USER_ENTITY);
     }
 
-    public function importRelayPoints(bool $columnHeadersFirstLine = false): Import
+    public function importRelayPoints(bool $columnHeadersFirstLine = false, bool $forceDisableValidation = false): Import
     {
         set_time_limit(self::TIME_LIMIT);
         $this->_columnHeadersFirstLine = $columnHeadersFirstLine;
@@ -130,7 +132,9 @@ class Importer
         if (!$this->_validateFile()) {
             return $this->_buildImport(self::USER_ENTITY);
         }
-        $this->_validateLines(new RelayPointLineImportValidator());
+        if (!$forceDisableValidation) {
+            $this->_validateLines(new RelayPointLineImportValidator());
+        }
         if (0 == count($this->_errors)) {
             $this->_populateTable(new RelayPointImportPopulator($this->_manager, $this->_requester));
         }
