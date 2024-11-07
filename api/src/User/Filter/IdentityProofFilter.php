@@ -46,13 +46,13 @@ class IdentityProofFilter extends AbstractContextAwareFilter
 
         if (is_array($value)) {
             $queryBuilder
-                ->andWhere('ip.status IN (:status)')
-                ->setParameter('status', implode(', ', $value))
+                ->andWhere('ip.status IN (:identityStatus)')
+                ->setParameter('identityStatus', $value)
             ;
         } else {
             $queryBuilder
-                ->andWhere('ip.status = :status')
-                ->setParameter('status', $value)
+                ->andWhere('ip.status = :identityStatus')
+                ->setParameter('identityStatus', $value)
             ;
         }
     }
