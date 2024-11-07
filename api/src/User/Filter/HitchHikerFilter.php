@@ -67,7 +67,7 @@ final class HitchHikerFilter extends AbstractContextAwareFilter
         ;
 
         if (1 === $value || 'true' === $value) {
-            $queryBuilder->andWhere($rootAlias.'.hitchHikeDriver is not null or '.$rootAlias.'.hitchHikePassenger is not null');
+            $queryBuilder->andWhere($rootAlias.'.hitchHikeDriver = 1 OR '.$rootAlias.'.hitchHikePassenger = 1');
         } elseif (0 === $value || 'false' === $value) {
             $queryBuilder->andWhere($rootAlias.'hitchHikeDriver is null and '.$rootAlias.'hitchHikePassenger is null');
         }
