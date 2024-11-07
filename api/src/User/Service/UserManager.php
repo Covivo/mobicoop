@@ -1570,8 +1570,7 @@ class UserManager
     {
         $user->setLastActivityDate(new \DateTime());
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->entityManager->flush($user);
     }
 
     public function createAuthenticationDelegation(User $userByDelegation, User $user): void
