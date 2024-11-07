@@ -1272,6 +1272,8 @@ export default {
     role(){
       if(!this.showDriverRole && !this.showBothRole){
         return 2;
+      }else if (this.isUpdate) {
+        return this.ad.role;
       }
       return this.defaultRoleToPublish;
     },
