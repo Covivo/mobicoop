@@ -68,7 +68,7 @@ class MangoPayProvider implements PaymentProviderInterface
     public const ITEM_TRANSFERS = 'transfers';
     public const ITEM_PAYOUT = 'payouts/bankwire';
     public const ITEM_WALLET_TRANSACTIONS = 'wallets/{walletId}/transactions';
-    public const TRANSACTIONS_TYPES = 'TRANSFER,PAYIN';
+    public const TRANSACTIONS_TYPES = '[TRANSFER,PAYIN,PAYOUT]';
     public const TRASACTION_STATUS_SUCCEEDED = 'SUCCEEDED';
 
     public const ITEM_KYC_CREATE_DOC = 'users/{userId}/KYC/documents/';
@@ -982,33 +982,31 @@ class MangoPayProvider implements PaymentProviderInterface
         }
     }
 
-    public function getWalletTransactions(string $walletId)
+    public function getWalletTransactions(string $walletId, int $beforeDate, int $afterDate)
     {
         $this->_auth();
         $urlGet = str_replace('{walletId}', $walletId, self::ITEM_WALLET_TRANSACTIONS);
         $dataProvider = new DataProvider($this->serverUrl.$urlGet);
         $getParams = [
-            'type' => self::TRANSACTIONS_TYPES,
+            '[type]' => self::TRANSACTIONS_TYPES,
             'status' => self::TRASACTION_STATUS_SUCCEEDED,
-            'beforeDate' => '',
-            'afterDate' => '',
+            'beforeDate' => $beforeDate,
+            'afterDate' => $afterDate,
         ];
         $headers = [
             'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->getItem($getParams, $headers);
 
-        $wallets = [];
+        $transactions = [];
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
-            foreach ($data as $wallet) {
-                $wallet = $this->deserializeWallet($wallet);
-                $wallet->setOwnerIdentifier($paymentProfile->getIdentifier());
-                $wallets[] = $wallet;
+            foreach ($data as $transaction) {
+                $transactions[] = $transaction;
             }
         }
 
-        return $wallets;
+        return $transactions;
     }
 
     private function _uploadPage(string $docId, string $identifier, array $headers, string $fileName)
