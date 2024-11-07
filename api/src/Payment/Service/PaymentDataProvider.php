@@ -367,4 +367,11 @@ class PaymentDataProvider
 
         return $this->providerInstance->getKycDocument($kycDocumentId);
     }
+
+    public function getWalletTransactions(string $walletId, int $beforeDate, int $afterDate)
+    {
+        $this->checkPaymentConfiguration();
+
+        return $this->providerInstance->getWalletTransactions($walletId, $beforeDate, $afterDate);
+    }
 }
