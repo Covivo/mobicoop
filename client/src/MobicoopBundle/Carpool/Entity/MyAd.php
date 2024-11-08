@@ -186,6 +186,13 @@ class MyAd extends GamificationEntity implements ResourceInterface, \JsonSeriali
      */
     private $communities;
 
+    /**
+     * @var null|int
+     *
+     * @version 1.87
+     */
+    private $_linkedAd;
+
     public function __construct($id = null)
     {
         if (!is_null($id)) {
@@ -547,11 +554,24 @@ class MyAd extends GamificationEntity implements ResourceInterface, \JsonSeriali
         return $this;
     }
 
+    public function getLinkedAd(): ?int
+    {
+        return $this->_linkedAd;
+    }
+
+    public function setLinkedAd($linkedAd): self
+    {
+        $this->_linkedAd = $linkedAd;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
             [
                 'id' => $this->getId(),
+                'linkedAd' => $this->getLinkedAd(),
                 'published' => $this->isPublished(),
                 'paused' => $this->isPaused(),
                 'roleDriver' => $this->hasRoleDriver(),

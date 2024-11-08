@@ -126,6 +126,12 @@ class MyAdManager
         $myAd->setRolePassenger((true === $proposal->getCriteria()->isPassenger()) ? true : false);
         $myAd->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive() ? true : false);
 
+        $myAd->setLinkedAd(
+            !is_null($proposal->getProposalLinked())
+            ? $proposal->getProposalLinked()->getId()
+            : null
+        );
+
         if (is_array($proposal->getCommunities()) && count($proposal->getCommunities()) > 0) {
             foreach ($proposal->getCommunities() as $community) {
                 $myAdCommunity = new MyAdCommunity();

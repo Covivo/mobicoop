@@ -2,12 +2,11 @@
   <v-container class="py-0">
     <v-snackbar
       v-model="snackbar"
-      :color="
-        alert.type === 'error'
-          ? 'error'
-          : alert.type === 'warning'
-            ? 'warning'
-            : 'success'
+      :color="alert.type === 'error'
+        ? 'error'
+        : alert.type === 'warning'
+          ? 'warning'
+          : 'success'
       "
       top
     >
@@ -95,6 +94,7 @@
         cols="3"
         class="text-right"
       >
+        <!-- REMOVE button -->
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -119,6 +119,7 @@
           <span> {{ $t("ads.tooltips.delete") }} </span>
         </v-tooltip>
 
+        <!-- EDIT button -->
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <div v-on="on">
@@ -136,11 +137,14 @@
               </v-btn>
             </div>
           </template>
-          <span> {{ isUpdatable ? $t("ads.tooltips.update") : $t("ads.tooltips.notUpdatable") }} </span>
+          <span>
+            {{ isUpdatable ? $t("ads.tooltips.update") : $t("ads.tooltips.notUpdatable") }}
+          </span>
         </v-tooltip>
 
+        <!-- PAUSE button -->
         <v-tooltip
-          v-if="isPausable && !isArchived && paused"
+          v-if="isUpdatable && isPausable && !isArchived && paused"
           bottom
         >
           <template v-slot:activator="{ on }">
@@ -156,10 +160,10 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>{{ $t("ads.tooltips.play") }}</span>
+          <span>{{ $t("ads.tooltips.play.outward") }}</span>
         </v-tooltip>
         <v-tooltip
-          v-if="isPausable && !isArchived && !paused"
+          v-else-if="isUpdatable && isPausable && !isArchived && !paused"
           bottom
         >
           <template v-slot:activator="{ on }">
@@ -175,7 +179,30 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>{{ $t("ads.tooltips.pause") }}</span>
+          <span>{{ $t("ads.tooltips.pause.outward") }}</span>
+        </v-tooltip>
+        <v-tooltip
+          v-else-if="!isUpdatable && isPausable && !isArchived"
+          bottom
+        >
+          <template v-slot:activator="{ on }">
+            <div v-on="on">
+              <v-btn
+                class="secondary my-1"
+                icon
+                :loading="loading"
+                disabled
+                @click="pauseAd"
+              >
+                <v-icon
+                  class="white--text"
+                >
+                  {{ getPauseIcon }}
+                </v-icon>
+              </v-btn>
+            </div>
+          </template>
+          <span>{{ getPauseTooltip }}</span>
         </v-tooltip>
       </v-col>
       <v-col
@@ -261,13 +288,13 @@
             outlined
             @click="dialogWarningUpdate = false"
           >
-            {{ $t('no') }}
+            {{ $t("no") }}
           </v-btn>
           <v-btn
             color="secondary"
             @click="updateAd"
           >
-            {{ $t('yes') }}
+            {{ $t("yes") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -283,7 +310,7 @@ import {
   messages_en,
   messages_fr,
   messages_eu,
-  messages_nl
+  messages_nl,
 } from "@translations/components/user/profile/ad/AdHeader/";
 
 export default {
@@ -292,85 +319,85 @@ export default {
       en: messages_en,
       nl: messages_nl,
       fr: messages_fr,
-      eu: messages_eu
-    }
+      eu: messages_eu,
+    },
   },
   components: {
-    AdPayment
+    AdPayment,
   },
   props: {
     isDriver: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isPassenger: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isPausable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     isPaused: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isArchived: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isSolidaryExclusive: {
       type: Boolean,
-      default: false
+      default: false,
     },
     adId: {
       type: Number,
-      default: null
+      default: null,
     },
     adFrequency: {
       type: Number,
-      default: null
+      default: null,
     },
     hasAsk: {
       type: Boolean,
-      default: false
+      default: false,
     },
     hasAcceptedAsk: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isCarpool: {
       type: Boolean,
-      default: false
+      default: false,
     },
     paymentStatus: {
       type: Number,
-      default: null
+      default: null,
     },
     paymentItemId: {
       type: Number,
-      default: null
+      default: null,
     },
     paymentWeek: {
       type: Number,
-      default: null
+      default: null,
     },
     unpaidDate: {
       type: String,
-      default: null
+      default: null,
     },
     paymentElectronicActive: {
       type: Boolean,
-      default: false
+      default: false,
     },
     adType: {
       type: Number,
-      default: 0
+      default: 0,
     },
     freeCarpooling: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -378,19 +405,29 @@ export default {
       snackbar: false,
       alert: {
         type: "success",
-        message: ""
+        message: "",
       },
       dialogActive: false,
       dialog: {
         title: "",
         content: "",
-        textarea: true
+        textarea: true,
       },
       dialogWarningUpdate: false,
       deleteMessage: "",
       paused: this.isPaused,
-      isUpdatable: this.adType !== 2 ? true : false
     };
+  },
+  computed: {
+    isUpdatable() {
+      return this.adType !== 2;
+    },
+    getPauseIcon() {
+      return this.paused ? 'mdi-play' : 'mdi-pause';
+    },
+    getPauseTooltip() {
+      return this.paused ? this.$t("ads.tooltips.play.return") : this.$t("ads.tooltips.pause.return");
+    }
   },
   methods: {
     deleteAd() {
@@ -401,24 +438,19 @@ export default {
         .delete(this.$t("delete.route"), {
           data: {
             adId: this.adId,
-            deletionMessage: this.deleteMessage
-          }
+            deletionMessage: this.deleteMessage,
+          },
         })
-        .then(function(response) {
-          self.$emit(
-            "ad-deleted",
-            self.isArchived,
-            self.adId,
-            self.$t("delete.success")
-          );
+        .then(function (response) {
+          self.$emit("ad-deleted", self.isArchived, self.adId, self.$t("delete.success"));
         })
-        .catch(function(error) {
+        .catch(function (error) {
           self.alert = {
             type: "error",
-            message: self.$t("delete.error")
+            message: self.$t("delete.error"),
           };
         })
-        .finally(function() {
+        .finally(function () {
           if (self.alert.message.length > 0) {
             self.snackbar = true;
           }
@@ -434,19 +466,19 @@ export default {
       this.loading = true;
       let ad = {
         id: this.adId,
-        paused: this.paused
+        paused: this.paused,
       };
       maxios
         .put(this.$t("update.route", { id: this.adId }), ad, {
           headers: {
-            "content-type": "application/json"
-          }
+            "content-type": "application/json",
+          },
         })
-        .then(res => {
+        .then((res) => {
           if (res.data && res.data.message == "error") {
             this.alert = {
               type: "warning",
-              message: this.$t("pause.error.antifraud")
+              message: this.$t("pause.error.antifraud"),
             };
             this.paused = !this.paused;
           } else if (res.data && res.data.result.id) {
@@ -454,7 +486,7 @@ export default {
               type: "success",
               message: res.data.result.paused
                 ? this.$t("pause.success.pause")
-                : this.$t("pause.success.unpause")
+                : this.$t("pause.success.unpause"),
             };
             this.$emit("pause-ad", res.data.result.paused);
           } else {
@@ -462,7 +494,7 @@ export default {
               type: "error",
               message: this.paused
                 ? this.$t("pause.error.pause")
-                : this.$t("pause.error.unpause")
+                : this.$t("pause.error.unpause"),
             };
             this.paused = !this.paused;
           }
@@ -473,7 +505,7 @@ export default {
     resetAlert() {
       this.alert = {
         type: "success",
-        message: ""
+        message: "",
       };
     },
     activeBaseDialog() {
@@ -481,7 +513,7 @@ export default {
       this.dialog = {
         title: this.$t("delete.dialog.base.title"),
         content: this.$t("delete.dialog.base.text"),
-        textarea: false
+        textarea: false,
       };
       this.dialogActive = true;
     },
@@ -490,7 +522,7 @@ export default {
       this.dialog = {
         title: this.$t("delete.dialog.pending.title"),
         content: this.$t("delete.dialog.pending.text"),
-        textarea: true
+        textarea: true,
       };
       this.dialogActive = true;
     },
@@ -499,14 +531,14 @@ export default {
       this.dialog = {
         title: this.$t("delete.dialog.accepted.title"),
         content: this.$t("delete.dialog.accepted.text"),
-        textarea: true
+        textarea: true,
       };
       this.dialogActive = true;
     },
     activePanel() {
       this.$emit("activePanel");
-    }
-  }
+    },
+  },
 };
 </script>
 
