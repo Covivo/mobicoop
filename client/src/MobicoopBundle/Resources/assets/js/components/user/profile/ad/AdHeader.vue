@@ -429,6 +429,11 @@ export default {
       return this.paused ? this.$t("ads.tooltips.play.return") : this.$t("ads.tooltips.pause.return");
     }
   },
+  watch: {
+    isPaused(newValue) {
+      this.paused = newValue;
+    }
+  },
   methods: {
     deleteAd() {
       this.resetAlert();
