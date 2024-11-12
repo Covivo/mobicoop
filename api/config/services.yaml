@@ -1165,11 +1165,15 @@ services:
       $communicationFolder: "%env(resolve:COMMUNICATION_FOLDER)%"
       $emailTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%"
       $emailTitleTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%"
-      $emailRecipients: "%env(json:BANK_TRANSFER_REPORT_EMAIL)%"
+      $emailRecipient: "%env(string:PAYMENT_ACCOUNTANT_EMAIL)%"
 
   App\Payment\Service\UnpaidReminderManager:
     arguments:
       $reminderDelays: "%env(json:PAYMENT_UNPAID_REMINDER_DELAYS)%"
+  
+  App\Payment\Command\GetWalletTransactionCommand:
+    arguments:
+      $paymentAccountantAccountId: "%env(string:PAYMENT_ACCOUNTANT_ACCOUNT_ID)%"
 
   # Price
   App\Price\Controller\:
