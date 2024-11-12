@@ -78,6 +78,7 @@ class CarpoolController extends AbstractController
     private $specificTerms;
     private $defaultRoleToPublish;
     private $bothRoleEnabled;
+    private $carpoolTimezone;
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
@@ -102,7 +103,8 @@ class CarpoolController extends AbstractController
         bool $carpoolStandardMessagingEnabled,
         bool $specificTerms,
         int $defaultRoleToPublish,
-        bool $bothRoleEnabled
+        bool $bothRoleEnabled,
+        string $carpoolTimezone
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -127,6 +129,7 @@ class CarpoolController extends AbstractController
         $this->specificTerms = $specificTerms;
         $this->defaultRoleToPublish = $defaultRoleToPublish;
         $this->bothRoleEnabled = $bothRoleEnabled;
+        $this->carpoolTimezone = $carpoolTimezone;
     }
 
     private function __originDisplay(array $waypoint)
@@ -790,9 +793,9 @@ class CarpoolController extends AbstractController
         $params = json_decode($request->getContent(), true);
 
         // If there is no date in params, we use 'now'
-        $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+        $date = new \DateTime('now', new \DateTimeZone($this->carpoolTimezone));
         if (!empty($params['date'])) {
-            $date = new \DateTime($params['date'].' 08:00:00', new \DateTimeZone('Europe/Paris'));
+            $date = new \DateTime($params['date'].' 08:00:00', new \DateTimeZone($this->carpoolTimezone));
         }
         $journeys = $this->publicTransportManager->getJourneys(
             $params['from_latitude'],

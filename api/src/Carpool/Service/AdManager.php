@@ -109,6 +109,7 @@ class AdManager
     private $_journeyValidation;
 
     private $_matcherCustomization;
+    private $_carpoolTimezone;
 
     /**
      * Constructor.
@@ -168,6 +169,7 @@ class AdManager
         }
         $this->_journeyValidation = $journeyValidation;
         $this->_matcherCustomization = $params['matcherCustomization'];
+        $this->_carpoolTimezone = $params['carpoolTimezone'];
     }
 
     /**
@@ -181,9 +183,9 @@ class AdManager
      * @param bool   $forceNotUseTime   For to set useTime at false
      * @param string $matchingAlgorithm Version of the matching algorithm
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
@@ -425,7 +427,7 @@ class AdManager
                 $outwardCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
                 ($forceNotUseTime) ? $outwardProposal->setUseTime(false) : $outwardProposal->setUseTime(true);
             } else {
-                $outwardCriteria->setFromTime(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+                $outwardCriteria->setFromTime(new \DateTime('now', new \DateTimeZone($this->_carpoolTimezone)));
                 $outwardProposal->setUseTime(false);
             }
 
@@ -550,13 +552,13 @@ class AdManager
                 // punctual
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 // if no return time is specified, we use the outward time to be sure the return date is not before the outward date, and null for a search
-                // $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : new \DateTime("now",new \DateTimeZone('Europe/Paris')));
+                // $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : new \DateTime("now",new \DateTimeZone($this->_carpoolTimezone)));
 
                 if ($ad->getReturnTime()) {
                     $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                     ($forceNotUseTime) ? $returnProposal->setUseTime(false) : $returnProposal->setUseTime(true);
                 } else {
-                    $returnCriteria->setFromTime(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+                    $returnCriteria->setFromTime(new \DateTime('now', new \DateTimeZone($this->_carpoolTimezone)));
                     $returnProposal->setUseTime(false);
                 }
 
@@ -1235,9 +1237,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws \Exception
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1314,9 +1316,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1413,9 +1415,9 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
@@ -1455,9 +1457,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareSchedules($old, $new)
     {
@@ -1585,9 +1587,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {
@@ -1704,20 +1706,20 @@ class AdManager
 
         // if outward is null, we make an array using now with 1 hour margin on $day bases
         if (is_null($outward)) {
-            $time = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+            $time = new \DateTime('now', new \DateTimeZone($this->_carpoolTimezone));
             $mintime = $time->format('H:i:s');
             $maxtime = $time->add(new \DateInterval('PT1H'))->format('H:i:s');
 
             // if days is null, we are using today
 
             if (is_null($days)) {
-                $today = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+                $today = new \DateTime('now', new \DateTimeZone($this->_carpoolTimezone));
                 $days = [strtolower($today->format('l')) => 1];
                 $outward = ['mindate' => $time->format('Y-m-d')];
             } else {
                 // We don't have any date so i'm looking for the first date corresponding to the first day
                 $dateFound = '';
-                $currentTestDate = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+                $currentTestDate = new \DateTime('now', new \DateTimeZone($this->_carpoolTimezone));
                 $cpt = 0; // it's a failsafe to avoid infinit loop
                 while ('' === $dateFound && $cpt < 7) {
                     if (isset($days[strtolower($currentTestDate->format('l'))])) {
@@ -1736,7 +1738,7 @@ class AdManager
         $daysList = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         if (is_null($days)) {
             $day = [];
-            $today = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+            $today = new \DateTime('now', new \DateTimeZone($this->_carpoolTimezone));
             foreach ($outward as $day => $times) {
                 if (in_array($day, $daysList)) {
                     $days[$day] = 1;
@@ -2171,7 +2173,7 @@ class AdManager
                 $outwardCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
                 $outwardProposal->setUseTime(true);
             } else {
-                $outwardCriteria->setFromTime(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+                $outwardCriteria->setFromTime(new \DateTime('now', new \DateTimeZone($this->_carpoolTimezone)));
                 $outwardProposal->setUseTime(false);
             }
             $outwardCriteria->setMarginDuration($marginDuration);
@@ -2264,7 +2266,7 @@ class AdManager
                     $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                     $returnProposal->setUseTime(true);
                 } else {
-                    $returnCriteria->setFromTime(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+                    $returnCriteria->setFromTime(new \DateTime('now', new \DateTimeZone($this->_carpoolTimezone)));
                     $returnProposal->setUseTime(false);
                 }
                 $returnCriteria->setMarginDuration($marginDuration);

@@ -128,7 +128,7 @@ class MassPublicTransportPotentialManager
                 $person->getPersonalAddress()->getLongitude(),
                 $person->getWorkAddress()->getLatitude(),
                 $person->getWorkAddress()->getLongitude(),
-                new \DateTime(date('Y-m-d').' '.$person->getOutwardTime()->format('H:i:s'), new \DateTimeZone('Europe/Paris'))
+                new \DateTime(date('Y-m-d').' '.$person->getOutwardTime()->format('H:i:s'), new \DateTimeZone($this->params['carpoolTimezone']))
             );
             // var_dump($results);die;
             foreach ($results as $ptjourney) {

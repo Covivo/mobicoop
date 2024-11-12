@@ -13,7 +13,7 @@
                          {% if context.booking.distance %}
                             <li>Distance covoiturée : {{context.booking.distance}}km</li>
                          {% endif %}
-                            <li>Date: le {{context.booking.passengerPickupDate|date("d-m-Y à H:i","Europe/Paris")}}</li>
+                            <li>Date: le {{context.booking.passengerPickupDate|date("d-m-Y à H:i",context.carpoolTimezone)}}</li>
                             <li>Prise en charge à {{context.booking.passengerPickupAddress}}.</li>
                             <li>Dépose à {{context.booking.passengerDropAddress}}.</li>
                          {% if context.booking.price %}

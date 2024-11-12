@@ -36,13 +36,14 @@ class BookingManager
     private $userManager;
     private $security;
     private $operatorIdentifier;
+    private $carpoolTimezone;
 
     /**
      * Constructor.
      *
      * @throws \ReflectionException
      */
-    public function __construct(DataProvider $dataProvider, UserManager $userManager, Security $security, string $operatorIdentifier)
+    public function __construct(DataProvider $dataProvider, UserManager $userManager, Security $security, string $operatorIdentifier, string $carpoolTimezone)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Booking::class, Booking::RESOURCE_NAME);
@@ -50,6 +51,7 @@ class BookingManager
         $this->security = $security;
         $this->userManager = $userManager;
         $this->operatorIdentifier = $operatorIdentifier;
+        $this->carpoolTimezone = $carpoolTimezone;
     }
 
     public function postBooking(array $data)
@@ -84,8 +86,8 @@ class BookingManager
         $price->setAmount($data['roundedPrice']);
         $price->setType(Price::TYPE_UNKNOWN);
 
-        $date = (new \DateTime($data['date']))->format('Y/m/d').' '.(new \DateTime($data['time'], new \DateTimeZone('Europe/Paris')))->format('H:i:s');
-        $dateTime = (new \DateTime($date, new \DateTimeZone('Europe/Paris')))->format('U');
+        $date = (new \DateTime($data['date']))->format('Y/m/d').' '.(new \DateTime($data['time'], new \DateTimeZone($this->carpoolTimezone)))->format('H:i:s');
+        $dateTime = (new \DateTime($date, new \DateTimeZone($this->carpoolTimezone)))->format('U');
 
         $booking->setDriver($driver);
         $booking->setPassenger($passenger);
