@@ -28,8 +28,6 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityMembersList;
 use App\Community\Service\CommunityManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * Get the members of a community.
@@ -38,16 +36,11 @@ use Symfony\Component\Security\Core\Security;
  */
 final class CommunityMembersGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $request;
     private $communityManager;
-    private $security;
 
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, Security $security)
+    public function __construct(CommunityManager $communityManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
-
-        $this->security = $security;
     }
 
     public function supports(string $resourceClass, ?string $operationName = null, array $context = []): bool

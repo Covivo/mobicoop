@@ -51,6 +51,7 @@ use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -78,6 +79,11 @@ class CommunityManager
     private $actionRepository;
 
     /**
+     * @var TokenStorageInterface
+     */
+    private $_tokenStorage;
+
+    /**
      * Constructor.
      */
     public function __construct(
@@ -92,6 +98,7 @@ class CommunityManager
         AdManager $adManager,
         EventDispatcherInterface $eventDispatcher,
         ActionRepository $actionRepository,
+        TokenStorageInterface $tokenStorage,
         string $securityPath
     ) {
         $this->entityManager = $entityManager;
@@ -106,6 +113,7 @@ class CommunityManager
         $this->adManager = $adManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->actionRepository = $actionRepository;
+        $this->_tokenStorage = $tokenStorage;
     }
 
     /**
@@ -436,7 +444,7 @@ class CommunityManager
 
         $community = $this->communityRepository->find($communityId);
 
-        if ($community) {
+        if ($community && $this->_isAuthenticatedUserAllowedToSeeCommunityContent($community)) {
             $communityUsers = $this->communityUserRepository->findForCommunity($community, $context);
             foreach ($communityUsers as $communityUser) {
                 $communityMember = new CommunityMember();
@@ -459,7 +467,12 @@ class CommunityManager
             }
         }
 
-        return new CommunityMembersList($communityMembers, count($communityUsers));
+        return new CommunityMembersList(
+            $communityMembers,
+            isset($communityUsers)
+                ? count($communityUsers)
+                : 0
+        );
     }
 
     // MCommunity management
@@ -594,6 +607,18 @@ class CommunityManager
         }
 
         return false;
+    }
+
+    private function _isAuthenticatedUserAllowedToSeeCommunityContent(Community $community): bool
+    {
+        /**
+         * @var null|User
+         */
+        $user = $this->_tokenStorage->getToken()
+            ? $this->_tokenStorage->getToken()->getUser()
+            : null;
+
+        return !is_null($user) && $user->isCommunityMemberValidated($community);
     }
 
     /**

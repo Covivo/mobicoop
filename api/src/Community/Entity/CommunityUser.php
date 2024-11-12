@@ -178,6 +178,11 @@ class CommunityUser
     public const STATUS_ACCEPTED_AS_MODERATOR = 2;
     public const STATUS_REFUSED = 3;
 
+    public const STATUS_MEMBER = [
+        self::STATUS_ACCEPTED_AS_MEMBER,
+        self::STATUS_ACCEPTED_AS_MODERATOR,
+    ];
+
     /**
      * @var int the id of this community user
      *
