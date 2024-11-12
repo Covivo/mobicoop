@@ -635,7 +635,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *  ]
      * ]
      */
-    public function processElectronicPayment(User $debtor, array $creditors): array
+    public function processElectronicPayment(User $debtor, array $creditors, string $tag): array
     {
         $return = [];
 
@@ -645,12 +645,12 @@ class MangoPayProvider implements PaymentProviderInterface
         // Transfer to the creditors wallets and payout
         foreach ($creditors as $creditor) {
             $creditorWallet = $creditor['user']->getWallets()[0];
-            $return[] = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
+            $return[] = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount'], $tag);
 
             // Do the payout to the default bank account
             $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
             $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
-            $return[] = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
+            $return[] = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount'], $tag);
         }
 
         return $return;
@@ -992,7 +992,7 @@ class MangoPayProvider implements PaymentProviderInterface
         $getParams = [
             '[type]' => self::TRANSACTIONS_TYPES,
             'status' => self::TRASACTION_STATUS_SUCCEEDED,
-            'afterDate' => $date,
+            // 'afterDate' => $date,
         ];
         $headers = [
             'Authorization' => $this->authChain,
@@ -1006,6 +1006,9 @@ class MangoPayProvider implements PaymentProviderInterface
                 $transactions[] = $transaction;
             }
         }
+        var_dump($transactions);
+
+        exit;
 
         return $transactions;
     }

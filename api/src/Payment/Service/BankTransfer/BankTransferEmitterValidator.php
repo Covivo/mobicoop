@@ -136,7 +136,7 @@ class BankTransferEmitterValidator
 
     private function _getHolder()
     {
-        if (is_null($this->_holderId) || !is_numeric($this->_holderId)) {
+        if (is_null($this->_holderId)) {
             $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_NO_HOLDER_ID);
             $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No Holder id');
 
