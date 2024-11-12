@@ -24,9 +24,7 @@ namespace App\Payment\Service\Transaction;
 
 use App\Communication\Entity\Email;
 use App\Communication\Service\EmailManager;
-use App\Payment\Entity\BankTransfer;
-use App\Payment\Exception\BankTransferException;
-use App\Payment\Repository\BankTransferRepository;
+use App\Payment\Service\PaymentDataProvider;
 use App\TranslatorTrait;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
@@ -44,69 +42,60 @@ class TransactionsSummarizer
 
     public const CSV_HEADERS = ['ExecutionDate:ISO', 'CreditedUserId', 'Email', 'Libelle', 'Montant', 'Sens'];
 
-    public const EMAIL_TEMPLATE = 'bank_transfers_report';
+    public const EMAIL_TEMPLATE = 'last_month_transactions';
     public const EMAIL_LANGUAGE = 'fr';
 
-    private $_BankTransferRepository;
     private $_logger;
     private $_emailManager;
     private $_communicationFolder;
     private $_emailTemplatePath;
     private $_emailTitleTemplatePath;
     private $_templating;
-    private $_emailRecipients;
+    private $_emailRecipient;
     private $_platformName;
-
-    /**
-     * @var BankTransfer[]
-     */
-    private $_BankTransfers;
-
-    /**
-     * @var string
-     */
-    private $_batchId;
+    private $_paymentProvider;
 
     public function __construct(
-        BankTransferRepository $BankTransferRepository,
         LoggerInterface $logger,
         EmailManager $emailManager,
         Environment $templating,
+        PaymentDataProvider $paymentProvider,
         string $communicationFolder,
         string $emailTemplatePath,
         string $emailTitleTemplatePath,
-        array $emailRecipients,
+        string $emailRecipient,
         string $platformName
     ) {
-        $this->_BankTransferRepository = $BankTransferRepository;
         $this->_logger = $logger;
         $this->_emailManager = $emailManager;
         $this->_communicationFolder = $communicationFolder;
         $this->_emailTemplatePath = $emailTemplatePath;
         $this->_emailTitleTemplatePath = $emailTitleTemplatePath;
         $this->_templating = $templating;
-        $this->_emailRecipients = $emailRecipients;
+        $this->_emailRecipient = $emailRecipient;
         $this->_platformName = $platformName;
+        $this->_paymentProvider = $paymentProvider;
     }
 
     public function summarize(array $transactions)
     {
         $this->_makeCsvFile($transactions);
-        // $this->_sendEmail();
+        $this->_sendEmail();
     }
 
     private function _makeCsvFile(array $transactions)
     {
-        $file = fopen(self::PATH_TO_FILES.'/'.$this->_platformName.'-'.date('m-Y').'.'.self::FILES_EXTENTION, 'w');
+        $file = fopen(self::PATH_TO_FILES.'/'.$this->_platformName.'-export-incitatifs-'.date('m-Y').'.'.self::FILES_EXTENTION, 'w');
         fputcsv($file, self::CSV_HEADERS, self::CSV_DELIMITER);
         foreach ($transactions as $transaction) {
             $line = [];
             $line[0] = date('d/m/Y', $transaction['CreationDate']);
             $line[1] = $transaction['CreditedUserId'];
 
-            // todo call to mangopy api to get user email
-            $line[2] = 'comptabilite@mobicoop.org';
-            $line[3] = $transaction['CreditedUserId'].'comptabilite@mobicoop.org';
+            $creditedUserEmail = $this->_getUserEmail($transaction['CreditedUserId']);
+
+            $line[2] = $creditedUserEmail;
+            $line[3] = $transaction['CreditedUserId'].$creditedUserEmail;
             $line[4] = ((int) $transaction['CreditedFunds']['Amount']) / 100;
 
             switch ($transaction['Type']) {
@@ -126,23 +115,23 @@ class TransactionsSummarizer
         fclose($file);
     }
 
-    // private function _sendEmail()
-    // {
-    //     $email = new Email();
-    //     if (0 == count($this->_emailRecipients)) {
-    //         throw new BankTransferException(BankTransferException::NO_REPORT_RECIPIENTS);
-    //     }
-    //     $email->setRecipientEmail($this->_emailRecipients[0]);
+    private function _getUserEmail(string $userId)
+    {
+        $user = $this->_paymentProvider->getUser($userId);
 
-    //     if (count($this->_emailRecipients) > 1) {
-    //         $email->setRecipientEmailCc(array_slice($this->_emailRecipients, 1));
-    //     }
+        return $user['Email'];
+    }
 
-    //     $titleTemplate = $this->_communicationFolder.self::EMAIL_LANGUAGE.$this->_emailTitleTemplatePath.self::EMAIL_TEMPLATE.'.html.twig';
-    //     $email->setObject($this->_templating->render($titleTemplate));
+    private function _sendEmail()
+    {
+        $email = new Email();
+        $email->setRecipientEmail($this->_emailRecipient);
 
-    //     $bodyContext = [];
-    //     $attachements = [self::PATH_TO_FILES.'/'.$this->_batchId.'.'.self::FILES_EXTENTION];
-    //     $this->_emailManager->send($email, $this->_communicationFolder.self::EMAIL_LANGUAGE.$this->_emailTemplatePath.self::EMAIL_TEMPLATE, $bodyContext, self::EMAIL_LANGUAGE, $attachements);
-    // }
+        $titleTemplate = $this->_communicationFolder.self::EMAIL_LANGUAGE.$this->_emailTitleTemplatePath.self::EMAIL_TEMPLATE.'.html.twig';
+        $email->setObject($this->_templating->render($titleTemplate));
+
+        $bodyContext = [];
+        $attachements = [self::PATH_TO_FILES.'/'.$this->_platformName.'-export-incitatifs-'.date('m-Y').'.'.self::FILES_EXTENTION];
+        $this->_emailManager->send($email, $this->_communicationFolder.self::EMAIL_LANGUAGE.$this->_emailTemplatePath.self::EMAIL_TEMPLATE, $bodyContext, self::EMAIL_LANGUAGE, $attachements);
+    }
 }

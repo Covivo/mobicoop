@@ -982,16 +982,17 @@ class MangoPayProvider implements PaymentProviderInterface
         }
     }
 
-    public function getWalletTransactions(string $walletId, int $beforeDate, int $afterDate)
+    public function getLastMonthWalletTransactions(string $walletId)
     {
         $this->_auth();
         $urlGet = str_replace('{walletId}', $walletId, self::ITEM_WALLET_TRANSACTIONS);
         $dataProvider = new DataProvider($this->serverUrl.$urlGet);
+        $date = strtotime('1-'.date('m-Y', strtotime('-1 months')).' 00:00:00');
+
         $getParams = [
             '[type]' => self::TRANSACTIONS_TYPES,
             'status' => self::TRASACTION_STATUS_SUCCEEDED,
-            'beforeDate' => $beforeDate,
-            'afterDate' => $afterDate,
+            'afterDate' => $date,
         ];
         $headers = [
             'Authorization' => $this->authChain,

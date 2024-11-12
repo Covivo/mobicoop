@@ -50,9 +50,9 @@ class TransactionManager
         $this->_TransactionsSummarizer = $TransactionsSummarizer;
     }
 
-    public function getWalletTransactions($walletId, $beforeDate, $afterDate)
+    public function getLastMonthWalletTransactions($walletId)
     {
-        $transactions = $this->_paymentProvider->getWalletTransactions($walletId, $beforeDate, $afterDate);
+        $transactions = $this->_paymentProvider->getLastMonthWalletTransactions($walletId);
         $this->_TransactionsSummarizer->summarize($transactions);
     }
 }

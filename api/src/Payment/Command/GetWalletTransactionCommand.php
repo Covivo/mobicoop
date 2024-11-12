@@ -34,17 +34,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GetWalletTransactionCommand extends Command
 {
     private $_TransactionManager;
+    private $paymentAccountantAccountId;
 
-    public function __construct(TransactionManager $TransactionManager)
+    public function __construct(TransactionManager $TransactionManager, $paymentAccountantAccountId)
     {
         parent::__construct();
         $this->_TransactionManager = $TransactionManager;
+        $this->paymentAccountantAccountId = $paymentAccountantAccountId;
     }
 
     protected function configure()
     {
         $this
-            ->setName('app:wallet:get-transactions')
+            ->setName('app:wallet:get-last-month-transactions')
             ->setDescription('Make a serie of Bank Transfert using a CSV file as input.')
             ->setHelp('Make a serie of Bank Transfert using a CSV file as input.')
         ;
@@ -52,6 +54,6 @@ class GetWalletTransactionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->_TransactionManager->getWalletTransactions('2775088453', 1733011199, 1730419200);
+        return $this->_TransactionManager->getLastMonthWalletTransactions($this->paymentAccountantAccountId);
     }
 }

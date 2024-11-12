@@ -368,10 +368,10 @@ class PaymentDataProvider
         return $this->providerInstance->getKycDocument($kycDocumentId);
     }
 
-    public function getWalletTransactions(string $walletId, int $beforeDate, int $afterDate)
+    public function getLastMonthWalletTransactions(string $walletId)
     {
         $this->checkPaymentConfiguration();
 
-        return $this->providerInstance->getWalletTransactions($walletId, $beforeDate, $afterDate);
+        return $this->providerInstance->getLastMonthWalletTransactions($walletId);
     }
 }
