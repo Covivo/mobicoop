@@ -24,9 +24,8 @@ namespace App\Payment\Service\Transaction;
 
 use App\Communication\Entity\Email;
 use App\Communication\Service\EmailManager;
+use App\Payment\Repository\BankTransferRepository;
 use App\Payment\Service\PaymentDataProvider;
-use App\TranslatorTrait;
-use Psr\Log\LoggerInterface;
 use Twig\Environment;
 
 /**
@@ -34,18 +33,15 @@ use Twig\Environment;
  */
 class TransactionsSummarizer
 {
-    use TranslatorTrait;
-
     public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/transactions';
     public const FILES_EXTENTION = 'csv';
     public const CSV_DELIMITER = ';';
 
-    public const CSV_HEADERS = ['ExecutionDate:ISO', 'CreditedUserId', 'Email', 'Libelle', 'Montant', 'Sens'];
+    public const CSV_HEADERS = ['ExecutionDate:ISO', 'CreditedUserId', 'Email', 'Libelle', 'Montant', 'Sens', 'Commentaires'];
 
     public const EMAIL_TEMPLATE = 'last_month_transactions';
     public const EMAIL_LANGUAGE = 'fr';
 
-    private $_logger;
     private $_emailManager;
     private $_communicationFolder;
     private $_emailTemplatePath;
@@ -54,19 +50,19 @@ class TransactionsSummarizer
     private $_emailRecipient;
     private $_platformName;
     private $_paymentProvider;
+    private $_bankTransferRepository;
 
     public function __construct(
-        LoggerInterface $logger,
         EmailManager $emailManager,
         Environment $templating,
         PaymentDataProvider $paymentProvider,
+        BankTransferRepository $bankTransferRepository,
         string $communicationFolder,
         string $emailTemplatePath,
         string $emailTitleTemplatePath,
         string $emailRecipient,
         string $platformName
     ) {
-        $this->_logger = $logger;
         $this->_emailManager = $emailManager;
         $this->_communicationFolder = $communicationFolder;
         $this->_emailTemplatePath = $emailTemplatePath;
@@ -75,6 +71,7 @@ class TransactionsSummarizer
         $this->_emailRecipient = $emailRecipient;
         $this->_platformName = $platformName;
         $this->_paymentProvider = $paymentProvider;
+        $this->_bankTransferRepository = $bankTransferRepository;
     }
 
     public function summarize(array $transactions)
@@ -93,10 +90,9 @@ class TransactionsSummarizer
             $line[1] = $transaction['CreditedUserId'];
 
             $creditedUserEmail = $this->_getUserEmail($transaction['CreditedUserId']);
-
             $line[2] = $creditedUserEmail;
             $line[3] = $transaction['CreditedUserId'].$creditedUserEmail;
-            $line[4] = ((int) $transaction['CreditedFunds']['Amount']) / 100;
+            $line[4] = (int) $transaction['CreditedFunds']['Amount'] / 100;
 
             switch ($transaction['Type']) {
                 case 'PAYIN':
@@ -110,6 +106,12 @@ class TransactionsSummarizer
 
                     break;
             }
+            if (null != $transaction['Tag'] && isset($transaction['Tag'])) {
+                $line[6] = $this->_getBankTrasferDetails($transaction['Tag']);
+            } else {
+                $line[6] = '';
+            }
+
             fputcsv($file, $line, self::CSV_DELIMITER);
         }
         fclose($file);
@@ -120,6 +122,13 @@ class TransactionsSummarizer
         $user = $this->_paymentProvider->getUser($userId);
 
         return $user['Email'];
+    }
+
+    private function _getBankTrasferDetails(int $bankTransferId)
+    {
+        $bankTransfer = $this->_bankTransferRepository->find($bankTransferId);
+
+        return $bankTransfer->getDetails();
     }
 
     private function _sendEmail()

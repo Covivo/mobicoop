@@ -992,7 +992,7 @@ class MangoPayProvider implements PaymentProviderInterface
         $getParams = [
             '[type]' => self::TRANSACTIONS_TYPES,
             'status' => self::TRASACTION_STATUS_SUCCEEDED,
-            // 'afterDate' => $date,
+            'afterDate' => $date,
         ];
         $headers = [
             'Authorization' => $this->authChain,
@@ -1006,9 +1006,6 @@ class MangoPayProvider implements PaymentProviderInterface
                 $transactions[] = $transaction;
             }
         }
-        var_dump($transactions);
-
-        exit;
 
         return $transactions;
     }
