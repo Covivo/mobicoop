@@ -34,13 +34,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GetWalletTransactionCommand extends Command
 {
     private $_TransactionManager;
-    private $paymentAccountantAccountId;
+    private $paymentAccountantWalletId;
 
-    public function __construct(TransactionManager $TransactionManager, $paymentAccountantAccountId)
+    public function __construct(TransactionManager $TransactionManager, $paymentAccountantWalletId)
     {
         parent::__construct();
         $this->_TransactionManager = $TransactionManager;
-        $this->paymentAccountantAccountId = $paymentAccountantAccountId;
+        $this->paymentAccountantWalletId = $paymentAccountantWalletId;
     }
 
     protected function configure()
@@ -54,6 +54,6 @@ class GetWalletTransactionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->_TransactionManager->getLastMonthWalletTransactions($this->paymentAccountantAccountId);
+        return $this->_TransactionManager->getLastMonthWalletTransactions($this->paymentAccountantWalletId);
     }
 }

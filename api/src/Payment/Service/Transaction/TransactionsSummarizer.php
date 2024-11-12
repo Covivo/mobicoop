@@ -85,7 +85,7 @@ class TransactionsSummarizer
 
     private function _makeCsvFile(array $transactions)
     {
-        $file = fopen(self::PATH_TO_FILES.'/'.$this->_platformName.'-export-incitatifs-'.date('m-Y').'.'.self::FILES_EXTENTION, 'w');
+        $file = fopen(self::PATH_TO_FILES.'/'.$this->_platformName.'-exports-'.date('m-Y').'.'.self::FILES_EXTENTION, 'w');
         fputcsv($file, self::CSV_HEADERS, self::CSV_DELIMITER);
         foreach ($transactions as $transaction) {
             $line = [];
@@ -131,7 +131,7 @@ class TransactionsSummarizer
         $email->setObject($this->_templating->render($titleTemplate));
 
         $bodyContext = [];
-        $attachements = [self::PATH_TO_FILES.'/'.$this->_platformName.'-export-incitatifs-'.date('m-Y').'.'.self::FILES_EXTENTION];
+        $attachements = [self::PATH_TO_FILES.'/'.$this->_platformName.'-exports-'.date('m-Y').'.'.self::FILES_EXTENTION];
         $this->_emailManager->send($email, $this->_communicationFolder.self::EMAIL_LANGUAGE.$this->_emailTemplatePath.self::EMAIL_TEMPLATE, $bodyContext, self::EMAIL_LANGUAGE, $attachements);
     }
 }
