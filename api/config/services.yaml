@@ -1173,7 +1173,7 @@ services:
   
   App\Payment\Command\GetWalletTransactionCommand:
     arguments:
-      $paymentAccountantAccountId: "%env(string:PAYMENT_ACCOUNTANT_ACCOUNT_ID)%"
+      $paymentAccountantAccountId: "%env(string:BANK_TRANSFER_HOLDER_ID)%"
 
   # Price
   App\Price\Controller\:
