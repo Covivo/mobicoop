@@ -207,6 +207,11 @@ class MyAd
      */
     private $communities;
 
+    /**
+     * @var null|int the linked
+     */
+    private $_linkedAd;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -553,6 +558,18 @@ class MyAd
     public function addCommunity(MyAdCommunity $community): self
     {
         $this->communities[] = $community;
+
+        return $this;
+    }
+
+    public function getLinkedAd(): ?int
+    {
+        return $this->_linkedAd;
+    }
+
+    public function setLinkedAd(?int $linkedAd): self
+    {
+        $this->_linkedAd = $linkedAd;
 
         return $this;
     }

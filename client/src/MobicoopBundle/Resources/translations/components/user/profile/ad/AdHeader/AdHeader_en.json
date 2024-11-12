@@ -6,8 +6,14 @@
       "driverOrPassenger": "Not important: I will be the driver or a passenger",
       "passenger": "I will be a passenger",
       "driver": "I will be the driver",
-      "pause": "Temporarily hide ad in results",
-      "play": "Tedisplay this ad in results",
+      "pause": {
+        "outward": "Temporarily hide ad in results",
+        "return": "Pause the outward journey associated with this return"
+      },
+      "play": {
+        "outward": "Display this ad in results",
+        "return": "Display the outward journey associated with this return"
+      },
       "delete": "Delete this ad",
       "update": "Update this ad",
       "notUpdatable": "Update the linked outward ad"

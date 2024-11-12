@@ -767,24 +767,18 @@ class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializa
         return $this->smoke;
     }
 
-    public function setSmoke(?bool $smoke): ?bool
+    public function setSmoke(?bool $smoke): self
     {
         $this->smoke = $smoke;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function hasMusic(): ?bool
     {
         return $this->music;
     }
 
-    /**
-     * @param bool $music
-     */
     public function setMusic(?bool $music): Ad
     {
         $this->music = $music;
