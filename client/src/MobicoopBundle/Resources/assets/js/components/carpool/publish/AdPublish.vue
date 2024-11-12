@@ -507,12 +507,14 @@
                 >
                   <v-text-field
                     v-model="price"
+                    :class="colorPricePerKm + '--text'"
+                    :color="colorPricePerKm"
                     :disabled="distance<=0"
-                    suffix="€"
                     :hint="hintPricePerKm"
                     persistent-hint
-                    :color="colorPricePerKm"
-                    :class="colorPricePerKm + '--text'"
+                    step="0.1"
+                    suffix="€"
+                    type="number"
                     @input="disableNextButton = true;roundPrice(price, regular ? 2 : 1, true);price = Math.abs(price)"
                   />
                 </v-col>
