@@ -304,7 +304,7 @@ class Tools
     {
         $carpooler = $this->_getCarpooler($carpoolerType);
 
-        if (!is_null($carpooler)) {
+        if (!is_null($carpooler) && User::STATUS_ANONYMIZED !== $carpooler->getStatus() && !is_null($carpooler->getTelephone())) {
             $phoneService = new PhoneService($carpooler->getTelephone(), $carpooler->getPhoneCode());
 
             return !is_null($truncLen)
