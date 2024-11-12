@@ -259,14 +259,18 @@ class CommunityManager
     {
         $mapsAds = [];
 
-        // We get only the public proposal (we exclude searches)
-        $proposals = $this->proposalRepository->findCommunityAds($this->communityRepository->find($communityId));
+        $community = $this->communityRepository->find($communityId);
 
-        foreach ($proposals as $proposal) {
-            if (!$proposal->hasExpired()) {
-                $mapsAd = $this->adManager->makeMapsAdFromProposal($proposal);
-                $mapsAd->setEntityId($communityId);
-                $mapsAds[] = $mapsAd;
+        if ($this->_isAuthenticatedUserAllowedToSeeCommunityContent($community)) {
+            // We get only the public proposal (we exclude searches)
+            $proposals = $this->proposalRepository->findCommunityAds($this->communityRepository->find($communityId));
+
+            foreach ($proposals as $proposal) {
+                if (!$proposal->hasExpired()) {
+                    $mapsAd = $this->adManager->makeMapsAdFromProposal($proposal);
+                    $mapsAd->setEntityId($communityId);
+                    $mapsAds[] = $mapsAd;
+                }
             }
         }
 
