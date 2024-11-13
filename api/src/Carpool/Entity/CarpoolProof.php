@@ -67,6 +67,7 @@ class CarpoolProof
     public const STATUS_ANOMALY_ERROR = 21;
     public const STATUS_TERMS_VIOLATION_ERROR = 22;
     public const STATUS_VALITION_ERROR = 23;
+    public const STATUS_IGNORED = 24;
 
     public const ACTOR_DRIVER = 1;
     public const ACTOR_PASSENGER = 2;
@@ -103,6 +104,7 @@ class CarpoolProof
         self::STATUS_INVALID_DUPLICATE_DEVICE,
         self::STATUS_NOT_SENT_MISSING_PHONE,
         self::STATUS_RPC_NOT_REACHABLE,
+        self::STATUS_IGNORED,
     ];
 
     /**

@@ -73,6 +73,8 @@ class CarpoolProofGouvProvider implements ProviderInterface
     public function postCollection(CarpoolProof $carpoolProof, string $resource = self::RESSOURCE_POST)
     {
         if (is_null($carpoolProof->getAsk())) {
+            $carpoolProof->setStatus(CarpoolProof::STATUS_IGNORED);
+
             return new Response(418);
         }
 

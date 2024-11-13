@@ -693,6 +693,13 @@ class ProofManager
 
         // we check taht we have phone numbers
         foreach ($proofs as $proof) {
+            if (is_null($proof->getAsk())) {
+                $proof->setStatus(CarpoolProof::STATUS_IGNORED);
+                $this->entityManager->persist($proof);
+
+                continue;
+            }
+
             $this->_tools->setCurrentCarpoolProof($proof);
 
             if (is_null($proof->getDriver()->getTelephone())
