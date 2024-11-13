@@ -13,7 +13,7 @@
                          {% if context.booking.distance %}
                             <li>Carpooling distance : {{context.booking.distance}}km</li>
                          {% endif %}
-                            <li>Date: on {{context.booking.passengerPickupDate|date("d-m-Y at H:i","Europe/Paris")}}</li>
+                            <li>Date: on {{context.booking.passengerPickupDate|date("d-m-Y at H:i",context.carpoolTimezone)}}</li>
                             <li>Pick-up in {{context.booking.passengerPickupAddress}}.</li>
                             <li>Drop-off in {{context.booking.passengerDropAddress}}.</li>
                          {% if context.booking.price %}
