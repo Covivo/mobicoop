@@ -52,9 +52,9 @@
           <v-col
             v-for="(item, i) in itemsVisual"
             :key="i"
-            cols="4"
+            cols="12"
+            md="6"
             lg="4"
-            md="8"
           >
             <ToolBoxItem
               :title="item.title"
