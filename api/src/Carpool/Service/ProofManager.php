@@ -693,6 +693,13 @@ class ProofManager
 
         // we check taht we have phone numbers
         foreach ($proofs as $proof) {
+            if (is_null($proof->getAsk())) {
+                $proof->setStatus(CarpoolProof::STATUS_IGNORED);
+                $this->entityManager->persist($proof);
+
+                continue;
+            }
+
             $this->_tools->setCurrentCarpoolProof($proof);
 
             if (is_null($proof->getDriver()->getTelephone())
@@ -728,7 +735,7 @@ class ProofManager
 
                     break;
 
-                case 409 == $result->getCode():
+                case $result->getCode() >= 400 && $result->getCode() < 500:
                     $proof->setStatus(CarpoolProof::STATUS_SENT);
 
                     break;
@@ -800,6 +807,21 @@ class ProofManager
                         break;
 
                     case 'pending':
+                        if (isset($data['fraud_error_labels']) && count($data['fraud_error_labels']) > 0) {
+                            $proof->setStatus(CarpoolProof::STATUS_FRAUD_ERROR);
+
+                            break;
+                        }
+                        if (isset($data['anomaly_error_details']) && count($data['anomaly_error_details']) > 0) {
+                            $proof->setStatus(CarpoolProof::STATUS_ANOMALY_ERROR);
+
+                            break;
+                        }
+                        if (isset($data['terms_violation_details']) && count($data['terms_violation_details']) > 0) {
+                            $proof->setStatus(CarpoolProof::STATUS_TERMS_VIOLATION_ERROR);
+
+                            break;
+                        }
                         $proof->setStatus(CarpoolProof::STATUS_UNDER_CHECKING);
 
                         break;
@@ -811,6 +833,21 @@ class ProofManager
 
                     case 'anomaly_error':
                         $proof->setStatus(CarpoolProof::STATUS_ANOMALY_ERROR);
+
+                        break;
+
+                    case 'terms_violation_error':
+                        $proof->setStatus(CarpoolProof::STATUS_TERMS_VIOLATION_ERROR);
+
+                        break;
+
+                    case 'validation_error':
+                        $proof->setStatus(CarpoolProof::STATUS_VALITION_ERROR);
+
+                        break;
+
+                    default:
+                        $proof->setStatus(CarpoolProof::STATUS_UNDER_CHECKING);
 
                         break;
                 }

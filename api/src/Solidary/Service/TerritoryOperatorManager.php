@@ -2,6 +2,7 @@
 
 namespace App\Solidary\Service;
 
+use App\Auth\Service\AuthManager;
 use App\Geography\Entity\Territory;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,10 +30,13 @@ class TerritoryOperatorManager
      */
     private $_territories;
 
-    public function __construct(EntityManagerInterface $em, TokenStorageInterface $ts)
+    private $_authManager;
+
+    public function __construct(EntityManagerInterface $em, TokenStorageInterface $ts, AuthManager $authManager)
     {
         $this->_em = $em;
         $this->_tokenStorage = $ts;
+        $this->_authManager = $authManager;
     }
 
     /**
@@ -44,7 +48,7 @@ class TerritoryOperatorManager
 
         $this->_operator = $this->_tokenStorage->getToken()->getUser();
 
-        if ($this->_operator->isSolidaryOperator()) {
+        if ($this->_operator->isSolidaryOperator() && !$this->_authManager->isAuthorized('ROLE_ADMIN')) {
             $structures = [];
 
             foreach ($this->_operator->getOperates() as $operate) {
