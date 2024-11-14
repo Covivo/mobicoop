@@ -4,6 +4,7 @@ namespace App\Incentive\Entity;
 
 use App\Incentive\Entity\Subscription\Progression;
 use App\Incentive\Resource\SubscriptionDefinition;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -26,7 +27,14 @@ abstract class Subscription
 
     protected $createdAt;
 
+    /**
+     * @var ArrayCollection
+     */
     protected $longDistanceJourneys;
+
+    /**
+     * @var ArrayCollection
+     */
     protected $shortDistanceJourneys;
 
     protected $commitmentProofJourney;
@@ -98,6 +106,13 @@ abstract class Subscription
     protected $journeys;
 
     /**
+     * Used to return only EEC compliant journeys.
+     *
+     * @var bool
+     */
+    private $_compliantJourneys = false;
+
+    /**
      * The mobConnect Subscription data.
      *
      * @Groups({"readAdminSubscription"})
@@ -144,12 +159,24 @@ abstract class Subscription
 
     public function getLongDistanceJourneys()
     {
-        return $this->longDistanceJourneys;
+        return true === $this->_compliantJourneys
+            ? array_values(
+                array_filter($this->longDistanceJourneys->toArray(), function (LongDistanceJourney $journeys) {
+                    return $journeys->isEECCompliant();
+                })
+            )
+            : $this->longDistanceJourneys;
     }
 
     public function getShortDistanceJourneys()
     {
-        return $this->shortDistanceJourneys;
+        return true === $this->_compliantJourneys
+            ? array_values(
+                array_filter($this->shortDistanceJourneys->toArray(), function (ShortDistanceJourney $journey) {
+                    return $journey->isEECCompliant();
+                })
+            )
+            : $this->shortDistanceJourneys;
     }
 
     public function getCommitmentProofJourney()
@@ -480,6 +507,16 @@ abstract class Subscription
     public function getDefinition(): SubscriptionDefinition
     {
         return new SubscriptionDefinition($this);
+    }
+
+    /**
+     * Set the value of _compliantJourneys.
+     */
+    public function setCompliantJourneys(bool $compliantJourneys): self
+    {
+        $this->_compliantJourneys = $compliantJourneys;
+
+        return $this;
     }
 
     /**

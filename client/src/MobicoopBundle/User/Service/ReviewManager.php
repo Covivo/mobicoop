@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
@@ -27,33 +27,29 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Review;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Review management service.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ReviewManager
 {
     private $dataProvider;
-
+    private $carpoolTimezone;
 
     /**
      * Constructor.
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, string $carpoolTimezone)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Review::class);
+        $this->carpoolTimezone = $carpoolTimezone;
     }
 
     /**
-     * Create a review left by the reviewer about the reviewed
-     *
-     * @param integer $reviewerId
-     * @param integer $reviewedId
-     * @param string $content
-     * @return bool
+     * Create a review left by the reviewer about the reviewed.
      */
     public function createReview(int $reviewerId, int $reviewedId, string $content): bool
     {
@@ -63,25 +59,25 @@ class ReviewManager
         $review->setContent($content);
 
         $response = $this->dataProvider->post($review);
-        if ($response->getCode() == 201) {
+        if (201 == $response->getCode()) {
             return true;
         }
+
         return false;
     }
 
     /**
-     * Get the Review Dashboard of a User
-     *
-     * @return array|null
+     * Get the Review Dashboard of a User.
      */
     public function reviewDashboard(): ?array
     {
         $this->dataProvider->setClass(ReviewDashboard::class);
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getCollection();
-        if ($response->getCode() == 200) {
+        if (200 == $response->getCode()) {
             return $response->getValue();
         }
+
         return null;
     }
 }

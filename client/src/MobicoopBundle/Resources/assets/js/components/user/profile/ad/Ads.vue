@@ -60,6 +60,7 @@
                     <Ad
                       :ad="ad"
                       @ad-deleted="deleteAd"
+                      @ad-paused="pauseAd"
                     />
                   </v-col>
                 </v-row>
@@ -158,6 +159,13 @@ export default {
         this.alert.message = message;
         this.snackbar = true;
       }, 2500);
+    },
+    pauseAd(ad) {
+      this.regularAds.map((activeAd) => {
+        if (ad.linkedAd && activeAd.id === ad.linkedAd) {
+          activeAd.paused = ad.paused;
+        }
+      });
     },
     updateAds(){
       this.localAds = this.ads;

@@ -507,12 +507,14 @@
                 >
                   <v-text-field
                     v-model="price"
+                    :class="colorPricePerKm + '--text'"
+                    :color="colorPricePerKm"
                     :disabled="distance<=0"
-                    suffix="€"
                     :hint="hintPricePerKm"
                     persistent-hint
-                    :color="colorPricePerKm"
-                    :class="colorPricePerKm + '--text'"
+                    step="0.1"
+                    suffix="€"
+                    type="number"
                     @input="disableNextButton = true;roundPrice(price, regular ? 2 : 1, true);price = Math.abs(price)"
                   />
                 </v-col>
@@ -1272,6 +1274,8 @@ export default {
     role(){
       if(!this.showDriverRole && !this.showBothRole){
         return 2;
+      }else if (this.isUpdate) {
+        return this.ad.role;
       }
       return this.defaultRoleToPublish;
     },
@@ -1338,12 +1342,11 @@ export default {
         }
       }
     },
-    freeCarpool(newValue) {
-      if (newValue) {
-        this.price = 0;
-      } else {
-        this.calculatePrice();
+    freeCarpool() {
+      if (!this.freeCarpool) {
+        this.pricePerKm = this.defaultPriceKm;
       }
+      this.calculatePrice();
     },
   },
   methods: {
@@ -1444,12 +1447,10 @@ export default {
       this.duration = route.direction ? route.direction.duration : null;
       this.selectedCommunities = route.selectedCommunities ? route.selectedCommunities : null;
 
-      if (this.communityWithFreeCarpool) {
-        this.freeCarpool = false;
-        this.freeCarpoolCommunities = [];
+      this.freeCarpool = false;
+      this.freeCarpoolCommunities = [];
 
-        this.setCommunityFreeCarpool(route.communities);
-      }
+      this.setCommunityFreeCarpool(route.communities);
 
       if(this.step!==1){
         this.origin = route.origin;

@@ -27,8 +27,6 @@ use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Community\Entity\Community;
 use App\Community\Service\CommunityManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * Get the Ads related to a Community.
@@ -37,16 +35,11 @@ use Symfony\Component\Security\Core\Security;
  */
 final class CommunityMapsAdsGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $request;
     private $communityManager;
-    private $security;
 
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, Security $security)
+    public function __construct(CommunityManager $communityManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
-
-        $this->security = $security;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool

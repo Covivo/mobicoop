@@ -28,6 +28,7 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Ressource\Ad;
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use App\Geography\Service\GeoTools;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
@@ -1301,6 +1302,7 @@ class ProposalRepository
             ->join('p.communities', 'com')
             ->join('p.criteria', 'c')
             ->join('p.user', 'u', 'WITH', 'u.status != :pseudonymizedStatus')
+            ->join('u.communityUsers', 'cu', 'WITH', 'cu.status IN ('.implode(', ', CommunityUser::STATUS_MEMBER).')')
             ->where('com.id = :communityId')
             ->andWhere('p.private = 0')
             ->andWhere('p.type = 1 or p.type = 2')

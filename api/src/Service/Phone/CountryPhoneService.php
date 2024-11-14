@@ -248,10 +248,10 @@ class CountryPhoneService
             if (preg_match('/^'.$code.'/', $this->_phoneNumber)) {
                 $this->_setCode($key);
                 $this->_setIndicative($code);
-
-                $this->_setPhoneNumber(strlen($this->_indicative));
             }
         }
+
+        $this->_setPhoneNumber(strlen($this->_indicative));
 
         // Define by default for France
         if (preg_match('/^'.self::PHONE_PATTERN[self::FR].'$/', $this->_phoneNumber)) {

@@ -4478,4 +4478,17 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
+
+    public function isCommunityMemberValidated(Community $community): bool
+    {
+        $filteredCommunityUsers = array_filter($this->getCommunityUsers(), function (CommunityUser $communityUser) use ($community) {
+            return $communityUser->getCommunity()->getId() === $community->getId()
+                && in_array(
+                    $communityUser->getStatus(),
+                    CommunityUser::STATUS_MEMBER
+                );
+        });
+
+        return !empty($filteredCommunityUsers);
+    }
 }

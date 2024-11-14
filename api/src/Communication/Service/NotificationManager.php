@@ -111,6 +111,7 @@ class NotificationManager
     private $altCommunicationFolder;
     private $structureLogoUri;
     private $userRepository;
+    private $carpoolTimezone;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -138,7 +139,8 @@ class NotificationManager
         string $communicationFolder,
         string $altCommunicationFolder,
         string $structureLogoUri,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        string $carpoolTimezone
     ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -166,6 +168,7 @@ class NotificationManager
         $this->altCommunicationFolder = $altCommunicationFolder;
         $this->structureLogoUri = $structureLogoUri;
         $this->userRepository = $userRepository;
+        $this->carpoolTimezone = $carpoolTimezone;
     }
 
     /**
@@ -183,7 +186,7 @@ class NotificationManager
         }
 
         // Check if the user is anonymised if yes we don't send notifications
-        if (USER::STATUS_ANONYMIZED == $recipient->getStatus()) {
+        if (User::STATUS_ANONYMIZED == $recipient->getStatus()) {
             return;
         }
 
@@ -443,7 +446,7 @@ class NotificationManager
                     if ($recipient->getId() !== $object->getUserId()) {
                         $recipientRole = $object->getRole();
                     } else {
-                        $recipientRole = ad::ROLE_DRIVER == $object->getRole() ? ad::ROLE_PASSENGER : ad::ROLE_DRIVER;
+                        $recipientRole = Ad::ROLE_DRIVER == $object->getRole() ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER;
                     }
 
                     if (null !== $result->getOutward()) {
@@ -787,7 +790,7 @@ class NotificationManager
                 'context' => $titleContext,
             ]
         ));
-
+        $bodyContext['carpoolTimezone'] = $this->carpoolTimezone;
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
             $this->emailManager->send($email, $this->altCommunicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
@@ -1006,6 +1009,7 @@ class NotificationManager
             $this->translator->setLocale($lang);
             $templateLanguage = $lang;
         }
+        $bodyContext['carpoolTimezone'] = $this->carpoolTimezone;
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
             $response = $this->smsManager->send($sms, $this->altCommunicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
@@ -1259,6 +1263,7 @@ class NotificationManager
             ]
         ));
 
+        $bodyContext['carpoolTimezone'] = $this->carpoolTimezone;
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
             $this->pushManager->send($push, $this->altCommunicationFolder.$templateLanguage.$this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);

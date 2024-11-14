@@ -105,7 +105,7 @@ interface PaymentProviderInterface
      *  ]
      * ]
      */
-    public function processElectronicPayment(User $debtor, array $creditors);
+    public function processElectronicPayment(User $debtor, array $creditors, string $tag);
 
     /**
      * Upload an identity validation document

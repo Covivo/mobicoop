@@ -233,6 +233,7 @@ services:
         carpoolProofDistance: "%env(int:CARPOOL_PROOF_DISTANCE)%"
         paymentActive: "%env(string:PAYMENT_ACTIVE)%"
         matcherCustomization: "%env(bool:MATCHER_CUSTOMIZATION)%"
+        carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 
@@ -244,6 +245,7 @@ services:
     arguments:
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
       $carpoolDisplayFieldsOrder: "%env(json:CARPOOL_DISPLAY_FIELDS_ORDER)%"
+      $userMinAgeToDrive: "%env(int:USER_MIN_AGE_TO_DRIVE)%"
 
   App\Carpool\Service\ProofManager:
     arguments:
@@ -298,6 +300,7 @@ services:
         maxDetourDurationPercent: "%env(int:ALGORITHM_MAX_DETOUR_DURATION_PERCENT)%"
         minCommonDistanceCheck: "%env(int:ALGORITHM_MIN_COMMON_DISTANCE_CHECK)%"
         minCommonDistancePercent: "%env(int:ALGORITHM_MIN_COMMON_DISTANCE_PERCENT)%"
+        userMinAgeToDrive: "%env(int:USER_MIN_AGE_TO_DRIVE)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 
@@ -462,6 +465,7 @@ services:
       $smsEnabled: "%env(bool:resolve:NOTIFICATION_SMS_ENABLED)%"
       $pushEnabled: "%env(bool:resolve:NOTIFICATION_PUSH_ENABLED)%"
       $structureLogoUri: "%env(string:STRUCTURE_LOGO_URI)%"
+      $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
     tags:
       - { name: monolog.logger, channel: notification }
 
@@ -972,6 +976,7 @@ services:
       $popularJourneyMaxNumber: "%env(int:POPULAR_JOURNEY_MAX_NUMBER)%"
       $popularJourneyHomeMaxNumber: "%env(int:POPULAR_JOURNEY_HOME_MAX_NUMBER)%"
       $popularJourneyMinOccurences: "%env(int:POPULAR_JOURNEY_MINIMAL_OCCURENCES)%"
+      $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
 
   App\Journey\Repository\JourneyRepository:
     arguments:
@@ -1066,6 +1071,7 @@ services:
         ptMaxDistanceWalkFromWork: "%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_WORK)%"
         ptMaxNbCarDuration: "%env(int:MOBIMATCH_PT_MAXIMUM_NB_CAR_DURATION)%"
         roundTripCompute: "%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%"
+        carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
     tags:
       - { name: monolog.logger, channel: mass }
 
@@ -1159,9 +1165,21 @@ services:
     tags:
       - { name: monolog.logger, channel: bank_transfer }
 
+  App\Payment\Service\Transaction\TransactionsSummarizer:
+    arguments:
+      $platformName: "%env(string:PAYMENT_PLATFORM_NAME)%"
+      $communicationFolder: "%env(resolve:COMMUNICATION_FOLDER)%"
+      $emailTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%"
+      $emailTitleTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%"
+      $emailRecipient: "%env(string:PAYMENT_ACCOUNTANT_EMAIL)%"
+
   App\Payment\Service\UnpaidReminderManager:
     arguments:
       $reminderDelays: "%env(json:PAYMENT_UNPAID_REMINDER_DELAYS)%"
+  
+  App\Payment\Command\GetWalletTransactionCommand:
+    arguments:
+      $paymentAccountantWalletId: "%env(string:PAYMENT_ACCOUNTANT_WALLET_ID)%"
 
   # Price
   App\Price\Controller\:
@@ -1338,6 +1356,10 @@ services:
   App\User\Interoperability\Service\UserManager:
     arguments:
       $notificationSsoRegistration: "%env(bool:NOTIFICATION_SSO_REGISTRATION)%"
+
+  App\User\Service\UserUnderEighteenManager:
+    arguments:
+      $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
 
   App\User\Controller\EECSubscription:
     tags:

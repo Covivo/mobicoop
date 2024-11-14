@@ -53,17 +53,19 @@ class UserManager
     private $encoder;
     private $tokenStorage;
     private $logger;
+    private $carpoolTimezone;
 
     /**
      * Constructor.
      */
-    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage, LoggerInterface $logger)
+    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage, LoggerInterface $logger, string $carpoolTimezone)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
         $this->encoder = $encoder;
         $this->tokenStorage = $tokenStorage;
         $this->logger = $logger;
+        $this->carpoolTimezone = $carpoolTimezone;
     }
 
     /**
@@ -261,7 +263,7 @@ class UserManager
      *
      * @return null|Mass[] the Masses found or empty array
      */
-    public function getMasses(int $id, string $orderBy = null, string $order = 'desc')
+    public function getMasses(int $id, ?string $orderBy = null, string $order = 'desc')
     {
         $params = null;
         if (!is_null($orderBy)) {
@@ -533,7 +535,7 @@ class UserManager
      *
      * @return null|array|object
      */
-    public function flushUserToken(User $user, string $operation = null)
+    public function flushUserToken(User $user, ?string $operation = null)
     {
         if (empty($operation)) {
             $operation = 'password_update';
@@ -583,9 +585,9 @@ class UserManager
     /**
      * Get the ads of an user.
      *
-     * @throws \ReflectionException
-     *
      * @return array|object
+     *
+     * @throws \ReflectionException
      */
     public function getAds(bool $isAcceptedCarpools = false)
     {
@@ -613,7 +615,7 @@ class UserManager
                 continue;
             }
 
-            $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+            $now = new \DateTime('now', new \DateTimeZone($this->carpoolTimezone));
 
             // Carpool regular
             if (Ad::FREQUENCY_REGULAR === $ad->getFrequency()) {
@@ -658,7 +660,7 @@ class UserManager
         foreach ($myAds as $myAd) {
             // we check if the ad is still valid
             $valid = false;
-            $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+            $now = new \DateTime('now', new \DateTimeZone($this->carpoolTimezone));
             if (MyAd::FREQUENCY_REGULAR === $myAd->getFrequency()) {
                 // regular
                 $date = \DateTime::createFromFormat('Y-m-d', $myAd->getToDate());
@@ -671,7 +673,7 @@ class UserManager
                         (!is_null($myAd->getReturnDate()) && !is_null($myAd->getReturnTime())) ?
                         $myAd->getReturnDate().' '.$myAd->getReturnTime() :
                         $myAd->getOutwardDate().' '.$myAd->getDriver()['pickUpTime'],
-                        new \DateTimeZone('Europe/Paris')
+                        new \DateTimeZone($this->carpoolTimezone)
                     );
                 } elseif (count($myAd->getPassengers()) > 0) {
                     $date = \DateTime::createFromFormat(
@@ -679,7 +681,7 @@ class UserManager
                         (!is_null($myAd->getReturnDate()) && !is_null($myAd->getReturnTime())) ?
                         $myAd->getReturnDate().' '.$myAd->getReturnTime() :
                         $myAd->getOutwardDate().' '.$myAd->getPassengers()[0]['startTime'],
-                        new \DateTimeZone('Europe/Paris')
+                        new \DateTimeZone($this->carpoolTimezone)
                     );
                 } else {
                     $date = \DateTime::createFromFormat(
@@ -687,7 +689,7 @@ class UserManager
                         (!is_null($myAd->getReturnDate()) && !is_null($myAd->getReturnTime())) ?
                         $myAd->getReturnDate().' '.$myAd->getReturnTime() :
                         $myAd->getOutwardDate().' '.$myAd->getOutwardTime(),
-                        new \DateTimeZone('Europe/Paris')
+                        new \DateTimeZone($this->carpoolTimezone)
                     );
                 }
             }
@@ -706,7 +708,7 @@ class UserManager
                     $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd->getDriver()['toDate']);
                     $carpoolDate->setTime(0, 0);
                 } else {
-                    $carpoolDate = \DateTime::createFromFormat('Y-m-d H:i', $myAd->getDriver()['fromDate'].' '.$myAd->getDriver()['startTime'], new \DateTimeZone('Europe/Paris'));
+                    $carpoolDate = \DateTime::createFromFormat('Y-m-d H:i', $myAd->getDriver()['fromDate'].' '.$myAd->getDriver()['startTime'], new \DateTimeZone($this->carpoolTimezone));
                 }
                 if ($valid && $carpoolDate >= $now) {
                     $ads['accepted']['active'][] = $myAd;
@@ -721,7 +723,7 @@ class UserManager
                         $carpoolDate = \DateTime::createFromFormat('Y-m-d', $passenger['toDate']);
                         $carpoolDate->setTime(0, 0);
                     } else {
-                        $carpoolDate = \DateTime::createFromFormat('Y-m-d H:i', $passenger['fromDate'].' '.$passenger['startTime'], new \DateTimeZone('Europe/Paris'));
+                        $carpoolDate = \DateTime::createFromFormat('Y-m-d H:i', $passenger['fromDate'].' '.$passenger['startTime'], new \DateTimeZone($this->carpoolTimezone));
                     }
                     if ($carpoolDate >= $now) {
                         $validCarpool = true;

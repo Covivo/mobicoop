@@ -31,7 +31,6 @@ use App\Journey\Repository\JourneyRepository;
 use App\Service\FileManager;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use LogicException;
 
 /**
  * Journey manager service.
@@ -48,6 +47,7 @@ class JourneyManager
     private $popularJourneyHomeMaxNumber;
     private $popularJourneyMaxNumber;
     private $popularJourneyMinOccurences;
+    private $carpoolTimezone;
 
     /**
      * Constructor.
@@ -60,7 +60,8 @@ class JourneyManager
         AdManager $adManager,
         int $popularJourneyMaxNumber,
         int $popularJourneyHomeMaxNumber,
-        int $popularJourneyMinOccurences
+        int $popularJourneyMinOccurences,
+        string $carpoolTimezone
     ) {
         $this->entityManager = $entityManager;
         $this->fileManager = $fileManager;
@@ -70,6 +71,7 @@ class JourneyManager
         $this->popularJourneyHomeMaxNumber = $popularJourneyHomeMaxNumber;
         $this->popularJourneyMaxNumber = $popularJourneyMaxNumber;
         $this->popularJourneyMinOccurences = $popularJourneyMinOccurences;
+        $this->carpoolTimezone = $carpoolTimezone;
     }
 
     /**
@@ -88,10 +90,10 @@ class JourneyManager
 
         // insert journeys
         $sql = "
-        insert into journey (proposal_id, user_id, frequency, type, role, from_date, origin, latitude_origin, longitude_origin, destination, latitude_destination, longitude_destination, created_date) 
-        select p.id, 0, 0, IF(p.type=1,1,2), 0, now(), ao.address_locality, ao.latitude, ao.longitude, ad.address_locality, ad.latitude, ad.longitude, now() from address ao 
-        left join waypoint wo on wo.address_id = ao.id left join proposal p on wo.proposal_id = p.id left join waypoint wd on wd.proposal_id = p.id 
-        left join address ad on wd.address_id = ad.id 
+        insert into journey (proposal_id, user_id, frequency, type, role, from_date, origin, latitude_origin, longitude_origin, destination, latitude_destination, longitude_destination, created_date)
+        select p.id, 0, 0, IF(p.type=1,1,2), 0, now(), ao.address_locality, ao.latitude, ao.longitude, ad.address_locality, ad.latitude, ad.longitude, now() from address ao
+        left join waypoint wo on wo.address_id = ao.id left join proposal p on wo.proposal_id = p.id left join waypoint wd on wd.proposal_id = p.id
+        left join address ad on wd.address_id = ad.id
         where p.private <> 1 and ao.address_locality is not null and ao.address_locality <> '' and ad.address_locality is not null and ad.address_locality <> '' and wo.proposal_id is not null and wo.position = 0 and wd.destination = 1
         ;
         ";
@@ -100,13 +102,13 @@ class JourneyManager
 
         // add days, date and time
         $sql = "
-        update journey j 
+        update journey j
         inner join proposal p on p.id = j.proposal_id
-        inner join criteria c on c.id = p.criteria_id 
+        inner join criteria c on c.id = p.criteria_id
         left join proposal pr on pr.id = p.proposal_linked_id
         left join criteria cr on cr.id = pr.criteria_id
-        set j.frequency = c.frequency, j.role = IF(c.driver=1 AND c.passenger=1,3,IF(c.driver=1,1,2)), j.from_date = c.from_date, j.to_date = c.to_date, j.time = c.from_time, 
-        j.days = IF(c.frequency=2, 
+        set j.frequency = c.frequency, j.role = IF(c.driver=1 AND c.passenger=1,3,IF(c.driver=1,1,2)), j.from_date = c.from_date, j.to_date = c.to_date, j.time = c.from_time,
+        j.days = IF(c.frequency=2,
         (
             CONCAT(
                 '{',
@@ -120,7 +122,7 @@ class JourneyManager
                 '}'
             )
         ),null),
-        j.outward_times = IF(c.frequency=2, 
+        j.outward_times = IF(c.frequency=2,
         (
             CONCAT(
                 '{',
@@ -134,7 +136,7 @@ class JourneyManager
                 '}'
             )
         ),null),
-        j.return_times = IF(c.frequency=2 AND j.type=2, 
+        j.return_times = IF(c.frequency=2 AND j.type=2,
         (
             CONCAT(
                 '{',
@@ -168,7 +170,7 @@ class JourneyManager
 
         // add user
         $sql = "
-        update journey j inner join proposal p on p.id = j.proposal_id inner join user u on u.id = p.user_id set j.user_id = u.id, j.user_name = 
+        update journey j inner join proposal p on p.id = j.proposal_id inner join user u on u.id = p.user_id set j.user_id = u.id, j.user_name =
         CONCAT(
             UPPER(LEFT(TRIM(u.given_name),1)),
             LOWER(RIGHT(TRIM(u.given_name),CHAR_LENGTH(TRIM(u.given_name))-1)),
@@ -245,6 +247,7 @@ class JourneyManager
             }
         }
         $cities = array_unique($cities);
+
         // then we search with the 'real' spellings
         return $this->journeyRepository->getAllFrom($cities, $operationName, $context);
     }
@@ -252,9 +255,7 @@ class JourneyManager
     /**
      * Get all destinations for the given origin.
      *
-     * @param string $origin        The origin
-     * @param string $operationName The api operation name (needed for pagination)
-     * @param array  $context       The api context (needed for pagination)
+     * @param string $origin The origin
      *
      * @return Journey[] The journeys found
      */
@@ -274,6 +275,7 @@ class JourneyManager
             }
         }
         $cities = array_unique($cities);
+
         // then we search the destinations with the 'real' spellings
         return $this->journeyRepository->getDestinationsForOrigin($cities);
     }
@@ -303,6 +305,7 @@ class JourneyManager
             }
         }
         $cities = array_unique($cities);
+
         // then we search with the 'real' spellings
         return $this->journeyRepository->getAllTo($cities, $operationName, $context);
     }
@@ -310,9 +313,7 @@ class JourneyManager
     /**
      * Get all origins for the given destination.
      *
-     * @param string $destination   The destination
-     * @param string $operationName The api operation name (needed for pagination)
-     * @param array  $context       The api context (needed for pagination)
+     * @param string $destination The destination
      *
      * @return Journey[] The journeys found
      */
@@ -332,6 +333,7 @@ class JourneyManager
             }
         }
         $cities = array_unique($cities);
+
         // then we search the destinations with the 'real' spellings
         return $this->journeyRepository->getOriginsForDestination($cities);
     }
@@ -373,6 +375,7 @@ class JourneyManager
         }
         $citiesOrigin = array_unique($citiesOrigin);
         $citiesDestination = array_unique($citiesDestination);
+
         // then we search with the 'real' spellings
         return $this->journeyRepository->getAllFromTo($citiesOrigin, $citiesDestination, $operationName, $context);
     }
@@ -402,7 +405,7 @@ class JourneyManager
         // We get the original Proposal
         $proposal = $this->proposalManager->get($proposalId);
         if (!$proposal) {
-            throw new LogicException('Unknown Proposal');
+            throw new \LogicException('Unknown Proposal');
         }
 
         // Make a new "search" Ad with this Proposal. Same structure that a simple search.
@@ -425,7 +428,7 @@ class JourneyManager
         $ad->setOutwardWaypoints($outwardWaypoint);
 
         // Like in a simple search, we use "now" as outwardDateTime
-        $ad->setOutwardDate(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+        $ad->setOutwardDate(new \DateTime('now', new \DateTimeZone($carpoolTimezone)));
         $ad->setFilters(['page' => 1]);
         $ad->setPaused(false);
 
