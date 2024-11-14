@@ -1165,9 +1165,21 @@ services:
     tags:
       - { name: monolog.logger, channel: bank_transfer }
 
+  App\Payment\Service\Transaction\TransactionsSummarizer:
+    arguments:
+      $platformName: "%env(string:PAYMENT_PLATFORM_NAME)%"
+      $communicationFolder: "%env(resolve:COMMUNICATION_FOLDER)%"
+      $emailTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%"
+      $emailTitleTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%"
+      $emailRecipient: "%env(string:PAYMENT_ACCOUNTANT_EMAIL)%"
+
   App\Payment\Service\UnpaidReminderManager:
     arguments:
       $reminderDelays: "%env(json:PAYMENT_UNPAID_REMINDER_DELAYS)%"
+  
+  App\Payment\Command\GetWalletTransactionCommand:
+    arguments:
+      $paymentAccountantWalletId: "%env(string:PAYMENT_ACCOUNTANT_WALLET_ID)%"
 
   # Price
   App\Price\Controller\:

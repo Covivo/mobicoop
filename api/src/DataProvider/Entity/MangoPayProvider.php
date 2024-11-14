@@ -67,6 +67,9 @@ class MangoPayProvider implements PaymentProviderInterface
     public const ITEM_PAYIN = 'payins/card/web';
     public const ITEM_TRANSFERS = 'transfers';
     public const ITEM_PAYOUT = 'payouts/bankwire';
+    public const ITEM_WALLET_TRANSACTIONS = 'wallets/{walletId}/transactions';
+    public const TRANSACTIONS_TYPES = '[TRANSFER,PAYIN,PAYOUT]';
+    public const TRASACTION_STATUS_SUCCEEDED = 'SUCCEEDED';
 
     public const ITEM_KYC_CREATE_DOC = 'users/{userId}/KYC/documents/';
     public const ITEM_KYC_CREATE_PAGE = 'users/{userId}/KYC/documents/{KYCDocId}/pages';
@@ -632,7 +635,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *  ]
      * ]
      */
-    public function processElectronicPayment(User $debtor, array $creditors): array
+    public function processElectronicPayment(User $debtor, array $creditors, string $tag): array
     {
         $return = [];
 
@@ -642,12 +645,12 @@ class MangoPayProvider implements PaymentProviderInterface
         // Transfer to the creditors wallets and payout
         foreach ($creditors as $creditor) {
             $creditorWallet = $creditor['user']->getWallets()[0];
-            $return[] = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
+            $return[] = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount'], $tag);
 
             // Do the payout to the default bank account
             $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
             $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
-            $return[] = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
+            $return[] = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount'], $tag);
         }
 
         return $return;
@@ -977,6 +980,34 @@ class MangoPayProvider implements PaymentProviderInterface
         } else {
             throw new PaymentException(PaymentException::ERROR_DOC);
         }
+    }
+
+    public function getLastMonthWalletTransactions(string $walletId)
+    {
+        $this->_auth();
+        $urlGet = str_replace('{walletId}', $walletId, self::ITEM_WALLET_TRANSACTIONS);
+        $dataProvider = new DataProvider($this->serverUrl.$urlGet);
+        $date = strtotime('1-'.date('m-Y', strtotime('-1 months')).' 00:00:00');
+
+        $getParams = [
+            '[type]' => self::TRANSACTIONS_TYPES,
+            'status' => self::TRASACTION_STATUS_SUCCEEDED,
+            'afterDate' => $date,
+        ];
+        $headers = [
+            'Authorization' => $this->authChain,
+        ];
+        $response = $dataProvider->getItem($getParams, $headers);
+
+        $transactions = [];
+        if (200 == $response->getCode()) {
+            $data = json_decode($response->getValue(), true);
+            foreach ($data as $transaction) {
+                $transactions[] = $transaction;
+            }
+        }
+
+        return $transactions;
     }
 
     private function _uploadPage(string $docId, string $identifier, array $headers, string $fileName)
