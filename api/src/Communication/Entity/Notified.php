@@ -245,6 +245,15 @@ class Notified
      */
     private $recipient;
 
+    /**
+     * @var \DateTimeInterface date when the notification has been blocked
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"read","write"})
+     */
+    private $blockedDate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -424,5 +433,17 @@ class Notified
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    public function getBlockedDate(): ?\DateTimeInterface
+    {
+        return $this->blockedDate;
+    }
+
+    public function setBlockedDate(\DateTimeInterface $blockedDate): self
+    {
+        $this->blockedDate = $blockedDate;
+
+        return $this;
     }
 }
