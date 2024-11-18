@@ -78,4 +78,21 @@ class NotifiedRepository
 
         return $query->getQuery()->getResult();
     }
+
+    public function findNotifiedByUserAndNotificationDuringLastTwentyFourHours(int $userId, int $notificationId)
+    {
+        $date = date('Y-m-d H:i:s', strtotime('now -1 day'));
+
+        $query = $this->repository->createQueryBuilder('n')
+            ->select('n')
+            ->where('n.user = :userId')
+            ->andWhere('n.notification = :notificationId')
+            ->andWhere('n.sentDate >= :todayMorning')
+            ->setParameter('userId', $userId)
+            ->setParameter('notificationId', $notificationId)
+            ->setParameter('todayMorning', $date)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }
