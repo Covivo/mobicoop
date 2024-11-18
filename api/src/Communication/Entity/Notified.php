@@ -86,6 +86,7 @@ class Notified
     public const STATUS_SENT = 1;
     public const STATUS_RECEIVED = 2;
     public const STATUS_READ = 3;
+    public const STATUS_BLOCKED = 4;
 
     /**
      * @var int the id of this notified
