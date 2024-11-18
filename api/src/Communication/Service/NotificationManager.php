@@ -44,6 +44,7 @@ use App\Communication\Entity\Recipient;
 use App\Communication\Entity\Sms;
 use App\Communication\Interfaces\MessagerInterface;
 use App\Communication\Repository\NotificationRepository;
+use App\Communication\Repository\NotifiedRepository;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\DataProvider\Entity\Response;
@@ -72,6 +73,7 @@ use App\User\Service\UserManager;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -111,6 +113,8 @@ class NotificationManager
     private $altCommunicationFolder;
     private $structureLogoUri;
     private $userRepository;
+    private $_notifiedRepository;
+    private $_security;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -138,7 +142,9 @@ class NotificationManager
         string $communicationFolder,
         string $altCommunicationFolder,
         string $structureLogoUri,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        NotifiedRepository $notifiedRepository,
+        Security $security
     ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -166,6 +172,8 @@ class NotificationManager
         $this->altCommunicationFolder = $altCommunicationFolder;
         $this->structureLogoUri = $structureLogoUri;
         $this->userRepository = $userRepository;
+        $this->_notifiedRepository = $notifiedRepository;
+        $this->_security = $security;
     }
 
     /**
@@ -210,45 +218,50 @@ class NotificationManager
         }
         if ($notifications && is_array($notifications)) {
             foreach ($notifications as $notification) {
-                switch ($notification->getMedium()->getId()) {
-                    case Medium::MEDIUM_MESSAGE:
-                        if (!is_null($object)) {
-                            $this->logger->info("Internal message notification for {$action} / ".get_class($object).' / '.$recipient->getEmail());
-                            if ($object instanceof MessagerInterface && !is_null($object->getMessage())) {
-                                $this->internalMessageManager->sendForObject([$recipient], $object);
+                if ($this->_canEmmitNotification($notification)) {
+                    switch ($notification->getMedium()->getId()) {
+                        case Medium::MEDIUM_MESSAGE:
+                            if (!is_null($object)) {
+                                $this->logger->info("Internal message notification for {$action} / ".get_class($object).' / '.$recipient->getEmail());
+                                if ($object instanceof MessagerInterface && !is_null($object->getMessage())) {
+                                    $this->internalMessageManager->sendForObject([$recipient], $object);
+                                }
                             }
-                        }
-                        $this->createNotified($notification, $recipient, $object);
+                            $this->createNotified($notification, $recipient, $object);
 
-                        break;
-
-                    case Medium::MEDIUM_EMAIL:
-                        if (!$this->mailsEnabled) {
                             break;
-                        }
-                        $this->notifyByEmail($notification, $recipient, $object);
-                        $this->createNotified($notification, $recipient, $object);
-                        $this->logger->info("Email notification for {$action} / ".$recipient->getEmail());
 
-                        break;
+                        case Medium::MEDIUM_EMAIL:
+                            if (!$this->mailsEnabled) {
+                                break;
+                            }
+                            $this->notifyByEmail($notification, $recipient, $object);
+                            $this->createNotified($notification, $recipient, $object);
+                            $this->logger->info("Email notification for {$action} / ".$recipient->getEmail());
 
-                    case Medium::MEDIUM_SMS:
-                        if (!$this->smsEnabled) {
                             break;
-                        }
-                        $this->notifyBySMS($notification, $recipient, $object);
 
-                        break;
+                        case Medium::MEDIUM_SMS:
+                            if (!$this->smsEnabled) {
+                                break;
+                            }
+                            $this->notifyBySMS($notification, $recipient, $object);
 
-                    case Medium::MEDIUM_PUSH:
-                        if (!$this->pushEnabled) {
                             break;
-                        }
-                        $this->notifyByPush($notification, $recipient, $object);
-                        $this->createNotified($notification, $recipient, $object);
-                        $this->logger->info("Push notification for {$action} / ".$recipient->getEmail());
 
-                        break;
+                        case Medium::MEDIUM_PUSH:
+                            if (!$this->pushEnabled) {
+                                break;
+                            }
+                            $this->notifyByPush($notification, $recipient, $object);
+                            $this->createNotified($notification, $recipient, $object);
+                            $this->logger->info("Push notification for {$action} / ".$recipient->getEmail());
+
+                            break;
+                    }
+                } else {
+                    $this->createBlockedNotified($notification, $recipient);
+                    $this->logger->info("limit per day reach for notification {$action} / ".$recipient->getEmail());
                 }
             }
         }
@@ -296,6 +309,24 @@ class NotificationManager
                     break;
             }
         }
+        $this->entityManager->persist($notified);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Create a blocked notified object.
+     *
+     * @param Notification $notification The notification at the origin of the notified
+     * @param User         $user         The recipient of the notification
+     * @param null|object  $object       The object linked with the notification
+     */
+    public function createBlockedNotified(Notification $notification, User $user)
+    {
+        $notified = new Notified();
+        $notified->setStatus(Notified::STATUS_BLOCKED);
+        $notified->setBlockedDate(new \DateTime());
+        $notified->setNotification($notification);
+        $notified->setUser($user);
         $this->entityManager->persist($notified);
         $this->entityManager->flush();
     }
@@ -1265,5 +1296,24 @@ class NotificationManager
         } else {
             $this->pushManager->send($push, $this->communicationFolder.$templateLanguage.$this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
         }
+    }
+
+    private function _canEmmitNotification(Notification $notification)
+    {
+        if ($notification->getMaxEmmittedPerDay() > 0 && $this->_security->getUser() instanceof User) {
+            return $this->_dailyLimitNotReached($this->_security->getUser()->getId(), $notification);
+        }
+
+        return true;
+    }
+
+    private function _dailyLimitNotReached(int $userId, Notification $notification)
+    {
+        $notifieds = $this->_notifiedRepository->findNotifiedByUserAndNotificationDuringLastTwentyFourHours($userId, $notification->getId());
+        if (count($notifieds) < $notification->getMaxEmmittedPerDay()) {
+            return true;
+        }
+
+        return false;
     }
 }
