@@ -187,6 +187,14 @@ class Notification
      */
     private $updatedDate;
 
+    /**
+     * @var int the max limit of the notification per day
+     *
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $maxEmmittedPerDay;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -349,5 +357,17 @@ class Notification
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    public function getMaxEmmittedPerDay(): ?int
+    {
+        return $this->maxEmmittedPerDay;
+    }
+
+    public function setMaxEmmittedPerDay(int $maxEmmittedPerDay): self
+    {
+        $this->maxEmmittedPerDay = $maxEmmittedPerDay;
+
+        return $this;
     }
 }
