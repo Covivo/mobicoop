@@ -49,6 +49,7 @@ use App\Community\Entity\CommunityUser;
 use App\DataProvider\Entity\Response;
 use App\Event\Entity\Event;
 use App\ExternalJourney\Ressource\ExternalConnection;
+use App\Geography\Service\GeoTools;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Validator\SubscriptionValidator;
@@ -111,7 +112,7 @@ class NotificationManager
     private $altCommunicationFolder;
     private $structureLogoUri;
     private $userRepository;
-    private $carpoolTimezone;
+    private $defaultCarpoolTimezone;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -140,7 +141,7 @@ class NotificationManager
         string $altCommunicationFolder,
         string $structureLogoUri,
         UserRepository $userRepository,
-        string $carpoolTimezone
+        string $defaultCarpoolTimezone
     ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -168,7 +169,7 @@ class NotificationManager
         $this->altCommunicationFolder = $altCommunicationFolder;
         $this->structureLogoUri = $structureLogoUri;
         $this->userRepository = $userRepository;
-        $this->carpoolTimezone = $carpoolTimezone;
+        $this->defaultCarpoolTimezone = $defaultCarpoolTimezone;
     }
 
     /**
@@ -480,6 +481,7 @@ class NotificationManager
                             }
                         }
                     }
+
                     $bodyContext = [
                         'user' => $recipient,
                         'ad' => $object,
@@ -490,6 +492,7 @@ class NotificationManager
                         'returnOrigin' => $returnOrigin,
                         'returnDestination' => $returnDestination,
                         'recipientRole' => $recipientRole,
+                        'carpoolTimezone' => GeoTools::determineTimeZoneOfAd($object, $this->defaultCarpoolTimezone),
                     ];
 
                     break;
@@ -790,7 +793,9 @@ class NotificationManager
                 'context' => $titleContext,
             ]
         ));
-        $bodyContext['carpoolTimezone'] = $this->carpoolTimezone;
+        if (!isset($bodyContext['carpoolTimezone'])) {
+            $bodyContext['carpoolTimezone'] = $this->defaultCarpoolTimezone;
+        }
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
             $this->emailManager->send($email, $this->altCommunicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
@@ -885,6 +890,7 @@ class NotificationManager
                         'outwardDestination' => $outwardDestination,
                         'returnOrigin' => $returnOrigin,
                         'returnDestination' => $returnDestination,
+                        'carpoolTimezone' => GeoTools::determineTimeZoneOfAd($object, $this->defaultCarpoolTimezone),
                     ];
 
                     break;
@@ -1009,8 +1015,9 @@ class NotificationManager
             $this->translator->setLocale($lang);
             $templateLanguage = $lang;
         }
-        $bodyContext['carpoolTimezone'] = $this->carpoolTimezone;
-        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
+        if (!isset($bodyContext['carpoolTimezone'])) {
+            $bodyContext['carpoolTimezone'] = $this->defaultCarpoolTimezone;
+        }        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
             $response = $this->smsManager->send($sms, $this->altCommunicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
         } else {
@@ -1126,6 +1133,7 @@ class NotificationManager
                         'outwardDestination' => $outwardDestination,
                         'returnOrigin' => $returnOrigin,
                         'returnDestination' => $returnDestination,
+                        'carpoolTimezone' => GeoTools::determineTimeZoneOfAd($object, $this->defaultCarpoolTimezone),
                     ];
 
                     break;
@@ -1263,8 +1271,9 @@ class NotificationManager
             ]
         ));
 
-        $bodyContext['carpoolTimezone'] = $this->carpoolTimezone;
-        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
+        if (!isset($bodyContext['carpoolTimezone'])) {
+            $bodyContext['carpoolTimezone'] = $this->defaultCarpoolTimezone;
+        }        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
             $this->pushManager->send($push, $this->altCommunicationFolder.$templateLanguage.$this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
         } else {
