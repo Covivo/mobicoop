@@ -36,13 +36,13 @@ class UserUnderEighteenManager
 {
     private $userRepository;
     private $entityManager;
-    private $carpoolTimezone;
+    private $defaultCarpoolTimezone;
 
-    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager, string $carpoolTimezone)
+    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager, string $defaultCarpoolTimezone)
     {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
-        $this->carpoolTimezone = $carpoolTimezone;
+        $this->defaultCarpoolTimezone = $defaultCarpoolTimezone;
     }
 
     public function getUserUnderEighteenByToken(string $token)
@@ -67,7 +67,7 @@ class UserUnderEighteenManager
         if (is_null($user)) {
             throw new \LogicException('User not found, the parental consent failed', 1);
         }
-        $user->setParentalConsentDate(new \DateTime('now', new \DateTimeZone($this->carpoolTimezone)));
+        $user->setParentalConsentDate(new \DateTime('now', new \DateTimeZone($this->defaultCarpoolTimezone)));
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
