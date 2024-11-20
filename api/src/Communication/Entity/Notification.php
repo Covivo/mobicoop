@@ -36,6 +36,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  * A message sent by the system for an action and a medium.
  *
  * @ORM\Entity()
+ *
  * @ORM\HasLifecycleCallbacks
  * ApiResource(
  *      attributes={
@@ -89,8 +90,11 @@ class Notification
      * @var int the id of this notification
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups("read")
      */
     private $id;
@@ -99,6 +103,7 @@ class Notification
      * @var string the template file for the title of the notification
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $templateTitle;
@@ -107,6 +112,7 @@ class Notification
      * @var string the template file for the body of the notification
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $templateBody;
@@ -115,6 +121,7 @@ class Notification
      * @var bool the status of the notification (active/inactive)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $active;
@@ -123,6 +130,7 @@ class Notification
      * @var bool the alternative template of the notification (active/inactive)
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $alt;
@@ -131,6 +139,7 @@ class Notification
      * @var bool the default status of the notification (active/inactive) for each user
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $userActiveDefault;
@@ -139,6 +148,7 @@ class Notification
      * @var bool the notification is editable by the user
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","write"})
      */
     private $userEditable;
@@ -147,6 +157,7 @@ class Notification
      * @var int position number in user preferences
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"read","write"})
      */
     private $position;
@@ -155,8 +166,11 @@ class Notification
      * @var Action the action
      *
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $action;
@@ -165,8 +179,11 @@ class Notification
      * @var Medium the medium
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $medium;
@@ -175,6 +192,7 @@ class Notification
      * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $createdDate;
@@ -183,6 +201,7 @@ class Notification
      * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"read"})
      */
     private $updatedDate;
@@ -190,7 +209,8 @@ class Notification
     /**
      * @var int the max limit of the notification per day
      *
-     * @ORM\Column(type="smallint")
+     * @ORM\Column(type="smallint", options={"default": 25})
+     *
      * @Groups({"read","write"})
      */
     private $maxEmmittedPerDay;
