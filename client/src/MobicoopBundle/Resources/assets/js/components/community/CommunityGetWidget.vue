@@ -5,8 +5,9 @@
         justify="center"
       >
         <v-col
-          cols="4"
+          cols="12"
           md="5"
+          lg="4"
           align="center"
           class="justify-center mt-10"
         >
@@ -21,8 +22,9 @@
           />
         </v-col>
         <v-col
-          cols="8"
+          cols="12"
           md="7"
+          lg="8"
           class="mt-12"
         >
           <v-row class="mt-12">
