@@ -154,10 +154,7 @@ class AntiFraudManager
 
         $proposalWaypointDestination = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'destination' => 1]);
 
-        $ODToCheck = [$proposalWaypointDestination->getAddress(), $adAddressOrigin];
-
-        $routeBetweenProposalDestinationAndAdOrigin = $this->geoRouter->getRoutes($ODToCheck, false, true);
-        $travelDurationBetweenProposalDestinationAndAdOrigin = $routeBetweenProposalDestinationAndAdOrigin[0]->getDuration();
+        $travelDurationBetweenProposalDestinationAndAdOrigin = $this->_getTravelDurationBetweenTwoAddresses([$proposalWaypointDestination->getAddress(), $adAddressOrigin]);
 
         $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
@@ -227,17 +224,23 @@ class AntiFraudManager
         $adAddressOrigin->setLatitude($ad->getOutwardWaypoints()[0]['latitude']);
         $adAddressOrigin->setLongitude($ad->getOutwardWaypoints()[0]['longitude']);
 
+        $adAddressDestination = new Address();
+        $lastWaypoint = count($ad->getOutwardWaypoints()) - 1;
+        $adAddressDestination->setLatitude($ad->getOutwardWaypoints()[$lastWaypoint]['latitude']);
+        $adAddressDestination->setLongitude($ad->getOutwardWaypoints()[$lastWaypoint]['longitude']);
+
+        $proposalWaypointOrign = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'position' => 0]);
         $proposalWaypointDestination = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'destination' => 1]);
 
-        $ODToCheck = [$proposalWaypointDestination->getAddress(), $adAddressOrigin];
-
-        $routeBetweenProposalDestinationAndAdOrigin = $this->geoRouter->getRoutes($ODToCheck, false, true);
-        $travelDurationBetweenProposalDestinationAndAdOrigin = $routeBetweenProposalDestinationAndAdOrigin[0]->getDuration();
+        $travelDurationBetweenProposalDestinationAndAdOrigin = $this->_getTravelDurationBetweenTwoAddresses([$proposalWaypointDestination->getAddress(), $adAddressOrigin]);
+        $travalDurationBetweenAdDestinationAndProposalOrigin = $this->_getTravelDurationBetweenTwoAddresses([$adAddressDestination, $proposalWaypointOrign]);
+        $travelDurationBetweenAdOriginAndAndDestination = $this->_getTravelDurationBetweenTwoAddresses([$adAddressOrigin, $adAddressDestination]);
 
         $adOutwardTime = new \DateTime($ad->getOutwardTime());
         $adOriginDateTime = $ad->getOutwardDate()->setTime($adOutwardTime->format('H'), $adOutwardTime->format('i'), 0);
         $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getFromTime()->format('H'), $sameDayProposal->getCriteria()->getFromTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
 
+        // Case when departure of the posted ad is after the arrival of the proposal
         if ($adOriginDateTime > $departureProposalDateTime) {
             // punctual ad match punctual ad
             if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency() && Criteria::FREQUENCY_PUNCTUAL == $sameDayProposal->getCriteria()->getFrequency()) {
@@ -389,6 +392,15 @@ class AntiFraudManager
 
             return new AntiFraudResponse(true, AntiFraudException::OK);
         }
+        // Case when departure of the proposal is after the arrival of the posted ad
+        // punctual ad match punctual ad
+        if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency() && Criteria::FREQUENCY_PUNCTUAL == $sameDayProposal->getCriteria()->getFrequency()) {
+            $timeToAdd = $travelDurationBetweenAdOriginAndAndDestination + $travalDurationBetweenAdDestinationAndProposalOrigin;
+            $arrivalHourToNextProposalOrigin = $adOriginDateTime->modify('+'.$timeToAdd.'seconds');
+            if ($departureProposalDateTime <= $arrivalHourToNextProposalOrigin) {
+                return new AntiFraudResponse(false, AntiFraudException::NOT_ENOUGH_TIME);
+            }
+        }
 
         return new AntiFraudResponse(true, AntiFraudException::OK);
     }
@@ -444,10 +456,7 @@ class AntiFraudManager
         $adAddressDestination->setLatitude($ad->getOutwardWaypoints()[$lastWaypoint]['latitude']);
         $adAddressDestination->setLongitude($ad->getOutwardWaypoints()[$lastWaypoint]['longitude']);
 
-        $ODToCheck = [$adAddressOrigin, $adAddressDestination];
-
-        $routeBetweenProposalDestinationAndAdOrigin = $this->geoRouter->getRoutes($ODToCheck, false, true);
-        $travelDurationBetweenAdOriginAndDestination = $routeBetweenProposalDestinationAndAdOrigin[0]->getDuration();
+        $travelDurationBetweenAdOriginAndDestination = $this->_getTravelDurationBetweenTwoAddresses([$adAddressOrigin, $adAddressDestination]);
 
         $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getFromTime()->format('H'), $sameDayProposal->getCriteria()->getFromTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
 
@@ -737,5 +746,12 @@ class AntiFraudManager
         }
 
         return new AntiFraudResponse(true, AntiFraudException::OK);
+    }
+
+    private function _getTravelDurationBetweenTwoAddresses(array $ODToCheck)
+    {
+        $route = $this->geoRouter->getRoutes($ODToCheck, false, true);
+
+        return $route[0]->getDuration();
     }
 }
