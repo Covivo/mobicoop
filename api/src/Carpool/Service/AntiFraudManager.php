@@ -368,24 +368,55 @@ class AntiFraudManager
             }
 
             // regular Ad match punctual ad
-            if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency() && Criteria::FREQUENCY_PUNCTUAL == $sameDayProposal->getCriteria()->getFrequency()) {
-                $day = strtolower($sameDayProposal->getCriteria()->getArrivalDateTime()->format('D'));
+            if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency() && Criteria::FREQUENCY_REGULAR == $sameDayProposal->getCriteria()->getFrequency()) {
+                $adOutwardTime = new \DateTime($ad->getOutwardTime());
+                $adOriginDateTime = $ad->getOutwardDate()->setTime($adOutwardTime->format('H'), $adOutwardTime->format('i'), 0);
+                $timeToAdd = $travelDurationBetweenAdOriginAndAndDestination + $travalDurationBetweenAdDestinationAndProposalOrigin;
+                $arrivalHourToNextProposalOrigin = $adOriginDateTime->modify('+'.$timeToAdd.'seconds');
 
-                // We check if the Ad we are trying to post as a monday check in a schedule
-                foreach ($ad->getSchedule() as $schedule) {
-                    if (isset($schedule[$day]) && $schedule[$day]) {
-                        $adOriginDateTime = new \DateTime('now');
-                        $outwardTime = explode(':', $schedule['outwardTime']);
-                        $adOriginDateTime->setTime((int) $outwardTime[0], (int) $outwardTime[1]);
+                $day = strtolower($adOriginDateTime->format('D'));
 
-                        $arrivalDateTimeOfProposal = $sameDayProposal->getCriteria()->getArrivalDateTime();
-                        $arrivalHourToNextOrigin = $arrivalDateTimeOfProposal->add(new \DateInterval('PT'.$travelDurationBetweenProposalDestinationAndAdOrigin.'S'));
+                // We check if there is a time for this day in the matching proposal
+                switch ($day) {
+                    case 'sun':
+                        $departureProposalDateTime = $adOriginDateTime->setTime($sameDayProposal->getCriteria()->getSunTime()->format('H'), $sameDayProposal->getCriteria()->getSunTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
 
-                        if (!is_null($arrivalHourToNextOrigin)) {
-                            if ($adOriginDateTime <= $arrivalHourToNextOrigin) {
-                                return new AntiFraudResponse(false, AntiFraudException::NOT_ENOUGH_TIME);
-                            }
-                        }
+                        break;
+
+                    case 'mon':
+                        $departureProposalDateTime = $adOriginDateTime->setTime($sameDayProposal->getCriteria()->getMonTime()->format('H'), $sameDayProposal->getCriteria()->getMonTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
+
+                        break;
+
+                    case 'tue':
+                        $departureProposalDateTime = $adOriginDateTime->setTime($sameDayProposal->getCriteria()->getTueTime()->format('H'), $sameDayProposal->getCriteria()->getTueTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
+
+                        break;
+
+                    case 'wed':
+                        $departureProposalDateTime = $adOriginDateTime->setTime($sameDayProposal->getCriteria()->getWedTime()->format('H'), $sameDayProposal->getCriteria()->getWedTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
+
+                        break;
+
+                    case 'thu':
+                        $departureProposalDateTime = $adOriginDateTime->setTime($sameDayProposal->getCriteria()->getThuTime()->format('H'), $sameDayProposal->getCriteria()->getThuTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
+
+                        break;
+
+                    case 'fri':
+                        $departureProposalDateTime = $adOriginDateTime->setTime($sameDayProposal->getCriteria()->getFriTime()->format('H'), $sameDayProposal->getCriteria()->getFriTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
+
+                        break;
+
+                    case 'sat':
+                        $departureProposalDateTime = $adOriginDateTime->setTime($sameDayProposal->getCriteria()->getSatTime()->format('H'), $sameDayProposal->getCriteria()->getSatTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
+
+                        break;
+                }
+
+                if (!is_null($arrivalHourToNextProposalOrigin)) {
+                    if ($departureProposalDateTime <= $arrivalHourToNextProposalOrigin) {
+                        return new AntiFraudResponse(false, AntiFraudException::NOT_ENOUGH_TIME);
                     }
                 }
             }
