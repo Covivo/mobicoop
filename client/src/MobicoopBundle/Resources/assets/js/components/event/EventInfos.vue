@@ -8,30 +8,7 @@
           justify="center"
           align="center"
         >
-          <v-img
-            v-if="event.hasOwnProperty('externalImageUrl') && event.externalImageUrl"
-            :src="event.externalImageUrl"
-            width="225"
-            height="200"
-            :aspect-ratio="1"
-            :alt="event.name"
-            contain
-          />
-          <v-icon
-            v-else-if="event.hasOwnProperty('externalImageUrl') && !event.externalImageUrl"
-            x-large
-          >
-            mdi-calendar-month
-          </v-icon>
-          <v-img
-            v-else
-            :src="(event.images[0]) ? event['images'][0]['versions']['square_250'] : event.community ? event.community.image : urlAltAvatar"
-            width="225"
-            height="200"
-            :aspect-ratio="1"
-            :alt="event.name"
-            contain
-          />
+          <EventImage :event="event" />
         </v-col>
       </v-row>
       <v-row>
@@ -119,8 +96,12 @@
 <script>
 import moment from "moment";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventInfos/";
+import EventImage from "./EventImage.vue";
 
 export default {
+  components: {
+    EventImage,
+  },
   props:{
     event: {
       type: Object,
