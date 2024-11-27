@@ -6,7 +6,7 @@
           cols="6"
           md="8"
           lg="6"
-          class="text-left"
+          class="d-flex flex-row justify-center"
         >
           <v-avatar
             class="ma-0"

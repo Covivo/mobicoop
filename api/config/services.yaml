@@ -233,7 +233,7 @@ services:
         carpoolProofDistance: "%env(int:CARPOOL_PROOF_DISTANCE)%"
         paymentActive: "%env(string:PAYMENT_ACTIVE)%"
         matcherCustomization: "%env(bool:MATCHER_CUSTOMIZATION)%"
-        carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
+        defaultCarpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
     tags:
       - { name: monolog.logger, channel: carpool }
 
@@ -465,7 +465,7 @@ services:
       $smsEnabled: "%env(bool:resolve:NOTIFICATION_SMS_ENABLED)%"
       $pushEnabled: "%env(bool:resolve:NOTIFICATION_PUSH_ENABLED)%"
       $structureLogoUri: "%env(string:STRUCTURE_LOGO_URI)%"
-      $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
+      $defaultCarpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
     tags:
       - { name: monolog.logger, channel: notification }
 
@@ -976,7 +976,7 @@ services:
       $popularJourneyMaxNumber: "%env(int:POPULAR_JOURNEY_MAX_NUMBER)%"
       $popularJourneyHomeMaxNumber: "%env(int:POPULAR_JOURNEY_HOME_MAX_NUMBER)%"
       $popularJourneyMinOccurences: "%env(int:POPULAR_JOURNEY_MINIMAL_OCCURENCES)%"
-      $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
+      $defaultCarpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
 
   App\Journey\Repository\JourneyRepository:
     arguments:
@@ -1176,7 +1176,7 @@ services:
   App\Payment\Service\UnpaidReminderManager:
     arguments:
       $reminderDelays: "%env(json:PAYMENT_UNPAID_REMINDER_DELAYS)%"
-  
+
   App\Payment\Command\GetWalletTransactionCommand:
     arguments:
       $paymentAccountantWalletId: "%env(string:PAYMENT_ACCOUNTANT_WALLET_ID)%"
@@ -1359,7 +1359,7 @@ services:
 
   App\User\Service\UserUnderEighteenManager:
     arguments:
-      $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
+      $defaultCarpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
 
   App\User\Controller\EECSubscription:
     tags:

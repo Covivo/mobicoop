@@ -411,7 +411,7 @@ class SubscriptionManager extends MobConnectManager
         }
 
         if (!is_null($this->getDriver()->{'get'.ucfirst($subscriptionType).'DistanceSubscription'}())) {
-            throw new \LogicException('eec_subscriptionType_'.$subscriptionType.'_allready.subscribed');
+            return;
         }
 
         if (

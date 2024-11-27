@@ -47,7 +47,7 @@ class JourneyManager
     private $popularJourneyHomeMaxNumber;
     private $popularJourneyMaxNumber;
     private $popularJourneyMinOccurences;
-    private $carpoolTimezone;
+    private $defaultCarpoolTimezone;
 
     /**
      * Constructor.
@@ -61,7 +61,7 @@ class JourneyManager
         int $popularJourneyMaxNumber,
         int $popularJourneyHomeMaxNumber,
         int $popularJourneyMinOccurences,
-        string $carpoolTimezone
+        string $defaultCarpoolTimezone
     ) {
         $this->entityManager = $entityManager;
         $this->fileManager = $fileManager;
@@ -71,7 +71,7 @@ class JourneyManager
         $this->popularJourneyHomeMaxNumber = $popularJourneyHomeMaxNumber;
         $this->popularJourneyMaxNumber = $popularJourneyMaxNumber;
         $this->popularJourneyMinOccurences = $popularJourneyMinOccurences;
-        $this->carpoolTimezone = $carpoolTimezone;
+        $this->defaultCarpoolTimezone = $defaultCarpoolTimezone;
     }
 
     /**
