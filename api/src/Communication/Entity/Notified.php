@@ -86,6 +86,7 @@ class Notified
     public const STATUS_SENT = 1;
     public const STATUS_RECEIVED = 2;
     public const STATUS_READ = 3;
+    public const STATUS_BLOCKED = 4;
 
     /**
      * @var int the id of this notified
@@ -244,6 +245,15 @@ class Notified
      * @MaxDepth(1)
      */
     private $recipient;
+
+    /**
+     * @var \DateTimeInterface date when the notification has been blocked
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"read","write"})
+     */
+    private $blockedDate;
 
     public function getId(): ?int
     {
@@ -424,5 +434,17 @@ class Notified
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    public function getBlockedDate(): ?\DateTimeInterface
+    {
+        return $this->blockedDate;
+    }
+
+    public function setBlockedDate(\DateTimeInterface $blockedDate): self
+    {
+        $this->blockedDate = $blockedDate;
+
+        return $this;
     }
 }
