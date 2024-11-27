@@ -112,4 +112,49 @@ class LongDistanceSubscriptionRepository extends SubscriptionRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function getSubscriptionsthatMayBeReEngaged()
+    {
+        $query = 'SELECT
+                mlds.id AS subscription_id,
+                cp.id AS carpool_payment_id
+            FROM mobconnect__long_distance_subscription mlds
+                INNER JOIN mobconnect__long_distance_journey commit_journey ON mlds.commitment_proof_journey_id = commit_journey.id
+                INNER JOIN mobconnect__long_distance_journey mldj ON mlds.id =mldj.subscription_id AND mldj.id != commit_journey.id
+                INNER JOIN carpool_item ci ON commit_journey.carpool_item_id = ci.id
+                INNER JOIN carpool_payment cp ON mldj.carpool_payment_id = cp.id
+                INNER JOIN ask a ON ci.ask_id = a.id
+                INNER JOIN carpool_proof cp2 ON a.id = cp2.ask_id
+            WHERE
+                mlds.status IS NULL
+                AND (
+                    ci.creditor_user_id != '.CarpoolItem::CREDITOR_STATUS_ONLINE.'
+                    OR cp.status != '.CarpoolPayment::STATUS_SUCCESS."
+                    OR cp.transaction_id IS NULL
+                    OR cp2.type != '".CarpoolProof::TYPE_HIGH."'
+                    OR cp2.status != ".CarpoolProof::STATUS_VALIDATED.'
+                )
+                AND (
+                    SELECT COUNT(mldj2.id)
+                    FROM mobconnect__long_distance_journey mldj2
+                        INNER JOIN carpool_item ci2 ON mldj2.carpool_item_id = ci2.id
+                        INNER JOIN carpool_payment cp3 ON mldj2.carpool_payment_id = cp3.id
+                        INNER JOIN ask a2 ON ci2.ask_id = a2.id
+                        INNER JOIN carpool_proof cp4 ON a2.id = cp4.ask_id
+                    WHERE
+                        mldj2.subscription_id = mlds.id
+                        AND mldj2.id != commit_journey.id
+                        AND ci.creditor_user_id = '.CarpoolItem::CREDITOR_STATUS_ONLINE.'
+                        AND cp.status = '.CarpoolPayment::STATUS_SUCCESS."
+                        AND cp.transaction_id IS NOT NULL
+                        AND cp2.type = '".CarpoolProof::TYPE_HIGH."'
+                        AND cp2.status = ".CarpoolProof::STATUS_VALIDATED.'
+                ) > 1
+            GROUP BY mlds.id';
+
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
 }
