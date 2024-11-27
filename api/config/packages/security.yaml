@@ -157,6 +157,12 @@ security:
             stateless: true
             anonymous: true
 
+        # firewall for Monitoring notification abuses
+        monitorNotificationAbuses:
+            pattern:  ^/monitor/check_notification_abuses
+            stateless: true
+            anonymous: true
+
         # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|js)/
@@ -187,6 +193,7 @@ security:
         - { path: ^/campaigns/unsubscribe, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST] }
         - { path: ^/carpool_standard/from_external/bookings, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST, PUT] }
         - { path: ^/monitor/check_proofs, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [GET] }
+        - { path: ^/monitor/check_notification_abuses, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [GET] }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 

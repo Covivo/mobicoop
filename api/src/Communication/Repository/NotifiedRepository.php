@@ -34,6 +34,8 @@ class NotifiedRepository
      */
     private $repository;
 
+    private $entityManager;
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Notified::class);
@@ -79,20 +81,21 @@ class NotifiedRepository
         return $query->getQuery()->getResult();
     }
 
-    public function findNotifiedByUserAndNotificationDuringLastTwentyFourHours(int $userId, int $notificationId)
+    public function findNotifiedAbuses()
     {
-        $yesterdayAtTheSameTime = date('Y-m-d H:i:s', strtotime('now -1 day'));
+        $query = 'select user_id, notification_id, count(notification_id) as nb_notif, notification.max_emmitted_per_day,
+            sum(case when blocked_date is not null then 1 else 0 end) as nb_blocked
+            from notified
+            inner join notification on notification.id = notified.notification_id
+            where notified.created_date >= :aDayAgo
+            group by user_id, notification_id
+            having nb_blocked > max_emmitted_per_day
+            order by nb_notif desc';
 
-        $query = $this->repository->createQueryBuilder('n')
-            ->select('n')
-            ->where('n.user = :userId')
-            ->andWhere('n.notification = :notificationId')
-            ->andWhere('n.sentDate >= :yesterdayAtTheSameTime')
-            ->setParameter('userId', $userId)
-            ->setParameter('notificationId', $notificationId)
-            ->setParameter('yesterdayAtTheSameTime', $yesterdayAtTheSameTime)
-        ;
+        $stmt = $this->entityManager->getConnection()->prepare($query);
+        $stmt->bindValue('aDayAgo', (new \DateTime('now'))->modify('-20 day')->format('Y-m-d H:i:s'));
+        $stmt->execute();
 
-        return $query->getQuery()->getResult();
+        return $stmt->fetchAll();
     }
 }
