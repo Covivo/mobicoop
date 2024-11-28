@@ -23,6 +23,8 @@
 
 namespace App\Geography\Service;
 
+use App\Carpool\Entity\Ask;
+use App\Carpool\Ressource\Ad;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -438,6 +440,143 @@ class GeoTools
         $d = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         return $earth_radius * $d;
+    }
+
+    public static function getTimezoneFromCoordinates($latitude, $longitude, $default = 'Europe/Paris')
+    {
+        // Use PHP's built-in timezone database
+        $timezoneDb = timezone_identifiers_list();
+
+        foreach ($timezoneDb as $timezone) {
+            $tz = new \DateTimeZone($timezone);
+            $location = $tz->getLocation();
+
+            if ($location) {
+                $tzLat = $location['latitude'];
+                $tzLon = $location['longitude'];
+
+                // Calculate distance using Haversine formula
+                $earthRadius = 6371; // kilometers
+                $dLat = deg2rad($latitude - $tzLat);
+                $dLon = deg2rad($longitude - $tzLon);
+                $a = sin($dLat / 2) * sin($dLat / 2) +
+                     cos(deg2rad($tzLat)) * cos(deg2rad($latitude)) *
+                     sin($dLon / 2) * sin($dLon / 2);
+                $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+                $distance = $earthRadius * $c;
+
+                // Return timezone if within 50km
+                if ($distance <= 50) {
+                    return $timezone;
+                }
+            }
+        }
+
+        return $default; // No matching timezone found
+    }
+
+    public static function determineTimeZoneOfAd(Ad $ad, $defaultCarpoolTimezone = 'Europe\Paris'): string
+    {
+        $waypoints = $ad->getOutwardWaypoints();
+        if (!is_null($waypoints) && count($waypoints) > 0) {
+            $address = ($waypoints[0] instanceof Address) ? $waypoints[0] : self::createAddressFromPoint($waypoints[0]);
+
+            return GeoTools::getTimezoneFromCoordinates($address->getLatitude(), $address->getLongitude(), $defaultCarpoolTimezone);
+        }
+
+        return $defaultCarpoolTimezone;
+    }
+
+    public static function determineTimeZoneOfAsk(Ask $ask, $defaultCarpoolTimezone = 'Europe\Paris'): string
+    {
+        if (is_null($ask->getMatching()) || is_null($ask->getMatching()->getProposalOffer()) || is_null($ask->getMatching()->getProposalOffer())) {
+            return $defaultCarpoolTimezone;
+        }
+
+        $waypoints = $ask->getMatching()->getProposalOffer()->getWaypoints();
+        if (!is_null($waypoints) && count($waypoints) > 0) {
+            $address = ($waypoints[0] instanceof Address) ? $waypoints[0] : self::createAddressFromPoint($waypoints[0]);
+
+            return GeoTools::getTimezoneFromCoordinates($address->getLatitude(), $address->getLongitude(), $defaultCarpoolTimezone);
+        }
+
+        return $defaultCarpoolTimezone;
+    }
+
+    /**
+     * Map address.
+     *
+     * @param array $point
+     *
+     * @return Address
+     */
+    public static function createAddressFromPoint($point)
+    {
+        $address = new Address();
+
+        if (isset($point['layer'])) {
+            $address->setLayer($point['layer']);
+        }
+        if (isset($point['houseNumber'])) {
+            $address->setHouseNumber($point['houseNumber']);
+        }
+        if (isset($point['street'])) {
+            $address->setStreet($point['street']);
+        }
+        if (isset($point['streetAddress'])) {
+            $address->setStreetAddress($point['streetAddress']);
+        }
+        if (isset($point['postalCode'])) {
+            $address->setPostalCode($point['postalCode']);
+        }
+        if (isset($point['subLocality'])) {
+            $address->setSubLocality($point['subLocality']);
+        }
+        if (isset($point['addressLocality'])) {
+            $address->setAddressLocality($point['addressLocality']);
+        }
+        if (isset($point['localAdmin'])) {
+            $address->setLocalAdmin($point['localAdmin']);
+        }
+        if (isset($point['county'])) {
+            $address->setCounty($point['county']);
+        }
+        if (isset($point['macroCounty'])) {
+            $address->setMacroCounty($point['macroCounty']);
+        }
+        if (isset($point['region'])) {
+            $address->setRegion($point['region']);
+        }
+        if (isset($point['macroRegion'])) {
+            $address->setMacroRegion($point['macroRegion']);
+        }
+        if (isset($point['addressCountry'])) {
+            $address->setAddressCountry($point['addressCountry']);
+        }
+        if (isset($point['countryCode'])) {
+            $address->setCountryCode($point['countryCode']);
+        }
+        if (isset($point['latitude'])) {
+            $address->setLatitude($point['latitude']);
+        }
+        if (isset($point['longitude'])) {
+            $address->setLongitude($point['longitude']);
+        }
+        if (isset($point['elevation'])) {
+            $address->setElevation($point['elevation']);
+        }
+        if (isset($point['relayPoint']) && '' !== trim($point['relayPoint']['name'])) {
+            $address->setName($point['relayPoint']['name']);
+        } else {
+            if (isset($point['name'])) {
+                $address->setName($point['name']);
+            }
+        }
+        if (isset($point['home'])) {
+            $address->setHome(is_null($point['home']) ? false : true);
+        }
+
+        return $address;
     }
 
     /**

@@ -5,29 +5,7 @@
         cols="3"
         class="text-center"
       >
-        <v-img
-          v-if="item.hasOwnProperty('externalImageUrl') && item.externalImageUrl"
-          :src="item.externalImageUrl"
-          :aspect-ratio="1"
-          contain
-          width="225"
-          height="200"
-        />
-        <v-icon
-          v-else-if="item.hasOwnProperty('externalImageUrl') && !item.externalImageUrl"
-          class="mt-5"
-          x-large
-        >
-          mdi-calendar-month
-        </v-icon>
-        <v-img
-          v-else
-          :src="(item['images'][0]) ? item['images'][0]['versions']['square_250'] : item.community ? item.community.image : item['defaultAvatar']"
-          :aspect-ratio="1"
-          contain
-          max-width="250"
-          max-height="150"
-        />
+        <EventImage :event="item" />
         <v-row
           v-if="item.community"
           class="mt-8"
@@ -113,9 +91,11 @@
 import moment from "moment";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventListItem/";
 import Report from "@components/utilities/Report";
+import EventImage from "./EventImage.vue";
 
 export default {
   components:{
+    EventImage,
     Report
   },
   i18n: {

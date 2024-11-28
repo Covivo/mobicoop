@@ -28,6 +28,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
+use App\Solidary\Service\TerritoryOperatorManager;
 use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
@@ -42,27 +43,33 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
     private $security;
     private $authManager;
 
-    public function __construct(Security $security, AuthManager $authManager)
+    /**
+     * @var TerritoryOperatorManager
+     */
+    private $_territoryOperatorManager;
+
+    public function __construct(Security $security, AuthManager $authManager, TerritoryOperatorManager $territoryOperatorManager)
     {
         $this->security = $security;
         $this->authManager = $authManager;
+        $this->_territoryOperatorManager = $territoryOperatorManager;
     }
 
-    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?string $operationName = null)
     {
         if (User::class == $resourceClass && in_array($operationName, ['ADMIN_get', 'ADMIN_associate_campaign', 'ADMIN_send_campaign'])) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
-    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
+    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, ?string $operationName = null, array $context = [])
     {
         if (User::class == $resourceClass && 'ADMIN_get' == $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
         }
     }
 
-    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
+    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, ?string $operationName = null, array $identifiers = [], array $context = []): void
     {
         // concerns only User resource, and User users (not Apps)
         if ((null === $this->security->getUser()) || $this->security->getUser() instanceof App) {
@@ -79,19 +86,15 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
                 case 'ADMIN_associate_campaign':
                 case 'ADMIN_send_campaign':
                     $territories = $this->authManager->getTerritoriesForItem('user_list');
+                    $territories = $this->_territoryOperatorManager->getOperatorTerritories();
             }
         }
-
         if (count($territories) > 0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
                 ->leftJoin($rootAlias.'.addresses', 'autfe')
                 ->leftJoin('autfe.territories', 'atutfe')
-                ->leftJoin($rootAlias.'.proposals', 'putfe')
-                ->leftJoin('putfe.waypoints', 'wutfe')
-                ->leftJoin('wutfe.address', 'a2utfe')
-                ->leftJoin('a2utfe.territories', 'awptutfe')
-                ->andWhere('(autfe.home = 1 AND atutfe.id in (:territories)) OR (putfe.private <> 1 AND (wutfe.position = 0 OR wutfe.destination = 1) AND awptutfe.id in (:territories))')
+                ->andWhere('(autfe.home = 1 AND atutfe.id in (:territories))')
                 ->setParameter('territories', $territories)
             ;
         }

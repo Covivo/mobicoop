@@ -3726,6 +3726,11 @@ class User implements UserInterface, EquatableInterface
         return $this->operates->getValues();
     }
 
+    public function isSolidaryOperator(): bool
+    {
+        return !empty($this->getOperates());
+    }
+
     public function addOperate(Operate $operate): self
     {
         if (!$this->operates->contains($operate)) {
@@ -4472,5 +4477,18 @@ class User implements UserInterface, EquatableInterface
         $this->oldEnoughToDrive = $oldEnoughToDrive;
 
         return $this;
+    }
+
+    public function isCommunityMemberValidated(Community $community): bool
+    {
+        $filteredCommunityUsers = array_filter($this->getCommunityUsers(), function (CommunityUser $communityUser) use ($community) {
+            return $communityUser->getCommunity()->getId() === $community->getId()
+                && in_array(
+                    $communityUser->getStatus(),
+                    CommunityUser::STATUS_MEMBER
+                );
+        });
+
+        return !empty($filteredCommunityUsers);
     }
 }

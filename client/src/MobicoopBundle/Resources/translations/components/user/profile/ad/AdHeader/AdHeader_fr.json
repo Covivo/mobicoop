@@ -6,8 +6,14 @@
       "driver": "Je serai conducteur",
       "passenger": "Je serai passager",
       "driverOrPassenger": "Peu importe: je serai conducteur ou passager",
-      "pause": "Masquer temporairement l'annonce dans les résultats",
-      "play": "Afficher de nouveau l'annonce dans les résultats",
+      "pause": {
+        "outward": "Masquer temporairement l'annonce dans les résultats",
+        "return": "Mettez en pause l'aller associé à ce retour"
+      },
+      "play": {
+        "outward": "Afficher de nouveau l'annonce dans les résultats",
+        "return": "Affichez l'aller associé à ce retour"
+      },
       "delete": "Supprimer l'annonce",
       "update": "Mettre à jour l'annonce",
       "notUpdatable": "Mettez à jour l'aller associé à ce retour"

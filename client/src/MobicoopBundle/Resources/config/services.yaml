@@ -74,6 +74,7 @@ services:
       $specificTerms: "%env(bool:CARPOOL_SPECIFIC_TERMS)%"
       $defaultRoleToPublish: "%env(resolve:CARPOOL_ROLE_TO_PUBLISH)%"
       $bothRoleEnabled: "%env(bool:CARPOOL_ROLE_BOTH_ENABLED)%"
+      $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
 
   Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
     resource: "@MobicoopBundle/Carpool/Service/*"
@@ -276,6 +277,9 @@ services:
     tags: ["controller.service_arguments"]
   Mobicoop\Bundle\MobicoopBundle\User\Service\:
     resource: "@MobicoopBundle/User/Service/*"
+    arguments:
+      $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
+
   Mobicoop\Bundle\MobicoopBundle\User\Security\:
     resource: "@MobicoopBundle/User/Security/*"
 
@@ -327,3 +331,4 @@ services:
     resource: "@MobicoopBundle/CarpoolStandard/Service/*"
     arguments:
       $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"
+      $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"

@@ -50,6 +50,7 @@ use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
 use App\Geography\Service\AddressManager;
 use App\Geography\Service\Geocoder\GeocoderFactory;
+use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
@@ -109,6 +110,7 @@ class AdManager
     private $_journeyValidation;
 
     private $_matcherCustomization;
+    private $_defaultCarpoolTimezone;
 
     /**
      * Constructor.
@@ -168,6 +170,7 @@ class AdManager
         }
         $this->_journeyValidation = $journeyValidation;
         $this->_matcherCustomization = $params['matcherCustomization'];
+        $this->_defaultCarpoolTimezone = $params['defaultCarpoolTimezone'];
     }
 
     /**
@@ -181,9 +184,9 @@ class AdManager
      * @param bool   $forceNotUseTime   For to set useTime at false
      * @param string $matchingAlgorithm Version of the matching algorithm
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false, string $matchingAlgorithm = Ad::MATCHING_ALGORITHM_DEFAULT)
     {
@@ -200,6 +203,7 @@ class AdManager
         // $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->logger->info('AdManager : start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
+        $timezone = GeoTools::determineTimeZoneOfAd($ad, $this->_defaultCarpoolTimezone);
         $outwardProposal = new Proposal();
         $outwardCriteria = new Criteria();
 
@@ -425,7 +429,7 @@ class AdManager
                 $outwardCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
                 ($forceNotUseTime) ? $outwardProposal->setUseTime(false) : $outwardProposal->setUseTime(true);
             } else {
-                $outwardCriteria->setFromTime(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+                $outwardCriteria->setFromTime(new \DateTime('now', new \DateTimeZone($timezone)));
                 $outwardProposal->setUseTime(false);
             }
 
@@ -436,7 +440,7 @@ class AdManager
         foreach ($ad->getOutwardWaypoints() as $position => $point) {
             $waypoint = new Waypoint();
 
-            $address = ($point instanceof Address) ? $point : $this->createAddressFromPoint($point);
+            $address = ($point instanceof Address) ? $point : GeoTools::createAddressFromPoint($point);
 
             if (is_null($address->getAddressLocality())) {
                 // No address locality given. We need to reverse geocode this address
@@ -550,13 +554,13 @@ class AdManager
                 // punctual
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 // if no return time is specified, we use the outward time to be sure the return date is not before the outward date, and null for a search
-                // $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : new \DateTime("now",new \DateTimeZone('Europe/Paris')));
+                // $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : new \DateTime("now",new \DateTimeZone($this->_defaultCarpoolTimezone)));
 
                 if ($ad->getReturnTime()) {
                     $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                     ($forceNotUseTime) ? $returnProposal->setUseTime(false) : $returnProposal->setUseTime(true);
                 } else {
-                    $returnCriteria->setFromTime(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+                    $returnCriteria->setFromTime(new \DateTime('now', new \DateTimeZone($timezone)));
                     $returnProposal->setUseTime(false);
                 }
 
@@ -571,7 +575,7 @@ class AdManager
             foreach ($ad->getReturnWaypoints() as $position => $point) {
                 $waypoint = new Waypoint();
 
-                $address = ($point instanceof Address) ? $point : $this->createAddressFromPoint($point);
+                $address = ($point instanceof Address) ? $point : GeoTools::createAddressFromPoint($point);
 
                 if (is_null($address->getAddressLocality())) {
                     // No address locality given. We need to reverse geocode this address
@@ -695,82 +699,6 @@ class AdManager
         }
 
         return $ad;
-    }
-
-    /**
-     * Map address.
-     *
-     * @param array $point
-     *
-     * @return Address
-     */
-    public function createAddressFromPoint($point)
-    {
-        $address = new Address();
-
-        if (isset($point['layer'])) {
-            $address->setLayer($point['layer']);
-        }
-        if (isset($point['houseNumber'])) {
-            $address->setHouseNumber($point['houseNumber']);
-        }
-        if (isset($point['street'])) {
-            $address->setStreet($point['street']);
-        }
-        if (isset($point['streetAddress'])) {
-            $address->setStreetAddress($point['streetAddress']);
-        }
-        if (isset($point['postalCode'])) {
-            $address->setPostalCode($point['postalCode']);
-        }
-        if (isset($point['subLocality'])) {
-            $address->setSubLocality($point['subLocality']);
-        }
-        if (isset($point['addressLocality'])) {
-            $address->setAddressLocality($point['addressLocality']);
-        }
-        if (isset($point['localAdmin'])) {
-            $address->setLocalAdmin($point['localAdmin']);
-        }
-        if (isset($point['county'])) {
-            $address->setCounty($point['county']);
-        }
-        if (isset($point['macroCounty'])) {
-            $address->setMacroCounty($point['macroCounty']);
-        }
-        if (isset($point['region'])) {
-            $address->setRegion($point['region']);
-        }
-        if (isset($point['macroRegion'])) {
-            $address->setMacroRegion($point['macroRegion']);
-        }
-        if (isset($point['addressCountry'])) {
-            $address->setAddressCountry($point['addressCountry']);
-        }
-        if (isset($point['countryCode'])) {
-            $address->setCountryCode($point['countryCode']);
-        }
-        if (isset($point['latitude'])) {
-            $address->setLatitude($point['latitude']);
-        }
-        if (isset($point['longitude'])) {
-            $address->setLongitude($point['longitude']);
-        }
-        if (isset($point['elevation'])) {
-            $address->setElevation($point['elevation']);
-        }
-        if (isset($point['relayPoint']) && '' !== trim($point['relayPoint']['name'])) {
-            $address->setName($point['relayPoint']['name']);
-        } else {
-            if (isset($point['name'])) {
-                $address->setName($point['name']);
-            }
-        }
-        if (isset($point['home'])) {
-            $address->setHome(is_null($point['home']) ? false : true);
-        }
-
-        return $address;
     }
 
     /**
@@ -1235,9 +1163,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws \Exception
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1314,9 +1242,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1413,9 +1341,9 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
@@ -1455,9 +1383,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareSchedules($old, $new)
     {
@@ -1585,9 +1513,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {
@@ -1704,20 +1632,20 @@ class AdManager
 
         // if outward is null, we make an array using now with 1 hour margin on $day bases
         if (is_null($outward)) {
-            $time = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+            $time = new \DateTime('now', new \DateTimeZone($this->_defaultCarpoolTimezone));
             $mintime = $time->format('H:i:s');
             $maxtime = $time->add(new \DateInterval('PT1H'))->format('H:i:s');
 
             // if days is null, we are using today
 
             if (is_null($days)) {
-                $today = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+                $today = new \DateTime('now', new \DateTimeZone($this->_defaultCarpoolTimezone));
                 $days = [strtolower($today->format('l')) => 1];
                 $outward = ['mindate' => $time->format('Y-m-d')];
             } else {
                 // We don't have any date so i'm looking for the first date corresponding to the first day
                 $dateFound = '';
-                $currentTestDate = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+                $currentTestDate = new \DateTime('now', new \DateTimeZone($this->_defaultCarpoolTimezone));
                 $cpt = 0; // it's a failsafe to avoid infinit loop
                 while ('' === $dateFound && $cpt < 7) {
                     if (isset($days[strtolower($currentTestDate->format('l'))])) {
@@ -1736,7 +1664,7 @@ class AdManager
         $daysList = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         if (is_null($days)) {
             $day = [];
-            $today = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+            $today = new \DateTime('now', new \DateTimeZone($this->_defaultCarpoolTimezone));
             foreach ($outward as $day => $times) {
                 if (in_array($day, $daysList)) {
                     $days[$day] = 1;
@@ -2035,6 +1963,8 @@ class AdManager
             }
         }
 
+        $timezone = GeoTools::determineTimeZoneOfAd($ad, $this->_defaultCarpoolTimezone);
+
         // SOLIDARY TEMPORARY FIX
         // if the poster is solidary manager, we assume the Ad is solidary
         // if (isset($user)) {
@@ -2171,7 +2101,7 @@ class AdManager
                 $outwardCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
                 $outwardProposal->setUseTime(true);
             } else {
-                $outwardCriteria->setFromTime(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+                $outwardCriteria->setFromTime(new \DateTime('now', new \DateTimeZone($timezone)));
                 $outwardProposal->setUseTime(false);
             }
             $outwardCriteria->setMarginDuration($marginDuration);
@@ -2180,7 +2110,7 @@ class AdManager
         // waypoints
         foreach ($ad->getOutwardWaypoints() as $position => $point) {
             $waypoint = new Waypoint();
-            $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
+            $waypoint->setAddress(($point instanceof Address) ? $point : GeoTools::createAddressFromPoint($point));
             $waypoint->setPosition($position);
             $waypoint->setDestination($position == count($ad->getOutwardWaypoints()) - 1);
             $outwardProposal->addWaypoint($waypoint);
@@ -2264,7 +2194,7 @@ class AdManager
                     $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                     $returnProposal->setUseTime(true);
                 } else {
-                    $returnCriteria->setFromTime(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+                    $returnCriteria->setFromTime(new \DateTime('now', new \DateTimeZone($timezone)));
                     $returnProposal->setUseTime(false);
                 }
                 $returnCriteria->setMarginDuration($marginDuration);
@@ -2277,7 +2207,7 @@ class AdManager
             }
             foreach ($ad->getReturnWaypoints() as $position => $point) {
                 $waypoint = new Waypoint();
-                $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
+                $waypoint->setAddress(($point instanceof Address) ? $point : GeoTools::createAddressFromPoint($point));
                 $waypoint->setPosition($position);
                 $waypoint->setDestination($position == count($ad->getReturnWaypoints()) - 1);
                 $returnProposal->addWaypoint($waypoint);

@@ -50,6 +50,7 @@ use App\Community\Entity\CommunityUser;
 use App\DataProvider\Entity\Response;
 use App\Event\Entity\Event;
 use App\ExternalJourney\Ressource\ExternalConnection;
+use App\Geography\Service\GeoTools;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Validator\SubscriptionValidator;
@@ -113,6 +114,7 @@ class NotificationManager
     private $altCommunicationFolder;
     private $structureLogoUri;
     private $userRepository;
+    private $defaultCarpoolTimezone;
     private $_notifiedRepository;
     private $_security;
 
@@ -143,6 +145,7 @@ class NotificationManager
         string $altCommunicationFolder,
         string $structureLogoUri,
         UserRepository $userRepository,
+        string $defaultCarpoolTimezone,
         NotifiedRepository $notifiedRepository,
         Security $security
     ) {
@@ -172,6 +175,7 @@ class NotificationManager
         $this->altCommunicationFolder = $altCommunicationFolder;
         $this->structureLogoUri = $structureLogoUri;
         $this->userRepository = $userRepository;
+        $this->defaultCarpoolTimezone = $defaultCarpoolTimezone;
         $this->_notifiedRepository = $notifiedRepository;
         $this->_security = $security;
     }
@@ -191,7 +195,7 @@ class NotificationManager
         }
 
         // Check if the user is anonymised if yes we don't send notifications
-        if (USER::STATUS_ANONYMIZED == $recipient->getStatus()) {
+        if (User::STATUS_ANONYMIZED == $recipient->getStatus()) {
             return;
         }
 
@@ -318,7 +322,6 @@ class NotificationManager
      *
      * @param Notification $notification The notification at the origin of the notified
      * @param User         $user         The recipient of the notification
-     * @param null|object  $object       The object linked with the notification
      */
     public function createBlockedNotified(Notification $notification, User $user)
     {
@@ -474,7 +477,7 @@ class NotificationManager
                     if ($recipient->getId() !== $object->getUserId()) {
                         $recipientRole = $object->getRole();
                     } else {
-                        $recipientRole = ad::ROLE_DRIVER == $object->getRole() ? ad::ROLE_PASSENGER : ad::ROLE_DRIVER;
+                        $recipientRole = Ad::ROLE_DRIVER == $object->getRole() ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER;
                     }
 
                     if (null !== $result->getOutward()) {
@@ -508,6 +511,7 @@ class NotificationManager
                             }
                         }
                     }
+
                     $bodyContext = [
                         'user' => $recipient,
                         'ad' => $object,
@@ -518,6 +522,7 @@ class NotificationManager
                         'returnOrigin' => $returnOrigin,
                         'returnDestination' => $returnDestination,
                         'recipientRole' => $recipientRole,
+                        'carpoolTimezone' => GeoTools::determineTimeZoneOfAd($object, $this->defaultCarpoolTimezone),
                     ];
 
                     break;
@@ -818,7 +823,9 @@ class NotificationManager
                 'context' => $titleContext,
             ]
         ));
-
+        if (!isset($bodyContext['carpoolTimezone'])) {
+            $bodyContext['carpoolTimezone'] = $this->defaultCarpoolTimezone;
+        }
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
             $this->emailManager->send($email, $this->altCommunicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
@@ -913,6 +920,7 @@ class NotificationManager
                         'outwardDestination' => $outwardDestination,
                         'returnOrigin' => $returnOrigin,
                         'returnDestination' => $returnDestination,
+                        'carpoolTimezone' => GeoTools::determineTimeZoneOfAd($object, $this->defaultCarpoolTimezone),
                     ];
 
                     break;
@@ -1037,7 +1045,9 @@ class NotificationManager
             $this->translator->setLocale($lang);
             $templateLanguage = $lang;
         }
-        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
+        if (!isset($bodyContext['carpoolTimezone'])) {
+            $bodyContext['carpoolTimezone'] = $this->defaultCarpoolTimezone;
+        }        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
             $response = $this->smsManager->send($sms, $this->altCommunicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
         } else {
@@ -1153,6 +1163,7 @@ class NotificationManager
                         'outwardDestination' => $outwardDestination,
                         'returnOrigin' => $returnOrigin,
                         'returnDestination' => $returnDestination,
+                        'carpoolTimezone' => GeoTools::determineTimeZoneOfAd($object, $this->defaultCarpoolTimezone),
                     ];
 
                     break;
@@ -1290,7 +1301,9 @@ class NotificationManager
             ]
         ));
 
-        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
+        if (!isset($bodyContext['carpoolTimezone'])) {
+            $bodyContext['carpoolTimezone'] = $this->defaultCarpoolTimezone;
+        }        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
             $this->pushManager->send($push, $this->altCommunicationFolder.$templateLanguage.$this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
         } else {

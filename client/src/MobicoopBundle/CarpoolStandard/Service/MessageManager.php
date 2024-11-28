@@ -36,19 +36,21 @@ class MessageManager
     private $operatorIdentifier;
 
     private $security;
+    private $carpoolTimezone;
 
     /**
      * Constructor.
      *
      * @throws \ReflectionException
      */
-    public function __construct(DataProvider $dataProvider, Security $security, string $operatorIdentifier)
+    public function __construct(DataProvider $dataProvider, Security $security, string $operatorIdentifier, string $carpoolTimezone)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Message::class, 'carpool_standard');
         $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         $this->security = $security;
         $this->operatorIdentifier = $operatorIdentifier;
+        $this->carpoolTimezone = $carpoolTimezone;
     }
 
     public function postCarpoolStandardMessage(Message $message)

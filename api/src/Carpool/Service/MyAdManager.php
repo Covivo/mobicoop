@@ -37,6 +37,7 @@ use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use App\User\Entity\User;
+use App\User\Service\BlockedCarpoolers;
 use App\User\Service\ReviewManager;
 
 /**
@@ -55,6 +56,7 @@ class MyAdManager
     private $matchingRepository;
     private $carpoolPaymentRepository;
     private $displayLabelBuilder;
+    private $userMinAgeToDrive;
 
     /**
      * Constructor.
@@ -71,7 +73,8 @@ class MyAdManager
         ProofManager $proofManager,
         MatchingRepository $matchingRepository,
         CarpoolPaymentRepository $carpoolPaymentRepository,
-        array $carpoolDisplayFieldsOrder
+        array $carpoolDisplayFieldsOrder,
+        int $userMinAgeToDrive
     ) {
         $this->proposalRepository = $proposalRepository;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -85,6 +88,7 @@ class MyAdManager
             $this->paymentActive = true;
         }
         $this->displayLabelBuilder = new DisplayLabelBuilder($carpoolDisplayFieldsOrder);
+        $this->userMinAgeToDrive = $userMinAgeToDrive;
     }
 
     /**
@@ -124,6 +128,12 @@ class MyAdManager
         $myAd->setRoleDriver((true === $proposal->getCriteria()->isDriver()) ? true : false);
         $myAd->setRolePassenger((true === $proposal->getCriteria()->isPassenger()) ? true : false);
         $myAd->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive() ? true : false);
+
+        $myAd->setLinkedAd(
+            !is_null($proposal->getProposalLinked())
+            ? $proposal->getProposalLinked()->getId()
+            : null
+        );
 
         if (is_array($proposal->getCommunities()) && count($proposal->getCommunities()) > 0) {
             foreach ($proposal->getCommunities() as $community) {
@@ -229,7 +239,9 @@ class MyAdManager
             // we exclude private proposals and expired matchings for the carpooler count
             // We need them though to treat former ask without sending another request
             if (!$matchingOffer->getProposalOffer()->isPrivate() && !$this->_hasJourneyReachedDeadline($matchingOffer->getCriteria())) {
-                $carpoolers[] = $matchingOffer->getProposalOffer()->getUser()->getId();
+                if (!$this->_isUnderAgedToDrive($matchingOffer->getProposalOffer()->getUser()->getBirthDate())) {
+                    $carpoolers[] = $matchingOffer->getProposalOffer()->getUser()->getId();
+                }
             }
             // check for asks (driver)
             foreach ($matchingOffer->getAsks() as $ask) {
@@ -241,6 +253,10 @@ class MyAdManager
                     && ($ask->getUser()->getId() == $proposal->getUser()->getId() || $ask->getUserRelated()->getId() == $proposal->getUser()->getId())
                 ) {
                     // accepted ask
+                    if ($this->_isUnderAgedToDrive($matchingOffer->getProposalOffer()->getUser()->getBirthDate())) {
+                        continue;
+                    }
+
                     $myAd->setAsks(true);
                     $driver = $this->getDriverDetailsForUserAndAsk($proposal->getUser(), $ask);
                     $driver['canReceiveReview'] = $this->reviewManager->canReceiveReview(
@@ -248,7 +264,7 @@ class MyAdManager
                         $ask->getUser()->getId() == $proposal->getUser()->getId() ? $ask->getUserRelated() : $ask->getUser()
                     );
 
-                    if (CRITERIA::FREQUENCY_PUNCTUAL === $ask->getCriteria()->getFrequency()) {
+                    if (Criteria::FREQUENCY_PUNCTUAL === $ask->getCriteria()->getFrequency()) {
                         foreach ($ask->getCarpoolProofs() as $carpoolProof) {
                             if ($carpoolProof->getDriver()->getId() === $driver['id']) {
                                 $driver['classicProof'] = $this->proofManager->getClassicProof($carpoolProof->getId());
@@ -315,7 +331,7 @@ class MyAdManager
                     } elseif (MyAd::PAYMENT_STATUS_NULL == $myAd->getPaymentStatus()) {
                         $myAd->setPaymentStatus($passenger['payment']['status']);
                     }
-                    if (CRITERIA::FREQUENCY_PUNCTUAL === $ask->getCriteria()->getFrequency()) {
+                    if (Criteria::FREQUENCY_PUNCTUAL === $ask->getCriteria()->getFrequency()) {
                         foreach ($ask->getCarpoolProofs() as $carpoolProof) {
                             if ($carpoolProof->getPassenger()->getId() === $passenger['id']) {
                                 $passenger['classicProof'] = $this->proofManager->getClassicProof($carpoolProof->getId());
@@ -342,12 +358,25 @@ class MyAdManager
                 }
             }
         }
-        $myAd->setCarpoolers(count($carpoolers));
+
+        $carpoolersFilter = new BlockedCarpoolers($proposal->getUser());
+
+        $myAd->setCarpoolers(count($carpoolersFilter->filterCarpoolers($carpoolers)));
 
         $myAd->setDriver($driver);
         $myAd->setPassengers($passengers);
 
         return $myAd;
+    }
+
+    private function _isUnderAgedToDrive(\DateTime $birthDate): bool
+    {
+        $age = $birthDate->diff(new \DateTime())->y;
+        if ($age < $this->userMinAgeToDrive) {
+            return true;
+        }
+
+        return false;
     }
 
     private function _hasJourneyReachedDeadline(Criteria $criteria): bool

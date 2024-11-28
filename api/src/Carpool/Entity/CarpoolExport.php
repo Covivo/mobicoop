@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Entity;
 
+use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 
 /**
@@ -44,6 +45,7 @@ class CarpoolExport
     public const CERTIFICATION_B = 'B';
     public const CERTIFICATION_C = 'C';
 
+    public const CERTIFICATION_MISSING_ASK = 'Le RPC ne peut pas certifier la preuve de votre trajet, car votre annonce a été supprimée.';
     public const CERTIFICATION_UNDER_CHECKING = 'En cours de certification';
     public const CERTIFICATION_CANCELED = 'La certification a été annulé';
     public const CERTIFICATION_ERROR = 'Non certifié par le RPC';
@@ -203,45 +205,13 @@ class CarpoolExport
         return $this->certification;
     }
 
-    public function setCertification(?CarpoolProof $carpoolProof): self
+    public function setCertification(?CarpoolItem $carpoolItem): self
     {
-        $certification = null;
-
-        if (!is_null($carpoolProof)) {
-            switch ($carpoolProof->getStatus()) {
-                case CarpoolProof::STATUS_PENDING:
-                case CarpoolProof::STATUS_SENT:
-                case CarpoolProof::STATUS_UNDER_CHECKING:
-                case CarpoolProof::STATUS_RPC_NOT_REACHABLE:
-                    $certification = self::CERTIFICATION_UNDER_CHECKING;
-
-                    break;
-
-                case CarpoolProof::STATUS_CANCELED:
-                case CarpoolProof::STATUS_CANCELED_BY_OPERATOR:
-                    $certification = self::CERTIFICATION_CANCELED;
-
-                    break;
-
-                case CarpoolProof::STATUS_VALIDATED:
-                    $certification = $carpoolProof->getType();
-
-                    break;
-
-                case CarpoolProof::STATUS_ERROR:
-                case CarpoolProof::STATUS_ACQUISITION_ERROR:
-                case CarpoolProof::STATUS_FRAUD_ERROR:
-                case CarpoolProof::STATUS_EXPIRED:
-                case CarpoolProof::STATUS_INVALID_CONCURRENT_SCHEDULES:
-                case CarpoolProof::STATUS_INVALID_DUPLICATE_DEVICE:
-                case CarpoolProof::STATUS_INVALID_SPLITTED_TRIP:
-                    $certification = self::CERTIFICATION_ERROR;
-
-                    break;
-            }
+        if (!is_null($carpoolItem->getCarpoolProof())) {
+            $this->_setCertificationAccordingToProofStatus($carpoolItem->getCarpoolProof());
+        } else {
+            $this->_setCertificationWithoutProof($carpoolItem);
         }
-
-        $this->certification = $certification;
 
         return $this;
     }
@@ -254,5 +224,51 @@ class CarpoolExport
     public function setDistance(?int $distance)
     {
         $this->distance = $distance;
+    }
+
+    private function _setCertificationWithoutProof(CarpoolItem $carpoolItem): self
+    {
+        if (is_null($carpoolItem->getAsk())) {
+            $this->certification = self::CERTIFICATION_MISSING_ASK;
+        }
+
+        return $this;
+    }
+
+    private function _setCertificationAccordingToProofStatus(CarpoolProof $carpoolProof): self
+    {
+        switch ($carpoolProof->getStatus()) {
+            case CarpoolProof::STATUS_PENDING:
+            case CarpoolProof::STATUS_SENT:
+            case CarpoolProof::STATUS_UNDER_CHECKING:
+            case CarpoolProof::STATUS_RPC_NOT_REACHABLE:
+                $this->certification = self::CERTIFICATION_UNDER_CHECKING;
+
+                break;
+
+            case CarpoolProof::STATUS_CANCELED:
+            case CarpoolProof::STATUS_CANCELED_BY_OPERATOR:
+                $this->certification = self::CERTIFICATION_CANCELED;
+
+                break;
+
+            case CarpoolProof::STATUS_VALIDATED:
+                $this->certification = $carpoolProof->getType();
+
+                break;
+
+            case CarpoolProof::STATUS_ERROR:
+            case CarpoolProof::STATUS_ACQUISITION_ERROR:
+            case CarpoolProof::STATUS_FRAUD_ERROR:
+            case CarpoolProof::STATUS_EXPIRED:
+            case CarpoolProof::STATUS_INVALID_CONCURRENT_SCHEDULES:
+            case CarpoolProof::STATUS_INVALID_DUPLICATE_DEVICE:
+            case CarpoolProof::STATUS_INVALID_SPLITTED_TRIP:
+                $this->certification = self::CERTIFICATION_ERROR;
+
+                break;
+        }
+
+        return $this;
     }
 }

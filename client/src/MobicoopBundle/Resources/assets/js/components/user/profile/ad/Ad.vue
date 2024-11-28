@@ -77,6 +77,7 @@ export default {
     },
     adPaused(paused) {
       this.ad.paused = paused;
+      this.$emit("ad-paused", { id: this.ad.id, linkedAd: this.ad.linkedAd, paused: this.ad.paused });
     }
   }
 };
