@@ -28,9 +28,9 @@
       <v-row justify="center">
         <v-col
           cols="12"
-          lg="9"
+          lg="10"
           md="10"
-          xl="6"
+          xl="10"
         >
           <!-- Community : avatar, title and description -->
           <community-infos
@@ -231,7 +231,12 @@
             v-if="isLogged && isAccepted && !loading"
             align="start"
           >
-            <v-col cols="8">
+            <v-col
+              cols="8"
+              md="8"
+              lg="6"
+              xl="6"
+            >
               <community-member-list
                 :community-id="community.id"
                 :refresh="refreshMemberList"
