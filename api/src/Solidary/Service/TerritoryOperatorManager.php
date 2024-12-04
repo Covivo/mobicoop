@@ -48,7 +48,7 @@ class TerritoryOperatorManager
 
         $this->_operator = $this->_tokenStorage->getToken()->getUser();
 
-        if ($this->_operator->isSolidaryOperator() && !$this->_authManager->isAuthorized('ROLE_ADMIN')) {
+        if ($this->_operator->isSolidaryOperator()) {
             $structures = [];
 
             foreach ($this->_operator->getOperates() as $operate) {
@@ -70,7 +70,7 @@ class TerritoryOperatorManager
     private function _isTerritoryAllreadyExists(Territory $territory): bool
     {
         return 0 < count(array_filter($this->_territories, function ($t) use ($territory) {
-            $t->getId() === $territory->getId();
+            return $t === $territory->getId();
         }));
     }
 }
