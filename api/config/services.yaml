@@ -1096,6 +1096,10 @@ services:
       $phoneNumberTruncLength: "%env(int:CARPOOL_PROOF_PHONE_TRUNC_LENGTH)%"
       $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $secret: "%env(string:APP_SECRET)%"
+    
+  App\OAuth\Service\Manager\TokenManager:
+    arguments:
+      $servicesDefinition: "%env(json:OAUTH_SERVICES)%"
 
   App\DataProvider\DataPersister\StripeHookDataPersister:
     arguments:
