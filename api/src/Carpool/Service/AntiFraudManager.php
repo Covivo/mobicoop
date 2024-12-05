@@ -153,7 +153,6 @@ class AntiFraudManager
         $adAddressOrigin->setLongitude($ad->getOutwardWaypoints()[0]['address']['longitude']);
 
         $proposalWaypointDestination = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'destination' => 1]);
-
         $travelDurationBetweenProposalDestinationAndAdOrigin = $this->_getTravelDurationBetweenTwoAddresses([$proposalWaypointDestination->getAddress(), $adAddressOrigin]);
 
         $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -231,9 +230,8 @@ class AntiFraudManager
 
         $proposalWaypointOrign = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'position' => 0]);
         $proposalWaypointDestination = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'destination' => 1]);
-
         $travelDurationBetweenProposalDestinationAndAdOrigin = $this->_getTravelDurationBetweenTwoAddresses([$proposalWaypointDestination->getAddress(), $adAddressOrigin]);
-        $travalDurationBetweenAdDestinationAndProposalOrigin = $this->_getTravelDurationBetweenTwoAddresses([$adAddressDestination, $proposalWaypointOrign]);
+        $travalDurationBetweenAdDestinationAndProposalOrigin = $this->_getTravelDurationBetweenTwoAddresses([$adAddressDestination, $proposalWaypointOrign->getAddress()]);
         $travelDurationBetweenAdOriginAndAndDestination = $this->_getTravelDurationBetweenTwoAddresses([$adAddressOrigin, $adAddressDestination]);
 
         $adOutwardTime = new \DateTime($ad->getOutwardTime());
@@ -455,7 +453,6 @@ class AntiFraudManager
         $lastWaypoint = count($ad->getOutwardWaypoints()) - 1;
         $adAddressDestination->setLatitude($ad->getOutwardWaypoints()[$lastWaypoint]['latitude']);
         $adAddressDestination->setLongitude($ad->getOutwardWaypoints()[$lastWaypoint]['longitude']);
-
         $travelDurationBetweenAdOriginAndDestination = $this->_getTravelDurationBetweenTwoAddresses([$adAddressOrigin, $adAddressDestination]);
 
         $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getFromTime()->format('H'), $sameDayProposal->getCriteria()->getFromTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
