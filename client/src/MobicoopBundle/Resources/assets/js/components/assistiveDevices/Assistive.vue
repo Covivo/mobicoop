@@ -101,15 +101,23 @@
 </template>
 
 <script>
+
+import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/assistiveDevices";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/assistiveDevices";
+
+let messagesMergedEn = merge(messages_en, messages_client_en);
+let messagesMergedNl = merge(messages_nl, messages_client_nl);
+let messagesMergedFr = merge(messages_fr, messages_client_fr);
+let messagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
+      'en': messagesMergedEn,
+      'nl': messagesMergedNl,
+      'fr': messagesMergedFr,
+      'eu': messagesMergedEu
     }
   },
   props: {

@@ -54,11 +54,9 @@ class AssistiveController extends AbstractController
 
             if (empty($ssoServices)) {
                 $this->_logger->error(self::ERROR_MISSING_PROVIDER);
-
-                return $this->redirectToRoute('home');
+            } else {
+                $params['activationUri'] = $ssoServices[0]->getUri();
             }
-
-            $params['activationUri'] = $ssoServices[0]->getUri();
         }
 
         return $this->render(
