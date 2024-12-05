@@ -991,6 +991,7 @@ class MangoPayProvider implements PaymentProviderInterface
 
         $getParams = [
             '[type]' => self::TRANSACTIONS_TYPES,
+            'per_page' => 100,
             'status' => self::TRASACTION_STATUS_SUCCEEDED,
             'afterDate' => $date,
         ];
