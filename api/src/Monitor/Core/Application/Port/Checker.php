@@ -25,5 +25,8 @@ namespace App\Monitor\Core\Application\Port;
 
 interface Checker
 {
-    public function check(): string;
+    /**
+     * @return false|string
+     */
+    public function check();
 }

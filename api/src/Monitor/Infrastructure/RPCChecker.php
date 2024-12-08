@@ -24,8 +24,11 @@
 namespace App\Monitor\Infrastructure;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\DataProvider\Entity\CarpoolProofGouvProvider;
 use App\DataProvider\Service\CurlDataProvider;
+use App\DataProvider\Service\RPCv3\HTTPHeaders;
 use App\Monitor\Core\Application\Port\Checker;
+use App\OAuth\Service\Manager\TokenManager;
 
 class RPCChecker implements Checker
 {
@@ -40,7 +43,6 @@ class RPCChecker implements Checker
     private $_carpoolProofService;
     private $_rpcUri;
     private $_rpcPrefix;
-    private $_headers = [];
 
     private $_minDate;
 
@@ -49,28 +51,34 @@ class RPCChecker implements Checker
      */
     private $_lastCarpool;
 
+    /**
+     * @var TokenManager
+     */
+    private $_tokenManager;
+
     public function __construct(
         CurlDataProvider $curlDataProvider,
         CarpoolProofService $carpoolProofService,
+        TokenManager $tokenManager,
         string $rpcUri,
-        string $rpcToken,
         string $rpcPrefix
     ) {
         $this->_curlDataProvider = $curlDataProvider;
         $this->_carpoolProofService = $carpoolProofService;
+        $this->_tokenManager = $tokenManager;
+
         $this->_rpcUri = $rpcUri;
         if ('' !== trim($this->_rpcUri) && '/' !== $this->_rpcUri[strlen($this->_rpcUri) - 1]) {
             $this->_rpcUri .= '/';
         }
         $this->_rpcPrefix = $rpcPrefix;
         $this->_curlDataProvider->setUrl($this->_rpcUri.self::RPC_URI_SUFFIX);
-        $this->_headers = [
-            'Authorization: Bearer '.$rpcToken,
-            'Content-Type: application/json',
-        ];
     }
 
-    public function check(): string
+    /**
+     * @return false|string
+     */
+    public function check()
     {
         $params = ['status' => self::RPC_PROOF_STATUS];
         $this->_computeMinDate();
@@ -79,14 +87,24 @@ class RPCChecker implements Checker
         return $this->_determineResult($params);
     }
 
-    private function _determineResult(array $params): string
+    /**
+     * @return false|string
+     */
+    private function _determineResult(array $params)
     {
         if (is_null($params['start']) || '' == trim($this->_rpcUri)) {
             return json_encode(self::CHECKED);
         }
 
         $return = self::NOT_CHECKED;
-        $response = $this->_curlDataProvider->get($params, $this->_headers);
+
+        $OAuthToken = $this->_tokenManager->getOAuthToken(CarpoolProofGouvProvider::SERVICE_DEFINITION);
+
+        if (is_null($OAuthToken)) {
+            return false;
+        }
+
+        $response = $this->_curlDataProvider->get($params, HTTPHeaders::getHeaders($OAuthToken->getToken()));
 
         if (is_string($response->getValue()) && is_countable(json_decode($response->getValue(), true)) && count(json_decode($response->getValue(), true)) > 0) {
             $return = self::CHECKED;
@@ -123,7 +141,14 @@ class RPCChecker implements Checker
 
         $uri = $this->_rpcUri.self::RPC_URI_SUFFIX."/{$this->_rpcPrefix}{$this->_lastCarpool->getId()}";
         $this->_curlDataProvider->setUrl($uri);
-        $response = $this->_curlDataProvider->get(null, $this->_headers);
+
+        $OAuthToken = $this->_tokenManager->getOAuthToken(CarpoolProofGouvProvider::SERVICE_DEFINITION);
+
+        if (is_null($OAuthToken)) {
+            return false;
+        }
+
+        $response = $this->_curlDataProvider->get(null, HTTPHeaders::getHeaders($OAuthToken->getToken()));
 
         if (is_string($response->getValue())
             && isset(json_decode($response->getValue(), true)['status'])
