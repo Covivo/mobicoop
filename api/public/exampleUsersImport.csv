@@ -1,4 +1,4 @@
-email;givenName;familyName;gender;birthDate;phoneNumber;communityId;postalCode;addressLocality;consent
+email;givenName;familyName;gender;birthDate;phoneNumber;communityId;house_number;street_address;postal_code;address_locality;address_country;latitude;longitude;postalCode;addressLocality;consent
 max.testimport@yopmail.com;Max;TestImport;1;1982-02-03;0666666666;communityId;54000;Nancy;1
 
 indications about data formating:

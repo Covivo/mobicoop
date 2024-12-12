@@ -370,8 +370,13 @@ class MyAdManager
         return $myAd;
     }
 
-    private function _isUnderAgedToDrive(\DateTime $birthDate): bool
+    private function _isUnderAgedToDrive(?\DateTime $birthDate): bool
     {
+        // #8767 - Use cases for pseudonymized users User::status === User::STATUS_PSEUDONYMIZED
+        if (is_null($birthDate)) {
+            return true;
+        }
+
         $age = $birthDate->diff(new \DateTime())->y;
         if ($age < $this->userMinAgeToDrive) {
             return true;

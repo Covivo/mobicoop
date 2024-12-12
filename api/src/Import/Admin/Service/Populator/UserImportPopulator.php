@@ -43,9 +43,14 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
     private const BIRTHDATE = 4;
     private const PHONE_NUMBER = 5;
     private const COMMUNITY_ID = 6;
-    private const POSTAL_CODE = 7;
-    private const ADDRESS_LOCALITY = 8;
-    private const CONSENT = 9;
+    private const HOUSE_NUMBER = 7;
+    private const STREET_ADDRESS = 8;
+    private const POSTAL_CODE = 9;
+    private const ADDRESS_LOCALITY = 10;
+    private const ADDRESS_COUNTRY = 11;
+    private const ADDRESS_LATITUDE = 12;
+    private const ADDRESS_LONGITUDE = 13;
+    private const CONSENT = 14;
 
     private const MESSAGE_OK = 'added';
     private const MESSAGE_ALREADY_EXISTS = 'already exists';
@@ -115,7 +120,7 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         $this->_user->setUserDelegate($this->_requester);
         $this->_user->setImportedDate(new \DateTime('now'));
         $this->_user->setNewsSubscription($line[self::CONSENT]);
-        $this->_user->setHomeAddress($this->_treatLocality($line[self::POSTAL_CODE].' '.$line[self::ADDRESS_LOCALITY]));
+        $this->_user->setHomeAddress($this->_treatLocality($line));
 
         try {
             $this->_user = $this->_importManager->addUser($this->_user);
@@ -153,13 +158,51 @@ class UserImportPopulator extends ImportPopulator implements PopulatorInterface
         }
     }
 
-    private function _treatLocality(string $searchedLocality): ?Address
+    private function _buildCompleteAddress(array $line): Address
     {
-        if (empty(trim($searchedLocality))) {
+        $address = new Address();
+        $address->setLatitude(('' !== trim($line[self::ADDRESS_LATITUDE])) ? $line[self::ADDRESS_LATITUDE] : null);
+        $address->setLongitude(('' !== trim($line[self::ADDRESS_LONGITUDE])) ? $line[self::ADDRESS_LONGITUDE] : null);
+        $address->setHouseNumber(('' !== trim($line[self::HOUSE_NUMBER])) ? $line[self::HOUSE_NUMBER] : null);
+        $address->setStreetAddress(('' !== trim($line[self::STREET_ADDRESS])) ? $line[self::STREET_ADDRESS] : null);
+        $address->setPostalCode(('' !== trim($line[self::POSTAL_CODE])) ? $line[self::POSTAL_CODE] : null);
+        $address->setAddressLocality(('' !== trim($line[self::ADDRESS_LOCALITY])) ? $line[self::ADDRESS_LOCALITY] : null);
+        $address->setAddressCountry(('' !== trim($line[self::ADDRESS_COUNTRY])) ? $line[self::ADDRESS_COUNTRY] : null);
+
+        return $address;
+    }
+
+    private function _treatLocality(array $line): ?Address
+    {
+        if (!is_null($line[self::ADDRESS_LATITUDE])
+        && !is_null($line[self::ADDRESS_LONGITUDE])
+        && '' !== trim($line[self::ADDRESS_LATITUDE])
+        && '' !== trim($line[self::ADDRESS_LONGITUDE])) {
+            return $this->_buildCompleteAddress($line);
+        }
+
+        $searchedLocalityArray = [];
+        if ('' !== trim($line[self::HOUSE_NUMBER])) {
+            $searchedLocalityArray[] = trim($line[self::HOUSE_NUMBER]);
+        }
+        if ('' !== trim($line[self::STREET_ADDRESS])) {
+            $searchedLocalityArray[] = trim($line[self::STREET_ADDRESS]);
+        }
+        if ('' !== trim($line[self::POSTAL_CODE])) {
+            $searchedLocalityArray[] = trim($line[self::POSTAL_CODE]);
+        }
+        if ('' !== trim($line[self::ADDRESS_LOCALITY])) {
+            $searchedLocalityArray[] = trim($line[self::ADDRESS_LOCALITY]);
+        }
+        if ('' !== trim($line[self::ADDRESS_COUNTRY])) {
+            $searchedLocalityArray[] = trim($line[self::ADDRESS_COUNTRY]);
+        }
+
+        if (0 == count($searchedLocalityArray)) {
             return null;
         }
 
-        $results = $this->_pointSearcher->geocode($searchedLocality);
+        $results = $this->_pointSearcher->geocode(implode(' ', $searchedLocalityArray));
 
         if (!empty($results)) {
             $homeAddress = new Address();

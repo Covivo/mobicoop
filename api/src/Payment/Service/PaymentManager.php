@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -858,13 +859,16 @@ class PaymentManager
         $askIds = [];
 
         if (count($asks) > 0 && $this->consumptionFeedbackProvider->isActive()) {
-            $this->consumptionFeedbackProvider->auth();
+            try {
+                $this->consumptionFeedbackProvider->auth();
+            } catch (\Exception $e) {
+                $this->logger->error('ConsumptionFeedback authentication failed: '.$e->getMessage());
+            }
         }
 
         if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
             $this->resendConsumptionFeedbackInError();
         }
-
         // then we create the corresponding items
         foreach ($asks as $ask) {
             /**
