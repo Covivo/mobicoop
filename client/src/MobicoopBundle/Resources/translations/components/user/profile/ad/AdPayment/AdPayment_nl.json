@@ -1,18 +1,18 @@
 {
-    "freeCarpoolingLabel": "Free carpooling: cannot be paid",
-    "unpaid": "Onbetaald",
-    "route": "/paiements/{id}/{frequency}/{type}/{week}",
-    "tooltip": {
-        "paymentElectronicNotActive": "De betaling en de carpooling bevestigen",
-        "paymentElectronicActive": "Online betalen of de cash betaling en de carpooling bevestigen"
-    },
-    "passenger": {
-        "pendingElectronicNotActive": "Bevestigen",
-        "pending": "Betalen of bevestigen",
-        "paid": "Reeds betaald"
-    },
-    "driver": {
-        "pending": "Betaling valideren",
-        "paid": "Reeds betaald"
-    }
+  "unpaid": "Onbetaald",
+  "route": "/paiements/{id}/{frequency}/{type}/{week}",
+  "tooltip": {
+    "freeCarpooling": "Free carpooling: cannot be paid",
+    "paymentElectronicNotActive": "De betaling en de carpooling bevestigen",
+    "paymentElectronicActive": "Online betalen of de cash betaling en de carpooling bevestigen"
+  },
+  "passenger": {
+    "pendingElectronicNotActive": "Bevestigen",
+    "pending": "Betalen of bevestigen",
+    "paid": "Reeds betaald"
+  },
+  "driver": {
+    "pending": "Betaling valideren",
+    "paid": "Reeds betaald"
+  }
 }

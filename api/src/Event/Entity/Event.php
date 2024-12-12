@@ -194,7 +194,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate", "name", "toDate","createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(DateFilter::class, properties={"toDate","fromDate"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
- * @ApiFilter(NumericFilter::class, properties={"community.id"})
+ * @ApiFilter(NumericFilter::class, properties={"community.id","id"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(BooleanFilter::class, properties={"private"})
  * @ApiFilter(EventAddressTerritoryFilter::class, properties={"eventAddressTerritoryFilter"})

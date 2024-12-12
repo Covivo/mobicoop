@@ -1,18 +1,18 @@
 {
-    "freeCarpoolingLabel": "Free carpooling: cannot be paid",
-    "unpaid": "Ordaindugabekoa",
-    "route": "/paiements/{id}/{frequency}/{type}/{week}",
-    "tooltip": {
-        "paymentElectronicNotActive": "Ordainketa eta autokidetzaren gauzatzea baieztatu",
-        "paymentElectronicActive": "Linearen bidez pagatu edo eskuz eskuko ordainketa eta autokidetzaren gauzatzea baieztatu"
-    },
-    "passenger": {
-        "pendingElectronicNotActive": "Baieztatu",
-        "pending": "Pagatu edo baieztatu",
-        "paid": "Jadanik pagatua"
-    },
-    "driver": {
-        "pending": "Ordainketa baieztatu",
-        "paid": "Jadanik pagatua"
-    }
+  "unpaid": "Ordaindugabekoa",
+  "route": "/paiements/{id}/{frequency}/{type}/{week}",
+  "tooltip": {
+    "freeCarpooling": "Free carpooling: cannot be paid",
+    "paymentElectronicNotActive": "Ordainketa eta autokidetzaren gauzatzea baieztatu",
+    "paymentElectronicActive": "Linearen bidez pagatu edo eskuz eskuko ordainketa eta autokidetzaren gauzatzea baieztatu"
+  },
+  "passenger": {
+    "pendingElectronicNotActive": "Baieztatu",
+    "pending": "Pagatu edo baieztatu",
+    "paid": "Jadanik pagatua"
+  },
+  "driver": {
+    "pending": "Ordainketa baieztatu",
+    "paid": "Jadanik pagatua"
+  }
 }
