@@ -291,8 +291,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
- * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id"})
- * @ApiFilter(NumericFilter::class, properties={"validationType"})
+ * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id","id", "validationType"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(CommunityAddressTerritoryFilter::class, properties={"communityAddressTerritoryFilter"})
  * @ApiFilter(ReferrerFilter::class, properties={"referrer"})
