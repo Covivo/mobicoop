@@ -30,7 +30,7 @@ use App\Import\Admin\Interfaces\LineImportValidatorInterface;
  */
 class UserLineImportValidator extends LineImportValidator implements LineImportValidatorInterface
 {
-    private const NUMBER_OF_COLUMN = 10;
+    private const NUMBER_OF_COLUMN = 15;
 
     private const FIELDS_VALIDATORS = [
         0 => [
@@ -56,6 +56,12 @@ class UserLineImportValidator extends LineImportValidator implements LineImportV
         ],
         6 => [
             'App\Import\Admin\Service\Validator\EmptyOrIntValidator',
+        ],
+        12 => [
+            'App\Import\Admin\Service\Validator\EmptyOrFloatValidator',
+        ],
+        13 => [
+            'App\Import\Admin\Service\Validator\EmptyOrFloatValidator',
         ],
     ];
 
