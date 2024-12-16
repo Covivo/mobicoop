@@ -11,18 +11,22 @@
         </v-icon> {{ $t('unpaid') }}
       </v-col>
       <v-col v-if="!hideButton">
-        <v-tooltip bottom>
+        <v-tooltip
+          bottom
+          :disabled="!isDisabled"
+        >
           <template v-slot:activator="{ on }">
-            <v-btn
-              color="primary"
-              rounded
-              :outlined="outlined"
-              :disabled="isDisabled"
-              @click="action()"
-              v-on="(isDriver === false) ? on : {}"
-            >
-              {{ displayPaymentStatus }}
-            </v-btn>
+            <div v-on="(isDriver === false) ? on : {}">
+              <v-btn
+                color="primary"
+                rounded
+                :outlined="outlined"
+                :disabled="isDisabled"
+                @click="action()"
+              >
+                {{ displayPaymentStatus }}
+              </v-btn>
+            </div>
           </template>
           <span>{{ displayTooltips }}</span>
         </v-tooltip>
