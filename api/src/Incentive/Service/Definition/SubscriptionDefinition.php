@@ -59,4 +59,9 @@ abstract class SubscriptionDefinition implements SubscriptionDefinitionInterface
     }
 
     public static function manageTransition(): void {}
+
+    public static function isReady(): bool
+    {
+        return self::getDeadline() > new \DateTime();
+    }
 }
