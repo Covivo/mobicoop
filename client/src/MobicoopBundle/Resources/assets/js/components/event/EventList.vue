@@ -140,6 +140,7 @@
                 :search="search"
                 :items="eventscoming"
                 :items-per-page.sync="itemsPerPage"
+                :page="page"
                 :server-items-length="totalItems"
                 :no-data-text="$t('noEvent')"
                 :footer-props="{
@@ -225,6 +226,7 @@
                 :search="searchPassed"
                 :items="eventspassed"
                 :items-per-page.sync="itemsPerPage"
+                :page="pagePassed"
                 :server-items-length="totalItemsPassed"
                 :footer-props="{
                   'items-per-page-options': itemsPerPageOptions,
@@ -522,9 +524,11 @@ export default {
       },500);
     },
     updateSearch: debounce(function(value) {
+      this.page=1;
       this.getEvents(true);
     }, 1000),
     updateSearchPassed: debounce(function(value) {
+      this.pagePassed=1;
       this.getEvents(false);
     }, 1000)
   }
