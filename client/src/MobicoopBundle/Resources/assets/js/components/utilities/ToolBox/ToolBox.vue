@@ -71,6 +71,60 @@
               :text-logo1="item.textLogo1"
               :text-logo2="item.textLogo2"
               :text-logo3="item.textLogo3"
+              :alt="item.alt"
+            />
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+
+    <!-- Logos -->
+
+    <v-row
+      v-if="itemsLogos.length>0"
+      align="center"
+      justify="center"
+    >
+      <v-col
+        :cols="nbCols"
+      >
+        <h2 class="font-weight-bold">
+          {{ $t('subtitleLogos') }}
+        </h2>
+      </v-col>
+    </v-row>
+
+    <v-row
+      v-if="itemsLogos.length>0"
+      align="center"
+      justify="center"
+    >
+      <v-col :cols="nbCols">
+        <v-row>
+          <v-col
+            v-for="(item, i) in itemsLogos"
+            :key="i"
+            cols="12"
+            md="6"
+            lg="4"
+          >
+            <ToolBoxItem
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :link-subtitle="item.linkSubtitle"
+              :image="item.image"
+              :text-download="item.textDownload"
+              :download-link="item.downloadLink"
+              :personalized-text="item.personalizedText"
+              :personalized-text-link="item.personalizedTextLink"
+              :link1="item.link1"
+              :link2="item.link2"
+              :link3="item.link3"
+              :text-logo1="item.textLogo1"
+              :text-logo2="item.textLogo2"
+              :text-logo3="item.textLogo3"
+              :alt="item.alt"
+              :max-width="item.maxWidth"
             />
           </v-col>
         </v-row>
@@ -121,6 +175,7 @@
               :text-logo1="item.textLogo1"
               :text-logo2="item.textLogo2"
               :text-logo3="item.textLogo3"
+              :alt="item.alt"
             />
           </v-col>
         </v-row>
@@ -169,6 +224,8 @@ export default {
     return {
       itemsVisual: this.$t('itemsVisual'),
       itemsAnimation: this.$t('itemsAnimation'),
+      itemsLogos: this.$t('itemsLogos'),
+
       nbCols:10
     }
   }
