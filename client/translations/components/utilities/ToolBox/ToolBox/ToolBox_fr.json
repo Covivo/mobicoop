@@ -91,7 +91,7 @@
     },
     {
       "title": "Logo Mobicoop blanc",
-      "image": "images/communication/mobicoop-logo-blanc-visu.png",
+      "image": "images/communication/mobicoop-logo-blanc.png",
       "downloadLink": "images/communication/mobicoop-logo-blanc.png",
       "alt": "Logo Mobicoop",
       "maxWidth": "125"
@@ -105,8 +105,8 @@
     },
     {
       "title": "Logo Rezo Pouce Blanc",
-      "image": "images/communication/rezopouce-logo-blanc-visu.png",
-      "downloadLinks": "images/communication/rezopouce-logo-blanc.png",
+      "image": "images/communication/rezopouce-logo-blanc.png",
+      "downloadLink": "images/communication/rezopouce-logo-blanc.png",
       "alt": "Logo Rezo Pouce",
       "maxWidth": "125"
     }
