@@ -258,9 +258,14 @@ class CeeSubscriptions
         $this->id = $this->_user->getId() ? $this->_user->getId() : self::DEFAULT_ID;
 
         $this->setShortDistanceSubscription($this->_user->getShortDistanceSubscription());
-        $this->shortDistanceSubscription->setCompliantJourneys(true);
+        if ($this->shortDistanceSubscription) {
+            $this->shortDistanceSubscription->setCompliantJourneys(true);
+        }
+
         $this->setLongDistanceSubscription($this->_user->getLongDistanceSubscription());
-        $this->longDistanceSubscription->setCompliantJourneys(true);
+        if ($this->longDistanceSubscription) {
+            $this->longDistanceSubscription->setCompliantJourneys(true);
+        }
 
         $this->_computeShortDistance();
 
