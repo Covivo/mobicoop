@@ -20,7 +20,8 @@
               <v-img
                 :src="image"
                 contain
-                max-width="90"
+                :max-width="maxWidth"
+                :alt="alt"
               />
             </a>
           </v-avatar>
@@ -163,6 +164,14 @@ export default {
     linkSubtitle: {
       type: String,
       default: null
+    },
+    alt: {
+      type: String,
+      default: null
+    },
+    maxWidth: {
+      type: String,
+      default: '90'
     }
   }
 };

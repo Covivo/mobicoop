@@ -39,7 +39,7 @@
       "link1": "images/communication/RZC_Flyer_A5.pdf"
     },
     {
-      "title": "Logos",
+      "title": "Kit Logos",
       "image": "images/communication/Logo_logo.jpg",
       "textDownload": "> Téléchargez",
       "downloadLink": "images/communication/Kit_logos.zip"
@@ -71,5 +71,45 @@
       "textLogo1": "Téléchargez la vidéo de présentation",
       "link1": "https://youtu.be/tbXcNO7iJx8"
     }
+  ],
+  "subtitleLogos": "Logos",
+  "itemsLogos": [
+    {
+      "title": "Logo Mobicoop",
+      "image": "images/communication/mobicoop-logo.png",
+      "downloadLink": "images/communication/mobicoop-logo.png",
+      "alt": "Logo Mobicoop",
+      "maxWidth": "125"
+
+    },
+    {
+      "title": "Logo Mobicoop gris",
+      "image": "images/communication/mobicoop-logo-gris.png",
+      "downloadLink": "images/communication/mobicoop-logo-gris.png",
+      "alt": "Logo Mobicoop",
+      "maxWidth": "125"
+    },
+    {
+      "title": "Logo Mobicoop blanc",
+      "image": "images/communication/mobicoop-logo-blanc.png",
+      "downloadLink": "images/communication/mobicoop-logo-blanc.png",
+      "alt": "Logo Mobicoop",
+      "maxWidth": "125"
+    },
+    {
+      "title": "Logo Rezo Pouce",
+      "image": "images/communication/rezopouce-logo.png",
+      "downloadLink": "images/communication/rezopouce-logo.png",
+      "alt": "Logo Rezo Pouce",
+      "maxWidth": "125"
+    },
+    {
+      "title": "Logo Rezo Pouce Blanc",
+      "image": "images/communication/rezopouce-logo-blanc.png",
+      "downloadLink": "images/communication/rezopouce-logo-blanc.png",
+      "alt": "Logo Rezo Pouce",
+      "maxWidth": "125"
+    }
+
   ]
 }
