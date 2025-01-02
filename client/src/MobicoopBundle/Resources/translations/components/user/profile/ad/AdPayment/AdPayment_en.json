@@ -1,18 +1,18 @@
 {
-    "freeCarpoolingLabel": "Free carpooling: cannot be paid",
-    "driver": {
-        "paid": "Already paid",
-        "pending": "Confirm payment"
-    },
-    "passenger": {
-        "paid": "Already paid",
-        "pending": "Pay or confirm",
-        "pendingElectronicNotActive": "Confirm"
-    },
-    "tooltip": {
-        "paymentElectronicActive": "Pay online or confirm the direct payment and the completion of the carpooling",
-        "paymentElectronicNotActive": "Confirm the direct payment and the completion of the carpooling"
-    },
-    "route": "/payments/{id}/{frequency}/{type}/{week}",
-    "unpaid": "Not paid"
+  "driver": {
+    "paid": "Already paid",
+    "pending": "Confirm payment"
+  },
+  "passenger": {
+    "paid": "Already paid",
+    "pending": "Pay or confirm",
+    "pendingElectronicNotActive": "Confirm"
+  },
+  "tooltip": {
+    "freeCarpooling": "Free carpooling: cannot be paid",
+    "paymentElectronicActive": "Pay online or confirm the direct payment and the completion of the carpooling",
+    "paymentElectronicNotActive": "Confirm the direct payment and the completion of the carpooling"
+  },
+  "route": "/payments/{id}/{frequency}/{type}/{week}",
+  "unpaid": "Not paid"
 }

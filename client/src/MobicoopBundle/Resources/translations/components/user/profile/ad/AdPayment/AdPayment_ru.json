@@ -1,3 +1,5 @@
 {
-  "freeCarpoolingLabel": "Free carpooling: cannot be paid"
+  "tooltip": {
+    "freeCarpooling": "Free carpooling: cannot be paid"
+  }
 }

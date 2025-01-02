@@ -24,7 +24,10 @@
 namespace App\User\Repository;
 
 use App\App\Entity\App;
+use App\Carpool\Entity\CarpoolProof;
 use App\Community\Entity\Community;
+use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryVolunteer;
 use App\Solidary\Entity\Structure;
@@ -618,5 +621,94 @@ class UserRepository
         ;
 
         return $query->getQuery()->getOneOrNullResult();
+    }
+
+    public function getUsersWithSDRecoverableJourneys(): array
+    {
+        $query = 'SELECT
+                u.id AS user_id
+            FROM `user` u
+                INNER JOIN mobconnect__short_distance_subscription msds ON u.id = msds.user_id
+                INNER JOIN carpool_proof cp ON u.id = cp.driver_id
+            WHERE
+                u.status != '.User::STATUS_PSEUDONYMIZED."
+                AND msds.status IS NULL
+                AND cp.type = '".CarpoolProof::TYPE_HIGH."'
+                AND cp.status = ".CarpoolProof::STATUS_VALIDATED."
+                AND cp.id NOT IN (
+                    SELECT cp2.id
+                    FROM carpool_proof cp2
+                        INNER JOIN mobconnect__short_distance_journey msdj
+                            ON cp2.id = msdj.carpool_proof_id
+                            AND msds.id = msdj.subscription_id
+                    WHERE
+                        cp2.driver_id = u.id
+                        AND cp2.type = '".CarpoolProof::TYPE_HIGH."'
+                        AND cp2.status = ".CarpoolProof::STATUS_VALIDATED.'
+                        AND cp2.created_date > msds.created_at
+                )
+            GROUP BY u.id';
+
+        $stmt = $this->entityManager->getConnection()->prepare($query);
+        $stmt->execute();
+
+        return $this->findUsersByIds(array_map(function ($value) {
+            return $value['user_id'];
+        }, $stmt->fetchAll()));
+    }
+
+    public function getUsersWithLDRecoverableJourneys(): array
+    {
+        $query = 'SELECT
+                u.id AS user_id
+            FROM `user` u
+                INNER JOIN mobconnect__long_distance_subscription mlds ON u.id = mlds.user_id
+                INNER JOIN carpool_item ci
+                    ON u.id = ci.creditor_user_id
+                    AND ci.creditor_status = '.CarpoolItem::CREDITOR_STATUS_ONLINE.'
+                INNER JOIN carpool_payment_carpool_item cpci ON ci.id = cpci.carpool_item_id
+                INNER JOIN carpool_payment cp
+                    ON cpci.carpool_payment_id = cp.id
+                    AND cp.status = '.CarpoolPayment::STATUS_SUCCESS."
+                    AND cp.transaction_id IS NOT NULL
+                INNER JOIN ask a ON ci.ask_id = a.id
+                INNER JOIN carpool_proof cp2
+                    ON a.id = cp2.ask_id
+                    AND cp2.`type` = '".CarpoolProof::TYPE_HIGH."'
+                    AND cp2.status = ".CarpoolProof::STATUS_VALIDATED.'
+            WHERE
+                u.status != '.User::STATUS_PSEUDONYMIZED.'
+                AND mlds.status IS NULL
+                AND ci.id NOT IN (
+                    SELECT ci2.id
+                    FROM carpool_item ci2
+                        INNER JOIN mobconnect__long_distance_journey mldj
+                            ON ci2.id = mldj.carpool_item_id
+                            AND mlds.id = mldj.subscription_id
+                    WHERE
+                        ci2.creditor_user_id = u.id
+                        AND ci2.creditor_status = '.CarpoolItem::CREDITOR_STATUS_ONLINE.'
+                        AND ci2.created_date > mlds.created_at
+                )
+            GROUP BY u.id;';
+
+        $stmt = $this->entityManager->getConnection()->prepare($query);
+        $stmt->execute();
+
+        return $this->findUsersByIds(array_map(function ($value) {
+            return $value['user_id'];
+        }, $stmt->fetchAll()));
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function findUsersByIds($ids): array
+    {
+        $qb = $this->repository->createQueryBuilder('u');
+
+        $qb->where('u.id IN ('.implode(', ', $ids).')');
+
+        return $qb->getQuery()->getResult();
     }
 }

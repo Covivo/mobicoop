@@ -86,7 +86,7 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
                 case 'ADMIN_associate_campaign':
                 case 'ADMIN_send_campaign':
                     $territories = $this->authManager->getTerritoriesForItem('user_list');
-                    $territories = $this->_territoryOperatorManager->getOperatorTerritories();
+                    $territories = $this->_territoryOperatorManager->getOperatorTerritories($territories);
             }
         }
         if (count($territories) > 0) {
