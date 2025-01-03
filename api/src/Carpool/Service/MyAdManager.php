@@ -239,7 +239,7 @@ class MyAdManager
             // we exclude private proposals and expired matchings for the carpooler count
             // We need them though to treat former ask without sending another request
             if (!$matchingOffer->getProposalOffer()->isPrivate() && !$this->_hasJourneyReachedDeadline($matchingOffer->getCriteria())) {
-                if (!$this->_isUnderAgedToDrive($matchingOffer->getProposalOffer()->getUser()->getBirthDate())) {
+                if (!$this->_isUnderAgedToDrive($matchingOffer->getProposalOffer()->getUser()->getBirthDate(), $matchingOffer->getProposalOffer()->getUser()->getStatus())) {
                     $carpoolers[] = $matchingOffer->getProposalOffer()->getUser()->getId();
                 }
             }
@@ -253,7 +253,7 @@ class MyAdManager
                     && ($ask->getUser()->getId() == $proposal->getUser()->getId() || $ask->getUserRelated()->getId() == $proposal->getUser()->getId())
                 ) {
                     // accepted ask
-                    if ($this->_isUnderAgedToDrive($matchingOffer->getProposalOffer()->getUser()->getBirthDate())) {
+                    if ($this->_isUnderAgedToDrive($matchingOffer->getProposalOffer()->getUser()->getBirthDate(), $matchingOffer->getProposalOffer()->getUser()->getStatus())) {
                         continue;
                     }
 
@@ -370,11 +370,14 @@ class MyAdManager
         return $myAd;
     }
 
-    private function _isUnderAgedToDrive(?\DateTime $birthDate): bool
+    private function _isUnderAgedToDrive(?\DateTime $birthDate, int $userStatus): bool
     {
-        // #8767 - Use cases for pseudonymized users User::status === User::STATUS_PSEUDONYMIZED
-        if (is_null($birthDate)) {
+        if (User::STATUS_ANONYMIZED == $userStatus) {
             return true;
+        }
+
+        if (is_null($birthDate)) {
+            return false;
         }
 
         $age = $birthDate->diff(new \DateTime())->y;
