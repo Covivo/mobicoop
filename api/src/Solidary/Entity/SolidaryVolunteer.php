@@ -19,19 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A solidary volunteer.
@@ -113,64 +110,72 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryVolunteer
 {
-    const DEFAULT_ID = 999999999999;
-    const TYPE = "volunteer";
-    const AUTHORIZED_GENERIC_FILTERS = ['familyName','givenName','email'];
-    const VALIDATED_CANDIDATE_FILTER = 'validatedCandidate';
-    const DAYS_SLOTS = ['mMon','aMon','eMon','mTue','aTue','eTue','mWed','aWed','eWed','mThu','aThu','eThu','mFri','aFri','eFri','mSat','aSat','eSat','mSun','aSun','eSun'];
-    const TIMES_SLOTS = ['mMinTime','mMaxTime','aMinTime','aMaxTime','eMinTime','eMaxTime'];
+    public const DEFAULT_ID = 999999999999;
+    public const TYPE = 'volunteer';
+    public const AUTHORIZED_GENERIC_FILTERS = ['familyName', 'givenName', 'email'];
+    public const VALIDATED_CANDIDATE_FILTER = 'validatedCandidate';
+    public const DAYS_SLOTS = ['mMon', 'aMon', 'eMon', 'mTue', 'aTue', 'eTue', 'mWed', 'aWed', 'eWed', 'mThu', 'aThu', 'eThu', 'mFri', 'aFri', 'eFri', 'mSat', 'aSat', 'eSat', 'mSun', 'aSun', 'eSun'];
+    public const TIMES_SLOTS = ['mMinTime', 'mMaxTime', 'aMinTime', 'aMaxTime', 'eMinTime', 'eMaxTime'];
 
     /**
-     * @var int The id of this solidary user.
+     * @var int the id of this solidary user
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $id;
 
     /**
-     * @var string The email of the user.
+     * @var string the email of the user
      *
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $email;
 
     /**
-     * @var string The encoded password of the user.
+     * @var string the encoded password of the user
+     *
      * @Groups({"writeSolidary"})
      */
     private $password;
 
     /**
-     * @var int|null The gender of the user (1=female, 2=male, 3=nc)
+     * @var null|int The gender of the user (1=female, 2=male, 3=nc)
+     *
      * @Groups({"readSolidary","aReadItem","writeSolidary"})
      */
     private $gender;
 
     /**
-     * @var string|null The telephone number of the user.
+     * @var null|string the telephone number of the user
+     *
      * @Groups({"readSolidary","aReadItem","writeSolidary"})
      */
     private $telephone;
 
     /**
-     * @var string|null The first name of the user.
+     * @var null|string the first name of the user
+     *
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $givenName;
 
     /**
-     * @var string|null The family name of the user.
+     * @var null|string the family name of the user
+     *
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $familyName;
 
     /**
-     * @var \DateTimeInterface|null The birth date of the user.
+     * @var null|\DateTimeInterface the birth date of the user
+     *
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
      *
      * @ApiProperty(
@@ -182,25 +187,28 @@ class SolidaryVolunteer
     private $birthDate;
 
     /**
-     * @var boolean|null The user accepts to receive news about the platform.
+     * @var null|bool the user accepts to receive news about the platform
+     *
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $newsSubscription;
 
     /**
-     * @var User The user associated with the solidaryUser.
+     * @var User the user associated with the solidaryUser
+     *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $user;
 
     /**
      * @var array The home address of this User
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $homeAddress;
 
     /**
-     * @var string|null A comment about the solidaryUser.
+     * @var null|string a comment about the solidaryUser
      *
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -208,245 +216,282 @@ class SolidaryVolunteer
 
     /**
      * @var array The proofs associated to this user
+     *
      * @Groups({"writeSolidary","aReadItem"})
      */
     private $proofs;
 
     /**
-     * @var bool|null If the candidate is validated or not
+     * @var null|bool If the candidate is validated or not
+     *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $validatedCandidate;
 
     /**
      * @var array The diaries associated to this user
+     *
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $diaries;
 
     /**
      * @var array The solidaries of this user
+     *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $solidaries;
 
     /**
-     * @var \DateTimeInterface|null Morning min time.
+     * @var null|\DateTimeInterface morning min time
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mMinTime;
-    
+
     /**
-     * @var \DateTimeInterface|null Morning max time.
+     * @var null|\DateTimeInterface morning max time
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mMaxTime;
-    
+
     /**
-     * @var \DateTimeInterface|null Afternoon min time.
+     * @var null|\DateTimeInterface afternoon min time
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aMinTime;
-    
+
     /**
-     * @var \DateTimeInterface|null Afternoon max time.
+     * @var null|\DateTimeInterface afternoon max time
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aMaxTime;
-    
+
     /**
-     * @var \DateTimeInterface|null Evening min time.
+     * @var null|\DateTimeInterface evening min time
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eMinTime;
-    
+
     /**
-     * @var \DateTimeInterface|null Evening max time.
+     * @var null|\DateTimeInterface evening max time
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eMaxTime;
-    
+
     /**
-     * @var bool|null Available on monday morning.
+     * @var null|bool available on monday morning
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mMon;
-    
+
     /**
-     * @var bool|null Available on monday afternoon.
+     * @var null|bool available on monday afternoon
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aMon;
-    
+
     /**
-     * @var bool|null Available on monday evening.
+     * @var null|bool available on monday evening
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eMon;
-    
+
     /**
-     * @var bool|null Available on tuesday morning.
+     * @var null|bool available on tuesday morning
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mTue;
-    
+
     /**
-     * @var bool|null Available on tuesday afternoon.
+     * @var null|bool available on tuesday afternoon
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aTue;
-    
+
     /**
-     * @var bool|null Available on tuesday evening.
+     * @var null|bool available on tuesday evening
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eTue;
-    
+
     /**
-     * @var bool|null Available on wednesday morning.
+     * @var null|bool available on wednesday morning
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mWed;
-    
+
     /**
-     * @var bool|null Available on wednesday afternoon.
+     * @var null|bool available on wednesday afternoon
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aWed;
-    
+
     /**
-     * @var bool|null Available on wednesday evening.
+     * @var null|bool available on wednesday evening
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eWed;
-    
+
     /**
-     * @var bool|null Available on thursday morning.
+     * @var null|bool available on thursday morning
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mThu;
-    
+
     /**
-     * @var bool|null Available on thursday afternoon.
+     * @var null|bool available on thursday afternoon
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aThu;
-    
+
     /**
-     * @var bool|null Available on thursday evening.
+     * @var null|bool available on thursday evening
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eThu;
-    
+
     /**
-     * @var bool|null Available on friday morning.
+     * @var null|bool available on friday morning
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mFri;
-    
+
     /**
-     * @var bool|null Available on friday afternoon.
+     * @var null|bool available on friday afternoon
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aFri;
-    
+
     /**
-     * @var bool|null Available on friday evening.
+     * @var null|bool available on friday evening
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eFri;
-    
+
     /**
-     * @var bool|null Available on saturday morning.
+     * @var null|bool available on saturday morning
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mSat;
-    
+
     /**
-     * @var bool|null Available on saturday afternoon.
+     * @var null|bool available on saturday afternoon
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aSat;
-    
+
     /**
-     * @var bool|null Available on saturday evening.
+     * @var null|bool available on saturday evening
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eSat;
-    
+
     /**
-     * @var bool|null Available on sunday morning.
+     * @var null|bool available on sunday morning
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mSun;
-    
+
     /**
-     * @var bool|null Available on sunday afternoon.
+     * @var null|bool available on sunday afternoon
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aSun;
-    
+
     /**
-     * @var bool|null Available on sunday evening.
+     * @var null|bool available on sunday evening
+     *
      * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eSun;
 
     /**
      * @var array The solidary structures of this user
+     *
      * @Groups({"aReadCol","aReadItem"})
      */
     private $structures;
 
     /**
      * @var Structure The solidary structures of this user only in POST context
+     *
      * @Groups({"writeSolidary"})
      */
     private $structure;
 
     /**
-     * @var int|null The maximum distance in metres allowed from the center address.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @var null|int the maximum distance in metres allowed from the center address
+     *
+     * @Groups({"readSolidary","writeSolidary", "aReadItem"})
      */
     private $maxDistance;
 
     /**
-     * @var bool The solidaryUser has a vehicle.
+     * @var bool the solidaryUser has a vehicle
+     *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $vehicle;
 
     /**
-     * @var array|null The special needs for this solidary record.
+     * @var null|array the special needs for this solidary record
      *
      * @Groups({"readSolidary","writeSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $needs;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $updatedDate;
 
     /**
-     * @var string|null The avatar of the solidary beneficiary
+     * @var null|string The avatar of the solidary beneficiary
      *
      * @Groups({"aReadItem"})
      */
     private $avatar;
 
     /**
-     * @var int|null The userId of the solidary user
+     * @var null|int The userId of the solidary user
+     *
      * @Groups({"aReadItem"})
      */
     private $userId;
@@ -459,16 +504,16 @@ class SolidaryVolunteer
         $this->needs = [];
         $this->proofs = [];
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -567,7 +612,7 @@ class SolidaryVolunteer
 
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -596,11 +641,11 @@ class SolidaryVolunteer
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -615,7 +660,7 @@ class SolidaryVolunteer
 
         return $this;
     }
-    
+
     public function isValidatedCandidate(): ?bool
     {
         return $this->validatedCandidate;
@@ -663,7 +708,7 @@ class SolidaryVolunteer
 
         return $this;
     }
-    
+
     public function getMMaxTime(): ?\DateTimeInterface
     {
         return $this->mMaxTime;
@@ -675,7 +720,7 @@ class SolidaryVolunteer
 
         return $this;
     }
-    
+
     public function getAMinTime(): ?\DateTimeInterface
     {
         return $this->aMinTime;
@@ -687,7 +732,7 @@ class SolidaryVolunteer
 
         return $this;
     }
-    
+
     public function getAMaxTime(): ?\DateTimeInterface
     {
         return $this->aMaxTime;
@@ -699,7 +744,7 @@ class SolidaryVolunteer
 
         return $this;
     }
-    
+
     public function getEMinTime(): ?\DateTimeInterface
     {
         return $this->eMinTime;
@@ -711,7 +756,7 @@ class SolidaryVolunteer
 
         return $this;
     }
-    
+
     public function getEMaxTime(): ?\DateTimeInterface
     {
         return $this->eMaxTime;
@@ -723,12 +768,12 @@ class SolidaryVolunteer
 
         return $this;
     }
-    
+
     public function hasMMon(): ?bool
     {
         return $this->mMon;
     }
-    
+
     public function setMMon(?bool $mMon): self
     {
         $this->mMon = $mMon;
@@ -747,223 +792,223 @@ class SolidaryVolunteer
 
         return $this;
     }
-    
+
     public function hasEMon(): ?bool
     {
         return $this->eMon;
     }
-    
+
     public function setEMon(?bool $eMon): self
     {
         $this->eMon = $eMon;
 
         return $this;
     }
-    
+
     public function hasMTue(): ?bool
     {
         return $this->mTue;
     }
-    
+
     public function setMTue(?bool $mTue): self
     {
         $this->mTue = $mTue;
 
         return $this;
     }
-    
+
     public function hasATue(): ?bool
     {
         return $this->aTue;
     }
-   
+
     public function setATue(?bool $aTue): self
     {
         $this->aTue = $aTue;
 
         return $this;
     }
-    
+
     public function hasETue(): ?bool
     {
         return $this->eTue;
     }
-   
+
     public function setETue(?bool $eTue): self
     {
         $this->eTue = $eTue;
 
         return $this;
     }
-    
+
     public function hasMWed(): ?bool
     {
         return $this->mWed;
     }
-   
+
     public function setMWed(?bool $mWed): self
     {
         $this->mWed = $mWed;
 
         return $this;
     }
-    
+
     public function hasAWed(): ?bool
     {
         return $this->aWed;
     }
-   
+
     public function setAWed(?bool $aWed): self
     {
         $this->aWed = $aWed;
 
         return $this;
     }
-    
+
     public function hasEWed(): ?bool
     {
         return $this->eWed;
     }
-   
+
     public function setEWed(?bool $eWed): self
     {
         $this->eWed = $eWed;
 
         return $this;
     }
-    
+
     public function hasMThu(): ?bool
     {
         return $this->mThu;
     }
-   
+
     public function setMThu(?bool $mThu): self
     {
         $this->mThu = $mThu;
 
         return $this;
     }
-    
+
     public function hasAThu(): ?bool
     {
         return $this->aThu;
     }
-   
+
     public function setAThu(?bool $aThu): self
     {
         $this->aThu = $aThu;
 
         return $this;
     }
-    
+
     public function hasEThu(): ?bool
     {
         return $this->eThu;
     }
-   
+
     public function setEThu(?bool $eThu): self
     {
         $this->eThu = $eThu;
 
         return $this;
     }
-    
+
     public function hasMFri(): ?bool
     {
         return $this->mFri;
     }
-   
+
     public function setMFri(?bool $mFri): self
     {
         $this->mFri = $mFri;
 
         return $this;
     }
-    
+
     public function hasAFri(): ?bool
     {
         return $this->aFri;
     }
-   
+
     public function setAFri(?bool $aFri): self
     {
         $this->aFri = $aFri;
 
         return $this;
     }
-    
+
     public function hasEFri(): ?bool
     {
         return $this->eFri;
     }
-   
+
     public function setEFri(?bool $eFri): self
     {
         $this->eFri = $eFri;
 
         return $this;
     }
-    
+
     public function hasMSat(): ?bool
     {
         return $this->mSat;
     }
-   
+
     public function setMSat(?bool $mSat): self
     {
         $this->mSat = $mSat;
 
         return $this;
     }
-    
+
     public function hasASat(): ?bool
     {
         return $this->aSat;
     }
-   
+
     public function setASat(?bool $aSat): self
     {
         $this->aSat = $aSat;
 
         return $this;
     }
-    
+
     public function hasESat(): ?bool
     {
         return $this->eSat;
     }
-   
+
     public function setESat(?bool $eSat): self
     {
         $this->eSat = $eSat;
 
         return $this;
     }
-    
+
     public function hasMSun(): ?bool
     {
         return $this->mSun;
     }
-   
+
     public function setMSun(?bool $mSun): self
     {
         $this->mSun = $mSun;
 
         return $this;
     }
-    
+
     public function hasASun(): ?bool
     {
         return $this->aSun;
     }
-   
+
     public function setASun(?bool $aSun): self
     {
         $this->aSun = $aSun;
 
         return $this;
     }
-    
+
     public function hasESun(): ?bool
     {
         return $this->eSun;

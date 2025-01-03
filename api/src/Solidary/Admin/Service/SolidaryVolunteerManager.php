@@ -99,6 +99,7 @@ class SolidaryVolunteerManager
             // @var SolidaryUser $solidaryUser
             $solidaryVolunteers[] = $this->createSolidaryVolunteerFromSolidaryUser($solidaryUser);
         }
+
         // we need to return a paginator, we already have all informations but we need to build a custom paginator object
         return new MobicoopPaginator($solidaryVolunteers, $solidaryUsers->getCurrentPage(), $solidaryUsers->getItemsPerPage(), $solidaryUsers->getTotalItems());
     }
@@ -247,6 +248,7 @@ class SolidaryVolunteerManager
         $solidaryVolunteer->setMSun($solidaryUser->hasMSun());
         $solidaryVolunteer->setASun($solidaryUser->hasASun());
         $solidaryVolunteer->setESun($solidaryUser->hasESun());
+        $solidaryVolunteer->setMaxDistance($solidaryUser->getMaxDistance());
 
         // get the status of the volunteer for each structure attached
         $volunteerStructures = [];
