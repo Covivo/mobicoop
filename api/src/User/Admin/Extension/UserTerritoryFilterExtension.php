@@ -31,6 +31,7 @@ use App\Auth\Service\AuthManager;
 use App\Solidary\Service\TerritoryOperatorManager;
 use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -42,17 +43,19 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
 {
     private $security;
     private $authManager;
+    private $_requestStack;
 
     /**
      * @var TerritoryOperatorManager
      */
     private $_territoryOperatorManager;
 
-    public function __construct(Security $security, AuthManager $authManager, TerritoryOperatorManager $territoryOperatorManager)
+    public function __construct(Security $security, AuthManager $authManager, TerritoryOperatorManager $territoryOperatorManager, RequestStack $requestStack)
     {
         $this->security = $security;
         $this->authManager = $authManager;
         $this->_territoryOperatorManager = $territoryOperatorManager;
+        $this->_requestStack = $requestStack;
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?string $operationName = null)
@@ -76,6 +79,9 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
             return;
         }
 
+        $request = $this->_requestStack->getCurrentRequest();
+        $isHitchHiker = filter_var($request->query->get('isHitchHiker'), FILTER_VALIDATE_BOOLEAN);
+
         $territories = [];
 
         // we check if the user has limited territories
@@ -86,7 +92,9 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
                 case 'ADMIN_associate_campaign':
                 case 'ADMIN_send_campaign':
                     $territories = $this->authManager->getTerritoriesForItem('user_list');
-                    $territories = $this->_territoryOperatorManager->getOperatorTerritories($territories);
+                    if (!($isHitchHiker && $this->authManager->isAuthorized('ROLE_HITCHHIKING_ADMINISTRATOR'))) {
+                        $territories = $this->_territoryOperatorManager->getOperatorTerritories($territories);
+                    }
             }
         }
         if (count($territories) > 0) {
