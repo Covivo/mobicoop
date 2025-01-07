@@ -47,16 +47,30 @@
       </v-btn>
     </v-snackbar>
 
-    <!-- Title and subtitle -->
-    <v-row
-      justify="center"
+    <v-snackbar
+      v-model="routeMissingSnackbar.show"
+      color="red"
+      timeout="-1"
+      top
     >
+      {{ $t('routeMissingSnackbarText') }}
+      <v-btn
+        color="white"
+        text
+        @click="routeMissingSnackbar.show = false"
+      >
+        Fermer
+      </v-btn>
+    </v-snackbar>
+
+    <!-- Title and subtitle -->
+    <v-row justify="center">
       <v-col
         cols="12"
         xl="8"
         align="center"
       >
-        <h1>{{ $t( isUpdate && !isSearchToSave ? 'update.title' : 'create.title') }}</h1>
+        <h1>{{ $t(isUpdate && !isSearchToSave ? 'update.title' : 'create.title') }}</h1>
         <h3 style="height: 30px">
           {{ step === 1 && !isUpdate ? $t('create.subtitle') : "" }}
         </h3>
@@ -101,7 +115,7 @@
         xl="8"
       >
         <v-alert type="info">
-          <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}</p>
+          <p>{{ $t("messageFirstAd.signUpDone", { 'givenName': user.givenName }) }}</p>
           <p>{{ $t("messageFirstAd.alert") }}</p>
         </v-alert>
       </v-col>
@@ -147,9 +161,7 @@
       </v-col>
     </v-row>
     <!-- Stepper -->
-    <v-row
-      justify="center"
-    >
+    <v-row justify="center">
       <v-col
         cols="12"
         xl="8"
@@ -162,7 +174,7 @@
         >
           <!-- Stepper Header -->
           <v-stepper-header
-            v-show="step!==1 || isUpdate"
+            v-show="step !== 1 || isUpdate"
             class="elevation-0"
           >
             <!-- Step 1 : search journey -->
@@ -306,6 +318,7 @@
                     :init-waypoints="initWaypoints"
                     :community-ids="communityIds"
                     @change="routeChanged"
+                    @routeMissing="routeMissing($event)"
                   />
                 </v-col>
               </v-row>
@@ -328,9 +341,7 @@
                   {{ $t('stepper.content.passengers.seats.question') }}
                 </v-col>
 
-                <v-col
-                  cols="1"
-                >
+                <v-col cols="1">
                   <v-select
                     v-model="seats"
                     :items="itemsSeatNumber"
@@ -358,9 +369,7 @@
                   >
                     {{ $t('stepper.content.passengers.luggage.label') }}
                   </v-col>
-                  <v-col
-                    cols="1"
-                  >
+                  <v-col cols="1">
                     <v-switch
                       v-model="luggage"
                       inset
@@ -398,9 +407,7 @@
                   >
                     {{ $t('stepper.content.passengers.bike.label') }}
                   </v-col>
-                  <v-col
-                    cols="1"
-                  >
+                  <v-col cols="1">
                     <v-switch
                       v-model="bike"
                       inset
@@ -438,9 +445,7 @@
                   >
                     {{ $t('stepper.content.passengers.backSeats.label') }}
                   </v-col>
-                  <v-col
-                    cols="1"
-                  >
+                  <v-col cols="1">
                     <v-switch
                       v-model="backSeats"
                       inset
@@ -502,20 +507,18 @@
                   {{ $t('stepper.content.participation.price') }}
                 </v-col>
 
-                <v-col
-                  cols="2"
-                >
+                <v-col cols="2">
                   <v-text-field
                     v-model="price"
                     :class="colorPricePerKm + '--text'"
                     :color="colorPricePerKm"
-                    :disabled="distance<=0"
+                    :disabled="distance <= 0"
                     :hint="hintPricePerKm"
                     persistent-hint
                     step="0.1"
                     suffix="€"
                     type="number"
-                    @input="disableNextButton = true;roundPrice(price, regular ? 2 : 1, true);price = Math.abs(price)"
+                    @input="disableNextButton = true; roundPrice(price, regular ? 2 : 1, true); price = Math.abs(price)"
                   />
                 </v-col>
 
@@ -570,17 +573,13 @@
             </v-stepper-content>
 
             <!-- Step 6 : message -->
-            <v-stepper-content
-              :step="driver ? (solidaryExclusive ? 5 : 6) : 4"
-            >
+            <v-stepper-content :step="driver ? (solidaryExclusive ? 5 : 6) : 4">
               <v-row
                 dense
                 align="center"
                 justify="center"
               >
-                <v-col
-                  cols="6"
-                >
+                <v-col cols="6">
                   <p v-if="driver && passenger">
                     {{ $t('stepper.content.message.title.both') }}
                   </p>
@@ -599,9 +598,7 @@
             </v-stepper-content>
 
             <!-- Step 7 : summary -->
-            <v-stepper-content
-              :step="driver ? (solidaryExclusive ? 6 : 7) : 5"
-            >
+            <v-stepper-content :step="driver ? (solidaryExclusive ? 6 : 7) : 5">
               <v-container>
                 <v-row>
                   <v-col cols="12">
@@ -641,22 +638,19 @@
                 </v-row>
 
                 <v-row>
-                  <v-col
-                    v-if="driver && !specificTerms"
-                  >
+                  <v-col v-if="driver && !specificTerms">
                     {{ $t('stepper.driverLicense.text') }}
                     <a
                       class="primary--text"
                       target="_blank"
                       :href="$t('stepper.driverLicense.route')"
                       @click.stop
-                    >{{ $t('stepper.driverLicense.link') }}
+                    >{{
+                      $t('stepper.driverLicense.link') }}
                     </a>
                   </v-col>
                 </v-row>
-                <v-row
-                  v-if="driver && specificTerms"
-                >
+                <v-row v-if="driver && specificTerms">
                   <v-col>
                     <v-checkbox
                       v-model="checkboxDrivingLicence"
@@ -736,7 +730,7 @@
 
       <v-btn
         v-if="((step < 7 && driver && step !== 5 && !solidaryExclusive) || (step < 5 && !driver && !solidaryExclusive) || (solidaryExclusive && step < 6))"
-        :disabled="!validNext"
+        :disabled="!validNext || routeMissingSnackbar.validityPersist"
         rounded
         color="secondary"
         align-center
@@ -750,8 +744,8 @@
         v-if="isMainBtnDisplayed"
         bottom
       >
-        <template v-slot:activator="{on}">
-          <div v-on="(!valid)?on:{}">
+        <template v-slot:activator="{ on }">
+          <div v-on="(!valid) ? on : {}">
             <v-btn
               :disabled="!valid || loading"
               :loading="loading"
@@ -761,7 +755,8 @@
               align-center
               @click="isUpdate ? (hasAsks || hasPotentialAds ? dialog = true : updateAd()) : postAd()"
             >
-              {{ isUpdate && !isSearchToSave ? $t('stepper.buttons.update_ad', {id: ad.id}) : $t('stepper.buttons.publish_ad') }}
+              {{ isUpdate && !isSearchToSave ? $t('stepper.buttons.update_ad', { id: ad.id }) :
+                $t('stepper.buttons.publish_ad') }}
             </v-btn>
           </div>
         </template>
@@ -812,8 +807,8 @@
 </template>
 
 <script>
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/publish/AdPublish/";
-import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/publish/AdPublish/";
+import { messages_en, messages_fr, messages_eu, messages_nl } from "@translations/components/carpool/publish/AdPublish/";
+import { messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl } from "@clientTranslations/components/carpool/publish/AdPublish/";
 
 import maxios from "@utils/maxios";
 import debounce from "lodash/debounce";
@@ -826,6 +821,7 @@ import AdRoute from "@components/carpool/publish/AdRoute";
 import AdSummary from "@components/carpool/publish/AdSummary";
 import MMap from '@components/utilities/MMap/MMap'
 import L from "leaflet";
+import { stubFalse } from "lodash";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -869,15 +865,15 @@ export default {
       type: Number,
       default: null
     },
-    mapProvider:{
+    mapProvider: {
       type: String,
       default: ""
     },
-    urlTiles:{
+    urlTiles: {
       type: String,
       default: ""
     },
-    attributionCopyright:{
+    attributionCopyright: {
       type: String,
       default: ""
     },
@@ -913,7 +909,7 @@ export default {
       type: Boolean,
       default: false
     },
-    defaultPricesRanges:{
+    defaultPricesRanges: {
       type: Object,
       default: null
     },
@@ -967,13 +963,13 @@ export default {
       type: Boolean,
       default: false
     },
-    seatNumber : {
+    seatNumber: {
       type: Number,
-      default:null
+      default: null
     },
-    defaultSeatNumber : {
+    defaultSeatNumber: {
       type: Number,
-      default:null
+      default: null
     },
     contentPassenger: {
       type: Boolean,
@@ -993,7 +989,7 @@ export default {
     },
     defaultRoleToPublish: {
       type: Number,
-      default:null
+      default: null
     },
     bothRoleEnabled: {
       type: Boolean,
@@ -1009,13 +1005,13 @@ export default {
       anyRouteAsPassenger: null, // not used yet
       backSeats: false,
       baseUrl: window.location.origin,
-      bbox:null,
+      bbox: null,
       bike: false,
       bodyIsFullyLoaded: false,
       cancellationMessage: "",
       destination: this.initDestination,
       dialog: false,
-      directionWay:[],
+      directionWay: [],
       disableNextButton: false,
       disconnected: false,
       distance: 0,
@@ -1035,7 +1031,7 @@ export default {
       outwardDate: this.initDate,
       outwardTime: this.initTime,
       passenger: (this.defaultRoleToPublish && this.defaultRoleToPublish == 1) ? false : true,
-      pointsToMap:[],
+      pointsToMap: [],
       price: null,
       priceForbidden: false,
       pricePerKm: this.isUpdate && this.ad ? this.ad.priceKm : this.defaultPriceKm,
@@ -1046,8 +1042,12 @@ export default {
       returnTimeIsValid: true,
       returnTrip: null,
       route: null,
+      routeMissingSnackbar: {
+        show: false,
+        validityPersist: false
+      },
       schedules: null,
-      seats : this.defaultSeatNumber,
+      seats: this.defaultSeatNumber,
       selectedCommunities: null,
       snackbar: {
         show: false,
@@ -1059,7 +1059,7 @@ export default {
         color: "error"
       },
       solidaryExclusive: this.solidaryExclusiveAd,
-      step:1,
+      step: 1,
       strictDate: null,         // not used yet
       strictPunctual: null,     // not used yet
       strictRegular: null,      // not used yet
@@ -1074,15 +1074,15 @@ export default {
     }
   },
   computed: {
-    pricesRanges(){
-      if(this.defaultPricesRanges){
+    pricesRanges() {
+      if (this.defaultPricesRanges) {
         return this.defaultPricesRanges;
       }
-      else{
+      else {
         return {
-          "mid":0.12,
-          "high":0.3,
-          "forbidden":0.5
+          "mid": 0.12,
+          "high": 0.3,
+          "forbidden": 0.5
         }
       }
     },
@@ -1090,16 +1090,16 @@ export default {
       if (this.disconnected) {
         return this.disconnect();
       }
-      return this.isValidAd ? this.$t("snackErrorPublish"): this.$t("snackErrorAntiFraud");
+      return this.isValidAd ? this.$t("snackErrorPublish") : this.$t("snackErrorAntiFraud");
     },
     hintPricePerKm() {
       let pricePerKm = this.pricePerKm;
       if (isNaN(this.pricePerKm)) pricePerKm = 0;
-      return pricePerKm.toFixed(2)+'€/km';
+      return pricePerKm.toFixed(2) + '€/km';
     },
     validWaypoints() {
       if (this.route && this.route.waypoints) {
-        return this.route.waypoints.filter(function(waypoint) {
+        return this.route.waypoints.filter(function (waypoint) {
           return waypoint.visible && waypoint.address;
         });
       }
@@ -1109,16 +1109,16 @@ export default {
       // For the publish button
 
       // step validation
-      if(this.solidaryExclusive){
-        if(this.step<6) return false;
+      if (this.solidaryExclusive) {
+        if (this.step < 6) return false;
       }
-      else{
+      else {
         if ((this.driver && this.step != 7) || (!this.driver && this.step != 5)) return false;
       }
       // role validation
       if (this.driver === false && this.passenger === false) return false;
       // route validation
-      if (this.distance<=0 || this.duration<=0 || !this.origin || !this.destination || !this.route) return false;
+      if (this.distance <= 0 || this.duration <= 0 || !this.origin || !this.destination || !this.route) return false;
       // punctual date validation
       if (!this.regular && !(this.outwardDate && this.outwardTime)) return false;
       // punctual roundtrip date validation
@@ -1126,25 +1126,25 @@ export default {
       // regular date validation
       if (this.regular && !this.schedules) return false;
       // regular schedules validation
-      if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
+      if (this.step == 2 && this.regular && (this.schedules == null || this.schedules.length == 0)) return false;
 
       // Price to high. Forbidden to post
-      if(this.priceForbidden) return false;
+      if (this.priceForbidden) return false;
 
       // Specifics terms
-      if(!this.checkboxDrivingLicence && this.driver && this.specificTerms) return false;
-      if(!this.checkboxEmployer && this.driver && this.specificTerms) return false;
-      if(!this.checkboxInssurance && this.driver && this.specificTerms) return false;
+      if (!this.checkboxDrivingLicence && this.driver && this.specificTerms) return false;
+      if (!this.checkboxEmployer && this.driver && this.specificTerms) return false;
+      if (!this.checkboxInssurance && this.driver && this.specificTerms) return false;
 
       // Step 2 regular schedule no return without outward
-      if(this.regular && this.schedules){
+      if (this.regular && this.schedules) {
         return this.isOutwardSchedulesValid();
       }
 
       // We are in update mode and initialization is not finished yet
       if (this.isValidUpdate && this.oldUpdateObject == null) return false;
       // update mode and there are no changes
-      if (!this.isUpdated ) return false;
+      if (!this.isUpdated) return false;
 
       // validation ok
       return true;
@@ -1152,45 +1152,45 @@ export default {
     validNext() {
 
       // For the next button
-      if(this.origin == null || this.destination == null) return false;
-      if(!this.passenger && !this.driver) return false;
-      if(!this.regular && !this.outwardDate) return false;
-      if(!this.driver && this.step>4) return false;
-      if(this.step>=7) return false;
-      if(this.priceForbidden) return false;
+      if (this.origin == null || this.destination == null) return false;
+      if (!this.passenger && !this.driver) return false;
+      if (!this.regular && !this.outwardDate) return false;
+      if (!this.driver && this.step > 4) return false;
+      if (this.step >= 7) return false;
+      if (this.priceForbidden) return false;
 
       // Specifics by steps
       // Step 2 regular : you have to setup at least one schedule
-      if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
+      if (this.step == 2 && this.regular && (this.schedules == null || this.schedules.length == 0)) return false;
 
       // Step 2 regular schedule no return without outward
-      if(this.step==2 && this.regular && this.schedules){
+      if (this.step == 2 && this.regular && this.schedules) {
         return this.isOutwardSchedulesValid();
       }
 
       //We get here if we give at least the departure time on the 1st day
       //So now we can check on all others days, if visible and date AND at least 1 hour is not defined -> return false
-      if(this.step ==2  && this.regular){
+      if (this.step == 2 && this.regular) {
         for (var s in this.fullschedule) {
           var i = this.fullschedule[s];
           if (i.visible) {
-            if ( !i.mon && !i.tue && !i.wed && !i.thu && !i.fri && !i.sat && !i.sun )  return false;
-            if ( i.outwardTime == null && i.returnTime == null) return false;
+            if (!i.mon && !i.tue && !i.wed && !i.thu && !i.fri && !i.sat && !i.sun) return false;
+            if (i.outwardTime == null && i.returnTime == null) return false;
           }
         }
       }
 
       // Step 2 punctual : you have to set the outward time
-      if(this.step==2 && ((!this.regular && !(this.outwardDate && this.outwardTime)) || this.returnTimeIsValid === false)) return false;
+      if (this.step == 2 && ((!this.regular && !(this.outwardDate && this.outwardTime)) || this.returnTimeIsValid === false)) return false;
       // Step 2 punctual, round-trip chosen : you have to set the outward date & time
-      if(this.step==2 && !this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
+      if (this.step == 2 && !this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
 
       return true;
     },
-    pointEscapedPrice(){
-      return this.price.replace(".",",");
+    pointEscapedPrice() {
+      return this.price.replace(".", ",");
     },
-    colorPricePerKm(){
+    colorPricePerKm() {
       if (this.pricePerKm < this.pricesRanges.mid) {
         return "success";
       } else if (this.pricePerKm >= this.pricesRanges.mid && this.pricePerKm < this.pricesRanges.high) {
@@ -1199,14 +1199,14 @@ export default {
         return "error";
       }
     },
-    isValidUpdate () {
+    isValidUpdate() {
       return this.isUpdate && !isEmpty(this.ad);
     },
-    isUpdated () {
+    isUpdated() {
       if (!this.isUpdate) return true;
       else return this.isValidUpdate && !isEqual(this.oldUpdateObject, this.newUpdateObject);
     },
-    isMajorUpdate () {
+    isMajorUpdate() {
       if (!this.isValidUpdate || isEmpty(this.oldUpdateObject)) return false;
       let newUpdateObject = this.newUpdateObject;
       return newUpdateObject.regular !== this.oldUpdateObject.regular
@@ -1222,23 +1222,23 @@ export default {
         || !isEqual(this.oldUpdateObject.waypoints, newUpdateObject.waypoints)
         || !isEqual(this.oldUpdateObject.schedules, newUpdateObject.schedules);
     },
-    newUpdateObject () {
+    newUpdateObject() {
       return this.buildAdObject();
     },
-    popupTitle () {
+    popupTitle() {
       if (this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.major_update_asks.title');
       else if (this.isMajorUpdate && this.hasPotentialAds) return this.$t('update.popup.major_update_ads.title');
       else if (!this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.minor_update_asks.title');
       return '';
     },
-    popupContent () {
+    popupContent() {
       if (this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.major_update_asks.content');
       else if (this.isMajorUpdate && this.hasPotentialAds) return this.$t('update.popup.major_update_ads.content');
       else if (!this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.minor_update_asks.content');
       return '';
     },
     itemsSeatNumber() {
-      return [...Array(this.seatNumber+1).keys()].slice(1);
+      return [...Array(this.seatNumber + 1).keys()].slice(1);
     },
     getTooltip() {
       switch (true) {
@@ -1246,7 +1246,7 @@ export default {
         return this.$t('stepper.buttons.unUpdated')
       case this.priceForbidden:
         return this.$t('stepper.buttons.unacceptableParticipation')
-      case this.distance<=0 || this.duration<=0 || !this.origin || !this.destination || !this.route:
+      case this.distance <= 0 || this.duration <= 0 || !this.origin || !this.destination || !this.route:
         return this.$t('stepper.buttons.incorrectRouteDefinition')
       case !this.regular && !(this.outwardDate && this.outwardTime):
         return this.$t('stepper.buttons.punctualOutwardDate')
@@ -1271,61 +1271,61 @@ export default {
         || (this.step === 6 && this.solidaryExclusive)
       )
     },
-    role(){
-      if(!this.showDriverRole && !this.showBothRole){
+    role() {
+      if (!this.showDriverRole && !this.showBothRole) {
         return 2;
-      }else if (this.isUpdate) {
+      } else if (this.isUpdate) {
         return this.ad.role;
       }
       return this.defaultRoleToPublish;
     },
-    showDriverRole(){
+    showDriverRole() {
       return this.user.oldEnoughToDrive;
     },
-    showBothRole(){
+    showBothRole() {
       return this.bothRoleEnabled && this.user.oldEnoughToDrive;
     }
   },
   watch: {
     price() {
       //this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.pricePerKm);
-      this.pricePerKm = (this.distance>0 ? parseFloat(this.price) / this.distance * 100/100 : this.pricePerKm);
-      (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
+      this.pricePerKm = (this.distance > 0 ? parseFloat(this.price) / this.distance * 100 / 100 : this.pricePerKm);
+      (this.pricePerKm > this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {
       this.calculatePrice();
     },
-    route(){
+    route() {
       this.buildPointsToMap();
-      if(this.route.direction !== null){this.buildDirectionWay();}
+      if (this.route.direction !== null) { this.buildDirectionWay(); }
       this.$refs.mmapSummary.redrawMap();
       this.$refs.mmapRoute.redrawMap();
     },
-    step(){
+    step() {
       this.$refs.mmapSummary.redrawMap();
       this.$refs.mmapRoute.redrawMap();
     },
-    outwardTime(newValue,oldValue){
-      if(newValue){
+    outwardTime(newValue, oldValue) {
+      if (newValue) {
         this.outwardTime = (moment(newValue).isValid()) ? moment(this.ad.outwardTime).format("HH:mm") : newValue;
       }
     },
-    returnTime(newValue,oldValue){
-      if(newValue){
+    returnTime(newValue, oldValue) {
+      if (newValue) {
         this.returnTime = (moment(newValue).isValid()) ? moment(this.ad.returnTime).format("HH:mm") : newValue;
       }
     },
     ad: {
       immediate: true,
-      handler () {
+      handler() {
         const self = this;
-        if(this.ad){
+        if (this.ad) {
           this.origin = this.ad.origin;
           this.outwardDate = this.ad.outwardDate;
           this.outwardTime = moment(this.ad.outwardTime).utc().format();
           this.returnDate = this.ad.returnDate;
           this.returnTime = moment(this.ad.returnTime).isValid() ? moment(this.ad.returnTime).format() : null;
-          this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id;});
+          this.initWaypoints = this.ad.outwardWaypoints.filter(point => { return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id; });
           this.initSchedule = isEmpty(this.ad.schedule) ? {} : this.ad.schedule;
           this.seats = this.ad.seatsDriver;
           this.luggage = this.ad.luggage;
@@ -1354,46 +1354,46 @@ export default {
       let price = this.freeCarpool ? 0 : Math.round(this.distance * this.pricePerKm * 100) / 100;
       this.roundPrice(price, this.regular ? 2 : 1);
     },
-    buildPointsToMap: function(){
+    buildPointsToMap: function () {
       this.pointsToMap.length = 0;
       // Set the origin point with custom icon
-      if(this.origin !== null && this.origin !== undefined){
-        let pointOrigin = this.buildPoint(this.origin.latitude,this.origin.longitude,this.origin.displayLabel,"/images/cartography/pictos/origin.png",[36, 42],[10, 25]);
+      if (this.origin !== null && this.origin !== undefined) {
+        let pointOrigin = this.buildPoint(this.origin.latitude, this.origin.longitude, this.origin.displayLabel, "/images/cartography/pictos/origin.png", [36, 42], [10, 25]);
         this.pointsToMap.push(pointOrigin);
       }
       // Set all the waypoints (default icon for now)
       this.route.waypoints.forEach((waypoint, index) => {
-        if(waypoint.address != null){
-          let currentWaypoint = this.buildPoint(waypoint.address.latitude,waypoint.address.longitude,waypoint.address.displayLabel);
+        if (waypoint.address != null) {
+          let currentWaypoint = this.buildPoint(waypoint.address.latitude, waypoint.address.longitude, waypoint.address.displayLabel);
           this.pointsToMap.push(currentWaypoint);
         }
       });
       // Set the destination point with custom icon
-      if(this.destination !== null && this.destination !== undefined){
-        let pointDestination = this.buildPoint(this.destination.latitude,this.destination.longitude,this.destination.displayLabel,"/images/cartography/pictos/destination.png",[36, 42],[10, 25]);
+      if (this.destination !== null && this.destination !== undefined) {
+        let pointDestination = this.buildPoint(this.destination.latitude, this.destination.longitude, this.destination.displayLabel, "/images/cartography/pictos/destination.png", [36, 42], [10, 25]);
         this.pointsToMap.push(pointDestination);
       }
     },
-    buildDirectionWay(){
+    buildDirectionWay() {
       // You need to push the entire directPoints array because the MMap component can show multiple journeys
       this.directionWay.length = 0;
       let currentDirectionWay = {
-        latLngs:this.route.direction.directPoints
+        latLngs: this.route.direction.directPoints
       };
       this.directionWay.push(currentDirectionWay);
     },
-    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
+    buildPoint: function (lat, lng, title = "", pictoUrl = "", size = [], anchor = []) {
       let point = {
-        title:title,
-        latLng:L.latLng(lat, lng),
+        title: title,
+        latLng: L.latLng(lat, lng),
         icon: {}
       };
 
-      if(pictoUrl!==""){
+      if (pictoUrl !== "") {
         point.icon = {
-          url:pictoUrl,
-          size:size,
-          anchor:anchor
+          url: pictoUrl,
+          size: size,
+          anchor: anchor
         }
       }
 
@@ -1409,14 +1409,14 @@ export default {
     isOutwardSchedulesValid() {
       let outwardSchedulesValid = true;
       this.schedules.forEach((s, index) => {
-        if(!this.staggeredSchedulesAllowed && s.returnTime !== null && s.outwardTime == null){
+        if (!this.staggeredSchedulesAllowed && s.returnTime !== null && s.outwardTime == null) {
           outwardSchedulesValid = false;
         }
       });
 
       return outwardSchedulesValid;
     },
-    searchChanged: function(search) {
+    searchChanged: function (search) {
       this.passenger = search.passenger;
       this.driver = search.driver;
       this.origin = search.origin;
@@ -1452,14 +1452,14 @@ export default {
 
       this.setCommunityFreeCarpool(route.communities);
 
-      if(this.step!==1){
+      if (this.step !== 1) {
         this.origin = route.origin;
         this.destination = route.destination;
       }
     },
     setCommunityFreeCarpool(communities) {
       if (this.selectedCommunities) {
-        for(let index in this.selectedCommunities) {
+        for (let index in this.selectedCommunities) {
           const community = communities.find(community => community.id === this.selectedCommunities[index] && community.freeCarpool);
 
           if (community) {
@@ -1473,8 +1473,8 @@ export default {
     postAd() {
       let postObject = this.buildAdObject();
       this.loading = true;
-      maxios.post(this.buildUrl(this.$t('route.publish')),postObject,{
-        headers:{
+      maxios.post(this.buildUrl(this.$t('route.publish')), postObject, {
+        headers: {
           'content-type': 'application/json'
         }
       })
@@ -1507,7 +1507,7 @@ export default {
           // this.loading = false;
         });
     },
-    updateAd () {
+    updateAd() {
       // double check
       if (!this.isValidUpdate) {
         this.snackbar = {
@@ -1523,18 +1523,18 @@ export default {
         postObject.cancellationMessage = this.cancellationMessage;
       }
       this.loading = true;
-      maxios.put(this.buildUrl(this.$t('route.update', {id: this.ad.id})),postObject,{
-        headers:{
+      maxios.put(this.buildUrl(this.$t('route.update', { id: this.ad.id })), postObject, {
+        headers: {
           'content-type': 'application/json'
         }
       })
         .then(response => {
           if (response.data) {
-            if(response.data.message == 'error'){
+            if (response.data.message == 'error') {
               this.snackErrorPublish.show = true;
               this.loading = false;
             }
-            else{
+            else {
               maxios.post(this.$t("route.cleanOrphans"), {})
                 .then(res => {
                   window.location.href = this.$t('route.myAds');
@@ -1560,7 +1560,7 @@ export default {
           // this.loading = false;
         });
     },
-    buildAdObject () {
+    buildAdObject() {
       let postObject = {
         regular: this.regular,
         driver: this.driver,
@@ -1568,7 +1568,7 @@ export default {
         origin: this.origin,
         destination: this.destination,
         solidaryExclusive: this.solidaryExclusive,
-        eventId : this.eventId,
+        eventId: this.eventId,
       };
       if (this.isValidUpdate) postObject.id = this.ad.id;
       if (this.userDelegated) postObject.userDelegated = this.userDelegated;
@@ -1596,7 +1596,7 @@ export default {
       }
 
       postObject.priceKm = 0;
-      if (this.pricePerKm){
+      if (this.pricePerKm) {
         postObject.priceKm = this.solidaryExclusive ? 0 : this.pricePerKm;
       }
 
@@ -1618,7 +1618,7 @@ export default {
           value: price,
           frequency: frequency
         }).then(resp => {
-          if(this.price !== resp.data.value) {
+          if (this.price !== resp.data.value) {
             this.price = resp.data.value;
             if (doneByUser === true) {
               this.snackbar = {
@@ -1633,11 +1633,11 @@ export default {
           this.price = price;
         }).finally(() => {
           this.loadingPrice = false;
-          if(!this.priceForbidden) this.disableNextButton = false;
+          if (!this.priceForbidden) this.disableNextButton = false;
         })
       }
-    },1000),
-    countWaypoints () {
+    }, 1000),
+    countWaypoints() {
       if (!isEmpty(this.initOrigin) && !isEmpty(this.initDestination)) {
         return 2;
       } else if (!isEmpty(this.initOrigin) || !isEmpty(this.initDestination)) {
@@ -1647,6 +1647,12 @@ export default {
     scrollToElement(element = "app") {
       // this.$vuetify.goTo(0, {easing: 'easeInOutCubic'});
       document.getElementById(element).scrollIntoView();
+    },
+    routeMissing(e) {
+      console.log(e);
+
+      this.routeMissingSnackbar.show = e.routeMissing;
+      this.routeMissingSnackbar.validityPersist = e.validityPersist;
     }
   }
 };
