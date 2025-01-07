@@ -116,7 +116,7 @@ class ProposalMatcher
             if ($matching->getProposalOffer() === $proposal) {
                 $proposal->addMatchingRequest($matching);
             } else {
-                if ($this->_isUnderAgedToDrive($matching->getProposalOffer()->getUser()->getBirthDate())) {
+                if ($this->_isUnderAgedToDrive($matching->getProposalOffer()->getUser()->getBirthDate(), $matching->getProposalOffer()->getUser()->getStatus())) {
                     continue;
                 }
                 $proposal->addMatchingOffer($matching);
@@ -1529,8 +1529,16 @@ class ProposalMatcher
         return static::$minCommonDistancePercent;
     }
 
-    private function _isUnderAgedToDrive(\DateTime $birthDate): bool
+    private function _isUnderAgedToDrive(?\DateTime $birthDate, int $userStatus): bool
     {
+        if (User::STATUS_ANONYMIZED == $userStatus) {
+            return true;
+        }
+
+        if (is_null($birthDate)) {
+            return false;
+        }
+
         $age = $birthDate->diff(new \DateTime())->y;
         if ($age < $this->userMinAgeToDrive) {
             return true;
