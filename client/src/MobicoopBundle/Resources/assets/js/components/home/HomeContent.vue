@@ -3,24 +3,6 @@
     fluid
     pa-0
   >
-    <v-row
-      align="center"
-      class="mt-4"
-      justify="center"
-    >
-      <v-col
-        cols="12"
-        xl="6"
-        lg="8"
-        md="12"
-        class="px-14"
-      >
-        <m-news
-          :url-mobile="mobileUrl"
-        />
-      </v-col>
-    </v-row>
-    <!-- features -->
     <div :style="'background-image:url(\''+$t('urlBackground2')+'\');background-position-y:bottom;background-size:100% 100%;background-repeat:no-repeat;alt=\'\';'">
       <v-row
         align="center"
@@ -165,7 +147,6 @@
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/home/HomeContent/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/home/HomeContent/";
-import MNews from "@components/utilities/news/MNews";
 import MFeatures from "@components/utilities/MFeatures";
 import MEvents from "@components/utilities/event/MEvents";
 import JourneyCityToCity from "@components/journey/JourneyCityToCity";
@@ -179,7 +160,6 @@ let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   components: {
-    MNews,
     MFeatures,
     MEvents,
     JourneyCityToCity,
