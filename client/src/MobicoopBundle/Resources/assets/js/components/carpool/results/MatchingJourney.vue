@@ -1371,7 +1371,7 @@ export default {
           : null;
       } else {
         params.date = resultChoice.outward.date;
-        params.time = resultChoice.outward.time;
+        params.time = resultChoice.outward.waypoints[0].time;
       }
       // proposal and matching results
       params.adId = resultChoice.outward.proposalId;
