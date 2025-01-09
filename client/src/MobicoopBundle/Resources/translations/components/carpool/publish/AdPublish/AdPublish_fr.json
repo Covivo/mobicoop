@@ -116,6 +116,7 @@
     "roundPrice": "/prix/arrondir",
     "cleanOrphans": "/covoiturage/cleanOrphanProposals"
   },
+  "routeMissingSnackbarText": "Nous n'avons pas trouvé d'itinéraire pour ce trajet.",
   "snackErrorAntiFraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer.",
   "snackErrorPublish": "Une erreur est survenue, veuillez réessayer plus tard",
   "snackErrorDisconnected": "Vous avez été déconnecté du service pour inactivité, merci de bien vouloir vous reconnecter",

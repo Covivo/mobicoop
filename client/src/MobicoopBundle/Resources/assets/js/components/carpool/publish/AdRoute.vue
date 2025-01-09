@@ -1,7 +1,5 @@
 <template>
-  <v-container
-    fluid
-  >
+  <v-container fluid>
     <!-- Origin -->
     <v-row
       align="center"
@@ -65,7 +63,7 @@
           :results-order="geoCompleteResultsOrder"
           :palette="geoCompletePalette"
           :chip="geoCompleteChip"
-          :label="$t('waypoint' + (index + 1) +'.label')"
+          :label="$t('waypoint' + (index + 1) + '.label')"
           :address="waypoint.address"
           @address-selected="waypointSelected(index, ...arguments)"
         />
@@ -136,9 +134,7 @@
       justify="center"
       class="mt-2"
     >
-      <v-col
-        cols="10"
-      >
+      <v-col cols="10">
         <v-autocomplete
           v-model="selectedCommunities"
           :items="communities"
@@ -183,9 +179,7 @@
       align="center"
       justify="center"
     >
-      <v-col
-        cols="10"
-      >
+      <v-col cols="10">
         <!-- Route detail -->
         <v-card>
           <v-row
@@ -202,7 +196,7 @@
 
 <script>
 import maxios from "@utils/maxios";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/publish/AdRoute/";
+import { messages_en, messages_fr, messages_eu, messages_nl } from "@translations/components/carpool/publish/AdRoute/";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 
 export default {
@@ -211,7 +205,7 @@ export default {
       'en': messages_en,
       'nl': messages_nl,
       'fr': messages_fr,
-      'eu':messages_eu
+      'eu': messages_eu
     },
   },
   components: {
@@ -299,7 +293,7 @@ export default {
     initWaypoints: {
       immediate: true,
       handler() {
-        for (let i = 0; i < this.initWaypoints.length && i < 4; i ++) {
+        for (let i = 0; i < this.initWaypoints.length && i < 4; i++) {
           this.waypoints[i].visible = true;
           this.waypoints[i].address = this.initWaypoints[i].address
         }
@@ -307,20 +301,20 @@ export default {
       }
     }
   },
-  mounted(){
+  mounted() {
     this.getRoute();
     this.getCommunities();
   },
   methods: {
-    originSelected: function(address) {
+    originSelected: function (address) {
       this.origin = address;
       this.getRoute();
     },
-    destinationSelected: function(address) {
+    destinationSelected: function (address) {
       this.destination = address;
       this.getRoute();
     },
-    waypointSelected(id,address) {
+    waypointSelected(id, address) {
       this.waypoints[id].address = address;
       this.getRoute();
     },
@@ -328,7 +322,7 @@ export default {
       if (this.origin != null && this.destination != null) {
         let params = `?points[0][longitude]=${this.origin.longitude}&points[0][latitude]=${this.origin.latitude}`;
         let nbWaypoints = 0;
-        this.waypoints.forEach((item,key) => {
+        this.waypoints.forEach((item, key) => {
           if (item.visible && item.address) {
             nbWaypoints++;
             params += `&points[${nbWaypoints}][longitude]=${item.address.longitude}&points[${nbWaypoints}][latitude]=${item.address.latitude}`;
@@ -339,9 +333,15 @@ export default {
         maxios
           .get(`${this.geoRouteUrl}${params}`)
           .then(res => {
-            this.direction = res.data.member[0];
-            this.direction.distance = Math.ceil(this.direction.distance /1000)
-            this.emitEvent();
+            if (res.data.member.length > 0) {
+              this.direction = res.data.member[0];
+              this.direction.distance = Math.ceil(this.direction.distance / 1000)
+              this.emitEvent();
+
+              return;
+            }
+
+            this.$emit("routeMissing", { routeMissing: true, validityPersist: true });
           })
           .catch(err => {
             console.error(err);
@@ -351,7 +351,7 @@ export default {
         this.emitEvent();
       }
     },
-    emitEvent: function() {
+    emitEvent: function () {
       this.$emit("change", {
         origin: this.origin,
         destination: this.destination,
@@ -361,6 +361,7 @@ export default {
         selectedCommunities: this.selectedCommunities,
         communities: this.communities
       });
+      this.$emit("routeMissing", { routeMissing: false, validityPersist: false })
     },
     addWaypoint() {
       if (!this.waypoints[0].visible) {
@@ -387,7 +388,7 @@ export default {
     },
     getCommunities() {
       let params = {
-        'userId':this.user.id
+        'userId': this.user.id
       }
       maxios.post(this.$t("communities.route"), params)
         .then(res => {
