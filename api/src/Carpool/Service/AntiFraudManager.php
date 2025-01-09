@@ -236,7 +236,8 @@ class AntiFraudManager
 
         $adOutwardTime = new \DateTime($ad->getOutwardTime());
         $adOriginDateTime = $ad->getOutwardDate()->setTime($adOutwardTime->format('H'), $adOutwardTime->format('i'), 0);
-        $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getFromTime()->format('H'), $sameDayProposal->getCriteria()->getFromTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
+
+        $departureProposalDateTime = $this->_getDepartureProposalDateTime($adOriginDateTime, $sameDayProposal);
 
         // Case when departure of the posted ad is after the arrival of the proposal
         if ($adOriginDateTime > $departureProposalDateTime) {
@@ -403,6 +404,54 @@ class AntiFraudManager
         return new AntiFraudResponse(true, AntiFraudException::OK);
     }
 
+    private function _getDepartureProposalDateTime($adOriginDateTime, Proposal $sameDayProposal): \DateTime
+    {
+        if (Criteria::FREQUENCY_PUNCTUAL == $sameDayProposal->getCriteria()->getFrequency()) {
+            $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getFromTime()->format('H'), $sameDayProposal->getCriteria()->getFromTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
+        } else {
+            $day = strtolower($adOriginDateTime->format('D'));
+
+            switch ($day) {
+                case 'sun':
+                    $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getSunTime()->format('H'), $sameDayProposal->getCriteria()->getSunTime()->format('i'), $sameDayProposal->getCriteria()->getSunTime()->format('s'));
+
+                    break;
+
+                case 'mon':
+                    $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getMonTime()->format('H'), $sameDayProposal->getCriteria()->getMonTime()->format('i'), $sameDayProposal->getCriteria()->getMonTime()->format('s'));
+
+                    break;
+
+                case 'tue':
+                    $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getTueTime()->format('H'), $sameDayProposal->getCriteria()->getTueTime()->format('i'), $sameDayProposal->getCriteria()->getTueTime()->format('s'));
+
+                    break;
+
+                case 'wed':
+                    $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getWedTime()->format('H'), $sameDayProposal->getCriteria()->getWedTime()->format('i'), $sameDayProposal->getCriteria()->getWedTime()->format('s'));
+
+                    break;
+
+                case 'thu':
+                    $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getThuTime()->format('H'), $sameDayProposal->getCriteria()->getThuTime()->format('i'), $sameDayProposal->getCriteria()->getThuTime()->format('s'));
+
+                    break;
+
+                case 'fri':
+                    $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getFriTime()->format('H'), $sameDayProposal->getCriteria()->getFriTime()->format('i'), $sameDayProposal->getCriteria()->getFriTime()->format('s'));
+
+                    break;
+
+                case 'sat':
+                    $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getSatTime()->format('H'), $sameDayProposal->getCriteria()->getSatTime()->format('i'), $sameDayProposal->getCriteria()->getSatTime()->format('s'));
+
+                    break;
+            }
+        }
+
+        return $departureProposalDateTime;
+    }
+
     /**
      * Anti Fraud System first check - Max number of journeys
      * A user can only have $nbCarpoolsMax on the same day.
@@ -455,7 +504,9 @@ class AntiFraudManager
         $adAddressDestination->setLongitude($ad->getOutwardWaypoints()[$lastWaypoint]['longitude']);
         $travelDurationBetweenAdOriginAndDestination = $this->_getTravelDurationBetweenTwoAddresses([$adAddressOrigin, $adAddressDestination]);
 
-        $departureProposalDateTime = (clone $sameDayProposal->getCriteria()->getFromDate())->setTime($sameDayProposal->getCriteria()->getFromTime()->format('H'), $sameDayProposal->getCriteria()->getFromTime()->format('i'), $sameDayProposal->getCriteria()->getFromTime()->format('s'));
+        $adOutwardTime = new \DateTime($ad->getOutwardTime());
+        $adOriginDateTime = $ad->getOutwardDate()->setTime($adOutwardTime->format('H'), $adOutwardTime->format('i'), 0);
+        $departureProposalDateTime = $this->_getDepartureProposalDateTime($adOriginDateTime, $sameDayProposal);
 
         if (Criteria::FREQUENCY_PUNCTUAL == $sameDayProposal->getCriteria()->getFrequency()) {
             $arrivalAdOutwardDateTime = \DateTime::createFromFormat('U', $sameDayProposal->getCriteria()->getFromDate()->getTimestamp());
