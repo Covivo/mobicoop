@@ -156,7 +156,7 @@ class EventController extends AbstractController
         if (!$user instanceof User) {
             $user = null;
 
-            return $this->redirectToRoute('user_login');
+            return new Response(json_encode('error.loggedOut'));
         }
 
         if ($request->isMethod('POST')) {

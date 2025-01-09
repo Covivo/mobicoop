@@ -1987,6 +1987,11 @@ class UserManager
     public function sendValidationEmail(string $email)
     {
         if ($user = $this->userRepository->findOneBy(['email' => $email])) {
+            if (null === $user->getEmailToken()) {
+                $user->setEmailToken($this->createShortToken());
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+            }
             $event = new UserSendValidationEmailEvent($user);
             $this->eventDispatcher->dispatch(UserSendValidationEmailEvent::NAME, $event);
 
