@@ -39,12 +39,6 @@
       "link1": "images/communication/RZC_Flyer_A5.pdf"
     },
     {
-      "title": "Kit Logos",
-      "image": "images/communication/Logo_logo.jpg",
-      "textDownload": "> Téléchargez",
-      "downloadLink": "images/communication/Kit_logos.zip"
-    },
-    {
       "title": "Stickers",
       "image": "images/communication/RZM_Stickers_Rond_Vignette.jpg",
       "textDownload": "> Téléchargez",
@@ -109,6 +103,12 @@
       "downloadLink": "images/communication/rezopouce-logo-blanc.png",
       "alt": "Logo Rezo Pouce",
       "maxWidth": "125"
+    },
+    {
+      "title": "Kit Logos",
+      "image": "images/communication/Logo_logo.jpg",
+      "textDownload": "> Téléchargez",
+      "downloadLink": "images/communication/Kit_logos.zip"
     }
 
   ]

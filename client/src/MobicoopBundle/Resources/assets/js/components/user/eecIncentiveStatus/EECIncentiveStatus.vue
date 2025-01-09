@@ -22,7 +22,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <div v-if="!loading">
+    <div v-if="!loading && isEecBlockdisplayed">
       <EECIncentiveInitiateSubscription
         v-if="!subscriptionInitiated"
         :confirmed-phone-number="confirmedPhoneNumber"
@@ -38,7 +38,7 @@
         @changeTab="changeTab"
       />
     </div>
-    <div v-else>
+    <div v-else-if="loading">
       <v-skeleton-loader
         class="mx-auto"
         max-width="100%"
@@ -121,6 +121,34 @@ export default {
         return true;
       }
       return false;
+    },
+    isEecBlockdisplayed() {
+      if (this.eecInstance && this.eecInstance.available) {
+        return true;
+      }
+
+      let result = false;
+
+      if (this.subscriptions) {
+        const { longDistanceSubscription, shortDistanceSubscription } = this.subscriptions || {};
+
+        result =
+          (
+            longDistanceSubscription
+            && this.eecInstance.ldExpirationDate
+            && longDistanceSubscription.hasHonorCertificateToken
+            && longDistanceSubscription.expirationDate
+            && new Date(longDistanceSubscription.expirationDate) < new Date(this.eecInstance.ldExpirationDate)
+          )
+          || (
+            shortDistanceSubscription
+            && shortDistanceSubscription.hasCommitToken
+            && shortDistanceSubscription.commitmentProofDate
+            && new Date(shortDistanceSubscription.commitmentProofDate) < new Date(this.eecInstance.sdExpirationDate)
+          );
+      }
+
+      return result;
     }
   },
   mounted(){
