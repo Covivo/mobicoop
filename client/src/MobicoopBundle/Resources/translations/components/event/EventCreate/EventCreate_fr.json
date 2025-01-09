@@ -52,7 +52,8 @@
         }
     },
     "redirect": {
-        "route": "/covoiturages-evenements"
+        "route": "/covoiturages-evenements",
+        "login":"/utilisateur/connexion"
     },
     "error": {
         "event": {
@@ -63,7 +64,8 @@
             "descriptionLength": "Description courte trop longue (512 caractères maximum).",
             "fullDescriptionLength": "Description trop longue (2500 caractères maximum)."
         },
-        "image": "L'image n'a pas été enregistrée"
+        "image": "L'image n'a pas été enregistrée",
+        "loggedOut": "loggedOut"
     },
     "startDate": {
         "label": "Date de début*",

@@ -641,7 +641,10 @@ export default {
           }
         })
         .then(res => {
-          if (res.data.includes('error')) {
+          if (res.data.includes(this.$t('error.loggedOut'))){
+            window.location.href = this.$t('redirect.login');
+          }
+          else if (res.data.includes('error')) {
             this.snackError = this.$t(res.data)
             this.snackbar = true;
           } else {
