@@ -2112,6 +2112,15 @@ class UserManager
         );
     }
 
+    public function removePushToken(User $user): User
+    {
+        foreach ($user->getPushTokens() as $pushToken) {
+            $user->removePushToken($pushToken);
+        }
+
+        return $user;
+    }
+
     private function _attachUserBySso(User $user, SsoUser $ssoUser): User
     {
         // AutoCreate Autoattach disable. If the User isn't already attached to this SSO provider we reject it
