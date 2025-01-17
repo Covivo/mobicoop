@@ -79,7 +79,7 @@ class UserRepository
      *
      * @return null|User
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -120,7 +120,7 @@ class UserRepository
      * @param string $type    Type of SolidaryUser (Beneficiary or Volunteer)
      * @param array  $filters Optionnal filters
      */
-    public function findUsersBySolidaryUserType(string $type = null, array $filters = null, Structure $structureAdmin = null): ?array
+    public function findUsersBySolidaryUserType(?string $type = null, ?array $filters = null, ?Structure $structureAdmin = null): ?array
     {
         $this->logger->info('Start findUsersBySolidaryUserType');
 
@@ -210,7 +210,7 @@ class UserRepository
         return $query->getQuery()->getSingleScalarResult();
     }
 
-    public function findUserWithNoAdSinceXDays(int $nbOfDays = null): ?array
+    public function findUserWithNoAdSinceXDays(?int $nbOfDays = null): ?array
     {
         $now = new \DateTime('now');
         $createdDate = $now->modify('- '.$nbOfDays.' days')->format('Y-m-d');
@@ -243,7 +243,7 @@ class UserRepository
         return $query->getQuery()->getResult();
     }
 
-    public function findUserWithOlderThanXDaysAd(int $nbOfDays = null): ?array
+    public function findUserWithOlderThanXDaysAd(?int $nbOfDays = null): ?array
     {
         $now = (new \DateTime('now'));
         $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
@@ -407,6 +407,10 @@ class UserRepository
             $query .= '
             INNER JOIN address_territory at2 ON ha.id = at2.address_id AND at2.territory_id IN ('.join(',', $restrictionTerritoryIds).')
             ';
+        } elseif (array_key_exists('homeAddressTerritory', $filters)) {
+            $query .= '
+                INNER JOIN address_territory at2 ON ha.id = at2.address_id AND at2.territory_id IN ('.join(',', $filters['homeAddressTerritory']).')
+            ';
         }
 
         foreach ($filters as $filter => $value) {
@@ -538,14 +542,14 @@ class UserRepository
         foreach ($filters as $filter => $value) {
             switch ($filter) {
                 case 'isHitchHiker':
-                    $query .= 'AND (u.hitch_hike_driver IS NOT NULL OR u.hitch_hike_passenger IS NOT NULL) ';
+                    $query .= ' AND (u.hitch_hike_driver IS NOT NULL OR u.hitch_hike_passenger IS NOT NULL) ';
 
                     break;
             }
         }
 
         if (is_array($selected) && count($selected) > 0) {
-            $query .= "AND u.id in ('".implode("','", $selected)."')";
+            $query .= " AND u.id in ('".implode("','", $selected)."')";
         }
 
         $stmt = $this->entityManager->getConnection()->prepare($query);
