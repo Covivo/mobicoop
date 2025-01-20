@@ -86,7 +86,7 @@
                   <div>{{ $t('dialog.latLng', {'lat': selectedRelayPoint.address.latitude, 'lng': selectedRelayPoint.address.longitude}) }}</div>
                 </v-col>
               </v-row>
-              <v-row v-if="selectedRelayPoint.misc.description">
+              <v-row v-if="selectedRelayPoint.misc.description || selectedRelayPoint.misc.fullDescription">
                 <v-col>
                   <div class="black--text text-h6">
                     {{ $t('dialog.moreInfos') }}
@@ -94,6 +94,7 @@
                   <div>
                     {{ selectedRelayPoint.misc.description }}
                   </div>
+                  <div v-html="selectedRelayPoint.misc.fullDescription" />
                 </v-col>
               </v-row>
               <v-row justify="start">

@@ -149,6 +149,13 @@ class RelayPointMap
      */
     private $description;
 
+    /**
+     * @var null|string the description of the relay point
+     *
+     * @Groups({"readRelayPoint"})
+     */
+    private $fullDescription;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -291,5 +298,17 @@ class RelayPointMap
     public function setDescription(?string $description)
     {
         $this->description = $description;
+    }
+
+    public function getFullDescription(): ?string
+    {
+        return $this->fullDescription;
+    }
+
+    public function setFullDescription(?string $fullDescription): self
+    {
+        $this->fullDescription = $fullDescription;
+
+        return $this;
     }
 }
