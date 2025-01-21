@@ -646,7 +646,6 @@ export default {
             this.snackbar = true;
             setTimeout(() => {
               window.location.href = this.$t('redirect.login');
-              console.log("Voici le premier message");
             }, 1500);
           }
           else if (res.data.includes('error')) {
