@@ -30,8 +30,9 @@
             "name": "Dit evenement bestaat al. Gebruik een andere naam",
             "fullDescriptionLength": "Description courte trop longue (2500 caractères maximum)."
         },
-        "loggedOut": "loggedOut"
+        "loggedOut": "Vous avez été déconnecté, votre événement n'a pas été enreigtré"
     },
+    "loggedOut": "loggedOut",
     "redirect": {
         "route": "/covoiturages-evenements",
         "login":"/utilisateur/connexion"
