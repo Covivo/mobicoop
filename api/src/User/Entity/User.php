@@ -132,8 +132,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"patchSso", "readUser","mass","readSolidary","userStructure", "readExport","carpoolExport","eec-timestamps", "readSubscription", "readAdminSubscription"}, "enable_max_depth"="true","skip_null_values"="false"},
- *          "denormalization_context"={"groups"={"write","writeSolidary"}}
+ *          "normalization_context"={"groups"={"patchSso", "readUser","mass","readSolidary","userStructure", "readExport","carpoolExport","eec-timestamps", "readSubscription", "readAdminSubscription", "removePushToken"}, "enable_max_depth"="true","skip_null_values"="false"},
+ *          "denormalization_context"={"groups"={"write","writeSolidary", "removePushToken"}}
  *      },
  *      collectionOperations={
  *          "get"={
@@ -596,6 +596,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Users"}
  *              }
  *          },
+ *          "remove_push_token"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/removePushToken",
+ *              "read"="false",
+ *              "denormalization_context"={"groups"={"removePushToken"}},
+ *              "normalization_context"={"groups"={"removePushToken"}},
+ *              "security"="is_granted('user_register',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
+ *          },
  *          "ADMIN_get"={
  *              "path"="/admin/users/{id}",
  *              "method"="GET",
@@ -734,7 +745,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="integer")
      *
-     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso","eec-timestamps"})
+     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso","eec-timestamps", "removePushToken"})
      *
      * @ApiProperty(identifier=true)
      */
@@ -1192,9 +1203,9 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var null|ArrayCollection a user may have many push token ids
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\PushToken", mappedBy="user", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\PushToken", mappedBy="user", cascade={"persist"}, orphanRemoval=true)
      *
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","removePushToken"})
      */
     private $pushTokens;
 
