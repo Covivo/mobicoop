@@ -12,12 +12,13 @@ use Symfony\Component\Security\Core\Security;
 
 class ExportManager
 {
-    public const ALLOWED_FILTERS = [self::FILTER_COMMUNITY, self::FILTER_HITCHHIKING, self::FILTER_TERRITORY];
+    public const ALLOWED_FILTERS = [self::FILTER_COMMUNITY, self::FILTER_HITCHHIKING, self::FILTER_TERRITORY, self::HOME_ADDRESS_TERRITORY];
     public const SELECTED = 'selected';
     public const MAXIMUM_NUMBER_OF_ROLES = 5;
     public const FILTER_COMMUNITY = 'community';
     public const FILTER_HITCHHIKING = 'isHitchHiker';
     public const FILTER_TERRITORY = 'territory';
+    public const HOME_ADDRESS_TERRITORY = 'homeAddressTerritory';
 
     /**
      * @var User

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -60,12 +61,14 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
             return;
         }
 
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+
         if (is_array($value)) {
             $queryBuilder
-                ->join('u.addresses', 'homeAddress')
+                ->join($rootAlias.'.addresses', 'homeAddress')
                 ->leftJoin('homeAddress.territories', 'hat')
                 ->andWhere('((hat.id in (:value) AND homeAddress.home=1))')
-                ->andWhere('u.status != :status')
+                ->andWhere($rootAlias.'.status != :status')
                 ->setParameter('status', User::STATUS_PSEUDONYMIZED)
                 ->setParameter('value', $value)
             ;
@@ -76,10 +79,10 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
             }
 
             $queryBuilder
-                ->leftJoin('u.addresses', 'homeAddress')
+                ->leftJoin($rootAlias.'.addresses', 'homeAddress')
                 ->leftJoin('homeAddress.territories', 't')
                 ->andWhere(sprintf('t.id = %s AND homeAddress.home=1', $value))
-                ->andWhere('u.status != :status')
+                ->andWhere($rootAlias.'.status != :status')
                 ->setParameter('status', User::STATUS_PSEUDONYMIZED)
             ;
         }

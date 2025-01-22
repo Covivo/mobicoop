@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -53,7 +54,7 @@ final class HitchHikerFilter extends AbstractContextAwareFilter
         return $description;
     }
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?string $operationName = null)
     {
         if ('isHitchHiker' != $property) {
             return;
@@ -62,7 +63,7 @@ final class HitchHikerFilter extends AbstractContextAwareFilter
         $rootAlias = $queryBuilder->getRootAliases()[0];
 
         $queryBuilder
-            ->andWhere('u.status != :status')
+            ->andWhere($rootAlias.'.status != :status')
             ->setParameter('status', User::STATUS_PSEUDONYMIZED)
         ;
 
