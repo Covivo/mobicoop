@@ -102,6 +102,8 @@ class PaymentManager
     private $consumptionFeedbackProvider;
     private $logger;
 
+    private $_defaultCarpoolTimezone;
+
     /**
      * @var JourneyValidation
      */
@@ -142,7 +144,8 @@ class PaymentManager
         EventDispatcherInterface $eventDispatcher,
         ActionRepository $actionRepository,
         ConsumptionFeedbackDataProvider $consumptionFeedbackProvider,
-        JourneyValidation $journeyValidation
+        JourneyValidation $journeyValidation,
+        string $defaultCarpoolTimezone
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -168,6 +171,7 @@ class PaymentManager
         $this->logger = $logger;
         $this->consumptionFeedbackProvider = $consumptionFeedbackProvider;
         $this->_journeyValidation = $journeyValidation;
+        $this->_defaultCarpoolTimezone = $defaultCarpoolTimezone;
     }
 
     /**
@@ -196,7 +200,7 @@ class PaymentManager
                 throw new PaymentException(PaymentException::DAY_OR_WEEK_NOT_PROVIDED);
             }
             if (!is_null($day)) {
-                $fromDate = \DateTime::createFromFormat('Ymd', $day);
+                $fromDate = \DateTime::createFromFormat('Ymd', $day, new \DateTimeZone($this->_defaultCarpoolTimezone));
                 $fromDate->modify('first day of this month');
                 $toDate = clone $fromDate;
                 $toDate->modify('last day of this month');
@@ -293,11 +297,14 @@ class PaymentManager
             }
             $paymentItem->setFrequency($frequency);
             if (Criteria::FREQUENCY_PUNCTUAL == $paymentItem->getFrequency()) {
-                $paymentItem->setDate($carpoolItem->getItemDate());
+                $itemDate = new \DateTime($carpoolItem->getItemDate()->format('Y-m-d H:i:s'), new \DateTimeZone($this->_defaultCarpoolTimezone));
+                $paymentItem->setDate($itemDate);
                 $paymentItem->setAmount($carpoolItem->getAmount());
             } else {
-                $paymentItem->setFromDate($fromDate);
-                $paymentItem->setToDate($toDate);
+                $itemFromDate = new \DateTime($fromDate->format('Y-m-d H:i:s'), new \DateTimeZone($this->_defaultCarpoolTimezone));
+                $itemToDate = new \DateTime($toDate->format('Y-m-d H:i:s'), new \DateTimeZone($this->_defaultCarpoolTimezone));
+                $paymentItem->setFromDate($itemFromDate);
+                $paymentItem->setToDate($itemToDate);
 
                 if (Proposal::TYPE_RETURN == $carpoolItem->getType() && isset($regularAmounts[$carpoolItem->getAsk()->getAskLinked()->getId()]['outward'])) {
                     $paymentItem->setOutwardAmount($regularAmounts[$carpoolItem->getAsk()->getAskLinked()->getId()]['outward']);
