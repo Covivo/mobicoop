@@ -110,6 +110,7 @@ class RelayPointMapManager
         $relayPointMap->setSecured($relayPoint->isSecured());
         $relayPointMap->setOfficial($relayPoint->isOfficial());
         $relayPointMap->setDescription($relayPoint->getDescription());
+        $relayPointMap->setFullDescription($relayPoint->getFullDescription());
 
         if (!is_null($relayPoint->getImages()) && count($relayPoint->getImages()) > 0
             && file_exists('upload/'.RelayPointMap::IMAGE_PATH.'/'.RelayPointMap::IMAGE_VERSION.'-'.$relayPoint->getImages()[0]->getFileName())) {
