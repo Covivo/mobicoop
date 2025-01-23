@@ -36,7 +36,7 @@ class CsvMaker
 {
     public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/csvExport';
     public const PATH_TO_QUERIES = __DIR__.'/queries';
-    public const PATH_TO_QUERIES_CLASSES = 'App\\Utility\\Entity\\CsvMaker\\queries\\';
+    public const PATH_TO_QUERIES_CLASSES = 'App\Utility\Entity\CsvMaker\queries\\';
 
     public const CSV_DELIMITER = ';';
     public const SINGLE_QUERY_FILE_EXTENTION = 'sql';
@@ -86,7 +86,8 @@ class CsvMaker
             $csvExport['serverUri'],
             $csvExport['login'],
             $csvExport['password'],
-            $csvExport['remotePath']
+            $csvExport['remotePath'],
+            $csvExport['port']
         );
     }
 
@@ -126,7 +127,11 @@ class CsvMaker
             mkdir($folder);
         }
 
-        $path = $folder.'/'.date('YmdHis').'-'.$resultsFileName.'.csv';
+        $path = $folder.'/';
+        if (isset($this->_csvExports[$this->_service]['horodatedFiles']) && $this->_csvExports[$this->_service]['horodatedFiles']) {
+            $path .= date('YmdHis').'-';
+        }
+        $path .= $resultsFileName.'.csv';
         $file = fopen($path, 'w+');
         $header = true;
         foreach ($this->_queryResults as $result) {
