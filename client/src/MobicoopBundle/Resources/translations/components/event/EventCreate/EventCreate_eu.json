@@ -30,7 +30,7 @@
             "descriptionLength": "Aurkezpen motza luzeegia da (512 karaktere gehienez).",
             "fullDescriptionLength": "Description courte trop longue (2500 caractères maximum)."
         },
-        "loggedOut": "Vous avez été déconnecté, votre événement n'a pas été enreigtré"
+        "loggedOut": "Vous avez été déconnecté, votre événement n'a pas été enregistré"
       },
       "loggedOut": "loggedOut",
     "redirect": {
