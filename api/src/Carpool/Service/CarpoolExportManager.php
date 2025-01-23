@@ -206,6 +206,7 @@ class CarpoolExportManager
         $sanitizeUserName = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
             ->transliterate($user->getGivenName().$user->getFamilyName())
         ;
+        $sanitizeUserName = str_replace("'", '', $sanitizeUserName);
         $infoForPdf['fileName'] = $now->format('YmdHis').$sanitizeUserName.'ListeDesCovoiturages.pdf';
         $infoForPdf['filePath'] = $this->carpoolExportPath;
         $infoForPdf['returnUrl'] = $this->carpoolExportUri.$infoForPdf['fileName'];
