@@ -62,6 +62,10 @@
     "carpoolIncentive": {
       "title": "Prime Covoiturage",
       "link": "/mobility-package"
+    },
+    "accessibility": {
+      "title": "Accessibility: non-compliant",
+      "link": "/docs/Accessibilite-Mobicoop_Platform.pdf"
     }
   },
   "services": {

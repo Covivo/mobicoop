@@ -65,8 +65,10 @@
             "fullDescriptionLength": "Description trop longue (2500 caractères maximum)."
         },
         "image": "L'image n'a pas été enregistrée",
-        "loggedOut": "loggedOut"
+        "loggedOut": "Vous avez été déconnecté, votre événement n'a pas été enregistré"
     },
+    "loggedOut": "loggedOut",
+
     "startDate": {
         "label": "Date de début*",
         "error": "Obligatoire",

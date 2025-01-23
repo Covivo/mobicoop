@@ -60,8 +60,9 @@
             "fullDescriptionLength": "Full description too long (2500 characters maximum)."
         },
         "image": "The image has not been saved",
-        "loggedOut": "loggedOut"
+        "loggedOut": "You have been disconnected, you're event has not been registered"
     },
+    "loggedOut": "loggedOut",
     "startDate": {
         "label": "Start date*",
         "error": "Required"

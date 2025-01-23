@@ -34,9 +34,9 @@ use Psr\Log\LoggerInterface;
  */
 class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements ProviderInterface
 {
-    public const RESSOURCE_POST = 'v3/journeys';
-    public const RESSOURCE_GET_ITEM = 'v3/journeys/';
-    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3/policies/cee/import';
+    public const RESSOURCE_POST = 'v3.2/journeys';
+    public const RESSOURCE_GET_ITEM = 'v3.2/journeys/';
+    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3.2/policies/cee/import';
 
     public const POLICIES_CEE_IMPORT_LIMIT = 1000;
 

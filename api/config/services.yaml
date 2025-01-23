@@ -1151,6 +1151,7 @@ services:
       $validationDocsPath: "%env(resolve:PAYMENT_VALIDATION_DOCS_PATH)%"
       $validationDocsAuthorizedExtensions: "%env(json:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%"
       $exportPath: "%env(resolve:PAYMENT_EXPORT_PATH)%"
+      $defaultCarpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
 
   App\Payment\Service\BankTransfer\:
     resource: "../src/Payment/Service/BankTransfer/*"
