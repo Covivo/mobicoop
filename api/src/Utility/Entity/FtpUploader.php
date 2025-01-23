@@ -36,19 +36,21 @@ class FtpUploader
     private $_password;
     private $_remotePath;
     private $_file;
+    private $_port;
 
-    public function __construct($protocol, $serverUri, $login, $password, $remotePath = '/')
+    public function __construct($protocol, $serverUri, $login, $password, $remotePath = '/', $port = 22)
     {
         $this->_protocol = $protocol;
         $this->_serverUri = $serverUri;
         $this->_login = $login;
         $this->_password = $password;
         $this->_remotePath = $remotePath;
+        $this->_port = $port;
     }
 
     public function upload(string $file)
     {
-        $sftp = new SFTP($this->_serverUri);
+        $sftp = new SFTP($this->_serverUri, $this->_port);
         if (!$sftp->login($this->_login, $this->_password)) {
             throw new \Exception('Cannot login into your server !');
         }

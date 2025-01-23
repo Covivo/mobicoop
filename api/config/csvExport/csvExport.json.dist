@@ -3,11 +3,13 @@
     "queries": ["query1", "query2"],
     "upload": {
       "protocol": "sftp",
+      "port": 22,
       "serverUri": "server domain or ip without ftp:// or sftp://",
       "remotePath": "remote path for the file",
       "login": "login",
       "password": "password"
     },
-    "anonymize": false
+    "anonymize": false,
+    "horodatedFiles": true
   }
 }
