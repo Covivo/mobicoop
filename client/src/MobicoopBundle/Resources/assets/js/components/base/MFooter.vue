@@ -170,6 +170,14 @@
               @click="showCookiesAction()"
             >{{ $t('tools.cookies.title') }}</a>
           </v-card-text>
+          <v-card-text class="my-0 py-1">
+            <a
+              :href="$t('tools.accessibility.link')"
+              style="text-decoration:none;"
+              class="white--text"
+              target="_blank"
+            >{{ $t('tools.accessibility.title') }}</a>
+          </v-card-text>
 
           <v-card-text class="my-0 pt-3 pb-0 white--text font-weight-bold">
             <span>{{ $t('category.contacts') }}</span>

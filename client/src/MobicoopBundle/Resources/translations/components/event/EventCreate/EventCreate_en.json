@@ -47,7 +47,8 @@
         }
     },
     "redirect": {
-        "route": "/carpools-events"
+        "route": "/carpools-events",
+        "login":"/user/login"
     },
     "error": {
         "event": {
@@ -58,8 +59,10 @@
             "descriptionLength": "Short description too long (512 characters maximum).",
             "fullDescriptionLength": "Full description too long (2500 characters maximum)."
         },
-        "image": "The image has not been saved"
+        "image": "The image has not been saved",
+        "loggedOut": "You have been disconnected, you're event has not been registered"
     },
+    "loggedOut": "loggedOut",
     "startDate": {
         "label": "Start date*",
         "error": "Required"

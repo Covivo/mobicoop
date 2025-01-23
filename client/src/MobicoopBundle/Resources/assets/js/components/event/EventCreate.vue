@@ -641,7 +641,14 @@ export default {
           }
         })
         .then(res => {
-          if (res.data.includes('error')) {
+          if (res.data.includes(this.$t('loggedOut'))){
+            this.snackError = this.$t('error.loggedOut')
+            this.snackbar = true;
+            setTimeout(() => {
+              window.location.href = this.$t('redirect.login');
+            }, 1500);
+          }
+          else if (res.data.includes('error')) {
             this.snackError = this.$t(res.data)
             this.snackbar = true;
           } else {

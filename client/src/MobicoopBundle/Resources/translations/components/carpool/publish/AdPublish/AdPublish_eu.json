@@ -96,6 +96,7 @@
     "update": "covoiturage/annonce/{id}/modifier",
     "publish": "covoiturage/publierannonce"
   },
+  "routeMissingSnackbarText": "Nous n'avons pas trouvé d'itinéraire pour ce trajet.",
   "messageRoundedPrice": "Zure iragarkiaren prezioa borobildu dugu, zure eta beste erabiltzaileen esperentzia hobetzeko. Ulertuko duzulakoan, eskertzen zaitugu.",
   "participation": {
     "text": "Gobernu gomendiek zehazten dituzten prezioak ibilgailu pribatuekin egiten diren bidaiekin lotuak dira. Ez dituzte nehondik engaiatzen parte hartzaileak, ezin ez eta plataforma edota IBM. Zerbitzuaren helburua da enplegatuen arteko harremanen errextea. Xehetasun gehiagorentzat: <a href='/FAQ'>FAQ</a>.",

@@ -29,10 +29,13 @@
             "create": "Het evenement kon niet worden aangemaakt",
             "name": "Dit evenement bestaat al. Gebruik een andere naam",
             "fullDescriptionLength": "Description courte trop longue (2500 caractères maximum)."
-        }
+        },
+        "loggedOut": "Vous avez été déconnecté, votre événement n'a pas été enregistré"
     },
+    "loggedOut": "loggedOut",
     "redirect": {
-        "route": "/covoiturages-evenements"
+        "route": "/covoiturages-evenements",
+        "login":"/utilisateur/connexion"
     },
     "form": {
         "mandatoryCharacter":"*",

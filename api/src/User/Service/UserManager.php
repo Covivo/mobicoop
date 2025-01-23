@@ -78,6 +78,7 @@ use App\User\Event\UserHomeAddressUpdateEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
 use App\User\Event\UserPhoneUpdateEvent;
+use App\User\Event\UserPhoneValidatedEvent;
 use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Event\UserUpdatedSelfEvent;
@@ -1527,6 +1528,10 @@ class UserManager
             $this->entityManager->persist($userFound);
             $this->entityManager->flush();
 
+            // We dispatch the phone validated event
+            $event = new UserPhoneValidatedEvent($userFound);
+            $this->eventDispatcher->dispatch(UserPhoneValidatedEvent::NAME, $event);
+
             //  we dispatch the gamification event associated
             $action = $this->actionRepository->findOneBy(['name' => 'user_phone_validation']);
             $actionEvent = new ActionEvent($action, $userFound);
@@ -1982,6 +1987,11 @@ class UserManager
     public function sendValidationEmail(string $email)
     {
         if ($user = $this->userRepository->findOneBy(['email' => $email])) {
+            if (null === $user->getEmailToken()) {
+                $user->setEmailToken($this->createShortToken());
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+            }
             $event = new UserSendValidationEmailEvent($user);
             $this->eventDispatcher->dispatch(UserSendValidationEmailEvent::NAME, $event);
 
