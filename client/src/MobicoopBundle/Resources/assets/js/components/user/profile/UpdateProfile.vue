@@ -3,7 +3,7 @@
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
-      :color="(errorUpdate) ? 'error' : 'success'"
+      :color="errorUpdate ? 'error' : 'success'"
       top
     >
       {{ errorUpdate ? textSnackError : textSnackOk }}
@@ -21,8 +21,13 @@
       type="success"
       outlined
     >
-      {{ $t('savedCo2', { savedCo2: savedCo2 }) }} CO<sub>2</sub>
+      {{ $t("savedCo2", { savedCo2: savedCo2 }) }} CO<sub>2</sub>
     </v-alert>
+
+    <MissingDataToPayElectronically
+      v-if="user.missingDataToPayElectronically.length > 0"
+      :user="user"
+    />
 
     <!-- Main form -->
     <v-form
@@ -36,7 +41,7 @@
         class="mb-8"
       >
         <v-card-title>
-          {{ $t('titles.personnalInfos') }}
+          {{ $t("titles.personnalInfos") }}
           <v-spacer />
           <v-btn
             color="primary"
@@ -44,7 +49,7 @@
             rounded
             @click="dialogPublicProfile = true"
           >
-            {{ $t('publicProfile.see') }}
+            {{ $t("publicProfile.see") }}
           </v-btn>
         </v-card-title>
         <v-card-text>
@@ -78,8 +83,12 @@
                         mdi-alert-circle-outline
                       </v-icon>
                     </template>
-                    <span v-if="email && emailVerified">{{ $t('email.tooltips.verified') }}</span>
-                    <span v-else-if="email && !emailVerified">{{ $t('email.tooltips.notVerified') }}</span>
+                    <span v-if="email && emailVerified">{{
+                      $t("email.tooltips.verified")
+                    }}</span>
+                    <span v-else-if="email && !emailVerified">{{
+                      $t("email.tooltips.notVerified")
+                    }}</span>
                   </v-tooltip>
                 </template>
               </v-text-field>
@@ -95,7 +104,10 @@
                 :loading="loadingEmail"
                 @click="sendValidationEmail"
               >
-                {{ !emailSended ? $t('email.buttons.label.generateEmail') : $t('email.buttons.label.generateEmailAgain')
+                {{
+                  !emailSended
+                    ? $t("email.buttons.label.generateEmail")
+                    : $t("email.buttons.label.generateEmailAgain")
                 }}
               </v-btn>
             </v-col>
@@ -148,7 +160,17 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col :cols="telephone && phoneVerified ? (phoneCode ? '10' : '12') : (phoneCode ? '4' : '6')">
+            <v-col
+              :cols="
+                telephone && phoneVerified
+                  ? phoneCode
+                    ? '10'
+                    : '12'
+                  : phoneCode
+                    ? '4'
+                    : '6'
+              "
+            >
               <v-text-field
                 v-model="telephone"
                 :label="$t('phone.label')"
@@ -176,8 +198,12 @@
                         mdi-alert-circle-outline
                       </v-icon>
                     </template>
-                    <span v-if="telephone && phoneVerified">{{ $t('phone.tooltips.verified') }}</span>
-                    <span v-if="telephone && !phoneVerified">{{ $t('phone.tooltips.notVerified') }}</span>
+                    <span v-if="telephone && phoneVerified">{{
+                      $t("phone.tooltips.verified")
+                    }}</span>
+                    <span v-if="telephone && !phoneVerified">{{
+                      $t("phone.tooltips.notVerified")
+                    }}</span>
                   </v-tooltip>
                 </template>
               </v-text-field>
@@ -193,8 +219,11 @@
                 :loading="loadingToken"
                 @click="generateToken"
               >
-                {{ phoneToken == null ? $t('phone.buttons.label.generateToken') :
-                  $t('phone.buttons.label.generateNewToken') }}
+                {{
+                  phoneToken == null
+                    ? $t("phone.buttons.label.generateToken")
+                    : $t("phone.buttons.label.generateNewToken")
+                }}
               </v-btn>
             </v-col>
           </v-row>
@@ -219,7 +248,7 @@
                 :loading="loadingValidatePhone"
                 @click="validateToken"
               >
-                {{ $t('phone.buttons.label.validate') }}
+                {{ $t("phone.buttons.label.validate") }}
               </v-btn>
             </v-col>
           </v-row>
@@ -260,7 +289,7 @@
                     mdi-help-circle-outline
                   </v-icon>
                 </template>
-                <span>{{ $t('news.tooltip') }}</span>
+                <span>{{ $t("news.tooltip") }}</span>
               </v-tooltip>
             </v-switch>
             <!--NewsSubscription Confirmation Popup-->
@@ -271,7 +300,7 @@
             >
               <v-card>
                 <v-card-title class="text-h5">
-                  {{ $t('news.confirmation.title') }}
+                  {{ $t("news.confirmation.title") }}
                 </v-card-title>
                 <v-card-text v-html="$t('news.confirmation.content')" />
                 <v-card-actions>
@@ -279,16 +308,19 @@
                   <v-btn
                     color="primary darken-1"
                     text
-                    @click="dialog = false; newsSubscription = true"
+                    @click="
+                      dialog = false;
+                      newsSubscription = true;
+                    "
                   >
-                    {{ $t('no') }}
+                    {{ $t("no") }}
                   </v-btn>
                   <v-btn
                     color="secondary darken-1"
                     text
                     @click="dialog = false"
                   >
-                    {{ $t('yes') }}
+                    {{ $t("yes") }}
                   </v-btn>
                 </v-card-actions>
               </v-card>
@@ -344,7 +376,10 @@
                   <v-text-field
                     :value="computedBirthdateFormat"
                     :label="$t('birthDay.label')"
-                    :rules="[birthdayRules.checkIfAdult, birthdayRules.required]"
+                    :rules="[
+                      birthdayRules.checkIfAdult,
+                      birthdayRules.required
+                    ]"
                     readonly
                     v-on="on"
                   />
@@ -370,7 +405,7 @@
                 v-if="!drivingLicenceNumberValid"
                 type="error"
               >
-                {{ $t('checkDrivingLicenceNumber.error') }}
+                {{ $t("checkDrivingLicenceNumber.error") }}
               </v-alert>
             </v-col>
             <!-- Avatar -->
@@ -407,7 +442,7 @@
                     rounded
                     @click="avatarDelete"
                   >
-                    {{ $t('avatar.delete.label') }}
+                    {{ $t("avatar.delete.label") }}
                     <v-icon
                       right
                       dark
@@ -430,7 +465,11 @@
                     :label="$t('avatar.label')"
                     prepend-icon="mdi-image"
                     :change="previewAvatar()"
-                    :hint="$t('avatar.minPxSize', { size: imageMinPxSize }) + ', ' + $t('avatar.maxMbSize', { size: imageMaxMbSize })"
+                    :hint="
+                      $t('avatar.minPxSize', { size: imageMinPxSize }) +
+                        ', ' +
+                        $t('avatar.maxMbSize', { size: imageMaxMbSize })
+                    "
                     persistent-hint
                     show-size
                     @change="selectedAvatar"
@@ -453,7 +492,7 @@
                 :value="$t('save')"
                 @click="update"
               >
-                {{ $t('save') }}
+                {{ $t("save") }}
               </v-btn>
               <v-dialog
                 v-model="dialogEmail"
@@ -462,7 +501,7 @@
               >
                 <v-card>
                   <v-card-title class="headline">
-                    {{ $t('dialogEmail.title') }}
+                    {{ $t("dialogEmail.title") }}
                   </v-card-title>
                   <v-card-text v-html="$t('dialogEmail.content')" />
                   <v-card-actions>
@@ -472,14 +511,14 @@
                       text
                       @click="cancel"
                     >
-                      {{ $t('dialogEmail.buttons.cancelUpdate') }}
+                      {{ $t("dialogEmail.buttons.cancelUpdate") }}
                     </v-btn>
                     <v-btn
                       color="primary darken-1"
                       text
                       @click="validate"
                     >
-                      {{ $t('dialogEmail.buttons.confirmUpdate') }}
+                      {{ $t("dialogEmail.buttons.confirmUpdate") }}
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -498,7 +537,7 @@
       class="mb-8"
     >
       <v-card-title>
-        {{ $t('homeTown.label') }}
+        {{ $t("homeTown.label") }}
       </v-card-title>
       <v-card-text>
         <v-row no-gutters>
@@ -531,13 +570,12 @@
               type="button"
               @click="updateAddress"
             >
-              {{ $t('address.update.label') }}
+              {{ $t("address.update.label") }}
             </v-btn>
           </v-col>
         </v-row>
       </v-card-text>
     </v-card>
-
 
     <!-- Password form -->
     <v-card
@@ -546,7 +584,7 @@
       class="mb-8"
     >
       <v-card-title>
-        {{ $t('titles.password') }}
+        {{ $t("titles.password") }}
       </v-card-title>
       <v-card-text>
         <ChangePassword />
@@ -573,7 +611,7 @@
       class="mb-8"
     >
       <v-card-title>
-        {{ $t('buttons.supprimerAccount') }}
+        {{ $t("buttons.supprimerAccount") }}
       </v-card-title>
       <v-card-text v-if="!ssoExternalAccountDeletion">
         <v-row justify="center">
@@ -588,13 +626,15 @@
                   class="button"
                   color="error"
                   rounded
-                  :disabled="!valid || disabledCreatedEvents || disabledOwnedCommunities"
+                  :disabled="
+                    !valid || disabledCreatedEvents || disabledOwnedCommunities
+                  "
                   :loading="loading"
                   type="button"
                   :value="$t('save')"
                   v-on="on"
                 >
-                  {{ $t('buttons.supprimerAccount') }}
+                  {{ $t("buttons.supprimerAccount") }}
                 </v-btn>
               </template>
 
@@ -604,14 +644,14 @@
                   class="text-h5 error--text"
                   primary-title
                 >
-                  {{ $t('dialog.titles.deletionImpossible') }}
+                  {{ $t("dialog.titles.deletionImpossible") }}
                 </v-card-title>
                 <v-card-title
                   v-else
                   class="text-h5"
                   primary-title
                 >
-                  {{ $t('dialog.titles.deleteAccount') }}
+                  {{ $t("dialog.titles.deleteAccount") }}
                 </v-card-title>
 
                 <v-card-text>
@@ -635,9 +675,12 @@
                   <v-btn
                     color="primary darken-1"
                     text
-                    @click="dialogDelete = false; newsSubscription = true"
+                    @click="
+                      dialogDelete = false;
+                      newsSubscription = true;
+                    "
                   >
-                    {{ $t('dialog.buttons.close') }}
+                    {{ $t("dialog.buttons.close") }}
                   </v-btn>
                 </v-card-actions>
                 <v-card-actions v-else>
@@ -645,9 +688,12 @@
                   <v-btn
                     color="primary darken-1"
                     text
-                    @click="dialogDelete = false; newsSubscription = true"
+                    @click="
+                      dialogDelete = false;
+                      newsSubscription = true;
+                    "
                   >
-                    {{ $t('no') }}
+                    {{ $t("no") }}
                   </v-btn>
                   <v-btn
                     color="primary"
@@ -655,7 +701,7 @@
                     :href="$t('route.supprimer')"
                     @click="dialogDelete = false"
                   >
-                    {{ $t('dialog.buttons.confirmDelete') }}
+                    {{ $t("dialog.buttons.confirmDelete") }}
                   </v-btn>
                 </v-card-actions>
               </v-card>
@@ -666,7 +712,9 @@
       <v-card-text v-else>
         <v-row>
           <v-col col="12">
-            {{ $t('ssoDeleteAccountWarning', { 'service': ssoConnection.service }) }}
+            {{
+              $t("ssoDeleteAccountWarning", { service: ssoConnection.service })
+            }}
           </v-col>
         </v-row>
       </v-card-text>
@@ -679,7 +727,7 @@
     >
       <v-card>
         <v-card-title class="headline grey lighten-2">
-          {{ $t('publicProfile.title') }}
+          {{ $t("publicProfile.title") }}
         </v-card-title>
 
         <v-card-text>
@@ -700,7 +748,7 @@
             text
             @click="dialogPublicProfile = false"
           >
-            {{ $t('publicProfile.close') }}
+            {{ $t("publicProfile.close") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -716,8 +764,19 @@ import ChangePassword from "@components/user/profile/ChangePassword";
 import PublicProfile from "@components/user/profile/PublicProfile";
 import EECIncentiveStatus from "@components/user/eecIncentiveStatus/EECIncentiveStatus";
 import { merge } from "lodash";
-import { messages_en, messages_fr, messages_eu, messages_nl } from "@translations/components/user/profile/UpdateProfile/";
-import { messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl } from "@clientTranslations/components/user/profile/UpdateProfile/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/user/profile/UpdateProfile/";
+import {
+  messages_client_en,
+  messages_client_fr,
+  messages_client_eu,
+  messages_client_nl
+} from "@clientTranslations/components/user/profile/UpdateProfile/";
+import MissingDataToPayElectronically from "@components/user/profile/MissingDataToPayElectronically.vue";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -727,17 +786,18 @@ let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'nl': MessagesMergedNl,
-      'fr': MessagesMergedFr,
-      'eu': MessagesMergedEu
-    },
+      en: MessagesMergedEn,
+      nl: MessagesMergedNl,
+      fr: MessagesMergedFr,
+      eu: MessagesMergedEu
+    }
   },
   components: {
     PublicProfile,
     Geocomplete,
     ChangePassword,
-    EECIncentiveStatus
+    EECIncentiveStatus,
+    MissingDataToPayElectronically
   },
   props: {
     geoSearchUrl: {
@@ -808,7 +868,8 @@ export default {
       type: Array,
       default: () => []
     },
-    eecInstance: {              // The EEC service status for the instance
+    eecInstance: {
+      // The EEC service status for the instance
       type: Object,
       default: () => ({})
     },
@@ -823,7 +884,7 @@ export default {
       dialogDelete: false,
       dialogPublicProfile: false,
       snackbar: false,
-      textSnackOk: this.$t('snackBar.profileUpdated'),
+      textSnackOk: this.$t("snackBar.profileUpdated"),
       textSnackError: this.$t("snackBar.passwordUpdateError"),
       errorUpdate: false,
       valid: true,
@@ -834,20 +895,16 @@ export default {
       email: this.user.email,
       telephone: this.user.telephone,
       phoneCode: this.user.phoneCode,
-      phoneCodeRules: [
-        (v) => !!v || this.$t("phoneCode.errors.required"),
-      ],
+      phoneCodeRules: [v => !!v || this.$t("phoneCode.errors.required")],
       givenName: this.user.givenName,
-      givenNameRules: [
-        (v) => !!v || this.$t("givenName.errors.required"),
-      ],
+      givenNameRules: [v => !!v || this.$t("givenName.errors.required")],
       familyName: this.user.familyName,
-      familyNameRules: [
-        (v) => !!v || this.$t("familyName.errors.required"),
-      ],
+      familyNameRules: [v => !!v || this.$t("familyName.errors.required")],
       birthDay: this.user.birthDate ? this.user.birthDate.date : null,
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
-      drivingLicenceNumber: this.user.drivingLicenceNumber ? this.user.drivingLicenceNumber : null,
+      drivingLicenceNumber: this.user.drivingLicenceNumber
+        ? this.user.drivingLicenceNumber
+        : null,
       phoneErrors: [],
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
@@ -858,20 +915,35 @@ export default {
         value: this.user.phoneDisplay
       },
       phoneDisplays: [
-        { value: 1, label: this.$t('phoneDisplay.label.restricted') },
-        { value: 2, label: this.$t('phoneDisplay.label.all') }
+        { value: 1, label: this.$t("phoneDisplay.label.restricted") },
+        { value: 2, label: this.$t("phoneDisplay.label.all") }
       ],
       avatar: null,
       avatarHeight: null,
       avatarWidth: null,
       avatarRules: [
-        v => !v || v.size < this.imageMaxMbSize * 1024 * 1024 || this.$t("avatar.size") + " (Max " + (this.imageMaxMbSize) + "MB)",
-        v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
-        v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
+        v =>
+          !v ||
+          v.size < this.imageMaxMbSize * 1024 * 1024 ||
+          this.$t("avatar.size") + " (Max " + this.imageMaxMbSize + "MB)",
+        v =>
+          !v ||
+          this.avatarHeight >= this.imageMinPxSize ||
+          this.$t("avatar.pxSize", {
+            size: this.imageMinPxSize,
+            height: this.avatarHeight,
+            width: this.avatarWidth
+          }),
+        v =>
+          !v ||
+          this.avatarWidth >= this.imageMinPxSize ||
+          this.$t("avatar.pxSize", {
+            size: this.imageMinPxSize,
+            height: this.avatarHeight,
+            width: this.avatarWidth
+          })
       ],
-      tokenRules: [
-        v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
-      ],
+      tokenRules: [v => /^\d{4}$/.test(v) || this.$t("phone.token.inputError")],
       birthdayRules: {
         required: v => !!v || this.$t("birthDay.errors.required"),
         checkIfAdult: value => {
@@ -879,13 +951,16 @@ export default {
           var d2 = moment(value, "DD/MM/YYYY").toDate();
 
           var diff = (d1.getTime() - d2.getTime()) / 1000;
-          diff /= (60 * 60 * 24);
+          diff /= 60 * 60 * 24;
 
           var diffYears = Math.abs(Math.floor(diff / 365.24));
-          return diffYears >= 16 || this.$t("birthDay.errors.notadult")
+          return diffYears >= 16 || this.$t("birthDay.errors.notadult");
         }
       },
-      newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
+      newsSubscription:
+        this.user && this.user.newsSubscription !== null
+          ? this.user.newsSubscription
+          : null,
       urlAvatar: this.user.avatars[this.user.avatars.length - 1],
       displayFileUpload: this.user.images.length == 0,
       phoneVerified: null,
@@ -908,9 +983,10 @@ export default {
       dialogEmail: false,
       ssoConnection: null,
       drivingLicenceNumberValid: true,
-      gratuitySubscription: this.user && this.user.gratuity !== null ? this.user.gratuity : null,
+      gratuitySubscription:
+        this.user && this.user.gratuity !== null ? this.user.gratuity : null,
       flags: this.phoneCodes,
-      cleanedPhoneNumber: null,
+      cleanedPhoneNumber: null
     };
   },
   computed: {
@@ -918,7 +994,10 @@ export default {
       const currentYear = new Date().getFullYear();
       const ageMin = Number(this.ageMin);
       const ageMax = Number(this.ageMax);
-      return Array.from({ length: ageMax - ageMin }, (value, index) => (currentYear - ageMin) - index)
+      return Array.from(
+        { length: ageMax - ageMin },
+        (value, index) => currentYear - ageMin - index
+      );
     },
     computedBirthdateFormat() {
       if (this.birthDay) {
@@ -944,29 +1023,26 @@ export default {
       return false;
     },
     genders() {
-      return this.$t("gender.values").filter((genderItem) => {
+      return this.$t("gender.values").filter(genderItem => {
         return this.gendersList.includes(parseInt(genderItem.value));
       });
     },
     gratuityActive() {
-      return this.$store.getters['grt/isActive'];
+      return this.$store.getters["grt/isActive"];
     },
     isEecblockDisplayed() {
       return (
-        this.ceeDisplay
-        && (
-          this.eecInstance.available
-          || (
-            !this.eecInstance.available
-            && (this.user.longDistanceSubscription || this.user.shortDistanceSubscription)
-          )
-        )
+        this.ceeDisplay &&
+        (this.eecInstance.available ||
+          (!this.eecInstance.available &&
+            (this.user.longDistanceSubscription ||
+              this.user.shortDistanceSubscription)))
       );
     }
   },
   watch: {
     menu(val) {
-      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+      val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
     },
     telephone(val) {
       this.phoneToken = null;
@@ -976,23 +1052,22 @@ export default {
         .post(
           this.$t("phone.checkValidity.url"),
           {
-            telephone: this.cleanedPhoneNumber,
+            telephone: this.cleanedPhoneNumber
           },
           {
             headers: {
-              "content-type": "application/json",
-            },
+              "content-type": "application/json"
+            }
           }
         )
-        .then((response) => {
+        .then(response => {
           if (response.data.valid) {
             this.phoneErrors = [];
-          }
-          else {
+          } else {
             this.phoneErrors = [this.$t("phone.errors.valid")];
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error(error);
           this.phoneErrors = [this.$t("phone.errors.valid")];
         });
@@ -1005,23 +1080,22 @@ export default {
         .post(
           this.$t("phone.checkValidity.url"),
           {
-            telephone: this.cleanedPhoneNumber,
+            telephone: this.cleanedPhoneNumber
           },
           {
             headers: {
-              "content-type": "application/json",
-            },
+              "content-type": "application/json"
+            }
           }
         )
-        .then((response) => {
+        .then(response => {
           if (response.data.valid) {
             this.phoneErrors = [];
-          }
-          else {
+          } else {
             this.phoneErrors = [this.$t("phone.errors.valid")];
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error(error);
           this.phoneErrors = [this.$t("phone.errors.valid")];
         });
@@ -1054,7 +1128,7 @@ export default {
       // this.$emit('updateUser', {"homeAddress": this.homeAddress})
     },
     save(date) {
-      this.$refs.menu.save(date)
+      this.$refs.menu.save(date);
     },
 
     validate() {
@@ -1090,18 +1164,22 @@ export default {
       updateUser.append("drivingLicenceNumber", this.drivingLicenceNumber);
 
       maxios
-        .post(this.$t('route.update'), updateUser,
-          {
-            headers: {
-              'content-type': 'multipart/form-data'
-            }
-          })
+        .post(this.$t("route.update"), updateUser, {
+          headers: {
+            "content-type": "multipart/form-data"
+          }
+        })
         .then(res => {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
           this.loading = false;
-          if (this.drivingLicenceNumber && this.user.drivingLicenceNumber != this.drivingLicenceNumber) {
-            this.$emit('updateUser', { "drivingLicenceNumber": this.drivingLicenceNumber })
+          if (
+            this.drivingLicenceNumber &&
+            this.user.drivingLicenceNumber != this.drivingLicenceNumber
+          ) {
+            this.$emit("updateUser", {
+              drivingLicenceNumber: this.drivingLicenceNumber
+            });
           }
           if (this.user.telephone != this.telephone) {
             this.phoneValidatedDate = null;
@@ -1119,40 +1197,43 @@ export default {
     },
     updateAddress() {
       this.loadingAddress = true;
-      this.homeAddress.id = this.user.homeAddress ? this.user.homeAddress.id : null;
+      this.homeAddress.id = this.user.homeAddress
+        ? this.user.homeAddress.id
+        : null;
       maxios
-        .post(this.$t('address.update.route'), this.homeAddress,
-          {
-            headers: {
-              'content-type': 'application/json'
-            }
-          })
+        .post(this.$t("address.update.route"), this.homeAddress, {
+          headers: {
+            "content-type": "application/json"
+          }
+        })
         .then(res => {
           this.homeAddress = res.data;
           this.loadingAddress = false;
           this.disabledAddress = true;
-          this.$emit('updateUser', { "homeAddress": this.homeAddress })
+          this.$emit("updateUser", { homeAddress: this.homeAddress });
         });
     },
     avatarDelete() {
       this.loadingDelete = true;
-      maxios
-        .get(this.$t('avatar.delete.route'))
-        .then(res => {
-          this.errorUpdate = res.data.state;
-          this.displayFileUpload = true;
-          this.loadingDelete = false;
-          this.urlAvatar = res.data[res.data.length - 1];
-          this.avatarWidth = null;
-          this.avatarHeight = null;
-        });
+      maxios.get(this.$t("avatar.delete.route")).then(res => {
+        this.errorUpdate = res.data.state;
+        this.displayFileUpload = true;
+        this.loadingDelete = false;
+        this.urlAvatar = res.data[res.data.length - 1];
+        this.avatarWidth = null;
+        this.avatarHeight = null;
+      });
     },
     previewAvatar() {
       if (this.avatar) {
         let reader = new FileReader();
-        reader.addEventListener("load", function () {
-          this.urlAvatar = reader.result; // UPDATE PREVIEW
-        }.bind(this), false);
+        reader.addEventListener(
+          "load",
+          function() {
+            this.urlAvatar = reader.result; // UPDATE PREVIEW
+          }.bind(this),
+          false
+        );
         reader.readAsDataURL(this.avatar); // FIRE LOAD EVENT
       }
       // else {
@@ -1173,11 +1254,10 @@ export default {
         img.onload = () => {
           self.avatarHeight = img.height;
           self.avatarWidth = img.width;
-          self.$refs.avatar.validate()
-        }
+          self.$refs.avatar.validate();
+        };
         img.src = evt.target.result;
-      }
-
+      };
     },
     checkVerifiedPhone() {
       if (this.telephone !== null) {
@@ -1191,93 +1271,89 @@ export default {
     },
     generateToken() {
       this.loadingToken = true;
-      maxios
-        .get(this.$t('phone.token.route'))
-        .then(res => {
-          if (res.data.state) {
-            this.errorUpdate = true;
-            this.textSnackError = this.$t('snackBar.tokenError');
-            this.snackbar = true;
-          }
-          this.textSnackOk = this.$t('snackBar.tokenOk');
+      maxios.get(this.$t("phone.token.route")).then(res => {
+        if (res.data.state) {
+          this.errorUpdate = true;
+          this.textSnackError = this.$t("snackBar.tokenError");
           this.snackbar = true;
-          this.phoneToken = true;
-          this.token = null;
-          this.loadingToken = false;
-        })
+        }
+        this.textSnackOk = this.$t("snackBar.tokenOk");
+        this.snackbar = true;
+        this.phoneToken = true;
+        this.token = null;
+        this.loadingToken = false;
+      });
     },
     sendValidationEmail() {
       this.loadingEmail = true;
-      maxios
-        .get(this.$t('email.verificationRoute'))
-        .then(res => {
-          if (res.data.state) {
-            this.errorUpdate = true;
-            this.textSnackError = this.$t('snackBar.emailError');
-            this.snackbar = true;
-          }
-          this.textSnackOk = this.$t('snackBar.emailOk');
+      maxios.get(this.$t("email.verificationRoute")).then(res => {
+        if (res.data.state) {
+          this.errorUpdate = true;
+          this.textSnackError = this.$t("snackBar.emailError");
           this.snackbar = true;
-          this.emailSended = true;
-          this.loadingEmail = false;
-        })
+        }
+        this.textSnackOk = this.$t("snackBar.emailOk");
+        this.snackbar = true;
+        this.emailSended = true;
+        this.loadingEmail = false;
+      });
     },
     validateToken() {
       this.loadingValidatePhone = true;
       maxios
-        .post(this.$t('phone.validation.route'),
+        .post(
+          this.$t("phone.validation.route"),
           {
             token: this.token,
             telephone: this.telephone
-          }, {
+          },
+          {
             headers: {
-              'content-type': 'application/json'
+              "content-type": "application/json"
             }
-          })
+          }
+        )
         .then(res => {
           if (!res.data) {
             this.errorUpdate = true;
             this.textSnackError = this.$t("snackBar.unknown");
             this.snackbar = true;
-          }
-          else {
+          } else {
             this.phoneVerified = true;
           }
           this.loadingValidatePhone = false;
-        })
+        });
       // Todo create "emit" event to refresh the alerts
     },
     getOwnedCommunities() {
       let params = {
-        'userId': this.user.id
-      }
+        userId: this.user.id
+      };
       this.disabledOwnedCommunities = true;
-      maxios.post(this.$t("communities.route"), params)
-        .then(res => {
-          if (res.data.length > 0) {
-            this.ownedCommunities = res.data;
-            this.hasOwnedCommunities = true;
-          }
-          this.disabledOwnedCommunities = false;
-        });
+      maxios.post(this.$t("communities.route"), params).then(res => {
+        if (res.data.length > 0) {
+          this.ownedCommunities = res.data;
+          this.hasOwnedCommunities = true;
+        }
+        this.disabledOwnedCommunities = false;
+      });
     },
     getCreatedEvents() {
       let params = {
-        'userId': this.user.id
-      }
+        userId: this.user.id
+      };
       this.disabledCreatedEvents = true;
-      maxios.post(this.$t("events.route"), params)
-        .then(res => {
-          if (res.data.length > 0) {
-            this.createdEvents = res.data;
-            this.createdEvents.forEach(createdEvent => {
-              if (moment(createdEvent.toDate.date) >= moment(new Date())) {
-                this.hasCreatedEvents = true;
-              }
-            });
-          }
-          this.disabledCreatedEvents = false;
-        });
+      maxios.post(this.$t("events.route"), params).then(res => {
+        if (res.data.length > 0) {
+          this.createdEvents = res.data;
+          this.createdEvents.forEach(createdEvent => {
+            if (moment(createdEvent.toDate.date) >= moment(new Date())) {
+              this.hasCreatedEvents = true;
+            }
+          });
+        }
+        this.disabledCreatedEvents = false;
+      });
     },
     maxDate() {
       let maxDate = new Date();
@@ -1286,17 +1362,16 @@ export default {
     },
     getSso() {
       let params = {
-        "service": this.user.ssoProvider
-      }
-      maxios.post(this.$t("urlGetSsoServices"), params)
-        .then(response => {
-          if (response.data.length > 0) {
-            this.ssoConnection = response.data[0];
-          }
-        });
+        service: this.user.ssoProvider
+      };
+      maxios.post(this.$t("urlGetSsoServices"), params).then(response => {
+        if (response.data.length > 0) {
+          this.ssoConnection = response.data[0];
+        }
+      });
     },
     changeTab(tab) {
-      this.$emit('changeTab', tab);
+      this.$emit("changeTab", tab);
     },
     checkDrivingLicenceNumber() {
       this.drivingLicenceNumberValid = true;
@@ -1305,23 +1380,22 @@ export default {
           .post(
             this.$t("checkDrivingLicenceNumber.url"),
             {
-              driverLicenceNumber: this.drivingLicenceNumber,
+              driverLicenceNumber: this.drivingLicenceNumber
             },
             {
               headers: {
-                "content-type": "application/json",
-              },
+                "content-type": "application/json"
+              }
             }
           )
-          .then((response) => {
+          .then(response => {
             if (response.data.valid) {
-              this.drivingLicenceNumberValid = response.data.valid
-            }
-            else {
+              this.drivingLicenceNumberValid = response.data.valid;
+            } else {
               this.drivingLicenceNumberValid = false;
             }
           })
-          .catch(function (error) {
+          .catch(function(error) {
             console.error(error);
             this.drivingLicenceNumberValid = false;
           });
@@ -1331,11 +1405,12 @@ export default {
       if (this.phoneCode == null) {
         this.cleanedPhoneNumber = this.telephone;
       } else {
-        this.cleanedPhoneNumber = '+' + this.phoneCode + this.telephone.replace(/^0+/, "");
+        this.cleanedPhoneNumber =
+          "+" + this.phoneCode + this.telephone.replace(/^0+/, "");
       }
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 #avatar {

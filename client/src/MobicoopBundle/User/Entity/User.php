@@ -622,6 +622,13 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $referral;
 
+    /**
+     * Show what's missing for the user to pay electronically.
+     *
+     * @var null|array
+     */
+    private $missingDataToPayElectronically;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1844,6 +1851,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getMissingDataToPayElectronically(): ?array
+    {
+        return is_null($this->missingDataToPayElectronically) ? [] : $this->missingDataToPayElectronically;
+    }
+
+    public function setMissingDataToPayElectronically(array $missingDataToPayElectronically): self
+    {
+        $this->missingDataToPayElectronically = $missingDataToPayElectronically;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1909,6 +1928,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'needParentalConsent' => $this->getNeedParentalConsent(),
             'oldEnoughToDrive' => $this->isOldEnoughToDrive(),
             'referral' => $this->getReferral(),
+            'missingDataToPayElectronically' => $this->getMissingDataToPayElectronically(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
