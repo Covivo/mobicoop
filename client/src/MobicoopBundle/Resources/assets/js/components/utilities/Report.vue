@@ -42,8 +42,17 @@
             <v-form
               ref="form"
               v-model="valid"
-              lazy-validation
             >
+              <!-- Honey pot -->
+              <v-text-field
+                ref="name"
+                v-model="name"
+                class="noney"
+                :label="$t('popup.form.name.label')"
+                aria-required="true"
+                required
+              />
+              <!-- /Honey pot -->
               <v-text-field
                 ref="email"
                 v-model="email"
@@ -137,7 +146,8 @@ export default {
       text: null,
       textRules: [
         v => !!v || this.$t("popup.form.text.errors.required")
-      ]
+      ],
+      name: "" // honey pot data
     }
   },
   computed : {
@@ -185,7 +195,8 @@ export default {
 
       let params = {
         "email": this.email,
-        "text": this.text
+        "text": this.text,
+        "name": this.name, // honey pot data
       }
 
       maxios
@@ -202,3 +213,14 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+
+  /* Honey pot */
+  /* no display none / opacity 0 or visibility hidden to avoid bot from checking it */
+ .noney {
+    position: absolute;
+    top: -1500px;
+    left: 0;
+  }
+</style>
