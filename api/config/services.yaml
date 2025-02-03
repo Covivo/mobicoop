@@ -1336,6 +1336,15 @@ services:
     tags:
       - { name: monolog.logger, channel: user_auto_delete }
 
+  App\User\Service\HitchhickerIncompleteRegistrationRelauncher:
+    arguments:
+      $active: "%env(bool:HITCHHICKER_INCOMPLETE_REGISTRATION_RELAUNCHER_ACTIVE)%"
+    tags:
+      - {
+          name: monolog.logger,
+          channel: hitchhicker_incomplete_registration_relauncher,
+        }
+
   App\User\Service\IdentityProofManager:
     arguments:
       $uploadPath: "%kernel.project_dir%/public/upload/users/proofs/"

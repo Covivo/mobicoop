@@ -715,4 +715,18 @@ class UserRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @return User[]
+     */
+    public function findUsersHitchhickersIncompleteRegistrationOn(\DateTime $date): array
+    {
+        $qb = $this->repository->createQueryBuilder('u')
+            ->where('u.createdDate LIKE :createdDate')
+            ->andWhere('u.hitchHikePassenger = 1 OR u.hitchHikeDriver = 1')
+            ->setParameter('createdDate', $date->format('Y-m-d').'%')
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
 }
