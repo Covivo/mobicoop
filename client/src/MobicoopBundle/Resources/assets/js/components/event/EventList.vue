@@ -94,6 +94,7 @@
                       type="button"
                       color="secondary"
                       rounded
+                      :disabled="!isLogged"
                       :href="paths.event_create"
                     >
                       {{ $t('createEvent') }}
@@ -200,6 +201,7 @@
                       v-if="eventButtonDisplay"
                       type="button"
                       color="secondary"
+                      :disabled="!isLogged"
                       rounded
                       :href="paths.event_create"
                     >

@@ -56,6 +56,7 @@
             </v-btn>
             <v-btn
               rounded
+              :disabled="createEventDisabled()"
               color="secondary"
               :href="this.$t('events.button2.route')"
               class="white--text mt-4"
@@ -193,6 +194,15 @@ export default {
       mobileUrl: this.urlMobile,
       imageLink: "/images/pages/home/",
       items:this.$t("items")
+    }
+  },
+  methods: {
+    createEventDisabled() {
+      if (this.userId !== null) {
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 }
