@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -156,10 +157,16 @@ class EventController extends AbstractController
         if (!$user instanceof User) {
             $user = null;
 
-            return new Response(json_encode('error.loggedOut'));
+            return $this->redirectToRoute('user_login');
         }
 
         if ($request->isMethod('POST')) {
+            // Redirect to user_login
+            if (!$user instanceof User) {
+                $user = null;
+
+                return new Response(json_encode('error.loggedOut'));
+            }
             // Create event and return response code
             if ($event = $eventManager->createEvent($request->request, $event, $user)) {
                 // Post avatar of the event
@@ -173,12 +180,14 @@ class EventController extends AbstractController
                     }
                     // If an error occur on upload image, the event is already create, so we delete him
                     $eventManager->deleteEvent($event->getId());
+
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
 
                 return new Response();
             }
+
             // return error if event post didn't work
             return new Response(json_encode('error.event.create'));
         }
@@ -285,6 +294,7 @@ class EventController extends AbstractController
 
                 return new Response();
             }
+
             // return error if event post didn't work
             return new Response(json_encode('error.event.create'));
         }
@@ -329,6 +339,7 @@ class EventController extends AbstractController
     {
         // retreive event;
         $event = $eventManager->getEvent($id);
+
         // $this->denyAccessUnlessGranted('show', $community);
         return $this->render('@Mobicoop/event/event-get-widget.html.twig', [
             'event' => $event,
