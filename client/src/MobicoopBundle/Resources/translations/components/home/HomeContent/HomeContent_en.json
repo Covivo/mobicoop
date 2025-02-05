@@ -38,7 +38,8 @@
         },
         "button2": {
             "label": "Add an event",
-            "route": "/event/create"
+            "route": "/event/create",
+            "tooltip": "To create an event, please log in."
         }
     },
     "articles": {

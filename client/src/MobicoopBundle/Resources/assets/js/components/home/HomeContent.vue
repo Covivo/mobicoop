@@ -54,15 +54,32 @@
             >
               {{ $t('events.button1.label') }}
             </v-btn>
-            <v-btn
-              rounded
-              :disabled="createEventDisabled()"
-              color="secondary"
-              :href="this.$t('events.button2.route')"
-              class="white--text mt-4"
+
+            <v-tooltip
+              bottom
+              color="info"
             >
-              {{ $t('events.button2.label') }}
-            </v-btn>
+              <template v-slot:activator="{ on }">
+                <div v-on="on">
+                  <v-btn
+                    rounded
+                    :disabled="createEventDisabled()"
+                    :href="linkToCreateEvent"
+                    color="secondary"
+                    class="white--text mt-4"
+                  >
+                    {{ $t('events.button2.label') }}
+                  </v-btn>
+                </div>
+              </template>
+              <span>
+                {{ $t('events.button2.tooltip') }}
+              </span>
+            </v-tooltip>
+
+
+
+
             <v-img
               class="mt-6"
               :src="imageLink + 'van_evenement.svg'"
@@ -193,7 +210,8 @@ export default {
     return {
       mobileUrl: this.urlMobile,
       imageLink: "/images/pages/home/",
-      items:this.$t("items")
+      items:this.$t("items"),
+      linkToCreateEvent: this.$t('events.button2.route'),
     }
   },
   methods: {

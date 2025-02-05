@@ -25,7 +25,8 @@
     "events": {
         "button2": {
             "route": "/evenement/aanmaken",
-            "label": "Een evenement toevoegen"
+            "label": "Een evenement toevoegen",
+            "tooltip": "Pour créer un événement, veuillez vous connecter."
         },
         "button1": {
             "route": "/evenementen",

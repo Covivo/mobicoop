@@ -17,6 +17,7 @@
     "events": "Ekitaldiak autokidetzan",
     "getCommunities": "/community/getCommunityList",
     "filterByCommunity":"filtrer par communauté",
-    "seeEvent":"Voir l'évènement"
+    "seeEvent":"Voir l'évènement",
+    "tooltip": "Pour créer un événement, veuillez vous connecter."
 
 }

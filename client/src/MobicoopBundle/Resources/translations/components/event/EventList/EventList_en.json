@@ -17,6 +17,8 @@
     "events": "The carpool events",
     "getCommunities": "/community/getCommunityList",
     "filterByCommunity":"filtrer par communauté",
-    "seeEvent":"View the event"
+    "seeEvent":"View the event",
+    "tooltip": "To create an event, please log in."
+
 
 }

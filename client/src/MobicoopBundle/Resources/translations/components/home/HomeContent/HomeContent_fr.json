@@ -38,7 +38,8 @@
         },
         "button2": {
             "label": "Ajouter un événement",
-            "route": "/evenement/creer"
+            "route": "/evenement/creer",
+            "tooltip": "Pour créer un événement, veuillez vous connecter."
         }
     },
     "articles": {

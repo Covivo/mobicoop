@@ -90,15 +90,27 @@
                     v-if="eventButtonDisplay"
                     cols="6"
                   >
-                    <v-btn
-                      type="button"
-                      color="secondary"
-                      rounded
-                      :disabled="!isLogged"
-                      :href="paths.event_create"
+                    <v-tooltip
+                      bottom
+                      color="info"
                     >
-                      {{ $t('createEvent') }}
-                    </v-btn>
+                      <template v-slot:activator="{ on }">
+                        <div v-on="on">
+                          <v-btn
+                            type="button"
+                            color="secondary"
+                            rounded
+                            :disabled="!isLogged"
+                            :href="paths.event_create"
+                          >
+                            {{ $t('createEvent') }}
+                          </v-btn>
+                        </div>
+                      </template>
+                      <span>
+                        {{ $t('tooltip') }}
+                      </span>
+                    </v-tooltip>
                   </v-col>
                   <v-col
                     cols="6"
@@ -197,16 +209,27 @@
                   <v-col
                     cols="6"
                   >
-                    <v-btn
-                      v-if="eventButtonDisplay"
-                      type="button"
-                      color="secondary"
-                      :disabled="!isLogged"
-                      rounded
-                      :href="paths.event_create"
+                    <v-tooltip
+                      bottom
+                      color="info"
                     >
-                      {{ $t('createEvent') }}
-                    </v-btn>
+                      <template v-slot:activator="{ on }">
+                        <div v-on="on">
+                          <v-btn
+                            type="button"
+                            color="secondary"
+                            rounded
+                            :disabled="!isLogged"
+                            :href="paths.event_create"
+                          >
+                            {{ $t('createEvent') }}
+                          </v-btn>
+                        </div>
+                      </template>
+                      <span>
+                        {{ $t('tooltip') }}
+                      </span>
+                    </v-tooltip>
                   </v-col>
                   <v-col
                     cols="6"
