@@ -53,12 +53,13 @@ class SolidaryTransportMatcher
 
     /**
      * Match a solidary record with transport volunteers
-     *
-     * @param Solidary $solidary    The solidary record
-     * @return void
      */
-    public function match(Solidary $solidary)
+    public function match(Solidary $solidary): void
     {
+        if (is_null($solidary->getProposal())) {
+            return;
+        }
+        
         // first we get the volunteers for the outward
         $outwardVolunteers = $this->solidaryUserRepository->getMatchingVolunteers($solidary, $solidary->getProposal()->getType());
 
