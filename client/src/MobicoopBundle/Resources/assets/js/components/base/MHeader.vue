@@ -109,15 +109,22 @@
           href="/"
           class="d-flex"
         >
-          <v-img
+          <img
             class="logo"
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
-            :alt="$t('logo')"
+            :alt="$te('logo_alt') ? $t('logo_alt', { platform: appName.toLowerCase()}) : $t('logo')"
+            height="50"
+            width="210"
+          >
+          <!-- <v-img
+            class="logo"
+            :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
+            :alt="$te('logo_alt') ? $t('logo_alt', { platform: 'mobicoop'}) : $t('logo')"
             height="50"
             width="210"
             contain
             eager
-          />
+          /> -->
         </a>
       </v-toolbar-title>
 
@@ -411,6 +418,10 @@ export default {
     GratuityNotifications
   },
   props: {
+    appName:{
+      type: String,
+      default: null
+    },
     user: {
       type: Object,
       default: null

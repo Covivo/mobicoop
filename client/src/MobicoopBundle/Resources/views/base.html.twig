@@ -54,7 +54,9 @@
     <div id="app">
         <v-app>
             {% if app.user %}
-            <m-header :user="{{app.user|json_encode}}" :url-mobile="{{urlMobile|json_encode}}"
+            <m-header
+                app-name="{{ app_name }}"
+                :user="{{app.user|json_encode}}" :url-mobile="{{urlMobile|json_encode}}"
                 :publish-button-always-active="{{ publishButtonAlwaysActive ? " true" : "false" }}"
                 :show-reviews="{{ app.user.userReviewsActive ? " true" : "false" }}"
                 :locale="{{ app.user.language ? app.user.language.code|json_encode : ''|json_encode }}"
@@ -62,7 +64,10 @@
                 :gamification-active="{{ gamificationActive ? 'true' : 'false'}}"
                 :gratuity-active="{{ gratuityActive ? 'true' : 'false'}}"></m-header>
             {% else %}
-            <m-header token="{{token.getToken}}" :url-mobile="{{urlMobile|json_encode}}"
+            <m-header
+                app-name="{{ app_name }}"
+                token="{{token.getToken}}"
+                :url-mobile="{{urlMobile|json_encode}}"
                 :publish-button-always-active="{{ publishButtonAlwaysActive ? " true" : "false" }}"
                 :languages="{{languages|json_encode}}"
                 :gamification-active="{{ gamificationActive ? 'true' : 'false'}}"
