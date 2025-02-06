@@ -21,6 +21,9 @@
                     "required": "Helbide elektronikoa beharrezkoa da"
                 },
                 "label": "Milesker zure helbide elektronikoa zehazteagatik"
+            },
+            "name": {
+                "label": "Merci de renseigner votre nom"
             }
         },
         "user": {

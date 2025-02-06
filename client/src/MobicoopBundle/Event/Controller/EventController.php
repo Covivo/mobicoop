@@ -173,12 +173,14 @@ class EventController extends AbstractController
                     }
                     // If an error occur on upload image, the event is already create, so we delete him
                     $eventManager->deleteEvent($event->getId());
+
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
 
                 return new Response();
             }
+
             // return error if event post didn't work
             return new Response(json_encode('error.event.create'));
         }
@@ -285,6 +287,7 @@ class EventController extends AbstractController
 
                 return new Response();
             }
+
             // return error if event post didn't work
             return new Response(json_encode('error.event.create'));
         }
@@ -329,6 +332,7 @@ class EventController extends AbstractController
     {
         // retreive event;
         $event = $eventManager->getEvent($id);
+
         // $this->denyAccessUnlessGranted('show', $community);
         return $this->render('@Mobicoop/event/event-get-widget.html.twig', [
             'event' => $event,
@@ -347,10 +351,15 @@ class EventController extends AbstractController
 
             $success = false;
 
+            // name is the honey pot field
+            if (isset($data['name']) && '' !== $data['name']) {
+                $success = true;
+            }
+
             // Post the Report
             if (
-                isset($data['email'], $data['text'])
-                && '' !== $data['email'] && '' !== $data['text']
+                isset($data['email'], $data['text'], $data['name'])
+                && '' !== $data['email'] && '' !== $data['text'] && '' == $data['name']
             ) {
                 $dataProvider->setClass(Report::class);
 
