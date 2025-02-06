@@ -842,7 +842,7 @@ class ProofManager
                         break;
 
                     case 'validation_error':
-                        $proof->setStatus(CarpoolProof::STATUS_VALITION_ERROR);
+                        $proof->setStatus(CarpoolProof::STATUS_VALIDATION_ERROR);
 
                         break;
 

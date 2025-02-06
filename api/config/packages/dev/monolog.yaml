@@ -70,6 +70,11 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/georouter.log"
       channels: [georouter]
+    hitchhicker_incomplete_registration_relauncher:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/hitchhicker_incomplete_registration_relauncher.log"
+      channels: [hitchhicker_incomplete_registration_relauncher]
     incentive_subscription:
       type: stream
       level: debug
@@ -133,6 +138,7 @@ monolog:
           "!notification",
           "!solidary",
           "!user_auto_delete",
+          "!hitchhicker_incomplete_registration_relauncher",
         ]
 
     console:

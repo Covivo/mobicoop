@@ -66,7 +66,7 @@ class CarpoolProof
     public const STATUS_MAX_OPERATOR_TRIP_IDS = 20;     // Too many different operator_trip_ids on the same day
     public const STATUS_ANOMALY_ERROR = 21;
     public const STATUS_TERMS_VIOLATION_ERROR = 22;
-    public const STATUS_VALITION_ERROR = 23;
+    public const STATUS_VALIDATION_ERROR = 23;
     public const STATUS_IGNORED = 24;
 
     public const ACTOR_DRIVER = 1;
@@ -95,7 +95,7 @@ class CarpoolProof
         self::STATUS_ANOMALY_ERROR,
         self::STATUS_UNKNOWN,
         self::STATUS_TERMS_VIOLATION_ERROR,
-        self::STATUS_VALITION_ERROR,
+        self::STATUS_VALIDATION_ERROR,
     ];
 
     public const NOT_SENT_STATUS = [

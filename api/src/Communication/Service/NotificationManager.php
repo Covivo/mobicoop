@@ -770,6 +770,9 @@ class NotificationManager
                     break;
 
                 default:
+                    $bodyContext = [
+                        'user' => $recipient,
+                    ];
                     if (isset($object->new, $object->old, $object->ask, $object->sender)) {
                         $outwardOrigin = null;
                         $outwardDestination = null;
@@ -783,7 +786,6 @@ class NotificationManager
                             }
                         }
                         $bodyContext = [
-                            'user' => $recipient,
                             'notification' => $notification,
                             'object' => $object,
                             'origin' => $outwardOrigin,

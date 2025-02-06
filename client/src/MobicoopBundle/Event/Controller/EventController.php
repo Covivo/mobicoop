@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -156,10 +157,16 @@ class EventController extends AbstractController
         if (!$user instanceof User) {
             $user = null;
 
-            return new Response(json_encode('error.loggedOut'));
+            return $this->redirectToRoute('user_login');
         }
 
         if ($request->isMethod('POST')) {
+            // Redirect to user_login
+            if (!$user instanceof User) {
+                $user = null;
+
+                return new Response(json_encode('error.loggedOut'));
+            }
             // Create event and return response code
             if ($event = $eventManager->createEvent($request->request, $event, $user)) {
                 // Post avatar of the event
