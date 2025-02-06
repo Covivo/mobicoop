@@ -26,7 +26,10 @@
           "errors": {
             "required": "Une explication est nécessaire"
           }
-        }
+        },
+        "name": {
+          "label": "Merci de renseigner votre nom"
+          }
       },
       "button": {
         "report": "Signaler",

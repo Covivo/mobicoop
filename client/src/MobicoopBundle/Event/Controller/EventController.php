@@ -358,10 +358,15 @@ class EventController extends AbstractController
 
             $success = false;
 
+            // name is the honey pot field
+            if (isset($data['name']) && '' !== $data['name']) {
+                $success = true;
+            }
+
             // Post the Report
             if (
-                isset($data['email'], $data['text'])
-                && '' !== $data['email'] && '' !== $data['text']
+                isset($data['email'], $data['text'], $data['name'])
+                && '' !== $data['email'] && '' !== $data['text'] && '' == $data['name']
             ) {
                 $dataProvider->setClass(Report::class);
 

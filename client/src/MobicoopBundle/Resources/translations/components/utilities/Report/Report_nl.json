@@ -21,6 +21,9 @@
                     "required": "Het e-mailadres is vereist"
                 },
                 "label": "Geef uw e-mailadres in"
+            },
+            "name": {
+                "label": "Merci de renseigner votre nom"
             }
         },
         "user": {

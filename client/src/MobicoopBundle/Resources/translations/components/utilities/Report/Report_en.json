@@ -26,6 +26,9 @@
                 "errors": {
                     "required": "An explanation is required"
                 }
+            },
+            "name": {
+                "label": "A name is required"
             }
         },
         "button": {
