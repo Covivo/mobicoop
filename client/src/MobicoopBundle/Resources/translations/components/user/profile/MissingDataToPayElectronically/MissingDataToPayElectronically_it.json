@@ -1,0 +1,12 @@
+{
+  "title": "Paiement en ligne",
+  "text": "Pour réaliser des paiements en ligne sur le service, merci de compléter les champs suivants",
+  "givenName": "Prénom",
+  "familyName": "Nom de famille",
+  "birthDate": "Date de naissance",
+  "email": "Adresse email",
+  "homeAddress": "Adresse de domicile complète",
+  "addressLocality": "Ville de domicile",
+  "countryCode": "Pays de domicile",
+  "postalCode": "Code postale du domicile"
+}

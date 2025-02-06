@@ -2001,6 +2001,15 @@ class User implements UserInterface, EquatableInterface
      */
     private $referral;
 
+    /**
+     * Show what's missing for the user to pay electronically.
+     *
+     * @Groups({"aRead","aWrite","readUser","write"})
+     *
+     * @var null|array
+     */
+    private $missingDataToPayElectronically;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -2049,6 +2058,7 @@ class User implements UserInterface, EquatableInterface
         $this->ssoAccounts = new ArrayCollection();
         $this->gratuityCampaigns = new ArrayCollection();
         $this->gratuity = true;
+        $this->missingDataToPayElectronically = [];
     }
 
     public function getId(): ?int
@@ -4501,5 +4511,17 @@ class User implements UserInterface, EquatableInterface
         });
 
         return !empty($filteredCommunityUsers);
+    }
+
+    public function getMissingDataToPayElectronically(): ?array
+    {
+        return is_null($this->missingDataToPayElectronically) ? [] : $this->missingDataToPayElectronically;
+    }
+
+    public function setMissingDataToPayElectronically(array $missingDataToPayElectronically): self
+    {
+        $this->missingDataToPayElectronically = $missingDataToPayElectronically;
+
+        return $this;
     }
 }

@@ -6,7 +6,7 @@
       top
       :timeout="5000"
     >
-      {{ $t('msg.bank-account.create') }}
+      {{ $t("msg.bank-account.create") }}
     </v-snackbar>
     <div v-if="loading">
       <v-skeleton-loader
@@ -22,7 +22,7 @@
       >
         {{ $t("error") }}
       </v-alert>
-      <PaymentStatus :can-be-paid="canBePaid" />
+      <PaymentStatus :bank-coordinates="bankCoordinates" />
       <v-form
         v-if="!bankCoordinates"
         v-model="valid"
@@ -425,25 +425,27 @@ export default {
         return false;
       }
       return true;
-    },
+    }
   },
-  watch:{
-    updateCurrentHomeAddress(value){
-      if(value){
+  watch: {
+    updateCurrentHomeAddress(value) {
+      if (value) {
         this.setCurrentHomeAddress();
       }
     }
   },
   mounted() {
     this.getBankCoordinates();
-    if(this.user.homeAddress){
+    if (this.user.homeAddress) {
       this.addressSelected(this.user.homeAddress);
     }
   },
   methods: {
-    setCurrentHomeAddress(){
-      this.form.formAddress = (this.user.homeAddress) ? this.user.homeAddress : null
-      this.$emit('currentHomeAddressSetted');
+    setCurrentHomeAddress() {
+      this.form.formAddress = this.user.homeAddress
+        ? this.user.homeAddress
+        : null;
+      this.$emit("currentHomeAddressSetted");
     },
     getBankCoordinates() {
       this.loading = true;
@@ -544,8 +546,8 @@ export default {
       this.form.addressDetail.addressLocality = null;
       this.addressValidation = false;
     },
-    removeWhiteSpacesIban(){
-      this.form.iban = this.form.iban.replace(/\s+/g, '');
+    removeWhiteSpacesIban() {
+      this.form.iban = this.form.iban.replace(/\s+/g, "");
     }
   }
 };
