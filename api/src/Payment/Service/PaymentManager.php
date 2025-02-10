@@ -427,7 +427,7 @@ class PaymentManager
             }
         }
 
-        if (is_null($homeAddress)) {
+        if (!isset($homeAddress) || is_null($homeAddress)) {
             $missingData[] = 'homeAddress';
         } else {
             if (is_null($homeAddress->getAddressLocality()) || '' == $homeAddress->getAddressLocality()) {
