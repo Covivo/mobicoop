@@ -427,7 +427,7 @@ class PaymentManager
             }
         }
 
-        if (is_null($homeAddress)) {
+        if (!isset($homeAddress) || is_null($homeAddress)) {
             $missingData[] = 'homeAddress';
         } else {
             if (is_null($homeAddress->getAddressLocality()) || '' == $homeAddress->getAddressLocality()) {
@@ -441,10 +441,10 @@ class PaymentManager
             }
 
             $street = '';
-            if ('' != $address->getStreetAddress()) {
-                $street = $address->getStreetAddress();
+            if ('' != $homeAddress->getStreetAddress()) {
+                $street = $homeAddress->getStreetAddress();
             } else {
-                $street = trim($address->getHouseNumber().' '.$address->getStreet());
+                $street = trim($homeAddress->getHouseNumber().' '.$homeAddress->getStreet());
             }
 
             if ('' == $street) {
