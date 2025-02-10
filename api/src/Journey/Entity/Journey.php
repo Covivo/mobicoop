@@ -282,6 +282,33 @@ class Journey
     private $frequency;
 
     /**
+     * @var null|float the price per km
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true, options={"default" : 0})
+     *
+     * @Groups({"readJourney"})
+     */
+    private $priceKm;
+
+    /**
+     * @var int the total distance of the direction in meter
+     *
+     * @ORM\Column(type="integer", options={"default" : 0})
+     *
+     * @Groups({"readJourney"})
+     */
+    private $distance;
+
+    /**
+     * @var int the total duration of the direction in seconds
+     *
+     * @ORM\Column(type="integer", options={"default" : 0})
+     *
+     * @Groups({"readJourney"})
+     */
+    private $duration;
+
+    /**
      * @var int the proposal type (1 = oneway; 2 = return trip)
      *
      * @ORM\Column(type="smallint")
@@ -532,6 +559,40 @@ class Journey
     public function setFrequency(int $frequency): self
     {
         $this->frequency = $frequency;
+
+        return $this;
+    }
+
+    public function getPriceKm(): ?string
+    {
+        return $this->priceKm;
+    }
+
+    public function setPriceKm(?string $priceKm)
+    {
+        $this->priceKm = $priceKm;
+    }
+
+    public function getDistance(): int
+    {
+        return $this->distance;
+    }
+
+    public function setDistance(int $distance): self
+    {
+        $this->distance = $distance;
+
+        return $this;
+    }
+
+    public function getDuration(): int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
 
         return $this;
     }

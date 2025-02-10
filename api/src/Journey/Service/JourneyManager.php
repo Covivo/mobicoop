@@ -107,7 +107,12 @@ class JourneyManager
         inner join criteria c on c.id = p.criteria_id
         left join proposal pr on pr.id = p.proposal_linked_id
         left join criteria cr on cr.id = pr.criteria_id
-        set j.frequency = c.frequency, j.seats_driver = c.seats_driver, j.role = IF(c.driver=1 AND c.passenger=1,3,IF(c.driver=1,1,2)), j.from_date = c.from_date, j.to_date = c.to_date, j.time = c.from_time,
+        left join direction as dd on dd.id = c.direction_driver_id
+        left join direction as dp on dp.id = c.direction_passenger_id
+        set j.frequency = c.frequency, j.seats_driver = c.seats_driver, j.price_km = c.price_km,
+        j.distance = IF(c.driver=1,dd.distance,IF(dp.distance=0, IF(dd.distance IS NULL,0,dp.distance),dp.distance)),
+        j.duration = IF(c.driver=1,dd.duration,IF(dp.duration=0, IF(dd.duration IS NULL,0,dp.duration),dp.duration=0)),
+        j.role = IF(c.driver=1 AND c.passenger=1,3,IF(c.driver=1,1,2)), j.from_date = c.from_date, j.to_date = c.to_date, j.time = c.from_time,
         j.days = IF(c.frequency=2,
         (
             CONCAT(

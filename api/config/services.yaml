@@ -981,6 +981,7 @@ services:
   App\Journey\Repository\JourneyRepository:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+      $rdexAlternativeMathingCircleRadius: "%env(int:RDEX_ALTERNATIVE_MATCHING_CIRCLE_RADIUS)%"
 
   # Translation
   App\I18n\Service\LanguageManager:
@@ -1204,6 +1205,11 @@ services:
   # Rdex
   App\Rdex\Controller\:
     resource: "../src/Rdex/Controller"
+    tags: ["controller.service_arguments"]
+
+  App\Rdex\Controller\JourneyCollectionController:
+    arguments:
+      $alternativeMatching: "%env(bool:RDEX_ALTERNATIVE_MATCHING)%"
     tags: ["controller.service_arguments"]
 
   App\Rdex\Service\RdexManager:
