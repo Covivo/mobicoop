@@ -441,10 +441,10 @@ class PaymentManager
             }
 
             $street = '';
-            if ('' != $address->getStreetAddress()) {
-                $street = $address->getStreetAddress();
+            if ('' != $homeAddress->getStreetAddress()) {
+                $street = $homeAddress->getStreetAddress();
             } else {
-                $street = trim($address->getHouseNumber().' '.$address->getStreet());
+                $street = trim($homeAddress->getHouseNumber().' '.$homeAddress->getStreet());
             }
 
             if ('' == $street) {
