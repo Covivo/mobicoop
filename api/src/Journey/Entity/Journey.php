@@ -19,29 +19,33 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Journey\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Carpooling : an effective journey.
+ *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  * @ORM\Entity
+ *
  * @ORM\Table(indexes={
+ *
  *  @ORM\Index(name="IDX_ORIGIN", columns={"origin"}),
  *  @ORM\Index(name="IDX_DESTINATION", columns={"destination"}),
  *  @ORM\Index(name="IDX_ORIGIN_DESTINATION", columns={"origin","destination"})
  * })
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -129,6 +133,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          },
  *      }
  * )
+ *
  * @ApiFilter(SearchFilter::class, properties={"origin":"partial", "destination":"partial"})
  * @ApiFilter(NumericFilter::class, properties={"frequency"})
  * @ApiFilter(DateFilter::class, properties={"fromDate": DateFilter::EXCLUDE_NULL,"toDate": DateFilter::EXCLUDE_NULL})
@@ -136,182 +141,236 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  */
 class Journey
 {
-    const DEFAULT_ID = 999999999999;
-    
-    const FREQUENCY_PUNCTUAL = 1;
-    const FREQUENCY_REGULAR = 2;
-    const ROLE_DRIVER = 1;
-    const ROLE_PASSENGER = 2;
-    const ROLE_DRIVER_OR_PASSENGER = 3;
+    public const DEFAULT_ID = 999999999999;
 
-    const POPULAR_RANDOMIZATION_FACTOR = 5; // Used to shuffle the results for popular Journeys
+    public const FREQUENCY_PUNCTUAL = 1;
+    public const FREQUENCY_REGULAR = 2;
+    public const ROLE_DRIVER = 1;
+    public const ROLE_PASSENGER = 2;
+    public const ROLE_DRIVER_OR_PASSENGER = 3;
+
+    public const POPULAR_RANDOMIZATION_FACTOR = 5; // Used to shuffle the results for popular Journeys
 
     /**
-     * @var int The id of this journey.
+     * @var int the id of this journey
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"readJourney"})
      */
     private $id;
 
     /**
      * @var int The proposal id for this journey
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"readJourney","writeJourney","journeyCarpools"})
      */
     private $proposalId;
 
     /**
      * @var int The user id for this journey
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"readJourney"})
      */
     private $userId;
 
     /**
-     * @var string|null The name of the user.
+     * @var null|string the name of the user
+     *
      * @ORM\Column(type="string", nullable=true)
+     *
      * @Groups({"readJourney"})
      */
     private $userName;
 
     /**
-     * @var int|null The age of the user
+     * @var null|int The age of the user
+     *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"readJourney"})
      */
     private $age;
-    
+
+    /**
+     * @var null|int The gender of the user (1=female, 2=male, 3=nc)
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     *
+     * @Groups({"readJourney"})
+     */
+    private $gender;
+
+    /**
+     * @var int the number of available seats for a driver
+     *
+     * @ORM\Column(type="integer", options={"default" : 0})
+     *
+     * @Groups({"readJourney"})
+     */
+    private $seatsDriver;
+
     /**
      * @var string The origin of the journey
+     *
      * @ORM\Column(type="string")
+     *
      * @Groups({"readJourney", "readPopularJourney"})
      */
     private $origin;
 
     /**
-     * @var float|null The latitude of the origin.
+     * @var null|float the latitude of the origin
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"readJourney", "readPopularJourney"})
      */
     private $latitudeOrigin;
 
     /**
-     * @var float|null The longitude of the origin.
+     * @var null|float the longitude of the origin
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"readJourney", "readPopularJourney"})
      */
     private $longitudeOrigin;
 
     /**
      * @var string The destination of the journey
+     *
      * @ORM\Column(type="string")
+     *
      * @Groups({"readJourney", "readPopularJourney"})
      */
     private $destination;
 
     /**
-     * @var float|null The latitude of the destination.
+     * @var null|float the latitude of the destination
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"readJourney", "readPopularJourney"})
      */
     private $latitudeDestination;
 
     /**
-     * @var float|null The longitude of the destination.
+     * @var null|float the longitude of the destination
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     *
      * @Groups({"readJourney", "readPopularJourney"})
      */
     private $longitudeDestination;
 
     /**
-     * @var int The proposal frequency (1 = punctual; 2 = regular).
+     * @var int the proposal frequency (1 = punctual; 2 = regular)
+     *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"readJourney"})
      */
     private $frequency;
 
     /**
-     * @var int The proposal type (1 = oneway; 2 = return trip).
+     * @var int the proposal type (1 = oneway; 2 = return trip)
+     *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"readJourney"})
      */
     private $type;
 
     /**
-     * @var int The role for this journey (1 = driver; 2 = passenger; 3 = driver or passenger).
+     * @var int the role for this journey (1 = driver; 2 = passenger; 3 = driver or passenger)
+     *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"readJourney"})
      */
     private $role;
 
     /**
-     * @var \DateTimeInterface The starting date.
+     * @var \DateTimeInterface the starting date
      *
      * @ORM\Column(type="date")
+     *
      * @Groups({"readJourney"})
      */
     private $fromDate;
 
     /**
-     * @var \DateTimeInterface The end date.
+     * @var \DateTimeInterface the end date
      *
      * @ORM\Column(type="date", nullable=true)
+     *
      * @Groups({"readJourney"})
      */
     private $toDate;
 
     /**
-     * @var \DateTimeInterface|null The starting time for a punctual journey.
+     * @var null|\DateTimeInterface the starting time for a punctual journey
+     *
      * @ORM\Column(type="time", nullable=true)
+     *
      * @Groups({"readJourney"})
      */
     private $time;
 
     /**
-     * @var string|null The json representation of the possible days for a regular journey.
+     * @var null|string the json representation of the possible days for a regular journey
+     *
      * @ORM\Column(type="string", nullable=true)
+     *
      * @Groups({"readJourney"})
      */
     private $days;
 
     /**
-     * @var string|null The json representation of the outward times for a regular journey.
+     * @var null|string the json representation of the outward times for a regular journey
+     *
      * @ORM\Column(type="string", nullable=true)
+     *
      * @Groups({"readJourney"})
      */
     private $outwardTimes;
 
     /**
-     * @var string|null The json representation of the return times for a regular journey.
+     * @var null|string the json representation of the return times for a regular journey
+     *
      * @ORM\Column(type="string", nullable=true)
+     *
      * @Groups({"readJourney"})
      */
     private $returnTimes;
 
-
     /**
-     * @var int|null The number of occurences of this journey (for Popular Journey only)
-    * @Groups({"readPopularJourney"})
-    */
+     * @var null|int The number of occurences of this journey (for Popular Journey only)
+     *
+     * @Groups({"readPopularJourney"})
+     */
     private $occurences;
 
     /**
-     * @var \DateTimeInterface Creation date of the journey.
+     * @var \DateTimeInterface creation date of the journey
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"readJourney"})
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the journey.
+     * @var \DateTimeInterface updated date of the journey
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -333,7 +392,7 @@ class Journey
     {
         return $this->proposalId;
     }
-    
+
     public function setProposalId(int $proposalId): self
     {
         $this->proposalId = $proposalId;
@@ -345,7 +404,7 @@ class Journey
     {
         return $this->userId;
     }
-    
+
     public function setUserId(int $userId): self
     {
         $this->userId = $userId;
@@ -369,10 +428,34 @@ class Journey
     {
         return $this->age;
     }
-    
+
     public function setAge(int $age): self
     {
         $this->age = $age;
+
+        return $this;
+    }
+
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    public function setGender($gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getSeatsDriver(): ?int
+    {
+        return $this->seatsDriver;
+    }
+
+    public function setSeatsDriver(int $seatsDriver): self
+    {
+        $this->seatsDriver = $seatsDriver;
 
         return $this;
     }
@@ -381,7 +464,7 @@ class Journey
     {
         return $this->origin;
     }
-    
+
     public function setOrigin(string $origin): self
     {
         $this->origin = $origin;
@@ -413,7 +496,7 @@ class Journey
     {
         return $this->destination;
     }
-    
+
     public function setDestination(string $destination): self
     {
         $this->destination = $destination;
@@ -506,6 +589,7 @@ class Journey
         if ($this->time) {
             return \DateTime::createFromFormat('His', $this->time->format('His'));
         }
+
         return null;
     }
 
