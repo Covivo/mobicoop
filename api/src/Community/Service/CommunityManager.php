@@ -25,6 +25,7 @@ namespace App\Community\Service;
 
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\App\Entity\App;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
@@ -261,7 +262,7 @@ class CommunityManager
 
         $community = $this->communityRepository->find($communityId);
 
-        if ($this->_isAuthenticatedUserAllowedToSeeCommunityContent($community)) {
+        if (!$community->isProposalsHidden() || $this->_isAuthenticatedUserAllowedToSeeCommunityContent($community)) {
             // We get only the public proposal (we exclude searches)
             $proposals = $this->proposalRepository->findCommunityAds($this->communityRepository->find($communityId));
 
@@ -621,6 +622,11 @@ class CommunityManager
         $user = $this->_tokenStorage->getToken()
             ? $this->_tokenStorage->getToken()->getUser()
             : null;
+
+        // case when no user is logged in
+        if ($user instanceof App) {
+            return false;
+        }
 
         return !is_null($user) && $user->isCommunityMemberValidated($community);
     }
