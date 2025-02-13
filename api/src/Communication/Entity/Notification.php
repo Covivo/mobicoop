@@ -85,6 +85,7 @@ class Notification
     ];
     public const CONFIRMED_CARPOOLER = 144;
     public const SEND_BOOSTER = 150;
+    public const SOLIDARY_VOLUNTEER_MATCHING_SUCCESS = 178;
 
     /**
      * @var int the id of this notification
