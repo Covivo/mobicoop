@@ -1209,6 +1209,7 @@ services:
 
   App\Rdex\Controller\JourneyCollectionController:
     arguments:
+      $active: "%env(bool:RDEX_ACTIVE)%"
       $alternativeMatching: "%env(bool:RDEX_ALTERNATIVE_MATCHING)%"
     tags: ["controller.service_arguments"]
 

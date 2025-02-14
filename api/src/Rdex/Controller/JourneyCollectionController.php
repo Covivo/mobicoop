@@ -42,13 +42,15 @@ class JourneyCollectionController
     use TranslatorTrait;
     protected $request;
     private $rdexManager;
+    private $active;
     private $alternativeMatching;
 
-    public function __construct(RequestStack $requestStack, RdexManager $rdexManager, bool $alternativeMatching)
+    public function __construct(RequestStack $requestStack, RdexManager $rdexManager, bool $active, bool $alternativeMatching)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->rdexManager = $rdexManager;
         $this->alternativeMatching = $alternativeMatching;
+        $this->active = $active;
     }
 
     /**
@@ -60,6 +62,9 @@ class JourneyCollectionController
      */
     public function __invoke(array $data): JsonResponse
     {
+        if (!$this->active) {
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        }
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans('bad RdexJourney id is provided'));
         }
