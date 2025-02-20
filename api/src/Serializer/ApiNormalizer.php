@@ -318,7 +318,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             $data['adType'] = User::AD_NONE;
         }
 
-        if (isset($date['communityId'])) {
+        if (isset($data['communityId'])) {
             $nbAdsInCommunityAsDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_DRIVER, $data['communityId']);
             $nbAdsInCommunityAsPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_PASSENGER, $data['communityId']);
     
