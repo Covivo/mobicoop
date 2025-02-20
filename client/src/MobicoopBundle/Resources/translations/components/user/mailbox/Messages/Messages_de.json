@@ -1,1 +1,5 @@
-{}
+{
+    "info": {
+        "withoutThread": "Pour afficher le contenu d'une discussion, sélectionnez un fil depuis la colonne de gauche."
+    }
+}

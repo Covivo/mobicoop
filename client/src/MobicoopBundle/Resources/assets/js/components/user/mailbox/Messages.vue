@@ -5,9 +5,7 @@
       grid-list-md
       fluid
     >
-      <v-row
-        justify="center"
-      >
+      <v-row justify="center">
         <v-col class="mr-n12 ml-n12">
           <warning-message :fraud-warning-display="fraudWarningDisplay" />
         </v-col>
@@ -30,9 +28,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col
-          class="col-3"
-        >
+        <v-col class="col-3">
           <v-tabs
             v-model="modelTabs"
             slider-color="secondary"
@@ -60,7 +56,7 @@
                   style="letter-spacing: -0.15px;"
                 >
                   <v-badge
-                    :value="(unreadMessages.currentUnreadCarpoolMessages>0) ? true : false"
+                    :value="(unreadMessages.currentUnreadCarpoolMessages > 0) ? true : false"
                     :content="unreadMessages.currentUnreadCarpoolMessages"
                     color="secondary"
                     inline
@@ -88,7 +84,7 @@
                     <br>
                     <div class="mb-2">
                       <v-badge
-                        :value="(unreadMessages.currentUnreadDirectMessages>0) ? true : false"
+                        :value="(unreadMessages.currentUnreadDirectMessages > 0) ? true : false"
                         :content="unreadMessages.currentUnreadDirectMessages"
                         color="secondary"
                         inline
@@ -118,7 +114,7 @@
                   style="letter-spacing: -0.15px;"
                 >
                   <v-badge
-                    :value="(unreadMessages.currentUnreadSolidaryMessages>0) ? true : false"
+                    :value="(unreadMessages.currentUnreadSolidaryMessages > 0) ? true : false"
                     :content="unreadMessages.currentUnreadSolidaryMessages"
                     color="secondary"
                     inline
@@ -174,9 +170,7 @@
             </v-container>
           </v-tabs-items>
         </v-col>
-        <v-col
-          class="col-5"
-        >
+        <v-col class="col-5">
           <v-row>
             <v-col cols="12">
               <thread-details
@@ -184,11 +178,17 @@
                 :id-message="idMessage"
                 :id-user="idUser"
                 :refresh="refreshDetails"
-                :hide-no-thread-selected="(idRecipient!==null)"
+                :hide-no-thread-selected="(idRecipient !== null)"
                 :fraud-warning-display="fraudWarningDisplay"
                 :carpoolers-identity="carpoolersIdentity"
                 @refreshCompleted="refreshDetailsCompleted"
               />
+              <v-alert
+                v-else
+                type="info"
+              >
+                {{ $t('info.withoutThread') }}
+              </v-alert>
             </v-col>
           </v-row>
           <v-row>
@@ -198,7 +198,7 @@
                 :id-booking="idBooking"
                 :id-user="idUser"
                 :refresh-booking="refreshBookingDetails"
-                :hide-no-thread-selected="(idRecipient!==null)"
+                :hide-no-thread-selected="(idRecipient !== null)"
                 :fraud-warning-display="fraudWarningDisplay"
                 :carpoolers-identity="carpoolersIdentity"
                 @refreshCompleted="refreshBookingDetailsCompleted"
@@ -224,9 +224,7 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col
-          class="col-4"
-        >
+        <v-col class="col-4">
           <thread-actions
             :id-booking="idBooking"
             :refresh-booking="refreshBookingActions"
@@ -255,7 +253,7 @@
 </template>
 <script>
 import maxios from "@utils/maxios";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/Messages/";
+import { messages_en, messages_fr, messages_eu, messages_nl } from "@translations/components/user/mailbox/Messages/";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
 import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
@@ -272,7 +270,7 @@ export default {
       'en': messages_en,
       'nl': messages_nl,
       'fr': messages_fr,
-      'eu':messages_eu
+      'eu': messages_eu
     }
   },
   components: {
@@ -289,23 +287,23 @@ export default {
   props: {
     user: {
       type: Object,
-      default:null
+      default: null
     },
-    idUser:{
+    idUser: {
       type: Number,
-      default:null
+      default: null
     },
-    emailUser:{
+    emailUser: {
       type: String,
-      default:null
+      default: null
     },
-    idThreadDefault:{
+    idThreadDefault: {
       type: Number,
-      default:null
+      default: null
     },
-    newThread:{
-      type:Object,
-      default:null
+    newThread: {
+      type: Object,
+      default: null
     },
     givenIdAsk: {
       type: Number,
@@ -342,33 +340,33 @@ export default {
   },
   data() {
     return {
-      modelTabs:"tab-cm",
+      modelTabs: "tab-cm",
       idMessage: this.givenIdMessage ? this.givenIdMessage : null,
       idBooking: this.givenIdBooking ? this.givenIdBooking : null,
       idRecipient: this.givenIdRecipient ? this.givenIdRecipient : null,
       currentIdAsk: this.givenIdAsk ? this.givenIdAsk : null,
       currentIdBooking: this.givenIdBooking ? this.givenIdBooking : null,
-      recipientName:null,
-      recipientAvatar:null,
-      newThreadDirect:null,
-      newThreadCarpool:null,
-      loadingTypeText:false,
-      refreshDetails:false,
-      refreshThreadsDirect:false,
-      refreshThreadsCarpool:false,
-      refreshThreadsSolidary:false,
-      refreshActions:false,
-      loadingDetails:false,
-      loadingBtnAction:false,
-      hideClickIcon : false,
+      recipientName: null,
+      recipientAvatar: null,
+      newThreadDirect: null,
+      newThreadCarpool: null,
+      loadingTypeText: false,
+      refreshDetails: false,
+      refreshThreadsDirect: false,
+      refreshThreadsCarpool: false,
+      refreshThreadsSolidary: false,
+      refreshActions: false,
+      loadingDetails: false,
+      loadingBtnAction: false,
+      hideClickIcon: false,
       blockerId: null,
-      unreadMessages:{
+      unreadMessages: {
         currentUnreadCarpoolMessages: 0,
         currentUnreadDirectMessages: 0,
         currentUnreadSolidaryMessages: 0
       },
       isExternalStandard: false,
-      refreshBookingActions:false,
+      refreshBookingActions: false,
       carpoolersIdentity: null,
       refreshBookingDetails: false
     };
@@ -376,31 +374,31 @@ export default {
   created() {
     switch (this.defaultThreadTab) {
     case 'carpool':
-      this.modelTabs="tab-cm";
+      this.modelTabs = "tab-cm";
       break;
     case 'direct':
-      this.modelTabs="tab-dm";
+      this.modelTabs = "tab-dm";
       break;
     case 'solidary':
-      this.modelTabs="tab-sm";
+      this.modelTabs = "tab-sm";
       break;
     }
   },
   mounted() {
     // If there is a new thread we give it to te right component
-    if(this.newThread){
-      if(this.newThread.carpool){
+    if (this.newThread) {
+      if (this.newThread.carpool) {
         this.newThreadCarpool = this.newThread
-        this.modelTabs="tab-cm";
+        this.modelTabs = "tab-cm";
         this.idRecipient = this.newThread.idRecipient;
       }
-      else{
+      else {
         this.newThreadDirect = this.newThread;
-        this.modelTabs="tab-dm";
+        this.modelTabs = "tab-dm";
         this.idRecipient = this.newThread.idRecipient;
       }
     }
-    if(this.givenIdAsk) {
+    if (this.givenIdAsk) {
       this.refreshActions = true;
     }
     this.unreadMessages.currentUnreadCarpoolMessages = this.$store.getters['m/unreadCarpoolMessageNumber'];
@@ -408,24 +406,24 @@ export default {
     this.unreadMessages.currentUnreadSolidaryMessages = this.$store.getters['m/unreadSolidaryMessageNumber'];
   },
   methods: {
-    updateDetails(data){
+    updateDetails(data) {
       // console.error(data);
       this.hideClickIcon = false;
 
-      this.isExternalStandard = (data.idBooking !==null) ? true : false;
+      this.isExternalStandard = (data.idBooking !== null) ? true : false;
       // Update the current Ask
-      (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
+      (data.type == "Carpool" || data.type == "Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
 
       // Update the number of unread messages in the right tab
-      if(data.type=="Carpool"){
+      if (data.type == "Carpool") {
         this.$store.commit('m/setUnreadCarpoolMessageNumber', this.unreadMessages.currentUnreadCarpoolMessages - 1);
         this.unreadMessages.currentUnreadCarpoolMessages = this.$store.getters['m/unreadCarpoolMessageNumber'];
       }
-      else if(data.type=="Solidary"){
-        this.$store.commit('m/setUnreadSolidaryMessageNumber', this.unreadMessages.currentUnreadSolidaryMessages -1);
+      else if (data.type == "Solidary") {
+        this.$store.commit('m/setUnreadSolidaryMessageNumber', this.unreadMessages.currentUnreadSolidaryMessages - 1);
         this.unreadMessages.currentUnreadSolidaryMessages = this.$store.getters['m/unreadSolidaryMessageNumber'];
       }
-      else if(data.type=="Direct"){
+      else if (data.type == "Direct") {
         this.$store.commit('m/setUnreadDirectMessageNumber', this.unreadMessages.currentUnreadDirectMessages - 1);
         this.unreadMessages.currentUnreadDirectMessages = this.$store.getters['m/unreadDirectMessageNumber'];
       }
@@ -437,7 +435,7 @@ export default {
       this.recipientAvatar = data.avatar;
       this.blockerId = data.blockerId;
     },
-    sendInternalMessage(data){
+    sendInternalMessage(data) {
       this.loadingTypeText = true;
       let messageToSend = {
         idThreadMessage: data.idThreadMessage,
@@ -446,7 +444,7 @@ export default {
         idAsk: this.currentIdAsk
       };
 
-      if(this.newThreadCarpool && this.newThreadCarpool.matchingId){
+      if (this.newThreadCarpool && this.newThreadCarpool.matchingId) {
         messageToSend.matchingId = this.newThreadCarpool.matchingId;
         messageToSend.proposalId = this.newThreadCarpool.proposalId;
         messageToSend.adIdToRespond = this.newThreadCarpool.adId;
@@ -461,10 +459,10 @@ export default {
         this.refreshDetails = true;
         this.newThreadDirect = null;
         this.newThreadCarpool = null;
-        (this.currentIdAsk) ? this.refreshSelected({'idAsk':this.currentIdAsk}) : this.refreshSelected({'idMessage':this.idMessage});
+        (this.currentIdAsk) ? this.refreshSelected({ 'idAsk': this.currentIdAsk }) : this.refreshSelected({ 'idMessage': this.idMessage });
       });
     },
-    sendExternalStandardMessage(data){
+    sendExternalStandardMessage(data) {
       this.loadingTypeText = true;
       let messageToSend = {
         text: data.textToSend,
@@ -487,44 +485,44 @@ export default {
         this.newThreadCarpool = null;
       });
     },
-    updateStatusAskHistory(data){
+    updateStatusAskHistory(data) {
       this.loadingBtnAction = true;
       let params = {
-        idAsk:this.currentIdAsk
+        idAsk: this.currentIdAsk
       }
 
       // Compute the right status for the update
       let statusUpdate = 1;
-      if(data.status==1 && data.driver){
+      if (data.status == 1 && data.driver) {
         statusUpdate = 2
       }
-      else if(data.status==1 && !data.driver){
+      else if (data.status == 1 && !data.driver) {
         statusUpdate = 3
       }
-      else{
+      else {
         statusUpdate = data.status
       }
 
       // If it's already a formal ask, we don't need everything
-      if(statusUpdate>3){
+      if (statusUpdate > 3) {
         params = {
-          "idAsk":this.currentIdAsk,
-          "status" : statusUpdate
+          "idAsk": this.currentIdAsk,
+          "status": statusUpdate
         }
       }
-      else{
+      else {
         params = {
-          "idAsk":this.currentIdAsk,
-          "outwardDate":data.fromDate,
-          "outwardLimitDate":data.toDate,
-          "outwardSchedule" : data.outwardSchedule,
-          "returnSchedule" : data.returnSchedule,
-          "status" : statusUpdate
+          "idAsk": this.currentIdAsk,
+          "outwardDate": data.fromDate,
+          "outwardLimitDate": data.toDate,
+          "outwardSchedule": data.outwardSchedule,
+          "returnSchedule": data.returnSchedule,
+          "status": statusUpdate
         }
       }
       // console.error(data);sk
       // console.error(params);
-      maxios.post(this.$t("urlUpdateAsk"),params)
+      maxios.post(this.$t("urlUpdateAsk"), params)
         .then(response => {
           //console.error(response.data);
           this.refreshActions = true;
@@ -536,13 +534,13 @@ export default {
         });
 
     },
-    updateStatusBooking(data){
+    updateStatusBooking(data) {
       this.loadingBtnAction = true;
       let params = {
-        idBooking:this.currentIdBooking,
-        status:data.status,
+        idBooking: this.currentIdBooking,
+        status: data.status,
       }
-      maxios.post(this.$t("urlUpdateBooking"),params)
+      maxios.post(this.$t("urlUpdateBooking"), params)
         .then(response => {
           console.error(response.data);
           this.refreshActions = true;
@@ -554,14 +552,14 @@ export default {
         });
 
     },
-    refreshSelected(data){
+    refreshSelected(data) {
       this.loadingDetails = true;
       this.isExternalStandard = false;
       this.currentIdBooking = null;
-      (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
+      (data.idAsk) ? this.currentIdAsk = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;
     },
-    refreshSelectedBooking(data){
+    refreshSelectedBooking(data) {
       this.currentIdAsk = null;
       this.currentIdBooking = data.idBooking;
       this.message = -99;
@@ -569,7 +567,7 @@ export default {
       this.idBooking = data.idBooking;
       this.refreshBookingActions = true;
     },
-    reloadOnIcon(){
+    reloadOnIcon() {
       this.loadingDetails = true;
       this.refreshActions = true;
       this.refreshDetails = true;
@@ -577,36 +575,36 @@ export default {
       this.idMessage = -2;
       this.cleanAsk();
     },
-    cleanAsk(){
+    cleanAsk() {
       this.recipientName = null;
       this.currentIdAsk = null;
       this.idRecipient = null;
       this.recipientAvatar = null;
     },
-    refreshDetailsCompleted(data){
+    refreshDetailsCompleted(data) {
       //this.refreshActions = true;
       this.refreshDetails = false;
     },
-    refreshBookingDetailsCompleted(data){
+    refreshBookingDetailsCompleted(data) {
       //this.refreshActions = true;
       this.refreshBookingDetails = false;
     },
-    refreshThreadsDirectCompleted(){
+    refreshThreadsDirectCompleted() {
       this.refreshThreadsDirect = false;
     },
-    refreshThreadsCarpoolCompleted(){
+    refreshThreadsCarpoolCompleted() {
       this.refreshThreadsCarpool = false;
     },
-    refreshThreadsSolidaryCompleted(){
+    refreshThreadsSolidaryCompleted() {
       this.refreshThreadsSolidary = false;
     },
-    refreshActionsCompleted(){
+    refreshActionsCompleted() {
       this.loadingDetails = false;
       this.refreshActions = false;
       this.loadingBtnAction = false;
       this.refreshBookingActions = false;
     },
-    refreshBookingActionsCompleted(booking){
+    refreshBookingActionsCompleted(booking) {
       console.log(booking);
       this.loadingDetails = false;
       this.loadingBtnAction = false;
@@ -617,9 +615,9 @@ export default {
       this.carpoolersIdentity = {
         sender: {
           id: this.user.id,
-          identityStatus:this.user.identityStatus,
-          bankingIdentityStatus:this.user.bankingIdentityStatus,
-          eecStatus:this.user.eecStatus,
+          identityStatus: this.user.identityStatus,
+          bankingIdentityStatus: this.user.bankingIdentityStatus,
+          eecStatus: this.user.eecStatus,
           role: e.role === DRIVER ? PASSENGER : DRIVER
         },
         recipient: e
@@ -632,15 +630,16 @@ export const DRIVER = 1;
 export const PASSENGER = 2;
 </script>
 <style lang="scss">
-.v-main__wrap{
-  #headGridMessages{
-    .col{
+.v-main__wrap {
+  #headGridMessages {
+    .col {
       border-left: 2px solid white !important;
     }
   }
-  .window-scroll{
-    max-height:600px;
-    overflow:auto;
+
+  .window-scroll {
+    max-height: 600px;
+    overflow: auto;
   }
 }
 </style>

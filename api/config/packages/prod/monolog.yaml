@@ -28,6 +28,7 @@ monolog:
           "!notification",
           "!solidary",
           "!user_auto_delete",
+          "!hitchhicker_incomplete_registration_relauncher",
         ]
     grouped:
       type: group
@@ -127,6 +128,12 @@ monolog:
       max_files: 30
       path: "%kernel.logs_dir%/georouter.log"
       channels: [georouter]
+    hitchhicker_incomplete_registration_relauncher:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/hitchhicker_incomplete_registration_relauncher.log"
+      channels: [hitchhicker_incomplete_registration_relauncher]
     incentive_subscription:
       type: rotating_file
       level: debug

@@ -49,6 +49,7 @@ class CarpoolExport
     public const CERTIFICATION_UNDER_CHECKING = 'En cours de certification';
     public const CERTIFICATION_CANCELED = 'La certification a été annulé';
     public const CERTIFICATION_ERROR = 'Non certifié par le RPC';
+    public const CERTIFICATION_NOT_SENT_MISSING_PHONE = 'Non envoyée car le numéro de téléphone n\'a pas été renseigné';
 
     /**
      * @var int the id of this carpoolExport item
@@ -257,6 +258,11 @@ class CarpoolExport
 
                 break;
 
+            case CarpoolProof::STATUS_NOT_SENT_MISSING_PHONE:
+                $this->certification = self::CERTIFICATION_NOT_SENT_MISSING_PHONE;
+
+                break;
+
             case CarpoolProof::STATUS_ERROR:
             case CarpoolProof::STATUS_ACQUISITION_ERROR:
             case CarpoolProof::STATUS_FRAUD_ERROR:
@@ -264,6 +270,13 @@ class CarpoolExport
             case CarpoolProof::STATUS_INVALID_CONCURRENT_SCHEDULES:
             case CarpoolProof::STATUS_INVALID_DUPLICATE_DEVICE:
             case CarpoolProof::STATUS_INVALID_SPLITTED_TRIP:
+            case CarpoolProof::STATUS_DISTANCE_TOO_SHORT:
+            case CarpoolProof::STATUS_CONCURRENT_DRIVER_JOURNEY:
+            case CarpoolProof::STATUS_MAX_OPERATOR_TRIP_IDS:
+            case CarpoolProof::STATUS_ANOMALY_ERROR:
+            case CarpoolProof::STATUS_TERMS_VIOLATION_ERROR:
+            case CarpoolProof::STATUS_VALIDATION_ERROR:
+            case CarpoolProof::STATUS_IGNORED:
                 $this->certification = self::CERTIFICATION_ERROR;
 
                 break;

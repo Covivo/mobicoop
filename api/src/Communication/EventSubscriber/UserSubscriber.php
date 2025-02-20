@@ -34,6 +34,8 @@ use App\User\Entity\IdentityProof;
 use App\User\Event\AskParentalConsentEvent;
 use App\User\Event\AutoUnsubscribedEvent;
 use App\User\Event\ConfirmedCarpoolerEvent;
+use App\User\Event\HitchhickerIncompleteRegistrationFirstRelaunchEvent;
+use App\User\Event\HitchhickerIncompleteRegistrationSecondRelaunchEvent;
 use App\User\Event\IdentityProofModeratedEvent;
 use App\User\Event\IdentityProofValidationReminderEvent;
 use App\User\Event\IncitateToPublishFirstAdEvent;
@@ -121,6 +123,8 @@ class UserSubscriber implements EventSubscriberInterface
             TooLongInactivityLastWarningEvent::NAME => 'onTooLongInactivityLastWarning',
             AutoUnsubscribedEvent::NAME => 'onAutoUnsubscribedEvent',
             AskParentalConsentEvent::NAME => 'onAskParentalEvent',
+            HitchhickerIncompleteRegistrationFirstRelaunchEvent::NAME => 'onHitchhickerIncompleteRegistrationFirstRelaunchEvent',
+            HitchhickerIncompleteRegistrationSecondRelaunchEvent::NAME => 'onHitchhickerIncompleteRegistrationSecondRelaunchEvent',
         ];
     }
 
@@ -267,5 +271,15 @@ class UserSubscriber implements EventSubscriberInterface
     public function onAskParentalEvent(AskParentalConsentEvent $event)
     {
         $this->notificationManager->notifies(AskParentalConsentEvent::NAME, $event->getUser(), $event->getUser());
+    }
+
+    public function onHitchhickerIncompleteRegistrationFirstRelaunchEvent(HitchhickerIncompleteRegistrationFirstRelaunchEvent $event)
+    {
+        $this->notificationManager->notifies(HitchhickerIncompleteRegistrationFirstRelaunchEvent::NAME, $event->getUser(), $event);
+    }
+
+    public function onHitchhickerIncompleteRegistrationSecondRelaunchEvent(HitchhickerIncompleteRegistrationSecondRelaunchEvent $event)
+    {
+        $this->notificationManager->notifies(HitchhickerIncompleteRegistrationSecondRelaunchEvent::NAME, $event->getUser(), $event);
     }
 }

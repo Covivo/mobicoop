@@ -132,24 +132,14 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $data = $this->decorated->normalize($object, $format, $context);
 
         // add adType to User in admin
-
         if (isset($context['collection_operation_name']) && 'ADMIN_get' === $context['collection_operation_name'] && ($object instanceof User || $object instanceof CommunityUser)) {
             if ($object instanceof User) {
                 $user = $data['id'];
             } else {
                 $user = $data['userId'];
             }
-            $nbDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($user, Ad::ROLE_DRIVER);
-            $nbPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($user, Ad::ROLE_PASSENGER);
-            if ($nbDriver > 0 && $nbPassenger > 0) {
-                $data['adType'] = User::AD_DRIVER_PASSENGER;
-            } elseif ($nbDriver > 0) {
-                $data['adType'] = User::AD_DRIVER;
-            } elseif ($nbPassenger > 0) {
-                $data['adType'] = User::AD_PASSENGER;
-            } else {
-                $data['adType'] = User::AD_NONE;
-            }
+
+            $data = $this->_getAdData($data, $user);
 
             return $data;
         }
@@ -312,5 +302,30 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                 'imageLight' => (!is_null($reward->getBadge()->getImageLight())) ? $this->badgeImageUri.$reward->getBadge()->getImageLight()->getFileName() : null,
             ],
         ];
+    }
+
+    private function _getAdData(array $data, int $userId): array {
+        $nbDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_DRIVER);
+        $nbPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_PASSENGER);
+
+        if ($nbDriver > 0 && $nbPassenger > 0) {
+            $data['adType'] = User::AD_DRIVER_PASSENGER;
+        } elseif ($nbDriver > 0) {
+            $data['adType'] = User::AD_DRIVER;
+        } elseif ($nbPassenger > 0) {
+            $data['adType'] = User::AD_PASSENGER;
+        } else {
+            $data['adType'] = User::AD_NONE;
+        }
+
+        if (isset($date['communityId'])) {
+            $nbAdsInCommunityAsDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_DRIVER, $data['communityId']);
+            $nbAdsInCommunityAsPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_PASSENGER, $data['communityId']);
+    
+            $data['adsInCommunityAsDriver'] = $nbAdsInCommunityAsDriver > 0;
+            $data['adsInCommunityAsPassenger'] = $nbAdsInCommunityAsPassenger > 0;
+        }
+
+        return $data;
     }
 }

@@ -23,6 +23,7 @@
 
 namespace App\User\EventListener;
 
+use App\Payment\Service\PaymentManager;
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
@@ -37,6 +38,7 @@ class UserLoadListener
     private $avatarDefaultFolder;
     private $userReviewActive;
     private $userManager;
+    private $paymentManager;
     private $identityValidation;
     private $minAgeToDrive;
 
@@ -47,12 +49,14 @@ class UserLoadListener
 
     public function __construct(
         UserManager $userManager,
+        PaymentManager $paymentManager,
         $params
     ) {
         $this->avatarSizes = $params['avatarSizes'];
         $this->avatarDefaultFolder = $params['avatarDefaultFolder'];
         $this->userReviewActive = $params['userReview'];
         $this->userManager = $userManager;
+        $this->paymentManager = $paymentManager;
         $this->identityValidation = $params['identityValidation'];
         $this->minAgeToDrive = $params['minAgeToDrive'];
     }
@@ -93,6 +97,7 @@ class UserLoadListener
                 $this->_user->setVerifiedIdentity(IdentityProof::STATUS_ACCEPTED == $this->_user->getIdentityStatus());
             }
             $this->_checkOldEnoughToDrive();
+            $this->_user->setMissingDataToPayElectronically($this->paymentManager->checkMissingDataToPayElectronically($this->_user));
         }
     }
 

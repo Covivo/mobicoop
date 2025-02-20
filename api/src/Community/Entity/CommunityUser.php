@@ -355,11 +355,32 @@ class CommunityUser
     private $adType;
 
     /**
+     * @var boolean
+     *
+     * @Groups("aRead")
+     */
+    private $adsInCommunityAsDriver = false;
+
+    /**
+     * @var boolean
+     *
+     * @Groups("aRead")
+     */
+    private $adsInCommunityAsPassenger = false;
+
+    /**
      * @var int user id
      *
      * @Groups("aRead")
      */
     private $userId;
+
+    /**
+     * @var int community id
+     *
+     * @Groups("aRead")
+     */
+    private $communityId;
 
     public function getId(): ?int
     {
@@ -533,6 +554,11 @@ class CommunityUser
     public function getUserId(): ?int
     {
         return $this->getUser()->getId();
+    }
+
+    public function getCommunityId(): ?int
+    {
+        return $this->getCommunity()->getId();
     }
 
     // DOCTRINE EVENTS

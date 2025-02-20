@@ -201,7 +201,8 @@ export default {
             placesDisabled:relayPoint.placesDisabled,
             image:relayPoint.image,
             type:relayPoint.relayPointType ? relayPoint.relayPointType.id : 13,
-            description:relayPoint.description
+            description:relayPoint.description,
+            fullDescription:relayPoint.fullDescription
           }
 
           this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon,misc));

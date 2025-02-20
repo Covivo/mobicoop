@@ -93,6 +93,11 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
      */
     private $description;
 
+    /**
+     * @var null|string the description of the relay point
+     */
+    private $fullDescription;
+
     public function __construct($id = null)
     {
         if ($id) {
@@ -234,10 +239,21 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
         $this->description = $description;
     }
 
-    public function jsonSerialize()
+    public function getFullDescription(): ?string
     {
-        return
-        [
+        return $this->fullDescription;
+    }
+
+    public function setFullDescription(?string $fullDescription): self
+    {
+        $this->fullDescription = $fullDescription;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
             'id' => $this->getId(),
             'name' => $this->getName(),
             'address' => $this->getAddress(),
@@ -250,6 +266,7 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
             'official' => $this->isOfficial(),
             'image' => $this->getImage(),
             'description' => $this->getDescription(),
+            'fullDescription' => $this->getFullDescription(),
         ];
     }
 }

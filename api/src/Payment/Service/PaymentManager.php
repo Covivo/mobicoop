@@ -397,9 +397,68 @@ class PaymentManager
     }
 
     /**
+     * Check missing data to be eligible to electronical payment for a User.
+     *
+     * @param User $user The User to check
+     */
+    public function checkMissingDataToPayElectronically(User $user): array
+    {
+        $missingData = [];
+        if (is_null($user->getGivenName()) || '' == $user->getGivenName()) {
+            $missingData[] = 'givenName';
+        }
+        if (is_null($user->getFamilyName()) || '' == $user->getFamilyName()) {
+            $missingData[] = 'familyName';
+        }
+        if (is_null($user->getBirthDate()) || '' == $user->getBirthDate()) {
+            $missingData[] = 'birthDate';
+        }
+        if (is_null($user->getEmail()) || '' == $user->getEmail()) {
+            $missingData[] = 'email';
+        }
+
+        /** @var Address */
+        $address = null;
+        foreach ($user->getAddresses() as $address) {
+            if ($address->isHome()) {
+                $homeAddress = $address;
+
+                break;
+            }
+        }
+
+        if (!isset($homeAddress) || is_null($homeAddress)) {
+            $missingData[] = 'homeAddress';
+        } else {
+            if (is_null($homeAddress->getAddressLocality()) || '' == $homeAddress->getAddressLocality()) {
+                $missingData[] = 'addressLocality';
+            }
+            if (is_null($homeAddress->getCountryCode()) || '' == $homeAddress->getCountryCode()) {
+                $missingData[] = 'countryCode';
+            }
+            if (is_null($homeAddress->getPostalCode()) || '' == $homeAddress->getPostalCode()) {
+                $missingData[] = 'postalCode';
+            }
+
+            $street = '';
+            if ('' != $homeAddress->getStreetAddress()) {
+                $street = $homeAddress->getStreetAddress();
+            } else {
+                $street = trim($homeAddress->getHouseNumber().' '.$homeAddress->getStreet());
+            }
+
+            if ('' == $street) {
+                $missingData[] = 'street';
+            }
+        }
+
+        return $missingData;
+    }
+
+    /**
      * Check if the User is valid for a registration to the provider.
      *
-     * @param User    $user        The User to test
+     * @param User    $user        The User to check
      * @param Address $homeAddress Ignore the home address of the user, use this address instead
      */
     public function checkValidForRegistrationToTheProvider(User $user, ?Address $homeAddress = null): bool

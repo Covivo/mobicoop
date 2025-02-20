@@ -1237,7 +1237,7 @@ class ProposalRepository
      *
      * @return int The number of ads
      */
-    public function getNbActiveAdsForUserAndRole(int $userId, int $role): int
+    public function getNbActiveAdsForUserAndRole(int $userId, int $role, int $communityId = null): int
     {
         $now = new \DateTime();
         $qb = $this->repository->createQueryBuilder('p')
@@ -1246,6 +1246,15 @@ class ProposalRepository
             ->select('count(c.id) as nb')
             ->andWhere('u.id = :id and (p.private is null or p.private = 0)')
         ;
+
+        if (!is_null($communityId)) {
+            $qb
+                ->join('p.communities', 'co')
+                ->andWhere('co.id = :communityId')
+                ->setParameter('communityId', $communityId)
+            ;
+        }
+
         if (Ad::ROLE_DRIVER == $role) {
             $qb->andWhere('c.driver = 1 and (
                 (c.frequency = 1 and c.fromDate >= :now) or

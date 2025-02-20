@@ -40,7 +40,6 @@
           <!-- Events available -->
 
           <v-tab-item
-
             :value="'tab-current'"
           >
             <v-card class="pa-6">
@@ -60,6 +59,12 @@
                       indeterminate
                       color="tertiary"
                     />
+                  </v-card>
+                  <v-card
+                    v-if="$te('events.intro')"
+                    elevation="0"
+                  >
+                    <v-card-text v-html="$t('events.intro')" />
                   </v-card>
                   <m-map
                     v-if="!loadingMap && !loading && pointsComingMap.length >= 0"

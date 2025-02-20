@@ -1,0 +1,12 @@
+{
+  "title": "Online payment",
+  "text": "To perform online payments on the platform, please complete the following fields",
+  "givenName": "Given name",
+  "familyName": "Family Name",
+  "birthDate": "Birthdate",
+  "email": "Email",
+  "homeAddress": "Complete home address",
+  "addressLocality": "Home city",
+  "countryCode": "Home country",
+  "postalCode": "Home postal code"
+}
