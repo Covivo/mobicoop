@@ -28,7 +28,6 @@ use App\Carpool\Entity\Result;
 use App\Carpool\Exception\AdException;
 use App\Carpool\Service\AdManager;
 use App\Communication\Service\NotificationManager;
-use App\Journey\Repository\JourneyRepository;
 use App\Rdex\Entity\RdexAddress;
 use App\Rdex\Entity\RdexClient;
 use App\Rdex\Entity\RdexConnection;
@@ -85,12 +84,11 @@ class RdexManager
 
     private $logger;
     private $defaultMarginDuration;
-    private $journeyRepository;
 
     /**
      * Constructor.
      */
-    public function __construct(AdManager $adManager, NotificationManager $notificationManager, UserManager $userManager, LoggerInterface $logger, JourneyRepository $journeyRepository, array $operator, array $clients, int $defaultMarginDuration)
+    public function __construct(AdManager $adManager, NotificationManager $notificationManager, UserManager $userManager, LoggerInterface $logger, array $operator, array $clients, int $defaultMarginDuration)
     {
         $this->adManager = $adManager;
         $this->notificationManager = $notificationManager;
@@ -100,7 +98,6 @@ class RdexManager
         $this->client = null;
         $this->logger = $logger;
         $this->defaultMarginDuration = $defaultMarginDuration;
-        $this->journeyRepository = $journeyRepository;
     }
 
     /**
@@ -108,7 +105,7 @@ class RdexManager
      *
      * @return bool|RdexError True if validation is ok, error if not
      */
-    public function checkSignature(Request $request, string $privateApiKey, ?string $urlToCheck = null)
+    public function checkSignature(Request $request, string $privateApiKey, string $urlToCheck = null)
     {
         // we check the signature
         if (self::CHECK_SIGNATURE) {
@@ -478,7 +475,7 @@ class RdexManager
             $journey->setCost(['variable' => $kilometersPrice]);
 
             // Frequency
-            $journey->setFrequency((1 == $result->getFrequency()) ? RdexJourney::FREQUENCY_PUNCTUAL : RdexJourney::FREQUENCY_REGULAR);
+            $journey->setFrequency((1 == $result->getFrequency()) ? 'punctual' : 'regular');
 
             // there's always an outward
             $infos = $this->buildJourneyDetails($result, $roleRequester, 'outward');
@@ -495,32 +492,6 @@ class RdexManager
             }
 
             $returnArray[] = ['journeys' => $journey];
-        }
-
-        return $returnArray;
-    }
-
-    /**
-     * Get the journeys from the proposals.
-     *
-     * @return array|RdexError
-     */
-    public function getJourneysAlt(array $parameters)
-    {
-        $returnArray = [];
-
-        if (is_null($this->client)) {
-            return new RdexError('apikey', RdexError::ERROR_ACCESS_DENIED, 'Invalid apikey');
-        }
-
-        $results = $this->journeyRepository->getJourneysByHaversineDistance($parameters);
-
-        foreach ($results as $result) {
-            $rdexJourneyBuilder = new RdexAltJourneyBuilder($result, $this->operator);
-            $candidateJourney = $rdexJourneyBuilder->build($result);
-            if ($this->_postBuildValidations($candidateJourney, $parameters)) {
-                $returnArray[] = $candidateJourney;
-            }
         }
 
         return $returnArray;
@@ -702,63 +673,6 @@ class RdexManager
             $this->notificationManager->notifies(RdexConnectionEvent::NAME, $recipient, $rdexConnection);
         } else {
             return new RdexError(RdexConnection::STATE_RECIPIENT, RdexError::ERROR_UNKNOWN_USER);
-        }
-
-        return true;
-    }
-
-    private function _postBuildValidations(array $candidateJourney, array $parameters): bool
-    {
-        return $this->_postBuildDaysValidation($candidateJourney, $parameters)
-        && $this->_postBuildDaysTimesValidation($candidateJourney, $parameters, 'outward')
-        && $this->_postBuildDaysTimesValidation($candidateJourney, $parameters, 'return');
-    }
-
-    private function _postBuildDaysValidation(array $candidateJourney, array $parameters): bool
-    {
-        if (isset($parameters['days'])) {
-            $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-            foreach ($days as $currentDay) {
-                if (isset($parameters['days'][$currentDay]) && 1 == $parameters['days'][$currentDay]) {
-                    if (1 !== $candidateJourney['journeys']->getDays()->{'get'.ucfirst($currentDay)}()) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private function _postBuildDaysTimesValidation(array $candidateJourney, array $parameters, string $way): bool
-    {
-        if (isset($parameters[$way])) {
-            $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-            foreach ($days as $currentDay) {
-                $tripDay = $candidateJourney['journeys']->getOutward()->{'get'.ucfirst($currentDay)}();
-                if (isset($parameters[$way][$currentDay]['mintime'], $parameters[$way][$currentDay]['maxtime'])) {
-                    $minTimeParam = \DateTime::createFromFormat('H:i:s', $parameters[$way][$currentDay]['mintime']);
-                    $maxTimeParam = \DateTime::createFromFormat('H:i:s', $parameters[$way][$currentDay]['maxtime']);
-                    $tripDayTime = \DateTime::createFromFormat('H:i:s', $tripDay->getMinTime());
-                    if ($parameters[$way][$currentDay]['mintime'] > $tripDay->getMinTime() || $parameters[$way][$currentDay]['maxtime'] < $tripDay->getMinTime()) {
-                        return false;
-                    }
-                } elseif (isset($parameters[$way][$currentDay]['mintime'])) {
-                    $minTimeParam = \DateTime::createFromFormat('H:i:s', $parameters[$way][$currentDay]['mintime']);
-                    $tripDayTime = \DateTime::createFromFormat('H:i:s', $tripDay->getMinTime());
-                    if ($minTimeParam > $tripDayTime) {
-                        return false;
-                    }
-                } elseif (isset($parameters[$way][$currentDay]['maxtime'])) {
-                    $maxTimeParam = \DateTime::createFromFormat('H:i:s', $parameters[$way][$currentDay]['maxtime']);
-                    $tripDayTime = \DateTime::createFromFormat('H:i:s', $tripDay->getMinTime());
-                    if ($maxTimeParam < $tripDayTime) {
-                        return false;
-                    }
-                }
-            }
         }
 
         return true;

@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- */
+ **************************/
 
 namespace App\Rdex\Controller;
 
-use App\Rdex\Entity\RdexError;
-use App\Rdex\Entity\RdexJourney;
-use App\Rdex\Service\RdexManager;
 use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use App\Rdex\Service\RdexManager;
+use App\Rdex\Entity\RdexError;
+use App\Rdex\Entity\RdexJourney;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Controller class for Rdex Journey collection.
@@ -40,33 +40,25 @@ use Symfony\Component\HttpFoundation\Response;
 class JourneyCollectionController
 {
     use TranslatorTrait;
-    protected $request;
     private $rdexManager;
-    private $active;
-    private $alternativeMatching;
-
-    public function __construct(RequestStack $requestStack, RdexManager $rdexManager, bool $active, bool $alternativeMatching)
+    protected $request;
+    
+    public function __construct(RequestStack $requestStack, RdexManager $rdexManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->rdexManager = $rdexManager;
-        $this->alternativeMatching = $alternativeMatching;
-        $this->active = $active;
     }
-
+    
     /**
      * This method is invoked when a Journey collection is requested.
      *
      * @param RdexJourney $data
-     *
      * @return Response
      */
     public function __invoke(array $data): JsonResponse
     {
-        if (!$this->active) {
-            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
-        }
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans('bad RdexJourney id is provided'));
+            throw new \InvalidArgumentException($this->translator->trans("bad RdexJourney id is provided"));
         }
         $response = new JsonResponse();
         // if there are no parameters we stop without errors, in could be an api check, it shouldn't throw an error
@@ -79,12 +71,9 @@ class JourneyCollectionController
             $error = $this->rdexManager->createError($validation);
             $response->setContent($error['error']);
             $response->setStatusCode($error['code']);
-        } elseif ($this->alternativeMatching) {
-            $response->setContent(json_encode($this->rdexManager->getJourneysAlt($this->request->get('p'))));
         } else {
-            $response->setContent(json_encode($this->rdexManager->getJourneys($this->request->get('p'))));
+            $response->setContent(json_encode($this->rdexManager->getJourneys($this->request->get("p"))));
         }
-
         return $response;
     }
 }

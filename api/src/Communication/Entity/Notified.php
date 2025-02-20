@@ -35,7 +35,6 @@ use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\Solidary\Entity\Solidary;
 
 /**
  * A notification to send for a user.
@@ -222,19 +221,6 @@ class Notified
     private $matching;
 
     /**
-     * @var Solidary the matching if the notified is linked to a solidaryMatching
-     *
-     * @ORM\ManyToOne(targetEntity=Solidary::class, inversedBy="notifieds")
-     *
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     *
-     * @Groups({"read","write"})
-     *
-     * @MaxDepth(1)
-     */
-    private $solidary;
-
-    /**
      * @var AskHistory the askHistory if the notified is linked to an askHistory
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\AskHistory", inversedBy="notifieds")
@@ -376,18 +362,6 @@ class Notified
     public function setMatching(?Matching $matching): self
     {
         $this->matching = $matching;
-
-        return $this;
-    }
-
-    public function getSolidary(): ?Solidary
-    {
-        return $this->solidary;
-    }
-
-    public function setSolidary(?Solidary $solidary): self
-    {
-        $this->solidary = $solidary;
 
         return $this;
     }

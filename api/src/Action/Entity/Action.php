@@ -93,7 +93,6 @@ class Action
 
     public const ACTION_SOLIDARY_UPDATE_PROGRESS_MANUALLY = 39;
     public const ACTION_CEE_SUBSCRIPTION_NOT_READY_TO_VERRIFY = 'eec_subscription_not_ready_to_verify';
-    public const ACTION_SOLIDARY_VOLUNTEER_MATCHING_SUCCESS = 'solidary_volunteer_matching_success';
 
     /**
      * @var int the id of this action
