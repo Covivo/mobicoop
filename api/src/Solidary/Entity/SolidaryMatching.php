@@ -31,6 +31,7 @@ use App\Carpool\Entity\Matching;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A solidary matching
@@ -65,7 +66,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SolidaryMatching
 {
     const DEFAULT_ID = 999999999999;
-
+    
     /**
      * @var int The id of this subject.
      *
@@ -169,7 +170,7 @@ class SolidaryMatching
     {
         $this->id = self::DEFAULT_ID;
     }
-
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -208,11 +209,11 @@ class SolidaryMatching
     {
         return $this->solidaryUser;
     }
-
+    
     public function setSolidaryUser(?SolidaryUser $solidaryUser): self
     {
         $this->solidaryUser = $solidaryUser;
-
+        
         return $this;
     }
 
@@ -220,11 +221,11 @@ class SolidaryMatching
     {
         return $this->solidary;
     }
-
+    
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-
+        
         return $this;
     }
 
@@ -232,11 +233,11 @@ class SolidaryMatching
     {
         return $this->solidarySolution;
     }
-
+    
     public function setSolidarySolution(?SolidarySolution $solidarySolution): self
     {
         $this->solidarySolution = $solidarySolution;
-
+        
         return $this;
     }
 
