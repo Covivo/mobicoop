@@ -32,6 +32,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
+use App\Communication\Entity\Notified;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use DateTime;
@@ -846,6 +847,15 @@ class Solidary
      * @Groups("aReadItem")
      */
     private $adminstructureSolidaryTransport;
+
+    /**
+     * @var ArrayCollection|null The notifications sent for the matching.
+     *
+     * @ORM\OneToMany(targetEntity=Notified::class, mappedBy="matching", cascade={"persist"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $notifieds;
 
     public function __construct()
     {
@@ -2061,5 +2071,34 @@ class Solidary
             && $this->getSolidaryUserStructure()->getStructure()->getSolidaryTransport();
 
         return $this->adminstructureSolidaryTransport;
+    }
+
+
+    public function getNotifieds()
+    {
+        return $this->notifieds->getValues();
+    }
+
+    public function addNotified(Notified $notified): self
+    {
+        if (!$this->notifieds->contains($notified)) {
+            $this->notifieds[] = $notified;
+            $notified->setSolidary($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotified(Notified $notified): self
+    {
+        if ($this->notifieds->contains($notified)) {
+            $this->notifieds->removeElement($notified);
+            // set the owning side to null (unless already changed)
+            if ($notified->getSolidary() === $this) {
+                $notified->setSolidary(null);
+            }
+        }
+
+        return $this;
     }
 }

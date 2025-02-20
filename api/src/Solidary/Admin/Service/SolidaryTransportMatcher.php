@@ -30,7 +30,9 @@ use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
+use App\Solidary\Event\SolidaryMatchingEvent;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Solidary transport matcher in admin context.
@@ -43,12 +45,18 @@ class SolidaryTransportMatcher
     private $solidaryUserRepository;
 
     /**
-    * Constructor
-    */
-    public function __construct(EntityManagerInterface $entityManager, SolidaryUserRepository $solidaryUserRepository)
-    {
+     * @var EventDispatcherInterface
+     */
+    private $_eventDispatcher;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        SolidaryUserRepository $solidaryUserRepository,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->entityManager = $entityManager;
         $this->solidaryUserRepository = $solidaryUserRepository;
+        $this->_eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -59,7 +67,7 @@ class SolidaryTransportMatcher
         if (is_null($solidary->getProposal())) {
             return;
         }
-        
+
         // first we get the volunteers for the outward
         $outwardVolunteers = $this->solidaryUserRepository->getMatchingVolunteers($solidary, $solidary->getProposal()->getType());
 
@@ -112,6 +120,9 @@ class SolidaryTransportMatcher
         }
 
         $this->entityManager->flush();
+
+        $event = new SolidaryMatchingEvent($solidary);
+        $this->_eventDispatcher->dispatch(SolidaryMatchingEvent::NAME, $event);
     }
 
     /**

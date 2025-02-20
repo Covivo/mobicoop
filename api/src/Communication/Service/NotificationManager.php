@@ -226,7 +226,7 @@ class NotificationManager
                     switch ($notification->getMedium()->getId()) {
                         case Medium::MEDIUM_MESSAGE:
                             if (!is_null($object)) {
-                                $this->logger->info("Internal message notification for {$action} / ".get_class($object).' / '.$recipient->getEmail());
+                                $this->logger->info("Internal message notification for {$action} / " . get_class($object) . ' / ' . $recipient->getEmail());
                                 if ($object instanceof MessagerInterface && !is_null($object->getMessage())) {
                                     $this->internalMessageManager->sendForObject([$recipient], $object);
                                 }
@@ -241,7 +241,7 @@ class NotificationManager
                             }
                             $this->notifyByEmail($notification, $recipient, $object);
                             $this->createNotified($notification, $recipient, $object);
-                            $this->logger->info("Email notification for {$action} / ".$recipient->getEmail());
+                            $this->logger->info("Email notification for {$action} / " . $recipient->getEmail());
 
                             break;
 
@@ -251,6 +251,8 @@ class NotificationManager
                             }
                             $this->notifyBySMS($notification, $recipient, $object);
 
+                            $this->createNotified($notification, $recipient, $object);
+
                             break;
 
                         case Medium::MEDIUM_PUSH:
@@ -259,13 +261,13 @@ class NotificationManager
                             }
                             $this->notifyByPush($notification, $recipient, $object);
                             $this->createNotified($notification, $recipient, $object);
-                            $this->logger->info("Push notification for {$action} / ".$recipient->getEmail());
+                            $this->logger->info("Push notification for {$action} / " . $recipient->getEmail());
 
                             break;
                     }
                 } else {
                     $this->createBlockedNotified($notification, $recipient);
-                    $this->logger->info("limit per day reach for notification {$action} / ".$recipient->getEmail());
+                    $this->logger->info("limit per day reach for notification {$action} / " . $recipient->getEmail());
                 }
             }
         }
@@ -309,6 +311,10 @@ class NotificationManager
 
                 case Recipient::class:
                     $notified->setRecipient($object);
+
+                    break;
+                case Solidary::class:
+                    $notified->setSolidary($object);
 
                     break;
             }
@@ -364,10 +370,10 @@ class NotificationManager
                         $departureTime = $object->getCriteria()->getFromTime();
                         if ($object->getCriteria()->isPassenger()) {
                             $arrivalTime = clone $departureTime;
-                            $arrivalTime->modify('+'.$object->getCriteria()->getDiractionPassenger()->getDuration().' second');
+                            $arrivalTime->modify('+' . $object->getCriteria()->getDiractionPassenger()->getDuration() . ' second');
                         } else {
                             $arrivalTime = clone $departureTime;
-                            $arrivalTime->modify('+'.$object->getCriteria()->getDiractionDriver()->getDuration().' second');
+                            $arrivalTime->modify('+' . $object->getCriteria()->getDiractionDriver()->getDuration() . ' second');
                         }
                     }
                     $titleContext = [];
@@ -425,14 +431,15 @@ class NotificationManager
                             }
                             // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
                             // It's the case when the user who made the ask only checked return days
-                            if (Criteria::FREQUENCY_REGULAR == $object->getAd()->getFrequency()
-                            && !$result->getOutward()->isMonCheck()
-                            && !$result->getOutward()->isTueCheck()
-                            && !$result->getOutward()->isWedCheck()
-                            && !$result->getOutward()->isThuCheck()
-                            && !$result->getOutward()->isFriCheck()
-                            && !$result->getOutward()->isSatCheck()
-                            && !$result->getOutward()->isSunCheck()
+                            if (
+                                Criteria::FREQUENCY_REGULAR == $object->getAd()->getFrequency()
+                                && !$result->getOutward()->isMonCheck()
+                                && !$result->getOutward()->isTueCheck()
+                                && !$result->getOutward()->isWedCheck()
+                                && !$result->getOutward()->isThuCheck()
+                                && !$result->getOutward()->isFriCheck()
+                                && !$result->getOutward()->isSatCheck()
+                                && !$result->getOutward()->isSunCheck()
                             ) {
                                 $result->setOutward(null);
                             }
@@ -490,14 +497,15 @@ class NotificationManager
                         }
                         // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
                         // It's the case when the user who made the ask only checked return days
-                        if (Criteria::FREQUENCY_REGULAR == $object->getFrequency()
-                        && !$result->getOutward()->isMonCheck()
-                        && !$result->getOutward()->isTueCheck()
-                        && !$result->getOutward()->isWedCheck()
-                        && !$result->getOutward()->isThuCheck()
-                        && !$result->getOutward()->isFriCheck()
-                        && !$result->getOutward()->isSatCheck()
-                        && !$result->getOutward()->isSunCheck()
+                        if (
+                            Criteria::FREQUENCY_REGULAR == $object->getFrequency()
+                            && !$result->getOutward()->isMonCheck()
+                            && !$result->getOutward()->isTueCheck()
+                            && !$result->getOutward()->isWedCheck()
+                            && !$result->getOutward()->isThuCheck()
+                            && !$result->getOutward()->isFriCheck()
+                            && !$result->getOutward()->isSatCheck()
+                            && !$result->getOutward()->isSunCheck()
                         ) {
                             $result->setOutward(null);
                         }
@@ -651,7 +659,7 @@ class NotificationManager
                     $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
                     $signature = [
                         'text' => $structure->getSignature(),
-                        'logo' => count($structure->getImages()) > 0 ? $this->structureLogoUri.$structure->getImages()[0]->getFileName() : null,
+                        'logo' => count($structure->getImages()) > 0 ? $this->structureLogoUri . $structure->getImages()[0]->getFileName() : null,
                     ];
                     $titleContext = ['user' => $object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
                     $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient, 'signature' => $signature];
@@ -689,7 +697,7 @@ class NotificationManager
 
                     $date = null;
                     if (!is_null($object->getAsk()) && !is_null($object->getAsk()->getCriteria())) {
-                        $date = \DateTime::createFromFormat('Y-m-d H:m', $object->getAsk()->getCriteria()->getFromDate()->format('Y-m-d').' '.is_null($object->getAsk()->getCriteria()->getFromTime()) ? '' : $object->getAsk()->getCriteria()->getFromTime()->format('H:m'));
+                        $date = \DateTime::createFromFormat('Y-m-d H:m', $object->getAsk()->getCriteria()->getFromDate()->format('Y-m-d') . ' ' . is_null($object->getAsk()->getCriteria()->getFromTime()) ? '' : $object->getAsk()->getCriteria()->getFromTime()->format('H:m'));
                     }
 
                     $bodyContext = [
@@ -798,7 +806,7 @@ class NotificationManager
                 $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
                 $signature = [
                     'text' => $structure->getSignature(),
-                    'logo' => count($structure->getImages()) > 0 ? $this->structureLogoUri.$structure->getImages()[0]->getFileName() : null,
+                    'logo' => count($structure->getImages()) > 0 ? $this->structureLogoUri . $structure->getImages()[0]->getFileName() : null,
                 ];
             }
             $bodyContext = ['user' => $recipient, 'notification' => $notification, 'signature' => $signature];
@@ -815,9 +823,9 @@ class NotificationManager
         }
 
         if ($notification->hasAlt()) {
-            $titleTemplate = $this->altCommunicationFolder.$templateLanguage.$this->emailTitleTemplatePath.$notification->getAction()->getName().'.html.twig';
+            $titleTemplate = $this->altCommunicationFolder . $templateLanguage . $this->emailTitleTemplatePath . $notification->getAction()->getName() . '.html.twig';
         } else {
-            $titleTemplate = $this->communicationFolder.$templateLanguage.$this->emailTitleTemplatePath.$notification->getAction()->getName().'.html.twig';
+            $titleTemplate = $this->communicationFolder . $templateLanguage . $this->emailTitleTemplatePath . $notification->getAction()->getName() . '.html.twig';
         }
         $email->setObject($this->templating->render(
             $titleTemplate,
@@ -830,9 +838,9 @@ class NotificationManager
         }
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
-            $this->emailManager->send($email, $this->altCommunicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $this->emailManager->send($email, $this->altCommunicationFolder . $templateLanguage . $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
         } else {
-            $this->emailManager->send($email, $this->communicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $this->emailManager->send($email, $this->communicationFolder . $templateLanguage . $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
         }
     }
 
@@ -850,7 +858,7 @@ class NotificationManager
         }
         $sms = new Sms();
         if (!is_null($recipient->getPhoneCode())) {
-            $sms->setRecipientTelephone('+'.$recipient->getPhoneCode().ltrim($recipient->getTelephone(), 0));
+            $sms->setRecipientTelephone('+' . $recipient->getPhoneCode() . ltrim($recipient->getTelephone(), 0));
         } else {
             $sms->setRecipientTelephone($recipient->getTelephone());
         }
@@ -944,6 +952,14 @@ class NotificationManager
 
                 case SolidaryContact::class:
                     $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient];
+
+                    break;
+
+                case Solidary::class:
+                    $bodyContext = [
+                        'user' => $recipient,
+                        'structure' => $object->getAdminstructure(),
+                    ];
 
                     break;
 
@@ -1051,19 +1067,19 @@ class NotificationManager
             $bodyContext['carpoolTimezone'] = $this->defaultCarpoolTimezone;
         }        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
-            $response = $this->smsManager->send($sms, $this->altCommunicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $response = $this->smsManager->send($sms, $this->altCommunicationFolder . $templateLanguage . $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
         } else {
-            $response = $this->smsManager->send($sms, $this->communicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $response = $this->smsManager->send($sms, $this->communicationFolder . $templateLanguage . $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
         }
 
         // ? #4705- Log creation when SMS is not send
         if (!$this->checkSmsSending($response)) {
-            $this->logger->error('Sms notification to '.$recipient->getId().' for the '.$notification->getAction()->getName().' has failed');
+            $this->logger->error('Sms notification to ' . $recipient->getId() . ' for the ' . $notification->getAction()->getName() . ' has failed');
         }
 
         $this->createNotified($notification, $recipient, $object);
 
-        $this->logger->info('Sms notification for '.$notification->getAction()->getName().' / '.$recipient->getEmail());
+        $this->logger->info('Sms notification for ' . $notification->getAction()->getName() . ' / ' . $recipient->getEmail());
     }
 
     private function checkSmsSending(Response $response): bool
@@ -1292,9 +1308,9 @@ class NotificationManager
         }
 
         if ($notification->hasAlt()) {
-            $titleTemplate = $this->altCommunicationFolder.$templateLanguage.$this->pushTitleTemplatePath.$notification->getAction()->getName().'.html.twig';
+            $titleTemplate = $this->altCommunicationFolder . $templateLanguage . $this->pushTitleTemplatePath . $notification->getAction()->getName() . '.html.twig';
         } else {
-            $titleTemplate = $this->communicationFolder.$templateLanguage.$this->pushTitleTemplatePath.$notification->getAction()->getName().'.html.twig';
+            $titleTemplate = $this->communicationFolder . $templateLanguage . $this->pushTitleTemplatePath . $notification->getAction()->getName() . '.html.twig';
         }
         $push->setTitle($this->templating->render(
             $titleTemplate,
@@ -1307,9 +1323,9 @@ class NotificationManager
             $bodyContext['carpoolTimezone'] = $this->defaultCarpoolTimezone;
         }        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
-            $this->pushManager->send($push, $this->altCommunicationFolder.$templateLanguage.$this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $this->pushManager->send($push, $this->altCommunicationFolder . $templateLanguage . $this->pushTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
         } else {
-            $this->pushManager->send($push, $this->communicationFolder.$templateLanguage.$this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $this->pushManager->send($push, $this->communicationFolder . $templateLanguage . $this->pushTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
         }
     }
 
