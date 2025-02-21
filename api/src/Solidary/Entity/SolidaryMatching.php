@@ -19,25 +19,26 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary matching
+ * A solidary matching.
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -61,25 +62,30 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryMatching
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
-     * @var int The id of this subject.
+     * @var int the id of this subject
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
      */
     private $id;
 
     /**
-     * @var int|null The solidary matching type.
+     * @var null|int The solidary matching type.
      *
      * 1 : matching for a one way trip
      * 2 : matching for the outward of a return trip
@@ -93,75 +99,93 @@ class SolidaryMatching
     private $type;
 
     /**
-     * @var Matching|null The carpool matching if there is any
+     * @var null|Matching The carpool matching if there is any
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="solidaryMatching", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","results",})
+     *
      * @MaxDepth(1)
      */
     private $matching;
 
     /**
-     * @var SolidaryUser The solidary User if needed.
+     * @var SolidaryUser the solidary User if needed
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="solidaryMatchings")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"readSolidary","writeSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidaryUser;
 
     /**
-     * @var Solidary The solidary.
+     * @var Solidary the solidary
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary", inversedBy="solidaryMatchings")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"readSolidary","writeSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidary;
 
     /**
-     * @var Criteria|null Criteria of this SolidaryAsk
+     * @var null|Criteria Criteria of this SolidaryAsk
      *
      * @Assert\NotBlank
+     *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryMatching", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $criteria;
 
     /**
-     * @var SolidarySolution|null SolidarySolution of this SolidaryMatching
+     * @var null|SolidarySolution SolidarySolution of this SolidaryMatching
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidaryMatching", cascade={"persist"})
+     *
      * @Groups({"readSolidary","writeSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidarySolution;
 
     /**
-     * @var SolidaryMatching|null The linked solidary matching for return trips.
+     * @var null|SolidaryMatching the linked solidary matching for return trips
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @MaxDepth(1)
      */
     private $solidaryMatchingLinked;
 
     /**
-     * @var \DateTimeInterface Creation date of the solidary record.
+     * @var \DateTimeInterface creation date of the solidary record
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups("readSolidary")
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the solidary record.
+     * @var \DateTimeInterface updated date of the solidary record
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups("readSolidary")
      */
     private $updatedDate;
@@ -170,7 +194,7 @@ class SolidaryMatching
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -209,11 +233,11 @@ class SolidaryMatching
     {
         return $this->solidaryUser;
     }
-    
+
     public function setSolidaryUser(?SolidaryUser $solidaryUser): self
     {
         $this->solidaryUser = $solidaryUser;
-        
+
         return $this;
     }
 
@@ -221,11 +245,11 @@ class SolidaryMatching
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
+
         return $this;
     }
 
@@ -233,11 +257,11 @@ class SolidaryMatching
     {
         return $this->solidarySolution;
     }
-    
+
     public function setSolidarySolution(?SolidarySolution $solidarySolution): self
     {
         $this->solidarySolution = $solidarySolution;
-        
+
         return $this;
     }
 
@@ -263,7 +287,7 @@ class SolidaryMatching
         $this->solidaryMatchingLinked = $solidaryMatchingLinked;
 
         // set (or unset) the owning side of the relation if necessary
-        $newSolidaryMatchingLinked = $solidaryMatchingLinked === null ? null : $this;
+        $newSolidaryMatchingLinked = null === $solidaryMatchingLinked ? null : $this;
         if (!is_null($solidaryMatchingLinked) && $newSolidaryMatchingLinked !== $solidaryMatchingLinked->getSolidaryMatchingLinked()) {
             $solidaryMatchingLinked->setSolidaryMatchingLinked($newSolidaryMatchingLinked);
         }
@@ -304,7 +328,7 @@ class SolidaryMatching
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -314,6 +338,6 @@ class SolidaryMatching
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

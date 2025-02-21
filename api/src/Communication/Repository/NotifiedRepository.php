@@ -115,4 +115,19 @@ class NotifiedRepository
 
         return $query->getQuery()->getResult();
     }
+
+    public function findNotifiedByUserAndNotificationAndSolidary(int $userId, int $notificationId, int $solidaryId)
+    {
+        $query = $this->repository->createQueryBuilder('n')
+            ->select('n')
+            ->where('n.user = :userId')
+            ->andWhere('n.notification = :notificationId')
+            ->andWhere('n.solidary = :solidaryId')
+            ->setParameter('userId', $userId)
+            ->setParameter('notificationId', $notificationId)
+            ->setParameter('solidaryId', $solidaryId)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }

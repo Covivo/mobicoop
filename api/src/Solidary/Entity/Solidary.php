@@ -32,6 +32,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
+use App\Communication\Entity\Notified;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use DateTime;
@@ -847,6 +848,17 @@ class Solidary
      */
     private $adminstructureSolidaryTransport;
 
+    /**
+     * @var null|ArrayCollection the notifications sent for the matching
+     *
+     * @ORM\OneToMany(targetEntity=Notified::class, mappedBy="matching", cascade={"persist"})
+     *
+     * @Groups({"read","write"})
+     *
+     * @MaxDepth(1)
+     */
+    private $notifieds;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -1513,7 +1525,7 @@ class Solidary
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -1523,7 +1535,7 @@ class Solidary
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     // ADMIN CUSTOM PROPERTIES
@@ -2061,5 +2073,33 @@ class Solidary
             && $this->getSolidaryUserStructure()->getStructure()->getSolidaryTransport();
 
         return $this->adminstructureSolidaryTransport;
+    }
+
+    public function getNotifieds()
+    {
+        return $this->notifieds->getValues();
+    }
+
+    public function addNotified(Notified $notified): self
+    {
+        if (!$this->notifieds->contains($notified)) {
+            $this->notifieds[] = $notified;
+            $notified->setSolidary($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotified(Notified $notified): self
+    {
+        if ($this->notifieds->contains($notified)) {
+            $this->notifieds->removeElement($notified);
+            // set the owning side to null (unless already changed)
+            if ($notified->getSolidary() === $this) {
+                $notified->setSolidary(null);
+            }
+        }
+
+        return $this;
     }
 }

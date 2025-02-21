@@ -251,6 +251,8 @@ class NotificationManager
                             }
                             $this->notifyBySMS($notification, $recipient, $object);
 
+                            $this->createNotified($notification, $recipient, $object);
+
                             break;
 
                         case Medium::MEDIUM_PUSH:
@@ -309,6 +311,11 @@ class NotificationManager
 
                 case Recipient::class:
                     $notified->setRecipient($object);
+
+                    break;
+
+                case Solidary::class:
+                    $notified->setSolidary($object);
 
                     break;
             }
@@ -425,14 +432,15 @@ class NotificationManager
                             }
                             // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
                             // It's the case when the user who made the ask only checked return days
-                            if (Criteria::FREQUENCY_REGULAR == $object->getAd()->getFrequency()
-                            && !$result->getOutward()->isMonCheck()
-                            && !$result->getOutward()->isTueCheck()
-                            && !$result->getOutward()->isWedCheck()
-                            && !$result->getOutward()->isThuCheck()
-                            && !$result->getOutward()->isFriCheck()
-                            && !$result->getOutward()->isSatCheck()
-                            && !$result->getOutward()->isSunCheck()
+                            if (
+                                Criteria::FREQUENCY_REGULAR == $object->getAd()->getFrequency()
+                                && !$result->getOutward()->isMonCheck()
+                                && !$result->getOutward()->isTueCheck()
+                                && !$result->getOutward()->isWedCheck()
+                                && !$result->getOutward()->isThuCheck()
+                                && !$result->getOutward()->isFriCheck()
+                                && !$result->getOutward()->isSatCheck()
+                                && !$result->getOutward()->isSunCheck()
                             ) {
                                 $result->setOutward(null);
                             }
@@ -490,14 +498,15 @@ class NotificationManager
                         }
                         // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
                         // It's the case when the user who made the ask only checked return days
-                        if (Criteria::FREQUENCY_REGULAR == $object->getFrequency()
-                        && !$result->getOutward()->isMonCheck()
-                        && !$result->getOutward()->isTueCheck()
-                        && !$result->getOutward()->isWedCheck()
-                        && !$result->getOutward()->isThuCheck()
-                        && !$result->getOutward()->isFriCheck()
-                        && !$result->getOutward()->isSatCheck()
-                        && !$result->getOutward()->isSunCheck()
+                        if (
+                            Criteria::FREQUENCY_REGULAR == $object->getFrequency()
+                            && !$result->getOutward()->isMonCheck()
+                            && !$result->getOutward()->isTueCheck()
+                            && !$result->getOutward()->isWedCheck()
+                            && !$result->getOutward()->isThuCheck()
+                            && !$result->getOutward()->isFriCheck()
+                            && !$result->getOutward()->isSatCheck()
+                            && !$result->getOutward()->isSunCheck()
                         ) {
                             $result->setOutward(null);
                         }
@@ -944,6 +953,14 @@ class NotificationManager
 
                 case SolidaryContact::class:
                     $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient];
+
+                    break;
+
+                case Solidary::class:
+                    $bodyContext = [
+                        'user' => $recipient,
+                        'structure' => $object->getAdminstructure(),
+                    ];
 
                     break;
 
