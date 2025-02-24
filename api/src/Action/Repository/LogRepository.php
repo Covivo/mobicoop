@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -18,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Repository;
 
@@ -32,15 +33,14 @@ class LogRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Log::class);
     }
-
 
     public function find(int $id): ?Log
     {
@@ -52,8 +52,7 @@ class LogRepository
         return $this->repository->findAll();
     }
 
-
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -61,5 +60,17 @@ class LogRepository
     public function findOneBy(array $criteria): ?Log
     {
         return $this->repository->findOneBy($criteria);
+    }
+
+    public function findByPtProviderAndDate(string $ptProvider, \DateTime $date): ?array
+    {
+        return $this->repository->createQueryBuilder('l')
+            ->where('l.ptProvider = :ptProvider')
+            ->andWhere('l.date >= :date')
+            ->setParameter('ptProvider', $ptProvider)
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }
