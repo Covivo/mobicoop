@@ -153,15 +153,8 @@ class EventController extends AbstractController
         $this->denyAccessUnlessGranted('create', $event);
         $user = $userManager->getLoggedUser();
 
-        // Redirect to user_login
-        if (!$user instanceof User) {
-            $user = null;
-
-            return $this->redirectToRoute('user_login');
-        }
-
         if ($request->isMethod('POST')) {
-            // Redirect to user_login
+            var_dump('in post');
             if (!$user instanceof User) {
                 $user = null;
 
@@ -190,6 +183,14 @@ class EventController extends AbstractController
 
             // return error if event post didn't work
             return new Response(json_encode('error.event.create'));
+        }
+
+        // Redirect to user_login
+        if (!$user instanceof User) {
+            var_dump('not logged');
+            $user = null;
+
+            return $this->redirectToRoute('user_login');
         }
 
         return $this->render('@Mobicoop/event/createEvent.html.twig', [
