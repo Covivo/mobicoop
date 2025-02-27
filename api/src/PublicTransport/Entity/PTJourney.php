@@ -33,10 +33,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * A public transport journey.
  *
  * @ORM\Entity
+ *
  * @ApiResource(
  *      routePrefix="/public_transport",
  *      attributes={
- *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"pt", "checkThreshold"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
  *          "get"={
@@ -110,6 +111,32 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  *                  },
  *              }
+ *          },
+ *          "checkThreshold"={
+ *              "path"="/checkThreshold",
+ *              "method"="get",
+ *              "normalization_context"={"groups"={"checkThreshold"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Public Transport"},
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "origin_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "origin_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the origin point"
+ *                      },
+ *                  },
+ *              }
  *          }
  *      },
  *      itemOperations={
@@ -133,8 +160,11 @@ class PTJourney
      * @var int the id of this journey
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -143,6 +173,7 @@ class PTJourney
      * @var int the total distance of this journey
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups("pt")
      */
     private $distance;
@@ -151,6 +182,7 @@ class PTJourney
      * @var string the total duration of this journey (in seconds)
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups("pt")
      */
     private $duration;
@@ -166,6 +198,7 @@ class PTJourney
      * @var float the estimated price of this journey
      *
      * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
+     *
      * @Groups("pt")
      */
     private $price;
@@ -174,6 +207,7 @@ class PTJourney
      * @var int the estimated CO2 emission of this journey
      *
      * @ORM\Column(type="integer")
+     *
      * @Groups("pt")
      */
     private $co2;
@@ -182,7 +216,9 @@ class PTJourney
      * @var PTDeparture the departure of this journey
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups("pt")
      */
     private $ptdeparture;
@@ -191,7 +227,9 @@ class PTJourney
      * @var PTArrival the arrival of this journey
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups("pt")
      */
     private $ptarrival;
@@ -200,6 +238,7 @@ class PTJourney
      * @var ArrayCollection the legs of this journey
      *
      * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTLeg", mappedBy="ptjourney", cascade={"persist"})
+     *
      * @Groups("pt")
      */
     private $ptlegs;
@@ -208,6 +247,7 @@ class PTJourney
      * @var string PT provider used to compute this journey
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups("pt")
      */
     private $provider;
@@ -225,6 +265,13 @@ class PTJourney
      * @Groups("pt")
      */
     private $ptProviderUrl;
+
+    /**
+     * @var bool true if the thrreshold has been reached for the given coordinates
+     *
+     * @Groups("checkThreshold")
+     */
+    private $thresholdReached;
 
     public function __construct($id = null)
     {
@@ -398,6 +445,18 @@ class PTJourney
     public function setPtProviderUrl(?string $ptProviderUrl): self
     {
         $this->ptProviderUrl = $ptProviderUrl;
+
+        return $this;
+    }
+
+    public function getThresholdReached(): ?bool
+    {
+        return !is_null($this->thresholdReached) ? $this->thresholdReached : false;
+    }
+
+    public function setThresholdReached(?bool $thresholdReached): self
+    {
+        $this->thresholdReached = $thresholdReached;
 
         return $this;
     }

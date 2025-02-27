@@ -49,7 +49,7 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
 
     public function supports(string $resourceClass, ?string $operationName = null, array $context = []): bool
     {
-        return PTJourney::class === $resourceClass;
+        return PTJourney::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, ?string $operationName = null): ?array

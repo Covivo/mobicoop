@@ -108,23 +108,8 @@ class PTDataProvider
     ): ?array {
         $providerUri = null;
 
-        $territoryId = 'default';
-        if (count($this->PTProviders) > 1) {
-            // If there is a territory, we look for the right provider. If there is no, we take the default.
-            // Get the territory of the request
-            $territories = $this->territoryRepository->findPointTerritories($origin_latitude, $origin_longitude);
-            foreach ($territories as $territory) {
-                // If the territoryId is in the providers.json for PT, we use this one
-                if (isset($this->PTProviders[$territory['id']])) {
-                    $territoryId = $territory['id'];
-
-                    break;
-                }
-            }
-        }
-
-        // Values
-        $provider = $this->PTProviders[$territoryId]['dataprovider'];
+        $providerFinder = new ProviderFinder($this->territoryRepository, $this->PTProviders, $origin_latitude, $origin_longitude);
+        $provider = $providerFinder->findProvider()['dataprovider'];
 
         // Authorized Providers
         if (!array_key_exists($provider, self::PROVIDERS)) {
@@ -133,8 +118,8 @@ class PTDataProvider
         }
 
         $thresholdReached = false;
-        $threshold = isset($this->PTProviders[$territoryId]['threshold']) && (int) $this->PTProviders[$territoryId]['threshold'] > 0 ? (int) $this->PTProviders[$territoryId]['threshold'] : self::DEFAULT_THRESHOLD;
-        $threshold_granularity = isset($this->PTProviders[$territoryId]['threshold_granularity']) && in_array($this->PTProviders[$territoryId]['threshold_granularity'], self::DEFAULT_AUTHORIZED_THRESHOLD_GRANULARITY) ? $this->PTProviders[$territoryId]['threshold_granularity'] : self::DEFAULT_THRESHOLD_GRANULARITY;
+        $threshold = isset($this->PTProviders[$providerFinder->getTerritoryId()]['threshold']) && (int) $this->PTProviders[$providerFinder->getTerritoryId()]['threshold'] > 0 ? (int) $this->PTProviders[$providerFinder->getTerritoryId()]['threshold'] : self::DEFAULT_THRESHOLD;
+        $threshold_granularity = isset($this->PTProviders[$providerFinder->getTerritoryId()]['threshold_granularity']) && in_array($this->PTProviders[$providerFinder->getTerritoryId()]['threshold_granularity'], self::DEFAULT_AUTHORIZED_THRESHOLD_GRANULARITY) ? $this->PTProviders[$providerFinder->getTerritoryId()]['threshold_granularity'] : self::DEFAULT_THRESHOLD_GRANULARITY;
 
         $tresholdComputer = new ThresholdComputer($this->logRepository, $provider, $threshold, $threshold_granularity);
         if ($tresholdComputer->isReached()) {
@@ -143,10 +128,10 @@ class PTDataProvider
 
         $journeys = [];
         if (!$thresholdReached) {
-            $providerUri = $this->PTProviders[$territoryId]['url'];
-            $apikey = $this->PTProviders[$territoryId]['apikey'];
-            $username = $this->PTProviders[$territoryId]['username'];
-            $customParams = $this->PTProviders[$territoryId]['params'];
+            $providerUri = $this->PTProviders[$providerFinder->getTerritoryId()]['url'];
+            $apikey = $this->PTProviders[$providerFinder->getTerritoryId()]['apikey'];
+            $username = $this->PTProviders[$providerFinder->getTerritoryId()]['username'];
+            $customParams = $this->PTProviders[$providerFinder->getTerritoryId()]['params'];
 
             $providerClass = self::PROVIDERS[$provider];
             $providerInstance = new $providerClass($providerUri);
@@ -194,8 +179,8 @@ class PTDataProvider
                     $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
                 }
 
-                $journey->setPtProviderName(isset($this->PTProviders[$territoryId]['ptProviderName']) ? $this->PTProviders[$territoryId]['ptProviderName'] : null);
-                $journey->setPtProviderUrl(isset($this->PTProviders[$territoryId]['ptProviderUrl']) ? $this->PTProviders[$territoryId]['ptProviderUrl'] : null);
+                $journey->setPtProviderName(isset($this->PTProviders[$providerFinder->getTerritoryId()]['ptProviderName']) ? $this->PTProviders[$providerFinder->getTerritoryId()]['ptProviderName'] : null);
+                $journey->setPtProviderUrl(isset($this->PTProviders[$providerFinder->getTerritoryId()]['ptProviderUrl']) ? $this->PTProviders[$providerFinder->getTerritoryId()]['ptProviderUrl'] : null);
                 $journey->setProvider($provider);
             }
         }
