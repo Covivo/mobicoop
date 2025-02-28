@@ -1,40 +1,40 @@
-_Replace italic text by your own description_
+_Remplacer le texte en italique par votre propre description_
 
-### Why this Merge Request
+### Pourquoi cette merge request ?
 
-_This merge request addresses, and describe the problem or user story being addressed._
+_A quoi répond cette merge ? Décrit le problème ou la user story à résoudre._
 
-### What is implemented, what is the chosen solution
+### Quel est le code implémenté, quelle est la solution choisie
 
-_Explain the fix or solution implemented. Which other solution have been envisaged._
+_Décrire le code implémenté, quelle est la solution choisie, quelles étaient les solutions envisagées._
 
-### Related issues and impact on other project in codebase
+### Problèmes et impacts sur le code d'autres projets
 
-_Provide links to the related issues, feature requests and merge request (from Gitlab and Redmine)._
+_Fournir les liens vers les tickets et les merge requests (depuis Gitlab et Redmine)._
 
-_And Link to other project Impacted._
+_Ajouter les liens vers d'autres projets impactés._
 
 ### Other Information
 
-_Include any extra information or considerations for reviewers._
+_Inclure toutes autres informations ou considérations pour les reviewers._
 
 ## Checklists
 
 ### Merge Request
 
--   [ ] Target branch identified.
--   [ ] Code based on last version of target branch (i.e. do a `git clone origin dev` localy in your branch if it came from `dev` before asking for a MR. You'll reduce the risks for conflicts)
--   [ ] Description filled.
--   [ ] Impact on other project codebase identified.
--   [ ] Test run in locally.
--   [ ] Need to add a .env variable (possibilty also in twig.yaml) in every client checked.
--   [ ] Need to adapt overloaded components (MHeader, MFooter...) in every client checked.
--   [ ] Add something to do in the [met-mep file](https://docs.google.com/document/d/1U3edMGP6MrqX5fApMnx2hfTvMG-Xd6v9PpDVFR37UVE/edit) checked.
--   [ ] Every migrations has been tested on local environnement
+-   [ ] Branche cible identifiée.
+-   [ ] Le code est à jour avec la branche cible (par exemple, fait un `git pull origin dev` localement dans votre branche si elle vient de `dev` avant de demander une MR. Vous réduirez les risques de conflits).
+-   [ ] Description remplie.
+-   [ ] Impacts sur les autres projets identifiés.
+-   [ ] Tests lancés localement.
+-   [ ] Besoin d'ajouter une variable au .env (éventuellement également dans twig.yaml) dans chaque client vérifié.
+-   [ ] Besoin d'adapter les composants surchargés (MHeader, MFooter...) dans chaque client vérifié.
+-   [ ] Ajouter des tâches à faire dans le fichier [met-mep](https://docs.google.com/document/d/1U3edMGP6MrqX5fApMnx2hfTvMG-Xd6v9PpDVFR37UVE/edit) vérifié.
+-   [ ] Toutes les migrations ont été testées et lancées sur l'environnement local.
 
 ### Code Review
 
--   [ ] The target branch of the MR and the `Version Cible` field in redmine are the same.
--   [ ] Code is easily readable.
--   [ ] Commit are all related to MR and well written (Atomic commit).
--   [ ] No useless logging or debugging code.
+-   [ ] La branche cible de la MR et le champ `Version Cible` dans redmine sont les mêmes.
+-   [ ] Le code est facilement lisible et compréhensible.
+-   [ ] Les commit sont tous reliés à la MR et bien écrits (Atomic commit).
+-   [ ] Pas d'affichage de logs ou de débug inutiles.
