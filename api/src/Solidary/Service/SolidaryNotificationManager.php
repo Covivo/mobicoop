@@ -39,14 +39,22 @@ class SolidaryNotificationManager
      */
     private $_volunteers = [];
 
+    /**
+     * @var int
+     */
+    private $_timeBeforeDeadline;
+
     public function __construct(
         EntityManagerInterface $em,
         NotifiedRepository $notifiedRepository,
-        NotificationManager $notificationManager
+        NotificationManager $notificationManager,
+        int $timeBeforeDeadline
     ) {
         $this->_em = $em;
         $this->_notifiedRepository = $notifiedRepository;
         $this->_notificationManager = $notificationManager;
+
+        $this->_timeBeforeDeadline = $timeBeforeDeadline;
     }
 
     public function notifyMatched(Solidary $solidary): void
@@ -81,6 +89,10 @@ class SolidaryNotificationManager
     private function _isSolidaryEnded(): bool
     {
         if (Criteria::FREQUENCY_PUNCTUAL === $this->_solidary->getFrequency()) {
+            $solidaryFromDateTime = $this->_solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d') . $this->_solidary->getProposal()->getCriteria()->getFromTime()->format('H:i:s');
+            $deadline = \DateTime::createFromFormat('Y-m-d H:i:s', $solidaryFromDateTime);
+            $deadline->sub(new \DateInterval('PT' . $this->_timeBeforeDeadline . 'H'));
+
             return $this->_solidary->getProposal()->getCriteria()->getFromDate() < new \DateTime();
         }
 
