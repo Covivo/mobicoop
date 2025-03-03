@@ -8,6 +8,7 @@ use App\Communication\Entity\Notification;
 use App\Communication\Repository\NotifiedRepository;
 use App\Communication\Service\NotificationManager;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryMatching;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Solidary\Entity\SolidarySolution;
@@ -39,14 +40,22 @@ class SolidaryNotificationManager
      */
     private $_volunteers = [];
 
+    /**
+     * @var int
+     */
+    private $_timeBeforeDeadline;
+
     public function __construct(
         EntityManagerInterface $em,
         NotifiedRepository $notifiedRepository,
-        NotificationManager $notificationManager
+        NotificationManager $notificationManager,
+        int $timeBeforeDeadline
     ) {
         $this->_em = $em;
         $this->_notifiedRepository = $notifiedRepository;
         $this->_notificationManager = $notificationManager;
+
+        $this->_timeBeforeDeadline = $timeBeforeDeadline;
     }
 
     public function notifyMatched(Solidary $solidary): void
@@ -81,6 +90,10 @@ class SolidaryNotificationManager
     private function _isSolidaryEnded(): bool
     {
         if (Criteria::FREQUENCY_PUNCTUAL === $this->_solidary->getFrequency()) {
+            $solidaryFromDateTime = $this->_solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d') . $this->_solidary->getProposal()->getCriteria()->getFromTime()->format('H:i:s');
+            $deadline = \DateTime::createFromFormat('Y-m-d H:i:s', $solidaryFromDateTime);
+            $deadline->sub(new \DateInterval('PT' . $this->_timeBeforeDeadline . 'H'));
+
             return $this->_solidary->getProposal()->getCriteria()->getFromDate() < new \DateTime();
         }
 
@@ -110,8 +123,10 @@ class SolidaryNotificationManager
 
     private function _setVolunteers(): void
     {
-        foreach ($this->_solidary->getSolidaryMatchings() as $matching) {
-            $user = $matching->getSolidaryUser()->getUser();
+        foreach ($this->_solidary->getSolidaryMatchings() as $solidaryMatching) {
+            $user = !is_null($solidaryMatching->getSolidaryUser())
+                ? $solidaryMatching->getSolidaryUser()->getUser()
+                : $this->_getRecipientFromMatching($solidaryMatching);
 
             if (
                 !is_null($user)
@@ -125,5 +140,16 @@ class SolidaryNotificationManager
                 array_push($this->_volunteers, $user);
             }
         }
+    }
+
+    private function _getRecipientFromMatching(SolidaryMatching $solidaryMatching): User
+    {
+        $userId = $this->_solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getId();
+
+        $matching = $solidaryMatching->getMatching();
+
+        return $matching->getProposalOffer()->getUser()->getId() !== $userId
+            ? $matching->getProposalOffer()->getUser()
+            : $matching->getProposalRequest()->getUser();
     }
 }
