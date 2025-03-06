@@ -31,7 +31,7 @@ abstract class SolidaryTerritory
     /**
      * @var TerritoryOperatorManager
      */
-    private $_territoryOperatorManager;
+    protected $_territoryOperatorManager;
 
     public function __construct(TerritoryOperatorManager $territoryOperatorManager)
     {
@@ -45,7 +45,7 @@ abstract class SolidaryTerritory
         if (count($territories) > 0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
-                ->leftJoin($rootAlias.'.user', 'su')
+                ->leftJoin($rootAlias . '.user', 'su')
                 ->leftJoin('su.addresses', 'autfe')
                 ->leftJoin('autfe.territories', 'atutfe')
                 ->andWhere('(autfe.home = 1 AND atutfe.id in (:territories))')
