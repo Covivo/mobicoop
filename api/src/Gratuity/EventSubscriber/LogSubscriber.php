@@ -50,7 +50,7 @@ class LogSubscriber implements EventSubscriberInterface
 
     public function onLogEvent(LogEvent $event)
     {
-        if ($this->_gratuityActive && $event->getLog()->getUser()->hasGratuity()) {
+        if ($this->_gratuityActive && !is_null($event->getLog()->getUser()) && $event->getLog()->getUser()->hasGratuity()) {
             $this->_gratuityCampaignLogManager->handleLog($event->getLog());
         }
     }

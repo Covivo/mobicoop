@@ -1,16 +1,18 @@
 <template>
   <div>
     <v-container fluid>
-      <v-row
-        justify="center"
-      >
+      <v-row justify="center">
         <v-col
           cols="8"
           md="8"
           xl="6"
           align="center"
         >
-          <h1>{{ $t('title', {'cityA':displayOrigin, 'cityB':displayDestination}) }}</h1>
+          <h1>
+            {{
+              $t("title", { cityA: displayOrigin, cityB: displayDestination })
+            }}
+          </h1>
 
           <!-- Matching header -->
           <matching-header
@@ -38,15 +40,21 @@
           >
             <v-col
               v-if="!loading && !loadingExternal"
-              :cols="(!newSearch) ? 8 : 12"
+              :cols="!newSearch ? 8 : 12"
               class="text-left"
             >
-              <p>{{ $tc('matchingNumber', numberOfResults, { number: numberOfResults }) }}</p>
+              <p>
+                {{
+                  $tc("matchingNumber", numberOfResults, {
+                    number: numberOfResults
+                  })
+                }}
+              </p>
               <p
                 v-if="numberOfResults == 0 && !regular"
                 class="font-weight-bold"
               >
-                {{ $t('AskNewSearch') }}
+                {{ $t("AskNewSearch") }}
               </p>
             </v-col>
             <v-col
@@ -75,7 +83,7 @@
                 color="secondary"
                 @click="startNewSearch()"
               >
-                {{ $t('newSearch') }}
+                {{ $t("newSearch") }}
               </v-btn>
             </v-col>
           </v-row>
@@ -88,18 +96,18 @@
               class="text-left"
             >
               <v-switch
-                v-if="role!=3 && externalId==''"
+                v-if="role != 3 && externalId == ''"
                 v-model="includePassenger"
                 class="ma-2"
                 :label="$t('includePassengers')"
               />
               <v-alert
-                v-else-if="externalId==''"
+                v-else-if="externalId == ''"
                 class="accent white--text"
                 dense
                 dismissible
               >
-                {{ $t('alsoIncludePassengers') }}
+                {{ $t("alsoIncludePassengers") }}
               </v-alert>
             </v-col>
           </v-row>
@@ -138,33 +146,39 @@
                 :content="nbCarpoolPlatform"
                 icon="mdi-timer-sand"
               >
-                {{ $t('tabs.carpools', {'platform':platformName}) }}
+                {{ $t("tabs.carpools", { platform: platformName }) }}
               </v-badge>
             </v-tab>
             <!-- External results tab -->
             <v-tab
               v-if="externalRdexJourneys"
               href="#otherCarpools"
+              @change="externalRdexJourneysTabChange()"
             >
               <v-badge
                 color="primary"
                 :content="nbCarpoolOther"
-                icon="mdi-timer-sand"
+                :icon="
+                  loadingExternal ? 'mdi-timer-sand' : 'mdi-cursor-default'
+                "
               >
-                {{ $t('tabs.otherCarpools') }}
+                {{ $t("tabs.otherCarpools") }}
               </v-badge>
             </v-tab>
             <!-- Public transport results tab -->
             <v-tab
               v-if="ptSearch"
               href="#ptSearch"
+              @change="ptSearchTabChange()"
             >
               <v-badge
                 color="primary"
                 :content="nbPtResults"
-                icon="mdi-timer-sand"
+                :icon="
+                  loadingPtResults ? 'mdi-timer-sand' : 'mdi-cursor-default'
+                "
               >
-                {{ $t('tabs.ptresults') }}
+                {{ $t("tabs.ptresults") }}
               </v-badge>
             </v-tab>
           </v-tabs>
@@ -198,8 +212,12 @@
                 :loading-prop="loadingExternal"
                 :external-rdex-journeys="externalRdexJourneys"
                 :platform-name="platformName"
-                :carpool-standard-booking-enabled="carpoolStandardBookingEnabled"
-                :carpool-standard-messaging-enabled="carpoolStandardMessagingEnabled"
+                :carpool-standard-booking-enabled="
+                  carpoolStandardBookingEnabled
+                "
+                :carpool-standard-messaging-enabled="
+                  carpoolStandardMessagingEnabled
+                "
                 @loginOrRegister="loginOrRegister"
                 @booking="booking"
                 @carpoolStandardContact="carpoolStandardContact"
@@ -243,26 +261,27 @@
               <p
                 v-if="nbCarpoolPlatform == '-'"
                 class="text-h6"
-                v-html="$t('saveSearch.noAd', {'cityA':displayOrigin, 'cityB':displayDestination})"
+                v-html="
+                  $t('saveSearch.noAd', {
+                    cityA: displayOrigin,
+                    cityB: displayDestination
+                  })
+                "
               />
               <p class="black--text">
-                {{ $t('saveSearch.message') }}
+                {{ $t("saveSearch.message") }}
               </p>
             </v-card-text>
             <v-card-actions class="pt-0">
-              <v-col
-                cols="12"
-              >
+              <v-col cols="12">
                 <v-btn
                   color="primary"
                   rounded
                   @click="saveSearch()"
                 >
-                  <v-icon
-                    color="white"
-                  >
+                  <v-icon color="white">
                     mdi-bell
-                  </v-icon>{{ $t('saveSearch.button.label') }}
+                  </v-icon>{{ $t("saveSearch.button.label") }}
                 </v-btn>
               </v-col>
             </v-card-actions>
@@ -355,7 +374,10 @@
           <v-btn
             color="error"
             text
-            @click="carpoolStandardContactDialog = false, carpoolStandardContactMessage = null"
+            @click="
+              (carpoolStandardContactDialog = false),
+              (carpoolStandardContactMessage = null)
+            "
           >
             {{ $t("carpoolStandard.dialog.cancel") }}
           </v-btn>
@@ -368,22 +390,31 @@
       :id="lProposalId"
       :show-dialog="loginOrRegisterDialog"
       type="proposal"
-      @closeLoginOrRegisterDialog=" loginOrRegisterDialog = false "
+      @closeLoginOrRegisterDialog="loginOrRegisterDialog = false"
     />
   </div>
 </template>
 <script>
-
 import maxios from "@utils/maxios";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/results/Matching/";
-import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/results/Matching/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/carpool/results/Matching/";
+import {
+  messages_client_en,
+  messages_client_fr,
+  messages_client_eu,
+  messages_client_nl
+} from "@clientTranslations/components/carpool/results/Matching/";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
 import BookingJourney from "@components/carpool/results/BookingJourney";
 import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
-import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
+import LoginOrRegisterFirst from "@components/utilities/LoginOrRegisterFirst";
 import Search from "@components/carpool/search/Search";
 import formData from "../../../utils/request";
 import { merge } from "lodash";
@@ -406,11 +437,11 @@ export default {
   },
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'nl': MessagesMergedNl,
-      'fr': MessagesMergedFr,
-      'eu':MessagesMergedEu
-    },
+      en: MessagesMergedEn,
+      nl: MessagesMergedNl,
+      fr: MessagesMergedFr,
+      eu: MessagesMergedEu
+    }
   },
   props: {
     // proposal Id if Matching results after an ad post
@@ -454,7 +485,7 @@ export default {
       default: null
     },
     user: {
-      type:Object,
+      type: Object,
       default: null
     },
     regular: {
@@ -481,7 +512,7 @@ export default {
       type: String,
       default: ""
     },
-    defaultRole:{
+    defaultRole: {
       type: Number,
       default: 3
     },
@@ -542,7 +573,7 @@ export default {
       default: false
     }
   },
-  data : function() {
+  data: function() {
     return {
       locale: localStorage.getItem("X-LOCALE"),
       carpoolDialog: false,
@@ -553,115 +584,117 @@ export default {
       loadingCarpoolStandardContact: false,
       results: null,
       searchId: null,
-      externalRDEXResults:null,
+      externalRDEXResults: null,
       result: null,
-      ptResults:null,
-      loading : true,
-      loadingStep:-1,
-      loadingText:"",
+      ptResults: null,
+      loading: true,
+      loadingStep: -1,
+      loadingText: "",
       loadingInterval: null,
       loadingDelay: 3000,
-      loadingExternal : false,
+      loadingExternal: false,
       lProposalId: this.proposalId ? this.proposalId : null,
       lExternalId: this.externalId ? this.externalId : null,
-      loadingPtResults : false,
+      loadingPtResults: false,
       lOrigin: null,
       lDestination: null,
       filters: null,
       newSearch: false,
-      modelTabs:"carpools",
-      nbCarpoolPlatform:0,
-      nbCarpoolOther:0,
-      nbPtResults:0,
-      role:this.defaultRole,
-      includePassenger:this.defaultIncludePassenger,
-      displayNewSearch:true,
-      initFiltersChips:false,
+      modelTabs: "carpools",
+      nbCarpoolPlatform: 0,
+      nbCarpoolOther: 0,
+      nbPtResults: 0,
+      role: this.defaultRole,
+      includePassenger: this.defaultIncludePassenger,
+      displayNewSearch: true,
+      initFiltersChips: false,
       lCommunityId: this.communityId,
       lCommunityIdBak: this.communityId,
       resetStepMatchingJourney: false,
       profileSummaryRefresh: false,
-      page:1,
-      refreshMapMatchingJourney: false
+      page: 1,
+      refreshMapMatchingJourney: false,
+      ptSearchLoaded: false,
+      externalJourneysLoaded: false
     };
   },
   computed: {
     numberOfResults() {
       let numberOfResults = 0;
-      (!isNaN(this.nbCarpoolPlatform)) ? numberOfResults = numberOfResults + this.nbCarpoolPlatform : 0;
-      (!isNaN(this.nbCarpoolOther)) ? numberOfResults = numberOfResults + this.nbCarpoolOther : 0;
+      !isNaN(this.nbCarpoolPlatform)
+        ? (numberOfResults = numberOfResults + this.nbCarpoolPlatform)
+        : 0;
+      !isNaN(this.nbCarpoolOther)
+        ? (numberOfResults = numberOfResults + this.nbCarpoolOther)
+        : 0;
       return numberOfResults;
     },
     communities() {
       if (!this.results) return null;
       let communities = [];
-      this.results.forEach((result,key) => {
+      this.results.forEach((result, key) => {
         if (result.communities) {
           for (let key in result.communities) {
             if (communities.indexOf(result.communities[key].name) == -1) {
-              communities.push({text:result.communities[key].name,value:key});
+              communities.push({
+                text: result.communities[key].name,
+                value: key
+              });
             }
           }
         }
       });
       return communities;
     },
-    displayTab(){
-      return (this.externalRdexJourneys || this.ptSearch) ? true : false;
+    displayTab() {
+      return this.externalRdexJourneys || this.ptSearch ? true : false;
     },
-    displayOrigin(){
-      if(this.lOrigin && this.lOrigin.name){
+    displayOrigin() {
+      if (this.lOrigin && this.lOrigin.name) {
         return this.$t(this.lOrigin.name);
-      }
-      else if(this.lOrigin && this.lOrigin.addressLocality)
-      {
+      } else if (this.lOrigin && this.lOrigin.addressLocality) {
         return this.$t(this.lOrigin.addressLocality);
       } else {
-        return (this.lOrigin) ? this.$t(this.lOrigin) : "";
+        return this.lOrigin ? this.$t(this.lOrigin) : "";
       }
     },
-    displayDestination(){
-      if(this.lDestination && this.lDestination.name){
+    displayDestination() {
+      if (this.lDestination && this.lDestination.name) {
         return this.$t(this.lDestination.name);
-      }
-      else if(this.lDestination && this.lDestination.addressLocality)
-      {
+      } else if (this.lDestination && this.lDestination.addressLocality) {
         return this.$t(this.lDestination.addressLocality);
       } else {
-        return (this.lDestination) ? this.$t(this.lDestination) : "";
+        return this.lDestination ? this.$t(this.lDestination) : "";
       }
     }
   },
-  watch:{
-    includePassenger(){
-      if(this.includePassenger){
+  watch: {
+    includePassenger() {
+      if (this.includePassenger) {
         this.role = 3;
         this.lProposalId = null;
-      }
-      else{
+      } else {
         this.role = 2;
       }
       this.search();
     },
-    communities(){
+    communities() {
       this.initFiltersChips = true;
     },
-    lCommunityId(){
+    lCommunityId() {
       this.lCommunityIdBak = this.lCommunityId;
     }
   },
   created() {
-    if(this.includePassenger){
+    if (this.includePassenger) {
       this.role = 3;
     }
-    if(this.proposalId) this.displayNewSearch = false;
+    if (this.proposalId) this.displayNewSearch = false;
     this.search();
-    if(this.externalRdexJourneys) this.searchExternalJourneys();
-    if(this.ptSearch) this.searchPTJourneys();
     this.lOrigin = this.origin;
     this.lDestination = this.destination;
   },
-  methods :{
+  methods: {
     carpool(carpool) {
       this.result = carpool;
       // open the dialog
@@ -675,7 +708,7 @@ export default {
       // open the dialog
       this.bookingDialog = true;
     },
-    carpoolStandardContact(carpoolStandardContact){
+    carpoolStandardContact(carpoolStandardContact) {
       this.result = carpoolStandardContact;
       // open the dialog
       this.carpoolStandardContactDialog = true;
@@ -691,45 +724,56 @@ export default {
     },
     setLoadingStep() {
       this.loadingStep++;
-      if (this.loadingStep>2) this.loadingStep = 0;
+      if (this.loadingStep > 2) this.loadingStep = 0;
       switch (this.loadingStep) {
-      case 1 : this.loadingText = this.$t("search2");
+      case 1:
+        this.loadingText = this.$t("search2");
         break;
-      case 2 : this.loadingText = this.$t("search3");
+      case 2:
+        this.loadingText = this.$t("search3");
         break;
-      default : this.loadingText = this.$t("search");
+      default:
+        this.loadingText = this.$t("search");
         break;
       }
     },
-    search(){
+    search() {
       // if a proposalId is provided, we load the proposal results
       if (this.lProposalId) {
         this.loading = true;
         this.setLoadingStep();
-        this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
+        this.loadingInterval = setInterval(
+          this.setLoadingStep,
+          this.loadingDelay
+        );
         if (this.filters === null) {
           this.filters = {
-            "page": this.page
+            page: this.page
           };
         } else {
           this.filters.page = this.page;
         }
         let postParams = {
-          "filters": this.filters,
+          filters: this.filters
         };
-        maxios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
-          {
-            headers:{
-              'content-type': 'application/json'
+        maxios
+          .post(
+            this.$t("proposalUrl", { id: Number(this.lProposalId) }),
+            postParams,
+            {
+              headers: {
+                "content-type": "application/json"
+              }
             }
-          })
-          .then((response) => {
+          )
+          .then(response => {
             this.results = response.data.results;
             this.lOrigin = response.data.origin;
             this.lDestination = response.data.destination;
-            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-";
+            this.nbCarpoolPlatform =
+              response.data.nb > 0 ? response.data.nb : "-";
           })
-          .catch((error) => {
+          .catch(error => {
             console.log(error);
           })
           .finally(() => {
@@ -741,37 +785,45 @@ export default {
         // if an externalId is provided, we load the corresponding proposal results
         this.loading = true;
         this.setLoadingStep();
-        this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
+        this.loadingInterval = setInterval(
+          this.setLoadingStep,
+          this.loadingDelay
+        );
         if (this.filters === null) {
           this.filters = {
-            "page": this.page
+            page: this.page
           };
         } else {
           this.filters.page = this.page;
         }
         let postParams = {
-          "filters": this.filters
+          filters: this.filters
         };
-        maxios.post(this.$t("externalUrl",{id: this.lExternalId}),postParams,
-          {
-            headers:{
-              'content-type': 'application/json'
+        maxios
+          .post(this.$t("externalUrl", { id: this.lExternalId }), postParams, {
+            headers: {
+              "content-type": "application/json"
             }
           })
-          .then((response) => {
+          .then(response => {
             this.results = response.data;
-            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : (!isNaN(response.data.length)) ? response.data.length : "-"
+            this.nbCarpoolPlatform =
+              response.data.nb > 0
+                ? response.data.nb
+                : !isNaN(response.data.length)
+                  ? response.data.length
+                  : "-";
             this.lOrigin = {
-              addressLocality:this.originLiteral
-            }
+              addressLocality: this.originLiteral
+            };
             this.lDestination = {
-              addressLocality:this.destinationLiteral
-            }
-            if (this.results.length>0 && this.results[0].id) {
+              addressLocality: this.destinationLiteral
+            };
+            if (this.results.length > 0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
             }
           })
-          .catch((error) => {
+          .catch(error => {
             console.log(error);
           })
           .finally(() => {
@@ -780,43 +832,47 @@ export default {
             this.loadingStep = -1;
           });
       } else {
-      // otherwise we send a proposal search
+        // otherwise we send a proposal search
         this.loading = true;
         this.setLoadingStep();
-        this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
+        this.loadingInterval = setInterval(
+          this.setLoadingStep,
+          this.loadingDelay
+        );
         if (this.filters === null) {
           this.filters = {
-            "page": this.page
+            page: this.page
           };
         } else {
           this.filters.page = this.page;
         }
         let postParams = {
-          "origin": this.origin,
-          "destination": this.destination,
-          "date": this.date,
-          "time": this.time,
-          "regular": this.regular,
-          "userId": this.user ? this.user.id : null,
-          "communityId": this.lCommunityId,
-          "filters": this.filters,
-          "role": this.role
+          origin: this.origin,
+          destination: this.destination,
+          date: this.date,
+          time: this.time,
+          regular: this.regular,
+          userId: this.user ? this.user.id : null,
+          communityId: this.lCommunityId,
+          filters: this.filters,
+          role: this.role
         };
-        maxios.post(this.$t("matchingUrl"), postParams,
-          {
-            headers:{
-              'content-type': 'application/json'
+        maxios
+          .post(this.$t("matchingUrl"), postParams, {
+            headers: {
+              "content-type": "application/json"
             }
           })
-          .then((response) => {
+          .then(response => {
             this.results = response.data.results;
             this.searchId = response.data.searchId;
-            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
-            if (this.results.length>0 && this.results[0].id) {
+            this.nbCarpoolPlatform =
+              response.data.nb > 0 ? response.data.nb : "-";
+            if (this.results.length > 0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
             }
           })
-          .catch((error) => {
+          .catch(error => {
             console.log(error);
           })
           .finally(() => {
@@ -825,59 +881,64 @@ export default {
             this.loadingStep = -1;
           });
       }
-
     },
-    searchExternalJourneys(){
+    searchExternalJourneys() {
       this.loadingExternal = true;
       let postParams = {
-        "driver": 1, // TO DO : Dynamic
-        "passenger": 0, // TO DO : Dynamic
-        "from_latitude": this.origin.latitude,
-        "from_longitude": this.origin.longitude,
-        "to_latitude": this.destination.latitude,
-        "to_longitude": this.destination.longitude,
-        "date": this.date,
-        "time": this.time,
-        "frequency": (this.regular) ? 'regular' : 'punctual'
+        driver: 1, // TO DO : Dynamic
+        passenger: 0, // TO DO : Dynamic
+        from_latitude: this.origin.latitude,
+        from_longitude: this.origin.longitude,
+        to_latitude: this.destination.latitude,
+        to_longitude: this.destination.longitude,
+        date: this.date,
+        time: this.time,
+        frequency: this.regular ? "regular" : "punctual"
       };
-      maxios.post(this.$t("externalJourneyUrl"), postParams,
-        {
-          headers:{
-            'content-type': 'application/json'
+      maxios
+        .post(this.$t("externalJourneyUrl"), postParams, {
+          headers: {
+            "content-type": "application/json"
           }
         })
-        .then((response) => {
+        .then(response => {
           this.loadingExternal = false;
           this.externalRDEXResults = response.data;
-          (response.data.length>0) ? this.nbCarpoolOther = response.data.length : this.nbCarpoolOther = '-';
+          response.data.length > 0
+            ? (this.nbCarpoolOther = response.data.length)
+            : (this.nbCarpoolOther = "-");
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
-
     },
-    searchPTJourneys(){
+    searchPTJourneys() {
       this.loadingPtResults = true;
       let postParams = {
-        "from_latitude": this.origin.latitude,
-        "from_longitude": this.origin.longitude,
-        "to_latitude": this.destination.latitude,
-        "to_longitude": this.destination.longitude,
-        "date": this.date
+        from_latitude: this.origin.latitude,
+        from_longitude: this.origin.longitude,
+        to_latitude: this.destination.latitude,
+        to_longitude: this.destination.longitude,
+        date: this.date
       };
-      maxios.post(this.$t("ptSearchUrl"), postParams,
-        {
-          headers:{
-            'content-type': 'application/json'
+      maxios
+        .post(this.$t("ptSearchUrl"), postParams, {
+          headers: {
+            "content-type": "application/json"
           }
         })
-        .then((response) => {
+        .then(response => {
           //console.error(response.data);
           this.loadingPtResults = false;
-          (response.data.member) ? this.ptResults = response.data.member : this.ptResults = [];
-          (response.data.member && response.data.member.length>0) ? this.nbPtResults = response.data.member.length : this.nbPtResults = '-';
+          response.data.member
+            ? (this.ptResults = response.data.member)
+            : (this.ptResults = []);
+          response.data.member && response.data.member.length > 0
+            ? (this.nbPtResults = response.data.member.length)
+            : (this.nbPtResults = "-");
+          this.ptSearchLoaded = true;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -928,64 +989,66 @@ export default {
       form.submit();
     },
     launchCarpool(params) {
-      maxios.post(this.$t("carpoolUrl"), params,
-        {
-          headers:{
-            'content-type': 'application/json'
+      maxios
+        .post(this.$t("carpoolUrl"), params, {
+          headers: {
+            "content-type": "application/json"
           }
         })
-        .then((response) => {
-          if(response.status == 200){
-            window.location = this.$t("mailboxUrl", {'askId':response.data.askId});
-          }
-          else{
+        .then(response => {
+          if (response.status == 200) {
+            window.location = this.$t("mailboxUrl", {
+              askId: response.data.askId
+            });
+          } else {
             console.log(response);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         })
         .finally(() => {
           this.carpoolDialog = false;
-        })
+        });
     },
     launchExternalBooking(params) {
       params.message = this.carpoolStandardContactMessage;
       console.log(params);
-      maxios.post(this.$t("bookingUrl"), params,
-        {
-          headers:{
-            'content-type': 'application/json'
+      maxios
+        .post(this.$t("bookingUrl"), params, {
+          headers: {
+            "content-type": "application/json"
           }
         })
-        .then((response) => {
-          if(response.status == 200){
+        .then(response => {
+          if (response.status == 200) {
             window.location = this.$t("carpoolMailBoxUrl");
-          }
-          else{
+          } else {
             console.log(response);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         })
         .finally(() => {
           this.carpoolDialog = false;
-        })
+        });
       this.bookingDialog = false;
       this.carpoolStandardContactDialog = false;
       this.carpoolStandardContactMessage = null;
       this.loadingCarpoolStandardContact = false;
     },
-    updateFilters(data){
-      this.page=1;
+    updateFilters(data) {
+      this.page = 1;
       this.filters = data;
       // Update the default filters also
-      this.lCommunityId = (this.filters.filters.community) ? parseInt(this.filters.filters.community) : null;
+      this.lCommunityId = this.filters.filters.community
+        ? parseInt(this.filters.filters.community)
+        : null;
 
       // If the communityid for a research has been modified, we need to post a new proposal for the search
       // We don't use the watch because it's excuted after updateFilters() is done (after the this.search...)
-      if(this.lCommunityId !== this.lCommunityIdBak){
+      if (this.lCommunityId !== this.lCommunityIdBak) {
         this.lProposalId = null;
       }
       this.search();
@@ -993,14 +1056,21 @@ export default {
     startNewSearch() {
       this.newSearch = true;
     },
-    refreshProfileSummary(){
+    refreshProfileSummary() {
       this.profileSummaryRefresh = false;
     },
-    mapRefreshed(){
+    mapRefreshed() {
       this.refreshMapMatchingJourney = false;
     },
-    saveSearch(){
-      formData(this.$t('saveSearch.route', {id : this.searchId}), null, 'GET');
+    saveSearch() {
+      formData(this.$t("saveSearch.route", { id: this.searchId }), null, "GET");
+    },
+    ptSearchTabChange() {
+      if (this.ptSearch && !this.ptSearchLoaded) this.searchPTJourneys();
+    },
+    externalRdexJourneysTabChange() {
+      if (this.externalRdexJourneys && !this.externalJourneysLoaded)
+        this.searchExternalJourneys();
     }
   }
 };

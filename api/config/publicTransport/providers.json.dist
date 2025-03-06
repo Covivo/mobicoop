@@ -6,7 +6,9 @@
         "apikey":"",
         "params":{"key":"value","key2":"value2"},
         "ptProviderName":"",
-        "ptProviderUrl":""
+        "ptProviderUrl":"",
+        "threshold":0,
+        "threshold_granularity": "day"
 
     },
     "idterritory":{
@@ -16,6 +18,8 @@
         "apikey":"",
         "params":{},
         "ptProviderName":"",
-        "ptProviderUrl":""
+        "ptProviderUrl":"",
+        "threshold":0,
+        "threshold_granularity": "day"
     }
 }
