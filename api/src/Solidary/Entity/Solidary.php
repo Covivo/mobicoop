@@ -849,10 +849,12 @@ class Solidary
     private $adminstructureSolidaryTransport;
 
     /**
-     * @var ArrayCollection|null The notifications sent for the matching.
+     * @var null|ArrayCollection the notifications sent for the matching
      *
      * @ORM\OneToMany(targetEntity=Notified::class, mappedBy="matching", cascade={"persist"})
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $notifieds;
@@ -1523,7 +1525,7 @@ class Solidary
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -1533,7 +1535,7 @@ class Solidary
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     // ADMIN CUSTOM PROPERTIES
@@ -2072,7 +2074,6 @@ class Solidary
 
         return $this->adminstructureSolidaryTransport;
     }
-
 
     public function getNotifieds()
     {

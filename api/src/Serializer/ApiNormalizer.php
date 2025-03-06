@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -139,9 +140,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                 $user = $data['userId'];
             }
 
-            $data = $this->_getAdData($data, $user);
-
-            return $data;
+            return $this->_getAdData($data, $user);
         }
         if (true == $this->gratuityActive && $object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
             $this->gratuityNotificationNormalizer->setUser($this->security->getUser());
@@ -304,7 +303,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         ];
     }
 
-    private function _getAdData(array $data, int $userId): array {
+    private function _getAdData(array $data, int $userId): array
+    {
         $nbDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_DRIVER);
         $nbPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_PASSENGER);
 
@@ -321,7 +321,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         if (isset($data['communityId'])) {
             $nbAdsInCommunityAsDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_DRIVER, $data['communityId']);
             $nbAdsInCommunityAsPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($userId, Ad::ROLE_PASSENGER, $data['communityId']);
-    
+
             $data['adsInCommunityAsDriver'] = $nbAdsInCommunityAsDriver > 0;
             $data['adsInCommunityAsPassenger'] = $nbAdsInCommunityAsPassenger > 0;
         }

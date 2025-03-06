@@ -9,9 +9,9 @@ use App\Communication\Repository\NotifiedRepository;
 use App\Communication\Service\NotificationManager;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryMatching;
+use App\Solidary\Entity\SolidarySolution;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Solidary\Entity\SolidarySolution;
 
 class SolidaryNotificationManager
 {
@@ -90,9 +90,9 @@ class SolidaryNotificationManager
     private function _isSolidaryEnded(): bool
     {
         if (Criteria::FREQUENCY_PUNCTUAL === $this->_solidary->getFrequency()) {
-            $solidaryFromDateTime = $this->_solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d') . $this->_solidary->getProposal()->getCriteria()->getFromTime()->format('H:i:s');
+            $solidaryFromDateTime = $this->_solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d').$this->_solidary->getProposal()->getCriteria()->getFromTime()->format('H:i:s');
             $deadline = \DateTime::createFromFormat('Y-m-d H:i:s', $solidaryFromDateTime);
-            $deadline->sub(new \DateInterval('PT' . $this->_timeBeforeDeadline . 'H'));
+            $deadline->sub(new \DateInterval('PT'.$this->_timeBeforeDeadline.'H'));
 
             return $this->_solidary->getProposal()->getCriteria()->getFromDate() < new \DateTime();
         }

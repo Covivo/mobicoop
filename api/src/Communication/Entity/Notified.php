@@ -31,11 +31,11 @@ use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use App\Community\Entity\Community;
+use App\Solidary\Entity\Solidary;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\Solidary\Entity\Solidary;
 
 /**
  * A notification to send for a user.
