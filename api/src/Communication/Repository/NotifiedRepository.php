@@ -62,7 +62,8 @@ class NotifiedRepository
             ->setParameter('userId', $userId)
             ->setParameter('notificationId', $notificationId)
             ->setParameter('today', $today)
-            ->setParameter('aMonthAgo', $aMonthAgo);
+            ->setParameter('aMonthAgo', $aMonthAgo)
+        ;
 
         return $query->getQuery()->getResult();
     }
@@ -74,7 +75,8 @@ class NotifiedRepository
             ->where('n.user = :userId')
             ->andWhere('n.notification = :notificationId')
             ->setParameter('userId', $userId)
-            ->setParameter('notificationId', $notificationId);
+            ->setParameter('notificationId', $notificationId)
+        ;
 
         return $query->getQuery()->getResult();
     }
@@ -108,7 +110,8 @@ class NotifiedRepository
             ->andWhere('n.sentDate >= :yesterdayAtTheSameTime')
             ->setParameter('userId', $userId)
             ->setParameter('notificationId', $notificationId)
-            ->setParameter('yesterdayAtTheSameTime', $yesterdayAtTheSameTime);
+            ->setParameter('yesterdayAtTheSameTime', $yesterdayAtTheSameTime)
+        ;
 
         return $query->getQuery()->getResult();
     }
@@ -122,7 +125,8 @@ class NotifiedRepository
             ->andWhere('n.solidary = :solidaryId')
             ->setParameter('userId', $userId)
             ->setParameter('notificationId', $notificationId)
-            ->setParameter('solidaryId', $solidaryId);
+            ->setParameter('solidaryId', $solidaryId)
+        ;
 
         return $query->getQuery()->getResult();
     }
