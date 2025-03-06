@@ -200,7 +200,7 @@ class JourneyRepository
                 )) AS distance_destination
             FROM journey ';
 
-        $where = 'WHERE to_date >= CURDATE() ';
+        $where = 'WHERE COALESCE(to_date, from_date) >= CURDATE() ';
 
         $where = $this->_addRolesParameter($where, $parameters);
         $where = $this->_addFrequencyParameter($where, $parameters);

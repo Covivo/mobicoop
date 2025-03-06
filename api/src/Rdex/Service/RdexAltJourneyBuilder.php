@@ -41,6 +41,8 @@ use App\Rdex\Entity\RdexTripDate;
  */
 class RdexAltJourneyBuilder
 {
+    private const OUTWARD_TIMES = 'outward_times';
+    private const RETURN_TIMES = 'return_times';
     private $_result;
     private $_operator;
 
@@ -92,8 +94,8 @@ class RdexAltJourneyBuilder
 
         $journey->setDays($this->_buildDays());
 
-        $journey->setOutward($this->_buildTripDate('outward_times'));
-        $journey->setReturn($this->_buildTripDate('return_times'));
+        $journey->setOutward($this->_buildTripDate(self::OUTWARD_TIMES));
+        $journey->setReturn($this->_buildTripDate(self::RETURN_TIMES));
 
         $journey->setDistance($this->_result['distance']);
         $journey->setDuration($this->_result['duration']);
@@ -155,6 +157,35 @@ class RdexAltJourneyBuilder
 
     private function _buildDays(): RdexDay
     {
+        if (Criteria::FREQUENCY_PUNCTUAL == $this->_result['frequency']) {
+            return $this->_buildDaysPunctal();
+        }
+
+        return $this->_buildDaysRegular();
+    }
+
+    private function _buildDaysPunctal(): RdexDay
+    {
+        $days = new RdexDay();
+        $days->setMonday(0);
+        $days->setTuesday(0);
+        $days->setWednesday(0);
+        $days->setThursday(0);
+        $days->setFriday(0);
+        $days->setSaturday(0);
+        $days->setSunday(0);
+
+        $from_date = \DateTime::createFromFormat('Y-m-d', $this->_result['from_date']);
+
+        $setter = 'set'.$from_date->format('l');
+
+        $days->{$setter}(1);
+
+        return $days;
+    }
+
+    private function _buildDaysRegular(): RdexDay
+    {
         $days = new RdexDay();
 
         $resultDays = json_decode($this->_result['days'], true);
@@ -201,6 +232,39 @@ class RdexAltJourneyBuilder
     }
 
     private function _buildTripDate(string $fieldTimes): ?RdexTripDate
+    {
+        if (self::OUTWARD_TIMES !== $fieldTimes) {
+            return null;
+        }
+
+        if (Criteria::FREQUENCY_PUNCTUAL == $this->_result['frequency']) {
+            return $this->_buildTripDatePunctual($fieldTimes);
+        }
+
+        return $this->_buildTripDateRegular($fieldTimes);
+    }
+
+    private function _buildTripDatePunctual(string $fieldTimes): ?RdexTripDate
+    {
+        $tripDate = new RdexTripDate();
+        $tripDate->setMindate($this->_result['from_date']);
+        $tripDate->setMaxdate($this->_result['from_date']);
+
+        $minMaxTime = $this->_computeMinMaxTime($this->_result['time']);
+        $rdexDayTime = new RdexDayTime();
+        $rdexDayTime->setMintime($minMaxTime[0]->format('H:i:s'));
+        $rdexDayTime->setMaxtime($minMaxTime[1]->format('H:i:s'));
+
+        $from_date = \DateTime::createFromFormat('Y-m-d', $this->_result['from_date']);
+
+        $setter = 'set'.$from_date->format('l');
+
+        $tripDate->{$setter}($rdexDayTime);
+
+        return $tripDate;
+    }
+
+    private function _buildTripDateRegular(string $fieldTimes): ?RdexTripDate
     {
         if (is_null($this->_result[$fieldTimes])) {
             return null;
