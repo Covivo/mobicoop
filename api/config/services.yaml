@@ -1316,6 +1316,10 @@ services:
       $loginsCommunityManager: "%env(json:KIBANA_LOGINS_COMMUNITY_MANAGER)%"
       $loginsSolidaryOperator: "%env(json:KIBANA_LOGINS_SOLIDARY_OPERATOR)%"
 
+  App\Solidary\Service\SolidaryNotificationManager:
+    arguments:
+      $timeBeforeDeadline: "%env(int:SOLIDARY_SMS_TIME_BEFORE_DEADLINE)%"
+
   App\User\Controller\:
     resource: "../src/User/Controller"
     tags: ["controller.service_arguments"]
