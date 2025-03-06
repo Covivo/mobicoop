@@ -154,7 +154,6 @@ class EventController extends AbstractController
         $user = $userManager->getLoggedUser();
 
         if ($request->isMethod('POST')) {
-            var_dump('in post');
             if (!$user instanceof User) {
                 $user = null;
 
