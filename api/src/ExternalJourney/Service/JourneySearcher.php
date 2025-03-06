@@ -55,7 +55,11 @@ class JourneySearcher
         $journeys = [];
         foreach ($this->_providers as $provider) {
             // @var JourneyProvider $provider
-            $journeys[] = $provider->getJourneys($provider, $request);
+            try {
+                $journeys[] = $provider->getJourneys($provider, $request);
+            } catch (\Exception $e) {
+                // continue execution
+            }
         }
 
         return $journeys;

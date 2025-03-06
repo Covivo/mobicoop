@@ -1197,6 +1197,10 @@ services:
     tags: ["controller.service_arguments"]
 
   # Public transport
+  App\PublicTransport\DataProvider\CheckThresholdCollectionDataProvider:
+    arguments:
+      $ptProviders: "%env(json:file:resolve:PT_PROVIDERS)%"
+
   App\PublicTransport\Service\PTDataProvider:
     arguments:
       $params:

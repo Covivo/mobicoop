@@ -23,6 +23,9 @@
 
 namespace App\PublicTransport\Service;
 
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
+use App\Action\Repository\LogRepository;
 use App\DataProvider\Entity\CitywayProvider;
 use App\DataProvider\Entity\ConduentPTProvider;
 use App\DataProvider\Entity\NavitiaProvider;
@@ -31,6 +34,7 @@ use App\Geography\Service\GeoTools;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTTripPoint;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Public transport DataProvider.
@@ -59,15 +63,25 @@ class PTDataProvider
     public const ALGORITHM_SHORTEST = 'shortest';
     public const ALGORITHM_MINCHANGES = 'minchanges';
 
+    public const DEFAULT_THRESHOLD = 0;
+    public const DEFAULT_THRESHOLD_GRANULARITY = 'month';
+    public const DEFAULT_AUTHORIZED_THRESHOLD_GRANULARITY = ['year', 'month', 'week', 'day', 'hour'];
+
     private $geoTools;
     private $PTProviders;
     private $territoryRepository;
+    private $actionRepository;
+    private $eventDispatcher;
+    private $logRepository;
 
-    public function __construct(GeoTools $geoTools, TerritoryRepository $territoryRepository, array $params)
+    public function __construct(GeoTools $geoTools, TerritoryRepository $territoryRepository, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher, LogRepository $logRepository, array $params)
     {
         $this->geoTools = $geoTools;
         $this->territoryRepository = $territoryRepository;
+        $this->actionRepository = $actionRepository;
+        $this->eventDispatcher = $eventDispatcher;
         $this->PTProviders = $params['ptProviders'];
+        $this->logRepository = $logRepository;
     }
 
     /**
@@ -79,8 +93,6 @@ class PTDataProvider
      * @param string    $destination_latitude  The latitude of the destination point
      * @param string    $destination_longitude The longitude of the destination point
      * @param \Datetime $date                  The datetime of the trip
-     * @param string    $dateCriteria          (optional) Date criteria like "arrival" or "departure"
-     * @param string    $mode                  (optional) Mode criteria
      *
      * @return null|array The journeys found or null if no journey is found
      */
@@ -91,89 +103,93 @@ class PTDataProvider
         string $destination_latitude,
         string $destination_longitude,
         \DateTime $date,
-        string $dateType = null,
-        string $modes = null
+        ?string $dateType = null,
+        ?string $modes = null
     ): ?array {
         $providerUri = null;
 
-        $territoryId = 'default';
-        if (count($this->PTProviders) > 1) {
-            // If there is a territory, we look for the right provider. If there is no, we take the default.
-            // Get the territory of the request
-            $territories = $this->territoryRepository->findPointTerritories($origin_latitude, $origin_longitude);
-            foreach ($territories as $territory) {
-                // If the territoryId is in the providers.json for PT, we use this one
-                if (isset($this->PTProviders[$territory['id']])) {
-                    $territoryId = $territory['id'];
-
-                    break;
-                }
-            }
-        }
-
-        // Values
-        $provider = $this->PTProviders[$territoryId]['dataprovider'];
+        $providerFinder = new ProviderFinder($this->territoryRepository, $this->PTProviders, $origin_latitude, $origin_longitude);
+        $provider = $providerFinder->findProvider()['dataprovider'];
 
         // Authorized Providers
         if (!array_key_exists($provider, self::PROVIDERS)) {
             // echo "Unauthorized Providers";die;
             return null;
         }
-        $providerUri = $this->PTProviders[$territoryId]['url'];
-        $apikey = $this->PTProviders[$territoryId]['apikey'];
-        $username = $this->PTProviders[$territoryId]['username'];
-        $customParams = $this->PTProviders[$territoryId]['params'];
 
-        $providerClass = self::PROVIDERS[$provider];
-        $providerInstance = new $providerClass($providerUri);
+        $thresholdReached = false;
+        $threshold = isset($this->PTProviders[$providerFinder->getTerritoryId()]['threshold']) && (int) $this->PTProviders[$providerFinder->getTerritoryId()]['threshold'] > 0 ? (int) $this->PTProviders[$providerFinder->getTerritoryId()]['threshold'] : self::DEFAULT_THRESHOLD;
+        $threshold_granularity = isset($this->PTProviders[$providerFinder->getTerritoryId()]['threshold_granularity']) && in_array($this->PTProviders[$providerFinder->getTerritoryId()]['threshold_granularity'], self::DEFAULT_AUTHORIZED_THRESHOLD_GRANULARITY) ? $this->PTProviders[$providerFinder->getTerritoryId()]['threshold_granularity'] : self::DEFAULT_THRESHOLD_GRANULARITY;
 
-        $params = [
-            'origin_latitude' => $origin_latitude,
-            'origin_longitude' => $origin_longitude,
-            'destination_latitude' => $destination_latitude,
-            'destination_longitude' => $destination_longitude,
-            'date' => $date,
-            'username' => $username,
-        ];
-
-        // $mode and $dateCriteria are forced if they're send in parameters
-        if (!is_null($dateType)) {
-            $params['dateType'] = $dateType;
-        }
-        if (!is_null($modes)) {
-            $params['modes'] = $modes;
+        $tresholdComputer = new ThresholdComputer($this->logRepository, $provider, $threshold, $threshold_granularity);
+        if ($tresholdComputer->isReached()) {
+            $thresholdReached = true;
         }
 
-        foreach ($customParams as $key => $value) {
-            // We don't override previously set parameters
-            if (!isset($params[$key])) {
-                $params[$key] = $value;
+        $journeys = [];
+        if (!$thresholdReached) {
+            $providerUri = $this->PTProviders[$providerFinder->getTerritoryId()]['url'];
+            $apikey = $this->PTProviders[$providerFinder->getTerritoryId()]['apikey'];
+            $username = $this->PTProviders[$providerFinder->getTerritoryId()]['username'];
+            $customParams = $this->PTProviders[$providerFinder->getTerritoryId()]['params'];
+
+            $providerClass = self::PROVIDERS[$provider];
+            $providerInstance = new $providerClass($providerUri);
+
+            $params = [
+                'origin_latitude' => $origin_latitude,
+                'origin_longitude' => $origin_longitude,
+                'destination_latitude' => $destination_latitude,
+                'destination_longitude' => $destination_longitude,
+                'date' => $date,
+                'username' => $username,
+            ];
+
+            // $mode and $dateCriteria are forced if they're send in parameters
+            if (!is_null($dateType)) {
+                $params['dateType'] = $dateType;
             }
-        }
+            if (!is_null($modes)) {
+                $params['modes'] = $modes;
+            }
 
-        $journeys = call_user_func_array([$providerInstance, 'getCollection'], [PTJourney::class, $apikey, $params]);
+            foreach ($customParams as $key => $value) {
+                // We don't override previously set parameters
+                if (!isset($params[$key])) {
+                    $params[$key] = $value;
+                }
+            }
 
-        // Set the display label of the departure and arrival
-        foreach ($journeys as $journey) {
-            /**
-             * @var PTJourney $journey
-             */
-            $departureAddress = $journey->getPTDeparture()->getAddress();
-            $departureAddress->setDisplayLabel($this->geoTools->getDisplayLabel($departureAddress));
-            $arrivalAddress = $journey->getPTArrival()->getAddress();
-            $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
+            $journeys = call_user_func_array([$providerInstance, 'getCollection'], [PTJourney::class, $apikey, $params]);
 
-            foreach ($journey->getPTLegs() as $leg) {
-                $departureAddress = $leg->getPTDeparture()->getAddress();
+            // Set the display label of the departure and arrival
+            foreach ($journeys as $journey) {
+                /**
+                 * @var PTJourney $journey
+                 */
+                $departureAddress = $journey->getPTDeparture()->getAddress();
                 $departureAddress->setDisplayLabel($this->geoTools->getDisplayLabel($departureAddress));
-                $arrivalAddress = $leg->getPTArrival()->getAddress();
+                $arrivalAddress = $journey->getPTArrival()->getAddress();
                 $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
-            }
 
-            $journey->setPtProviderName(isset($this->PTProviders[$territoryId]['ptProviderName']) ? $this->PTProviders[$territoryId]['ptProviderName'] : null);
-            $journey->setPtProviderUrl(isset($this->PTProviders[$territoryId]['ptProviderUrl']) ? $this->PTProviders[$territoryId]['ptProviderUrl'] : null);
-            $journey->setProvider($provider);
+                foreach ($journey->getPTLegs() as $leg) {
+                    $departureAddress = $leg->getPTDeparture()->getAddress();
+                    $departureAddress->setDisplayLabel($this->geoTools->getDisplayLabel($departureAddress));
+                    $arrivalAddress = $leg->getPTArrival()->getAddress();
+                    $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
+                }
+
+                $journey->setPtProviderName(isset($this->PTProviders[$providerFinder->getTerritoryId()]['ptProviderName']) ? $this->PTProviders[$providerFinder->getTerritoryId()]['ptProviderName'] : null);
+                $journey->setPtProviderUrl(isset($this->PTProviders[$providerFinder->getTerritoryId()]['ptProviderUrl']) ? $this->PTProviders[$providerFinder->getTerritoryId()]['ptProviderUrl'] : null);
+                $journey->setProvider($provider);
+            }
         }
+
+        $action = $this->actionRepository->findOneBy(['name' => 'public_transportation_search_performed']);
+        $actionEvent = new ActionEvent($action);
+        $actionEvent->setPtProvider($provider);
+        $actionEvent->setPtProviderThresholdReached($thresholdReached);
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
 
         return $journeys;
     }

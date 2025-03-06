@@ -106,7 +106,7 @@ class Log
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="logs")
      *
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      *
      * @Groups({"readLog","writeLog"})
      *
@@ -305,6 +305,24 @@ class Log
      */
     private $gratuityCampaign;
 
+    /**
+     * @var null|string the public transport provider if the action concerns a public transport research
+     *
+     * @ORM\Column(type="string", length=50, nullable=true)
+     *
+     * @Groups({"readLog","writeLog"})
+     */
+    private $ptProvider;
+
+    /**
+     * @var null|bool the public transport provider threshold reached
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     *
+     * @Groups({"readLog","writeLog"})
+     */
+    private $ptProviderThresholdReached;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -329,7 +347,7 @@ class Log
         return $this;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
@@ -541,6 +559,30 @@ class Log
     public function setUserRelated(?User $userRelated): self
     {
         $this->userRelated = $userRelated;
+
+        return $this;
+    }
+
+    public function getPtProvider(): ?string
+    {
+        return $this->ptProvider;
+    }
+
+    public function setPtProvider(string $ptProvider): self
+    {
+        $this->ptProvider = $ptProvider;
+
+        return $this;
+    }
+
+    public function isPtProviderThresholdReached(): ?bool
+    {
+        return $this->ptProviderThresholdReached;
+    }
+
+    public function setPtProviderThresholdReached(bool $ptProviderThresholdReached): self
+    {
+        $this->ptProviderThresholdReached = $ptProviderThresholdReached;
 
         return $this;
     }
