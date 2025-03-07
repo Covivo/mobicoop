@@ -122,7 +122,7 @@ export default {
   },
   data () {
     return {
-      locale: localStorage.getItem("X-LOCALE"),
+      locale: 'fr',
       params: null,
       defaultDestination: null,
     }

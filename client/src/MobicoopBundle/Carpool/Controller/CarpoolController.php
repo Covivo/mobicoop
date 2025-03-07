@@ -551,6 +551,8 @@ class CarpoolController extends AbstractController
         $originTitle = $this->__originDisplayFromObject($origin);
         $destinationTitle = $this->__destinationDisplayFromObject($destination);
 
+        $thresholdIsReached = $this->publicTransportManager->checkThreshold($origin->latitude, $origin->longitude);
+
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'origin' => $request->request->get('origin'),
             'destination' => $request->request->get('destination'),
@@ -561,7 +563,7 @@ class CarpoolController extends AbstractController
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
-            'ptSearch' => $this->ptResults,
+            'ptSearch' => $this->ptResults && !$thresholdIsReached['thresholdReached'],
             'defaultRole' => $this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
             'originTitle' => $originTitle,
@@ -589,6 +591,8 @@ class CarpoolController extends AbstractController
         $originTitle = $this->__originDisplayFromObject($origin);
         $destinationTitle = $this->__destinationDisplayFromObject($destination);
 
+        $thresholdIsReached = $this->publicTransportManager->checkThreshold($origin->latitude, $origin->longitude);
+
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             // todo: use if we can keep the proposal (request or offer) if we delete the matched one - cf CarpoolSubscriber
             //            'proposalId' => $request->get('pid'),
@@ -601,7 +605,7 @@ class CarpoolController extends AbstractController
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
-            'ptSearch' => $this->ptResults,
+            'ptSearch' => $this->ptResults && !$thresholdIsReached['thresholdReached'],
             'defaultRole' => $this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
             'originTitle' => $originTitle,

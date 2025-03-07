@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
-use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 
@@ -35,31 +35,28 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 class PublicTransportManager
 {
     private $dataProvider;
-    
+
     /**
      * Constructor.
-     *
-     * @param DataProvider $dataProvider
      */
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(PTJourney::class, "public_transport/journeys");
+        $this->dataProvider->setClass(PTJourney::class, 'public_transport/journeys');
     }
-    
+
     /**
-     * Get public transport journeys
+     * Get public transport journeys.
      *
-     * @param string    $provider                   The name of the provider
-     * @param string    $apikey                     The apikey
-     * @param float     $origin_latitude            The latitude of the origin point
-     * @param float     $origin_longitude           The longitude of the origin point
-     * @param float     $destination_latitude       The latitude of the destination point
-     * @param float     $destination_longitude      The longitude of the destination point
-     * @param string    $date                       The date of the journey
-     * @param string    $dateType                   (optional) Date criteria like "arrival" or "departure"
-     * @param string    $modes                      (optional) Mode criteria
-     * @return Hydra|null The journeys found (as an Hydra object) or null if not found.
+     * @param float  $origin_latitude       The latitude of the origin point
+     * @param float  $origin_longitude      The longitude of the origin point
+     * @param float  $destination_latitude  The latitude of the destination point
+     * @param float  $destination_longitude The longitude of the destination point
+     * @param string $date                  The date of the journey
+     * @param string $dateType              (optional) Date criteria like "arrival" or "departure"
+     * @param string $modes                 (optional) Mode criteria
+     *
+     * @return null|Hydra the journeys found (as an Hydra object) or null if not found
      */
     public function getJourneys(
         float $origin_latitude,
@@ -67,67 +64,83 @@ class PublicTransportManager
         float $destination_latitude,
         float $destination_longitude,
         string $date,
-        string $dateType = null,
-        string $modes = null
+        ?string $dateType = null,
+        ?string $modes = null
     ) {
         $response = $this->dataProvider->getCollection([
-            'origin_latitude'       => $origin_latitude,
-            'origin_longitude'      => $origin_longitude,
-            'destination_latitude'  => $destination_latitude,
+            'origin_latitude' => $origin_latitude,
+            'origin_longitude' => $origin_longitude,
+            'destination_latitude' => $destination_latitude,
             'destination_longitude' => $destination_longitude,
-            'date'                  => $date,
-            'dateType'          => $dateType,
-            'modes'                  => $modes
+            'date' => $date,
+            'dateType' => $dateType,
+            'modes' => $modes,
         ]);
+
         return $response->getValue();
     }
 
     /**
-     * Get Trip Points near a given couple of Latitude and Longitude
+     * Get Trip Points near a given couple of Latitude and Longitude.
      *
-     * @param float $latitude           The latitude near de trip points
-     * @param float $longitude          The longitude near de trip points
-     * @param int $perimeter            The perimeter you want to search fortrip points
-     * @param string $transportModes    The transport modes you want to search fortrip points
-     * @param string $keywords          Trip points whose name contains these keywords (can't combine with lat/lon)
-     * @return array|object|null
+     * @param float  $latitude       The latitude near de trip points
+     * @param float  $longitude      The longitude near de trip points
+     * @param int    $perimeter      The perimeter you want to search fortrip points
+     * @param string $transportModes The transport modes you want to search fortrip points
+     * @param string $keywords       Trip points whose name contains these keywords (can't combine with lat/lon)
+     *
+     * @return null|array|object
      */
     public function getTripPoints(
         float $latitude,
         float $longitude,
         int $perimeter,
         string $transportModes,
-        string $keywords=""
+        string $keywords = ''
     ) {
-        $this->dataProvider->setClass(PTTripPoint::class, "public_transport/trippoints");
+        $this->dataProvider->setClass(PTTripPoint::class, 'public_transport/trippoints');
 
         $response = $this->dataProvider->getCollection([
-            'latitude'       => $latitude,
-            'longitude'      => $longitude,
-            'perimeter'      => $perimeter,
-            'transportModes'      => $transportModes,
-            'keywords'      => $keywords
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'perimeter' => $perimeter,
+            'transportModes' => $transportModes,
+            'keywords' => $keywords,
         ]);
+
         return $response->getValue();
     }
 
-
     /**
-     * Get line Stops for a logicalid
+     * Get line Stops for a logicalid.
      *
-     * @param int $logicalId            The logicalId to retreive linestops
-     * @return array|object|null
+     * @param int $logicalId The logicalId to retreive linestops
+     *
+     * @return null|array|object
      */
     public function getLineStops(
         string $provider,
         int $logicalId,
-        string $transportModes=""
+        string $transportModes = ''
     ) {
-        $this->dataProvider->setClass(PTLineStop::class, "public_transport/linestops");
+        $this->dataProvider->setClass(PTLineStop::class, 'public_transport/linestops');
 
         $response = $this->dataProvider->getCollection([
-            'logicalId'       => $logicalId
+            'logicalId' => $logicalId,
         ]);
+
+        return $response->getValue();
+    }
+
+    public function checkThreshold(float $origin_latitude, float $origin_longitude)
+    {
+        $this->dataProvider->setClass(PTJourney::class, 'public_transport/checkThreshold');
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getCollection([
+            'origin_latitude' => $origin_latitude,
+            'origin_longitude' => $origin_longitude,
+        ]);
+
         return $response->getValue();
     }
 }

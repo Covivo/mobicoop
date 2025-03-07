@@ -125,7 +125,7 @@ export default {
   },
   data () {
     return {
-      locale: localStorage.getItem("X-LOCALE"),
+      locale: 'fr',
       params: { 'communityId' : this.community.id },
       defaultDestination: this.community.address,
     }

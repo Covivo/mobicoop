@@ -132,7 +132,7 @@ export default {
   },
   data () {
     return {
-      locale: localStorage.getItem("X-LOCALE"),
+      locale: 'fr',
       params: { 'eventId' : this.event.id },
       defaultDestination: this.event.address,
     }
