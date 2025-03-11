@@ -1096,6 +1096,16 @@ services:
       $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
       $secret: "%env(string:APP_SECRET)%"
 
+  App\DataProvider\DataPersister\StripeHookDataPersister:
+    arguments:
+      $paymentManager: '@App\Payment\Service\PaymentManager'
+      $requestStack: '@Symfony\Component\HttpFoundation\RequestStack'
+      $security: '@Symfony\Component\Security\Core\Security'
+      $logger: "@monolog.logger.payment"
+    tags:
+      - { name: "controller.service_arguments" }
+      - { name: "api_platform.data_persister" }
+
   App\Carpool\Service\MobicoopMatcher\MobicoopMatcherMatchingBuilder:
     arguments:
       $maxDetourDistancePercent: "%env(int:ALGORITHM_MAX_DETOUR_DISTANCE_PERCENT)%"
@@ -1147,12 +1157,19 @@ services:
     arguments:
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
       $paymentProviderService: "%env(string:PAYMENT_PROVIDER)%"
+      $paymentProviderUsesWallet: "%env(bool:PAYMENT_PROVIDER_USES_WALLET)%"
       $securityTokenActive: "%env(bool:PAYMENT_SECURITY_TOKEN_ACTIVE)%"
       $securityToken: "%env(string:PAYMENT_SECURITY_TOKEN)%"
       $validationDocsPath: "%env(resolve:PAYMENT_VALIDATION_DOCS_PATH)%"
       $validationDocsAuthorizedExtensions: "%env(json:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%"
       $exportPath: "%env(resolve:PAYMENT_EXPORT_PATH)%"
       $defaultCarpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
+    tags:
+      - { name: monolog.logger, channel: payment }
+
+  App\Payment\Repository\PaymentProfileRepository:
+    arguments:
+      $paymentProviderService: "%env(string:PAYMENT_PROVIDER)%"
 
   App\Payment\Service\BankTransfer\:
     resource: "../src/Payment/Service/BankTransfer/*"

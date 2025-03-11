@@ -87,6 +87,7 @@ class PaymentManager
     private $askRepository;
     private $provider;
     private $paymentProvider;
+    private $paymentProviderUsesWallet;
     private $paymentProfileRepository;
     private $userManager;
     private $paymentActive;
@@ -136,6 +137,7 @@ class PaymentManager
         LoggerInterface $logger,
         string $paymentActive,
         string $paymentProviderService,
+        bool $paymentProviderUsesWallet,
         bool $securityTokenActive,
         string $securityToken,
         string $validationDocsPath,
@@ -152,6 +154,7 @@ class PaymentManager
         $this->carpoolPaymentRepository = $carpoolPaymentRepository;
         $this->askRepository = $askRepository;
         $this->provider = $paymentProviderService;
+        $this->paymentProviderUsesWallet = $paymentProviderUsesWallet;
         $this->entityManager = $entityManager;
         $this->paymentProvider = $paymentProvider;
         $this->paymentProfileRepository = $paymentProfileRepository;
@@ -1140,7 +1143,7 @@ class PaymentManager
     public function createBankAccount(User $user, BankAccount $bankAccount)
     {
         // Check if there is a paymentProfile
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user, 'provider' => $this->paymentProvider->getPaymentProviderName()]);
 
         // We update the home Address by the bank account address
         if (!is_null($bankAccount->getAddress())) {
@@ -1161,25 +1164,31 @@ class PaymentManager
             $this->eventDispatcher->dispatch(UserHomeAddressUpdateEvent::NAME, $event);
         }
 
-        if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
+        $identifier = null;
+        if (!$this->_hasPaymentProfileForCurrentProvider($user)) {
             // No Payment Profile, we create one
-            $identifier = null;
 
             // RPC we check the user have already a bank account with anotherEmail
             $this->checkExistingPaymentProfile($user);
 
             // First we register the User on the payment provider to get an identifier
-            $identifier = $this->paymentProvider->registerUser($user, $bankAccount->getAddress());
+            try {
+                $identifier = $this->paymentProvider->registerUser($user, $bankAccount->getAddress());
+            } catch (PaymentException $e) {
+                throw new PaymentException(PaymentException::REGISTER_USER_FAILED.' - '.$e->getMessage());
+            }
 
             if (null == $identifier || '' == $identifier) {
                 throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
             }
 
             // Now, we create a Wallet for this User
-            $wallet = null;
-            $wallet = $this->paymentProvider->createWallet($identifier);
-            if (null == $wallet || '' == $wallet) {
-                throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
+            if ($this->paymentProviderUsesWallet) {
+                $wallet = null;
+                $wallet = $this->paymentProvider->createWallet($identifier);
+                if (null == $wallet || '' == $wallet) {
+                    throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
+                }
             }
 
             $paymentProfile = $this->createPaymentProfile($user, $identifier);
@@ -1187,12 +1196,13 @@ class PaymentManager
             $paymentProfile->setElectronicallyPayable(false);
         } else {
             $paymentProfile = $paymentProfiles[0];
+            $identifier = $paymentProfile->getIdentifier();
             if (PaymentProfile::VALIDATION_VALIDATED === $paymentProfile->getValidationStatus()) {
                 $paymentProfile->setElectronicallyPayable(true);
             }
         }
 
-        $bankAccount = $this->paymentProvider->addBankAccount($bankAccount);
+        $bankAccount = $this->paymentProvider->addBankAccount($bankAccount, $identifier);
 
         // Update the payment profile
         $paymentProfile->setStatus(PaymentProfile::STATUS_ACTIVE);
@@ -1210,7 +1220,7 @@ class PaymentManager
     public function disableBankAccount(User $user, BankAccount $bankAccount)
     {
         // Check if there is a paymentProfile
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user, 'provider' => $this->paymentProvider->getPaymentProviderName()]);
 
         if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
             throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
@@ -1420,6 +1430,10 @@ class PaymentManager
 
         switch ($hook->getStatus()) {
             case Hook::STATUS_SUCCESS:
+                if (PaymentProfile::VALIDATION_VALIDATED == $paymentProfile->getValidationStatus() && !is_null($paymentProfile->getValidatedDate())) {
+                    return;
+                }
+
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
                 $paymentProfile->setElectronicallyPayable(true);
                 $paymentProfile->setValidatedDate(new \DateTime());
@@ -1468,7 +1482,7 @@ class PaymentManager
      */
     public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
     {
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $validationDocument->getUser()]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $validationDocument->getUser(), 'provider' => $this->paymentProvider->getPaymentProviderName()]);
 
         $this->_checkMandatoryValidationDocument($validationDocument, $paymentProfiles);
 
@@ -1588,6 +1602,17 @@ class PaymentManager
         $paymentProfile->setRefusalReason($validationDocument->getStatus());
 
         return $paymentProfile;
+    }
+
+    private function _hasPaymentProfileForCurrentProvider(User $user): bool
+    {
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user, 'provider' => $this->paymentProvider->getPaymentProviderName()]);
+
+        if (!is_null($paymentProfiles) && 0 < count($paymentProfiles)) {
+            return true;
+        }
+
+        return false;
     }
 
     private function _checkMandatoryValidationDocument(ValidationDocument $validationDocument, array $paymentProfiles)
@@ -1711,9 +1736,9 @@ class PaymentManager
 
     private function checkExistingPaymentProfile(User $user)
     {
-        $paymentProfiles = $this->paymentProfileRepository->findPaymentProfileByUserInfos($user);
+        $paymentProfiles = $this->paymentProfileRepository->findPaymentProfileByUserInfos($user, $this->paymentProvider->getPaymentProviderName());
 
-        if (0 < count($paymentProfiles)) {
+        if (!is_null($paymentProfiles) && 0 < count($paymentProfiles)) {
             throw new PaymentException(PaymentException::USER_ALREADY_HAVE_BANK_ACCOUNT);
         }
     }

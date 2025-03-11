@@ -24,6 +24,7 @@
 namespace App\Payment\Service;
 
 use App\DataProvider\Entity\MangoPayProvider;
+use App\DataProvider\Entity\Stripe\StripeProvider;
 use App\DataProvider\Ressource\Hook;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
@@ -46,8 +47,12 @@ use Symfony\Component\Security\Core\Security;
  */
 class PaymentDataProvider
 {
+    public const MANGOPAY = 'MangoPay';
+    public const STRIPE = 'Stripe';
+
     private const SUPPORTED_PROVIDERS = [
-        'MangoPay' => MangoPayProvider::class,
+        self::MANGOPAY => MangoPayProvider::class,
+        self::STRIPE => StripeProvider::class,
     ];
     private $paymentActive;
     private $paymentActiveDate;
@@ -153,11 +158,11 @@ class PaymentDataProvider
      *
      * @return null|BankAccount
      */
-    public function addBankAccount(BankAccount $bankAccount)
+    public function addBankAccount(BankAccount $bankAccount, ?string $externalAccountId = null)
     {
         $this->checkPaymentConfiguration();
 
-        return $this->providerInstance->addBankAccount($bankAccount);
+        return $this->providerInstance->addBankAccount($bankAccount, $externalAccountId);
     }
 
     /**
@@ -185,7 +190,7 @@ class PaymentDataProvider
         $this->checkPaymentConfiguration();
 
         // Get more information for each profiles
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user, 'provider' => $this->paymentProvider]);
         if (!is_null($paymentProfiles)) {
             foreach ($paymentProfiles as $paymentProfile) {
                 // @var PaymentProfile $paymentProfile
@@ -213,7 +218,7 @@ class PaymentDataProvider
     public function getUserWallets(User $user): array
     {
         $this->checkPaymentConfiguration();
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user, 'provider' => $this->paymentProvider]);
         $wallets = [];
         if (!is_null($paymentProfiles)) {
             foreach ($paymentProfiles as $paymentProfile) {
@@ -233,7 +238,7 @@ class PaymentDataProvider
      *
      * @return string The identifier
      */
-    public function registerUser(User $user, Address $address = null)
+    public function registerUser(User $user, ?Address $address = null)
     {
         $this->checkPaymentConfiguration();
 
@@ -373,5 +378,10 @@ class PaymentDataProvider
         $this->checkPaymentConfiguration();
 
         return $this->providerInstance->getLastMonthWalletTransactions($walletId);
+    }
+
+    public function getPaymentProviderName(): string
+    {
+        return $this->paymentProvider;
     }
 }

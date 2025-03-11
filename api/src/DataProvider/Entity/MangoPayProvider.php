@@ -39,6 +39,7 @@ use App\Payment\Interfaces\PaymentProviderInterface;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\ValidationDocument;
+use App\Payment\Service\PaymentDataProvider;
 use App\User\Entity\User;
 
 /**
@@ -216,7 +217,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *
      * @return null|BankAccount
      */
-    public function addBankAccount(BankAccount $bankAccount)
+    public function addBankAccount(BankAccount $bankAccount, ?string $externalAccountId = null)
     {
         // Build the body
         $body['OwnerName'] = $this->user->getGivenName().' '.$this->user->getFamilyName();
@@ -241,7 +242,7 @@ class MangoPayProvider implements PaymentProviderInterface
         ];
 
         // Get the identifier
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user, 'provider' => PaymentDataProvider::MANGOPAY]);
         $identifier = $paymentProfiles[0]->getIdentifier();
 
         if (is_null($identifier)) {
@@ -278,7 +279,7 @@ class MangoPayProvider implements PaymentProviderInterface
         $body['Active'] = 'false';
 
         // Get the identifier
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user, 'provider' => PaymentDataProvider::MANGOPAY]);
         $identifier = $paymentProfiles[0]->getIdentifier();
 
         if (is_null($identifier)) {
@@ -456,7 +457,7 @@ class MangoPayProvider implements PaymentProviderInterface
     public function updateUser(User $user)
     {
         // We check first if the user have an identifier
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user, 'provider' => PaymentDataProvider::MANGOPAY]);
         $identifier = $paymentProfiles[0]->getIdentifier();
 
         if (is_null($identifier)) {
