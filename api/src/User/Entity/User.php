@@ -72,7 +72,6 @@ use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserAsks;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserDelete;
-use App\User\Controller\UserExport;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserSendValidationEmail;
 use App\User\Controller\UserThreads;
@@ -344,9 +343,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "ADMIN_exportAll"={
  *              "method"="GET",
  *              "path"="/admin/users/export",
- *              "controller"=UserExport::class,
  *              "formats"={"csv"={"text/csv"}},
- *              "normalization_context"={"groups"={"user-export"}},
+ *              "normalization_context"={"groups"={"export:extended", "export:standard"}},
  *              "security"="is_granted('admin_user_export_all',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"},
@@ -4293,8 +4291,8 @@ class User implements UserInterface, EquatableInterface
      */
     public function getBankingIdentityStatus(): bool
     {
-        $this->bankingIdentityStatus =
-            !is_null($this->getPaymentProfiles())
+        $this->bankingIdentityStatus
+            = !is_null($this->getPaymentProfiles())
             && !$this->getPaymentProfiles()->isEmpty()
             && $this->getPaymentProfiles()->toArray()[0]->isValidated();
 

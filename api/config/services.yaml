@@ -1449,6 +1449,10 @@ services:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
+  App\User\Admin\DataProvider\UserExportCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
   # Utility
   App\Utility\Service\VersionManager:
     arguments:
