@@ -40,8 +40,12 @@ final class UserExportCollectionDataProvider implements CollectionDataProviderIn
      */
     private $_exportManager;
 
-    public function __construct(RequestStack $requestStack, ManagerRegistry $managerRegistry, ExportManager $exportManager, iterable $collectionExtensions)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        ManagerRegistry $managerRegistry,
+        ExportManager $exportManager,
+        iterable $collectionExtensions
+    ) {
         $this->_request = $requestStack->getCurrentRequest();
         $this->collectionExtensions = $collectionExtensions;
         $this->_exportManager = $exportManager;
@@ -57,7 +61,7 @@ final class UserExportCollectionDataProvider implements CollectionDataProviderIn
     {
         $exportType = (int) $this->_request->get(self::EXPORT_TYPE_PARAMETER);
 
-        $context['normalization_context'] = isset(self::SERIALIZATION_GROUPS[$exportType]) ? self::SERIALIZATION_GROUPS[$exportType] : self::SERIALIZATION_GROUPS[0];
+        $this->_setSerializationGroups($exportType);
 
         if (self::EXPORT_EXTENDED === $exportType) {
             return $this->_exportManager->exportExtended();
@@ -83,6 +87,15 @@ final class UserExportCollectionDataProvider implements CollectionDataProviderIn
             }
         }
 
-        return $this->_exportManager->exportStandard($users);
+        return $users;
+    }
+
+    private function _setSerializationGroups(int $exportType)
+    {
+        $groups = [];
+
+        $groups[] = isset(self::SERIALIZATION_GROUPS[$exportType]) ? self::SERIALIZATION_GROUPS[$exportType] : self::SERIALIZATION_GROUPS[0];
+
+        $this->_request->attributes->set('_api_normalization_context', ['groups' => $groups]);
     }
 }

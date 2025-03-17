@@ -98,16 +98,6 @@ class ExportManager
     }
 
     /**
-     * @param User[] $users
-     *
-     * @return UserExport[]
-     */
-    public function exportStandard($users)
-    {
-        return $this->_buildUsersToExport($users);
-    }
-
-    /**
      * @param mixed $users
      *
      * @return UserExport[]
@@ -119,9 +109,7 @@ class ExportManager
         foreach ($users as $user) {
             array_push(
                 $usersToExport,
-                $user instanceof User
-                    ? UserExportMapper::fromEntity($user)
-                    : UserExportMapper::fromArray($user)
+                UserExportMapper::fromArray($user)
             );
         }
 

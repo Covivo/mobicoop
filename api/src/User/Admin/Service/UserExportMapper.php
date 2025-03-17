@@ -2,7 +2,6 @@
 
 namespace App\User\Admin\Service;
 
-use App\User\Entity\User;
 use App\User\Entity\UserExport;
 
 class UserExportMapper
@@ -67,24 +66,6 @@ class UserExportMapper
         $exportedUser->setRoleInteroperability($user['roleInteroperability']);
         $exportedUser->setRoleSolidaryAdmin($user['roleSolidaryAdmin']);
         $exportedUser->setRoleTerritoryConsultant($user['roleTerritoryConsultant']);
-
-        return $exportedUser;
-    }
-
-    public static function fromEntity(User $user): UserExport
-    {
-        $exportedUser = new UserExport();
-
-        $exportedUser->setId((int) $user->getId());
-        $exportedUser->setFamilyName($user->getFamilyName());
-        $exportedUser->setGivenName($user->getGivenName());
-        $exportedUser->setEmail($user->getEmail());
-        $exportedUser->setTelephone($user->getTelephone());
-        $exportedUser->setNewsletterSubscription($user->hasNewsSubscription());
-        $exportedUser->setRegistrationDate($user->getCreatedDate());
-        $exportedUser->setLastActivityDate($user->getLastActivityDate());
-
-        // TODO: Type d'annonces
 
         return $exportedUser;
     }

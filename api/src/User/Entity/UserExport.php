@@ -28,7 +28,7 @@ class UserExport
     /**
      * @var int
      *
-     * @Groups({"export:extended", "export:standard"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("userId")
      */
@@ -37,7 +37,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"export:extended", "export:standard"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Nom")
      */
@@ -46,7 +46,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"export:extended", "export:standard"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Prénom")
      */
@@ -64,7 +64,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"export:extended", "export:standard"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Email")
      */
@@ -73,7 +73,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"export:extended", "export:standard"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Téléphone")
      */
@@ -91,7 +91,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"export:extended", "export:standard"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Date d'inscription")
      */
@@ -100,7 +100,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"export:extended", "export:standard"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Date de dernière activité")
      */
@@ -109,7 +109,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"export:extended", "export:standard"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Accord pour newsletter")
      */
