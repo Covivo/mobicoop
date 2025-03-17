@@ -99,6 +99,7 @@ use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\ProposalValidFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\RezoKitFilter;
+use App\User\Filter\SelectedFilter;
 use App\User\Filter\SolidaryCandidateFilter;
 use App\User\Filter\SolidaryExclusiveFilter;
 use App\User\Filter\SolidaryFilter;
@@ -681,6 +682,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(IdentityProofFilter::class, properties={"identityProofStatus"})
+ * @ApiFilter(SelectedFilter::class, properties={"selected"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -743,7 +745,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="integer")
      *
-     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso","eec-timestamps", "removePushToken"})
+     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso","eec-timestamps", "removePushToken", "export:standard"})
      *
      * @ApiProperty(identifier=true)
      */
@@ -765,7 +767,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"aRead","aWrite","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview", "patchSso"})
+     * @Groups({"aRead","aWrite","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview", "patchSso", "export:standard"})
      */
     private $givenName;
 
@@ -774,7 +776,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"aRead","aWrite","readUser","write","communities", "readSolidary", "readAnimation", "readExport", "patchSso"})
+     * @Groups({"aRead","aWrite","readUser","write","communities", "readSolidary", "readAnimation", "readExport", "patchSso", "export:standard"})
      */
     private $familyName;
 
@@ -801,7 +803,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="string", length=255, unique=true)
      *
-     * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary", "patchSso"})
+     * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary", "patchSso", "export:standard"})
      */
     private $email;
 
@@ -898,7 +900,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"aRead","aWrite","readUser", "results", "write","checkPhoneToken", "readSolidary"})
+     * @Groups({"aRead","aWrite","readUser", "results", "write","checkPhoneToken", "readSolidary", "export:standard"})
      */
     private $telephone;
 
@@ -1038,7 +1040,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="boolean", nullable=true)
      *
-     * @Groups({"aRead","aWrite","readUser","write","readCommunity","readCommunityUser"})
+     * @Groups({"aRead","aWrite","readUser","write","readCommunity","readCommunityUser", "export:standard"})
      */
     private $newsSubscription;
 
@@ -1047,7 +1049,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="datetime")
      *
-     * @Groups({"aRead","readUser"})
+     * @Groups({"aRead","readUser", "export:standard"})
      */
     private $createdDate;
 
@@ -1578,7 +1580,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="datetime", nullable=true)
      *
-     * @Groups({"aRead","readUser","write"})
+     * @Groups({"aRead","readUser","write", "export:standard"})
      */
     private $lastActivityDate;
 
