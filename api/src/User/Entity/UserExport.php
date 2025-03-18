@@ -28,7 +28,7 @@ class UserExport
     /**
      * @var int
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("userId")
      */
@@ -37,7 +37,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Nom")
      */
@@ -46,7 +46,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Prénom")
      */
@@ -55,7 +55,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Genre")
      */
@@ -64,7 +64,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Email")
      */
@@ -73,7 +73,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Téléphone")
      */
@@ -82,7 +82,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Date de naissance")
      */
@@ -91,7 +91,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Date d'inscription")
      */
@@ -100,7 +100,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Date de dernière activité")
      */
@@ -109,7 +109,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Accord pour newsletter")
      */
@@ -118,7 +118,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Date de validité d'annonce")
      */
@@ -127,7 +127,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Commune de résidence")
      */
@@ -136,7 +136,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Utilisateur solidaire")
      */
@@ -145,7 +145,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Communauté 1")
      */
@@ -154,7 +154,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Communauté 2")
      */
@@ -163,7 +163,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Communauté 3")
      */
@@ -172,7 +172,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Annonce 1 - Commune d'origine")
      */
@@ -181,7 +181,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Annonce 2 - Commune d'origine")
      */
@@ -190,7 +190,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Annonce 3 - Commune d'origine")
      */
@@ -199,7 +199,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Annonce 1 - Commune de destination")
      */
@@ -208,7 +208,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Annonce 2 - Commune de destination")
      */
@@ -217,7 +217,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Annonce 3 - Commune de destination")
      */
@@ -226,7 +226,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Annonce 1 - Fréquence")
      */
@@ -235,7 +235,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Annonce 2 - Fréquence")
      */
@@ -244,7 +244,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Annonce 3 - Fréquence")
      */
@@ -253,7 +253,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle Conducteur Annonce 1")
      */
@@ -262,7 +262,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle Conducteur Annonce 2")
      */
@@ -271,7 +271,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle Conducteur Annonce 3")
      */
@@ -280,7 +280,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle Passager Annonce 1")
      */
@@ -289,7 +289,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle Passager Annonce 2")
      */
@@ -298,7 +298,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle Passager Annonce 3")
      */
@@ -307,7 +307,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_SUPER_ADMIN")
      */
@@ -316,7 +316,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_ADMIN")
      */
@@ -325,7 +325,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_USER_REGISTERED_FULL")
      */
@@ -334,7 +334,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_USER_REGISTERED_MINIMAL")
      */
@@ -343,7 +343,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_USER")
      */
@@ -352,7 +352,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_MASS_MATCH")
      */
@@ -361,7 +361,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_COMMUNITY_MANAGER")
      */
@@ -370,7 +370,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_COMMUNITY_MANAGER_PUBLIC")
      */
@@ -379,7 +379,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_SUPER_COMMUNITY_MANAGER_PUBLIC")
      */
@@ -388,7 +388,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_COMMUNITY_MANAGER_PRIVATE")
      */
@@ -397,7 +397,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_SOLIDARY_OPERATOR")
      */
@@ -406,7 +406,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_SOLIDARY_VOLUNTEER")
      */
@@ -415,7 +415,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_SOLIDARY_BENEFICIARY")
      */
@@ -424,7 +424,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_COMMUNICATION_MANAGER")
      */
@@ -433,7 +433,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_SOLIDARY_VOLUNTEER_CANDIDATE")
      */
@@ -442,7 +442,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_SOLIDARY_BENEFICIARY_CANDIDATE")
      */
@@ -451,7 +451,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_INTEROPERABILITY")
      */
@@ -460,7 +460,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_SOLIDARY_ADMIN")
      */
@@ -469,7 +469,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Rôle - ROLE_TERRITORY_CONSULTANT")
      */
@@ -478,7 +478,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Statut identité")
      */
@@ -487,7 +487,7 @@ class UserExport
     /**
      * @var string
      *
-     * @Groups({"user-export"})
+     * @Groups({"export:extended"})
      *
      * @SerializedName("Utilisation de Rezo Pouce")
      */
