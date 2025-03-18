@@ -49,21 +49,21 @@ final class SolidaryUserStructureOperatorExtension implements QueryCollectionExt
         $this->authManager = $authManager;
     }
 
-    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?string $operationName = null)
     {
         if (SolidaryUser::class == $resourceClass && 'ADMIN_get' === $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
-    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
+    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, ?string $operationName = null, array $context = [])
     {
         if (SolidaryUser::class == $resourceClass && 'ADMIN_get' === $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
         }
     }
 
-    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
+    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, ?string $operationName = null, array $identifiers = [], array $context = []): void
     {
         /**
          * @var User $user
@@ -71,7 +71,7 @@ final class SolidaryUserStructureOperatorExtension implements QueryCollectionExt
         $user = $this->security->getUser();
 
         // exclude pure admins
-        if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
+        if ($this->authManager->isAuthorized('ROLE_ADMIN') && !$this->authManager->isAuthorized('ROLE_SOLIDARY_OPERATOR')) {
             return;
         }
 
