@@ -2,14 +2,18 @@
 
 namespace App\DataProvider\Entity\Stripe;
 
+use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockBankAccount;
+use App\Tests\DataProvider\Entity\Stripe\Mock\MockPaymentProfile;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockUser;
 use PHPUnit\Framework\TestCase;
 use Stripe\Account as StripeAccount;
 use Stripe\BankAccount as StripeBankAccount;
+use Stripe\PaymentLink;
+use Stripe\Price;
 use Stripe\Token as StripeToken;
 
 /**
@@ -56,9 +60,31 @@ class StripeProviderTest extends TestCase
             ->willReturn(new StripeBankAccount('token'))
         ;
 
+        $pricesMock = $this->getMockBuilder(\stdClass::class)
+            ->addMethods(['create'])
+            ->getMock()
+        ;
+        $pricesMock->method('create')
+            ->willReturn(new Price('price_123'))
+        ;
+
+        $paymentLinksMock = $this->getMockBuilder(\stdClass::class)
+            ->addMethods(['create'])
+            ->getMock()
+        ;
+
+        $paymentLink = new PaymentLink('plink_123');
+        $paymentLink->url = 'https://yourbusiness.com/test';
+
+        $paymentLinksMock->method('create')
+            ->willReturn($paymentLink)
+        ;
+
         $stripeMock = new \stdClass();
         $stripeMock->tokens = $tokensMock;
         $stripeMock->accounts = $accountsMock;
+        $stripeMock->prices = $pricesMock;
+        $stripeMock->paymentLinks = $paymentLinksMock;
 
         $this->_stripeProvider = new StripeProvider(
             MockUser::getSimpleUser(),
@@ -166,5 +192,22 @@ class StripeProviderTest extends TestCase
             $this->_baseMobileUri,
             $this->_paymentProfileRepository
         );
+    }
+
+    /**
+     * @test
+     */
+    public function generateElectronicPaymentUrlReturnsACarpoolPaymentWithAnUrl(): void
+    {
+        $carpoolPayment = new CarpoolPayment();
+        $user = MockUser::getSimpleUser();
+        $user->addPaymentProfile(MockPaymentProfile::getPaymentProfile());
+        $carpoolPayment->setUser($user);
+        $carpoolPayment->setAmountOnline(100);
+
+        $payment = $this->_stripeProvider->generateElectronicPaymentUrl($carpoolPayment);
+
+        $this->assertInstanceOf(CarpoolPayment::class, $payment);
+        $this->assertStringStartsWith('https://', $payment->getRedirectUrl());
     }
 }

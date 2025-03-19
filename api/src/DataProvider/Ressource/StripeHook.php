@@ -74,6 +74,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class StripeHook extends Hook
 {
     public const TYPE_ACCOUNT_UPDATED = 'account.updated';
+    public const TYPE_PAYMENT_SUCCEEDED = 'checkout.session.completed';
 
     public const VALIDATION_SUCCEEDED = 'verified';
     public const VALIDATION_PENDING = 'pending';

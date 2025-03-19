@@ -85,6 +85,10 @@ final class StripeHookDataPersister implements ContextAwareDataPersisterInterfac
 
                     break;
 
+                case StripeHook::TYPE_PAYMENT_SUCCEEDED: $this->_treatPaymentSucceedHook($decodedPayload);
+
+                    break;
+
                 default:
                     break;
             }
@@ -101,6 +105,17 @@ final class StripeHookDataPersister implements ContextAwareDataPersisterInterfac
     public function remove($data, array $context = [])
     {
         // call your persistence layer to delete $data
+    }
+
+    private function _treatPaymentSucceedHook($decodedPayload)
+    {
+        if (isset($decodedPayload['data']['object']['payment_link'])) {
+            $hook = new StripeHook();
+            $hook->setStatus(Hook::STATUS_SUCCESS);
+            $hook->setRessourceId($decodedPayload['data']['object']['payment_link']);
+
+            $this->paymentManager->handleHookPayIn($hook);
+        }
     }
 
     private function _treatValidatedHook($decodedPayload)

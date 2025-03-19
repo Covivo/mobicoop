@@ -31,7 +31,6 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\AskRepository;
 use App\DataProvider\Ressource\Hook;
-use App\DataProvider\Ressource\MangoPayHook;
 use App\Geography\Entity\Address;
 use App\Incentive\Service\Validation\JourneyValidation;
 use App\Payment\Entity\CarpoolItem;
@@ -1382,13 +1381,13 @@ class PaymentManager
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
         }
 
-        switch ($hook->getEventType()) {
-            case MangoPayHook::PAYIN_SUCCEEDED:
+        switch ($hook->getStatus()) {
+            case Hook::STATUS_SUCCESS:
                 $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
 
                 break;
 
-            case MangoPayHook::PAYIN_FAILED:
+            case Hook::STATUS_FAILED:
                 $carpoolPayment->setStatus(CarpoolPayment::STATUS_FAILURE);
 
                 break;
@@ -1697,7 +1696,6 @@ class PaymentManager
                 $creditors[$carpoolItem->getCreditorUser()->getId()]['amount'] += $carpoolItem->getAmount();
             }
         }
-
         $debtor = $this->userManager->getPaymentProfile($carpoolPayment->getUser());
 
         $return = $this->paymentProvider->processAsyncElectronicPayment($debtor, $creditors);
