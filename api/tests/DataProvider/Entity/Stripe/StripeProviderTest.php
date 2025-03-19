@@ -2,10 +2,12 @@
 
 namespace App\DataProvider\Entity\Stripe;
 
+use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockBankAccount;
+use App\Tests\DataProvider\Entity\Stripe\Mock\MockPaymentProfile;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockUser;
 use PHPUnit\Framework\TestCase;
 use Stripe\Account as StripeAccount;
@@ -166,5 +168,22 @@ class StripeProviderTest extends TestCase
             $this->_baseMobileUri,
             $this->_paymentProfileRepository
         );
+    }
+
+    /**
+     * @test
+     */
+    public function generateElectronicPaymentUrlReturnsACarpoolPaymentWithAnUrl(): void
+    {
+        $carpoolPayment = new CarpoolPayment();
+        $user = MockUser::getSimpleUser();
+        $user->addPaymentProfile(MockPaymentProfile::getPaymentProfile());
+        $carpoolPayment->setUser($user);
+        $carpoolPayment->setAmountOnline(100);
+
+        $payment = $this->_stripeProvider->generateElectronicPaymentUrl($carpoolPayment);
+
+        $this->assertInstanceOf(CarpoolPayment::class, $payment);
+        $this->assertStringStartsWith('https://', $payment->getRedirectUrl());
     }
 }

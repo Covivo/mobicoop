@@ -28,6 +28,7 @@ use App\DataProvider\Entity\Stripe\Entity\AccountToken;
 use App\DataProvider\Entity\Stripe\Entity\BankAccountToken;
 use App\DataProvider\Entity\Stripe\Entity\ExternalBankAccount;
 use App\DataProvider\Entity\Stripe\Entity\File;
+use App\DataProvider\Entity\Stripe\Entity\Price;
 use App\DataProvider\Entity\Stripe\Entity\Token;
 use App\DataProvider\Ressource\Hook;
 use App\DataProvider\Ressource\MangoPayHook;
@@ -46,6 +47,7 @@ use Stripe\Account as StripeAccount;
 use Stripe\BankAccount as StripeBankAccount;
 use Stripe\Exception\ApiErrorException;
 use Stripe\File as StripeFile;
+use Stripe\Price as StripePrice;
 use Stripe\StripeClient;
 use Stripe\Token as StripeToken;
 
@@ -220,11 +222,30 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment): CarpoolPayment
     {
-        echo 'yo!';
+        $user = $carpoolPayment->getUser();
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+
+        if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
+            // No active payment profile. The User need at least a Wallet to pay so we register him and create a Wallet
+            $identifier = $this->registerUser($user);
+            $carpoolPayment->setCreateCarpoolProfileIdentifier($identifier); // To persist the paymentProfile in PaymentManager
+        } else {
+            $identifier = $paymentProfiles[0]->getIdentifier();
+        }
+
+        $price = new Price(
+            $carpoolPayment->getAmountOnline(),
+            $this->currency,
+            $this->baseUri
+        );
+
+        $stripePrice = $this->_createPrice($price);
+
+        $carpoolPayment->setRedirectUrl('https://www.yo.com');
 
         exit;
 
-        return new CarpoolPayment();
+        return $carpoolPayment;
     }
 
     /**
@@ -324,6 +345,17 @@ class StripeProvider implements PaymentProviderInterface
     public function getWallets(PaymentProfile $paymentProfile)
     {
         return [];
+    }
+
+    private function _createPrice(Price $price): ?StripePrice
+    {
+        try {
+            return $this->_stripe->prices->create($price->buildBody());
+        } catch (ApiErrorException $e) {
+            throw new PaymentException($e->getMessage());
+        }
+
+        return null;
     }
 
     private function _deserializeBankAccount(StripeBankAccount $stripeBankAccount): BankAccount
