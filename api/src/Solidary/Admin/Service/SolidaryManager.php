@@ -73,8 +73,6 @@ use App\Solidary\Repository\SubjectRepository;
 use App\User\Admin\Service\UserManager;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
-use DateInterval;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -310,7 +308,7 @@ class SolidaryManager
                         $carpool['origin'] = $waypoint->getAddress()->jsonSerialize();
                         if (Criteria::FREQUENCY_PUNCTUAL == $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFrequency()) {
                             /**
-                             * @var DateTime $destinationTime
+                             * @var \DateTime $destinationTime
                              */
                             $destinationTime = clone $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFromTime();
                             $destinationTime->add(new \DateInterval('PT'.$solidaryMatching->getMatching()->getOriginalDuration().'S'));
@@ -340,29 +338,60 @@ class SolidaryManager
                     'maxDistance' => $solidaryMatching->getSolidaryUser()->getMaxDistance(),
                     // type is used to determine if the journey has only an outward or also a return
                     'type' => Proposal::TYPE_ONE_WAY == $solidaryMatching->getType() ? 'oneway' : 'roundtrip',
-                    'mMinTime' => $solidaryMatching->getSolidaryUser()->getMMinTime(), 'mMaxTime' => $solidaryMatching->getSolidaryUser()->getMMaxTime(),
-                    'aMinTime' => $solidaryMatching->getSolidaryUser()->getAMinTime(), 'aMaxTime' => $solidaryMatching->getSolidaryUser()->getAMaxTime(),
-                    'eMinTime' => $solidaryMatching->getSolidaryUser()->getEMinTime(), 'eMaxTime' => $solidaryMatching->getSolidaryUser()->getEMaxTime(),
+                    'mMinTime' => $solidaryMatching->getSolidaryUser()->getMMinTime(),
+                    'mMaxTime' => $solidaryMatching->getSolidaryUser()->getMMaxTime(),
+                    'aMinTime' => $solidaryMatching->getSolidaryUser()->getAMinTime(),
+                    'aMaxTime' => $solidaryMatching->getSolidaryUser()->getAMaxTime(),
+                    'eMinTime' => $solidaryMatching->getSolidaryUser()->getEMinTime(),
+                    'eMaxTime' => $solidaryMatching->getSolidaryUser()->getEMaxTime(),
                 ];
                 // original schedule for the volunteer
                 $volunteer['volunteerSchedule'] = [
-                    'mMon' => $solidaryMatching->getSolidaryUser()->hasMMon(), 'aMon' => $solidaryMatching->getSolidaryUser()->hasAMon(), 'eMon' => $solidaryMatching->getSolidaryUser()->hasEMon(),
-                    'mTue' => $solidaryMatching->getSolidaryUser()->hasMTue(), 'aTue' => $solidaryMatching->getSolidaryUser()->hasATue(), 'eTue' => $solidaryMatching->getSolidaryUser()->hasETue(),
-                    'mWed' => $solidaryMatching->getSolidaryUser()->hasMWed(), 'aWed' => $solidaryMatching->getSolidaryUser()->hasAWed(), 'eWed' => $solidaryMatching->getSolidaryUser()->hasEWed(),
-                    'mThu' => $solidaryMatching->getSolidaryUser()->hasMThu(), 'aThu' => $solidaryMatching->getSolidaryUser()->hasAThu(), 'eThu' => $solidaryMatching->getSolidaryUser()->hasEThu(),
-                    'mFri' => $solidaryMatching->getSolidaryUser()->hasMFri(), 'aFri' => $solidaryMatching->getSolidaryUser()->hasAFri(), 'eFri' => $solidaryMatching->getSolidaryUser()->hasEFri(),
-                    'mSat' => $solidaryMatching->getSolidaryUser()->hasMSat(), 'aSat' => $solidaryMatching->getSolidaryUser()->hasASat(), 'eSat' => $solidaryMatching->getSolidaryUser()->hasESat(),
-                    'mSun' => $solidaryMatching->getSolidaryUser()->hasMSun(), 'aSun' => $solidaryMatching->getSolidaryUser()->hasASun(), 'eSun' => $solidaryMatching->getSolidaryUser()->hasESun(),
+                    'mMon' => $solidaryMatching->getSolidaryUser()->hasMMon(),
+                    'aMon' => $solidaryMatching->getSolidaryUser()->hasAMon(),
+                    'eMon' => $solidaryMatching->getSolidaryUser()->hasEMon(),
+                    'mTue' => $solidaryMatching->getSolidaryUser()->hasMTue(),
+                    'aTue' => $solidaryMatching->getSolidaryUser()->hasATue(),
+                    'eTue' => $solidaryMatching->getSolidaryUser()->hasETue(),
+                    'mWed' => $solidaryMatching->getSolidaryUser()->hasMWed(),
+                    'aWed' => $solidaryMatching->getSolidaryUser()->hasAWed(),
+                    'eWed' => $solidaryMatching->getSolidaryUser()->hasEWed(),
+                    'mThu' => $solidaryMatching->getSolidaryUser()->hasMThu(),
+                    'aThu' => $solidaryMatching->getSolidaryUser()->hasAThu(),
+                    'eThu' => $solidaryMatching->getSolidaryUser()->hasEThu(),
+                    'mFri' => $solidaryMatching->getSolidaryUser()->hasMFri(),
+                    'aFri' => $solidaryMatching->getSolidaryUser()->hasAFri(),
+                    'eFri' => $solidaryMatching->getSolidaryUser()->hasEFri(),
+                    'mSat' => $solidaryMatching->getSolidaryUser()->hasMSat(),
+                    'aSat' => $solidaryMatching->getSolidaryUser()->hasASat(),
+                    'eSat' => $solidaryMatching->getSolidaryUser()->hasESat(),
+                    'mSun' => $solidaryMatching->getSolidaryUser()->hasMSun(),
+                    'aSun' => $solidaryMatching->getSolidaryUser()->hasASun(),
+                    'eSun' => $solidaryMatching->getSolidaryUser()->hasESun(),
                 ];
                 // computed schedule for the volunteer regarding the matching criteria
                 $volunteer['schedule'] = [
-                    'mMon' => false, 'aMon' => false, 'eMon' => false,
-                    'mTue' => false, 'aTue' => false, 'eTue' => false,
-                    'mWed' => false, 'aWed' => false, 'eWed' => false,
-                    'mThu' => false, 'aThu' => false, 'eThu' => false,
-                    'mFri' => false, 'aFri' => false, 'eFri' => false,
-                    'mSat' => false, 'aSat' => false, 'eSat' => false,
-                    'mSun' => false, 'aSun' => false, 'eSun' => false,
+                    'mMon' => false,
+                    'aMon' => false,
+                    'eMon' => false,
+                    'mTue' => false,
+                    'aTue' => false,
+                    'eTue' => false,
+                    'mWed' => false,
+                    'aWed' => false,
+                    'eWed' => false,
+                    'mThu' => false,
+                    'aThu' => false,
+                    'eThu' => false,
+                    'mFri' => false,
+                    'aFri' => false,
+                    'eFri' => false,
+                    'mSat' => false,
+                    'aSat' => false,
+                    'eSat' => false,
+                    'mSun' => false,
+                    'aSun' => false,
+                    'eSun' => false,
                 ];
                 if (Criteria::FREQUENCY_REGULAR == $solidaryMatching->getCriteria()->getFrequency()) {
                     // regular schedule
@@ -518,31 +547,38 @@ class SolidaryManager
                     $key = '';
 
                     switch ($solidaryMatching->getCriteria()->getFromDate()->format('w')) {
-                        case 0: $key = 'Sun';
+                        case 0:
+                            $key = 'Sun';
 
                             break;
 
-                        case 1: $key = 'Mon';
+                        case 1:
+                            $key = 'Mon';
 
                             break;
 
-                        case 2: $key = 'Tue';
+                        case 2:
+                            $key = 'Tue';
 
                             break;
 
-                        case 3: $key = 'Wed';
+                        case 3:
+                            $key = 'Wed';
 
                             break;
 
-                        case 4: $key = 'Thu';
+                        case 4:
+                            $key = 'Thu';
 
                             break;
 
-                        case 5: $key = 'Fri';
+                        case 5:
+                            $key = 'Fri';
 
                             break;
 
-                        case 6: $key = 'Sat';
+                        case 6:
+                            $key = 'Sat';
 
                             break;
                     }
@@ -602,16 +638,33 @@ class SolidaryManager
                     'contacted' => $solution->getSolidaryAsk() ? true : false,
                     'centerPoint' => $solution->getSolidaryMatching()->getSolidaryUser()->getAddress()->jsonSerialize(),
                     'maxDistance' => $solution->getSolidaryMatching()->getSolidaryUser()->getMaxDistance(),
-                    'mMinTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getMMinTime(), 'mMaxTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getMMaxTime(),
-                    'aMinTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getAMinTime(), 'aMaxTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getAMaxTime(),
-                    'eMinTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getEMinTime(), 'eMaxTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getEMaxTime(),
-                    'mMon' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMMon(), 'aMon' => $solution->getSolidaryMatching()->getSolidaryUser()->hasAMon(), 'eMon' => $solution->getSolidaryMatching()->getSolidaryUser()->hasEMon(),
-                    'mTue' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMTue(), 'aTue' => $solution->getSolidaryMatching()->getSolidaryUser()->hasATue(), 'eTue' => $solution->getSolidaryMatching()->getSolidaryUser()->hasETue(),
-                    'mWed' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMWed(), 'aWed' => $solution->getSolidaryMatching()->getSolidaryUser()->hasAWed(), 'eWed' => $solution->getSolidaryMatching()->getSolidaryUser()->hasEWed(),
-                    'mThu' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMThu(), 'aThu' => $solution->getSolidaryMatching()->getSolidaryUser()->hasAThu(), 'eThu' => $solution->getSolidaryMatching()->getSolidaryUser()->hasEThu(),
-                    'mFri' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMFri(), 'aFri' => $solution->getSolidaryMatching()->getSolidaryUser()->hasAFri(), 'eFri' => $solution->getSolidaryMatching()->getSolidaryUser()->hasEFri(),
-                    'mSat' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMSat(), 'aSat' => $solution->getSolidaryMatching()->getSolidaryUser()->hasASat(), 'eSat' => $solution->getSolidaryMatching()->getSolidaryUser()->hasESat(),
-                    'mSun' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMSun(), 'aSun' => $solution->getSolidaryMatching()->getSolidaryUser()->hasASun(), 'eSun' => $solution->getSolidaryMatching()->getSolidaryUser()->hasESun(),
+                    'mMinTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getMMinTime(),
+                    'mMaxTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getMMaxTime(),
+                    'aMinTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getAMinTime(),
+                    'aMaxTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getAMaxTime(),
+                    'eMinTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getEMinTime(),
+                    'eMaxTime' => $solution->getSolidaryMatching()->getSolidaryUser()->getEMaxTime(),
+                    'mMon' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMMon(),
+                    'aMon' => $solution->getSolidaryMatching()->getSolidaryUser()->hasAMon(),
+                    'eMon' => $solution->getSolidaryMatching()->getSolidaryUser()->hasEMon(),
+                    'mTue' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMTue(),
+                    'aTue' => $solution->getSolidaryMatching()->getSolidaryUser()->hasATue(),
+                    'eTue' => $solution->getSolidaryMatching()->getSolidaryUser()->hasETue(),
+                    'mWed' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMWed(),
+                    'aWed' => $solution->getSolidaryMatching()->getSolidaryUser()->hasAWed(),
+                    'eWed' => $solution->getSolidaryMatching()->getSolidaryUser()->hasEWed(),
+                    'mThu' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMThu(),
+                    'aThu' => $solution->getSolidaryMatching()->getSolidaryUser()->hasAThu(),
+                    'eThu' => $solution->getSolidaryMatching()->getSolidaryUser()->hasEThu(),
+                    'mFri' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMFri(),
+                    'aFri' => $solution->getSolidaryMatching()->getSolidaryUser()->hasAFri(),
+                    'eFri' => $solution->getSolidaryMatching()->getSolidaryUser()->hasEFri(),
+                    'mSat' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMSat(),
+                    'aSat' => $solution->getSolidaryMatching()->getSolidaryUser()->hasASat(),
+                    'eSat' => $solution->getSolidaryMatching()->getSolidaryUser()->hasESat(),
+                    'mSun' => $solution->getSolidaryMatching()->getSolidaryUser()->hasMSun(),
+                    'aSun' => $solution->getSolidaryMatching()->getSolidaryUser()->hasASun(),
+                    'eSun' => $solution->getSolidaryMatching()->getSolidaryUser()->hasESun(),
                 ];
             } elseif ($solution->getSolidaryMatching()->getMatching()) {
                 // solution is a carpooler
@@ -685,7 +738,7 @@ class SolidaryManager
                         $asolution[$way]['origin'] = $waypoint->getAddress()->jsonSerialize();
                         if (Criteria::FREQUENCY_PUNCTUAL == $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()) {
                             /**
-                             * @var DateTime $destinationTime
+                             * @var \DateTime $destinationTime
                              */
                             $destinationTime = clone $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getCriteria()->getFromTime();
                             $destinationTime->add(new \DateInterval('PT'.$solution->getSolidaryMatching()->getMatching()->getOriginalDuration().'S'));
@@ -739,7 +792,7 @@ class SolidaryManager
                             $asolution[$way]['origin'] = $waypoint->getAddress()->jsonSerialize();
                             if (Criteria::FREQUENCY_PUNCTUAL == $solution->getSolidaryMatching()->getSolidaryMatchingLinked()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()) {
                                 /**
-                                 * @var DateTime $destinationTime
+                                 * @var \DateTime $destinationTime
                                  */
                                 $destinationTime = clone $solution->getSolidaryMatching()->getSolidaryMatchingLinked()->getMatching()->getProposalOffer()->getCriteria()->getFromTime();
                                 $destinationTime->add(new \DateInterval('PT'.$solution->getSolidaryMatching()->getSolidaryMatchingLinked()->getMatching()->getOriginalDuration().'S'));
@@ -781,7 +834,7 @@ class SolidaryManager
                             $asolution[$way]['origin'] = $waypoint->getAddress()->jsonSerialize();
                             if (Criteria::FREQUENCY_PUNCTUAL == $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getProposalLinked()->getCriteria()->getFrequency()) {
                                 /**
-                                 * @var DateTime $destinationTime
+                                 * @var \DateTime $destinationTime
                                  */
                                 $destinationTime = clone $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getProposalLinked()->getCriteria()->getFromTime();
                                 // for the destination time, we have to use the outward time as there is no matching for the return...
@@ -1145,7 +1198,7 @@ class SolidaryManager
     /**
      * Create a proof related to a solidary record.
      *
-     * @param $file                         The file representing the proof
+     * @param        $file             The file representing the proof
      * @param string $filename         The filename of the file
      * @param int    $solidaryId       The solidary record id
      * @param int    $structureProofId The structure proof id
@@ -1456,7 +1509,7 @@ class SolidaryManager
      *
      * @return array The schedule
      */
-    private function createSchedule(int $num, ?DateTime $outwardTime = null, ?DateTime $returnTime = null)
+    private function createSchedule(int $num, ?\DateTime $outwardTime = null, ?\DateTime $returnTime = null)
     {
         return [
             'mon' => 0 == $num,
@@ -1554,7 +1607,7 @@ class SolidaryManager
         // check needs
         foreach ($solidary->getNeeds() as $need) {
             /**
-             *  @var Need $need
+             * @var Need $need
              */
             if ($need->isPrivate()) {
                 $newNeed = clone $need;
@@ -1778,7 +1831,7 @@ class SolidaryManager
             $beneficiary->setGender($abeneficiary['gender']);
         }
         if (isset($abeneficiary['birthDate']) && $abeneficiary['birthDate'] != $beneficiary->getBirthDate()) {
-            $beneficiary->setBirthDate(new DateTime($abeneficiary['birthDate']));
+            $beneficiary->setBirthDate(new \DateTime($abeneficiary['birthDate']));
         }
         if (isset($abeneficiary['newsSubscription']) && $abeneficiary['newsSubscription'] != $beneficiary->hasNewsSubscription()) {
             $beneficiary->setNewsSubscription($abeneficiary['newsSubscription']);
@@ -2377,8 +2430,8 @@ class SolidaryManager
                 throw new SolidaryException(SolidaryException::REGULAR_MAX_DATE_REQUIRED);
             }
             $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
-            $ad->setOutwardDate(new DateTime($aad['regularMinDate']));
-            $ad->setOutwardLimitDate(new DateTime($aad['regularMaxDate']));
+            $ad->setOutwardDate(new \DateTime($aad['regularMinDate']));
+            $ad->setOutwardLimitDate(new \DateTime($aad['regularMaxDate']));
             $ad->setSchedule($aad['regularSchedules']);
             // check if there are returns
             $return = false;
@@ -2391,12 +2444,12 @@ class SolidaryManager
             }
             if ($return) {
                 $ad->setOneWay(false);
-                $ad->setReturnDate(new DateTime($aad['regularMinDate']));
-                $ad->setReturnLimitDate(new DateTime($aad['regularMaxDate']));
+                $ad->setReturnDate(new \DateTime($aad['regularMinDate']));
+                $ad->setReturnLimitDate(new \DateTime($aad['regularMaxDate']));
             }
         } else {
             $ad->setStrictDate(true);
-            $ad->setOutwardDate(new DateTime($aad['punctualOutwardMinDate']));
+            $ad->setOutwardDate(new \DateTime($aad['punctualOutwardMinDate']));
             $schedule = null;
 
             switch ($aad['punctualOutwardDateChoice']) {
@@ -2409,7 +2462,7 @@ class SolidaryManager
                     // transform to regular trip as the date is flexible
                     $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
                     $schedule = ['mon' => true, 'tue' => true, 'wed' => true, 'thu' => true, 'fri' => true, 'sat' => true, 'sun' => true];
-                    $ad->setOutwardLimitDate(new DateTime($aad['punctualOutwardMaxDate']));
+                    $ad->setOutwardLimitDate(new \DateTime($aad['punctualOutwardMaxDate']));
 
                     break;
             }
@@ -2462,15 +2515,15 @@ class SolidaryManager
                 case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_1:
                     $ad->setOneWay(false);
                     // add 1 hour to outward time
-                    $now = new DateTime();
+                    $now = new \DateTime();
                     if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
                         $now->setTime((int) substr($ad->getOutwardTime(), 0, 2), (int) substr($ad->getOutwardTime(), 3, 2));
-                        $now->add(new DateInterval('PT1H'));
+                        $now->add(new \DateInterval('PT1H'));
                         $ad->setReturnTime($now->format('H:i'));
                         $ad->setReturnDate($ad->getOutwardDate());
                     } else {
                         $now->setTime((int) substr($schedule['outwardTime'], 0, 2), (int) substr($schedule['outwardTime'], 3, 2));
-                        $now->add(new DateInterval('PT1H'));
+                        $now->add(new \DateInterval('PT1H'));
                         $schedule['returnTime'] = $now->format('H:i');
                     }
 
@@ -2479,15 +2532,15 @@ class SolidaryManager
                 case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_2:
                     $ad->setOneWay(false);
                     // add 2 hours to outward time
-                    $now = new DateTime();
+                    $now = new \DateTime();
                     if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
                         $now->setTime((int) substr($ad->getOutwardTime(), 0, 2), (int) substr($ad->getOutwardTime(), 3, 2));
-                        $now->add(new DateInterval('PT2H'));
+                        $now->add(new \DateInterval('PT2H'));
                         $ad->setReturnTime($now->format('H:i'));
                         $ad->setReturnDate($ad->getOutwardDate());
                     } else {
                         $now->setTime((int) substr($schedule['outwardTime'], 0, 2), (int) substr($schedule['outwardTime'], 3, 2));
-                        $now->add(new DateInterval('PT2H'));
+                        $now->add(new \DateInterval('PT2H'));
                         $schedule['returnTime'] = $now->format('H:i');
                     }
 
@@ -2496,15 +2549,15 @@ class SolidaryManager
                 case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_3:
                     $ad->setOneWay(false);
                     // add 3 hours to outward time
-                    $now = new DateTime();
+                    $now = new \DateTime();
                     if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
                         $now->setTime((int) substr($ad->getOutwardTime(), 0, 2), (int) substr($ad->getOutwardTime(), 3, 2));
-                        $now->add(new DateInterval('PT3H'));
+                        $now->add(new \DateInterval('PT3H'));
                         $ad->setReturnTime($now->format('H:i'));
                         $ad->setReturnDate($ad->getOutwardDate());
                     } else {
                         $now->setTime((int) substr($schedule['outwardTime'], 0, 2), (int) substr($schedule['outwardTime'], 3, 2));
-                        $now->add(new DateInterval('PT3H'));
+                        $now->add(new \DateInterval('PT3H'));
                         $schedule['returnTime'] = $now->format('H:i');
                     }
 
@@ -2513,7 +2566,7 @@ class SolidaryManager
                 case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_DATE:
                     $ad->setOneWay(false);
                     // chosen return date and time => only punctual
-                    $ad->setReturnDate(new DateTime($aad['punctualReturnDate']));
+                    $ad->setReturnDate(new \DateTime($aad['punctualReturnDate']));
                     $ad->setReturnTime($aad['punctualReturnTime']);
 
                     break;
@@ -2529,7 +2582,7 @@ class SolidaryManager
 
     private function getTimeAndMarginForStructure(Structure $structure)
     {
-        $now = new Datetime();
+        $now = new \DateTime();
         $mMinTime = clone $now;
         $mMaxTime = clone $now;
         $aMinTime = clone $now;
@@ -2547,9 +2600,9 @@ class SolidaryManager
         $eMargin = ($eMaxTime->getTimestamp() - $eMinTime->getTimestamp()) / 2;
 
         return [
-            'mTime' => $mMinTime->add(new DateInterval('PT'.$mMargin.'S'))->format('H:i'),
-            'aTime' => $aMinTime->add(new DateInterval('PT'.$aMargin.'S'))->format('H:i'),
-            'eTime' => $eMinTime->add(new DateInterval('PT'.$eMargin.'S'))->format('H:i'),
+            'mTime' => $mMinTime->add(new \DateInterval('PT'.$mMargin.'S'))->format('H:i'),
+            'aTime' => $aMinTime->add(new \DateInterval('PT'.$aMargin.'S'))->format('H:i'),
+            'eTime' => $eMinTime->add(new \DateInterval('PT'.$eMargin.'S'))->format('H:i'),
             'mMargin' => $mMargin,
             'aMargin' => $aMargin,
             'eMargin' => $eMargin,

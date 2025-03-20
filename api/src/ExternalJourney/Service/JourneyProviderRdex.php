@@ -92,7 +92,7 @@ class JourneyProviderRdex extends JourneyProvider
         }
 
         if ('punctual' == $searchParameters['frequency']) {
-            if ('' !== $time) {
+            if ('' !== $time && !is_null($time)) {
                 if (substr_count($time, ':') < 2) {
                     $time .= ':00';
                 }
@@ -127,7 +127,11 @@ class JourneyProviderRdex extends JourneyProvider
         $signedUrl = $url.'&signature='.$signature;
         // request url
 
-        $data = $client->request('GET', $signedUrl);
+        try {
+            $data = $client->request('GET', $signedUrl, ['connect_timeout' => 30]);
+        } catch (\Exception $e) {
+            return ['RDEX' => ['providerName' => $provider->getName(), 'journeys' => '']];
+        }
 
         return ['RDEX' => ['providerName' => $provider->getName(), 'journeys' => $data->getBody()->getContents()]];
     }
