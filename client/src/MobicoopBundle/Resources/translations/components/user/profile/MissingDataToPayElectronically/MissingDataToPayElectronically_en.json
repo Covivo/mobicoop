@@ -8,5 +8,6 @@
   "homeAddress": "Complete home address",
   "addressLocality": "Home city",
   "countryCode": "Home country",
-  "postalCode": "Home postal code"
+  "postalCode": "Home postal code",
+  "street": "street"
 }

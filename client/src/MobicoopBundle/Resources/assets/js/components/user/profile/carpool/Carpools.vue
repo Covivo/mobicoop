@@ -33,7 +33,7 @@
           </v-tooltip>
         </v-row>
         <MissingDataToPayElectronically
-          v-if="user.missingDataToPayElectronically.length > 0"
+          v-if="user.missingDataToPayElectronically.length > 0 && paymentElectronicActive"
           :user="user"
         />
         <v-tabs

@@ -25,7 +25,7 @@
     </v-alert>
 
     <MissingDataToPayElectronically
-      v-if="user.missingDataToPayElectronically.length > 0"
+      v-if="user.missingDataToPayElectronically.length > 0 && paymentElectronicActive"
       :user="user"
     />
 
@@ -876,6 +876,10 @@ export default {
     phoneCodes: {
       type: Array,
       default: () => []
+    },
+    paymentElectronicActive: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

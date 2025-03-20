@@ -277,7 +277,7 @@ export default {
       ],
       avoidMotorway: false,
       direction: null,
-      selectedCommunities: this.communityIds,
+      selectedCommunities: this.communityIds ? this.communityIds : [],
       communities: null
     };
   },
@@ -393,6 +393,11 @@ export default {
       maxios.post(this.$t("communities.route"), params)
         .then(res => {
           this.communities = res.data;
+          if (this.communities !== null) {
+            this.communities.forEach((community) => {
+              this.selectedCommunities.push(community.id);
+            });
+          }
         });
     }
   }

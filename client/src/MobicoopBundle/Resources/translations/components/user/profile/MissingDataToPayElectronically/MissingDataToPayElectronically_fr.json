@@ -8,5 +8,6 @@
   "homeAddress": "Adresse de domicile complète",
   "addressLocality": "Ville de domicile",
   "countryCode": "Pays de domicile",
-  "postalCode": "Code postale du domicile"
+  "postalCode": "Code postale du domicile",
+  "street": "Rue du domicile"
 }

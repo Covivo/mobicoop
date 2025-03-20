@@ -80,22 +80,37 @@ class ExportManager
         $this->_request = $requestStack->getCurrentRequest();
         $this->_userRepository = $userRepository;
         $this->_isHitchhiking = false;
+    }
+
+    /**
+     * @return UserExport[]
+     */
+    public function exportExtended()
+    {
         $this->_setFilters();
         $this->_setSelected();
 
         $this->_setAuthenticatedUserRestrictionTerritories();
-    }
 
-    public function exportAll()
-    {
         $users = $this->_userRepository->findForExport($this->_filters, $this->_authenticatedUserRestrictionTerritories, $this->_selected);
 
+        return $this->_buildUsersToExport($users);
+    }
+
+    /**
+     * @param mixed $users
+     *
+     * @return UserExport[]
+     */
+    private function _buildUsersToExport($users)
+    {
         $usersToExport = [];
 
         foreach ($users as $user) {
-            $this->_currentUser = $user;
-
-            array_push($usersToExport, $this->_transformUser());
+            array_push(
+                $usersToExport,
+                UserExportMapper::fromArray($user)
+            );
         }
 
         return $usersToExport;
@@ -123,28 +138,26 @@ class ExportManager
         $parameters = $this->_request->query->all();
 
         foreach ($parameters as $key => $parameter) {
-            if (!in_array($key, self::ALLOWED_FILTERS) && self::SELECTED !== $key) {
-                throw new BadRequestHttpException("The filter {$key} is not allowed");
+            if (in_array($key, self::ALLOWED_FILTERS)) {
+                switch ($key) {
+                    case self::FILTER_HITCHHIKING:
+                        $this->_isHitchhiking = true;
+
+                        break;
+
+                    case self::FILTER_TERRITORY:
+                        $this->_territoriesFilterBases = array_map(
+                            function ($id) {
+                                return intval($id);
+                            },
+                            explode(',', $parameter)
+                        );
+
+                        break;
+                }
+
+                $this->_filters[$key] = $parameter;
             }
-
-            switch ($key) {
-                case self::FILTER_HITCHHIKING:
-                    $this->_isHitchhiking = true;
-
-                    break;
-
-                case self::FILTER_TERRITORY:
-                    $this->_territoriesFilterBases = array_map(
-                        function ($id) {
-                            return intval($id);
-                        },
-                        explode(',', $parameter)
-                    );
-
-                    break;
-            }
-
-            $this->_filters[$key] = $parameter;
         }
 
         return $this;
@@ -156,69 +169,5 @@ class ExportManager
         if (!is_null($parameters) && '' !== $parameters) {
             $this->_selected = explode(',', $parameters);
         }
-    }
-
-    private function _transformUser(): UserExport
-    {
-        $this->_currentUserExport = new UserExport();
-
-        $this->_currentUserExport->setId((int) $this->_currentUser['userId']);
-        $this->_currentUserExport->setFamilyName($this->_currentUser['familyName']);
-        $this->_currentUserExport->setGivenName($this->_currentUser['givenName']);
-        $this->_currentUserExport->setGender($this->_currentUser['gender']);
-        $this->_currentUserExport->setEmail($this->_currentUser['email']);
-        $this->_currentUserExport->setTelephone($this->_currentUser['telephone']);
-        $this->_currentUserExport->setBirthDate(new \DateTime($this->_currentUser['birthDate']));
-        $this->_currentUserExport->setRegistrationDate('' != trim($this->_currentUser['registrationDate']) ? new \DateTime($this->_currentUser['registrationDate']) : null);
-        $this->_currentUserExport->setLastActivityDate('' != trim($this->_currentUser['lastActivityDate']) ? new \DateTime($this->_currentUser['lastActivityDate']) : null);
-        $this->_currentUserExport->setNewsletterSubscription($this->_currentUser['newsletterSubscription']);
-        $this->_currentUserExport->setMaxValidityAnnonceDate('' != trim($this->_currentUser['maxValidityAnnonceDate']) ? new \DateTime($this->_currentUser['maxValidityAnnonceDate']) : null);
-        $this->_currentUserExport->setAddressLocality($this->_currentUser['addressLocality']);
-        $this->_currentUserExport->setSolidaryUser($this->_currentUser['solidaryUser']);
-
-        $this->_currentUserExport->setCommunity1($this->_currentUser['community1']);
-        $this->_currentUserExport->setCommunity2($this->_currentUser['community2']);
-        $this->_currentUserExport->setCommunity3($this->_currentUser['community3']);
-
-        $this->_currentUserExport->setCarpool1OriginLocality($this->_currentUser['carpool1OriginLocality']);
-        $this->_currentUserExport->setCarpool1DestinationLocality($this->_currentUser['carpool1DestinationLocality']);
-        $this->_currentUserExport->setCarpool1Frequency($this->_currentUser['carpool1Frequency']);
-        $this->_currentUserExport->setcarpool1RoleDriver($this->_currentUser['carpool1RoleDriver']);
-        $this->_currentUserExport->setcarpool1RolePassenger($this->_currentUser['carpool1RolePassenger']);
-        $this->_currentUserExport->setCarpool2OriginLocality($this->_currentUser['carpool2OriginLocality']);
-        $this->_currentUserExport->setCarpool2DestinationLocality($this->_currentUser['carpool2DestinationLocality']);
-        $this->_currentUserExport->setCarpool2Frequency($this->_currentUser['carpool2Frequency']);
-        $this->_currentUserExport->setcarpool2RoleDriver($this->_currentUser['carpool2RoleDriver']);
-        $this->_currentUserExport->setcarpool2RolePassenger($this->_currentUser['carpool2RolePassenger']);
-        $this->_currentUserExport->setCarpool3OriginLocality($this->_currentUser['carpool3OriginLocality']);
-        $this->_currentUserExport->setCarpool3DestinationLocality($this->_currentUser['carpool3DestinationLocality']);
-        $this->_currentUserExport->setCarpool3Frequency($this->_currentUser['carpool3Frequency']);
-        $this->_currentUserExport->setcarpool3RoleDriver($this->_currentUser['carpool3RoleDriver']);
-        $this->_currentUserExport->setcarpool3RolePassenger($this->_currentUser['carpool3RolePassenger']);
-
-        $this->_currentUserExport->setRezoPouceUse($this->_currentUser['rezopouceUse']);
-        $this->_currentUserExport->setIdentityStatus($this->_currentUser['identityStatus']);
-
-        $this->_currentUserExport->setRoleSuperAdmin($this->_currentUser['roleSuperAdmin']);
-        $this->_currentUserExport->setRoleAdmin($this->_currentUser['roleAdmin']);
-        $this->_currentUserExport->setRoleUserRegisteredFull($this->_currentUser['roleUserRegisteredFull']);
-        $this->_currentUserExport->setRoleUserRegisteredMinimal($this->_currentUser['roleUserRegisteredMinimal']);
-        $this->_currentUserExport->setRoleUser($this->_currentUser['roleUser']);
-        $this->_currentUserExport->setRoleMassMatch($this->_currentUser['roleMassMatch']);
-        $this->_currentUserExport->setRoleCommunityManager($this->_currentUser['roleCommunityManager']);
-        $this->_currentUserExport->setRoleCommunityManagerPublic($this->_currentUser['roleCommunityManagerPublic']);
-        $this->_currentUserExport->setRoleSuperCommunityManagerPublic($this->_currentUser['roleSuperCommunityManagerPublic']);
-        $this->_currentUserExport->setRoleCommunityManagerPrivate($this->_currentUser['roleCommunityManagerPrivate']);
-        $this->_currentUserExport->setRoleCommunityManagerPrivate($this->_currentUser['roleSolidaryOperator']);
-        $this->_currentUserExport->setRoleSolidaryVolunteer($this->_currentUser['roleSolidaryVolunteer']);
-        $this->_currentUserExport->setRoleSolidaryBeneficiary($this->_currentUser['roleSolidaryBeneficiary']);
-        $this->_currentUserExport->setRoleCommunicationManager($this->_currentUser['roleCommunicationManager']);
-        $this->_currentUserExport->setRoleSolidaryVolunteerCandidate($this->_currentUser['roleSolidaryVolunteerCandidate']);
-        $this->_currentUserExport->setRoleSolidaryBeneficiaryCandidate($this->_currentUser['roleSolidaryBeneficiaryCandidate']);
-        $this->_currentUserExport->setRoleInteroperability($this->_currentUser['roleInteroperability']);
-        $this->_currentUserExport->setRoleSolidaryAdmin($this->_currentUser['roleSolidaryAdmin']);
-        $this->_currentUserExport->setRoleTerritoryConsultant($this->_currentUser['roleTerritoryConsultant']);
-
-        return $this->_currentUserExport;
     }
 }

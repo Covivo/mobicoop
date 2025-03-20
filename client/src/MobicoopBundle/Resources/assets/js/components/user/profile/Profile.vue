@@ -94,6 +94,7 @@
                   :genders-list="gendersList"
                   :eec-instance="eecInstance"
                   :phone-codes="phoneCodes"
+                  :payment-electronic-active="paymentElectronicActive"
                   @changeTab="changeTab"
                   @updateUser="updateUser"
                 />

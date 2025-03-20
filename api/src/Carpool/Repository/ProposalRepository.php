@@ -1052,84 +1052,32 @@ class ProposalRepository
         $proposals = [];
         // we start with the proposals as driver
         foreach ($proposalsDriver as $proposalDriver) {
-            // we have to check for an existing outward for a return proposal => we keep only outward
-            if (Proposal::TYPE_RETURN == $proposalDriver->getType()) {
-                $foundOutward = false;
-                foreach ($proposalsDriver as $proposal) {
-                    if ($proposal->getId() == $proposalDriver->getProposalLinked()->getId()) {
-                        $foundOutward = true;
+            // we check that the proposal doesn't exist yet in the final array
+            $found = false;
+            foreach ($proposals as $proposal) {
+                if ($proposal->getId() == $proposalDriver->getId()) {
+                    $found = true;
 
-                        break;
-                    }
+                    break;
                 }
-                if (!$foundOutward) {
-                    // only return trip, we check that the proposal doesn't exist yet in the final array
-                    $found = false;
-                    foreach ($proposals as $proposal) {
-                        if ($proposal->getId() == $proposalDriver->getId()) {
-                            $found = true;
-
-                            break;
-                        }
-                    }
-                    if (!$found) {
-                        $proposals[] = $proposalDriver;
-                    }
-                }
-            } else {
-                // outward or oneway, we check that the proposal doesn't exist yet in the final array
-                $found = false;
-                foreach ($proposals as $proposal) {
-                    if ($proposal->getId() == $proposalDriver->getId()) {
-                        $found = true;
-
-                        break;
-                    }
-                }
-                if (!$found) {
-                    $proposals[] = $proposalDriver;
-                }
+            }
+            if (!$found) {
+                $proposals[] = $proposalDriver;
             }
         }
         // we merge the proposals as passenger
         foreach ($proposalsPassenger as $proposalPassenger) {
-            // we have to check for an existing outward for a return proposal => we keep only outward
-            if (Proposal::TYPE_RETURN == $proposalPassenger->getType()) {
-                $foundOutward = false;
-                foreach ($proposalsPassenger as $proposal) {
-                    if ($proposal->getId() == $proposalPassenger->getProposalLinked()->getId()) {
-                        $foundOutward = true;
+            // we check that the proposal doesn't exist yet in the final array
+            $found = false;
+            foreach ($proposals as $proposal) {
+                if ($proposal->getId() == $proposalPassenger->getId()) {
+                    $found = true;
 
-                        break;
-                    }
+                    break;
                 }
-                if (!$foundOutward) {
-                    // only return trip, we check that the proposal doesn't exist yet in the final array
-                    $found = false;
-                    foreach ($proposals as $proposal) {
-                        if ($proposal->getId() == $proposalPassenger->getId()) {
-                            $found = true;
-
-                            break;
-                        }
-                    }
-                    if (!$found) {
-                        $proposals[] = $proposalPassenger;
-                    }
-                }
-            } else {
-                // outward or oneway, we check that the proposal doesn't exist yet in the final array
-                $found = false;
-                foreach ($proposals as $proposal) {
-                    if ($proposal->getId() == $proposalPassenger->getId()) {
-                        $found = true;
-
-                        break;
-                    }
-                }
-                if (!$found) {
-                    $proposals[] = $proposalPassenger;
-                }
+            }
+            if (!$found) {
+                $proposals[] = $proposalPassenger;
             }
         }
 
@@ -1237,7 +1185,7 @@ class ProposalRepository
      *
      * @return int The number of ads
      */
-    public function getNbActiveAdsForUserAndRole(int $userId, int $role, int $communityId = null): int
+    public function getNbActiveAdsForUserAndRole(int $userId, int $role, ?int $communityId = null): int
     {
         $now = new \DateTime();
         $qb = $this->repository->createQueryBuilder('p')
