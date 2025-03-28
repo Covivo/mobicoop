@@ -11,10 +11,10 @@
         <v-toolbar-title class="toolbar">
           {{ $t('loginOrRegisterTitle') }}
         </v-toolbar-title>
-        
+
         <v-spacer />
 
-        <v-btn 
+        <v-btn
           icon
           @click="closeDialog()"
         >
@@ -66,7 +66,7 @@ export default {
       'fr': messages_fr,
       'eu':messages_eu
     },
-  },  
+  },
   props:{
     id:{
       type: Number,
@@ -87,6 +87,10 @@ export default {
     showLoginBtn:{
       type: Boolean,
       default: true
+    },
+    event: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
@@ -101,6 +105,7 @@ export default {
       case 'proposal':
         return this.$t("loginUrlProposalId", {"id":this.id} );
       case 'event':
+        localStorage.setItem('event', JSON.stringify(this.event));
         return this.$t("loginUrlEventId", {"id":this.id} );
       case 'community':
         return this.$t("loginUrlCommunityId", {"id":this.id} );
