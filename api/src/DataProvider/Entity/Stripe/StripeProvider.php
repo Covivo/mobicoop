@@ -31,12 +31,13 @@ use App\DataProvider\Entity\Stripe\Entity\File;
 use App\DataProvider\Entity\Stripe\Entity\PaymentLink;
 use App\DataProvider\Entity\Stripe\Entity\Price;
 use App\DataProvider\Entity\Stripe\Entity\Token;
+use App\DataProvider\Entity\Stripe\Entity\Transfer;
 use App\DataProvider\Ressource\Hook;
-use App\DataProvider\Ressource\MangoPayHook;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Entity\PaymentResult;
 use App\Payment\Entity\Wallet;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Interfaces\PaymentProviderInterface;
@@ -50,9 +51,11 @@ use Stripe\BankAccount as StripeBankAccount;
 use Stripe\Exception\ApiErrorException;
 use Stripe\File as StripeFile;
 use Stripe\PaymentLink as StripePaymentLink;
+use Stripe\Payout as StripePayout;
 use Stripe\Price as StripePrice;
 use Stripe\StripeClient;
 use Stripe\Token as StripeToken;
+use Stripe\Transfer as StripeTransfer;
 
 /**
  * Payment Provider for Stripe.
@@ -249,20 +252,6 @@ class StripeProvider implements PaymentProviderInterface
         return $carpoolPayment;
     }
 
-    public function _createStripePaymentLink(CarpoolPayment $carpoolPayment, StripePrice $stripePrice): ?StripePaymentLink
-    {
-        $returnUrl = $this->baseUri.''.self::LANDING_AFTER_PAYMENT;
-        if (CarpoolPayment::ORIGIN_MOBILE == $carpoolPayment->getOrigin()) {
-            $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
-        } elseif (CarpoolPayment::ORIGIN_MOBILE_SITE == $carpoolPayment->getOrigin()) {
-            $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
-        }
-
-        $paymentLink = new PaymentLink([$stripePrice->id], $returnUrl);
-
-        return $this->_createPaymentLink($paymentLink);
-    }
-
     /**
      * Process an electronic payment between the $debtor and the $creditors.
      *
@@ -305,7 +294,7 @@ class StripeProvider implements PaymentProviderInterface
     }
 
     /**
-     * Handle a payment web hook.
+     * Handle a payment web hook. (useless in Stripe context).
      *
      * @var Hook The mangopay hook
      *
@@ -313,22 +302,6 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function handleHook(Hook $hook): Hook
     {
-        // switch ($hook->getEventType()) {
-        //     case MangoPayHook::PAYIN_SUCCEEDED:
-        //     case MangoPayHook::VALIDATION_SUCCEEDED:
-        //         $hook->setStatus(Hook::STATUS_SUCCESS);
-
-        //         break;
-
-        //     case MangoPayHook::VALIDATION_OUTDATED:
-        //         $hook->setStatus(Hook::STATUS_OUTDATED_RESSOURCE);
-
-        //         break;
-
-        //     default:
-        //         $hook->setStatus(Hook::STATUS_FAILED);
-        // }
-
         return $hook;
     }
 
@@ -338,6 +311,8 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
     {
+        // to do : factorize the upload and handle $validationDocument->getFile2()
+
         $file = new File(File::PURPOSE_IDENTITY_VALIDATION, $validationDocument->getFile());
         $stripefile = $this->_createFile($file);
 
@@ -362,40 +337,97 @@ class StripeProvider implements PaymentProviderInterface
         return [];
     }
 
-    public function processAsyncElectronicPayment(User $debtor, array $creditors): array
+    public function processAsyncElectronicPayment(User $debtor, array $creditors, ?int $carpoolPaymentId): array
     {
-        var_dump('processAsyncElectronicPayment');
-        $debtorPaymentProfile = $this->paymentProfileRepository->find($debtor->getPaymentProfileId());
-        var_dump($debtorPaymentProfile->getUser()->getId());
+        $return = [];
 
         foreach ($creditors as $creditor) {
             if (CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE == $creditor['debtorStatus']) {
-                // $creditorWallet = $creditor['user']->getWallets()[0];
-                // $result = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
-                // $treatedResult = $this->__treatReturn($debtor, $creditor, $result);
-                // $return[] = $treatedResult;
-
                 // do the transfert to the creditor
-                var_dump('transfert to the creditor');
+                $stripeTransfer = $this->_stripeTransferToCreditor($creditor, $carpoolPaymentId);
+                $treatedResult = $this->_treatReturn($debtor, $creditor, $stripeTransfer);
+                $return[] = $treatedResult;
             }
 
             if (CarpoolItem::DEBTOR_STATUS_ONLINE == $creditor['debtorStatus']) {
-                // Do the payout to the default bank account
-                // $creditorWallet = $creditor['user']->getWallets()[0];
-                // $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
-                // $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
-                // $result = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
-                // $treatedResult = $this->__treatReturn($debtor, $creditor, $result);
-                // $return[] = $treatedResult;
-
                 // trigger a payout to the creditor
-                var_dump('payout to the creditor');
+                $stripeTransfer = $this->_stripePayoutToCreditor($creditor);
+                $treatedResult = $this->_treatReturn($debtor, $creditor, $stripeTransfer);
+                $return[] = $treatedResult;
             }
         }
 
-        exit;
+        return $return;
+    }
 
-        return [];
+    private function _createStripePaymentLink(CarpoolPayment $carpoolPayment, StripePrice $stripePrice): ?StripePaymentLink
+    {
+        $returnUrl = $this->baseUri.''.self::LANDING_AFTER_PAYMENT;
+        if (CarpoolPayment::ORIGIN_MOBILE == $carpoolPayment->getOrigin()) {
+            $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
+        } elseif (CarpoolPayment::ORIGIN_MOBILE_SITE == $carpoolPayment->getOrigin()) {
+            $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
+        }
+
+        $paymentLink = new PaymentLink([$stripePrice->id], $returnUrl);
+
+        return $this->_createPaymentLink($paymentLink);
+    }
+
+    private function _treatReturn(User $debtor, array $creditor, object $stripeReturn): PaymentResult
+    {
+        $return = new PaymentResult();
+        $return->setDebtorId($debtor->getId());
+        $return->setCreditorId($creditor['user']->getId());
+        if (isset($creditor['carpoolItemId'])) {
+            $return->setCarpoolItemId($creditor['carpoolItemId']);
+        }
+
+        $return->setStatus(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_FAILED);
+
+        if ($stripeReturn instanceof StripeTransfer) {
+            $return->setType(PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_TRANSFER);
+            $return->setStatus(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS);
+        }
+        if ($stripeReturn instanceof StripePayout) {
+            $return->setType(PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_PAYOUT);
+            $return->setStatus(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS);
+        }
+
+        return $return;
+    }
+
+    private function _stripePayoutToCreditor(array $creditor): ?StripePayout
+    {
+        $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
+
+        try {
+            return $this->_stripe->payouts->create([
+                'amount' => $creditor['amount'] * 100, // Montant en centimes
+                'currency' => $this->currency,
+            ], [
+                'stripe_account' => $creditorPaymentProfile->getIdentifier(),
+            ]);
+        } catch (ApiErrorException $e) {
+            throw new PaymentException($e->getMessage());
+        }
+
+        return null;
+    }
+
+    private function _stripeTransferToCreditor(array $creditor, ?int $carpoolPaymentId = null): ?StripeTransfer
+    {
+        $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
+
+        $transfert = new Transfer($this->currency, $creditor['amount'] * 100, $creditorPaymentProfile->getIdentifier(), $carpoolPaymentId);
+
+        try {
+            return $this->_stripe->transfers->create($transfert->buildBody());
+        } catch (ApiErrorException $e) {
+            throw new PaymentException($e->getMessage());
+        }
+
+        return null;
     }
 
     private function _createStripePrice(CarpoolPayment $carpoolPayment, User $user): ?StripePrice

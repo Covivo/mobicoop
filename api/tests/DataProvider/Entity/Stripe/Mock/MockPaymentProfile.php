@@ -8,7 +8,7 @@ class MockPaymentProfile
 {
     public static function getPaymentProfile(): PaymentProfile
     {
-        $paymentProfile = new PaymentProfile();
+        $paymentProfile = new PaymentProfile(1);
         $paymentProfile->setIdentifier('paymentProfileId');
         $paymentProfile->setProvider('Stripe');
         $paymentProfile->setStatus(1);
@@ -16,6 +16,7 @@ class MockPaymentProfile
         $paymentProfile->setValidationId('validationId');
         $paymentProfile->setValidatedDate(new \DateTime());
         $paymentProfile->setValidationStatus(1);
+        $paymentProfile->setUser(MockUser::getSimpleUser());
 
         return $paymentProfile;
     }

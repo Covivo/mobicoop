@@ -595,7 +595,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *  ]
      * ]
      */
-    public function processAsyncElectronicPayment(User $debtor, array $creditors): array
+    public function processAsyncElectronicPayment(User $debtor, array $creditors, ?int $carpoolPaymentId = null): array
     {
         $return = [];
 

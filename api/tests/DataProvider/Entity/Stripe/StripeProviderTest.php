@@ -2,19 +2,25 @@
 
 namespace App\DataProvider\Entity\Stripe;
 
+use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
+use App\Payment\Entity\PaymentResult;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockBankAccount;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockPaymentProfile;
+use App\Tests\DataProvider\Entity\Stripe\Mock\MockStripeBankAccount;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockUser;
 use PHPUnit\Framework\TestCase;
 use Stripe\Account as StripeAccount;
 use Stripe\BankAccount as StripeBankAccount;
+use Stripe\Collection;
 use Stripe\PaymentLink;
+use Stripe\Payout;
 use Stripe\Price;
 use Stripe\Token as StripeToken;
+use Stripe\Transfer;
 
 /**
  * @internal
@@ -39,6 +45,13 @@ class StripeProviderTest extends TestCase
             ->getMock()
         ;
 
+        $this->_paymentProfileRepository->method('findBy')
+            ->willReturn([MockPaymentProfile::getPaymentProfile()])
+        ;
+        $this->_paymentProfileRepository->method('find')
+            ->willReturn(MockPaymentProfile::getPaymentProfile())
+        ;
+
         // Create mock with proper callable method
         $tokensMock = $this->getMockBuilder(\stdClass::class)
             ->addMethods(['create'])
@@ -51,6 +64,7 @@ class StripeProviderTest extends TestCase
         $accountsMock = $this->getMockBuilder(\stdClass::class)
             ->addMethods(['create'])
             ->addMethods(['createExternalAccount'])
+            ->addMethods(['allExternalAccounts'])
             ->getMock()
         ;
         $accountsMock->method('create')
@@ -58,6 +72,17 @@ class StripeProviderTest extends TestCase
         ;
         $accountsMock->method('createExternalAccount')
             ->willReturn(new StripeBankAccount('token'))
+        ;
+
+        $collection = Collection::constructFrom([
+            'object' => 'list',
+            'data' => [MockStripeBankAccount::getStripeBankAccount()],
+            'has_more' => false,
+            'url' => '/v1/accounts/acct_123/external_accounts',
+        ]);
+
+        $accountsMock->method('allExternalAccounts')
+            ->willReturn($collection)
         ;
 
         $pricesMock = $this->getMockBuilder(\stdClass::class)
@@ -209,5 +234,96 @@ class StripeProviderTest extends TestCase
 
         $this->assertInstanceOf(CarpoolPayment::class, $payment);
         $this->assertStringStartsWith('https://', $payment->getRedirectUrl());
+    }
+
+    /**
+     * @test
+     */
+    public function getBankAccountsReturnsAnArrayOfBankAccounts(): void
+    {
+        $bankAccounts = $this->_stripeProvider->getBankAccounts(MockPaymentProfile::getPaymentProfile());
+        $this->assertIsArray($bankAccounts);
+        $this->assertInstanceOf(BankAccount::class, $bankAccounts[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function processAsyncElectronicPaymentWhenDebtorStatusIsPendingReturnsAnArrayOfPaymentResults(): void
+    {
+        $debtor = MockUser::getSimpleUser();
+
+        $creditor = [
+            'user' => MockUser::getSimpleUser(),
+            'amount' => 100,
+            'debtorStatus' => CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE,
+            'carpoolItemId' => 1,
+        ];
+
+        $transfersMock = $this->getMockBuilder(\stdClass::class)
+            ->addMethods(['create'])
+            ->getMock()
+        ;
+
+        $transfersMock->method('create')
+            ->willReturn(new Transfer('tr_123'))
+        ;
+
+        // Add transfers mock to stripe mock
+        $reflection = new \ReflectionClass($this->_stripeProvider);
+        $property = $reflection->getProperty('_stripe');
+        $property->setAccessible(true);
+        $stripeMock = $property->getValue($this->_stripeProvider);
+        $stripeMock->transfers = $transfersMock;
+
+        $results = $this->_stripeProvider->processAsyncElectronicPayment($debtor, [$creditor], 1);
+
+        $this->assertIsArray($results);
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(PaymentResult::class, $results[0]);
+        $this->assertEquals(PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_TRANSFER, $results[0]->getType());
+        $this->assertEquals(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS, $results[0]->getStatus());
+    }
+
+    /**
+     * @test
+     * */
+    /**
+     * @test
+     */
+    public function processAsyncElectronicPaymentWhenDebtorStatusIsOnlineReturnsAnArrayOfPaymentResults(): void
+    {
+        $debtor = MockUser::getSimpleUser();
+
+        $creditor = [
+            'user' => MockUser::getSimpleUser(),
+            'amount' => 100,
+            'debtorStatus' => CarpoolItem::DEBTOR_STATUS_ONLINE,
+            'carpoolItemId' => 1,
+        ];
+
+        $payoutsMock = $this->getMockBuilder(\stdClass::class)
+            ->addMethods(['create'])
+            ->getMock()
+        ;
+
+        $payoutsMock->method('create')
+            ->willReturn(new Payout('po_123'))
+        ;
+
+        // Add payouts mock to stripe mock
+        $reflection = new \ReflectionClass($this->_stripeProvider);
+        $property = $reflection->getProperty('_stripe');
+        $property->setAccessible(true);
+        $stripeMock = $property->getValue($this->_stripeProvider);
+        $stripeMock->payouts = $payoutsMock;
+
+        $results = $this->_stripeProvider->processAsyncElectronicPayment($debtor, [$creditor], 1);
+
+        $this->assertIsArray($results);
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(PaymentResult::class, $results[0]);
+        $this->assertEquals(PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_PAYOUT, $results[0]->getType());
+        $this->assertEquals(PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS, $results[0]->getStatus());
     }
 }

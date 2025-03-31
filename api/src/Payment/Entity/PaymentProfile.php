@@ -212,6 +212,13 @@ class PaymentProfile
      */
     private $refusalReason;
 
+    public function __construct(?int $id = null)
+    {
+        if (!is_null($id)) {
+            $this->id = $id;
+        }
+    }
+
     public function getId(): ?int
     {
         return $this->id;

@@ -323,11 +323,11 @@ class PaymentDataProvider
      *  ]
      * ]
      */
-    public function processAsyncElectronicPayment(User $debtor, array $creditors): array
+    public function processAsyncElectronicPayment(User $debtor, array $creditors, ?int $carpoolPaymentId = null): array
     {
         $this->checkPaymentConfiguration();
 
-        return $this->providerInstance->processAsyncElectronicPayment($debtor, $creditors);
+        return $this->providerInstance->processAsyncElectronicPayment($debtor, $creditors, $carpoolPaymentId);
     }
 
     /**

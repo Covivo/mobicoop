@@ -16,6 +16,7 @@ class MockUser
         $user->setBirthDate(new \DateTime('1980-01-01'));
 
         $user->setHomeAddress(MockAddress::getSimpleAddress());
+        $user->setPaymentProfileId(1);
 
         return $user;
     }
