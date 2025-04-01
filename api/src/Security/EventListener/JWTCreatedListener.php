@@ -48,7 +48,7 @@ class JWTCreatedListener
      */
     private $_em;
 
-    public function __construct(EntityManagerInterface $em, RequestStack $requestStack, AuthManager $authManager, Security $security, userManager $userManager)
+    public function __construct(EntityManagerInterface $em, RequestStack $requestStack, AuthManager $authManager, Security $security, UserManager $userManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->authManager = $authManager;
@@ -77,6 +77,7 @@ class JWTCreatedListener
             // for now we set the mobile here
             if ($this->request->get('mobile')) {
                 $user->setMobile(true);
+                $this->userManager->createAlerts($user);
             }
 
             switch (true) {
