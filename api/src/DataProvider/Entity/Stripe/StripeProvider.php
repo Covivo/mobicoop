@@ -265,6 +265,9 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function processElectronicPayment(User $debtor, array $creditors, string $tag): array
     {
+        var_dump('processElectronicPayment');
+
+        exit;
         // $return = [];
 
         // // Get the wallet of the debtor and his identifier
@@ -283,6 +286,21 @@ class StripeProvider implements PaymentProviderInterface
 
         // return $return;
         return [];
+    }
+
+    public function getBalance(?PaymentProfile $paymentProfile = null): int
+    {
+        try {
+            $balance = $this->_stripe->balance->retrieve([]);
+        } catch (ApiErrorException $e) {
+            throw new PaymentException($e->getMessage());
+        }
+
+        if (isset($balance->available[0])) {
+            return $balance->available[0]->amount;
+        }
+
+        return 0;
     }
 
     /**

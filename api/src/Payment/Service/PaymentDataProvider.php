@@ -348,6 +348,13 @@ class PaymentDataProvider
         return $this->providerInstance->processElectronicPayment($debtor, $creditors, $tag);
     }
 
+    public function getBalance(?PaymentProfile $paymentProfile = null): int
+    {
+        $this->checkPaymentConfiguration();
+
+        return $this->providerInstance->getBalance($paymentProfile);
+    }
+
     /**
      * Upload an identity validation document to the payment provider
      * The document is not stored on the platform. It has to be deleted.

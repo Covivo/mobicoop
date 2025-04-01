@@ -1012,6 +1012,12 @@ class MangoPayProvider implements PaymentProviderInterface
         return $transactions;
     }
 
+    public function getBalance(?PaymentProfile $paymentProfile = null): int
+    {
+        // Not implemented for MangoPay
+        return 0;
+    }
+
     private function _uploadPage(string $docId, string $identifier, array $headers, string $fileName)
     {
         $urlPost = str_replace('{KYCDocId}', $docId, str_replace('{userId}', $identifier, self::ITEM_KYC_CREATE_PAGE));

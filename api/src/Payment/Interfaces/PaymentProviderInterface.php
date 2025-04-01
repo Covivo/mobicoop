@@ -146,4 +146,9 @@ interface PaymentProviderInterface
      * @return Wallet[]
      */
     public function getWallets(PaymentProfile $paymentProfile);
+
+    /**
+     * Returns the balance of the user.
+     */
+    public function getBalance(?PaymentProfile $paymentProfile = null): int;
 }
