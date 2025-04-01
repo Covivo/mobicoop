@@ -434,7 +434,7 @@ class JourneyManager
         $ad->setOutwardWaypoints($outwardWaypoint);
 
         // Like in a simple search, we use "now" as outwardDateTime
-        $ad->setOutwardDate(new \DateTime('now', new \DateTimeZone($carpoolTimezone)));
+        $ad->setOutwardDate(new \DateTime('now', new \DateTimeZone($this->defaultCarpoolTimezone)));
         $ad->setFilters(['page' => 1]);
         $ad->setPaused(false);
 
