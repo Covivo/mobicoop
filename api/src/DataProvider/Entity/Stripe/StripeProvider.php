@@ -262,30 +262,22 @@ class StripeProvider implements PaymentProviderInterface
      *      "amount" => float
      *  ]
      * ]
+     *
+     * @param null|mixed $carpoolPaymentId
      */
-    public function processElectronicPayment(User $debtor, array $creditors, string $tag): array
+    public function processElectronicPayment(User $debtor, array $creditors, string $tag, $carpoolPaymentId = null): array
     {
-        var_dump('processElectronicPayment');
+        foreach ($creditors as $creditor) {
+            $stripeTransfer = $this->_stripeTransferToCreditor($creditor, $carpoolPaymentId);
+            $treatedResult = $this->_treatReturn($debtor, $creditor, $stripeTransfer);
+            $return[] = $treatedResult;
 
-        exit;
-        // $return = [];
+            $stripeTransfer = $this->_stripePayoutToCreditor($creditor);
+            $treatedResult = $this->_treatReturn($debtor, $creditor, $stripeTransfer);
+            $return[] = $treatedResult;
+        }
 
-        // // Get the wallet of the debtor and his identifier
-        // $debtorPaymentProfile = $this->paymentProfileRepository->find($debtor->getPaymentProfileId());
-
-        // // Transfer to the creditors wallets and payout
-        // foreach ($creditors as $creditor) {
-        //     $creditorWallet = $creditor['user']->getWallets()[0];
-        //     $return[] = $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount'], $tag);
-
-        //     // Do the payout to the default bank account
-        //     $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
-        //     $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
-        //     $return[] = $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount'], $tag);
-        // }
-
-        // return $return;
-        return [];
+        return $return;
     }
 
     public function getBalance(?PaymentProfile $paymentProfile = null): int
@@ -433,7 +425,7 @@ class StripeProvider implements PaymentProviderInterface
         return null;
     }
 
-    private function _stripeTransferToCreditor(array $creditor, ?int $carpoolPaymentId = null): ?StripeTransfer
+    private function _stripeTransferToCreditor(array $creditor, $carpoolPaymentId = null): ?StripeTransfer
     {
         $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
 

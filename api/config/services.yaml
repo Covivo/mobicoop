@@ -1180,6 +1180,7 @@ services:
     arguments:
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
       $holderId: "%env(string:BANK_TRANSFER_HOLDER_ID)%"
+      $paymentProviderUsesWallet: "%env(bool:PAYMENT_PROVIDER_USES_WALLET)%"
     tags:
       - { name: monolog.logger, channel: bank_transfer }
 

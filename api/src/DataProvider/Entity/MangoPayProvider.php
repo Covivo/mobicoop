@@ -635,8 +635,10 @@ class MangoPayProvider implements PaymentProviderInterface
      *      "amount" => float
      *  ]
      * ]
+     *
+     * @param null|mixed $carpoolPaymentId
      */
-    public function processElectronicPayment(User $debtor, array $creditors, string $tag): array
+    public function processElectronicPayment(User $debtor, array $creditors, string $tag, $carpoolPaymentId = null): array
     {
         $return = [];
 

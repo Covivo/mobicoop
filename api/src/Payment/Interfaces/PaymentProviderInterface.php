@@ -104,8 +104,10 @@ interface PaymentProviderInterface
      *      "amount" => float
      *  ]
      * ]
+     *
+     * @param null|mixed $carpoolPaymentId
      */
-    public function processElectronicPayment(User $debtor, array $creditors, string $tag);
+    public function processElectronicPayment(User $debtor, array $creditors, string $tag, $carpoolPaymentId = null);
 
     /**
      * Upload an identity validation document
