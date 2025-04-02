@@ -35,13 +35,13 @@ use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
 use App\Geography\Service\DisplayLabelBuilder;
+use App\Geography\Service\GeoTools;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
 use App\User\Repository\ReviewRepository;
 use App\User\Service\BlockManager;
 use App\User\Service\ReviewManager;
 use Symfony\Component\Security\Core\Security;
-use App\Geography\Service\GeoTools;
 
 /**
  * Result manager service.
@@ -270,16 +270,19 @@ class ResultManager
                             $return = $a->getTime()->format('H') >= $value->format('H');
 
                             break;
+
                             // Filter on Role (driver, passenger, both)
                         case 'role':
                             $return = self::filterByRole($a, $value);
 
                             break;
+
                             // Filter on Gender
                         case 'gender':
                             $return = $a->getCarpooler()->getGender() == $value;
 
                             break;
+
                             // Filter on a Community
                         case 'community':
                             $return = array_key_exists($value, $a->getCommunities());
@@ -803,6 +806,9 @@ class ResultManager
             }
 
             if (!$blockedRequest && !$blockedOffer) {
+                if ((Criteria::FREQUENCY_PUNCTUAL == $matchingProposal->getcriteria()->getFrequency() && $matchingProposal->getCriteria()->getFromDate()) && ($matchingProposal->getCriteria()->getFromDate() <= new \DateTime()) && ($matchingProposal->getCriteria()->getFromTime() <= new \DateTime())) {
+                    continue;
+                }
                 $result = $this->createMatchingResult($proposal, $matchingProposal, $matching, $return);
                 $results[$matchingProposalId] = $result;
             }
@@ -859,14 +865,14 @@ class ResultManager
                 $hasAsk = false;
                 $asks = $matching['request']->getAsks();
                 foreach ($asks as $ask) {
-                    if ($ask->getStatus() == (ASK::STATUS_ACCEPTED_AS_DRIVER || ASK::STATUS_ACCEPTED_AS_PASSENGER)) {
+                    if ($ask->getStatus() == (Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
                         $hasAsk = true;
 
                         break;
                     }
                 }
                 // if we don't have accepted carpools AND (no user is logged OR the phone display is restricted) we pass the telephone at null
-                if (!$hasAsk && (!$matching['request']->getProposalOffer()->getUser() || USER::PHONE_DISPLAY_RESTRICTED == $carpooler->getPhoneDisplay())) {
+                if (!$hasAsk && (!$matching['request']->getProposalOffer()->getUser() || User::PHONE_DISPLAY_RESTRICTED == $carpooler->getPhoneDisplay())) {
                     $result->getCarpooler()->setTelephone(null);
                 }
             }
@@ -1411,14 +1417,14 @@ class ResultManager
                 $hasAsk = false;
                 $asks = $matching['offer']->getAsks();
                 foreach ($asks as $ask) {
-                    if ($ask->getStatus() == (ASK::STATUS_ACCEPTED_AS_DRIVER || ASK::STATUS_ACCEPTED_AS_PASSENGER)) {
+                    if ($ask->getStatus() == (Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
                         $hasAsk = true;
 
                         break;
                     }
                 }
                 // if we don't have accepted carpools AND (no user is logged OR the phone display is restricted) we pass the telephone at null
-                if (!$hasAsk && (!$matching['offer']->getProposalRequest()->getUser() || USER::PHONE_DISPLAY_RESTRICTED == $carpooler->getPhoneDisplay())) {
+                if (!$hasAsk && (!$matching['offer']->getProposalRequest()->getUser() || User::PHONE_DISPLAY_RESTRICTED == $carpooler->getPhoneDisplay())) {
                     $result->getCarpooler()->setTelephone(null);
                 }
             }
@@ -2030,7 +2036,7 @@ class ResultManager
      * @param bool           $useTime  If we use the time
      * @param null|\DateTime $time     Time of the search if we want to check it
      */
-    private function getValidCarpoolAsRequest(int $day, Proposal $proposal, bool $useTime = true, \DateTime $time = null): ?array
+    private function getValidCarpoolAsRequest(int $day, Proposal $proposal, bool $useTime = true, ?\DateTime $time = null): ?array
     {
         switch ($day) {
             case 0:
@@ -2206,7 +2212,7 @@ class ResultManager
      * @param Proposal       $proposal The Proposal that is matching
      * @param null|\DateTime $time     Time of the search if we want to check it
      */
-    private function getValidCarpoolAsOffer(int $day, Proposal $proposal, \DateTime $time = null): ?array
+    private function getValidCarpoolAsOffer(int $day, Proposal $proposal, ?\DateTime $time = null): ?array
     {
         switch ($day) {
             case 0:
