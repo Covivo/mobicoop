@@ -65,6 +65,7 @@ class ResultManager
     private $carpoolNoticeableDetourDistancePercent;
     private $proposalRepository;
     private $displayLabelBuilder;
+    private $carpoolTimezone;
 
     /**
      * Constructor.
@@ -83,7 +84,8 @@ class ResultManager
         bool $userReview,
         int $carpoolNoticeableDetourDurationPercent,
         int $carpoolNoticeableDetourDistancePercent,
-        array $carpoolDisplayFieldsOrder
+        array $carpoolDisplayFieldsOrder,
+        string $carpoolTimezone
     ) {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -98,6 +100,7 @@ class ResultManager
         $this->carpoolNoticeableDetourDistancePercent = $carpoolNoticeableDetourDistancePercent;
         $this->proposalRepository = $proposalRepository;
         $this->displayLabelBuilder = new DisplayLabelBuilder($carpoolDisplayFieldsOrder, $geoTools);
+        $this->carpoolTimezone = $carpoolTimezone;
     }
 
     // set the params
@@ -806,7 +809,9 @@ class ResultManager
             }
 
             if (!$blockedRequest && !$blockedOffer) {
-                if ((Criteria::FREQUENCY_PUNCTUAL == $matchingProposal->getcriteria()->getFrequency() && $matchingProposal->getCriteria()->getFromDate()) && ($matchingProposal->getCriteria()->getFromDate() <= new \DateTime()) && ($matchingProposal->getCriteria()->getFromTime() <= new \DateTime())) {
+                if ((Criteria::FREQUENCY_PUNCTUAL == $matchingProposal->getcriteria()->getFrequency())
+                && ($matchingProposal->getCriteria()->getFromDate() <= new \DateTime())
+                && ($matchingProposal->getCriteria()->getFromTime()->format('H:i:s') <= (new \DateTime('now', new \DateTimeZone($this->carpoolTimezone)))->format('H:i:s'))) {
                     continue;
                 }
                 $result = $this->createMatchingResult($proposal, $matchingProposal, $matching, $return);
