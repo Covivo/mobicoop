@@ -38,10 +38,13 @@ class PaymentProfileRepository
 
     private $logger;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
+    private $paymentProviderService;
+
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, string $paymentProviderService)
     {
         $this->repository = $entityManager->getRepository(PaymentProfile::class);
         $this->logger = $logger;
+        $this->paymentProviderService = $paymentProviderService;
     }
 
     public function find(int $id): ?PaymentProfile
@@ -49,8 +52,12 @@ class PaymentProfileRepository
         return $this->repository->find($id);
     }
 
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): ?array
     {
+        if (!in_array('provider', $criteria)) {
+            $criteria['provider'] = $this->paymentProviderService;
+        }
+
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
@@ -68,15 +75,16 @@ class PaymentProfileRepository
         return $query->getQuery()->getResult();
     }
 
-    public function findPaymentProfileByUserInfos(User $user): ?array
+    public function findPaymentProfileByUserInfos(User $user, string $paymentProvider): ?array
     {
         $query = $this->repository->createQueryBuilder('pp')
             ->join('pp.user', 'u')
-            ->where('u.givenName = :givenName and u.familyName = :familyName and u.birthDate = :birthDate')
+            ->where('u.givenName = :givenName and u.familyName = :familyName and u.birthDate = :birthDate and pp.provider = :paymentProvider')
             ->setParameter('givenName', $user->getGivenName())
             ->setParameter('familyName', $user->getFamilyName())
             ->setParameter('birthDate', $user->getBirthDate())
-            ;
+            ->setParameter('paymentProvider', $paymentProvider)
+        ;
 
         return $query->getQuery()->getResult();
     }

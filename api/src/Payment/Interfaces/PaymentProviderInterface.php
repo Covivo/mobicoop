@@ -49,7 +49,7 @@ interface PaymentProviderInterface
      *
      * @return string The identifier
      */
-    public function registerUser(User $user, Address $address = null);
+    public function registerUser(User $user, ?Address $address = null);
 
     /**
      * Update a User on the platform.
@@ -76,7 +76,7 @@ interface PaymentProviderInterface
      *
      * @return null|BankAccount
      */
-    public function addBankAccount(BankAccount $bankAccount);
+    public function addBankAccount(BankAccount $bankAccount, ?string $externalAccountId = null);
 
     /**
      * Disable a BankAccount.
@@ -104,8 +104,10 @@ interface PaymentProviderInterface
      *      "amount" => float
      *  ]
      * ]
+     *
+     * @param null|mixed $carpoolPaymentId
      */
-    public function processElectronicPayment(User $debtor, array $creditors, string $tag);
+    public function processElectronicPayment(User $debtor, array $creditors, string $tag, $carpoolPaymentId = null);
 
     /**
      * Upload an identity validation document
@@ -137,4 +139,18 @@ interface PaymentProviderInterface
      * @param string $KycDocumentId Id of the kyc document
      */
     public function getKycDocument(string $KycDocumentId);
+
+    /**
+     * Returns a collection of Wallet.
+     *
+     * @param PaymentProfile $paymentProfile The User's payment profile related to the wallets
+     *
+     * @return Wallet[]
+     */
+    public function getWallets(PaymentProfile $paymentProfile);
+
+    /**
+     * Returns the balance of the user.
+     */
+    public function getBalance(?PaymentProfile $paymentProfile = null): int;
 }

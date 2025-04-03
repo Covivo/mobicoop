@@ -29,6 +29,7 @@ monolog:
           "!solidary",
           "!user_auto_delete",
           "!hitchhicker_incomplete_registration_relauncher",
+          "!payment",
         ]
     grouped:
       type: group
@@ -164,6 +165,12 @@ monolog:
       max_files: 30
       path: "%kernel.logs_dir%/notification.log"
       channels: [notification]
+    payment:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/payment.log"
+      channels: [payment]
     solidary:
       type: rotating_file
       level: debug

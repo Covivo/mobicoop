@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -23,6 +24,7 @@
 namespace App\Payment\Service\BankTransfer;
 
 use App\Payment\Entity\BankTransfer;
+use App\Payment\Entity\PaymentResult;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -56,13 +58,13 @@ class BankTransferEmitterVerifier
     public function verify(BankTransfer $BankTransfer, array $return)
     {
         $this->_BankTransfer = $BankTransfer;
-        if (!$this->_checkWalletToWallet($return[0])) {
+        if (!$this->_checkWalletToWallet($this->_treatPaymentResult($return[0]))) {
             $this->_BankTransfer->setStatus(BankTransfer::STATUS_FAILED_WALLET_TO_WALLET);
             $this->_updateTransfert();
 
             return;
         }
-        if (!$this->_checkPayout($return[1])) {
+        if (!$this->_checkPayout($this->_treatPaymentResult($return[1]))) {
             $this->_BankTransfer->setStatus(BankTransfer::STATUS_FAILED_PAYOUT);
             $this->_updateTransfert();
 
@@ -70,6 +72,28 @@ class BankTransferEmitterVerifier
         }
         $this->_BankTransfer->setStatus(BankTransfer::STATUS_EXECUTED);
         $this->_updateTransfert();
+    }
+
+    private function _treatPaymentResult($return): string
+    {
+        if (!$return instanceof PaymentResult) {
+            return $return;
+        }
+
+        $type = PaymentResult::RESULT_ONLINE_PAYMENT_TYPE_TRANSFER == $return->getType() ? self::WALLET_TRANSFERT_TYPE : self::PAYOUT_TYPE;
+        $status = '';
+        if (PaymentResult::RESULT_ONLINE_PAYMENT_STATUS_SUCCESS == $return->getStatus()) {
+            if (self::WALLET_TRANSFERT_TYPE == $type) {
+                $status = self::WALLET_TRANSFERT_STATUS;
+            } else {
+                $status = self::PAYOUT_STATUS;
+            }
+        }
+
+        return json_encode([
+            'Status' => $status,
+            'Type' => $type,
+        ]);
     }
 
     private function _checkWalletToWallet(string $return): bool

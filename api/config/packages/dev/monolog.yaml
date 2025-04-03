@@ -100,6 +100,11 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/notification.log"
       channels: [notification]
+    payment:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/payment.log"
+      channels: [payment]
     solidary:
       type: stream
       level: debug
@@ -139,6 +144,7 @@ monolog:
           "!solidary",
           "!user_auto_delete",
           "!hitchhicker_incomplete_registration_relauncher",
+          "!payment",
         ]
 
     console:
@@ -167,4 +173,5 @@ monolog:
           "!matcherV3",
           "!notification",
           "!solidary",
+          "!payment",
         ]
