@@ -67,15 +67,14 @@ class ExportManager
      */
     private $_selected = [];
 
+    private $_security;
+
     public function __construct(
         Security $security,
         RequestStack $requestStack,
         UserRepository $userRepository
     ) {
-        if (is_null($security->getUser())) {
-            throw new BadRequestHttpException('There is no authenticated User');
-        }
-
+        $this->_security = $security;
         $this->_authenticatedUser = $security->getUser();
         $this->_request = $requestStack->getCurrentRequest();
         $this->_userRepository = $userRepository;
@@ -87,6 +86,7 @@ class ExportManager
      */
     public function exportExtended()
     {
+        $this->_checkIfUserIsAuthenticated();
         $this->_setFilters();
         $this->_setSelected();
 
@@ -97,6 +97,13 @@ class ExportManager
         return $this->_buildUsersToExport($users);
     }
 
+    private function _checkIfUserIsAuthenticated()
+    {
+        if (is_null($this->_security->getUser())) {
+            throw new BadRequestHttpException('There is no authenticated User');
+        }
+    }
+
     /**
      * @param mixed $users
      *
@@ -104,6 +111,8 @@ class ExportManager
      */
     private function _buildUsersToExport($users)
     {
+        $this->_checkIfUserIsAuthenticated();
+
         $usersToExport = [];
 
         foreach ($users as $user) {
@@ -118,6 +127,8 @@ class ExportManager
 
     private function _setAuthenticatedUserRestrictionTerritories(): self
     {
+        $this->_checkIfUserIsAuthenticated();
+
         $userTerritoryAuthAssignments = array_filter($this->_authenticatedUser->getUserAuthAssignments(), function ($assignment) {
             return 'admin_user_export_all' === $assignment->getAuthItem()->getName() && !is_null($assignment->getTerritory());
         });
@@ -135,6 +146,8 @@ class ExportManager
 
     private function _setFilters(): self
     {
+        $this->_checkIfUserIsAuthenticated();
+
         $parameters = $this->_request->query->all();
 
         foreach ($parameters as $key => $parameter) {
@@ -165,6 +178,8 @@ class ExportManager
 
     private function _setSelected()
     {
+        $this->_checkIfUserIsAuthenticated();
+
         $parameters = $this->_request->query->get(self::SELECTED);
         if (!is_null($parameters) && '' !== $parameters) {
             $this->_selected = explode(',', $parameters);
