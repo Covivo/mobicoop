@@ -764,7 +764,7 @@ class UserManager
     {
         // We check if the user have a payment profile
         if ($this->paymentActive) {
-            $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+            $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user, 'provider' => $this->paymentProvider->getPaymentProviderName()]);
             if (is_null($paymentProfiles) || 0 == count($paymentProfiles) || is_null($paymentProfiles[0]->getIdentifier())) {
                 return $user;
             }
@@ -1726,22 +1726,9 @@ class UserManager
         foreach ($paymentProfiles as $paymentProfile) {
             if (!is_null($paymentProfile->getBankAccounts())) {
                 foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
-                    /**
-                     * @var BankAccount $bankaccount
-                     */
-
-                    // We replace some characters in Iban and Bic by *
-                    $iban = $bankaccount->getIban();
-                    for ($i = 4; $i < strlen($iban) - 4; ++$i) {
-                        $iban[$i] = '*';
-                    }
-                    $bic = $bankaccount->getBic();
-                    for ($i = 2; $i < strlen($bic) - 2; ++$i) {
-                        $bic[$i] = '*';
-                    }
-
-                    $bankaccount->setIban($iban);
-                    $bankaccount->setBic($bic);
+                    // @var BankAccount $bankaccount
+                    $bankaccount->setIban($this->_sanitizeIban($bankaccount->getIban()));
+                    $bankaccount->setBic($this->_sanitizeBic($bankaccount->getBic()));
 
                     $bankaccount->setRefusalReason($paymentProfile->getRefusalReason());
 
@@ -2119,6 +2106,31 @@ class UserManager
         }
 
         return $user;
+    }
+
+    private function _sanitizeIban(string $iban): string
+    {
+        while (strlen($iban) < 27) {
+            $iban = '*'.$iban;
+        }
+
+        for ($i = 4; $i < strlen($iban) - 4; ++$i) {
+            $iban[$i] = '*';
+        }
+
+        return $iban;
+    }
+
+    private function _sanitizeBic(string $bic): string
+    {
+        while (strlen($bic) < 8) {
+            $bic = '*'.$bic;
+        }
+        for ($i = 2; $i < strlen($bic) - 2; ++$i) {
+            $bic[$i] = '*';
+        }
+
+        return $bic;
     }
 
     private function _attachUserBySso(User $user, SsoUser $ssoUser): User

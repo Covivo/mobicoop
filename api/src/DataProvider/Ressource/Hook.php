@@ -42,9 +42,10 @@ class Hook
     public const STATUS_OUTDATED_RESSOURCE = 4;
 
     /**
-     * @var int The id of this pay in
+     * @var string The id of this pay in
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"readPayment"})
      */
     private $id;
@@ -84,9 +85,9 @@ class Hook
      */
     private $status;
 
-    public function __construct()
+    public function __construct(?string $id = null)
     {
-        $this->id = self::DEFAULT_ID;
+        $this->id = !is_null($id) ? $id : self::DEFAULT_ID;
     }
 
     public function getId(): ?int
