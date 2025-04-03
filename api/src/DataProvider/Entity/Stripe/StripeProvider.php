@@ -486,7 +486,7 @@ class StripeProvider implements PaymentProviderInterface
         return $bankAccount;
     }
 
-    private function _getUserIdentifier(?User $user): string
+    private function _getUserIdentifier(?User $user = null): string
     {
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => !is_null($this->user) ? $this->user : $user, 'provider' => PaymentDataProvider::STRIPE]);
 
