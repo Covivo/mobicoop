@@ -1386,6 +1386,32 @@ class UserManager
         return $user;
     }
 
+    public function updatePushAlerts(User $user)
+    {
+        $pushNotifications = $this->userNotificationRepository->findActiveByMedium(Medium::MEDIUM_PUSH, $user);
+        if (count($pushNotifications) > 0) {
+            foreach ($pushNotifications as $pushNotification) {
+                $pushNotification->setActive(true);
+                $this->entityManager->persist($pushNotification);
+                $this->entityManager->flush();
+            }
+        } else {
+            $notifications = $this->notificationRepository->findUserEditableAndMedium(Medium::MEDIUM_PUSH);
+
+            foreach ($notifications as $notification) {
+                $userNotification = new UserNotification();
+                $userNotification->setNotification($notification);
+                $userNotification->setActive(true);
+
+                $user->addUserNotification($userNotification);
+            }
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        }
+
+        return $user;
+    }
+
     /**
      * Update user alerts.
      */

@@ -77,7 +77,7 @@ class JWTCreatedListener
             // for now we set the mobile here
             if ($this->request->get('mobile')) {
                 $user->setMobile(true);
-                $this->userManager->createAlerts($user);
+                $this->userManager->updatePushAlerts($user);
             }
 
             switch (true) {
