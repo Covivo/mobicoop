@@ -586,8 +586,8 @@ class CarpoolController extends AbstractController
      */
     public function carpoolSearchResultGet(Request $request, UserManager $userManager)
     {
-        $origin = json_decode($request->request->get('origin'));
-        $destination = json_decode($request->request->get('destination'));
+        $origin = json_decode($request->get('origin'));
+        $destination = json_decode($request->get('destination'));
         $originTitle = $this->__originDisplayFromObject($origin);
         $destinationTitle = $this->__destinationDisplayFromObject($destination);
 
