@@ -365,18 +365,21 @@ export default {
       this.post(`${this.$t("buttons.search.route")}`, lParams);
     },
     publish: function () {
+      let lParams = {
+        origin: JSON.stringify(this.origin),
+        destination: JSON.stringify(this.destination),
+        regular:this.dataRegular,
+        date:this.date?this.date:null,
+        time:this.time?this.time:null,
+        ...this.params
+      };
       if (this.logged){
         this.loadingPublish = true;
-        let lParams = {
-          origin: JSON.stringify(this.origin),
-          destination: JSON.stringify(this.destination),
-          regular:this.dataRegular,
-          date:this.date?this.date:null,
-          time:this.time?this.time:null,
-          ...this.params
-        };
         this.post(`${this.$t("buttons.publish.route")}`, lParams);
       }else{
+        if (this.params && this.params.eventId){
+          localStorage.setItem('event', JSON.stringify(lParams));
+        }
         window.location.href=this.$t("buttons.shareAnAd.route");
       }
     },
