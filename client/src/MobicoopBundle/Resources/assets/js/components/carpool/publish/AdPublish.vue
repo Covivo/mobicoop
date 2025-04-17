@@ -1349,10 +1349,26 @@ export default {
       this.calculatePrice();
     },
   },
+  created() {
+    this.initializeFromEvent();
+  },
   methods: {
     calculatePrice() {
       let price = this.freeCarpool ? 0 : Math.round(this.distance * this.pricePerKm * 100) / 100;
       this.roundPrice(price, this.regular ? 2 : 1);
+    },
+    initializeFromEvent() {
+      const event = JSON.parse(localStorage.getItem('event'));
+
+      if (event) {
+        this.origin = JSON.parse(event.origin);
+        this.destination = JSON.parse(event.destination);
+        this.outwardDate = event.date;
+        this.regular = event.regular;
+        this.eventId = event.eventId;
+      }
+
+      localStorage.removeItem('event');
     },
     buildPointsToMap: function () {
       this.pointsToMap.length = 0;
@@ -1501,7 +1517,7 @@ export default {
           }
         })
         .catch(function (error) {
-          console.log(error);
+          console.error(error);
         })
         .finally(() => {
           // this.loading = false;
@@ -1649,8 +1665,6 @@ export default {
       document.getElementById(element).scrollIntoView();
     },
     routeMissing(e) {
-      console.log(e);
-
       this.routeMissingSnackbar.show = e.routeMissing;
       this.routeMissingSnackbar.validityPersist = e.validityPersist;
     }

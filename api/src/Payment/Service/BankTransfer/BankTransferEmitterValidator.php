@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -50,6 +51,7 @@ class BankTransferEmitterValidator
     private $_holder;
     private $_paymentProfileRepository;
     private $_userManager;
+    private $_paymentProviderUsesWallet;
 
     public function __construct(
         LoggerInterface $logger,
@@ -58,7 +60,8 @@ class BankTransferEmitterValidator
         PaymentProfileRepository $paymentProfileRepository,
         UserManager $userManager,
         string $paymentActive,
-        string $holderId
+        string $holderId,
+        bool $paymentProviderUsesWallet
     ) {
         $this->_logger = $logger;
         $this->_entityManager = $entityManager;
@@ -67,6 +70,7 @@ class BankTransferEmitterValidator
         $this->_holderId = $holderId;
         $this->_paymentProfileRepository = $paymentProfileRepository;
         $this->_userManager = $userManager;
+        $this->_paymentProviderUsesWallet = $paymentProviderUsesWallet;
     }
 
     public function setBankTransfers(array $BankTransfers): self
@@ -92,7 +96,9 @@ class BankTransferEmitterValidator
         $this->_computeTotalAmount();
         $this->_checkFundsAvailability();
         $this->_checkRecipientsPaymentProfile();
-        $this->_checkRecipientsWallets();
+        if ($this->_paymentProviderUsesWallet) {
+            $this->_checkRecipientsWallets();
+        }
     }
 
     public function _checkRecipientsPaymentProfile()
@@ -193,7 +199,7 @@ class BankTransferEmitterValidator
         return $wallets[0];
     }
 
-    private function _checkFundsAvailability()
+    private function _checkFundsAvailabilityWallet()
     {
         // get the wallet of the holder user
         $wallet = $this->_getUserWallet($this->_holder);
@@ -206,12 +212,35 @@ class BankTransferEmitterValidator
 
         // check if enough found for $this->_totalAmount;
         if ($wallet->getBalance()->getAmount() / 100 < $this->_totalAmount) {
-            $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_FUNDS_UNAVAILABLE);
-            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Not enough funds');
-            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] '.$this->_totalAmount.' needed '.($wallet->getBalance()->getAmount() / 100).' available.');
-
-            throw new BankTransferException(BankTransferException::FUNDS_UNAVAILABLE);
+            $this->_abordForFundsUnavailable($wallet->getBalance()->getAmount());
         }
         $this->_logger->info('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Funds available : '.$this->_totalAmount.' needed '.($wallet->getBalance()->getAmount() / 100).' available.');
+    }
+
+    private function _abordForFundsUnavailable(int $balance)
+    {
+        $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_FUNDS_UNAVAILABLE);
+        $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Not enough funds');
+        $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] '.$this->_totalAmount.' needed '.($balance / 100).' available.');
+
+        throw new BankTransferException(BankTransferException::FUNDS_UNAVAILABLE);
+    }
+
+    private function _checkFundsAvailabilityAccount()
+    {
+        $balance = $this->_paymentProvider->getBalance();
+        if ($balance / 100 < $this->_totalAmount) {
+            $this->_abordForFundsUnavailable($balance);
+        }
+        $this->_logger->info('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Funds available : '.$this->_totalAmount.' needed '.($balance / 100).' available.');
+    }
+
+    private function _checkFundsAvailability()
+    {
+        if ($this->_paymentProviderUsesWallet) {
+            $this->_checkFundsAvailabilityWallet();
+        } else {
+            $this->_checkFundsAvailabilityAccount();
+        }
     }
 }

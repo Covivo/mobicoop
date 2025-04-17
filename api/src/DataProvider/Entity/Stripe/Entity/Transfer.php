@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2021, MOBICOOP. All rights reserved.
+ * Copyright (c) 2025, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,19 +21,45 @@
  *    LICENSE
  */
 
-namespace App\Solidary\Admin\Extension;
+namespace App\DataProvider\Entity\Stripe\Entity;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use App\Solidary\Entity\SolidaryUser;
-use Doctrine\ORM\QueryBuilder;
-
-final class SolidaryBeneficiaryExtension extends SolidaryTerritory implements QueryCollectionExtensionInterface
+class Transfer
 {
-    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?string $operationName = null)
+    /**
+     * @var int
+     */
+    private $amount;
+
+    /**
+     * @var string
+     */
+    private $currency;
+
+    /**
+     * @var string
+     */
+    private $destination;
+
+    /**
+     * @var string
+     */
+    private $transfert_group;
+
+    public function __construct(string $currency, int $amount, string $destination, string $transfert_group = '')
     {
-        if (SolidaryUser::class == $resourceClass && 'ADMIN_get' === $operationName) {
-            $this->addWhere($queryBuilder);
-        }
+        $this->currency = $currency;
+        $this->amount = $amount;
+        $this->destination = $destination;
+        $this->transfert_group = $transfert_group;
+    }
+
+    public function buildBody(): array
+    {
+        return [
+            'amount' => $this->amount,
+            'currency' => $this->currency,
+            'destination' => $this->destination,
+            'transfer_group' => $this->transfert_group,
+        ];
     }
 }

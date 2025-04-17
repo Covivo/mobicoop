@@ -139,6 +139,12 @@ security:
             stateless: true
             anonymous: true
 
+        # firewall for Stripe external requests
+        stripeHook:
+            pattern:  ^/stripe-hook
+            stateless: true
+            anonymous: true
+
         # firewall for Campaign unsubscribe hook
         campaignUnsubscribeHook:
             pattern:  ^/campaigns/unsubscribe
@@ -190,6 +196,7 @@ security:
         - { path: ^/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mango-payins, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mango-kyc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/stripe-hook, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/campaigns/unsubscribe, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST] }
         - { path: ^/carpool_standard/from_external/bookings, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST, PUT] }
         - { path: ^/monitor/check_proofs, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [GET] }

@@ -292,6 +292,7 @@ export default {
       eventPassed: false,
       loginOrRegisterDialog: false,
       lEventId: this.event.id ? this.event.id : null,
+      lParams: {},
       date: this.event.fromDate.date
     };
   },
@@ -355,20 +356,21 @@ export default {
     },
 
     publish() {
+      this.lParams = {
+        origin: null,
+        destination: JSON.stringify(this.destination),
+        regular: null,
+        date: this.dateFormated,
+        time: null,
+        ...this.params
+      };
       if (this.isLogged) {
-        let lParams = {
-          origin: null,
-          destination: JSON.stringify(this.destination),
-          regular: null,
-          date: this.dateFormated,
-          time: null,
-          ...this.params
-        };
         this.post(
           `${this.$t("buttons.publish.route", { id: this.lEventId })}`,
-          lParams
+          this.lParams
         );
       } else {
+        localStorage.setItem('event', JSON.stringify(this.lParams));
         this.loginOrRegister();
       }
     },

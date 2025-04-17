@@ -764,7 +764,7 @@ class UserManager
     {
         // We check if the user have a payment profile
         if ($this->paymentActive) {
-            $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+            $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user, 'provider' => $this->paymentProvider->getPaymentProviderName()]);
             if (is_null($paymentProfiles) || 0 == count($paymentProfiles) || is_null($paymentProfiles[0]->getIdentifier())) {
                 return $user;
             }
@@ -1386,6 +1386,32 @@ class UserManager
         return $user;
     }
 
+    public function updatePushAlerts(User $user)
+    {
+        $pushNotifications = $this->userNotificationRepository->findActiveByMedium(Medium::MEDIUM_PUSH, $user);
+        if (count($pushNotifications) > 0) {
+            foreach ($pushNotifications as $pushNotification) {
+                $pushNotification->setActive(true);
+                $this->entityManager->persist($pushNotification);
+                $this->entityManager->flush();
+            }
+        } else {
+            $notifications = $this->notificationRepository->findUserEditableAndMedium(Medium::MEDIUM_PUSH);
+
+            foreach ($notifications as $notification) {
+                $userNotification = new UserNotification();
+                $userNotification->setNotification($notification);
+                $userNotification->setActive(true);
+
+                $user->addUserNotification($userNotification);
+            }
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        }
+
+        return $user;
+    }
+
     /**
      * Update user alerts.
      */
@@ -1726,22 +1752,9 @@ class UserManager
         foreach ($paymentProfiles as $paymentProfile) {
             if (!is_null($paymentProfile->getBankAccounts())) {
                 foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
-                    /**
-                     * @var BankAccount $bankaccount
-                     */
-
-                    // We replace some characters in Iban and Bic by *
-                    $iban = $bankaccount->getIban();
-                    for ($i = 4; $i < strlen($iban) - 4; ++$i) {
-                        $iban[$i] = '*';
-                    }
-                    $bic = $bankaccount->getBic();
-                    for ($i = 2; $i < strlen($bic) - 2; ++$i) {
-                        $bic[$i] = '*';
-                    }
-
-                    $bankaccount->setIban($iban);
-                    $bankaccount->setBic($bic);
+                    // @var BankAccount $bankaccount
+                    $bankaccount->setIban($this->_sanitizeIban($bankaccount->getIban()));
+                    $bankaccount->setBic($this->_sanitizeBic($bankaccount->getBic()));
 
                     $bankaccount->setRefusalReason($paymentProfile->getRefusalReason());
 
@@ -2119,6 +2132,31 @@ class UserManager
         }
 
         return $user;
+    }
+
+    private function _sanitizeIban(string $iban): string
+    {
+        while (strlen($iban) < 27) {
+            $iban = '*'.$iban;
+        }
+
+        for ($i = 4; $i < strlen($iban) - 4; ++$i) {
+            $iban[$i] = '*';
+        }
+
+        return $iban;
+    }
+
+    private function _sanitizeBic(string $bic): string
+    {
+        while (strlen($bic) < 8) {
+            $bic = '*'.$bic;
+        }
+        for ($i = 2; $i < strlen($bic) - 2; ++$i) {
+            $bic[$i] = '*';
+        }
+
+        return $bic;
     }
 
     private function _attachUserBySso(User $user, SsoUser $ssoUser): User

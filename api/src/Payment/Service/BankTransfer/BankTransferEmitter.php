@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -86,6 +87,18 @@ class BankTransferEmitter
     {
         $this->_logger->info('[BatchId : '.$this->_batchId.'] Starting Bank Transferts');
         foreach ($this->_getOnlyInitiatedTransfert() as $BankTransfer) {
+            if (is_null($BankTransfer->getRecipient()->getPaymentProfileId())) {
+                $recipient = $BankTransfer->getRecipient();
+                $paymentProfiles = $this->_paymentProvider->getPaymentProfiles($BankTransfer->getRecipient());
+                if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
+                    $this->_logger->info('[BatchId : '.$this->_batchId.'] User '.$BankTransfer->getRecipient()->getId().' has no payment profile');
+
+                    continue;
+                }
+                $recipient->setPaymentProfileId($paymentProfiles[0]->getId());
+                $BankTransfer->setRecipient($recipient);
+            }
+
             $recipient = [
                 'userId' => [
                     'user' => $BankTransfer->getRecipient(),
@@ -93,7 +106,7 @@ class BankTransferEmitter
                 ],
             ];
 
-            $return = $this->_paymentProvider->processElectronicPayment($this->_BankTransferEmitterValidator->getHolder(), $recipient, $BankTransfer->getId());
+            $return = $this->_paymentProvider->processElectronicPayment($this->_BankTransferEmitterValidator->getHolder(), $recipient, $BankTransfer->getId(), $this->_batchId);
 
             $this->_logger->info('[BatchId : '.$this->_batchId.'] Transfering '.$BankTransfer->getAmount().' from User '.$this->_BankTransferEmitterValidator->getHolder()->getId().' to User '.$BankTransfer->getRecipient()->getId());
             $this->_updateTransfertStatus($BankTransfer, BankTransfer::STATUS_EMITTED);

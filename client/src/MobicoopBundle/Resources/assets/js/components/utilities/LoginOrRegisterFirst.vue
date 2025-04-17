@@ -11,10 +11,10 @@
         <v-toolbar-title class="toolbar">
           {{ $t('loginOrRegisterTitle') }}
         </v-toolbar-title>
-        
+
         <v-spacer />
 
-        <v-btn 
+        <v-btn
           icon
           @click="closeDialog()"
         >
@@ -66,7 +66,7 @@ export default {
       'fr': messages_fr,
       'eu':messages_eu
     },
-  },  
+  },
   props:{
     id:{
       type: Number,
@@ -87,7 +87,7 @@ export default {
     showLoginBtn:{
       type: Boolean,
       default: true
-    }
+    },
   },
   data() {
     return {
