@@ -64,6 +64,8 @@
               :is-regular="frequency == 2"
               :no-gutters="true"
               :has-days="true"
+              :is-driver="driver"
+              :is-return="isReturn"
             />
           </v-col>
         </v-row>
@@ -170,6 +172,10 @@ export default {
     freeCarpooling: {
       type: Boolean,
       default: false
+    },
+    type: {
+      type: Number,
+      default: 1
     }
   },
   data () {
@@ -191,6 +197,9 @@ export default {
         addressLocality: this.carpooler.waypoints.find(el => el.destination === true)['addressLocality'],
         name: this.carpooler.waypoints.find(el => el.destination === true)['name']
       }
+    },
+    isReturn () {
+      return this.type === 2;
     }
   }
 }

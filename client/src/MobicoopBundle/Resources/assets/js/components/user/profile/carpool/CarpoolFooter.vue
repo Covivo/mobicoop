@@ -76,6 +76,7 @@
               :user="user"
               :payment-electronic-active="paymentElectronicActive"
               :free-carpooling="freeCarpooling"
+              :type="ad.type"
             />
             <v-divider
               v-if="index < carpoolers.length - 1"
