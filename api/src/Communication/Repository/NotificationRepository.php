@@ -69,4 +69,15 @@ class NotificationRepository
 
         return $query->getQuery()->getResult();
     }
+
+    public function findUserEditableAndMedium(int $mediaId)
+    {
+        $query = $this->repository->createQueryBuilder('n')
+            ->where('n.userEditable=1')
+            ->andWhere('n.medium = $mediaId')
+            ->setParameter('mediaId', $mediaId)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }
