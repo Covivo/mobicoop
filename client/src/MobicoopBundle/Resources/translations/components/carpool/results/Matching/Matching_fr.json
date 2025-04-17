@@ -52,5 +52,7 @@
       "label": "Votre message"
     }
   },
-  "homeAddress": "Domicile"
+  "homeAddress": "Domicile",
+  "futureAds": "Trajets les jours suivants",
+  "publishAd": "/covoiturage/publierannonce"
 }
