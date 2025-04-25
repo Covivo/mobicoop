@@ -1349,10 +1349,8 @@ export default {
       this.calculatePrice();
     },
   },
-  mounted() {
-    if (this.eventId) {
-      this.initializeFromEvent();
-    }
+  created() {
+    this.initializeFromEvent();
   },
   methods: {
     calculatePrice() {
@@ -1362,9 +1360,12 @@ export default {
     initializeFromEvent() {
       const event = JSON.parse(localStorage.getItem('event'));
 
-      if (this.eventId === event.eventId) {
+      if (event) {
+        this.origin = JSON.parse(event.origin);
         this.destination = JSON.parse(event.destination);
         this.outwardDate = event.date;
+        this.regular = event.regular;
+        this.eventId = event.eventId;
       }
 
       localStorage.removeItem('event');

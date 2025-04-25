@@ -22,7 +22,7 @@
           {{ $t('multipleTimesSlots') }}
         </p>
       </v-col>
-      
+
       <v-col v-else>
         <v-row>
           <!--Outward-->
@@ -35,7 +35,7 @@
             <span
               v-if="!isRefined"
               class="accent--text text--accent font-weight-bold text-body-1"
-            >{{ isReturn ? $t('return') : $t('outward') }}</span>
+            >{{ getLeftTime }}</span>
 
             <v-icon
               v-if="!isRefined"
@@ -64,7 +64,7 @@
             class="py-0"
             :align="isRegular ? 'right' : 'left'"
           >
-            <span class="accent--text  font-weight-bold text-body-1">{{ $t('return') }}</span>
+            <span class="accent--text  font-weight-bold text-body-1">{{ getRightTime }}</span>
 
             <v-icon class="accent--text font-weight-bold">
               mdi-arrow-left
@@ -149,11 +149,30 @@ export default {
       type: Boolean,
       default: true
     },
+    isDriver: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
       locale: localStorage.getItem("X-LOCALE"),
     };
+  },
+  computed: {
+    getLeftTime() {
+      return this.isReturn ? this.$t('return') : this.$t('outward');
+    },
+    getRightTime() {
+      if (
+        (this.isReturn && this.isDriver) ||
+        (this.isReturn && !this.isDriver)
+      ) {
+        return this.$t('outward');
+      }
+
+      return this.$t('return');
+    }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE

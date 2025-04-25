@@ -48,6 +48,7 @@ class PointSearcher
     private $reverseProviders;
     private $tokenStorage;
     private $addressAdapter;
+    private $geoTools;
 
     private $_fixer;
     private $_fixerEnabled;
@@ -71,7 +72,8 @@ class PointSearcher
         array $exclusionTypes = [],
         array $relayPointParams,
         array $fixerData,
-        bool $fixerEnabled
+        bool $fixerEnabled,
+        GeoTools $geoTools
     ) {
         $geocoder = $geocoderFactory->getGeocoder();
         $this->tokenStorage = $tokenStorage;
@@ -139,6 +141,7 @@ class PointSearcher
 
         $this->reverseProviders = [$geocoderPointProvider];
         $this->addressAdapter = $addressAdapter;
+        $this->geoTools = $geoTools;
     }
 
     public function geocode(string $search): array
@@ -170,7 +173,9 @@ class PointSearcher
         $points = $this->reverse($lon, $lat);
 
         foreach ($points as $point) {
-            $addresses[] = $this->addressAdapter->pointToAddress($point);
+            $address = $this->addressAdapter->pointToAddress($point);
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $addresses[] = $address;
         }
 
         return $addresses;

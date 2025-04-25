@@ -155,7 +155,6 @@
     </v-container>
     <LoginOrRegisterFirst
       :id="lEventId"
-      :event="lParams"
       :show-dialog="loginOrRegisterDialog"
       type="event"
       @closeLoginOrRegisterDialog="loginOrRegisterDialog = false"
@@ -371,6 +370,7 @@ export default {
           this.lParams
         );
       } else {
+        localStorage.setItem('event', JSON.stringify(this.lParams));
         this.loginOrRegister();
       }
     },
