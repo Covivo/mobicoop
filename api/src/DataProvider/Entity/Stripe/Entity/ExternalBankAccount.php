@@ -68,6 +68,7 @@ class ExternalBankAccount
     {
         return [
             self::OBJECT => $this->bankAccountTokenId,
+            'default_for_currency' => true,
         ];
     }
 }

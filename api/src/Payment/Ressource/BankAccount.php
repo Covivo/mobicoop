@@ -110,9 +110,17 @@ class BankAccount
      * @var string The id of this bank account
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"readPayment"})
      */
     private $id;
+
+    /**
+     * @var null|string The identifier of the user owning this bank account
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $userIdentifier;
 
     /**
      * @var null|string The litteral name of the user owning this bank account
@@ -132,7 +140,9 @@ class BankAccount
      * @var string The iban number of this bank account
      *
      * @Assert\NotBlank
+     *
      * @Assert\Iban
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $iban;
@@ -141,6 +151,7 @@ class BankAccount
      * @var null|string The bic number of this bank account
      *
      * @Assert\Bic
+     *
      * @Groups({"readPayment","writePayment"})
      */
     private $bic;
@@ -214,6 +225,18 @@ class BankAccount
     public function setId(string $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getUserIdentifier(): ?string
+    {
+        return $this->userIdentifier;
+    }
+
+    public function setUserIdentifier(?string $userIdentifier): self
+    {
+        $this->userIdentifier = $userIdentifier;
 
         return $this;
     }

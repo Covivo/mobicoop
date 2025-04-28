@@ -1243,6 +1243,7 @@ class PaymentManager
             throw new PaymentException(PaymentException::NOT_THE_OWNER);
         }
 
+        $bankAccount->setUserIdentifier($userWithPaymentProfile->getPaymentProfileIdentifier());
         $bankAccount = $this->paymentProvider->disableBankAccount($bankAccount);
 
         // If there is no more active account, we need to update de PaymentProfile

@@ -73,6 +73,7 @@ class StripeProvider implements PaymentProviderInterface
     public const VERSION = 'v1';
 
     public const BANKACCCOUNT_STATUS_VALIDATED = ['validated', 'new', 'verified'];
+    public const BANKACCCOUNT_STATUS_INACTIVE = 'inactive';
 
     private const STRIPE_API_VERSION = '2025-02-24.acacia';
 
@@ -149,9 +150,10 @@ class StripeProvider implements PaymentProviderInterface
         foreach ($stripeBankAccounts->data as $stripeBankAccount) {
             $bankAccount = $this->_deserializeBankAccount($stripeBankAccount);
             $bankAccount->setAddress($user->getHomeAddress());
-            // if ($onlyActive && !$bankAccount->isActive()) {
-            //     continue;
-            // }
+
+            if ($onlyActive && BankAccount::STATUS_ACTIVE !== $bankAccount->getStatus()) {
+                continue;
+            }
             $bankAccounts[] = $bankAccount;
         }
 
@@ -192,6 +194,8 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function disableBankAccount(BankAccount $bankAccount)
     {
+        $this->_disableAccount($bankAccount->getUserIdentifier(), $bankAccount->getId());
+
         return $bankAccount;
     }
 
@@ -370,6 +374,21 @@ class StripeProvider implements PaymentProviderInterface
         return $return;
     }
 
+    private function _disableAccount(string $accountId, string $bankAccountId)
+    {
+        try {
+            return $this->_stripe->accounts->updateExternalAccount(
+                $accountId,
+                $bankAccountId,
+                ['metadata' => ['status' => 'inactive']]
+            );
+        } catch (ApiErrorException $e) {
+            throw new PaymentException($e->getMessage());
+        }
+
+        return null;
+    }
+
     private function _createStripePaymentLink(CarpoolPayment $carpoolPayment, StripePrice $stripePrice): ?StripePaymentLink
     {
         $returnUrl = $this->baseUri.''.self::LANDING_AFTER_PAYMENT;
@@ -478,7 +497,11 @@ class StripeProvider implements PaymentProviderInterface
         $bankAccount = new BankAccount();
         $bankAccount->setId($stripeBankAccount->id);
         $bankAccount->setIban($stripeBankAccount->last4);
-        $bankAccount->setStatus(in_array($stripeBankAccount->status, self::BANKACCCOUNT_STATUS_VALIDATED) ? BankAccount::STATUS_ACTIVE : BankAccount::STATUS_INACTIVE);
+        if (self::BANKACCCOUNT_STATUS_INACTIVE == $stripeBankAccount->metadata->status) {
+            $bankAccount->setStatus(BankAccount::STATUS_INACTIVE);
+        } else {
+            $bankAccount->setStatus(in_array($stripeBankAccount->status, self::BANKACCCOUNT_STATUS_VALIDATED) ? BankAccount::STATUS_ACTIVE : BankAccount::STATUS_INACTIVE);
+        }
         $bankAccount->setUserLitteral($stripeBankAccount->account_holder_name);
 
         $bankAccount->setBic('');

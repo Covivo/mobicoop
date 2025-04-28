@@ -1654,6 +1654,15 @@ class User implements UserInterface, EquatableInterface
     private $paymentProfileId;
 
     /**
+     * @var null|string PaymentProfileIdentifier of a User (external service identifier)
+     *
+     * @Groups({"readPayment"})
+     *
+     * @MaxDepth(1)
+     */
+    private $paymentProfileIdentifier;
+
+    /**
      * @var null|array BankAccounts of a User
      *
      * @Groups({"readPayment"})
@@ -3779,6 +3788,18 @@ class User implements UserInterface, EquatableInterface
     public function setPaymentProfileId(?int $paymentProfileId): self
     {
         $this->paymentProfileId = $paymentProfileId;
+
+        return $this;
+    }
+
+    public function getPaymentProfileIdentifier(): ?string
+    {
+        return $this->paymentProfileIdentifier;
+    }
+
+    public function setPaymentProfileIdentifier(?string $paymentProfileIdentifier): self
+    {
+        $this->paymentProfileIdentifier = $paymentProfileIdentifier;
 
         return $this;
     }
