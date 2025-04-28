@@ -101,6 +101,7 @@ class PaymentManager
     private $actionRepository;
     private $consumptionFeedbackProvider;
     private $logger;
+    private $paymentMinimumAmount;
 
     private $_defaultCarpoolTimezone;
 
@@ -146,7 +147,8 @@ class PaymentManager
         ActionRepository $actionRepository,
         ConsumptionFeedbackDataProvider $consumptionFeedbackProvider,
         JourneyValidation $journeyValidation,
-        string $defaultCarpoolTimezone
+        string $defaultCarpoolTimezone,
+        float $paymentMinimumAmount
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -174,6 +176,7 @@ class PaymentManager
         $this->consumptionFeedbackProvider = $consumptionFeedbackProvider;
         $this->_journeyValidation = $journeyValidation;
         $this->_defaultCarpoolTimezone = $defaultCarpoolTimezone;
+        $this->paymentMinimumAmount = $paymentMinimumAmount;
     }
 
     /**
@@ -351,14 +354,21 @@ class PaymentManager
             // default value
             $paymentItem->setElectronicallyPayable(false);
             $paymentItem->setCanPayElectronically(false);
+            $paymentItem->setAmountTooLow(false);
 
             if ($this->paymentActive && '' !== $this->provider) {
                 $paymentProfile = $this->paymentProvider->getPaymentProfiles($carpoolItem->getCreditorUser(), false);
                 if (is_null($paymentProfile) || 0 == count($paymentProfile)) {
                     $paymentItem->setElectronicallyPayable(false);
                 } else {
-                    if ($paymentProfile[0]->isElectronicallyPayable() && PaymentProfile::VALIDATION_VALIDATED == $paymentProfile[0]->getValidationStatus()) {
+                    if ($paymentProfile[0]->isElectronicallyPayable()
+                        && PaymentProfile::VALIDATION_VALIDATED == $paymentProfile[0]->getValidationStatus()
+                        && $paymentItem->getAmount() >= $this->paymentMinimumAmount) {
                         $paymentItem->setElectronicallyPayable(true);
+                    }
+
+                    if ($paymentItem->getAmount() < $this->paymentMinimumAmount) {
+                        $paymentItem->setAmountTooLow(true);
                     }
                 }
 
