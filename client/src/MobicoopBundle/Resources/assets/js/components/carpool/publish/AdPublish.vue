@@ -1350,25 +1350,41 @@ export default {
     },
   },
   created() {
-    this.initializeFromEvent();
+    this.initializeFromAdSettings();
   },
   methods: {
     calculatePrice() {
       let price = this.freeCarpool ? 0 : Math.round(this.distance * this.pricePerKm * 100) / 100;
       this.roundPrice(price, this.regular ? 2 : 1);
     },
-    initializeFromEvent() {
-      const event = JSON.parse(localStorage.getItem('event'));
+    /**
+     * Initializes the component from the adSettings item stored in localStorage.
+     * The item is removed from localStorage after use.
+     * The following properties are set from the item:
+     * - origin
+     * - destination
+     * - outwardDate
+     * - regular
+     * - defaultRoleToPublish
+     * - eventId (if it exists in the item)
+     */
+    initializeFromAdSettings() {
+      const item = 'adSettings';
 
-      if (event) {
-        this.origin = JSON.parse(event.origin);
-        this.destination = JSON.parse(event.destination);
-        this.outwardDate = event.date;
-        this.regular = event.regular;
-        this.eventId = event.eventId;
+      const adSettings = JSON.parse(localStorage.getItem(item));
+
+      if (adSettings) {
+        this.origin = JSON.parse(adSettings.origin);
+        this.destination = JSON.parse(adSettings.destination);
+        this.outwardDate = adSettings.date;
+        this.regular = adSettings.regular;
+        this.defaultRoleToPublish = adSettings.defaultRole ? adSettings.defaultRole : 3;
+        if (adSettings.eventId) {
+          this.eventId = adSettings.eventId;
+        }
       }
 
-      localStorage.removeItem('event');
+      localStorage.removeItem(item);
     },
     buildPointsToMap: function () {
       this.pointsToMap.length = 0;

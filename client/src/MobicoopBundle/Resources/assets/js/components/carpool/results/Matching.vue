@@ -186,19 +186,65 @@
           <v-tabs-items v-model="modelTabs">
             <!-- Platform results tab item -->
             <v-tab-item value="carpools">
-              <matching-results
-                :results="results"
-                :nb-results="isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform"
-                :distinguish-regular="distinguishRegular"
-                :user="user"
-                :loading-prop="loading"
-                :page="page"
-                :age-display="ageDisplay"
-                :birthdate-display="birthdateDisplay"
-                @carpool="carpool"
-                @loginOrRegister="loginOrRegister"
-                @paginate="paginate"
-              />
+              <div v-if="results.length > 0">
+                <!-- Trajets pour la date demandée -->
+                <v-row v-if="dateResults.length > 0">
+                  <v-col>
+                    <matching-results
+                      :results="dateResults"
+                      :nb-results="isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform"
+                      :distinguish-regular="distinguishRegular"
+                      :user="user"
+                      :loading-prop="loading"
+                      :page="page"
+                      :age-display="ageDisplay"
+                      :birthdate-display="birthdateDisplay"
+                      @carpool="carpool"
+                      @loginOrRegister="loginOrRegister"
+                      @paginate="paginate"
+                    />
+                  </v-col>
+                </v-row>
+                <div v-else>
+                  <EmptyResult
+                    :date="date"
+                    @publishAd="handlePublishAd"
+                  />
+                </div>
+                <!-- Trajets pour les jours suivants -->
+                <div v-if="true">
+                  <v-row>
+                    <v-col align="left">
+                      <h2 class="mt-15">
+                        {{ $t("futureAds") }}
+                      </h2>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <matching-results
+                        :results="futureResults"
+                        :nb-results="isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform"
+                        :distinguish-regular="distinguishRegular"
+                        :user="user"
+                        :loading-prop="loading"
+                        :page="page"
+                        :age-display="ageDisplay"
+                        :birthdate-display="birthdateDisplay"
+                        @carpool="carpool"
+                        @loginOrRegister="loginOrRegister"
+                        @paginate="paginate"
+                      />
+                    </v-col>
+                  </v-row>
+                </div>
+              </div>
+              <div v-else-if="!loading">
+                <EmptyResult
+                  :date="date"
+                  @publishAd="handlePublishAd"
+                />
+              </div>
             </v-tab-item>
             <!-- External results tab item -->
             <v-tab-item
@@ -236,7 +282,7 @@
           </v-tabs-items>
         </v-col>
       </v-row>
-      <v-row
+      <!-- <v-row
         v-if="user && !loading"
         justify="center"
       >
@@ -287,7 +333,7 @@
             </v-card-actions>
           </v-card>
         </v-col>
-      </v-row>
+      </v-row> -->
     </v-container>
 
     <!-- carpool dialog -->
@@ -412,12 +458,14 @@ import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
+import EmptyResult from "@components/carpool/results/EmptyResult";
 import BookingJourney from "@components/carpool/results/BookingJourney";
 import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
 import LoginOrRegisterFirst from "@components/utilities/LoginOrRegisterFirst";
 import Search from "@components/carpool/search/Search";
 import formData from "../../../utils/request";
 import { merge } from "lodash";
+import moment from "moment";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -433,7 +481,8 @@ export default {
     Search,
     MatchingPTResults,
     LoginOrRegisterFirst,
-    BookingJourney
+    BookingJourney,
+    EmptyResult,
   },
   i18n: {
     messages: {
@@ -629,6 +678,14 @@ export default {
         : 0;
       return numberOfResults;
     },
+    dateResults() {
+      let date = new moment(this.date).format();
+      return this.results.filter(result => result.date === date);
+    },
+    futureResults() {
+      let date = new moment(this.date).format();
+      return this.results.filter(result => result.date !== date);;
+    },
     communities() {
       if (!this.results) return null;
       let communities = [];
@@ -686,6 +743,7 @@ export default {
     }
   },
   created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
     if (this.includePassenger) {
       this.role = 3;
     }
@@ -718,10 +776,22 @@ export default {
       // open the dialog
       this.loginOrRegisterDialog = true;
     },
+    handlePublishAd() {
+      const adSettings = {
+        origin: JSON.stringify(this.origin),
+        destination: JSON.stringify(this.destination),
+        regular: this.regular,
+        date:this.date?this.date:null,
+        time:this.time?this.time:null,
+      };
+      localStorage.setItem('adSettings', JSON.stringify(adSettings));
+      window.location.href=this.$t("publishAd");
+    },
     paginate(page) {
       this.page = page;
       this.search();
     },
+
     setLoadingStep() {
       this.loadingStep++;
       if (this.loadingStep > 2) this.loadingStep = 0;
