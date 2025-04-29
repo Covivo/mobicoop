@@ -1101,4 +1101,17 @@ class SolidaryManager
 
         return $user;
     }
+
+    public function updateSolidaryUserAddress(User $user) {
+        $solidaryUser = $user->getSolidaryUser();
+
+        if (
+            is_null($solidaryUser->getAddress()) ||
+            $solidaryUser->getAddress()->getId() != $user->getHomeAddress()->getId()
+        ) {
+            $solidaryUser->setAddress($user->getHomeAddress());
+
+            $this->entityManager->flush();
+        }
+    }
 }
