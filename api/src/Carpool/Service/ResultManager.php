@@ -809,7 +809,8 @@ class ResultManager
             }
 
             if (!$blockedRequest && !$blockedOffer) {
-                if ((Criteria::FREQUENCY_PUNCTUAL == $matchingProposal->getcriteria()->getFrequency())
+                if (!$matchingProposal->isDynamic()
+                && (Criteria::FREQUENCY_PUNCTUAL == $matchingProposal->getcriteria()->getFrequency())
                 && ($matchingProposal->getCriteria()->getFromDate() <= new \DateTime())
                 && ($matchingProposal->getCriteria()->getFromTime()->format('H:i:s') <= (new \DateTime('now', new \DateTimeZone($this->carpoolTimezone)))->format('H:i:s'))) {
                     continue;
@@ -2718,10 +2719,10 @@ class ResultManager
                     'role' => 1 == $waypoint['candidate'] ? 'driver' : 'passenger',
                     'time' => $curTime,
                     'address' => $waypoint['address'],
-                    'type' => '0' == $waypoint['position'] ? 'origin' :
-                        (
-                            (1 == $waypoint['candidate']) ? ((int) $waypoint['position'] == $steps['requester'] ? 'destination' : 'step') :
-                            ((int) $waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
+                    'type' => '0' == $waypoint['position'] ? 'origin'
+                        : (
+                            (1 == $waypoint['candidate']) ? ((int) $waypoint['position'] == $steps['requester'] ? 'destination' : 'step')
+                            : ((int) $waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
                         ),
                 ];
             } else {
@@ -2731,10 +2732,10 @@ class ResultManager
                     'role' => 1 == $waypoint['candidate'] ? 'driver' : 'passenger',
                     'time' => $curTime,
                     'address' => $waypoint['address'],
-                    'type' => '0' == $waypoint['position'] ? 'origin' :
-                        (
-                            (1 == $waypoint['candidate']) ? ((int) $waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step') :
-                            ((int) $waypoint['position'] == $steps['requester'] ? 'destination' : 'step')
+                    'type' => '0' == $waypoint['position'] ? 'origin'
+                        : (
+                            (1 == $waypoint['candidate']) ? ((int) $waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
+                            : ((int) $waypoint['position'] == $steps['requester'] ? 'destination' : 'step')
                         ),
                 ];
             }

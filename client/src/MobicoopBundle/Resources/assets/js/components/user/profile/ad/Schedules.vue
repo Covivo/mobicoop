@@ -35,7 +35,7 @@
             <span
               v-if="!isRefined"
               class="accent--text text--accent font-weight-bold text-body-1"
-            >{{ getLeftTime }}</span>
+            >{{ getSchedule }}</span>
 
             <v-icon
               v-if="!isRefined"
@@ -49,32 +49,6 @@
               class="primary--text text--darken-2 text-body-1 text-capitalize"
             >
               {{ dateTimeFormat === null ? outwardTime : formatTime(outwardTime) }}
-            </span>
-            <span
-              v-else
-              class="primary--text text--darken-2 text-body-1"
-            >
-              {{ $t('multipleTimesSlots') }}
-            </span>
-          </v-col>
-
-          <!--Return-->
-          <v-col
-            v-if="returnTime"
-            class="py-0"
-            :align="isRegular ? 'right' : 'left'"
-          >
-            <span class="accent--text  font-weight-bold text-body-1">{{ getRightTime }}</span>
-
-            <v-icon class="accent--text font-weight-bold">
-              mdi-arrow-left
-            </v-icon>
-
-            <span
-              v-if="!multipleReturn"
-              class="primary--text text--darken-2 text-body-1 text-capitalize"
-            >
-              {{ dateTimeFormat === null ? returnTime : formatTime(returnTime) }}
             </span>
             <span
               v-else
@@ -160,18 +134,8 @@ export default {
     };
   },
   computed: {
-    getLeftTime() {
+    getSchedule() {
       return this.isReturn ? this.$t('return') : this.$t('outward');
-    },
-    getRightTime() {
-      if (
-        (this.isReturn && this.isDriver) ||
-        (this.isReturn && !this.isDriver)
-      ) {
-        return this.$t('outward');
-      }
-
-      return this.$t('return');
     }
   },
   created() {
