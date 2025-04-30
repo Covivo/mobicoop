@@ -393,7 +393,7 @@
                   @change="save"
                 />
               </v-menu>
-              <span id="driving-licence-number" />
+              <!-- <span id="driving-licence-number" />
               <v-text-field
                 v-model="drivingLicenceNumber"
                 :label="$t('drivingLicenceNumber.label')"
@@ -406,7 +406,7 @@
                 type="error"
               >
                 {{ $t("checkDrivingLicenceNumber.error") }}
-              </v-alert>
+              </v-alert> -->
             </v-col>
             <!-- Avatar -->
             <v-col cols="5">

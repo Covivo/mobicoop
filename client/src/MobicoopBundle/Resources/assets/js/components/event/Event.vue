@@ -370,7 +370,7 @@ export default {
           this.lParams
         );
       } else {
-        localStorage.setItem('event', JSON.stringify(this.lParams));
+        localStorage.setItem('adSettings', JSON.stringify(this.lParams));
         this.loginOrRegister();
       }
     },

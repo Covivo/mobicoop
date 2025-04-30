@@ -125,6 +125,8 @@ export default {
 
         break;
       }
+
+      this.isMessageDisplayed = this.warningMessages.length > 0;
     },
     getEecInstance(){
       this.loading = true;
@@ -135,7 +137,7 @@ export default {
           this.loading = false;
 
           if (this.carpoolersIdentity && this.eecInstance && this.eecInstance.available) {
-            this.build()
+            this.build();
           }
         })
         .catch(error => {});
