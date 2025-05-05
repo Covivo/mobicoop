@@ -28,6 +28,8 @@ use App\DataProvider\Ressource\Hook;
 use App\DataProvider\Ressource\StripeHook;
 use App\Payment\Service\PaymentManager;
 use Psr\Log\LoggerInterface;
+use Stripe\Exception\SignatureVerificationException;
+use Stripe\Webhook;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,19 +39,21 @@ use Symfony\Component\Security\Core\Security;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class StripeHookDataPersister implements ContextAwareDataPersisterInterface
+class StripeHookDataPersister implements ContextAwareDataPersisterInterface
 {
     private $paymentManager;
     private $security;
     private $requestStack;
     private $logger;
+    private $_webhookSecret;
 
-    public function __construct(PaymentManager $paymentManager, RequestStack $requestStack, Security $security, LoggerInterface $logger)
+    public function __construct(PaymentManager $paymentManager, RequestStack $requestStack, Security $security, LoggerInterface $logger, string $webhookSecret)
     {
         $this->paymentManager = $paymentManager;
         $this->security = $security;
         $this->requestStack = $requestStack;
         $this->logger = $logger;
+        $this->_webhookSecret = $webhookSecret;
     }
 
     public function __invoke(Request $request)
@@ -78,14 +82,21 @@ final class StripeHookDataPersister implements ContextAwareDataPersisterInterfac
 
             $decodedPayload = json_decode($payload, true);
             $this->logger->info($decodedPayload['type']);
-            $this->logger->info($payload);
+
+            if (!$this->_checkWebhookSecret($signature, $payload)) {
+                return new Response('Invalid webhook signature', Response::HTTP_OK);
+            }
 
             switch ($decodedPayload['type']) {
-                case StripeHook::TYPE_ACCOUNT_UPDATED: $this->_treatValidatedHook($decodedPayload);
+                case StripeHook::TYPE_ACCOUNT_UPDATED:
+                    $this->logger->info($payload);
+                    $this->_treatValidatedHook($decodedPayload);
 
                     break;
 
-                case StripeHook::TYPE_PAYMENT_SUCCEEDED: $this->_treatPaymentSucceedHook($decodedPayload);
+                case StripeHook::TYPE_PAYMENT_SUCCEEDED:
+                    $this->logger->info($payload);
+                    $this->_treatPaymentSucceedHook($decodedPayload);
 
                     break;
 
@@ -105,6 +116,25 @@ final class StripeHookDataPersister implements ContextAwareDataPersisterInterfac
     public function remove($data, array $context = [])
     {
         // call your persistence layer to delete $data
+    }
+
+    protected function _checkWebhookSecret($signature, $payload): bool
+    {
+        try {
+            $event = Webhook::constructEvent(
+                $payload,
+                $signature,
+                $this->_webhookSecret
+            );
+        } catch (SignatureVerificationException $e) {
+            $this->logger->error('Invalid webhook signature: '.$e->getMessage());
+
+            var_dump('INVALIIIIIIIIIIIIIIIIIIIIIIIDE!!!!!!!!');
+
+            return false;
+        }
+
+        return true;
     }
 
     private function _treatPaymentSucceedHook($decodedPayload)

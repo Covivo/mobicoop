@@ -1436,6 +1436,8 @@ class PaymentManager
 
         $paymentProfile = $this->paymentProfileRepository->findOneBy(['validationId' => $hook->getRessourceId()]);
         if (is_null($paymentProfile)) {
+            $this->logger->info($hook->getRessourceId());
+
             throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
         }
 
@@ -1444,6 +1446,8 @@ class PaymentManager
         switch ($hook->getStatus()) {
             case Hook::STATUS_SUCCESS:
                 if (PaymentProfile::VALIDATION_VALIDATED == $paymentProfile->getValidationStatus() && !is_null($paymentProfile->getValidatedDate())) {
+                    $this->logger->info('Payment profile validation success but return');
+
                     return;
                 }
 

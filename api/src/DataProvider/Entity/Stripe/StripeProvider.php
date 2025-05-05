@@ -157,10 +157,6 @@ class StripeProvider implements PaymentProviderInterface
             $bankAccounts[] = $bankAccount;
         }
 
-        // var_dump(json_encode($bankAccounts));
-
-        // exit;
-
         return $bankAccounts;
     }
 
