@@ -1,6 +1,7 @@
 {
   "title": "Online payment",
   "text": "To perform online payments on the platform, please complete the following fields",
+  "text2": "<b>Attention</b> le service de paiement va changer le 12/06/2025.</br>Renseignez à nouveau vos coordonnées bancaires dès le lendemain pour recevoir des paiements en ligne ou valider des preuves de covoiturage !",
   "givenName": "Given name",
   "familyName": "Family Name",
   "birthDate": "Birthdate",
