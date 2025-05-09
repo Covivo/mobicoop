@@ -321,13 +321,21 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
     {
-        // to do : factorize the upload and handle $validationDocument->getFile2()
-
         $file = new File(File::PURPOSE_IDENTITY_VALIDATION, $validationDocument->getFile());
         $stripefile = $this->_createFile($file);
 
+        $stripefile2 = null;
+        if (!is_null($validationDocument->getFile2())) {
+            $stripefile2 = $this->_createFile($file);
+        }
+
         $accountToken = new AccountToken($validationDocument->getUser());
         $accountToken->setValidationDocumentFrontId($stripefile->id);
+
+        if (!is_null($stripefile2) && isset($stripefile2->id)) {
+            $accountToken->setValidationDocumentBackId($stripefile2->id);
+        }
+
         $stripeToken = $this->_createToken($accountToken);
         $return = $this->_updateUserFromToken($stripeToken->id);
 
