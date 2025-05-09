@@ -881,7 +881,6 @@ class PaymentManager
      */
     public function treatCarpoolPayment(CarpoolPayment $carpoolPayment, array $onlineReturns = []): CarpoolPayment
     {
-        var_dump('treatCarpoolPayment');
         foreach ($carpoolPayment->getCarpoolItems() as $item) {
             /**
              * @var CarpoolItem $item
@@ -894,8 +893,6 @@ class PaymentManager
 
                 case CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE:
                 case CarpoolItem::DEBTOR_STATUS_ONLINE:
-                    var_dump('DEBTOR_STATUS_ONLINE');
-                    var_dump(count($onlineReturns));
                     $updated = false;
                     if (count($onlineReturns) > 0) {
                         $updated = $this->_treatOnlineCarpoolPayment($carpoolPayment->getStatus(), $item, $onlineReturns);

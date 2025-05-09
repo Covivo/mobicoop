@@ -78,6 +78,11 @@ class AccountToken extends Token
      */
     private $validation_document_front_id;
 
+    /**
+     * @var string
+     */
+    private $validation_document_back_id;
+
     public function __construct(User $user, ?Address $address = null)
     {
         $this->business_type = self::BUSINESS_TYPE;
@@ -196,6 +201,22 @@ class AccountToken extends Token
         return $this;
     }
 
+    public function getValidationDocumentBackId(): ?string
+    {
+        return $this->validation_document_back_id;
+    }
+
+    public function setValidationDocumentBackId(?string $validation_document_back_id): self
+    {
+        if (0 !== strpos($validation_document_back_id, 'file_')) {
+            throw new PaymentException('validation_document_back_id must start with "file_"');
+        }
+
+        $this->validation_document_back_id = $validation_document_back_id;
+
+        return $this;
+    }
+
     public function buildBody(): array
     {
         $body = [
@@ -214,9 +235,11 @@ class AccountToken extends Token
         ];
 
         if (!is_null($this->getValidationDocumentFrontId())) {
-            $body[self::TYPE][self::BUSINESS_TYPE]['verification']['document'] = [
-                'front' => $this->getValidationDocumentFrontId(),
-            ];
+            $body[self::TYPE][self::BUSINESS_TYPE]['verification']['document']['front'] = $this->getValidationDocumentFrontId();
+        }
+
+        if (!is_null($this->getValidationDocumentBackId())) {
+            $body[self::TYPE][self::BUSINESS_TYPE]['verification']['document']['back'] = $this->getValidationDocumentBackId();
         }
 
         return $body;

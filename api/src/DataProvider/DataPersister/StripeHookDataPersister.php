@@ -129,8 +129,6 @@ class StripeHookDataPersister implements ContextAwareDataPersisterInterface
         } catch (SignatureVerificationException $e) {
             $this->logger->error('Invalid webhook signature: '.$e->getMessage());
 
-            var_dump('INVALIIIIIIIIIIIIIIIIIIIIIIIDE!!!!!!!!');
-
             return false;
         }
 
@@ -150,7 +148,10 @@ class StripeHookDataPersister implements ContextAwareDataPersisterInterface
 
     private function _treatValidatedHook($decodedPayload)
     {
-        if (isset($decodedPayload['data']['object']['individual']['verification']['status']) && StripeHook::VALIDATION_SUCCEEDED == $decodedPayload['data']['object']['individual']['verification']['status']) {
+        if (isset($decodedPayload['data']['object']['individual']['verification']['status'])
+            && StripeHook::VALIDATION_SUCCEEDED == $decodedPayload['data']['object']['individual']['verification']['status']
+            && isset($decodedPayload['data']['object']['individual']['verification']['document']['front'])
+            && !is_null($decodedPayload['data']['object']['individual']['verification']['document']['front'])) {
             $hook = new StripeHook();
             $hook->setStatus(Hook::STATUS_SUCCESS);
             $hook->setRessourceId($decodedPayload['data']['object']['individual']['verification']['document']['front']);
