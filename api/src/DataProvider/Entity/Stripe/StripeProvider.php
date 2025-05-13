@@ -220,7 +220,11 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function updateUser(User $user)
     {
-        return '';
+        $accountToken = new AccountToken($user);
+        $stripeToken = $this->_createToken($accountToken);
+        $return = $this->_updateUserFromToken($stripeToken->id);
+
+        return $return->id;
     }
 
     /**

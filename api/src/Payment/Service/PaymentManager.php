@@ -1174,7 +1174,7 @@ class PaymentManager
         }
 
         $identifier = null;
-        if (!$this->_hasPaymentProfileForCurrentProvider($user)) {
+        if (!$this->hasPaymentProfileForCurrentProvider($user)) {
             // No Payment Profile, we create one
 
             // RPC we check the user have already a bank account with anotherEmail
@@ -1618,7 +1618,7 @@ class PaymentManager
         return $paymentProfile;
     }
 
-    private function _hasPaymentProfileForCurrentProvider(User $user): bool
+    public function hasPaymentProfileForCurrentProvider(User $user): bool
     {
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user, 'provider' => $this->paymentProvider->getPaymentProviderName()]);
 
