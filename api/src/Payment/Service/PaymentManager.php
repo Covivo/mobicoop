@@ -354,7 +354,6 @@ class PaymentManager
             // default value
             $paymentItem->setElectronicallyPayable(false);
             $paymentItem->setCanPayElectronically(false);
-            $paymentItem->setAmountTooLow(false);
 
             if ($this->paymentActive && '' !== $this->provider) {
                 $paymentProfile = $this->paymentProvider->getPaymentProfiles($carpoolItem->getCreditorUser(), false);
@@ -365,10 +364,6 @@ class PaymentManager
                         && PaymentProfile::VALIDATION_VALIDATED == $paymentProfile[0]->getValidationStatus()
                         && $paymentItem->getAmount() >= $this->paymentMinimumAmount) {
                         $paymentItem->setElectronicallyPayable(true);
-                    }
-
-                    if ($paymentItem->getAmount() < $this->paymentMinimumAmount) {
-                        $paymentItem->setAmountTooLow(true);
                     }
                 }
 

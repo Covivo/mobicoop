@@ -248,19 +248,6 @@ class PaymentItem
     private $electronicallyPayable;
 
     /**
-     * @var bool If the current item amount is inferior to the minimum amount for electronic payment
-     *
-     * @ApiProperty(
-     *     attributes={
-     *         "swagger_context"={"type"="boolean"}
-     *     }
-     * )
-     *
-     * @Groups({"readPayment"})
-     */
-    private $amountTooLow;
-
-    /**
      * @var bool If the current User can pay electronically this item (i.e. has a complete address for subscription or an already registered bank account)
      *
      * @ApiProperty(
@@ -500,18 +487,6 @@ class PaymentItem
     public function setElectronicallyPayable(bool $electronicallyPayable): self
     {
         $this->electronicallyPayable = $electronicallyPayable;
-
-        return $this;
-    }
-
-    public function isAmountTooLow(): bool
-    {
-        return $this->amountTooLow;
-    }
-
-    public function setAmountTooLow(bool $amountTooLow): self
-    {
-        $this->amountTooLow = $amountTooLow;
 
         return $this;
     }

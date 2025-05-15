@@ -383,7 +383,9 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
 
     public function isAmountTooLow(): bool
     {
-        return (is_null($this->amountTooLow)) ? false : $this->amountTooLow;
+        // return (is_null($this->amountTooLow)) ? false : $this->amountTooLow;
+        // to do : check if the amopunt is too low
+        return false;
     }
 
     public function setAmountTooLow(bool $amountTooLow): self
