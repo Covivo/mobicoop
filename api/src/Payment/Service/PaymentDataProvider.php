@@ -204,6 +204,7 @@ class PaymentDataProvider
                     $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
                 }
                 $user->setPaymentProfileId($paymentProfile->getId());
+                $user->setPaymentProfileIdentifier($paymentProfile->getIdentifier());
             }
         }
 

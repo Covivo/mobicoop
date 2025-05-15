@@ -42,7 +42,8 @@
     "getFirstWeek": "/getFirstWeek"
   },
   "tooltip": {
-    "message": "Vous ne pouvez pas payer en ligne car le conducteur n'a pas rempli ses coordonnées bancaires."
+    "message": "Vous ne pouvez pas payer en ligne car le conducteur n'a pas rempli ses coordonnées bancaires.",
+    "messageAmountTooLow": "Le montant est inférieur au montant minimum autorisé par la plateforme de covoiturage pour un paiement en ligne."
   },
   "regularInfo": "Si vous n'avez pas covoituré avec {driver} certains jours, vous pouvez les décocher ci-dessous.",
   "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",

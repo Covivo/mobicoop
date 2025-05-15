@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Entity;
 
@@ -27,135 +27,137 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
- * A PaymentItem
+ * A PaymentItem.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class PaymentItem implements ResourceInterface, \JsonSerializable
 {
-    const FREQUENCY_PUNCTUAL = 1;
-    const FREQUENCY_REGULAR = 2;
+    public const FREQUENCY_PUNCTUAL = 1;
+    public const FREQUENCY_REGULAR = 2;
 
-    const TYPE_PAY = 1;
-    const TYPE_COLLECT = 2;
+    public const TYPE_PAY = 1;
+    public const TYPE_COLLECT = 2;
 
-    const DAY_UNAVAILABLE = 0;
-    const DAY_CARPOOLED = 1;
-    const DAY_NOT_CARPOOLED = 2;
+    public const DAY_UNAVAILABLE = 0;
+    public const DAY_CARPOOLED = 1;
+    public const DAY_NOT_CARPOOLED = 2;
 
     /**
-     * @var int The id of this payment item.
+     * @var int the id of this payment item
      */
     private $id;
 
     /**
-     * @var int The id of the ask associated to this payment item.
-     *
+     * @var int the id of the ask associated to this payment item
      */
     private $askId;
 
     /**
-     * @var int The frequency (1 = punctual; 2 = regular).
+     * @var int the frequency (1 = punctual; 2 = regular)
      */
     private $frequency;
 
     /**
-     * @var int The payment type (1 = a payment to be made, 2 = a payment to collect).
+     * @var int the payment type (1 = a payment to be made, 2 = a payment to collect)
      */
     private $type;
 
     /**
-     * @var string|null The avatar of the user
+     * @var null|string The avatar of the user
      */
     private $avatar;
 
     /**
-     * @var string|null The first name of the user.
+     * @var null|string the first name of the user
      */
     private $givenName;
 
     /**
-     * @var string|null The shorten family name of the user.
-    */
+     * @var null|string the shorten family name of the user
+     */
     private $shortFamilyName;
 
     /**
-     * @var Address The origin.
+     * @var Address the origin
      */
     private $origin;
 
     /**
-     * @var Address The destination.
+     * @var Address the destination
      */
     private $destination;
 
     /**
-     * @var string|null The amount, if punctual.
+     * @var null|string the amount, if punctual
      */
     private $amount;
 
     /**
-     * @var string|null The amount for the outward, if regular.
+     * @var null|string the amount for the outward, if regular
      */
     private $outwardAmount;
 
     /**
-     * @var string|null The amount for the return, if regular.
+     * @var null|string the amount for the return, if regular
      */
     private $returnAmount;
 
     /**
-     * @var \DateTimeInterface|null The date of the item, if punctual.
+     * @var null|\DateTimeInterface the date of the item, if punctual
      */
     private $date;
 
     /**
-     * @var \DateTimeInterface|null The start date of the item, if regular.
+     * @var null|\DateTimeInterface the start date of the item, if regular
      */
     private $fromDate;
 
     /**
-     * @var \DateTimeInterface|null The end date of the item, if regular.
+     * @var null|\DateTimeInterface the end date of the item, if regular
      */
     private $toDate;
 
     /**
-     * @var array|null The days concerned by the outward trip.
-     * Each item of the array contains the status for the day :
-     * 0 : unavailable
-     * 1 : carpooled
-     * 2 : not carpooled
-     * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
+     * @var null|array The days concerned by the outward trip.
+     *                 Each item of the array contains the status for the day :
+     *                 0 : unavailable
+     *                 1 : carpooled
+     *                 2 : not carpooled
+     *                 The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
      */
     private $outwardDays;
 
     /**
-     * @var array|null The days concerned by the return trip.
-     * Each item of the array contains the status for the day :
-     * 0 : unavailable
-     * 1 : carpooled
-     * 2 : not carpooled
-     * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
+     * @var null|array The days concerned by the return trip.
+     *                 Each item of the array contains the status for the day :
+     *                 0 : unavailable
+     *                 1 : carpooled
+     *                 2 : not carpooled
+     *                 The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
      */
     private $returnDays;
 
     /**
      * @var bool If the current payment profile is linked to one or several bank accounts
      */
-
     private $electronicallyPayable;
-    
+
     /**
      * @var bool If the current User can pay electronically this item (i.e. has a complete address for subscription or an already registered bank account)
      */
-
     private $canPayElectronically;
-    
+
     /**
-     * @var \DateTimeInterface|null The unpaid date for this Item
+     * @var bool If the current item amount is inferior to the minimum amount for electronic payment
+     */
+    private $amountTooLow;
+
+    /**
+     * @var null|\DateTimeInterface The unpaid date for this Item
      */
     private $unpaidDate;
-
 
     public function getId(): int
     {
@@ -269,7 +271,7 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
     {
         return $this->amount;
     }
-    
+
     public function setAmount(?string $amount)
     {
         $this->amount = $amount;
@@ -279,7 +281,7 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
     {
         return $this->outwardAmount;
     }
-    
+
     public function setOutwardAmount(?string $outwardAmount)
     {
         $this->outwardAmount = $outwardAmount;
@@ -289,7 +291,7 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
     {
         return $this->returnAmount;
     }
-    
+
     public function setReturnAmount(?string $returnAmount)
     {
         $this->returnAmount = $returnAmount;
@@ -379,6 +381,20 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function isAmountTooLow(): bool
+    {
+        // return (is_null($this->amountTooLow)) ? false : $this->amountTooLow;
+        // to do : check if the amopunt is too low
+        return false;
+    }
+
+    public function setAmountTooLow(bool $amountTooLow): self
+    {
+        $this->amountTooLow = $amountTooLow;
+
+        return $this;
+    }
+
     public function getUnpaidDate(): ?\DateTimeInterface
     {
         return $this->unpaidDate;
@@ -395,25 +411,26 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
     {
         return
             [
-                'id'                        => $this->getId(),
-                'askId'                     => $this->getAskId(),
-                'frequency'                 => $this->getFrequency(),
-                'type'                      => $this->getType(),
-                'avatar'                    => $this->getAvatar(),
-                'givenName'                 => $this->getGivenName(),
-                'shortFamilyName'           => $this->getShortFamilyName(),
-                'origin'                    => $this->getOrigin(),
-                'destination'               => $this->getDestination(),
-                'amount'                    => $this->getAmount(),
-                'outwardAmount'             => $this->getOutwardAmount(),
-                'returnAmount'              => $this->getReturnAmount(),
-                'date'                      => $this->getDate(),
-                'toDate'                    => $this->getToDate(),
-                'outwardDays'               => $this->getOutwardDays(),
-                'returnDays'                => $this->getReturnDays(),
-                'electronicallyPayable'     => $this->isElectronicallyPayable(),
-                'canPayElectronically'      => $this->getCanPayElectronically(),
-                'unpaidDate'                => $this->getUnpaidDate()
+                'id' => $this->getId(),
+                'askId' => $this->getAskId(),
+                'frequency' => $this->getFrequency(),
+                'type' => $this->getType(),
+                'avatar' => $this->getAvatar(),
+                'givenName' => $this->getGivenName(),
+                'shortFamilyName' => $this->getShortFamilyName(),
+                'origin' => $this->getOrigin(),
+                'destination' => $this->getDestination(),
+                'amount' => $this->getAmount(),
+                'outwardAmount' => $this->getOutwardAmount(),
+                'returnAmount' => $this->getReturnAmount(),
+                'date' => $this->getDate(),
+                'toDate' => $this->getToDate(),
+                'outwardDays' => $this->getOutwardDays(),
+                'returnDays' => $this->getReturnDays(),
+                'electronicallyPayable' => $this->isElectronicallyPayable(),
+                'canPayElectronically' => $this->getCanPayElectronically(),
+                'unpaidDate' => $this->getUnpaidDate(),
+                'amountTooLow' => $this->isAmountTooLow(),
             ];
     }
 }

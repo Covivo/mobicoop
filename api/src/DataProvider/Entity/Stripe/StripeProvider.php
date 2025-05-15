@@ -73,6 +73,7 @@ class StripeProvider implements PaymentProviderInterface
     public const VERSION = 'v1';
 
     public const BANKACCCOUNT_STATUS_VALIDATED = ['validated', 'new', 'verified'];
+    public const BANKACCCOUNT_STATUS_INACTIVE = 'inactive';
 
     private const STRIPE_API_VERSION = '2025-02-24.acacia';
 
@@ -149,15 +150,12 @@ class StripeProvider implements PaymentProviderInterface
         foreach ($stripeBankAccounts->data as $stripeBankAccount) {
             $bankAccount = $this->_deserializeBankAccount($stripeBankAccount);
             $bankAccount->setAddress($user->getHomeAddress());
-            // if ($onlyActive && !$bankAccount->isActive()) {
-            //     continue;
-            // }
+
+            if ($onlyActive && BankAccount::STATUS_ACTIVE !== $bankAccount->getStatus()) {
+                continue;
+            }
             $bankAccounts[] = $bankAccount;
         }
-
-        // var_dump(json_encode($bankAccounts));
-
-        // exit;
 
         return $bankAccounts;
     }
@@ -192,6 +190,8 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function disableBankAccount(BankAccount $bankAccount)
     {
+        $this->_disableAccount($bankAccount->getUserIdentifier(), $bankAccount->getId());
+
         return $bankAccount;
     }
 
@@ -220,7 +220,11 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function updateUser(User $user)
     {
-        return '';
+        $accountToken = new AccountToken($user);
+        $stripeToken = $this->_createToken($accountToken);
+        $return = $this->_updateUserFromToken($stripeToken->id);
+
+        return $return->id;
     }
 
     /**
@@ -321,13 +325,21 @@ class StripeProvider implements PaymentProviderInterface
      */
     public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
     {
-        // to do : factorize the upload and handle $validationDocument->getFile2()
-
         $file = new File(File::PURPOSE_IDENTITY_VALIDATION, $validationDocument->getFile());
         $stripefile = $this->_createFile($file);
 
+        $stripefile2 = null;
+        if (!is_null($validationDocument->getFile2())) {
+            $stripefile2 = $this->_createFile($file);
+        }
+
         $accountToken = new AccountToken($validationDocument->getUser());
         $accountToken->setValidationDocumentFrontId($stripefile->id);
+
+        if (!is_null($stripefile2) && isset($stripefile2->id)) {
+            $accountToken->setValidationDocumentBackId($stripefile2->id);
+        }
+
         $stripeToken = $this->_createToken($accountToken);
         $return = $this->_updateUserFromToken($stripeToken->id);
 
@@ -368,6 +380,21 @@ class StripeProvider implements PaymentProviderInterface
         }
 
         return $return;
+    }
+
+    private function _disableAccount(string $accountId, string $bankAccountId)
+    {
+        try {
+            return $this->_stripe->accounts->updateExternalAccount(
+                $accountId,
+                $bankAccountId,
+                ['metadata' => ['status' => 'inactive']]
+            );
+        } catch (ApiErrorException $e) {
+            throw new PaymentException($e->getMessage());
+        }
+
+        return null;
     }
 
     private function _createStripePaymentLink(CarpoolPayment $carpoolPayment, StripePrice $stripePrice): ?StripePaymentLink
@@ -478,7 +505,11 @@ class StripeProvider implements PaymentProviderInterface
         $bankAccount = new BankAccount();
         $bankAccount->setId($stripeBankAccount->id);
         $bankAccount->setIban($stripeBankAccount->last4);
-        $bankAccount->setStatus(in_array($stripeBankAccount->status, self::BANKACCCOUNT_STATUS_VALIDATED) ? BankAccount::STATUS_ACTIVE : BankAccount::STATUS_INACTIVE);
+        if (self::BANKACCCOUNT_STATUS_INACTIVE == $stripeBankAccount->metadata->status) {
+            $bankAccount->setStatus(BankAccount::STATUS_INACTIVE);
+        } else {
+            $bankAccount->setStatus(in_array($stripeBankAccount->status, self::BANKACCCOUNT_STATUS_VALIDATED) ? BankAccount::STATUS_ACTIVE : BankAccount::STATUS_INACTIVE);
+        }
         $bankAccount->setUserLitteral($stripeBankAccount->account_holder_name);
 
         $bankAccount->setBic('');
@@ -486,7 +517,7 @@ class StripeProvider implements PaymentProviderInterface
         return $bankAccount;
     }
 
-    private function _getUserIdentifier(?User $user): string
+    private function _getUserIdentifier(?User $user = null): string
     {
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => !is_null($this->user) ? $this->user : $user, 'provider' => PaymentDataProvider::STRIPE]);
 

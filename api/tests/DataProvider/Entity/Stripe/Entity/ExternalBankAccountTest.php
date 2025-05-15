@@ -33,7 +33,7 @@ class ExternalBankAccountTest extends TestCase
      */
     public function testBuildBodyReturnsARightArray()
     {
-        $result = '{"external_account":"bt_1234567890"}';
+        $result = '{"external_account":"bt_1234567890","default_for_currency":true}';
         $this->assertEquals($result, json_encode($this->_externalBankAccount->buildBody()));
     }
 }

@@ -1757,6 +1757,7 @@ class UserManager
                     $bankaccount->setBic($this->_sanitizeBic($bankaccount->getBic()));
 
                     $bankaccount->setRefusalReason($paymentProfile->getRefusalReason());
+                    $bankaccount->setValidationAskedDate($paymentProfile->getValidationAskedDate());
 
                     $bankAccounts[] = $bankaccount;
                 }

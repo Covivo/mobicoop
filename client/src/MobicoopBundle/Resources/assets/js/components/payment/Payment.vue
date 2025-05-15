@@ -1,8 +1,6 @@
 <template>
   <v-container>
-    <v-row
-      align="center"
-    >
+    <v-row align="center">
       <!-- BACK BUTTON -->
       <v-col
         class="mt-0 mb-0 mr-0 ml-3 pa-0"
@@ -17,7 +15,7 @@
           <v-icon class="ml-n2">
             mdi-menu-left
           </v-icon>
-          {{ $t('buttons.back.label') }}
+          {{ $t("buttons.back.label") }}
         </v-btn>
       </v-col>
 
@@ -32,21 +30,21 @@
           v-if="!isPayment"
           class="pl-12 ml-12"
         >
-          {{ $t('titleConfirmation') }}
+          {{ $t("titleConfirmation") }}
         </h1>
         <!-- Passenger : regular payment -->
         <h1
           v-else-if="regular"
           class="pl-12 ml-12"
         >
-          {{ $t('titleRegular') }}
+          {{ $t("titleRegular") }}
         </h1>
         <!-- Passenger : punctual payment -->
         <h1
           v-else
           class="pl-12 ml-12"
         >
-          {{ $t('titlePunctual') }}
+          {{ $t("titlePunctual") }}
         </h1>
       </v-col>
     </v-row>
@@ -63,7 +61,7 @@
         class=" mr-n6 text-h4 primary--text "
       >
         <p>
-          {{ $t('select.label') }}
+          {{ $t("select.label") }}
         </p>
       </v-col>
       <v-col
@@ -110,7 +108,7 @@
           color="success"
           class="text-center"
         >
-          {{ $t('loadingPageText') }}
+          {{ $t("loadingPageText") }}
           <v-progress-linear
             indeterminate
             rounded
@@ -131,9 +129,7 @@
       >
         <v-row>
           <!-- PREVIOUS JOURNEY -->
-          <v-col
-            cols="2"
-          >
+          <v-col cols="2">
             <v-card
               v-if="previousItem"
               raised
@@ -160,7 +156,8 @@
               >
                 <v-card-title>
                   <p class="text-body-2">
-                    {{ previousItem.givenName }} {{ previousItem.shortFamilyName }}
+                    {{ previousItem.givenName }}
+                    {{ previousItem.shortFamilyName }}
                   </p>
                 </v-card-title>
               </v-row>
@@ -183,9 +180,7 @@
                 class="pt-2"
               >
                 <v-avatar size="90">
-                  <img
-                    src="/images/avatarsDefault/square_250.svg"
-                  >
+                  <img src="/images/avatarsDefault/square_250.svg">
                 </v-avatar>
               </v-row>
 
@@ -193,7 +188,8 @@
               <v-row justify="center">
                 <v-card-title class="ma-0 pa-0">
                   <p class="mb-0">
-                    {{ currentItem.givenName }} {{ currentItem.shortFamilyName }}
+                    {{ currentItem.givenName }}
+                    {{ currentItem.shortFamilyName }}
                   </p>
                 </v-card-title>
               </v-row>
@@ -250,19 +246,24 @@
                       >
                         <p
                           class="ma-0 pa-0"
-                          v-html="$t('regularInfo', {driver: currentItem.givenName +' '+ currentItem.shortFamilyName})"
+                          v-html="
+                            $t('regularInfo', {
+                              driver:
+                                currentItem.givenName +
+                                ' ' +
+                                currentItem.shortFamilyName
+                            })
+                          "
                         />
                       </v-col>
                     </v-row>
-                    <v-row
-                      justify="center"
-                    >
+                    <v-row justify="center">
                       <!-- outward -->
                       <v-col
                         cols="3"
                         class="accent--text pa-0 ma-0"
                       >
-                        {{ $t('outward') }}
+                        {{ $t("outward") }}
                         <v-icon color="accent">
                           mdi-arrow-right-bold
                         </v-icon>
@@ -273,22 +274,80 @@
                         class="pa-0 ma-0"
                       >
                         <day-list-chips
-                          :disabled="currentItem.mode !== null || disabledComponent"
+                          :disabled="
+                            currentItem.mode !== null || disabledComponent
+                          "
                           :is-outward="true"
-                          :sun-active="currentItem.outwardDays[0]['status'] == 1 ? true : false"
-                          :mon-active="currentItem.outwardDays[1]['status'] == 1 ? true : false"
-                          :tue-active="currentItem.outwardDays[2]['status'] == 1 ? true : false"
-                          :wed-active="currentItem.outwardDays[3]['status'] == 1 ? true : false"
-                          :thu-active="currentItem.outwardDays[4]['status'] == 1 ? true : false"
-                          :fri-active="currentItem.outwardDays[5]['status'] == 1 ? true : false"
-                          :sat-active="currentItem.outwardDays[6]['status'] == 1 ? true : false"
-                          :sun-disabled="currentItem.outwardDays[0]['status'] == 0 ? true : false"
-                          :mon-disabled="currentItem.outwardDays[1]['status'] == 0 ? true : false"
-                          :tue-disabled="currentItem.outwardDays[2]['status'] == 0 ? true : false"
-                          :wed-disabled="currentItem.outwardDays[3]['status'] == 0 ? true : false"
-                          :thu-disabled="currentItem.outwardDays[4]['status'] == 0 ? true : false"
-                          :fri-disabled="currentItem.outwardDays[5]['status'] == 0 ? true : false"
-                          :sat-disabled="currentItem.outwardDays[6]['status'] == 0 ? true : false"
+                          :sun-active="
+                            currentItem.outwardDays[0]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :mon-active="
+                            currentItem.outwardDays[1]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :tue-active="
+                            currentItem.outwardDays[2]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :wed-active="
+                            currentItem.outwardDays[3]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :thu-active="
+                            currentItem.outwardDays[4]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :fri-active="
+                            currentItem.outwardDays[5]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :sat-active="
+                            currentItem.outwardDays[6]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :sun-disabled="
+                            currentItem.outwardDays[0]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :mon-disabled="
+                            currentItem.outwardDays[1]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :tue-disabled="
+                            currentItem.outwardDays[2]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :wed-disabled="
+                            currentItem.outwardDays[3]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :thu-disabled="
+                            currentItem.outwardDays[4]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :fri-disabled="
+                            currentItem.outwardDays[5]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :sat-disabled="
+                            currentItem.outwardDays[6]['status'] == 0
+                              ? true
+                              : false
+                          "
                           @change="updateDaysList"
                         />
                       </v-col>
@@ -303,7 +362,7 @@
                         cols="3"
                         class="accent--text ma-0 pa-0"
                       >
-                        {{ $t('return') }}
+                        {{ $t("return") }}
                         <v-icon color="accent">
                           mdi-arrow-left-bold
                         </v-icon>
@@ -315,21 +374,79 @@
                       >
                         <day-list-chips
                           :is-outward="false"
-                          :disabled="currentItem.mode !== null || disabledComponent"
-                          :sun-active="currentItem.returnDays[0]['status'] == 1 ? true : false"
-                          :mon-active="currentItem.returnDays[1]['status'] == 1 ? true : false"
-                          :tue-active="currentItem.returnDays[2]['status'] == 1 ? true : false"
-                          :wed-active="currentItem.returnDays[3]['status'] == 1 ? true : false"
-                          :thu-active="currentItem.returnDays[4]['status'] == 1 ? true : false"
-                          :fri-active="currentItem.returnDays[5]['status'] == 1 ? true : false"
-                          :sat-active="currentItem.returnDays[6]['status'] == 1 ? true : false"
-                          :sun-disabled="currentItem.returnDays[0]['status'] == 0 ? true : false"
-                          :mon-disabled="currentItem.returnDays[1]['status'] == 0 ? true : false"
-                          :tue-disabled="currentItem.returnDays[2]['status'] == 0 ? true : false"
-                          :wed-disabled="currentItem.returnDays[3]['status'] == 0 ? true : false"
-                          :thu-disabled="currentItem.returnDays[4]['status'] == 0 ? true : false"
-                          :fri-disabled="currentItem.returnDays[5]['status'] == 0 ? true : false"
-                          :sat-disabled="currentItem.returnDays[6]['status'] == 0 ? true : false"
+                          :disabled="
+                            currentItem.mode !== null || disabledComponent
+                          "
+                          :sun-active="
+                            currentItem.returnDays[0]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :mon-active="
+                            currentItem.returnDays[1]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :tue-active="
+                            currentItem.returnDays[2]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :wed-active="
+                            currentItem.returnDays[3]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :thu-active="
+                            currentItem.returnDays[4]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :fri-active="
+                            currentItem.returnDays[5]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :sat-active="
+                            currentItem.returnDays[6]['status'] == 1
+                              ? true
+                              : false
+                          "
+                          :sun-disabled="
+                            currentItem.returnDays[0]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :mon-disabled="
+                            currentItem.returnDays[1]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :tue-disabled="
+                            currentItem.returnDays[2]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :wed-disabled="
+                            currentItem.returnDays[3]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :thu-disabled="
+                            currentItem.returnDays[4]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :fri-disabled="
+                            currentItem.returnDays[5]['status'] == 0
+                              ? true
+                              : false
+                          "
+                          :sat-disabled="
+                            currentItem.returnDays[6]['status'] == 0
+                              ? true
+                              : false
+                          "
                           @change="updateDaysList"
                         />
                       </v-col>
@@ -346,7 +463,7 @@
                       >
                         <v-col>
                           <p>
-                            {{ $t('price', {price: getAmount(currentItem)}) }}
+                            {{ $t("price", { price: getAmount(currentItem) }) }}
                           </p>
                         </v-col>
                       </v-row>
@@ -360,7 +477,7 @@
                           <v-icon class="mr-2 ml-n2">
                             mdi-alert-outline
                           </v-icon>
-                          {{ $t('report.labelIsReported') }}
+                          {{ $t("report.labelIsReported") }}
                         </v-col>
                       </v-row>
                       <!-- payment mode choice (if ePay enabled) -->
@@ -391,7 +508,11 @@
                                   mdi-help-circle-outline
                                 </v-icon>
                               </template>
-                              <span>{{ $t('tooltip.message') }}</span>
+                              <span>{{
+                                currentItem.amountTooLow
+                                  ? $t("tooltip.messageAmountTooLow")
+                                  : $t("tooltip.message")
+                              }}</span>
                             </v-tooltip>
                           </v-row>
                           <v-radio
@@ -413,12 +534,15 @@
                               class="text-center"
                             >
                               <v-alert
-                                v-if="currentItem.electronicallyPayable && !currentItem.canPayElectronically"
+                                v-if="
+                                  currentItem.electronicallyPayable &&
+                                    !currentItem.canPayElectronically
+                                "
                                 type="info"
                               >
-                                {{ $t('noOnlinePayment.line1') }}
+                                {{ $t("noOnlinePayment.line1") }}
                                 <br>
-                                {{ $t('noOnlinePayment.line2') }}
+                                {{ $t("noOnlinePayment.line2") }}
                               </v-alert>
                             </v-col>
                           </v-row>
@@ -438,7 +562,7 @@
                                 <v-icon class="mr-2 ml-n2">
                                   mdi-check
                                 </v-icon>
-                                {{ $t('buttons.isConfirmed') }}
+                                {{ $t("buttons.isConfirmed") }}
                               </v-btn>
 
                               <v-btn
@@ -448,7 +572,7 @@
                                 :disabled="disabledComponent"
                                 @click="confirmPayment(2)"
                               >
-                                {{ $t('buttons.directPay') }}
+                                {{ $t("buttons.directPay") }}
                               </v-btn>
                             </v-col>
                           </v-row>
@@ -466,7 +590,7 @@
                       >
                         <v-col>
                           <p>
-                            {{ $t('price', {price: getAmount(currentItem)}) }}
+                            {{ $t("price", { price: getAmount(currentItem) }) }}
                           </p>
                         </v-col>
                       </v-row>
@@ -487,19 +611,22 @@
                               <v-btn
                                 text
                                 class="error--text text-decoration-underline text-lowercase"
-                                :disabled="currentItem.mode !== null || disabledComponent"
+                                :disabled="
+                                  currentItem.mode !== null || disabledComponent
+                                "
                                 v-on="on"
                               >
-                                {{ $t('report.label') }}
+                                {{ $t("report.label") }}
                               </v-btn>
                             </template>
                             <v-card>
                               <v-card-title class="text-h5 primary--text">
-                                {{ $t('report.label') }}
+                                {{ $t("report.label") }}
                               </v-card-title>
                               <v-card-text>
-                                <p> {{ $t('report.text1') }}</p><p class="font-italic">
-                                  {{ $t('report.text2') }}
+                                <p>{{ $t("report.text1") }}</p>
+                                <p class="font-italic">
+                                  {{ $t("report.text2") }}
                                 </p>
                               </v-card-text>
                               <v-card-actions>
@@ -510,7 +637,7 @@
                                   :loading="loading"
                                   @click="dialog = false"
                                 >
-                                  {{ $t('report.cancel') }}
+                                  {{ $t("report.cancel") }}
                                 </v-btn>
                                 <v-btn
                                   color="secondary"
@@ -518,7 +645,7 @@
                                   :loading="loading"
                                   @click="sendReport"
                                 >
-                                  {{ $t('report.valid') }}
+                                  {{ $t("report.valid") }}
                                 </v-btn>
                               </v-card-actions>
                             </v-card>
@@ -536,7 +663,7 @@
                           <v-icon class="mr-2 ml-n2">
                             mdi-alert-outline
                           </v-icon>
-                          {{ $t('report.labelIsReported') }}
+                          {{ $t("report.labelIsReported") }}
                         </v-col>
                       </v-row>
 
@@ -557,7 +684,7 @@
                             <v-icon class="mr-2 ml-n2">
                               mdi-check
                             </v-icon>
-                            {{ $t('buttons.isConfirmed') }}
+                            {{ $t("buttons.isConfirmed") }}
                           </v-btn>
 
                           <!-- Item confirmation -->
@@ -566,10 +693,12 @@
                             color="secondary"
                             class="mt-n12"
                             rounded
-                            :disabled="disabledComponent || getAmount(currentItem)<0"
+                            :disabled="
+                              disabledComponent || getAmount(currentItem) < 0
+                            "
                             @click="confirmPayment(2)"
                           >
-                            {{ $t('buttons.directPayConfirm') }}
+                            {{ $t("buttons.directPayConfirm") }}
                           </v-btn>
                         </v-col>
                       </v-row>
@@ -597,7 +726,7 @@
                       <v-icon class="ml-n2">
                         mdi-menu-left
                       </v-icon>
-                      {{ $t('buttons.previous') }}
+                      {{ $t("buttons.previous") }}
                     </v-btn>
                   </v-col>
                   <!-- next button -->
@@ -610,7 +739,7 @@
                       :disabled="disabledComponent"
                       @click="currentKey++"
                     >
-                      {{ $t('buttons.next') }}
+                      {{ $t("buttons.next") }}
                       <v-icon class="mr-n2">
                         mdi-menu-right
                       </v-icon>
@@ -648,9 +777,7 @@
               </v-row>
               <v-row justify="center">
                 <v-card-title>
-                  <p
-                    class="text-body-2"
-                  >
+                  <p class="text-body-2">
                     {{ nextItem.givenName }} {{ nextItem.shortFamilyName }}
                   </p>
                 </v-card-title>
@@ -661,9 +788,7 @@
       </v-col>
 
       <!-- PAYMENT / CONFIRMATION SECTION -->
-      <v-col
-        cols="4"
-      >
+      <v-col cols="4">
         <!-- Wallet -->
         <!-- <v-row
           justify="center"
@@ -696,7 +821,7 @@
             class="font-weight-bold grey--text"
             cols="12"
           >
-            {{ $t('directPay') }} :
+            {{ $t("directPay") }} :
           </v-col>
           <!-- driver : direct payment received confirmation -->
           <v-col
@@ -704,7 +829,7 @@
             align="center"
             class="font-weight-bold"
           >
-            {{ $tc('directPaymentReceived', directItems.length) }} :
+            {{ $tc("directPaymentReceived", directItems.length) }} :
           </v-col>
           <v-col
             align="left"
@@ -749,7 +874,9 @@
             </v-list>
           </v-col>
         </v-row>
-        <v-divider v-if="ePay && ePayItems.length > 0 && directItems.length > 0" />
+        <v-divider
+          v-if="ePay && ePayItems.length > 0 && directItems.length > 0"
+        />
         <v-row
           v-if="ePay && ePayItems.length > 0"
           justify="center"
@@ -759,12 +886,10 @@
             class="font-weight-bold"
             cols="12"
           >
-            {{ $t('electronicPay') }} :
+            {{ $t("electronicPay") }} :
           </v-col>
           <v-col align="left">
-            <v-list
-              shaped
-            >
+            <v-list shaped>
               <v-list-item
                 v-for="(item, i) in ePayItems"
                 :key="i"
@@ -828,7 +953,7 @@
         >
           <v-col align="center">
             <p class="text-h5">
-              {{ $t('sumToPay', {price: sumToPay}) }}
+              {{ $t("sumToPay", { price: sumToPay }) }}
             </p>
           </v-col>
         </v-row>
@@ -840,12 +965,14 @@
             v-if="tipsEncouragement"
             style="display:block"
           >
-            {{ $t('tipsEncouragement.text', {'platformName':platformName}) }}
+            {{ $t("tipsEncouragement.text", { platformName: platformName }) }}
             <a
               :href="tipsEncouragementLink"
               target="_blank"
               title="a"
-            >{{ $t('tipsEncouragement.textLink') }}</a>.
+            >{{
+              $t("tipsEncouragement.textLink")
+            }}</a>.
           </p>
           <v-btn
             rounded
@@ -853,7 +980,7 @@
             :loading="loading"
             @click="sendValidatedPayments"
           >
-            {{ $t('buttons.validate') }}
+            {{ $t("buttons.validate") }}
           </v-btn>
         </v-row>
       </v-col>
@@ -862,34 +989,36 @@
       v-else
       justify="center"
     >
-      <v-col
-        cols="8"
-      >
+      <v-col cols="8">
         <v-alert
           v-alert
           text
           type="success"
         >
-          {{ $t('noMoreItems') }}
+          {{ $t("noMoreItems") }}
         </v-alert>
       </v-col>
     </v-row>
   </v-container>
 </template>
 <script>
-
 import maxios from "@utils/maxios";
 import moment from "moment";
 import DayListChips from "@components/utilities/DayListChips";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/payment/Payment/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/payment/Payment/";
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
     }
   },
   components: {
@@ -924,7 +1053,7 @@ export default {
   data() {
     return {
       locale: localStorage.getItem("X-LOCALE"),
-      message:null,
+      message: null,
       ePay: this.paymentElectronicActive,
       regular: this.frequency == 1 ? false : true,
       isPayment: this.type == 1 ? true : false,
@@ -939,35 +1068,51 @@ export default {
       disabledComponent: false,
       dialog: false,
       loadingPage: true,
-      tipsEncouragementLink: this.$t('tipsEncouragement.link')
+      tipsEncouragementLink: this.$t("tipsEncouragement.link")
     };
   },
   computed: {
     computedSelectedWeekDays() {
       if (this.selectedWeekDays === null) return "";
-      return this.$t("from")+moment(this.selectedWeekDays[0]).format(this.$t("ll"))+this.$t("to")+moment(this.selectedWeekDays[1]).format(this.$t("ll"))
+      return (
+        this.$t("from") +
+        moment(this.selectedWeekDays[0]).format(this.$t("ll")) +
+        this.$t("to") +
+        moment(this.selectedWeekDays[1]).format(this.$t("ll"))
+      );
     },
     maxDay() {
-      return moment().startOf('week').subtract(1, 'days').format('Y-MM-DD');
+      return moment()
+        .startOf("week")
+        .subtract(1, "days")
+        .format("Y-MM-DD");
     },
     currentItem: function() {
-      return this.paymentItems ? this.paymentItems[this.currentKey] : null
+      return this.paymentItems ? this.paymentItems[this.currentKey] : null;
     },
     previousItem: function() {
-      return this.paymentItems && this.currentKey>0 && this.paymentItems[this.currentKey-1] ? this.paymentItems[this.currentKey-1] : null
+      return this.paymentItems &&
+        this.currentKey > 0 &&
+        this.paymentItems[this.currentKey - 1]
+        ? this.paymentItems[this.currentKey - 1]
+        : null;
     },
     nextItem: function() {
-      return this.paymentItems && this.paymentItems[this.currentKey+1] ? this.paymentItems[this.currentKey+1] : null
+      return this.paymentItems && this.paymentItems[this.currentKey + 1]
+        ? this.paymentItems[this.currentKey + 1]
+        : null;
     },
     itemDate: function() {
-      return this.currentItem !== null && this.currentItem.date !== null ? moment(this.currentItem.date.date).format(this.$t("ll")) : null;
+      return this.currentItem !== null && this.currentItem.date !== null
+        ? moment(this.currentItem.date.date).format(this.$t("ll"))
+        : null;
     },
     directItems: function() {
       var items = [];
       if (this.paymentItems !== null) {
         this.paymentItems.forEach((item, key) => {
           // mode 2 = direct payment
-          if (item.mode==2) items.push(item);
+          if (item.mode == 2) items.push(item);
         });
       }
       return items;
@@ -977,14 +1122,14 @@ export default {
       if (this.paymentItems !== null) {
         this.paymentItems.forEach((item, key) => {
           // mode 1 = electronic payment
-          if (item.mode==1) items.push(item);
+          if (item.mode == 1) items.push(item);
         });
       }
       return items;
     },
     sumToPay: function() {
       var sum = 0;
-      if (this.ePayItems.length>0) {
+      if (this.ePayItems.length > 0) {
         this.ePayItems.forEach((item, key) => {
           sum += parseFloat(this.getAmount(item));
         });
@@ -992,7 +1137,7 @@ export default {
       return sum;
     }
   },
-  mounted () {
+  mounted() {
     // if regular, we search the first week where there are payments to confirm or pay
     if (this.frequency == 2) {
       this.getFirstWeek();
@@ -1005,20 +1150,24 @@ export default {
     moment.locale(this.locale);
   },
   methods: {
-
     // get the first week for which payments has to be made or collected
     getFirstWeek() {
       // we set params
       let params = {
-        'id':this.selectedId
-      }
+        id: this.selectedId
+      };
       // we get all paymentItems
-      maxios.post(this.$t("payments.getFirstWeek"), params)
+      maxios
+        .post(this.$t("payments.getFirstWeek"), params)
         .then(res => {
           this.selectedWeekNumber = res.data.week;
           this.selectedWeekDays = [
-            moment(this.selectedWeekNumber,'wwYYYY').startOf('week').format('Y-MM-DD'),
-            moment(this.selectedWeekNumber,'wwYYYY').endOf('week').format('Y-MM-DD')
+            moment(this.selectedWeekNumber, "wwYYYY")
+              .startOf("week")
+              .format("Y-MM-DD"),
+            moment(this.selectedWeekNumber, "wwYYYY")
+              .endOf("week")
+              .format("Y-MM-DD")
           ];
           this.getCalendar();
         })
@@ -1028,29 +1177,30 @@ export default {
     getCalendar() {
       // we set params
       let params = {
-        'type':this.type
-      }
+        type: this.type
+      };
       // we get all paymentItems
-      maxios.post(this.$t("payments.getCalendar"), params)
-        .then(res => {
-          this.periods = res.data;
-        });
+      maxios.post(this.$t("payments.getCalendar"), params).then(res => {
+        this.periods = res.data;
+      });
     },
     // get the first day of the current year, used to be sure to have good week numbers in week picker
     getFirstDayOfYear() {
-      return moment().startOf('year').format('E')
+      return moment()
+        .startOf("year")
+        .format("E");
     },
     // restrict datepicker choices to the days carpooled
     allowedDates(val) {
-      if (this.periods.length ==0) return false;
+      if (this.periods.length == 0) return false;
       var curDate = moment(val);
       var allowed = false;
-      this.periods.forEach((item) => {
+      this.periods.forEach(item => {
         var fromDate = moment(item.fromDate.date);
         var toDate = moment(item.toDate.date);
         if (curDate.isSameOrAfter(fromDate) && curDate.isSameOrBefore(toDate)) {
           // the items are returned using sunday as first day of week, so we use isoWeekday
-          if (item.days.indexOf(parseInt(curDate.isoWeekday()))>-1) {
+          if (item.days.indexOf(parseInt(curDate.isoWeekday())) > -1) {
             allowed = true;
             return;
           }
@@ -1059,10 +1209,17 @@ export default {
       return allowed;
     },
     changeWeekDays() {
-      this.selectedWeekNumber = ''+moment(this.selectedWeekDays[0]).isoWeek()+moment(this.selectedWeekDays[0]).year();
+      this.selectedWeekNumber =
+        "" +
+        moment(this.selectedWeekDays[0]).isoWeek() +
+        moment(this.selectedWeekDays[0]).year();
       let weekDays = [
-        moment(this.selectedWeekDays[0]).startOf('week').format('Y-MM-DD'),
-        moment(this.selectedWeekDays[0]).endOf('week').format('Y-MM-DD')
+        moment(this.selectedWeekDays[0])
+          .startOf("week")
+          .format("Y-MM-DD"),
+        moment(this.selectedWeekDays[0])
+          .endOf("week")
+          .format("Y-MM-DD")
       ];
       this.selectedWeekDays = weekDays;
       this.menuSelectedWeekDays = false;
@@ -1072,24 +1229,26 @@ export default {
       this.loadingPage = true;
       // we set params
       let params = {
-        'frequency':this.frequency,
-        'type':this.type,
-        'week':(this.selectedWeekNumber && this.selectedWeekNumber.length == 5) ? '0'+this.selectedWeekNumber : this.selectedWeekNumber
-      }
+        frequency: this.frequency,
+        type: this.type,
+        week:
+          this.selectedWeekNumber && this.selectedWeekNumber.length == 5
+            ? "0" + this.selectedWeekNumber
+            : this.selectedWeekNumber
+      };
       // we get all paymentItems
-      maxios.post(this.$t("payments.getPayments"), params)
-        .then(res => {
-          var items = res.data;
-          items.forEach((item, key) => {
-            // we set dynamic parameters
-            item.mode = null;
-            if (item.id === this.selectedId) {
-              this.currentKey = key;
-            }
-          });
-          this.paymentItems = items;
-          this.loadingPage = false;
+      maxios.post(this.$t("payments.getPayments"), params).then(res => {
+        var items = res.data;
+        items.forEach((item, key) => {
+          // we set dynamic parameters
+          item.mode = null;
+          if (item.id === this.selectedId) {
+            this.currentKey = key;
+          }
         });
+        this.paymentItems = items;
+        this.loadingPage = false;
+      });
     },
     getAmount(item) {
       if (item.frequency == 1) {
@@ -1099,38 +1258,40 @@ export default {
       // regular, we need to check each selected outward and return days
       let numberOutwardDays = 0;
       let numberReturnDays = 0;
-      item.outwardDays.forEach((day) => {
+      item.outwardDays.forEach(day => {
         if (day.status == 1) numberOutwardDays++;
       });
       if (item.returnDays) {
-        item.returnDays.forEach((day) => {
+        item.returnDays.forEach(day => {
           if (day.status == 1) numberReturnDays++;
         });
       }
-      return numberOutwardDays * item.outwardAmount +  numberReturnDays * item.returnAmount;
+      return (
+        numberOutwardDays * item.outwardAmount +
+        numberReturnDays * item.returnAmount
+      );
     },
     // method to update the dayslist of regular payment
     updateDaysList(daysList) {
       if (this.currentItem) {
         if (daysList.isOutward) {
-          this.currentItem.outwardDays[0]['status'] = daysList.sun
-          this.currentItem.outwardDays[1]['status'] = daysList.mon
-          this.currentItem.outwardDays[2]['status'] = daysList.tue
-          this.currentItem.outwardDays[3]['status'] = daysList.wed
-          this.currentItem.outwardDays[4]['status'] = daysList.thu
-          this.currentItem.outwardDays[5]['status'] = daysList.fri
-          this.currentItem.outwardDays[6]['status'] = daysList.sat
+          this.currentItem.outwardDays[0]["status"] = daysList.sun;
+          this.currentItem.outwardDays[1]["status"] = daysList.mon;
+          this.currentItem.outwardDays[2]["status"] = daysList.tue;
+          this.currentItem.outwardDays[3]["status"] = daysList.wed;
+          this.currentItem.outwardDays[4]["status"] = daysList.thu;
+          this.currentItem.outwardDays[5]["status"] = daysList.fri;
+          this.currentItem.outwardDays[6]["status"] = daysList.sat;
         } else if (!daysList.isOutward) {
-          this.currentItem.returnDays[0]['status'] = daysList.sun
-          this.currentItem.returnDays[1]['status'] = daysList.mon
-          this.currentItem.returnDays[2]['status'] = daysList.tue
-          this.currentItem.returnDays[3]['status'] = daysList.wed
-          this.currentItem.returnDays[4]['status'] = daysList.thu
-          this.currentItem.returnDays[5]['status'] = daysList.fri
-          this.currentItem.returnDays[6]['status'] = daysList.sat
+          this.currentItem.returnDays[0]["status"] = daysList.sun;
+          this.currentItem.returnDays[1]["status"] = daysList.mon;
+          this.currentItem.returnDays[2]["status"] = daysList.tue;
+          this.currentItem.returnDays[3]["status"] = daysList.wed;
+          this.currentItem.returnDays[4]["status"] = daysList.thu;
+          this.currentItem.returnDays[5]["status"] = daysList.fri;
+          this.currentItem.returnDays[6]["status"] = daysList.sat;
         }
       }
-
     },
     // confirm the current item
     confirmPayment(mode) {
@@ -1152,36 +1313,49 @@ export default {
       this.loading = true;
       this.disabledComponent = true;
       let payments = [];
-      this.paymentItems.forEach((paymentItem) => {
+      this.paymentItems.forEach(paymentItem => {
         // if punctual
         if (this.frequency == 1) {
           if (paymentItem.mode) {
-            payments.push({"id":paymentItem.id, "mode":paymentItem.mode, "status":1});
+            payments.push({
+              id: paymentItem.id,
+              mode: paymentItem.mode,
+              status: 1
+            });
           }
         } else {
           // if regular
           // we add all available days of the outward travel
-          paymentItem.outwardDays.forEach((day) => {
+          paymentItem.outwardDays.forEach(day => {
             // we check if we have made an action of payment on the paymentItem and we send it only if that's the case
-            if (day.id && paymentItem.mode ) {
-              payments.push({"id":day.id, "mode":paymentItem.mode, "status":day.status});
+            if (day.id && paymentItem.mode) {
+              payments.push({
+                id: day.id,
+                mode: paymentItem.mode,
+                status: day.status
+              });
             }
-          })
+          });
           // we add all available days of the return travel if return travel exist
           if (paymentItem.returnDays && paymentItem.returnDays.length > 0) {
-            paymentItem.returnDays.forEach((day) => {
-              if (day.id && paymentItem.mode ) {
-                payments.push({"id":day.id, "mode":paymentItem.mode, "status":day.status});
+            paymentItem.returnDays.forEach(day => {
+              if (day.id && paymentItem.mode) {
+                payments.push({
+                  id: day.id,
+                  mode: paymentItem.mode,
+                  status: day.status
+                });
               }
-            })
+            });
           }
         }
       });
       //we post datas
-      maxios.post(this.$t("payments.postPayments"), {
-        "type": this.type,
-        "items": payments
-      })
+      maxios
+        .post(this.$t("payments.postPayments"), {
+          type: this.type,
+          items: payments
+        })
         .then(res => {
           if (res.data.redirectUrl) {
             window.location.href = res.data.redirectUrl;
@@ -1189,7 +1363,7 @@ export default {
             window.location.href = this.$t("redirectAfterPayment");
           }
         })
-        .catch((error) => {
+        .catch(error => {
           this.disabledComponent = false;
           this.loading = false;
           console.error(error);
@@ -1202,38 +1376,50 @@ export default {
       let payments = [];
       // if punctual
       if (this.frequency == 1) {
-        payments.push({"id":this.currentItem.id, "mode":2, "status":3});
+        payments.push({ id: this.currentItem.id, mode: 2, status: 3 });
       } else {
         // if regular
         // we add all available days of the outward travel
-        this.currentItem.outwardDays.forEach((day) => {
+        this.currentItem.outwardDays.forEach(day => {
           if (day.id) {
-            payments.push({"id":day.id, "mode":2, "status":day.status == 1 ? 3 : day.status});
+            payments.push({
+              id: day.id,
+              mode: 2,
+              status: day.status == 1 ? 3 : day.status
+            });
           }
-        })
+        });
         // we add all available days of the return travel if return travel exist
-        if (this.currentItem.regularDays && this.currentItem.returnDays.length > 0) {
-          this.currentItem.returnDays.forEach((day) => {
+        if (
+          this.currentItem.regularDays &&
+          this.currentItem.returnDays.length > 0
+        ) {
+          this.currentItem.returnDays.forEach(day => {
             if (day.id) {
-              payments.push({"id":day.id, "mode":2, "status":day.status == 1 ? 3 : day.status});
+              payments.push({
+                id: day.id,
+                mode: 2,
+                status: day.status == 1 ? 3 : day.status
+              });
             }
-          })
+          });
         }
       }
 
       // we post data
-      maxios.post(this.$t("payments.postPayments"), {
-        "type": this.type,
-        "items": payments
-      })
+      maxios
+        .post(this.$t("payments.postPayments"), {
+          type: this.type,
+          items: payments
+        })
         .then(res => {
           this.loading = false;
           this.dialog = false;
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
         });
-    },
+    }
   }
 };
 </script>
