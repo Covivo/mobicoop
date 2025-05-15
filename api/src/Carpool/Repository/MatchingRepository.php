@@ -27,6 +27,7 @@ use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @method null|Matching find($id, $lockMode = null, $lockVersion = null)
@@ -109,9 +110,9 @@ class MatchingRepository
         $query = $this->repository->createQueryBuilder('m')
             ->join('m.proposalOffer', 'p')
             ->where('m.proposalRequest = :proposal')
-            ->andWhere('p.user is not null')
-            ->setParameter('proposal', $proposal)
         ;
+
+        $query = $this->_getProposalMatchingGeneric($query, $proposal);
 
         return $query->getQuery()->getResult();
     }
@@ -121,10 +122,22 @@ class MatchingRepository
         $query = $this->repository->createQueryBuilder('m')
             ->join('m.proposalRequest', 'p')
             ->where('m.proposalOffer = :proposal')
-            ->andWhere('p.user is not null')
-            ->setParameter('proposal', $proposal)
         ;
 
+        $query = $this->_getProposalMatchingGeneric($query, $proposal);
+
         return $query->getQuery()->getResult();
+    }
+
+    private function _getProposalMatchingGeneric(QueryBuilder $qb, Proposal $proposal)
+    {
+        $qb
+            ->andWhere('p.user is not null')
+            ->setParameter('proposal', $proposal)
+            ->andWhere('p.paused = 0')
+            ->andWhere('p.private = 0')
+        ;
+
+        return $qb;
     }
 }

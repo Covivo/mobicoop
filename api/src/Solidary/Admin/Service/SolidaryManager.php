@@ -186,6 +186,8 @@ class SolidaryManager
     {
         $solidary = $this->solidaryRepository->find($id);
 
+        $this->solidaryTransportMatcher->match($solidary);      // #9122 - match transport volunteers
+
         // link potential outward and return solidaryMatchings that would have not been made yet (as the link between Matchings are made after the SolidaryMatchings)
         $this->solidaryMatchingRepository->linkRelatedSolidaryMatchings($solidary->getId());
 
@@ -327,6 +329,7 @@ class SolidaryManager
                     $carpools['return'][] = $carpool;
                 }
             } else {
+
                 // volunteer matching
                 $volunteer = [
                     'matchingId' => $solidaryMatching->getId(),

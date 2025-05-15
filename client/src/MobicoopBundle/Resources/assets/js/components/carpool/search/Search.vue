@@ -378,7 +378,7 @@ export default {
         this.post(`${this.$t("buttons.publish.route")}`, lParams);
       }else{
         if (this.params && this.params.eventId){
-          localStorage.setItem('event', JSON.stringify(lParams));
+          localStorage.setItem('adSettings', JSON.stringify(lParams));
         }
         window.location.href=this.$t("buttons.shareAnAd.route");
       }

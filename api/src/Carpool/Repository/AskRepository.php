@@ -49,7 +49,7 @@ class AskRepository
         return $this->repository->find($id);
     }
 
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -195,7 +195,7 @@ class AskRepository
             )
             or
             (
-                c.frequency = :regular and c.fromDate <= :toDate and c.toDate >= :fromDate and
+                c.frequency = :regular and c.fromDate <= :toDate and c.toDate >= :fromDate and c.toDate >= :toDate and
                 ('.$regularWhere.')
             )
         )')
@@ -323,7 +323,7 @@ class AskRepository
      *
      * @return null|Ask[] The asks if found
      */
-    public function findAcceptedAsksForUser(User $user, User $user2 = null)
+    public function findAcceptedAsksForUser(User $user, ?User $user2 = null)
     {
         $query = $this->repository->createQueryBuilder('a')
             ->join('a.criteria', 'c')

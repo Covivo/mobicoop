@@ -22,7 +22,7 @@
           {{ $t('multipleTimesSlots') }}
         </p>
       </v-col>
-      
+
       <v-col v-else>
         <v-row>
           <!--Outward-->
@@ -35,7 +35,7 @@
             <span
               v-if="!isRefined"
               class="accent--text text--accent font-weight-bold text-body-1"
-            >{{ isReturn ? $t('return') : $t('outward') }}</span>
+            >{{ getSchedule }}</span>
 
             <v-icon
               v-if="!isRefined"
@@ -49,32 +49,6 @@
               class="primary--text text--darken-2 text-body-1 text-capitalize"
             >
               {{ dateTimeFormat === null ? outwardTime : formatTime(outwardTime) }}
-            </span>
-            <span
-              v-else
-              class="primary--text text--darken-2 text-body-1"
-            >
-              {{ $t('multipleTimesSlots') }}
-            </span>
-          </v-col>
-
-          <!--Return-->
-          <v-col
-            v-if="returnTime"
-            class="py-0"
-            :align="isRegular ? 'right' : 'left'"
-          >
-            <span class="accent--text  font-weight-bold text-body-1">{{ $t('return') }}</span>
-
-            <v-icon class="accent--text font-weight-bold">
-              mdi-arrow-left
-            </v-icon>
-
-            <span
-              v-if="!multipleReturn"
-              class="primary--text text--darken-2 text-body-1 text-capitalize"
-            >
-              {{ dateTimeFormat === null ? returnTime : formatTime(returnTime) }}
             </span>
             <span
               v-else
@@ -149,11 +123,20 @@ export default {
       type: Boolean,
       default: true
     },
+    isDriver: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
       locale: localStorage.getItem("X-LOCALE"),
     };
+  },
+  computed: {
+    getSchedule() {
+      return this.isReturn ? this.$t('return') : this.$t('outward');
+    }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
