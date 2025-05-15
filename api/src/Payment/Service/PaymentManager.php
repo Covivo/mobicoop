@@ -101,7 +101,6 @@ class PaymentManager
     private $actionRepository;
     private $consumptionFeedbackProvider;
     private $logger;
-    private $paymentMinimumAmount;
 
     private $_defaultCarpoolTimezone;
 
@@ -147,8 +146,7 @@ class PaymentManager
         ActionRepository $actionRepository,
         ConsumptionFeedbackDataProvider $consumptionFeedbackProvider,
         JourneyValidation $journeyValidation,
-        string $defaultCarpoolTimezone,
-        float $paymentMinimumAmount
+        string $defaultCarpoolTimezone
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -176,7 +174,6 @@ class PaymentManager
         $this->consumptionFeedbackProvider = $consumptionFeedbackProvider;
         $this->_journeyValidation = $journeyValidation;
         $this->_defaultCarpoolTimezone = $defaultCarpoolTimezone;
-        $this->paymentMinimumAmount = $paymentMinimumAmount;
     }
 
     /**
@@ -361,8 +358,7 @@ class PaymentManager
                     $paymentItem->setElectronicallyPayable(false);
                 } else {
                     if ($paymentProfile[0]->isElectronicallyPayable()
-                        && PaymentProfile::VALIDATION_VALIDATED == $paymentProfile[0]->getValidationStatus()
-                        && $paymentItem->getAmount() >= $this->paymentMinimumAmount) {
+                        && PaymentProfile::VALIDATION_VALIDATED == $paymentProfile[0]->getValidationStatus()) {
                         $paymentItem->setElectronicallyPayable(true);
                     }
                 }
