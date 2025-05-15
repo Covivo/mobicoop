@@ -25,7 +25,7 @@
     </v-alert>
 
     <MissingDataToPayElectronically
-      v-if="user.missingDataToPayElectronically.length > 0 && paymentElectronicActive"
+      v-if="user.missingDataToPayElectronically.length >= 0 && paymentElectronicActive"
       :user="user"
     />
 
