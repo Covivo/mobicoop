@@ -694,12 +694,12 @@ class CarpoolController extends AbstractController
         if (isset($params['date']) && '' != $params['date']) {
             $date = new \DateTime($params['date']);
         }
-        //  else {
-        //     $date = new \DateTime();
-        // }
         $time = null;
         if (isset($params['time']) && '' != $params['time']) {
-            $time = \DateTime::createFromFormat('H:i', $params['time']);
+            $time = new \DateTime($params['time']);
+            if (!$time) {
+                $time = \DateTime::createFromFormat('H:i', $params['time']);
+            }
         }
         $regular = isset($params['regular']) ? $params['regular'] : false;
         $strictDate = isset($params['strictDate']) ? $params['strictDate'] : null;
@@ -716,7 +716,7 @@ class CarpoolController extends AbstractController
             $params['origin'],
             $params['destination'],
             $date,
-            $time,
+            (!$time) ? null : $time,
             $regular,
             $strictDate,
             $strictPunctual,
