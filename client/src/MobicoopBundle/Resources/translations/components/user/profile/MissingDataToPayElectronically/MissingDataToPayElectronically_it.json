@@ -1,6 +1,7 @@
 {
   "title": "Paiement en ligne",
   "text": "Pour réaliser des paiements en ligne sur le service, merci de compléter les champs suivants",
+  "text2": "<b>Attention</b> le service de paiement va changer le 12/06/2025.</br>Renseignez à nouveau vos coordonnées bancaires dès le lendemain pour recevoir des paiements en ligne ou valider des preuves de covoiturage !",
   "givenName": "Prénom",
   "familyName": "Nom de famille",
   "birthDate": "Date de naissance",
