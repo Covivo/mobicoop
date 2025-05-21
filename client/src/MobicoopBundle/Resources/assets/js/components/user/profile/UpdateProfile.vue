@@ -7,39 +7,26 @@
       top
     >
       {{ errorUpdate ? textSnackError : textSnackOk }}
-      <v-btn
-        color="white"
-        text
-        @click="snackbar = false"
-      >
+      <v-btn color="white" text @click="snackbar = false">
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
 
-    <v-alert
-      v-if="savedCo2 > 0"
-      type="success"
-      outlined
-    >
+    <v-alert v-if="savedCo2 > 0" type="success" outlined>
       {{ $t("savedCo2", { savedCo2: savedCo2 }) }} CO<sub>2</sub>
     </v-alert>
 
     <MissingDataToPayElectronically
-      v-if="user.missingDataToPayElectronically.length > 0 && paymentElectronicActive"
+      v-if="
+        user.missingDataToPayElectronically.length >= 0 &&
+          paymentElectronicActive
+      "
       :user="user"
     />
 
     <!-- Main form -->
-    <v-form
-      ref="form"
-      v-model="valid"
-      lazy-validation
-    >
-      <v-card
-        flat
-        color="grey lighten-4"
-        class="mb-8"
-      >
+    <v-form ref="form" v-model="valid" lazy-validation>
+      <v-card flat color="grey lighten-4" class="mb-8">
         <v-card-title>
           {{ $t("titles.personnalInfos") }}
           <v-spacer />
@@ -63,10 +50,7 @@
                 class="email"
               >
                 <template v-slot:append>
-                  <v-tooltip
-                    color="info"
-                    top
-                  >
+                  <v-tooltip color="info" top>
                     <template v-slot:activator="{ on }">
                       <v-icon
                         v-if="email && emailVerified"
@@ -112,15 +96,9 @@
               </v-btn>
             </v-col>
           </v-row>
-          <v-row
-            id="phone-number"
-            no-gutters
-          >
+          <v-row id="phone-number" no-gutters>
             <!-- Telephone -->
-            <v-col
-              v-if="user.phoneCode"
-              cols="2"
-            >
+            <v-col v-if="user.phoneCode" cols="2">
               <v-select
                 v-model="phoneCode"
                 :items="flags"
@@ -167,8 +145,8 @@
                     ? '10'
                     : '12'
                   : phoneCode
-                    ? '4'
-                    : '6'
+                  ? '4'
+                  : '6'
               "
             >
               <v-text-field
@@ -178,10 +156,7 @@
                 :error-messages="phoneErrors"
               >
                 <template v-slot:append>
-                  <v-tooltip
-                    color="info"
-                    top
-                  >
+                  <v-tooltip color="info" top>
                     <template v-slot:activator="{ on }">
                       <v-icon
                         v-if="telephone && phoneVerified"
@@ -238,10 +213,7 @@
                 :label="$t('phone.validation.label')"
               />
             </v-col>
-            <v-col
-              cols="6"
-              class="d-flex justify-center"
-            >
+            <v-col cols="6" class="d-flex justify-center">
               <v-btn
                 rounded
                 color="secondary"
@@ -275,17 +247,9 @@
               color="secondary"
               @change="dialog = !newsSubscription"
             >
-              <v-tooltip
-                slot="append"
-                left
-                color="info"
-                :max-width="'35%'"
-              >
+              <v-tooltip slot="append" left color="info" :max-width="'35%'">
                 <template v-slot:activator="{ on }">
-                  <v-icon
-                    justify="left"
-                    v-on="on"
-                  >
+                  <v-icon justify="left" v-on="on">
                     mdi-help-circle-outline
                   </v-icon>
                 </template>
@@ -293,11 +257,7 @@
               </v-tooltip>
             </v-switch>
             <!--NewsSubscription Confirmation Popup-->
-            <v-dialog
-              v-model="dialog"
-              persistent
-              max-width="500"
-            >
+            <v-dialog v-model="dialog" persistent max-width="500">
               <v-card>
                 <v-card-title class="text-h5">
                   {{ $t("news.confirmation.title") }}
@@ -335,10 +295,7 @@
             />
           </v-row>
 
-          <v-row
-            no-gutters
-            align="center"
-          >
+          <v-row no-gutters align="center">
             <!-- Informations fields -->
             <v-col cols="7">
               <!--GivenName-->
@@ -410,31 +367,15 @@
             </v-col>
             <!-- Avatar -->
             <v-col cols="5">
-              <v-row
-                justify="center"
-                align="center"
-              >
-                <v-col
-                  align="center"
-                  class="d-flex justify-center"
-                >
-                  <v-avatar
-                    color="lighten-3"
-                    size="225px"
-                  >
-                    <img
-                      id="avatar"
-                      :src="urlAvatar"
-                      alt="avatar"
-                    >
+              <v-row justify="center" align="center">
+                <v-col align="center" class="d-flex justify-center">
+                  <v-avatar color="lighten-3" size="225px">
+                    <img id="avatar" :src="urlAvatar" alt="avatar" />
                   </v-avatar>
                 </v-col>
               </v-row>
               <v-row justify="center">
-                <v-col
-                  v-if="!displayFileUpload"
-                  class="d-flex justify-center"
-                >
+                <v-col v-if="!displayFileUpload" class="d-flex justify-center">
                   <v-btn
                     :loading="loadingDelete"
                     color="warning"
@@ -443,20 +384,13 @@
                     @click="avatarDelete"
                   >
                     {{ $t("avatar.delete.label") }}
-                    <v-icon
-                      right
-                      dark
-                    >
+                    <v-icon right dark>
                       mdi-delete
                     </v-icon>
                   </v-btn>
                 </v-col>
 
-                <v-col
-                  v-else
-                  cols="10"
-                  class="d-flex justify-center"
-                >
+                <v-col v-else cols="10" class="d-flex justify-center">
                   <v-file-input
                     ref="avatar"
                     v-model="avatar"
@@ -494,11 +428,7 @@
               >
                 {{ $t("save") }}
               </v-btn>
-              <v-dialog
-                v-model="dialogEmail"
-                persistent
-                max-width="450"
-              >
+              <v-dialog v-model="dialogEmail" persistent max-width="450">
                 <v-card>
                   <v-card-title class="headline">
                     {{ $t("dialogEmail.title") }}
@@ -506,18 +436,10 @@
                   <v-card-text v-html="$t('dialogEmail.content')" />
                   <v-card-actions>
                     <v-spacer />
-                    <v-btn
-                      color="error"
-                      text
-                      @click="cancel"
-                    >
+                    <v-btn color="error" text @click="cancel">
                       {{ $t("dialogEmail.buttons.cancelUpdate") }}
                     </v-btn>
-                    <v-btn
-                      color="primary darken-1"
-                      text
-                      @click="validate"
-                    >
+                    <v-btn color="primary darken-1" text @click="validate">
                       {{ $t("dialogEmail.buttons.confirmUpdate") }}
                     </v-btn>
                   </v-card-actions>
@@ -530,12 +452,7 @@
     </v-form>
 
     <!-- Address form -->
-    <v-card
-      id="user-postalAddress"
-      flat
-      color="grey lighten-4"
-      class="mb-8"
-    >
+    <v-card id="user-postalAddress" flat color="grey lighten-4" class="mb-8">
       <v-card-title>
         {{ $t("homeTown.label") }}
       </v-card-title>
@@ -556,10 +473,7 @@
             />
           </v-col>
         </v-row>
-        <v-row
-          no-gutters
-          justify="center"
-        >
+        <v-row no-gutters justify="center">
           <v-col class="d-flex justify-center">
             <v-btn
               rounded
@@ -578,11 +492,7 @@
     </v-card>
 
     <!-- Password form -->
-    <v-card
-      flat
-      color="grey lighten-4"
-      class="mb-8"
-    >
+    <v-card flat color="grey lighten-4" class="mb-8">
       <v-card-title>
         {{ $t("titles.password") }}
       </v-card-title>
@@ -605,21 +515,14 @@
     />
 
     <!-- Delete form -->
-    <v-card
-      flat
-      color="grey lighten-4"
-      class="mb-8"
-    >
+    <v-card flat color="grey lighten-4" class="mb-8">
       <v-card-title>
         {{ $t("buttons.supprimerAccount") }}
       </v-card-title>
       <v-card-text v-if="!ssoExternalAccountDeletion">
         <v-row justify="center">
           <v-col class="d-flex justify-center">
-            <v-dialog
-              v-model="dialogDelete"
-              width="500"
-            >
+            <v-dialog v-model="dialogDelete" width="500">
               <template v-slot:activator="{ on }">
                 <!--Delete button -->
                 <v-btn
@@ -646,11 +549,7 @@
                 >
                   {{ $t("dialog.titles.deletionImpossible") }}
                 </v-card-title>
-                <v-card-title
-                  v-else
-                  class="text-h5"
-                  primary-title
-                >
+                <v-card-title v-else class="text-h5" primary-title>
                   {{ $t("dialog.titles.deleteAccount") }}
                 </v-card-title>
 
@@ -663,10 +562,7 @@
                     v-else-if="hasCreatedEvents"
                     v-html="$t('dialog.content.errorEvents')"
                   />
-                  <p
-                    v-else
-                    v-html="$t('dialog.content.deleteAccount')"
-                  />
+                  <p v-else v-html="$t('dialog.content.deleteAccount')" />
                 </v-card-text>
 
                 <v-divider />
@@ -721,10 +617,7 @@
     </v-card>
 
     <!-- PUBLIC PROFILE DIALOG -->
-    <v-dialog
-      v-model="dialogPublicProfile"
-      width="100%"
-    >
+    <v-dialog v-model="dialogPublicProfile" width="100%">
       <v-card>
         <v-card-title class="headline grey lighten-2">
           {{ $t("publicProfile.title") }}
@@ -743,11 +636,7 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="primary"
-            text
-            @click="dialogPublicProfile = false"
-          >
+          <v-btn color="primary" text @click="dialogPublicProfile = false">
             {{ $t("publicProfile.close") }}
           </v-btn>
         </v-card-actions>
