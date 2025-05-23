@@ -65,7 +65,6 @@ use Stripe\Transfer as StripeTransfer;
  */
 class StripeProvider implements PaymentProviderInterface
 {
-    public const BUSINESS_URL_SANDBOX = 'https://yourbusiness.com/';
     public const SERVER_URL = 'https://api.stripe.com/';
     public const LANDING_AFTER_PAYMENT = 'paiements/paye';
     public const LANDING_AFTER_PAYMENT_MOBILE = '#/carpools/payment/paye';
@@ -99,6 +98,7 @@ class StripeProvider implements PaymentProviderInterface
         string $validationDocsPath,
         string $baseUri,
         string $baseMobileUri,
+        string $sandBoxReturnUrl,
         PaymentProfileRepository $paymentProfileRepository
     ) {
         $this->serverUrl = self::SERVER_URL;
@@ -110,7 +110,7 @@ class StripeProvider implements PaymentProviderInterface
         $this->currency = $currency;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->validationDocsPath = $validationDocsPath;
-        $this->baseUri = (!$sandBoxMode) ? $baseUri : self::BUSINESS_URL_SANDBOX;
+        $this->baseUri = (!$sandBoxMode) ? $baseUri : $sandBoxReturnUrl;
         $this->baseMobileUri = $baseMobileUri;
 
         $expectedPrefix = $sandBoxMode ? 'sk_test' : 'sk_live';

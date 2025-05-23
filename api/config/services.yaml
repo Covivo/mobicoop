@@ -1154,6 +1154,7 @@ services:
       $validationDocsPath: "%env(resolve:PAYMENT_VALIDATION_DOCS_PATH)%"
       $baseUri: "%env(string:BASE_URI)%"
       $baseMobileUri: "%env(string:BASE_MOBILE_URI)%"
+      $sandBoxReturnUrl: "%env(string:PAYMENT_SANDBOX_RETURN_URL)%"
 
   App\Payment\Service\PaymentManager:
     arguments:
