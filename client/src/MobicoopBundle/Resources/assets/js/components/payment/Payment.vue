@@ -494,12 +494,12 @@
                               <v-radio
                                 :label="$t('electronicPay')"
                                 :value="1"
-                                :disabled="!currentItem.electronicallyPayable"
+                                :disabled="!isElectronicalyPayable(currentItem)"
                               />
                             </v-col>
 
                             <v-tooltip
-                              v-if="!currentItem.electronicallyPayable"
+                              v-if="!isElectronicalyPayable(currentItem)"
                               right
                               color="info"
                             >
@@ -509,10 +509,9 @@
                                 </v-icon>
                               </template>
                               <span>{{
-                                currentItem.amountTooLow
-                                  ? $t("tooltip.messageAmountTooLow")
-                                  : $t("tooltip.message")
-                              }}</span>
+                                getMessageToolTipOnlinePayment(currentItem)
+                              }}
+                              </span>
                             </v-tooltip>
                           </v-row>
                           <v-radio
@@ -1048,6 +1047,10 @@ export default {
     tipsEncouragement: {
       type: Boolean,
       default: false
+    },
+    minimumAmount: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -1419,6 +1422,19 @@ export default {
         .catch(error => {
           console.error(error);
         });
+    },
+    getMessageToolTipOnlinePayment(currentItem) {
+      if (this.getAmount(currentItem) < this.minimumAmount) {
+        return this.$t("tooltip.messageAmountTooLow");
+      }
+      return this.$t("tooltip.message");
+    },
+    isElectronicalyPayable(currentItem) {
+      return (
+        currentItem.electronicallyPayable &&
+        currentItem.canPayElectronically &&
+        this.getAmount(currentItem) > this.minimumAmount
+      );
     }
   }
 };
