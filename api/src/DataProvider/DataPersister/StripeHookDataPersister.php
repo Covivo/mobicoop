@@ -47,7 +47,7 @@ class StripeHookDataPersister implements ContextAwareDataPersisterInterface
     private $logger;
     private $_webhookSecret;
 
-    public function __construct(PaymentManager $paymentManager, RequestStack $requestStack, Security $security, LoggerInterface $logger, string $webhookSecret)
+    public function __construct(PaymentManager $paymentManager, RequestStack $requestStack, Security $security, LoggerInterface $logger, array $webhookSecret)
     {
         $this->paymentManager = $paymentManager;
         $this->security = $security;
@@ -84,6 +84,8 @@ class StripeHookDataPersister implements ContextAwareDataPersisterInterface
             $this->logger->info($decodedPayload['type']);
 
             if (!$this->_checkWebhookSecret($signature, $payload)) {
+                $this->logger->error('Invalid webhook signature: '.$e->getMessage());
+
                 return new Response('Invalid webhook signature', Response::HTTP_OK);
             }
 
@@ -120,19 +122,24 @@ class StripeHookDataPersister implements ContextAwareDataPersisterInterface
 
     protected function _checkWebhookSecret($signature, $payload): bool
     {
-        try {
-            $event = Webhook::constructEvent(
-                $payload,
-                $signature,
-                $this->_webhookSecret
-            );
-        } catch (SignatureVerificationException $e) {
-            $this->logger->error('Invalid webhook signature: '.$e->getMessage());
+        $signatureIsValid = false;
+        foreach ($this->_webhookSecret as $webhookSecret) {
+            try {
+                $event = Webhook::constructEvent(
+                    $payload,
+                    $signature,
+                    $webhookSecret
+                );
+            } catch (SignatureVerificationException $e) {
+                // Signature verification failed
+                continue;
+            }
+            $signatureIsValid = true;
 
-            return false;
+            break;
         }
 
-        return true;
+        return $signatureIsValid;
     }
 
     private function _treatPaymentSucceedHook($decodedPayload)

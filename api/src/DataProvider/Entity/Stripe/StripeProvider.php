@@ -65,7 +65,6 @@ use Stripe\Transfer as StripeTransfer;
  */
 class StripeProvider implements PaymentProviderInterface
 {
-    public const BUSINESS_URL_SANDBOX = 'https://yourbusiness.com/';
     public const SERVER_URL = 'https://api.stripe.com/';
     public const LANDING_AFTER_PAYMENT = 'paiements/paye';
     public const LANDING_AFTER_PAYMENT_MOBILE = '#/carpools/payment/paye';
@@ -99,6 +98,7 @@ class StripeProvider implements PaymentProviderInterface
         string $validationDocsPath,
         string $baseUri,
         string $baseMobileUri,
+        string $sandBoxReturnUrl,
         PaymentProfileRepository $paymentProfileRepository
     ) {
         $this->serverUrl = self::SERVER_URL;
@@ -110,7 +110,7 @@ class StripeProvider implements PaymentProviderInterface
         $this->currency = $currency;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->validationDocsPath = $validationDocsPath;
-        $this->baseUri = (!$sandBoxMode) ? $baseUri : self::BUSINESS_URL_SANDBOX;
+        $this->baseUri = (!$sandBoxMode) ? $baseUri : $sandBoxReturnUrl;
         $this->baseMobileUri = $baseMobileUri;
 
         $expectedPrefix = $sandBoxMode ? 'sk_test' : 'sk_live';
@@ -251,7 +251,7 @@ class StripeProvider implements PaymentProviderInterface
 
         $carpoolPayment->setTransactionid($stripePaymentLink->id);
         $carpoolPayment->setRedirectUrl($stripePaymentLink->url);
-        $carpoolPayment->setTransactionPostData($carpoolPayment->getTransactionPostData());
+        $carpoolPayment->setTransactionPostData($carpoolPayment->getTransactionPostData().((!is_null($carpoolPayment->getTransactionPostData())) ? '|' : '').json_encode($stripePrice));
 
         return $carpoolPayment;
     }
@@ -406,7 +406,7 @@ class StripeProvider implements PaymentProviderInterface
             $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
         }
 
-        $paymentLink = new PaymentLink([$stripePrice->id], $returnUrl);
+        $paymentLink = new PaymentLink([$stripePrice->id], $returnUrl.'?paymentPaymentId='.$carpoolPayment->getId());
 
         return $this->_createPaymentLink($paymentLink);
     }
@@ -472,7 +472,7 @@ class StripeProvider implements PaymentProviderInterface
         $price = new Price(
             $this->currency,
             $carpoolPayment->getAmountOnline() * 100,
-            $this->baseUri.'|'.$carpoolPayment->getId().'|'.$user->getId()
+            $this->baseUri
         );
 
         return $this->_createPrice($price);
