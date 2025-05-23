@@ -251,7 +251,7 @@ class StripeProvider implements PaymentProviderInterface
 
         $carpoolPayment->setTransactionid($stripePaymentLink->id);
         $carpoolPayment->setRedirectUrl($stripePaymentLink->url);
-        $carpoolPayment->setTransactionPostData($carpoolPayment->getTransactionPostData());
+        $carpoolPayment->setTransactionPostData($carpoolPayment->getTransactionPostData().((!is_null($carpoolPayment->getTransactionPostData())) ? '|' : '').json_encode($stripePrice));
 
         return $carpoolPayment;
     }
@@ -406,7 +406,7 @@ class StripeProvider implements PaymentProviderInterface
             $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
         }
 
-        $paymentLink = new PaymentLink([$stripePrice->id], $returnUrl);
+        $paymentLink = new PaymentLink([$stripePrice->id], $returnUrl.'?paymentPaymentId='.$carpoolPayment->getId());
 
         return $this->_createPaymentLink($paymentLink);
     }
