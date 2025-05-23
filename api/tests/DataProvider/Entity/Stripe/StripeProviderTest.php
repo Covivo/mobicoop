@@ -126,6 +126,7 @@ class StripeProviderTest extends TestCase
             $this->_validationDocsPath,
             $this->_baseUri,
             $this->_baseMobileUri,
+            'https://yourbusiness.com/test',
             $this->_paymentProfileRepository
         );
 
@@ -179,6 +180,7 @@ class StripeProviderTest extends TestCase
             $this->_validationDocsPath,
             $this->_baseUri,
             $this->_baseMobileUri,
+            'https://yourbusiness.com/test',
             $this->_paymentProfileRepository
         );
     }
@@ -200,6 +202,7 @@ class StripeProviderTest extends TestCase
             $this->_validationDocsPath,
             $this->_baseUri,
             $this->_baseMobileUri,
+            'https://yourbusiness.com/test',
             $this->_paymentProfileRepository
         );
     }
@@ -221,6 +224,7 @@ class StripeProviderTest extends TestCase
             $this->_validationDocsPath,
             $this->_baseUri,
             $this->_baseMobileUri,
+            'https://yourbusiness.com/test',
             $this->_paymentProfileRepository
         );
     }

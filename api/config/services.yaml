@@ -1103,7 +1103,7 @@ services:
       $requestStack: '@Symfony\Component\HttpFoundation\RequestStack'
       $security: '@Symfony\Component\Security\Core\Security'
       $logger: "@monolog.logger.payment"
-      $webhookSecret: "%env(string:PAYMENT_WEBHOOK_SECRET)%"
+      $webhookSecret: "%env(json:PAYMENT_WEBHOOK_SECRET)%"
     tags:
       - { name: "controller.service_arguments" }
       - { name: "api_platform.data_persister" }

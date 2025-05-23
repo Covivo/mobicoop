@@ -472,7 +472,7 @@ class StripeProvider implements PaymentProviderInterface
         $price = new Price(
             $this->currency,
             $carpoolPayment->getAmountOnline() * 100,
-            $this->baseUri.'|'.$carpoolPayment->getId().'|'.$user->getId()
+            $this->baseUri
         );
 
         return $this->_createPrice($price);
