@@ -33,7 +33,7 @@ class StripeHookDataPersisterTest extends TestCase
         $this->security = $this->createMock(Security::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->request = $this->createMock(Request::class);
-        $this->secret = 'whsec_test_secret';
+        $this->secret = ['whsec_test_secret'];
 
         $this->stripeHookDataPersister = new class($this->paymentManager, $this->requestStack, $this->security, $this->logger, $this->secret) extends StripeHookDataPersister {
             protected function _checkWebhookSecret($signature, $payload): bool

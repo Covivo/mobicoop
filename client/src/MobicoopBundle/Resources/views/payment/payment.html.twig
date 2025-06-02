@@ -2,7 +2,7 @@
 
 {% block title %}{% trans from 'ui' %}payment.title{% endtrans %} - {{ app_name }}{% endblock %}
 {% block stylesheets %}
- 
+
 {% endblock %}
 {% block main %}
 
@@ -13,5 +13,6 @@
        :type = "{{ type }}"
        :tips-encouragement="{{ tipsEncouragement ? "true" : "false" }}"
        platform-name="{{ app_name }}"
+       :minimum-amount="{{ minimumAmount }}"
    />
 {% endblock %}

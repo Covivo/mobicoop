@@ -381,20 +381,6 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function isAmountTooLow(): bool
-    {
-        // return (is_null($this->amountTooLow)) ? false : $this->amountTooLow;
-        // to do : check if the amopunt is too low
-        return false;
-    }
-
-    public function setAmountTooLow(bool $amountTooLow): self
-    {
-        $this->amountTooLow = $amountTooLow;
-
-        return $this;
-    }
-
     public function getUnpaidDate(): ?\DateTimeInterface
     {
         return $this->unpaidDate;
@@ -430,7 +416,6 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
                 'electronicallyPayable' => $this->isElectronicallyPayable(),
                 'canPayElectronically' => $this->getCanPayElectronically(),
                 'unpaidDate' => $this->getUnpaidDate(),
-                'amountTooLow' => $this->isAmountTooLow(),
             ];
     }
 }

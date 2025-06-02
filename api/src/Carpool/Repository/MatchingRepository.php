@@ -52,7 +52,7 @@ class MatchingRepository
         return $this->repository->find($id);
     }
 
-    public function findOneBy(array $criteria, array $orderBy = null)
+    public function findOneBy(array $criteria, ?array $orderBy = null)
     {
         return $this->repository->findOneBy($criteria, $orderBy);
     }
@@ -135,7 +135,6 @@ class MatchingRepository
             ->andWhere('p.user is not null')
             ->setParameter('proposal', $proposal)
             ->andWhere('p.paused = 0')
-            ->andWhere('p.private = 0')
         ;
 
         return $qb;
