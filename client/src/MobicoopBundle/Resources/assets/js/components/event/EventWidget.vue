@@ -1,13 +1,8 @@
 <template>
   <v-main>
     <v-container>
-      <v-row
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          align="center"
-        >
+      <v-row justify="center">
+        <v-col cols="12" align="center">
           <!-- Event : avatar, title and description -->
           <event-infos
             :event="event"
@@ -20,20 +15,12 @@
         </v-col>
       </v-row>
       <!-- search journey -->
-      <p
-        class="font-weight-bold"
-        align="center"
-      >
-        {{ $t('title.searchCarpool') }}
+      <p class="font-weight-bold" align="center">
+        {{ $t("title.searchCarpool") }}
       </p>
       <!-- event buttons and map -->
-      <v-row
-        align="center"
-        justify="center"
-      >
-        <v-col
-          col="12"
-        >
+      <v-row align="center" justify="center">
+        <v-col col="12">
           <search
             :geo-search-url="geodata.geocompleteuri"
             :geo-complete-results-order="geoCompleteResultsOrder"
@@ -58,25 +45,30 @@
   </v-main>
 </template>
 <script>
-
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/Event/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/event/Event/";
 import EventInfos from "@components/event/EventInfos";
 import Search from "@components/carpool/search/Search";
 import moment from "moment";
 
 export default {
   components: {
-    EventInfos, Search,
+    EventInfos,
+    Search
   },
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
-    },
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
+    }
   },
-  props:{
+  props: {
     user: {
       type: Object,
       default: null
@@ -85,7 +77,7 @@ export default {
       type: Object,
       default: null
     },
-    event:{
+    event: {
       type: Object,
       default: null
     },
@@ -103,16 +95,16 @@ export default {
     },
     token: {
       type: String,
-      default: ''
+      default: ""
     },
     justifyTitle: {
       type: String,
       default: "text-h5 text-center font-weight-bold"
     },
-    justifyAddressLocality : {
+    justifyAddressLocality: {
       type: String,
       default: "text-h5 text-center text-subtitle-1"
-  	},
+    },
     geoCompleteResultsOrder: {
       type: Array,
       default: null
@@ -128,52 +120,55 @@ export default {
     dateTimePicker: {
       type: Boolean,
       default: false
-    },
-  },
-  data () {
-    return {
-      locale: 'fr',
-      params: { 'eventId' : this.event.id },
-      defaultDestination: this.event.address,
     }
+  },
+  data() {
+    return {
+      locale: "fr",
+      params: { eventId: this.event.id },
+      defaultDestination: this.event.address
+    };
   },
   computed: {
     disableSearch() {
       let now = moment();
-      if (now > moment(this.event.toDate.date))
-        return true;
-      else
-        return false;
+      if (now > moment(this.event.toDate.date)) return true;
+      else return false;
     },
     defaultOutwardDate() {
       const now = moment();
 
-      return now > moment(this.event.fromDate.date) ? now.format('YYYY-MM-DD HH:mm') : this.event.fromDate.date;
+      return now > moment(this.event.fromDate.date)
+        ? now.format("YYYY-MM-DD HH:mm")
+        : this.event.fromDate.date;
     },
     defaultOutwardTime() {
+      if (!this.dateTimePicker) return null;
+
       const now = moment();
 
-      return now > moment(this.event.fromDate.date) ? now.format('HH:mm') : this.event.fromDate.date;
-    },
+      return now > moment(this.event.fromDate.date)
+        ? now.format("HH:mm")
+        : this.event.fromDate.date;
+    }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
-    this.$store.commit('a/setToken', this.token);
+    this.$store.commit("a/setToken", this.token);
   }
-}
+};
 </script>
 
 <style>
-  div {
-    padding: 0px 3px !important;
-  }
-  div.row {
-    display: block !important;
-
-  }
-  div.row p.text-body-2 {
-    font-size: 0.75rem !important;
-    line-height: 1rem !important;
-    padding: 0px 3px !important;
-  }
- </style>
+div {
+  padding: 0px 3px !important;
+}
+div.row {
+  display: block !important;
+}
+div.row p.text-body-2 {
+  font-size: 0.75rem !important;
+  line-height: 1rem !important;
+  padding: 0px 3px !important;
+}
+</style>

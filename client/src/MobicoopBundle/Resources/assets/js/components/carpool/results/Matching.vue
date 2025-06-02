@@ -186,13 +186,15 @@
           <v-tabs-items v-model="modelTabs">
             <!-- Platform results tab item -->
             <v-tab-item value="carpools">
-              <div v-if="results.length > 0">
+              <div v-if="results && results.length > 0">
                 <!-- Trajets pour la date demandée -->
                 <v-row v-if="dateResults.length > 0">
                   <v-col>
                     <matching-results
                       :results="dateResults"
-                      :nb-results="isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform"
+                      :nb-results="
+                        isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform
+                      "
                       :distinguish-regular="distinguishRegular"
                       :user="user"
                       :loading-prop="loading"
@@ -224,7 +226,9 @@
                     <v-col>
                       <matching-results
                         :results="futureResults"
-                        :nb-results="isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform"
+                        :nb-results="
+                          isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform
+                        "
                         :distinguish-regular="distinguishRegular"
                         :user="user"
                         :loading-prop="loading"
@@ -482,7 +486,7 @@ export default {
     MatchingPTResults,
     LoginOrRegisterFirst,
     BookingJourney,
-    EmptyResult,
+    EmptyResult
   },
   i18n: {
     messages: {
@@ -679,12 +683,14 @@ export default {
       return numberOfResults;
     },
     dateResults() {
+      if (!this.results) return [];
       let date = new moment(this.date).format();
       return this.results.filter(result => result.date === date);
     },
     futureResults() {
+      if (!this.results) return [];
       let date = new moment(this.date).format();
-      return this.results.filter(result => result.date !== date);;
+      return this.results.filter(result => result.date !== date);
     },
     communities() {
       if (!this.results) return null;
@@ -781,11 +787,11 @@ export default {
         origin: JSON.stringify(this.origin),
         destination: JSON.stringify(this.destination),
         regular: this.regular,
-        date:this.date?this.date:null,
-        time:this.time?this.time:null,
+        date: this.date ? this.date : null,
+        time: this.time ? this.time : null
       };
-      localStorage.setItem('adSettings', JSON.stringify(adSettings));
-      window.location.href=this.$t("publishAd");
+      localStorage.setItem("adSettings", JSON.stringify(adSettings));
+      window.location.href = this.$t("publishAd");
     },
     paginate(page) {
       this.page = page;
