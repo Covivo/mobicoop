@@ -2,7 +2,10 @@
   <v-main>
     <v-container>
       <v-row justify="center">
-        <v-col cols="12" align="center">
+        <v-col
+          cols="12"
+          align="center"
+        >
           <!-- Event : avatar, title and description -->
           <event-infos
             :event="event"
@@ -15,11 +18,17 @@
         </v-col>
       </v-row>
       <!-- search journey -->
-      <p class="font-weight-bold" align="center">
+      <p
+        class="font-weight-bold"
+        align="center"
+      >
         {{ $t("title.searchCarpool") }}
       </p>
       <!-- event buttons and map -->
-      <v-row align="center" justify="center">
+      <v-row
+        align="center"
+        justify="center"
+      >
         <v-col col="12">
           <search
             :geo-search-url="geodata.geocompleteuri"

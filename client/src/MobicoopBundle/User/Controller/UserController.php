@@ -103,6 +103,7 @@ class UserController extends AbstractController
     private $phoneCodes;
     private $minorProtectionActivated;
     private $authorizedReferrals;
+    private $genderRequired;
 
     /**
      * Constructor.
@@ -150,7 +151,8 @@ class UserController extends AbstractController
         bool $specificTerms,
         $phoneCodes,
         bool $minorProtectionActivated,
-        array $authorizedReferrals
+        array $authorizedReferrals,
+        bool $genderRequired
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -184,6 +186,7 @@ class UserController extends AbstractController
         $this->phoneCodes = $phoneCodes;
         $this->minorProtectionActivated = $minorProtectionActivated;
         $this->authorizedReferrals = $authorizedReferrals;
+        $this->genderRequired = $genderRequired;
     }
 
     private function __parsePostParams(string $response): array
@@ -388,6 +391,7 @@ class UserController extends AbstractController
             'phoneCodes' => $this->phoneCodes,
             'referral' => $referral,
             'minorProtectionActivated' => $this->minorProtectionActivated,
+            'genderRequired' => $this->genderRequired,
         ]);
     }
 

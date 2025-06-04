@@ -274,6 +274,7 @@ services:
       $phoneCodes: "%env(json:file:resolve:PHONE_CODES)%"
       $minorProtectionActivated: "%env(bool:MINOR_PROTECTION_ACTIVATED)%"
       $authorizedReferrals: "%env(json:SIGNUP_AUTHORIZED_REFERRALS)%"
+      $genderRequired: "%env(bool:SIGNUP_GENDERS_REQUIRED)%"
     tags: ["controller.service_arguments"]
   Mobicoop\Bundle\MobicoopBundle\User\Service\:
     resource: "@MobicoopBundle/User/Service/*"

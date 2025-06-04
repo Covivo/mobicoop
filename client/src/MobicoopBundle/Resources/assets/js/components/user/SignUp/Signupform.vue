@@ -66,13 +66,11 @@
           xl="6"
           align="left"
         >
-          <v-alert
-
-            class="warning white--text"
-          >
+          <v-alert class="warning white--text">
             <v-icon class="white--text">
               mdi-information-outline
-            </v-icon> {{ $t('rgpd.consent') }}
+            </v-icon>
+            {{ $t("rgpd.consent") }}
           </v-alert>
         </v-col>
       </v-row>
@@ -81,9 +79,7 @@
         justify="center"
         class="text-center"
       >
-        <v-col
-          class="col-4"
-        >
+        <v-col class="col-4">
           <SsoLogins
             v-if="ssoButtonDisplay && !referral"
             :specific-sso-services="specificSsoServices"
@@ -91,21 +87,19 @@
           />
         </v-col>
       </v-row>
-      <v-row
-        v-if="signupRgpdInfos"
-      >
+      <v-row v-if="signupRgpdInfos">
         <v-col
           cols="12"
           align="center"
         >
           <p>
-            {{ $t('rgpd.infos') }}
+            {{ $t("rgpd.infos") }}
           </p>
           <a
             class="primary--text"
             target="_blank"
             :href="$t('rgpd.link.route')"
-          >{{ $t('rgpd.link.label') }}
+          >{{ $t("rgpd.link.label") }}
           </a>
         </v-col>
       </v-row>
@@ -152,9 +146,7 @@
               <v-divider />
 
               <!--STEP 3 home address - Community - checkbox-->
-              <v-stepper-step
-                :step="3"
-              />
+              <v-stepper-step :step="3" />
             </v-stepper-header>
 
             <!--STEP 1 User identification-->
@@ -204,10 +196,10 @@
                       name="phoneCode"
                       @change="checkPhoneNumberValidity"
                     >
-                      <template v-slot:item="{item}">
+                      <template v-slot:item="{ item }">
                         <v-list-item>
                           <v-list-item-action>
-                            <span :class="['fi fi-'+item.country]" />
+                            <span :class="['fi fi-' + item.country]" />
                           </v-list-item-action>
                           <v-list-item-content>
                             <v-list-item-title>
@@ -218,12 +210,10 @@
                         <v-divider class="mt-2" />
                       </template>
 
-                      <template
-                        v-slot:selection="{item}"
-                      >
+                      <template v-slot:selection="{ item }">
                         <v-list-item class="mt-n6 mb-n6">
                           <v-list-item-action>
-                            <span :class="['ml-n2 fi fi-'+item.country]" />
+                            <span :class="['ml-n2 fi fi-' + item.country]" />
                           </v-list-item-action>
                           <v-list-item-content class="ml-n9">
                             <v-list-item-title>
@@ -256,7 +246,11 @@
                       v-if="!phoneNumberValid"
                       type="error"
                     >
-                      {{ $tc('checkPhoneValidity.error', cleanedPhoneNumber, { phoneNumber: cleanedPhoneNumber }) }}
+                      {{
+                        $tc("checkPhoneValidity.error", cleanedPhoneNumber, {
+                          phoneNumber: cleanedPhoneNumber
+                        })
+                      }}
                     </v-alert>
                   </v-col>
                 </v-row>
@@ -269,7 +263,7 @@
                     form.passWordRules.min,
                     form.passWordRules.checkUpper,
                     form.passWordRules.checkLower,
-                    form.passWordRules.checkNumber,
+                    form.passWordRules.checkNumber
                   ]"
                   :type="form.showPassword ? 'text' : 'password'"
                   name="password"
@@ -289,23 +283,19 @@
                 >
                   {{ $t("button.next") }}
                 </v-btn>
-                <v-card-text
-                  v-if="loginLinkInConnection"
-                >
+                <v-card-text v-if="loginLinkInConnection">
                   <a
                     :href="$t('urlLogin')"
                     class="font-italic"
                   >
-                    {{ $t('login') }}
+                    {{ $t("login") }}
                   </a>
                 </v-card-text>
               </v-form>
             </v-stepper-content>
 
             <!--STEP 2 Name - Gender - BirthDate-->
-            <v-stepper-content
-              step="2"
-            >
+            <v-stepper-content step="2">
               <v-form
                 id="step2"
                 ref="step 2"
@@ -334,9 +324,9 @@
                   :items="genderItems"
                   item-text="label"
                   item-value="value"
-                  :rules="form.genderRules"
-                  :label="$t('gender.label') + ` *`"
-                  required
+                  :rules="genderRequired ? form.genderRules : []"
+                  :label="$t('gender.label') + (genderRequired ? ' *' : '')"
+                  :required="genderRequired"
                 />
                 <v-menu
                   v-if="birthDateDisplay"
@@ -351,9 +341,12 @@
                     <v-text-field
                       id="birthday"
                       v-model="form.date"
-                      :label="$t('birthDate.placeholder')+` *`"
+                      :label="$t('birthDate.placeholder') + ` *`"
                       readonly
-                      :rules="[ form.birthdayRules.checkIfHaveAge, form.birthdayRules.required ]"
+                      :rules="[
+                        form.birthdayRules.checkIfHaveAge,
+                        form.birthdayRules.required
+                      ]"
                       required
                       v-on="on"
                     />
@@ -371,7 +364,6 @@
                   <h2>{{ $t("parentalConsent.title") }}</h2>
                   <p>{{ $t("parentalConsent.explanation") }}</p>
                   <v-text-field
-
                     id="legalGuardianEmail"
                     v-model="form.legalGuardianEmail"
                     :rules="form.legalGuardianEmailRules"
@@ -440,9 +432,7 @@
                   v-if="communityShow && !referral"
                   class="text-justify pb-5"
                 >
-                  <community-help
-                    :display-title-community="false"
-                  />
+                  <community-help :display-title-community="false" />
                 </v-row>
 
                 <v-autocomplete
@@ -453,7 +443,11 @@
                   chips
                   :loading="loadingCommunity"
                   :disabled="loadingCommunity"
-                  :label="requiredCommunity ? $t('communities.label')+` *` : $t('communities.label')"
+                  :label="
+                    requiredCommunity
+                      ? $t('communities.label') + ` *`
+                      : $t('communities.label')
+                  "
                   item-text="name"
                   item-value="id"
                   :required="requiredCommunity"
@@ -471,7 +465,7 @@
                     </v-chip>
                   </template>
                   <template v-slot:item="data">
-                    <template v-if="(typeof data.item) !== 'object'">
+                    <template v-if="typeof data.item !== 'object'">
                       <v-list-item-content v-text="data.item" />
                     </template>
                     <template v-else>
@@ -567,7 +561,7 @@
                   outlined
                   rounded
                 >
-                  {{ $t('insteadRZP.label') }}
+                  {{ $t("insteadRZP.label") }}
                 </v-btn>
 
                 <v-row
@@ -585,7 +579,7 @@
                     v-if="!phoneNumberValid"
                     type="error"
                   >
-                    {{ $t('checkPhoneValidity.error') }}
+                    {{ $t("checkPhoneValidity.error") }}
                   </v-alert>
                 </v-row>
                 <v-row
@@ -646,7 +640,7 @@
             type="info"
             class="text-left"
           >
-            {{ $t('rgpd.socialServicesUnavailableWithoutConsent') }}
+            {{ $t("rgpd.socialServicesUnavailableWithoutConsent") }}
           </v-alert>
         </v-col>
       </v-row>
@@ -661,25 +655,56 @@ import Geocomplete from "@components/utilities/geography/Geocomplete";
 import CommunityHelp from "@components/community/CommunityHelp";
 
 import { merge } from "lodash";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/SignUp/";
-import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/SignUp/";
-import {messages_en as messages_en_referal, messages_fr as messages_fr_referal, messages_eu as messages_eu_referal, messages_nl as messages_nl_referal} from "@translations/components/user/ReferralHeader/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/user/SignUp/";
+import {
+  messages_client_en,
+  messages_client_fr,
+  messages_client_eu,
+  messages_client_nl
+} from "@clientTranslations/components/user/SignUp/";
+import {
+  messages_en as messages_en_referal,
+  messages_fr as messages_fr_referal,
+  messages_eu as messages_eu_referal,
+  messages_nl as messages_nl_referal
+} from "@translations/components/user/ReferralHeader/";
 import MFacebookAuth from "@components/user/MFacebookAuth";
-import SsoLogins from '@components/user/SsoLogins';
-import ReferralHeader from '@components/user/SignUp/ReferralHeader';
+import SsoLogins from "@components/user/SsoLogins";
+import ReferralHeader from "@components/user/SignUp/ReferralHeader";
 
-let MessagesMergedEn = merge(messages_en, messages_client_en, messages_en_referal);
-let MessagesMergedNl = merge(messages_nl, messages_client_nl, messages_nl_referal);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr, messages_fr_referal);
-let MessagesMergedEu = merge(messages_eu, messages_client_eu, messages_eu_referal);
+let MessagesMergedEn = merge(
+  messages_en,
+  messages_client_en,
+  messages_en_referal
+);
+let MessagesMergedNl = merge(
+  messages_nl,
+  messages_client_nl,
+  messages_nl_referal
+);
+let MessagesMergedFr = merge(
+  messages_fr,
+  messages_client_fr,
+  messages_fr_referal
+);
+let MessagesMergedEu = merge(
+  messages_eu,
+  messages_client_eu,
+  messages_eu_referal
+);
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'nl': MessagesMergedNl,
-      'fr': MessagesMergedFr,
-      'eu': MessagesMergedEu
-    },
+      en: MessagesMergedEn,
+      nl: MessagesMergedNl,
+      fr: MessagesMergedFr,
+      eu: MessagesMergedEu
+    }
   },
   components: {
     Geocomplete,
@@ -691,47 +716,47 @@ export default {
   props: {
     geoSearchUrl: {
       type: String,
-      default: null,
+      default: null
     },
     sentToken: {
       type: String,
-      default: null,
+      default: null
     },
     ageMin: {
       type: String,
-      default: null,
+      default: null
     },
     ageMax: {
       type: String,
-      default: null,
+      default: null
     },
     showFacebookSignUp: {
       type: Boolean,
-      default: false,
+      default: false
     },
     facebookLoginAppId: {
       type: String,
-      default: null,
+      default: null
     },
     requiredHomeAddress: {
       type: Boolean,
-      default: false,
+      default: false
     },
     requiredCommunity: {
       type: Boolean,
-      default: false,
+      default: false
     },
     communityShow: {
       type: Boolean,
-      default: false,
+      default: false
     },
     id: {
       type: Number,
-      default: null,
+      default: null
     },
     type: {
       type: String,
-      default: 'default'
+      default: "default"
     },
     loginLinkInConnection: {
       type: Boolean,
@@ -749,9 +774,9 @@ export default {
       type: Boolean,
       default: false
     },
-    ssoButtonDisplay:{
+    ssoButtonDisplay: {
       type: Boolean,
-      default:false
+      default: false
     },
     geoCompleteResultsOrder: {
       type: Array,
@@ -787,13 +812,17 @@ export default {
     },
     referral: {
       type: String,
-      default: ''
+      default: ""
     },
     minorProtectionActivated: {
       type: Boolean,
       default: false
     },
     integrateRzp: {
+      type: Boolean,
+      default: false
+    },
+    genderRequired: {
       type: Boolean,
       default: false
     }
@@ -832,89 +861,62 @@ export default {
         createToken: this.sentToken,
         email: null,
         emailRules: [
-          (v) => !!v || this.$t("email.errors.required"),
-          (v) => /.+@.+/.test(v) || this.$t("email.errors.valid"),
+          v => !!v || this.$t("email.errors.required"),
+          v => /.+@.+/.test(v) || this.$t("email.errors.valid")
         ],
         legalGuardianEmail: null,
         legalGuardianEmailRules: [
-          (v) => !!v || this.$t("legalGuardianEmail.errors.required"),
-          (v) => /.+@.+/.test(v) || this.$t("legalGuardianEmail.errors.valid"),
+          v => !!v || this.$t("legalGuardianEmail.errors.required"),
+          v => /.+@.+/.test(v) || this.$t("legalGuardianEmail.errors.valid")
         ],
         givenName: null,
-        givenNameRules: [
-          (v) => !!v || this.$t("givenName.errors.required"),
-        ],
+        givenNameRules: [v => !!v || this.$t("givenName.errors.required")],
         familyName: null,
-        familyNameRules: [
-          (v) => !!v || this.$t("familyName.errors.required"),
-        ],
+        familyNameRules: [v => !!v || this.$t("familyName.errors.required")],
         gender: null,
-        genderRules: [
-          (v) => !!v || this.$t("gender.errors.required"),
-        ],
+        genderRules: [v => !!v || this.$t("gender.errors.required")],
         date: null,
         telephone: null,
         telephoneRules: [
-          (v) => !!v || this.$t("phone.errors.required"),
-          (v) =>
-            this.phoneNumberValid ||
-            this.$t("phone.errors.valid"),
+          v => !!v || this.$t("phone.errors.required"),
+          v => this.phoneNumberValid || this.$t("phone.errors.valid")
         ],
-        phoneCode:33,
-        phoneCodeRules: [
-          (v) => !!v || this.$t("phoneCode.errors.required"),
-        ],
+        phoneCode: 33,
+        phoneCodeRules: [v => !!v || this.$t("phoneCode.errors.required")],
         password: null,
         showPassword: false,
         passWordRules: {
-          required: (v) =>
-            !!v || this.$t("password.errors.required"),
-          min: (v) =>
-            (v && v.length >= 8) || this.$t("password.errors.min"),
-          checkUpper: (value) => {
+          required: v => !!v || this.$t("password.errors.required"),
+          min: v => (v && v.length >= 8) || this.$t("password.errors.min"),
+          checkUpper: value => {
             const pattern = /^(?=.*[A-Z]).*$/;
-            return (
-              pattern.test(value) ||
-              this.$t("password.errors.upper")
-            );
+            return pattern.test(value) || this.$t("password.errors.upper");
           },
-          checkLower: (value) => {
+          checkLower: value => {
             const pattern = /^(?=.*[a-z]).*$/;
-            return (
-              pattern.test(value) ||
-              this.$t("password.errors.lower")
-            );
+            return pattern.test(value) || this.$t("password.errors.lower");
           },
-          checkNumber: (value) => {
+          checkNumber: value => {
             const pattern = /^(?=.*[0-9]).*$/;
-            return (
-              pattern.test(value) ||
-              this.$t("password.errors.number")
-            );
-          },
+            return pattern.test(value) || this.$t("password.errors.number");
+          }
         },
         birthdayRules: {
-          required: (v) =>
-            !!v || this.$t("birthDay.errors.required"),
-          checkIfHaveAge: (value) => {
+          required: v => !!v || this.$t("birthDay.errors.required"),
+          checkIfHaveAge: value => {
             return (
-              moment().diff(value, 'year') >= this.ageMin || this.$t("birthDay.errors.notadult", {age:this.ageMin})
+              moment().diff(value, "year") >= this.ageMin ||
+              this.$t("birthDay.errors.notadult", { age: this.ageMin })
             );
-          },
+          }
         },
         homeAddress: null,
-        checkboxRules: [
-          (v) => !!v || this.$t("chart.required"),
-        ],
-        checkboxLegalAgeRules: [
-          (v) => !!v || this.$t("legalAge.required"),
-        ],
+        checkboxRules: [v => !!v || this.$t("chart.required")],
+        checkboxLegalAgeRules: [v => !!v || this.$t("legalAge.required")],
         checkboxSpecificTermsRules: [
-          (v) => !!v || this.$t("specificTerms.required"),
+          v => !!v || this.$t("specificTerms.required")
         ],
-        checkboxReferalRules: [
-          (v) => !!v || this.$t("referalCheckbox.required"),
-        ],
+        checkboxReferalRules: [v => !!v || this.$t("referalCheckbox.required")],
         idFacebook: null,
         newsSubscription: this.newsSubscriptionDefault
       },
@@ -923,16 +925,16 @@ export default {
       locale: localStorage.getItem("X-LOCALE"),
       flags: this.phoneCodes,
       cleanedPhoneNumber: null,
-      isUnder18: false,
+      isUnder18: false
     };
   },
   computed: {
     action() {
       if (this.id === null) return this.$t("urlSignUp");
       switch (this.type) {
-      case 'proposal':
+      case "proposal":
         return this.$t("urlSignUpResult", { id: this.id });
-      case 'event':
+      case "event":
         return this.$t("urlSignUpEvent", { id: this.id });
       default:
         return this.$t("urlSignUp");
@@ -953,7 +955,7 @@ export default {
         duration: this.duration,
         offset: this.offset,
         easing: this.easing,
-        container: this.container,
+        container: this.container
       };
     },
     // disable validation if homeAddress and community is empty and required or email already taken
@@ -967,24 +969,26 @@ export default {
       if (this.requiredCommunity && !this.selectedCommunity) {
         return true;
       }
-      if(this.referral && !this.form.referral){
+      if (this.referral && !this.form.referral) {
         return true;
       }
       return false;
     },
-    consent(){
-      return this.$store.getters['up/connectionActive'];
+    consent() {
+      return this.$store.getters["up/connectionActive"];
     },
-    consentSocial(){
-      let social = this.$store.getters['up/social'];
-      let socialCookies = this.$store.getters['up/socialCookies'];
+    consentSocial() {
+      let social = this.$store.getters["up/social"];
+      let socialCookies = this.$store.getters["up/socialCookies"];
 
-      if(social){
-        if(socialCookies.length > 0){
-          if(socialCookies.filter((socialItem) => socialItem == 'Facebook').length > 0){
+      if (social) {
+        if (socialCookies.length > 0) {
+          if (
+            socialCookies.filter(socialItem => socialItem == "Facebook")
+              .length > 0
+          ) {
             return true;
-          }
-          else{
+          } else {
             return false;
           }
         }
@@ -994,28 +998,28 @@ export default {
 
       return social;
     },
-    genderItems(){
-      return this.$t("gender.values").filter((genderItem) => {
+    genderItems() {
+      return this.$t("gender.values").filter(genderItem => {
         return this.gendersList.includes(parseInt(genderItem.value));
       });
     },
-    phoneNumberDisabled(){
-      if(!this.form.phoneCode){
+    phoneNumberDisabled() {
+      if (!this.form.phoneCode) {
         return true;
+      } else {
+        return false;
       }
-      else {return false;}
     }
   },
   watch: {
     menu(val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
     },
-    'form.date'(){
+    "form.date"() {
       if (this.minorProtectionActivated) {
-        if (moment().diff(this.form.date, 'year') < 18 ) {
+        if (moment().diff(this.form.date, "year") < 18) {
           this.isUnder18 = true;
-        }
-        else {
+        } else {
           this.isUnder18 = false;
         }
       }
@@ -1035,11 +1039,11 @@ export default {
         this.loadingCommunity = true;
         this.getCommunities();
       }
-    },
+    }
   },
   mounted: function() {
     //get scroll target
-    (this.container = document.getElementById("scroll-target"))
+    this.container = document.getElementById("scroll-target");
   },
   methods: {
     maxDate() {
@@ -1065,22 +1069,24 @@ export default {
             password: this.form.password,
             givenName: this.form.givenName,
             familyName: this.form.familyName,
-            gender: this.form.gender,
+            gender: this.form.gender ? this.form.gender : 0,
             birthDay: this.form.date,
             address: this.form.homeAddress,
             idFacebook: this.form.idFacebook,
             newsSubscription: this.form.newsSubscription,
-            legalGuardianEmail: this.form.legalGuardianEmail ? this.form.legalGuardianEmail : null,
+            legalGuardianEmail: this.form.legalGuardianEmail
+              ? this.form.legalGuardianEmail
+              : null,
             community: this.selectedCommunity ? this.selectedCommunity : null,
             referral: this.referral
           },
           {
             headers: {
-              "content-type": "application/json",
-            },
+              "content-type": "application/json"
+            }
           }
         )
-        .then((res) => {
+        .then(res => {
           this.errorUpdate = res.data.state;
           this.textSnackbar = this.errorUpdate
             ? this.$t("snackbar.joinCommunity.textError")
@@ -1090,13 +1096,19 @@ export default {
             // an id is provided, we need to login automatically (it will redirect to the results of the proposal, the publish page for an event, the community...)
             const loginForm = document.createElement("form");
             loginForm.method = "post";
-            if (this.type === 'proposal') {
-              loginForm.action = this.$t("urlRedirectAfterSignUpResult", { id: this.id});
-            } else if (this.type === 'event') {
-              loginForm.action = this.$t("urlRedirectAfterSignUpEvent", { id: this.id});
-            } else if (this.type === 'community') {
-              loginForm.action = this.$t("urlRedirectAfterSignUpCommunity", { id: this.id});
-            } else if (this.type === 'publish') {
+            if (this.type === "proposal") {
+              loginForm.action = this.$t("urlRedirectAfterSignUpResult", {
+                id: this.id
+              });
+            } else if (this.type === "event") {
+              loginForm.action = this.$t("urlRedirectAfterSignUpEvent", {
+                id: this.id
+              });
+            } else if (this.type === "community") {
+              loginForm.action = this.$t("urlRedirectAfterSignUpCommunity", {
+                id: this.id
+              });
+            } else if (this.type === "publish") {
               loginForm.action = this.$t("urlRedirectAfterSignUpPublish");
             }
             const hiddenFieldEmail = document.createElement("input");
@@ -1112,7 +1124,7 @@ export default {
           } else {
             // usual redirect
             var urlRedirect = this.$t("urlRedirectAfterSignUp", {
-              email: this.form.email,
+              email: this.form.email
             });
             setTimeout(function() {
               window.location.href = urlRedirect;
@@ -1140,23 +1152,23 @@ export default {
       this.form.idFacebook = data.id;
     },
     checkEmail() {
-      if(!this.form.email){
-        return
+      if (!this.form.email) {
+        return;
       }
       this.loadingCheckEmailAldreadyTaken = true;
       maxios
         .post(
           this.$t("checkEmail.url"),
           {
-            email: this.form.email,
+            email: this.form.email
           },
           {
             headers: {
-              "content-type": "application/json",
-            },
+              "content-type": "application/json"
+            }
           }
         )
-        .then((response) => {
+        .then(response => {
           if (response.data.error) {
             if (response.data.message !== "") {
               this.textEmailError = response.data.message;
@@ -1173,28 +1185,27 @@ export default {
           this.loadingCheckEmailAldreadyTaken = false;
         });
     },
-    checkPhoneNumberValidity(){
-      if(!this.form.telephone || !this.form.phoneCode){
-        return
+    checkPhoneNumberValidity() {
+      if (!this.form.telephone || !this.form.phoneCode) {
+        return;
       }
       this.cleanPhoneNumber();
       maxios
         .post(
           this.$t("checkPhoneValidity.url"),
           {
-            telephone: this.cleanedPhoneNumber,
+            telephone: this.cleanedPhoneNumber
           },
           {
             headers: {
-              "content-type": "application/json",
-            },
+              "content-type": "application/json"
+            }
           }
         )
-        .then((response) => {
-          if(response.data.valid){
-            this.phoneNumberValid = response.data.valid
-          }
-          else{
+        .then(response => {
+          if (response.data.valid) {
+            this.phoneNumberValid = response.data.valid;
+          } else {
             this.phoneNumberValid = false;
           }
         })
@@ -1204,7 +1215,8 @@ export default {
         });
     },
     cleanPhoneNumber() {
-      this.cleanedPhoneNumber = '+'+this.form.phoneCode + this.form.telephone.replace(/^0+/, "");
+      this.cleanedPhoneNumber =
+        "+" + this.form.phoneCode + this.form.telephone.replace(/^0+/, "");
     },
     nextStep(n) {
       this.step += 1;
@@ -1213,20 +1225,37 @@ export default {
       this.step -= 1;
     },
     step1Valid() {
-      return this.form.email && this.form.password && this.form.telephone != null
+      return (
+        this.form.email && this.form.password && this.form.telephone != null
+      );
     },
     step2Valid() {
-      if (this.birthDateDisplay && this.isUnder18){
-        return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null && this.form.legalGuardianEmail !=null
+      if (this.birthDateDisplay && this.isUnder18) {
+        return (
+          this.form.familyName &&
+          this.form.givenName &&
+          this.form.gender &&
+          this.form.date != null &&
+          this.form.legalGuardianEmail != null
+        );
       } else if (this.birthDateDisplay) {
-        return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null
+        return (
+          this.form.familyName &&
+          this.form.givenName &&
+          this.form.gender &&
+          this.form.date != null
+        );
       } else {
-        return this.form.familyName && this.form.givenName && this.form.gender != null
+        return (
+          this.form.familyName &&
+          this.form.givenName &&
+          this.form.gender != null
+        );
       }
     },
     emitEvent: function() {
       this.$emit("change", {
-        communities: this.selectedCommunity,
+        communities: this.selectedCommunity
       });
     },
 
@@ -1241,15 +1270,15 @@ export default {
         .post(
           this.$t("communities.route"),
           {
-            email: this.form.email,
+            email: this.form.email
           },
           {
             headers: {
-              "content-type": "application/json",
-            },
+              "content-type": "application/json"
+            }
           }
         )
-        .then((res) => {
+        .then(res => {
           this.communities = res.data;
           this.loadingCommunity = false;
 
