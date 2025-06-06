@@ -1,7 +1,7 @@
 <template>
   <v-row
     justify="center"
-    :align="type==1 ? 'center' : 'start'"
+    :align="type == 1 ? 'center' : 'start'"
     dense
   >
     <v-col
@@ -19,7 +19,13 @@
     <v-col
       v-if="!compact"
       cols="5"
-      :class="type==1 ? 'text-left ml-6' : regular ? 'text-left' : 'text-left  mr-n4'"
+      :class="
+        type == 1
+          ? 'text-left ml-6'
+          : regular
+            ? 'text-left'
+            : 'text-left  mr-n4'
+      "
     >
       <v-list-item
         two-line
@@ -27,24 +33,34 @@
       >
         <v-list-item-content>
           <v-list-item-title
-            :class="(regular && type==2 || !regular && type==1) ? 'text-subtitle-1' : 'text-subtitle-2'"
+            :class="
+              (regular && type == 2) || (!regular && type == 1)
+                ? 'text-subtitle-1'
+                : 'text-subtitle-2'
+            "
           >
             <span :class="textColorClass">{{ originFirstLine }}</span>
           </v-list-item-title>
           <v-list-item-title
-            v-if="type==1 && regular"
+            v-if="type == 1 && regular"
             :class="'text-subtitle-2'"
           >
             <span :class="textColorClass">{{ originSecondLine }}</span>
           </v-list-item-title>
           <v-list-item-subtitle
-            v-if="type==2"
-            :class="(regular && type==2) ? 'text-subtitle-2' : ((regular) ? 'text-subtitle-2' : 'text-subtitle-2')"
+            v-if="type == 2"
+            :class="
+              regular && type == 2
+                ? 'text-subtitle-2'
+                : regular
+                  ? 'text-subtitle-2'
+                  : 'text-subtitle-2'
+            "
           >
             <span :class="textColorClass">{{ originSecondLine }}</span>
           </v-list-item-subtitle>
           <v-list-item-subtitle
-            v-if="!regular && type==1"
+            v-if="!regular && type == 1"
             class="text-subtitle-2"
           >
             <span :class="textColorClass">{{ originSecondLine }}</span>
@@ -62,24 +78,34 @@
       >
         <v-list-item-content>
           <v-list-item-title
-            :class="(regular && type==2 || !regular && type==1) ? 'text-subtitle-1' : 'text-subtitle-2'"
+            :class="
+              (regular && type == 2) || (!regular && type == 1)
+                ? 'text-subtitle-1'
+                : 'text-subtitle-2'
+            "
           >
             <span :class="textColorClass">{{ originFirstLine }}</span>
           </v-list-item-title>
           <v-list-item-title
-            v-if="type==1 && regular"
+            v-if="type == 1 && regular"
             :class="'text-subtitle-2'"
           >
             <span :class="textColorClass">{{ originSecondLine }}</span>
           </v-list-item-title>
           <v-list-item-subtitle
-            v-if="type==2"
-            :class="(regular && type==2) ? 'text-subtitle-2' : ((regular) ? 'text-subtitle-2' : 'text-subtitle-2')"
+            v-if="type == 2"
+            :class="
+              regular && type == 2
+                ? 'text-subtitle-2'
+                : regular
+                  ? 'text-subtitle-2'
+                  : 'text-subtitle-2'
+            "
           >
             <span :class="textColorClass">{{ originSecondLine }}</span>
           </v-list-item-subtitle>
           <v-list-item-subtitle
-            v-if="!regular && type==1"
+            v-if="!regular && type == 1"
             class="text-subtitle-2"
           >
             <span :class="textColorClass">{{ originSecondLine }}</span>
@@ -89,9 +115,7 @@
     </div>
 
     <!-- Icon -->
-    <v-col
-      cols="1"
-    >
+    <v-col cols="1">
       <v-icon
         size="60"
         :color="iconColor"
@@ -103,7 +127,13 @@
     <!-- Destination -->
     <v-col
       :cols="compact ? null : '5'"
-      :class="type==1 ? 'text-left ml-3' : regular ? 'text-left ml-4' : 'text-right  ml-6'"
+      :class="
+        type == 1
+          ? 'text-left ml-3'
+          : regular
+            ? 'text-left ml-4'
+            : 'text-right  ml-6'
+      "
     >
       <v-list-item
         two-line
@@ -111,24 +141,34 @@
       >
         <v-list-item-content>
           <v-list-item-title
-            :class="(regular && type==2 || !regular && type==1) ? 'text-subtitle-1' : 'text-subtitle-2'"
+            :class="
+              (regular && type == 2) || (!regular && type == 1)
+                ? 'text-subtitle-1'
+                : 'text-subtitle-2'
+            "
           >
             <span :class="textColorClass">{{ destinationFirstLine }}</span>
           </v-list-item-title>
           <v-list-item-title
-            v-if="type==1 && regular"
+            v-if="type == 1 && regular"
             :class="'text-subtitle-2'"
           >
             <span :class="textColorClass">{{ destinationSecondLine }}</span>
           </v-list-item-title>
           <v-list-item-subtitle
-            v-if="type==2"
-            :class="(regular && type==2) ? 'text-subtitle-2' : ((regular) ? 'text-subtitle-2' : 'text-subtitle-2')"
+            v-if="type == 2"
+            :class="
+              regular && type == 2
+                ? 'text-subtitle-2'
+                : regular
+                  ? 'text-subtitle-2'
+                  : 'text-subtitle-2'
+            "
           >
             <span :class="textColorClass">{{ destinationSecondLine }}</span>
           </v-list-item-subtitle>
           <v-list-item-subtitle
-            v-if="!regular && type==1"
+            v-if="!regular && type == 1"
             class="text-subtitle-2"
           >
             <span :class="textColorClass">{{ destinationSecondLine }}</span>
@@ -141,16 +181,21 @@
 
 <script>
 import moment from "moment";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/utilities/RouteSummary/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/carpool/utilities/RouteSummary/";
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
-    },
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
+    }
   },
   props: {
     origin: {
@@ -189,79 +234,109 @@ export default {
   },
   data() {
     return {
-      locale: localStorage.getItem("X-LOCALE"),
+      locale: localStorage.getItem("X-LOCALE")
     };
   },
   computed: {
     originFirstLine() {
-      if(this.origin.displayLabel && this.origin.displayLabel[0]){
-        return this.origin.displayLabel[0].join(" ");
-      }
-      else{
-        if(this.origin.name){
-          return this.$t(this.origin.name);
+      if (
+        this.origin &&
+        this.origin.displayLabel &&
+        this.origin.displayLabel[0]
+      ) {
+        if (Array.isArray(this.origin.displayLabel[0])) {
+          return this.origin.displayLabel[0].join(" ");
         }
-        else if (this.type == 1 && !this.regular) {
-          return (this.origin.streetAddress) ? this.origin.streetAddress : this.origin.addressLocality
+        return this.origin.displayLabel[0];
+      } else {
+        if (this.origin.name) {
+          return this.$t(this.origin.name);
+        } else if (this.type == 1 && !this.regular) {
+          return this.origin.streetAddress
+            ? this.origin.streetAddress
+            : this.origin.addressLocality;
         } else if (this.type == 1 && this.regular) {
-          return this.origin.streetAddress
+          return this.origin.streetAddress;
         } else if (this.type == 2 && !this.regular) {
-          return this.origin.addressLocality
+          return this.origin.addressLocality;
         } else {
-          return this.origin.streetAddress
+          return this.origin.streetAddress;
         }
       }
     },
     destinationFirstLine() {
-      if(this.destination.displayLabel && this.destination.displayLabel[0]){
-        return this.destination.displayLabel[0].join(" ");
-      }
-      else{
-        if(this.destination.name){
-          return this.$t(this.destination.name);
+      if (
+        this.destination &&
+        this.destination.displayLabel &&
+        this.destination.displayLabel[0]
+      ) {
+        if (Array.isArray(this.destination.displayLabel[0])) {
+          return this.destination.displayLabel[0].join(" ");
         }
-        else if (this.type == 1 && !this.regular) {
-          return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality
-        } else if (this.type == 1 && this.regular) {
-          return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality
-        } else if (this.type == 2 && !this.regular) {
-          return this.destination.addressLocality
-        } else {
+        return this.destination.displayLabel[0];
+      } else {
+        if (this.destination.name) {
+          return this.$t(this.destination.name);
+        } else if (this.type == 1 && !this.regular) {
           return this.destination.streetAddress
+            ? this.destination.streetAddress
+            : this.destination.addressLocality;
+        } else if (this.type == 1 && this.regular) {
+          return this.destination.streetAddress
+            ? this.destination.streetAddress
+            : this.destination.addressLocality;
+        } else if (this.type == 2 && !this.regular) {
+          return this.destination.addressLocality;
+        } else {
+          return this.destination.streetAddress;
         }
       }
     },
     originSecondLine() {
-      if(this.origin.displayLabel && this.origin.displayLabel[1]){
-        return this.origin.displayLabel[1].join(" ");
-      }
-      else{
+      if (
+        this.origin &&
+        this.origin.displayLabel &&
+        this.origin.displayLabel[1]
+      ) {
+        if (Array.isArray(this.origin.displayLabel[1])) {
+          return this.destination.displayLabel[1].join(" ");
+        }
+        return this.origin.displayLabel[1];
+      } else {
         if (this.type == 1 && this.regular) {
-          return this.origin.addressLocality
-        } else if(this.type == 1 && !this.regular){
-          return (this.origin.streetAddress) ? this.origin.addressLocality : ''
+          return this.origin.addressLocality;
+        } else if (this.type == 1 && !this.regular) {
+          return this.origin.streetAddress ? this.origin.addressLocality : "";
         } else if (this.type == 2 && !this.regular) {
-          return this.origin.streetAddress
+          return this.origin.streetAddress;
         } else if (this.type == 2 && this.regular) {
-          return this.origin.addressLocality
+          return this.origin.addressLocality;
         }
         return null;
       }
     },
     destinationSecondLine() {
-      if(this.destination.displayLabel && this.destination.displayLabel[1]){
-        return this.destination.displayLabel[1].join(" ");
-      }
-      else{
-        let secondline = '';
+      if (
+        this.destination &&
+        this.destination.displayLabel &&
+        this.destination.displayLabel[1]
+      ) {
+        if (Array.isArray(this.destination.displayLabel[1])) {
+          return this.destination.displayLabel[1].join(" ");
+        }
+        return this.destination.displayLabel[1];
+      } else {
+        let secondline = "";
         if (this.type == 1 && this.regular) {
-          secondline = this.destination.addressLocality
-        } else if(this.type == 1 && !this.regular){
-          secondline = (this.destination.streetAddress) ? this.destination.addressLocality : ''
-        } else if (this.type == 2 && !this.regular) {
+          secondline = this.destination.addressLocality;
+        } else if (this.type == 1 && !this.regular) {
           secondline = this.destination.streetAddress
+            ? this.destination.addressLocality
+            : "";
+        } else if (this.type == 2 && !this.regular) {
+          secondline = this.destination.streetAddress;
         } else if (this.type == 2 && this.regular) {
-          secondline = this.destination.addressLocality
+          secondline = this.destination.addressLocality;
         }
         return secondline === this.destinationFirstLine ? null : secondline;
       }
@@ -272,7 +347,9 @@ export default {
   },
   methods: {
     formatTime(time) {
-      return moment(time).isValid() ? moment.utc(time).format(this.$t("hourMinute")) : time;
+      return moment(time).isValid()
+        ? moment.utc(time).format(this.$t("hourMinute"))
+        : time;
     }
   }
 };
