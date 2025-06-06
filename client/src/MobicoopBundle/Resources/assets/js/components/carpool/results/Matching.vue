@@ -684,13 +684,40 @@ export default {
     },
     dateResults() {
       if (!this.results) return [];
-      let date = new moment(this.date).format();
-      return this.results.filter(result => result.date === date);
+      // Today's results
+      const now = moment();
+      const todayStart = now.clone().startOf("day");
+      const todayEnd = now.clone().endOf("day");
+
+      return this.results.filter(result => {
+        if (!result.date || !result.time) return false;
+        const resultDateTime = moment(
+          `${result.date} ${result.time}`,
+          "YYYY-MM-DD HH:mm"
+        );
+
+        return (
+          resultDateTime.isSameOrAfter(now) &&
+          resultDateTime.isBetween(todayStart, todayEnd, null, "[]")
+        );
+      });
     },
     futureResults() {
       if (!this.results) return [];
-      let date = new moment(this.date).format();
-      return this.results.filter(result => result.date !== date);
+      // Only future results
+      const tomorrowStart = moment()
+        .add(1, "day")
+        .startOf("day");
+
+      return this.results.filter(result => {
+        if (!result.date || !result.time) return false;
+        const resultDateTime = moment(
+          `${result.date} ${result.time}`,
+          "YYYY-MM-DD HH:mm"
+        );
+
+        return resultDateTime.isSameOrAfter(tomorrowStart);
+      });
     },
     communities() {
       if (!this.results) return null;
