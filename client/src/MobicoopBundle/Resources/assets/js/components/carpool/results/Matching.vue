@@ -690,9 +690,12 @@ export default {
       const todayEnd = now.clone().endOf("day");
 
       return this.results.filter(result => {
-        if (!result.date || !result.time) return false;
+        const dateToUse =
+          result.frequency === 2 ? result.startDate : result.date;
+
+        if (!dateToUse || !result.time) return false;
         const resultDateTime = moment(
-          `${result.date} ${result.time}`,
+          `${dateToUse} ${result.time}`,
           "YYYY-MM-DD HH:mm"
         );
 
@@ -702,6 +705,7 @@ export default {
         );
       });
     },
+
     futureResults() {
       if (!this.results) return [];
       // Only future results
@@ -710,9 +714,11 @@ export default {
         .startOf("day");
 
       return this.results.filter(result => {
-        if (!result.date || !result.time) return false;
+        const dateToUse =
+          result.frequency === 2 ? result.startDate : result.date;
+        if (!dateToUse || !result.time) return false;
         const resultDateTime = moment(
-          `${result.date} ${result.time}`,
+          `${dateToUse} ${result.time}`,
           "YYYY-MM-DD HH:mm"
         );
 
