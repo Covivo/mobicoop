@@ -69,6 +69,7 @@ class PaymentDataProvider
     private $clientId;
     private $apikey;
     private $sandBoxMode;
+    private $sandBoxReturnUrl;
 
     public function __construct(
         PaymentProfileRepository $paymentProfileRepository,
@@ -82,7 +83,8 @@ class PaymentDataProvider
         string $defaultCurrency,
         string $validationDocsPath,
         string $baseUri,
-        string $baseMobileUri
+        string $baseMobileUri,
+        string $sandBoxReturnUrl
     ) {
         $this->paymentProvider = $paymentProvider;
         $this->paymentProfileRepository = $paymentProfileRepository;
@@ -101,6 +103,7 @@ class PaymentDataProvider
         $this->clientId = $clientId;
         $this->apikey = $apikey;
         $this->sandBoxMode = $sandBoxMode;
+        $this->sandBoxReturnUrl = $sandBoxReturnUrl;
     }
 
     /**
@@ -120,6 +123,7 @@ class PaymentDataProvider
                     $this->validationDocsPath,
                     $this->baseUri,
                     $this->baseMobileUri,
+                    $this->sandBoxReturnUrl,
                     $this->paymentProfileRepository
                 );
             }
@@ -204,6 +208,7 @@ class PaymentDataProvider
                     $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
                 }
                 $user->setPaymentProfileId($paymentProfile->getId());
+                $user->setPaymentProfileIdentifier($paymentProfile->getIdentifier());
             }
         }
 

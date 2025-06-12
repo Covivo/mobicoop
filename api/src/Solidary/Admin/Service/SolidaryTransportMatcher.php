@@ -26,8 +26,10 @@ namespace App\Solidary\Admin\Service;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Solidary\Admin\Repository\SolidaryUserRepository;
+use App\Solidary\Admin\Service\SolidaryTransport\MatchVolunteers;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryMatching;
+use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Event\SolidaryMatchingEvent;
@@ -49,14 +51,21 @@ class SolidaryTransportMatcher
      */
     private $_eventDispatcher;
 
+    /**
+     * @var MatchVolunteers
+     */
+    private $_matchVolunteers;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         SolidaryUserRepository $solidaryUserRepository,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        MatchVolunteers $matchVolunteers
     ) {
         $this->entityManager = $entityManager;
         $this->solidaryUserRepository = $solidaryUserRepository;
         $this->_eventDispatcher = $eventDispatcher;
+        $this->_matchVolunteers = $matchVolunteers;
     }
 
     /**
@@ -69,12 +78,15 @@ class SolidaryTransportMatcher
         }
 
         // first we get the volunteers for the outward
-        $outwardVolunteers = $this->solidaryUserRepository->getMatchingVolunteers($solidary, $solidary->getProposal()->getType());
+        $outwardAcceptedVolunteers = $this->solidaryUserRepository->getMatchingVolunteers($solidary, $solidary->getProposal()->getType());
+        $solidary = $this->_matchVolunteers->removeVolunteerNoLongerMatch($solidary, $outwardAcceptedVolunteers);
+        $outwardVolunteers = $this->_matchVolunteers->getNewVolunteers($solidary, $outwardAcceptedVolunteers);
 
         // then, we get the volunteers for the return (if relevant)
         $returnVolunteers = [];
         if ($solidary->getProposal()->getProposalLinked()) {
-            $returnVolunteers = $this->solidaryUserRepository->getMatchingVolunteers($solidary, $solidary->getProposal()->getProposalLinked()->getType());
+            $returnAcceptedVolunteers = $this->solidaryUserRepository->getMatchingVolunteers($solidary, $solidary->getProposal()->getProposalLinked()->getType());
+            $returnVolunteers = $this->_matchVolunteers->getNewVolunteers($solidary, $returnAcceptedVolunteers);
         }
 
         // create outward SolidaryMatchings

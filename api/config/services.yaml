@@ -334,7 +334,6 @@ services:
       $carpoolDisplayFieldsOrder: "%env(json:CARPOOL_DISPLAY_FIELDS_ORDER)%"
       $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
 
-
   App\Carpool\Repository\CarpoolProofRepository:
     arguments:
       $carpoolProofErroCheckLimit: "%env(int:CARPOOL_PROOF_ERROR_CHECK_LIMIT)%"
@@ -1104,6 +1103,7 @@ services:
       $requestStack: '@Symfony\Component\HttpFoundation\RequestStack'
       $security: '@Symfony\Component\Security\Core\Security'
       $logger: "@monolog.logger.payment"
+      $webhookSecret: "%env(json:PAYMENT_WEBHOOK_SECRET)%"
     tags:
       - { name: "controller.service_arguments" }
       - { name: "api_platform.data_persister" }
@@ -1154,6 +1154,7 @@ services:
       $validationDocsPath: "%env(resolve:PAYMENT_VALIDATION_DOCS_PATH)%"
       $baseUri: "%env(string:BASE_URI)%"
       $baseMobileUri: "%env(string:BASE_MOBILE_URI)%"
+      $sandBoxReturnUrl: "%env(string:PAYMENT_SANDBOX_RETURN_URL)%"
 
   App\Payment\Service\PaymentManager:
     arguments:

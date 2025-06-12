@@ -357,7 +357,8 @@ class PaymentManager
                 if (is_null($paymentProfile) || 0 == count($paymentProfile)) {
                     $paymentItem->setElectronicallyPayable(false);
                 } else {
-                    if ($paymentProfile[0]->isElectronicallyPayable() && PaymentProfile::VALIDATION_VALIDATED == $paymentProfile[0]->getValidationStatus()) {
+                    if ($paymentProfile[0]->isElectronicallyPayable()
+                        && PaymentProfile::VALIDATION_VALIDATED == $paymentProfile[0]->getValidationStatus()) {
                         $paymentItem->setElectronicallyPayable(true);
                     }
                 }
@@ -871,7 +872,6 @@ class PaymentManager
      */
     public function treatCarpoolPayment(CarpoolPayment $carpoolPayment, array $onlineReturns = []): CarpoolPayment
     {
-        var_dump('treatCarpoolPayment');
         foreach ($carpoolPayment->getCarpoolItems() as $item) {
             /**
              * @var CarpoolItem $item
@@ -884,8 +884,6 @@ class PaymentManager
 
                 case CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE:
                 case CarpoolItem::DEBTOR_STATUS_ONLINE:
-                    var_dump('DEBTOR_STATUS_ONLINE');
-                    var_dump(count($onlineReturns));
                     $updated = false;
                     if (count($onlineReturns) > 0) {
                         $updated = $this->_treatOnlineCarpoolPayment($carpoolPayment->getStatus(), $item, $onlineReturns);
@@ -1167,7 +1165,7 @@ class PaymentManager
         }
 
         $identifier = null;
-        if (!$this->_hasPaymentProfileForCurrentProvider($user)) {
+        if (!$this->hasPaymentProfileForCurrentProvider($user)) {
             // No Payment Profile, we create one
 
             // RPC we check the user have already a bank account with anotherEmail
@@ -1243,6 +1241,7 @@ class PaymentManager
             throw new PaymentException(PaymentException::NOT_THE_OWNER);
         }
 
+        $bankAccount->setUserIdentifier($userWithPaymentProfile->getPaymentProfileIdentifier());
         $bankAccount = $this->paymentProvider->disableBankAccount($bankAccount);
 
         // If there is no more active account, we need to update de PaymentProfile
@@ -1425,6 +1424,8 @@ class PaymentManager
 
         $paymentProfile = $this->paymentProfileRepository->findOneBy(['validationId' => $hook->getRessourceId()]);
         if (is_null($paymentProfile)) {
+            $this->logger->info($hook->getRessourceId());
+
             throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
         }
 
@@ -1433,6 +1434,8 @@ class PaymentManager
         switch ($hook->getStatus()) {
             case Hook::STATUS_SUCCESS:
                 if (PaymentProfile::VALIDATION_VALIDATED == $paymentProfile->getValidationStatus() && !is_null($paymentProfile->getValidatedDate())) {
+                    $this->logger->info('Payment profile validation success but return');
+
                     return;
                 }
 
@@ -1606,7 +1609,7 @@ class PaymentManager
         return $paymentProfile;
     }
 
-    private function _hasPaymentProfileForCurrentProvider(User $user): bool
+    public function hasPaymentProfileForCurrentProvider(User $user): bool
     {
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user, 'provider' => $this->paymentProvider->getPaymentProviderName()]);
 

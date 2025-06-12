@@ -10,7 +10,6 @@ use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockBankAccount;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockPaymentProfile;
-use App\Tests\DataProvider\Entity\Stripe\Mock\MockStripeBankAccount;
 use App\Tests\DataProvider\Entity\Stripe\Mock\MockUser;
 use PHPUnit\Framework\TestCase;
 use Stripe\Account as StripeAccount;
@@ -74,9 +73,16 @@ class StripeProviderTest extends TestCase
             ->willReturn(new StripeBankAccount('token'))
         ;
 
+        $stripeBankAccount = new StripeBankAccount('ba_123');
+        $stripeBankAccount->metadata = new \stdClass();
+        $stripeBankAccount->metadata->status = 'validated';
+        $stripeBankAccount->status = 'validated';
+        $stripeBankAccount->bank_name = 'Test Bank';
+        $stripeBankAccount->last4 = '1234';
+
         $collection = Collection::constructFrom([
             'object' => 'list',
-            'data' => [MockStripeBankAccount::getStripeBankAccount()],
+            'data' => [$stripeBankAccount],
             'has_more' => false,
             'url' => '/v1/accounts/acct_123/external_accounts',
         ]);
@@ -120,6 +126,7 @@ class StripeProviderTest extends TestCase
             $this->_validationDocsPath,
             $this->_baseUri,
             $this->_baseMobileUri,
+            'https://yourbusiness.com/test',
             $this->_paymentProfileRepository
         );
 
@@ -173,6 +180,7 @@ class StripeProviderTest extends TestCase
             $this->_validationDocsPath,
             $this->_baseUri,
             $this->_baseMobileUri,
+            'https://yourbusiness.com/test',
             $this->_paymentProfileRepository
         );
     }
@@ -194,6 +202,7 @@ class StripeProviderTest extends TestCase
             $this->_validationDocsPath,
             $this->_baseUri,
             $this->_baseMobileUri,
+            'https://yourbusiness.com/test',
             $this->_paymentProfileRepository
         );
     }
@@ -215,6 +224,7 @@ class StripeProviderTest extends TestCase
             $this->_validationDocsPath,
             $this->_baseUri,
             $this->_baseMobileUri,
+            'https://yourbusiness.com/test',
             $this->_paymentProfileRepository
         );
     }

@@ -15,7 +15,8 @@
   "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
   "regularInfo": "Zenbait egunetan ez bazira {driver} -(r))ekin autokidetzan ibili, behereko laukian desmarka ezazu.",
   "tooltip": {
-    "message": "Ezin duzu linearen bidez pagatu, gidariak ez baititu bere banku datuak sartu."
+    "message": "Ezin duzu linearen bidez pagatu, gidariak ez baititu bere banku datuak sartu.",
+    "messageAmountTooLow": "The amount is lower than the minimum amount allowed by the carpooling platform for an online payment."
   },
   "payments": {
     "getFirstWeek": "/getFirstWeek",

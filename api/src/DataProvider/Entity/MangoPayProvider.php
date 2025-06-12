@@ -122,6 +122,7 @@ class MangoPayProvider implements PaymentProviderInterface
         string $validationDocsPath,
         string $baseUri,
         string $baseMobileUri,
+        string $sandBoxReturnUrl,
         PaymentProfileRepository $paymentProfileRepository
     ) {
         ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;

@@ -89,6 +89,7 @@ use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\HomeAddressWaypointTerritoryFilter;
 use App\User\Filter\IdentityProofFilter;
 use App\User\Filter\IdentityStatusFilter;
+use App\User\Filter\CommunityFilter;
 use App\User\Filter\IsInCommunityFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\NewsSubscriptionFilter;
@@ -655,6 +656,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(FamilyAndGivenNameFilter::class, properties={"q"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
+ * @ApiFilter(CommunityFilter::class, properties={"community"})
  * @ApiFilter(IsInCommunityFilter::class)
  * @ApiFilter(ProposalValidFilter::class)
  * @ApiFilter(ODRangeDestinationFilter::class)
@@ -1652,6 +1654,15 @@ class User implements UserInterface, EquatableInterface
      * @MaxDepth(1)
      */
     private $paymentProfileId;
+
+    /**
+     * @var null|string PaymentProfileIdentifier of a User (external service identifier)
+     *
+     * @Groups({"readPayment"})
+     *
+     * @MaxDepth(1)
+     */
+    private $paymentProfileIdentifier;
 
     /**
      * @var null|array BankAccounts of a User
@@ -3779,6 +3790,18 @@ class User implements UserInterface, EquatableInterface
     public function setPaymentProfileId(?int $paymentProfileId): self
     {
         $this->paymentProfileId = $paymentProfileId;
+
+        return $this;
+    }
+
+    public function getPaymentProfileIdentifier(): ?string
+    {
+        return $this->paymentProfileIdentifier;
+    }
+
+    public function setPaymentProfileIdentifier(?string $paymentProfileIdentifier): self
+    {
+        $this->paymentProfileIdentifier = $paymentProfileIdentifier;
 
         return $this;
     }

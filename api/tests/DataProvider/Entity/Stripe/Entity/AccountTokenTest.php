@@ -71,4 +71,23 @@ class AccountTokenTest extends TestCase
         $accountToken = new AccountToken($user, $address);
         $this->assertEquals($result, json_encode($accountToken->buildBody()));
     }
+
+    /**
+     * @test
+     */
+    public function testBuildBodyIncludesValidationDocuments()
+    {
+        $user = MockUser::getSimpleUser();
+        $accountToken = new AccountToken($user);
+
+        $accountToken->setValidationDocumentFrontId('file_front123');
+        $accountToken->setValidationDocumentBackId('file_back456');
+
+        $body = $accountToken->buildBody();
+
+        $this->assertArrayHasKey('verification', $body['account']['individual']);
+        $this->assertArrayHasKey('document', $body['account']['individual']['verification']);
+        $this->assertEquals('file_front123', $body['account']['individual']['verification']['document']['front']);
+        $this->assertEquals('file_back456', $body['account']['individual']['verification']['document']['back']);
+    }
 }

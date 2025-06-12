@@ -24,6 +24,7 @@ class StripeHookDataPersisterTest extends TestCase
     private $logger;
     private $stripeHookDataPersister;
     private $request;
+    private $secret;
 
     public function setUp(): void
     {
@@ -32,6 +33,14 @@ class StripeHookDataPersisterTest extends TestCase
         $this->security = $this->createMock(Security::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->request = $this->createMock(Request::class);
+        $this->secret = ['whsec_test_secret'];
+
+        $this->stripeHookDataPersister = new class($this->paymentManager, $this->requestStack, $this->security, $this->logger, $this->secret) extends StripeHookDataPersister {
+            protected function _checkWebhookSecret($signature, $payload): bool
+            {
+                return true;
+            }
+        };
 
         // Configure le mock RequestStack pour retourner le mock Request
         $this->requestStack->method('getCurrentRequest')
@@ -44,8 +53,6 @@ class StripeHookDataPersisterTest extends TestCase
             ->willReturn('some_signature')
         ;
         $this->request->headers = $headers;
-
-        $this->stripeHookDataPersister = new StripeHookDataPersister($this->paymentManager, $this->requestStack, $this->security, $this->logger);
     }
 
     /**
@@ -93,15 +100,6 @@ class StripeHookDataPersisterTest extends TestCase
         $this->stripeHookDataPersister->persist($data, ['operation_name' => $data]);
     }
 
-    public function getValidatedData(): array
-    {
-        $stripeEvent = '{"data":{"object":{"individual":{"account":"accountId","verification":{"document":{"front":"documentId"},"status":"verified"}}}}, "type":"account.updated"}';
-
-        return [
-            ['stripe_webhook', $stripeEvent],
-        ];
-    }
-
     /**
      * @test
      *
@@ -128,6 +126,40 @@ class StripeHookDataPersisterTest extends TestCase
         return [
             ['stripe_webhook', $stripeEvent],
             ['stripe_webhook', $stripeEvent2],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider getValidatedData
+     */
+    public function testHandleHookValidationNotCalledWhenSecretValidationFails(string $data, string $stripeEvent)
+    {
+        $this->stripeHookDataPersister = new class($this->paymentManager, $this->requestStack, $this->security, $this->logger, $this->secret) extends StripeHookDataPersister {
+            protected function _checkWebhookSecret($signature, $payload): bool
+            {
+                return false;
+            }
+        };
+
+        $this->request->method('getContent')
+            ->willReturn($stripeEvent)
+        ;
+
+        $this->paymentManager->expects($this->never())
+            ->method('handleHookValidation')
+        ;
+
+        $this->stripeHookDataPersister->persist($data, ['collection_operation_name' => $data]);
+    }
+
+    public function getValidatedData(): array
+    {
+        $stripeEvent = '{"data":{"object":{"individual":{"account":"accountId","verification":{"document":{"front":"documentId"},"status":"verified"}}}}, "type":"account.updated"}';
+
+        return [
+            ['stripe_webhook', $stripeEvent],
         ];
     }
 }

@@ -42,7 +42,8 @@
     "getFirstWeek": "/getFirstWeek"
   },
   "tooltip": {
-    "message": "You cannot pay online because the driver has not entered their bank details."
+    "message": "You cannot pay online because the driver has not entered their bank details.",
+    "messageAmountTooLow": "The amount is lower than the minimum amount allowed by the carpooling platform for an online payment."
   },
   "regularInfo": "If you haven't carpooled with {driver} on some days, you can uncheck them below.",
   "redirectAfterPayment": "/user/profile/change/my-accepted-carpools",
