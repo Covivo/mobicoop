@@ -684,10 +684,10 @@ export default {
     },
     dateResults() {
       if (!this.results) return [];
-      // Today's results
-      const now = moment();
-      const todayStart = now.clone().startOf("day");
-      const todayEnd = now.clone().endOf("day");
+      // Results for the requested date
+      const requestedDate = this.date ? moment(this.date) : moment();
+      const dayStart = requestedDate.clone().startOf("day");
+      const dayEnd = requestedDate.clone().endOf("day");
 
       return this.results.filter(result => {
         const dateToUse =
@@ -699,30 +699,26 @@ export default {
           "YYYY-MM-DD HH:mm"
         );
 
-        return (
-          resultDateTime.isSameOrAfter(now) &&
-          resultDateTime.isBetween(todayStart, todayEnd, null, "[]")
-        );
+        return resultDateTime.isBetween(dayStart, dayEnd, null, "[]");
       });
     },
-
     futureResults() {
       if (!this.results) return [];
-      // Only future results
-      const tomorrowStart = moment()
-        .add(1, "day")
-        .startOf("day");
+      // Results for dates after the requested date
+      const requestedDate = this.date ? moment(this.date) : moment();
+      const dayEnd = requestedDate.clone().endOf("day");
 
       return this.results.filter(result => {
         const dateToUse =
           result.frequency === 2 ? result.startDate : result.date;
+
         if (!dateToUse || !result.time) return false;
         const resultDateTime = moment(
           `${dateToUse} ${result.time}`,
           "YYYY-MM-DD HH:mm"
         );
 
-        return resultDateTime.isSameOrAfter(tomorrowStart);
+        return resultDateTime.isAfter(dayEnd);
       });
     },
     communities() {
