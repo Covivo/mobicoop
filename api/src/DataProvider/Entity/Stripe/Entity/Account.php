@@ -28,6 +28,7 @@ use Stripe\Token as StripeToken;
 class Account
 {
     private const TYPE_PROFILE = 'business_profile';
+    private const ACCOUNT_TYPE = 'custom';
     private const MCC = 4789;
     private const CAPABILITIES = [
         'bank_transfer_payments' => ['requested' => true],
@@ -112,6 +113,7 @@ class Account
                 'stripe_dashboard' => ['type' => 'none'],
                 'requirement_collection' => 'application',
             ],
+            'type' => self::ACCOUNT_TYPE,
         ];
     }
 }
