@@ -69,6 +69,9 @@ class PaymentLink
                     'url' => $this->returnUrl,
                 ],
             ],
+            'automatic_tax' => [
+                'enabled' => false,
+            ],
         ];
 
         foreach ($this->prices as $price) {

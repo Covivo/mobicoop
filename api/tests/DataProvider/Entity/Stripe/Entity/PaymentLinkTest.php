@@ -39,6 +39,9 @@ class PaymentLinkTest extends TestCase
                     'url' => 'https://yourbusiness.com/test',
                 ],
             ],
+            'automatic_tax' => [
+                'enabled' => false,
+            ],
         ];
         $this->_paymentLink = new PaymentLink($this->_prices, 'https://yourbusiness.com/test');
     }
