@@ -68,6 +68,7 @@ class PaymentDataProvider
     private $security;
     private $clientId;
     private $apikey;
+    private $publicApikey;
     private $sandBoxMode;
     private $sandBoxReturnUrl;
 
@@ -78,6 +79,7 @@ class PaymentDataProvider
         string $paymentProvider,
         string $clientId,
         string $apikey,
+        string $publicApikey,
         bool $sandBoxMode,
         string $platformName,
         string $defaultCurrency,
@@ -102,6 +104,7 @@ class PaymentDataProvider
         $this->security = $security;
         $this->clientId = $clientId;
         $this->apikey = $apikey;
+        $this->publicApikey = $publicApikey;
         $this->sandBoxMode = $sandBoxMode;
         $this->sandBoxReturnUrl = $sandBoxReturnUrl;
     }
@@ -118,6 +121,7 @@ class PaymentDataProvider
                     $this->security->getUser(),
                     $this->clientId,
                     $this->apikey,
+                    $this->publicApikey,
                     $this->sandBoxMode,
                     $this->defaultCurrency,
                     $this->validationDocsPath,
