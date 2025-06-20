@@ -107,12 +107,6 @@ class Account
                 'url' => $this->getUrl(),
             ],
             'capabilities' => $this->getCapabilities(),
-            'controller' => [
-                'fees' => ['payer' => 'application'],
-                'losses' => ['payments' => 'application'],
-                'stripe_dashboard' => ['type' => 'none'],
-                'requirement_collection' => 'application',
-            ],
             'type' => self::ACCOUNT_TYPE,
         ];
     }
