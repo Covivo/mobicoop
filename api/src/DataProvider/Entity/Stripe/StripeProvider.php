@@ -88,11 +88,13 @@ class StripeProvider implements PaymentProviderInterface
     private $baseMobileUri;
 
     private $_stripe;
+    private $_stripePublicKey;
 
     public function __construct(
         ?User $user,
         string $clientId,
         string $apikey,
+        string $publicApikey,
         bool $sandBoxMode,
         string $currency,
         string $validationDocsPath,
@@ -121,6 +123,10 @@ class StripeProvider implements PaymentProviderInterface
 
         $this->_stripe = new StripeClient([
             'api_key' => $apikey,
+            'stripe_version' => self::STRIPE_API_VERSION,
+        ]);
+        $this->_stripePublicKey = new StripeClient([
+            'api_key' => $publicApikey,
             'stripe_version' => self::STRIPE_API_VERSION,
         ]);
     }
@@ -546,7 +552,7 @@ class StripeProvider implements PaymentProviderInterface
     private function _createToken(Token $token): ?StripeToken
     {
         try {
-            return $this->_stripe->tokens->create($token->buildBody());
+            return $this->_stripePublicKey->tokens->create($token->buildBody());
         } catch (ApiErrorException $e) {
             throw new PaymentException($e->getMessage());
         }

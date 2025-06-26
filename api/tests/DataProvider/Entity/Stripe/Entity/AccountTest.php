@@ -30,7 +30,7 @@ class AccountTest extends TestCase
         $token = new Token('acct_XXXXXXXXXXXXX');
         $url = 'https://www.example.com/';
 
-        $result = '{"account_token":"acct_XXXXXXXXXXXXX","business_profile":{"mcc":"4789","url":"https:\/\/www.example.com\/"},"capabilities":{"bank_transfer_payments":{"requested":true},"card_payments":{"requested":true},"transfers":{"requested":true}},"controller":{"fees":{"payer":"application"},"losses":{"payments":"application"},"stripe_dashboard":{"type":"none"},"requirement_collection":"application"},"type":"custom"}';
+        $result = '{"account_token":"acct_XXXXXXXXXXXXX","business_profile":{"mcc":"4789","url":"https:\/\/www.example.com\/"},"capabilities":{"bank_transfer_payments":{"requested":true},"card_payments":{"requested":true},"transfers":{"requested":true}},"type":"custom"}';
 
         return [
             [$token, $url, $result],

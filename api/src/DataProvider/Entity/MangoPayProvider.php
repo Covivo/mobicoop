@@ -117,6 +117,7 @@ class MangoPayProvider implements PaymentProviderInterface
         ?User $user,
         string $clientId,
         string $apikey,
+        string $publicApikey,
         bool $sandBoxMode,
         string $currency,
         string $validationDocsPath,
