@@ -32,6 +32,7 @@ class StripeProviderTest extends TestCase
     private $_paymentProfileRepository;
     private $_clientId = 'clientId';
     private $_apikey = 'sk_test_apikey';
+    private $_publicApikey = 'pk_test_apikey';
     private $_currency = 'EUR';
     private $_validationDocsPath = 'validationDocsPath';
     private $_baseUri = 'baseUri';
@@ -121,6 +122,7 @@ class StripeProviderTest extends TestCase
             MockUser::getSimpleUser(),
             $this->_clientId,
             $this->_apikey,
+            $this->_publicApikey,
             true,
             $this->_currency,
             $this->_validationDocsPath,
@@ -135,6 +137,10 @@ class StripeProviderTest extends TestCase
         $property = $reflection->getProperty('_stripe');
         $property->setAccessible(true);
         $property->setValue($this->_stripeProvider, $stripeMock);
+
+        $property_public_key = $reflection->getProperty('_stripePublicKey');
+        $property_public_key->setAccessible(true);
+        $property_public_key->setValue($this->_stripeProvider, $stripeMock);
     }
 
     /**
@@ -175,6 +181,7 @@ class StripeProviderTest extends TestCase
             MockUser::getSimpleUser(),
             $this->_clientId,
             'invalidApiKey',
+            $this->_publicApikey,
             true,
             $this->_currency,
             $this->_validationDocsPath,
@@ -197,6 +204,7 @@ class StripeProviderTest extends TestCase
             MockUser::getSimpleUser(),
             $this->_clientId,
             'sk_live',
+            $this->_publicApikey,
             true,
             $this->_currency,
             $this->_validationDocsPath,
@@ -219,6 +227,7 @@ class StripeProviderTest extends TestCase
             MockUser::getSimpleUser(),
             $this->_clientId,
             'sk_test',
+            $this->_publicApikey,
             false,
             $this->_currency,
             $this->_validationDocsPath,
