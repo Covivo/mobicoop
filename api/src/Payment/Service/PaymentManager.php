@@ -1280,6 +1280,15 @@ class PaymentManager
         return $paymentProfile;
     }
 
+    public function updatePaymentProfileStatus(array $paymentProfile)
+    {
+        $user = $this->paymentProvider->getUser($paymentProfile['identifier']);
+
+        $kycDocument = $this->paymentProvider->getIdentityValidationStatus($user);
+
+        $this->updatePaymentProfile($paymentProfile['id'], $kycDocument);
+    }
+
     public function updatePaymentProfile(int $id, $kycDocument)
     {
         $paymentProfile = $this->paymentProfileRepository->find($id);

@@ -276,6 +276,13 @@ class PaymentDataProvider
         return $this->providerInstance->getUser($identifier);
     }
 
+    public function getIdentityValidationStatus($user)
+    {
+        $this->checkPaymentConfiguration();
+
+        return $this->providerInstance->getIdentityValidationStatus($user);
+    }
+
     /**
      * Create a wallet for a user.
      *

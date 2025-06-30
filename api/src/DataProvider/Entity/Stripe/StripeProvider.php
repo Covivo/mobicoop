@@ -45,6 +45,7 @@ use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\ValidationDocument;
 use App\Payment\Service\PaymentDataProvider;
+use App\Payment\Service\PaymentManager;
 use App\User\Entity\User;
 use Stripe\Account as StripeAccount;
 use Stripe\BankAccount as StripeBankAccount;
@@ -75,6 +76,9 @@ class StripeProvider implements PaymentProviderInterface
     public const BANKACCCOUNT_STATUS_INACTIVE = 'inactive';
 
     private const STRIPE_API_VERSION = '2025-02-24.acacia';
+
+    private const IDENTITY_VERIFED = 'verified';
+    private const IDENTITY_UNVERIFIED = 'unverified';
 
     private $user;
     private $clientId;
@@ -263,6 +267,43 @@ class StripeProvider implements PaymentProviderInterface
     }
 
     /**
+     * Get a User to the provider.
+     */
+    public function getUser(string $identifier)
+    {
+        try {
+            return $this->_stripe->accounts->retrieve($identifier, []);
+        } catch (ApiErrorException $e) {
+            throw new PaymentException($e->getMessage());
+        }
+    }
+
+    public function getIdentityValidationStatus($userPaymentProfile): array
+    {
+        if (isset($userPaymentProfile['individual']['verification']['status'])) {
+            switch ($userPaymentProfile['individual']['verification']['status']) {
+                case self::IDENTITY_VERIFED:
+                    $kycDocument['Status'] = PaymentManager::KYC_DOCUMENT_VALIDATED;
+
+                    break;
+
+                case self::IDENTITY_UNVERIFIED:
+                    $kycDocument['Status'] = PaymentManager::KYC_DOCUMENT_REFUSED;
+
+                    break;
+
+                default:
+                    $kycDocument['Status'] = '';
+
+                    break;
+            }
+            $kycDocument['Id'] = isset($userPaymentProfile['individual']['verification']['document']['front']) ? $userPaymentProfile['individual']['verification']['document']['front'] : '';
+        }
+
+        return $kycDocument;
+    }
+
+    /**
      * Process an electronic payment between the $debtor and the $creditors.
      *
      * array of creditors are like this :
@@ -358,7 +399,10 @@ class StripeProvider implements PaymentProviderInterface
 
     public function getDocument($validationDocumentId) {}
 
-    public function getKycDocument(string $kycDocumentId) {}
+    public function getKycDocument(string $kycDocumentId)
+    {
+        return [];
+    }
 
     public function getWallets(PaymentProfile $paymentProfile)
     {

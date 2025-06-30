@@ -54,14 +54,14 @@ class CheckPaymentProfileStatusCommand extends Command
     {
         $this
             ->setName('app:payment-profile:check-batch')
-            ->setDescription('Check if the payment profile is up to date with mangopay bdd.')
+            ->setDescription('Check if the payment profile is up to date with payment provider status of the user.')
             ->setHelp('Get each mangoPay user and check identityProof status and update paymentProfile if needed.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $paymentProfiles = $this->paymentProfileRepository->findAllIdentifiers();
+        $paymentProfiles = $this->paymentProfileRepository->findAllIdentifiers($this->paymentDataProvider->getPaymentProviderName());
 
         if (0 == count($paymentProfiles)) {
             return 0;
@@ -72,11 +72,7 @@ class CheckPaymentProfileStatusCommand extends Command
                 continue;
             }
 
-            $userPaymentProfile = $this->paymentDataProvider->getUser($paymentProfile['identifier']);
-            if (isset($userPaymentProfile['ProofOfIdentity']) && !is_null($userPaymentProfile['ProofOfIdentity'])) {
-                $kycDocument = $this->paymentDataProvider->getKycDocument($userPaymentProfile['ProofOfIdentity']);
-                $this->paymentManager->updatePaymentProfile($paymentProfile['id'], $kycDocument);
-            }
+            $this->paymentManager->updatePaymentProfileStatus($paymentProfile);
         }
 
         return 0;
