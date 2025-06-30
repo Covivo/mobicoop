@@ -80,6 +80,17 @@ class StripeProvider implements PaymentProviderInterface
     private const IDENTITY_VERIFED = 'verified';
     private const IDENTITY_UNVERIFIED = 'unverified';
 
+    private const OUT_OF_DATE = 'document_expired';
+    private const DOCUMENT_FALSIFIED = 'document_fraudulent';
+    private const DOCUMENT_MISSING_FRONT = 'document_missing_front';
+    private const DOCUMENT_MISSING_BACK = 'document_missing_back';
+    private const DOCUMENT_HAS_EXPIRED = 'document_expired';
+    private const DOCUMENT_NOT_ACCEPTED = 'document_type_not_supported';
+    private const DOCUMENT_DO_NOT_MATCH_USER_DATA = 'document_invalid';
+    private const DOCUMENT_UNREADABLE = 'document_not_readable';
+    private const DOCUMENT_INCOMPLETE = 'document_incomplete';
+    private const DOCUMENT_FAILED_OTHER_CASE = 'document_failed_other';
+
     private $user;
     private $clientId;
     private $serverUrl;
@@ -290,6 +301,58 @@ class StripeProvider implements PaymentProviderInterface
                 case self::IDENTITY_UNVERIFIED:
                     $kycDocument['Status'] = PaymentManager::KYC_DOCUMENT_REFUSED;
 
+                    switch ($userPaymentProfile['individual']['verification']['document']['details_code']) {
+                        case self::OUT_OF_DATE:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::OUT_OF_DATE;
+
+                            break;
+
+                        case self::DOCUMENT_FALSIFIED:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_FALSIFIED;
+
+                            break;
+
+                        case self::DOCUMENT_MISSING_FRONT:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_MISSING_FRONT;
+
+                            break;
+
+                        case self::DOCUMENT_MISSING_BACK:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_MISSING_BACK;
+
+                            break;
+
+                        case self::DOCUMENT_HAS_EXPIRED:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_HAS_EXPIRED;
+
+                            break;
+
+                        case self::DOCUMENT_NOT_ACCEPTED:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_NOT_ACCEPTED;
+
+                            break;
+
+                        case self::DOCUMENT_DO_NOT_MATCH_USER_DATA:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_DO_NOT_MATCH_USER_DATA;
+
+                            break;
+
+                        case self::DOCUMENT_UNREADABLE:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_UNREADABLE;
+
+                            break;
+
+                        case self::DOCUMENT_INCOMPLETE:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_INCOMPLETE;
+
+                            break;
+
+                        case self::DOCUMENT_FAILED_OTHER_CASE:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_FAILED_OTHER_CASE;
+
+                            break;
+                    }
+
                     break;
 
                 default:
@@ -397,7 +460,66 @@ class StripeProvider implements PaymentProviderInterface
         return $validationDocument;
     }
 
-    public function getDocument($validationDocumentId) {}
+    public function getDocument($validationDocumentId, $status = '')
+    {
+        $validationDocument = new ValidationDocument();
+
+        $validationDocument->setId($validationDocumentId);
+
+        switch ($status) {
+            case self::OUT_OF_DATE:
+                $validationDocument->setStatus(PaymentProfile::OUT_OF_DATE);
+
+                break;
+
+            case self::DOCUMENT_FALSIFIED:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_FALSIFIED);
+
+                break;
+
+            case self::DOCUMENT_MISSING_FRONT:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_MISSING_FRONT);
+
+                break;
+
+            case self::DOCUMENT_MISSING_BACK:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_MISSING_BACK);
+
+                break;
+
+            case self::DOCUMENT_HAS_EXPIRED:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_HAS_EXPIRED);
+
+                break;
+
+            case self::DOCUMENT_NOT_ACCEPTED:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_NOT_ACCEPTED);
+
+                break;
+
+            case self::DOCUMENT_DO_NOT_MATCH_USER_DATA:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_DO_NOT_MATCH_USER_DATA);
+
+                break;
+
+            case self::DOCUMENT_UNREADABLE:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_UNREADABLE);
+
+                break;
+
+            case self::DOCUMENT_INCOMPLETE:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_INCOMPLETE);
+
+                break;
+
+            case self::DOCUMENT_FAILED_OTHER_CASE:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_FAILED_OTHER_CASE);
+
+                break;
+        }
+
+        return $validationDocument;
+    }
 
     public function getKycDocument(string $kycDocumentId)
     {

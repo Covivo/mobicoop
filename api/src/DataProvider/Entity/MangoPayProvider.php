@@ -903,7 +903,7 @@ class MangoPayProvider implements PaymentProviderInterface
         return $wallet;
     }
 
-    public function getDocument($validationDocumentId)
+    public function getDocument($validationDocumentId, $contextualStatus = '')
     {
         $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl.'kyc/documents/'.$validationDocumentId.'/');

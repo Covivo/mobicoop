@@ -85,6 +85,13 @@ class Hook
      */
     private $status;
 
+    /**
+     * @var string An additional status depending on the event type
+     *
+     * @Groups({"readPayment"})
+     */
+    private $contextualStatus;
+
     public function __construct(?string $id = null)
     {
         $this->id = !is_null($id) ? $id : self::DEFAULT_ID;
@@ -158,6 +165,18 @@ class Hook
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getContextualStatus(): ?string
+    {
+        return $this->contextualStatus;
+    }
+
+    public function setContextualStatus(string $contextualStatus): self
+    {
+        $this->contextualStatus = $contextualStatus;
 
         return $this;
     }

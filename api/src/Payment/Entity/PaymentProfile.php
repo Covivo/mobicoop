@@ -59,6 +59,9 @@ class PaymentProfile
     public const DOCUMENT_UNREADABLE = 8;
     public const DOCUMENT_INCOMPLETE = 9;
     public const SPECIFIC_CASE = 10;
+    public const DOCUMENT_MISSING_FRONT = 11;
+    public const DOCUMENT_MISSING_BACK = 12;
+    public const DOCUMENT_FAILED_OTHER_CASE = 13;
 
     /**
      * @var int The id of this payment profile
