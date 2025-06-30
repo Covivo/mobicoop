@@ -583,6 +583,15 @@ class MangoPayProvider implements PaymentProviderInterface
         return $carpoolPayment;
     }
 
+    public function getIdentityValidationStatus($userPaymentProfile): array
+    {
+        if (isset($userPaymentProfile['ProofOfIdentity']) && !is_null($userPaymentProfile['ProofOfIdentity'])) {
+            $kycDocument = $this->getKycDocument($userPaymentProfile['ProofOfIdentity']);
+        }
+
+        return $kycDocument;
+    }
+
     /**
      * Process an asynchronous electronic payment between the $debtor and the $creditors.
      *
@@ -894,7 +903,7 @@ class MangoPayProvider implements PaymentProviderInterface
         return $wallet;
     }
 
-    public function getDocument($validationDocumentId)
+    public function getDocument($validationDocumentId, $contextualStatus = '')
     {
         $this->_auth();
         $dataProvider = new DataProvider($this->serverUrl.'kyc/documents/'.$validationDocumentId.'/');

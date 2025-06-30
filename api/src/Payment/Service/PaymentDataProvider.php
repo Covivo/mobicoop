@@ -276,6 +276,13 @@ class PaymentDataProvider
         return $this->providerInstance->getUser($identifier);
     }
 
+    public function getIdentityValidationStatus($user)
+    {
+        $this->checkPaymentConfiguration();
+
+        return $this->providerInstance->getIdentityValidationStatus($user);
+    }
+
     /**
      * Create a wallet for a user.
      *
@@ -377,11 +384,11 @@ class PaymentDataProvider
         return $this->providerInstance->uploadValidationDocument($validationDocument);
     }
 
-    public function getDocument(string $validationDocumentId)
+    public function getDocument(string $validationDocumentId, string $contextualStatus = '')
     {
         $this->checkPaymentConfiguration();
 
-        return $this->providerInstance->getDocument($validationDocumentId);
+        return $this->providerInstance->getDocument($validationDocumentId, $contextualStatus);
     }
 
     public function getKycDocument(string $kycDocumentId)
