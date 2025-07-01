@@ -24,7 +24,12 @@
       "7": "Document refusé car les données ne correspondent pas à celles de l'utilisateur",
       "8": "Document refusé car illisible",
       "9": "Document refusé car incomplet",
-      "10": "Document refusé (raison non donnée)"
+      "10": "Document refusé (raison non donnée)",
+      "11": "Document refusé car recto manquant",
+      "12": "Document refusé car verso manquant",
+      "13": "Document refusé (raison non donnée)",
+      "14": "Document refusé car copie de l'original",
+      "15": "Document refusé car date de naissance incorrecte"
     }
   },
   "sendUrl": "/utilisateur/document-validation-identite/envoyer"
