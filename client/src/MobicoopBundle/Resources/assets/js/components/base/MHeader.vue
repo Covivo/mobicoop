@@ -13,7 +13,7 @@
           :href="$t('pad.carpool.link')"
           :alt="$t('pad.carpool.title')"
           target="_blank"
-        >{{ $t('pad.carpool.title') }}</a>
+        >{{ $t("pad.carpool.title") }}</a>
       </v-col>
       <v-col
         cols="4"
@@ -24,13 +24,13 @@
           :href="$t('pad.mobility.link')"
           :alt="$t('pad.mobility.title')"
           target="_blank"
-        >{{ $t('pad.mobility.title') }}</a><br>
+        >{{ $t("pad.mobility.title") }}</a><br>
         <a
           :href="$t('pad.mobility.link')"
           :alt="$t('pad.mobility.title')"
           target="_blank"
           class="font-italic text-lowercase"
-        >{{ $t('pad.mobility.subtitle') }}</a>
+        >{{ $t("pad.mobility.subtitle") }}</a>
       </v-col>
       <v-col
         cols="4"
@@ -41,7 +41,7 @@
           :href="$t('pad.events.link')"
           :alt="$t('pad.events.title')"
           target="_blank"
-        >{{ $t('pad.events.title') }}</a>
+        >{{ $t("pad.events.title") }}</a>
       </v-col>
       <v-col
         cols="4"
@@ -52,7 +52,7 @@
           :href="$t('pad.subscribe.link')"
           :alt="$t('pad.subscribe.title')"
           target="_blank"
-        >{{ $t('pad.subscribe.title') }}</a>
+        >{{ $t("pad.subscribe.title") }}</a>
       </v-col>
       <v-col
         cols="4"
@@ -63,7 +63,7 @@
           :href="$t('pad.blog.link')"
           :alt="$t('pad.blog.title')"
           target="_blank"
-        >{{ $t('pad.blog.title') }}</a>
+        >{{ $t("pad.blog.title") }}</a>
       </v-col>
       <v-col
         cols="4"
@@ -112,7 +112,11 @@
           <img
             class="logo"
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
-            :alt="$te('logo_alt') ? $t('logo_alt', { platform: appName.toLowerCase()}) : $t('logo')"
+            :alt="
+              $te('logo_alt')
+                ? $t('logo_alt', { platform: appName.toLowerCase() })
+                : $t('logo')
+            "
             height="50"
             width="210"
           >
@@ -142,7 +146,11 @@
         />
         <MHeaderProfile
           :avatar="user.avatars[0]"
-          :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
+          :short-family-name="
+            user.shortFamilyName
+              ? user.givenName + ' ' + user.shortFamilyName
+              : '-'
+          "
           :show-reviews="showReviews"
           :text-color-class="textColorClass"
         />
@@ -157,7 +165,7 @@
           text
           :href="$t('buttons.signup.route')"
         >
-          {{ $t('buttons.signup.label') }}
+          {{ $t("buttons.signup.label") }}
         </v-btn>
         <v-btn
           class="white--text"
@@ -165,11 +173,11 @@
           text
           :href="$t('buttons.logIn.route')"
         >
-          {{ $t('buttons.logIn.label') }}
+          {{ $t("buttons.logIn.label") }}
         </v-btn>
       </v-toolbar-items>
       <v-btn
-        v-if="user || publishButtonAlwaysActive==true"
+        v-if="user || publishButtonAlwaysActive == true"
         rounded
         color="secondary"
         :href="$t('buttons.shareAnAd.route')"
@@ -177,7 +185,7 @@
         small
         :aria-label="$t('buttons.shareAnAd.label')"
       >
-        {{ $t('buttons.shareAnAd.label') }}
+        {{ $t("buttons.shareAnAd.label") }}
       </v-btn>
 
       <MHeaderLanguage
@@ -192,21 +200,18 @@
         top
         color="info"
       >
-        {{ $t('snackbar.needConnection') }}
+        {{ $t("snackbar.needConnection") }}
         <v-btn
           color="info"
           icon
           elevation="0"
           @click="snackbar = false"
         >
-          <v-icon
-            color="primary"
-          >
+          <v-icon color="primary">
             mdi-close
           </v-icon>
         </v-btn>
       </v-snackbar>
-
 
       <!--Display menu when user is connected-->
       <v-menu
@@ -241,7 +246,11 @@
             <v-list-item-title>
               <MHeaderProfile
                 :avatar="user.avatars[0]"
-                :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
+                :short-family-name="
+                  user.shortFamilyName
+                    ? user.givenName + ' ' + user.shortFamilyName
+                    : '-'
+                "
                 :show-reviews="showReviews"
                 :text-color-class="textColorClass"
               />
@@ -249,9 +258,7 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-              <MHeaderCommunities
-                :user-id="user.id"
-              />
+              <MHeaderCommunities :user-id="user.id" />
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
@@ -263,7 +270,7 @@
                 :href="$t('buttons.shareAnAd.route')"
                 :aria-label="$t('buttons.shareAnAd.label')"
               >
-                {{ $t('buttons.shareAnAd.label') }}
+                {{ $t("buttons.shareAnAd.label") }}
               </v-btn>
             </v-list-item-title>
           </v-list-item>
@@ -274,13 +281,12 @@
                 rounded
                 :href="$t('buttons.messages.route')"
               >
-                {{ $t('buttons.messages.label') }}
+                {{ $t("buttons.messages.label") }}
               </v-btn>
             </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
-
 
       <!--Display menu when there is no connected user-->
       <v-menu
@@ -308,7 +314,7 @@
                 rounded
                 :href="$t('buttons.messages.route')"
               >
-                {{ $t('buttons.messages.label') }}
+                {{ $t("buttons.messages.label") }}
               </v-btn>
             </v-list-item-title>
           </v-list-item>
@@ -319,7 +325,7 @@
                 text
                 :href="$t('buttons.signup.route')"
               >
-                {{ $t('buttons.signup.label') }}
+                {{ $t("buttons.signup.label") }}
               </v-btn>
             </v-list-item-title>
           </v-list-item>
@@ -330,7 +336,7 @@
                 text
                 :href="$t('buttons.logIn.route')"
               >
-                {{ $t('buttons.logIn.label') }}
+                {{ $t("buttons.logIn.label") }}
               </v-btn>
             </v-list-item-title>
           </v-list-item>
@@ -339,19 +345,29 @@
               <v-btn
                 text
                 rounded
-                :disabled="!user && publishButtonAlwaysActive==false"
+                :disabled="!user && publishButtonAlwaysActive == false"
                 :href="$t('buttons.shareAnAd.route')"
                 :aria-label="$t('buttons.shareAnAd.label')"
               >
-                {{ $t('buttons.shareAnAd.label') }}
+                {{ $t("buttons.shareAnAd.label") }}
               </v-btn>
             </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
     </v-toolbar>
-    <GamificationNotifications :user-gamification-notifications="(user && user.gamificationNotifications) ? user.gamificationNotifications : null" />
-    <GratuityNotifications :user-gratuity-notifications="(user && user.gratuityNotifications) ? user.gratuityNotifications : null" />
+    <GamificationNotifications
+      :user-gamification-notifications="
+        user && user.gamificationNotifications
+          ? user.gamificationNotifications
+          : null
+      "
+    />
+    <GratuityNotifications
+      :user-gratuity-notifications="
+        user && user.gratuityNotifications ? user.gratuityNotifications : null
+      "
+    />
     <!-- legal guardian dialog -->
     <v-dialog
       v-if="user"
@@ -360,12 +376,16 @@
       max-width="900"
     >
       <v-card>
-        <v-card-title
-          class="text-h5 justify-center"
-        >
-          {{ $t('dialog.parentalConsent.title') }}
+        <v-card-title class="text-h5 justify-center">
+          {{ $t("dialog.parentalConsent.title") }}
         </v-card-title>
-        <v-card-text v-html="$t('dialog.parentalConsent.content',{'legalGuardianEmail':user.legalGuardianEmail})" />
+        <v-card-text
+          v-html="
+            $t('dialog.parentalConsent.content', {
+              legalGuardianEmail: user.legalGuardianEmail
+            })
+          "
+        />
         <v-card-actions>
           <v-spacer />
           <v-btn
@@ -374,7 +394,7 @@
             rounded
             :href="this.$t('buttons.logOut.route')"
           >
-            {{ $t('dialog.parentalConsent.buttonLabel') }}
+            {{ $t("dialog.parentalConsent.buttonLabel") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -384,8 +404,18 @@
 
 <script>
 import { merge, has } from "lodash";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/base/MHeader/";
-import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/base/MHeader/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/base/MHeader/";
+import {
+  messages_client_en,
+  messages_client_fr,
+  messages_client_eu,
+  messages_client_nl
+} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
@@ -402,10 +432,10 @@ let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'nl': MessagesMergedNl,
-      'fr': MessagesMergedFr,
-      'eu': MessagesMergedEu
+      en: MessagesMergedEn,
+      nl: MessagesMergedNl,
+      fr: MessagesMergedFr,
+      eu: MessagesMergedEu
     }
   },
   components: {
@@ -418,7 +448,7 @@ export default {
     GratuityNotifications
   },
   props: {
-    appName:{
+    appName: {
       type: String,
       default: null
     },
@@ -444,35 +474,39 @@ export default {
     },
     token: {
       type: String,
-      default: ''
+      default: ""
     },
-    publishButtonAlwaysActive:{
-      type: Boolean,
-      default:false
-    },
-    gamificationActive:{
+    publishButtonAlwaysActive: {
       type: Boolean,
       default: false
     },
-    gratuityActive:{
+    gamificationActive: {
+      type: Boolean,
+      default: false
+    },
+    gratuityActive: {
       type: Boolean,
       default: false
     }
   },
-  data () {
+  data() {
     return {
       snackbar: false,
       width: 0,
-      defaultLocale: 'fr',
+      defaultLocale: "fr",
       dlocale: this.locale,
       imageLink: "/images/pages/home/",
       textColorClass: "white--text title text-none",
       activeLegalGuardianDialog: false
-    }
+    };
   },
-  computed:{
+  computed: {
     unreadMessageNumber() {
-      return this.$store.getters['m/unreadCarpoolMessageNumber'] + this.$store.getters['m/unreadDirectMessageNumber'] + this.$store.getters['m/unreadSolidaryMessageNumber'];
+      return (
+        this.$store.getters["m/unreadCarpoolMessageNumber"] +
+        this.$store.getters["m/unreadDirectMessageNumber"] +
+        this.$store.getters["m/unreadSolidaryMessageNumber"]
+      );
     }
   },
   mounted() {
@@ -481,49 +515,61 @@ export default {
     } else {
       this.dlocale = this.defaultLocale;
     }
-    this.$store.commit('g/setActive',this.gamificationActive);
-    this.$store.commit('grt/setActive',this.gratuityActive);
-    this.$store.commit('m/setUnreadCarpoolMessageNumber', this.user?.unreadCarpoolMessageNumber);
-    this.$store.commit('m/setUnreadDirectMessageNumber', this.user?.unreadDirectMessageNumber);
-    this.$store.commit('m/setUnreadSolidaryMessageNumber', this.user?.unreadSolidaryMessageNumber);
-
+    localStorage.setItem("X-LOCALE", this.dlocale);
+    this.$store.commit("g/setActive", this.gamificationActive);
+    this.$store.commit("grt/setActive", this.gratuityActive);
+    this.$store.commit(
+      "m/setUnreadCarpoolMessageNumber",
+      this.user?.unreadCarpoolMessageNumber
+    );
+    this.$store.commit(
+      "m/setUnreadDirectMessageNumber",
+      this.user?.unreadDirectMessageNumber
+    );
+    this.$store.commit(
+      "m/setUnreadSolidaryMessageNumber",
+      this.user?.unreadSolidaryMessageNumber
+    );
   },
   created() {
-    this.$store.commit('a/setToken',this.user?.token ? this.user.token : this.token);
-    if(this.user){
-      localStorage.setItem('X-LOCALE',this.dlocale);
+    this.$store.commit(
+      "a/setToken",
+      this.user?.token ? this.user.token : this.token
+    );
+    if (this.user) {
+      localStorage.setItem("X-LOCALE", this.dlocale);
     }
-    if(this.user?.needParentalConsent) {
+    if (this.user?.needParentalConsent) {
       this.activeLegalGuardianDialog = true;
     }
     this.$root.$i18n.locale = this.dlocale;
   },
-  methods:{
+  methods: {
     updateLanguage(language) {
-      this.$root.$i18n.locale = language
+      this.$root.$i18n.locale = language;
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-#pad{
-  background-color:#007B85;
-  margin:0px;
-  color:white;
+#pad {
+  background-color: #007b85;
+  margin: 0px;
+  color: white;
   font-family: Poppins, sans-serif !important;
-  a{
+  a {
     text-decoration: none;
-    color:white;
+    color: white;
     font-family: Poppins, sans-serif !important;
   }
-  .section{
+  .section {
     border-right: 1px solid white;
-    margin:0px;
+    margin: 0px;
     vertical-align: middle;
   }
-  .social{
-    margin:0px;
-    padding:0px;
+  .social {
+    margin: 0px;
+    padding: 0px;
     vertical-align: middle;
   }
 }
