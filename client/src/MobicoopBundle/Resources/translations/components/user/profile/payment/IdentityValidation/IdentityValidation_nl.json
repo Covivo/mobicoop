@@ -2,7 +2,6 @@
   "sendUrl": "/utilisateur/document-validation-identite/envoyer",
   "status": {
     "refused": {
-      "10": "Document refusé (raison non donnée)",
       "9": "Document geweigerd omdat het onvolledig is",
       "8": "Document geweigerd omdat het onleesbaar is",
       "7": "Document geweigerd omdat de gegevens niet overeenstemmen met die van de gebruiker",
@@ -12,7 +11,13 @@
       "3": "Document geweigerd omdat het vervalst werd",
       "2": "Document geweigerd omdat u meerderjarig moet zijn",
       "1": "Uw persoonsgegevens zijn veranderd. Valideer uw identiteit opnieuw",
-      "0": "Document geweigerd"
+      "0": "Document geweigerd",
+      "10": "Document rejected (unknown reason)",
+      "11": "Document rejected for missing front",
+      "12": "Document rejected for missing back",
+      "13": "Document rejected (unknown reason)",
+      "14": "Document rejected because it's a copy of the original",
+      "15": "Document rejected for incorrect date of birth"
     },
     "outdated": "Document niet meer geldig",
     "validated": "Identiteit gecontroleerd",
