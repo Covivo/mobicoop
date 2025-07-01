@@ -131,7 +131,7 @@ interface PaymentProviderInterface
      *
      * @param string $DocumentId Id of the document
      */
-    public function getDocument(string $DocumentId);
+    public function getDocument(string $DocumentId, string $contextualStatus = '');
 
     /**
      * Get a kyc document.
