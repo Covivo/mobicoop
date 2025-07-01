@@ -62,6 +62,8 @@ class PaymentProfile
     public const DOCUMENT_MISSING_FRONT = 11;
     public const DOCUMENT_MISSING_BACK = 12;
     public const DOCUMENT_FAILED_OTHER_CASE = 13;
+    public const DOCUMENT_FAILED_COPY = 14;
+    public const DOCUMENT_DOB_MISMATCH = 15;
 
     /**
      * @var int The id of this payment profile

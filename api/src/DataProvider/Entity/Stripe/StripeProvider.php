@@ -90,6 +90,8 @@ class StripeProvider implements PaymentProviderInterface
     private const DOCUMENT_UNREADABLE = 'document_not_readable';
     private const DOCUMENT_INCOMPLETE = 'document_incomplete';
     private const DOCUMENT_FAILED_OTHER_CASE = 'document_failed_other';
+    private const DOCUMENT_FAILED_COPY = 'document_failed_copy';
+    private const DOCUMENT_DOB_MISMATCH = 'document_dob_mismatch';
 
     private $user;
     private $clientId;
@@ -301,7 +303,9 @@ class StripeProvider implements PaymentProviderInterface
                 case self::IDENTITY_UNVERIFIED:
                     $kycDocument['Status'] = PaymentManager::KYC_DOCUMENT_REFUSED;
 
-                    switch ($userPaymentProfile['individual']['verification']['document']['details_code']) {
+                    $detailsCode = $userPaymentProfile['individual']['verification']['document']['details_code'] ?? $userPaymentProfile['individual']['verification']['details_code'];
+
+                    switch ($detailsCode) {
                         case self::OUT_OF_DATE:
                             $kycDocument['RefusedReasonType'] = PaymentProfile::OUT_OF_DATE;
 
@@ -351,6 +355,19 @@ class StripeProvider implements PaymentProviderInterface
                             $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_FAILED_OTHER_CASE;
 
                             break;
+
+                        case self::DOCUMENT_DOB_MISMATCH:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_DOB_MISMATCH;
+
+                            break;
+
+                        case self::DOCUMENT_FAILED_COPY:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_FAILED_COPY;
+
+                            break;
+
+                        default:
+                            $kycDocument['RefusedReasonType'] = PaymentProfile::DOCUMENT_FAILED_OTHER_CASE;
                     }
 
                     break;
@@ -516,6 +533,19 @@ class StripeProvider implements PaymentProviderInterface
                 $validationDocument->setStatus(PaymentProfile::DOCUMENT_FAILED_OTHER_CASE);
 
                 break;
+
+            case self::DOCUMENT_DOB_MISMATCH:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_DOB_MISMATCH);
+
+                break;
+
+            case self::DOCUMENT_FAILED_COPY:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_FAILED_COPY);
+
+                break;
+
+            default:
+                $validationDocument->setStatus(PaymentProfile::DOCUMENT_FAILED_OTHER_CASE);
         }
 
         return $validationDocument;

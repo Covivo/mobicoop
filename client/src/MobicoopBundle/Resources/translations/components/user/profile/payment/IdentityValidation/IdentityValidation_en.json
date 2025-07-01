@@ -24,7 +24,12 @@
       "7": "Document rejected because the data does not match the user data",
       "8": "Document rejected because illegible",
       "9": "Document rejected because incomplete",
-      "10": "Document refusé (raison non donnée)"
+      "10": "Document rejected (unknown reason)",
+      "11": "Document rejected for missing front",
+      "12": "Document rejected for missing back",
+      "13": "Document rejected (unknown reason)",
+      "14": "Document rejected because it's a copy of the original",
+      "15": "Document rejected for incorrect date of birth"
     }
   },
   "sendUrl": "/user/document-validation-identification/send"

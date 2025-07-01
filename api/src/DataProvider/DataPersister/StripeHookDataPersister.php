@@ -166,13 +166,18 @@ class StripeHookDataPersister implements ContextAwareDataPersisterInterface
             $this->paymentManager->handleHookValidation($hook);
         } elseif (isset($decodedPayload['data']['object']['individual']['verification']['status'])
             && StripeHook::VALIDATION_FAILED == $decodedPayload['data']['object']['individual']['verification']['status']
-            && isset($decodedPayload['data']['object']['individual']['verification']['document']['front'], $decodedPayload['data']['object']['individual']['verification']['document']['details_code'])
+            && isset($decodedPayload['data']['object']['individual']['verification']['document']['front'])
+            && (isset($decodedPayload['data']['object']['individual']['verification']['document']['details_code']) || isset($decodedPayload['data']['object']['individual']['verification']['details_code']))
             && !is_null($decodedPayload['data']['object']['individual']['verification']['document']['front'])
-            && !is_null($decodedPayload['data']['object']['individual']['verification']['document']['details_code'])) {
+            && (!is_null($decodedPayload['data']['object']['individual']['verification']['document']['details_code']) || !is_null($decodedPayload['data']['object']['individual']['verification']['details_code']))
+        ) {
             $hook = new StripeHook();
             $hook->setStatus(Hook::STATUS_FAILED);
             $hook->setRessourceId($decodedPayload['data']['object']['individual']['verification']['document']['front']);
-            $hook->setContextualStatus($decodedPayload['data']['object']['individual']['verification']['document']['details_code']);
+
+            $detailsCode = $decodedPayload['data']['object']['individual']['verification']['document']['details_code'] ?? $decodedPayload['data']['object']['individual']['verification']['details_code'];
+
+            $hook->setContextualStatus($detailsCode);
 
             $this->paymentManager->handleHookValidation($hook);
         }
