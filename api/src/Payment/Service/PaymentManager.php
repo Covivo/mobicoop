@@ -1357,6 +1357,36 @@ class PaymentManager
                         $paymentProfile->setRefusalReason(PaymentProfile::SPECIFIC_CASE);
 
                         break;
+
+                    case PaymentProfile::DOCUMENT_MISSING_FRONT:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_MISSING_FRONT);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_MISSING_BACK:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_MISSING_BACK);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_FAILED_OTHER_CASE:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_FAILED_OTHER_CASE);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_FAILED_COPY:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_FAILED_COPY);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_DOB_MISMATCH:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_DOB_MISMATCH);
+
+                        break;
+
+                    default:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_FAILED_OTHER_CASE);
+
+                        break;
                 }
 
                 break;
