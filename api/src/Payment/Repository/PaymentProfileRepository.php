@@ -66,11 +66,17 @@ class PaymentProfileRepository
         return $this->repository->findOneBy($criteria);
     }
 
-    public function findAllIdentifiers(): ?array
+    public function findAllIdentifiers(string $paymentProvider = ''): ?array
     {
         $query = $this->repository->createQueryBuilder('pp')
-            ->select('pp.id', 'pp.identifier', 'pp.validationId')
+            ->select('pp.id', 'pp.identifier', 'pp.validationId', 'pp.validationStatus')
         ;
+
+        if ('' != $paymentProvider) {
+            $query->andWhere('pp.provider = :paymentProvider')
+                ->setParameter('paymentProvider', $paymentProvider)
+            ;
+        }
 
         return $query->getQuery()->getResult();
     }
