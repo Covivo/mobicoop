@@ -43,6 +43,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public const SSO_PROVIDER_MOBCONNECTAUTH = 'mobConnectAuth';
     public const SSO_PROVIDER_MOBCONNECTBASIC = 'mobConnectBasic';
     public const SSO_PROVIDER_MOBIGO = 'mobigo';
+    public const SSO_PROVIDER_MOBICOOP = 'Mobicoop';
 
     public const AUTHORIZATION_URL = 'Authorization_Url';
     public const TOKEN_URL = 'Token_Url';
@@ -89,6 +90,12 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::TOKEN_URL => 'connect/token',
             self::USERINFOS_URL => 'connect/userinfo',
             self::LOGOUT_URL => 'connect/endsession?id_token_hint={ID_TOKEN_HINT}&post_logout_redirect_uri={REDIRECT_URI}',
+        ],
+        self::SSO_PROVIDER_MOBICOOP => [
+            self::AUTHORIZATION_URL => 'auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
+            self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
+            self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
     ];
 

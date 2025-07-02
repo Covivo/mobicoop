@@ -46,6 +46,7 @@ class SsoManager
         OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECTAUTH => MobConnectOpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECTBASIC => MobConnectOpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBIGO => OpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBICOOP => OpenIdSsoProvider::class,
     ];
 
     private $userManager;
