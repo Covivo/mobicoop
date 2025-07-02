@@ -116,6 +116,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
     private $redirectUrl;
     private $baseSiteUri;
     private $logOutRedirectUri;
+    private $signUpUrl;
 
     private $code;
     private $logger;
@@ -129,8 +130,9 @@ class OpenIdSsoProvider implements SsoProviderInterface
         string $clientId,
         string $clientSecret,
         string $redirectUrl,
-        bool $autoCreateAccount,
+        string $signUpUrl,
         string $logOutRedirectUri = '',
+        bool $autoCreateAccount,
         ?string $codeVerifier = null,
         ?string $responseMode = 'query',
         ?string $responseType = 'code'
@@ -145,6 +147,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->redirectUrl = $redirectUrl;
         $this->baseSiteUri = $baseSiteUri;
         $this->redirectUri = $this->baseSiteUri.'/'.$this->redirectUrl;
+        $this->signUpUrl = $signUpUrl;
         $this->autoCreateAccount = $autoCreateAccount;
         $this->logOutRedirectUri = $logOutRedirectUri;
         $this->codeVerifier = $codeVerifier;
@@ -262,6 +265,11 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public function getLogoutUrls(): ?string
     {
         return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
+    }
+
+    public function getSignUpUrl(): ?string
+    {
+        return $this->signUpUrl;
     }
 
     protected function getToken($code)

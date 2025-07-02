@@ -48,6 +48,11 @@ class SsoConnection implements \JsonSerializable
     private $uri;
 
     /**
+     * @var null|string The sign up url
+     */
+    private $signUpUrl;
+
+    /**
      * @var null|string The SSO service icon for the button
      */
     private $buttonIcon;
@@ -99,6 +104,18 @@ class SsoConnection implements \JsonSerializable
     public function setUri(string $uri): self
     {
         $this->uri = $uri;
+
+        return $this;
+    }
+
+    public function getSignUpUrl(): ?string
+    {
+        return $this->signUpUrl;
+    }
+
+    public function setSignUpUrl(?string $signUpUrl): self
+    {
+        $this->signUpUrl = $signUpUrl;
 
         return $this;
     }
@@ -158,6 +175,7 @@ class SsoConnection implements \JsonSerializable
             'service' => $this->getService(),
             'ssoProvider' => $this->getSsoProvider(),
             'uri' => $this->getUri(),
+            'signUpUrl' => $this->getSignUpUrl(),
             'buttonIcon' => $this->getButtonIcon(),
             'picto' => $this->getPicto(),
             'useButtonIcon' => $this->hasUseButtonIcon(),

@@ -97,6 +97,7 @@ class UserController extends AbstractController
     private $ceeSubscriptionManager;
     private $carpoolSettingsDisplay;
     private $signInSsoOriented;
+    private $signInSsoOrientedWithInbuiltForm;
     private $ceeDisplay;
     private $gendersList;
     private $specificTerms;
@@ -146,6 +147,7 @@ class UserController extends AbstractController
         bool $birthDateDisplay,
         bool $carpoolSettingsDisplay,
         bool $signInSsoOriented,
+        bool $signInSsoOrientedWithInbuiltForm,
         bool $ceeDisplay,
         array $gendersList,
         bool $specificTerms,
@@ -180,6 +182,7 @@ class UserController extends AbstractController
         $this->ceeSubscriptionManager = $ceeSubscriptionManager;
         $this->ssoManager = $ssoManager;
         $this->signInSsoOriented = $signInSsoOriented;
+        $this->signInSsoOrientedWithInbuiltForm = $signInSsoOrientedWithInbuiltForm;
         $this->ceeDisplay = $ceeDisplay;
         $this->gendersList = $gendersList;
         $this->specificTerms = $specificTerms;
@@ -247,6 +250,7 @@ class UserController extends AbstractController
             'facebook_show' => ('true' === $this->facebook_show) ? true : false,
             'facebook_appid' => $this->facebook_appid,
             'signUpLinkInConnection' => $this->signUpLinkInConnection,
+            'signInSsoOrientedWithInbuiltForm' => $this->signInSsoOrientedWithInbuiltForm,
         ]);
     }
 
@@ -281,7 +285,11 @@ class UserController extends AbstractController
         if ('user_sign_up_with_referral' == $request->get('_route') && !in_array($referral, $this->authorizedReferrals)) {
             return $this->redirectToRoute('home');
         }
+        if ($this->signInSsoOriented && !$this->signInSsoOrientedWithInbuiltForm) {
+            dump('you be here');
 
+            return $this->redirectToRoute('user_login');
+        }
         $user = new User();
         $address = new Address();
 
