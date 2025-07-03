@@ -92,10 +92,10 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::LOGOUT_URL => 'connect/endsession?id_token_hint={ID_TOKEN_HINT}&post_logout_redirect_uri={REDIRECT_URI}',
         ],
         self::SSO_PROVIDER_MOBICOOP => [
-            self::AUTHORIZATION_URL => 'auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
-            self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
-            self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
+            self::AUTHORIZATION_URL => 'protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
+            self::TOKEN_URL => 'protocol/openid-connect/token/',
+            self::USERINFOS_URL => 'protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => '',
         ],
     ];
 
@@ -238,7 +238,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
                 throw new \LogicException('Not enough infos about the User');
             }
 
-            if (!is_null($this->_idToken)) {
+            if (!is_null($this->_idToken) && self::RESPONSE_TYPE_ID_TOKEN_TOKEN == $this->responseType) {
                 $ssoUser->setIdToken($this->_idToken);
             }
 
