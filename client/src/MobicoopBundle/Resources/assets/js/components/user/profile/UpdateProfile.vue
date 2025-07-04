@@ -950,7 +950,9 @@ export default {
             width: this.avatarWidth
           })
       ],
-      tokenRules: [v => /^\d{4}$/.test(v) || this.$t("phone.token.inputError")],
+      tokenRules: [
+        v => !v || /^\d{4}$/.test(v) || this.$t("phone.token.inputError")
+      ],
       birthdayRules: {
         required: v => !!v || this.$t("birthDay.errors.required"),
         checkIfAdult: value => {
