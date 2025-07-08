@@ -9,10 +9,12 @@
 
 {% block main %}
 <login-sso-oriented :errormessage="{{ {'value': errorMessage}|json_encode(1) }}"
-    :show-facebook-login="{{ facebook_show ? " true" : "false" }}" facebook-login-app-id="{{ facebook_appid }}"
+    :show-facebook-login="{{ facebook_show ? "true" : "false" }}" facebook-login-app-id="{{ facebook_appid }}"
     :id="{{ id is defined ? (id ? id : 'null') : 'null' }}" type="{{ type }}"
-    :sign-up-link-in-connection="{{ signUpLinkInConnection ? " true" : "false" }}"
+    :sign-up-link-in-connection="{{ signUpLinkInConnection ? "true" : "false" }}"
     service="{{ service is defined ? service : 'null' }}" app-name="{{ app_name }}"
-    :sso-button-display="{{ ssoButtonDisplay ? " true" : "false" }}"
-    :specific-sso-services="{{ specificSsoServices|json_encode }}" />
+    :sso-button-display="{{ ssoButtonDisplay ? "true" : "false" }}"
+    :specific-sso-services="{{ specificSsoServices|json_encode }}"
+    :inbuilt-login-form-display="{{ signInSsoOrientedWithInbuiltForm ? "true" : "false" }}"/>
+
 {% endblock %}

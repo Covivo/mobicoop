@@ -46,6 +46,7 @@ class SsoManager
         OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECTAUTH => MobConnectOpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECTBASIC => MobConnectOpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBIGO => OpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBICOOP => OpenIdSsoProvider::class,
     ];
 
     private $userManager;
@@ -89,6 +90,7 @@ class SsoManager
                     $ssoConnection->setSsoProvider($serviceName);
                     $ssoConnection->setUseButtonIcon($this->ssoUseButtonIcon);
                     $ssoConnection->setExternalAccountDeletion($ssoService['externalAccountDeletion']);
+                    $ssoConnection->setSignUpUrl($provider->getSignUpUrl());
                     $ssoServices[] = $ssoConnection;
                 }
             }
@@ -181,8 +183,9 @@ class SsoManager
                 $service['clientId'],
                 $service['clientSecret'],
                 !is_null($redirectUri) && !empty(trim($redirectUri)) ? $redirectUri : (isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL),
-                $service['autoCreateAccount'],
+                isset($service['signUpUri']) ? $service['signUpUri'] : '',
                 $service['logOutRedirectUri'],
+                $service['autoCreateAccount'],
                 $service['codeVerifier'],
                 isset($service['response_mode']) ? $service['response_mode'] : self::DEFAULT_RESPONSE_MODE,
                 isset($service['response_type']) ? $service['response_type'] : self::DEFAULT_RESPONSE_TYPE
