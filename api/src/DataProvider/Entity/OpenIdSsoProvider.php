@@ -95,7 +95,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::AUTHORIZATION_URL => 'protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
             self::TOKEN_URL => 'protocol/openid-connect/token/',
             self::USERINFOS_URL => 'protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => '',
+            self::LOGOUT_URL => 'protocol/openid-connect/logout&post_logout_redirect_uri={REDIRECT_URI}',
         ],
     ];
 
