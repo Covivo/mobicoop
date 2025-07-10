@@ -1,5 +1,6 @@
 {
   "title": "Connexion",
+  "titleSignInSignUp": "Connexion / Inscription",
   "Bad credentials.": "Nom d'utilisateur ou mot de passe incorrect.",
   "Unable to get an API token.": "Erreur lors de la connexion.",
   "errorCredentialsFacebook": "Erreur dans la connexion via Facebook",
