@@ -31,6 +31,6 @@
       "15": "Document rejected for incorrect date of birth"
     }
   },
-  "text": "<p>Ověření totožnosti na základě aktuálního dokladu totožnosti (oboustranný občanský průkaz, cestovní pas, řidičský průkaz) je zákonnou povinností pro příjem plateb. Tato povinnost je motivována bojem proti praní špinavých peněz.</p><p>Ověření identity požadované pro platbu se provádí porovnáním jména a příjmení zadaných ve vašem profilu a těch na vašem dokladu totožnosti. Ujistěte se tedy, že máte ve svém profilu správné informace.</p><p>Podmínky ověření dokladu totožnosti si můžete přečíst u našeho partnera <a target='_blank' href='https://mangopay.com/docs/concepts/users/verification/document-process'>zde</a>.</p>",
+  "text": "<p>Ověření totožnosti na základě aktuálního dokladu totožnosti (oboustranný občanský průkaz, cestovní pas, řidičský průkaz) je zákonnou povinností pro příjem plateb. Tato povinnost je motivována bojem proti praní špinavých peněz.</p><p>Ověření identity požadované pro platbu se provádí porovnáním jména a příjmení zadaných ve vašem profilu a těch na vašem dokladu totožnosti. Ujistěte se tedy, že máte ve svém profilu správné informace.</p><p>Podmínky ověření dokladu totožnosti si můžete přečíst u našeho partnera <a target='_blank' href='https://support.stripe.com/questions/documents-for-identity-and-home-address-verification?locale=fr-FR#:%7E:text=Stripe%20pourra%20exiger%20des%20documents,et%20un%20justificatif%20de%20domicile'>zde</a>.</p>",
   "sendUrl": "/utilisateur/document-validation-identite/envoyer"
 }
