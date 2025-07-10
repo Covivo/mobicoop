@@ -268,12 +268,14 @@ services:
       $birthDateDisplay: "%env(bool:BIRTHDATE_DISPLAY)%"
       $carpoolSettingsDisplay: "%env(bool:CARPOOL_SETTINGS_DISPLAY)%"
       $signInSsoOriented: "%env(bool:SIGNIN_SSO_ORIENTED)%"
+      $signInSsoOrientedWithInbuiltForm: "%env(bool:SIGNIN_SSO_ORIENTED_WITH_INBUILT_FORM)%"
       $ceeDisplay: "%env(bool:CEE_DISPLAY)%"
       $gendersList: "%env(json:SIGNUP_GENDERS_LIST)%"
       $specificTerms: "%env(bool:SIGNUP_SPECIFIC_TERMS)%"
       $phoneCodes: "%env(json:file:resolve:PHONE_CODES)%"
       $minorProtectionActivated: "%env(bool:MINOR_PROTECTION_ACTIVATED)%"
       $authorizedReferrals: "%env(json:SIGNUP_AUTHORIZED_REFERRALS)%"
+      $genderRequired: "%env(bool:SIGNUP_GENDERS_REQUIRED)%"
     tags: ["controller.service_arguments"]
   Mobicoop\Bundle\MobicoopBundle\User\Service\:
     resource: "@MobicoopBundle/User/Service/*"

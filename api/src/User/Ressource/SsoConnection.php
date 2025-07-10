@@ -83,6 +83,7 @@ class SsoConnection
      * @var int The id of the SSO service
      *
      * @ApiProperty(identifier=true)
+     *
      * @Groups({"readSSOConnection"})
      */
     private $id;
@@ -115,6 +116,13 @@ class SsoConnection
      * @var null|string The return url after the connection
      */
     private $returnUrl;
+
+    /**
+     * @var null|string The sign up url
+     *
+     * @Groups({"readSSOConnection"})
+     */
+    private $signUpUrl;
 
     /**
      * @var string The SSO service name
@@ -158,7 +166,7 @@ class SsoConnection
      */
     private $externalAccountDeletion;
 
-    public function __construct(string $id = null)
+    public function __construct(?string $id = null)
     {
         (is_null($id)) ? $this->id = self::DEFAULT_ID : $this->id = $id;
     }
@@ -219,6 +227,18 @@ class SsoConnection
     public function setReturnUrl(?string $returnUrl): self
     {
         $this->returnUrl = $returnUrl;
+
+        return $this;
+    }
+
+    public function getSignUpUrl(): ?string
+    {
+        return $this->signUpUrl;
+    }
+
+    public function setSignUpUrl(?string $signUpUrl): self
+    {
+        $this->signUpUrl = $signUpUrl;
 
         return $this;
     }

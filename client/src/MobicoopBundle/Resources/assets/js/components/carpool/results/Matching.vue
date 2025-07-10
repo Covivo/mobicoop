@@ -721,6 +721,7 @@ export default {
         return resultDateTime.isAfter(dayEnd);
       });
     },
+
     communities() {
       if (!this.results) return null;
       let communities = [];

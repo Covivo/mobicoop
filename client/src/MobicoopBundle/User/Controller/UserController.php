@@ -97,12 +97,14 @@ class UserController extends AbstractController
     private $ceeSubscriptionManager;
     private $carpoolSettingsDisplay;
     private $signInSsoOriented;
+    private $signInSsoOrientedWithInbuiltForm;
     private $ceeDisplay;
     private $gendersList;
     private $specificTerms;
     private $phoneCodes;
     private $minorProtectionActivated;
     private $authorizedReferrals;
+    private $genderRequired;
 
     /**
      * Constructor.
@@ -145,12 +147,14 @@ class UserController extends AbstractController
         bool $birthDateDisplay,
         bool $carpoolSettingsDisplay,
         bool $signInSsoOriented,
+        bool $signInSsoOrientedWithInbuiltForm,
         bool $ceeDisplay,
         array $gendersList,
         bool $specificTerms,
         $phoneCodes,
         bool $minorProtectionActivated,
-        array $authorizedReferrals
+        array $authorizedReferrals,
+        bool $genderRequired
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -178,12 +182,14 @@ class UserController extends AbstractController
         $this->ceeSubscriptionManager = $ceeSubscriptionManager;
         $this->ssoManager = $ssoManager;
         $this->signInSsoOriented = $signInSsoOriented;
+        $this->signInSsoOrientedWithInbuiltForm = $signInSsoOrientedWithInbuiltForm;
         $this->ceeDisplay = $ceeDisplay;
         $this->gendersList = $gendersList;
         $this->specificTerms = $specificTerms;
         $this->phoneCodes = $phoneCodes;
         $this->minorProtectionActivated = $minorProtectionActivated;
         $this->authorizedReferrals = $authorizedReferrals;
+        $this->genderRequired = $genderRequired;
     }
 
     private function __parsePostParams(string $response): array
@@ -244,6 +250,7 @@ class UserController extends AbstractController
             'facebook_show' => ('true' === $this->facebook_show) ? true : false,
             'facebook_appid' => $this->facebook_appid,
             'signUpLinkInConnection' => $this->signUpLinkInConnection,
+            'signInSsoOrientedWithInbuiltForm' => $this->signInSsoOrientedWithInbuiltForm,
         ]);
     }
 
@@ -278,7 +285,11 @@ class UserController extends AbstractController
         if ('user_sign_up_with_referral' == $request->get('_route') && !in_array($referral, $this->authorizedReferrals)) {
             return $this->redirectToRoute('home');
         }
+        if ($this->signInSsoOriented && !$this->signInSsoOrientedWithInbuiltForm) {
+            dump('you be here');
 
+            return $this->redirectToRoute('user_login');
+        }
         $user = new User();
         $address = new Address();
 
@@ -388,6 +399,7 @@ class UserController extends AbstractController
             'phoneCodes' => $this->phoneCodes,
             'referral' => $referral,
             'minorProtectionActivated' => $this->minorProtectionActivated,
+            'genderRequired' => $this->genderRequired,
         ]);
     }
 

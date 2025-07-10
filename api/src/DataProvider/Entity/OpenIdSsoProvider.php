@@ -43,6 +43,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public const SSO_PROVIDER_MOBCONNECTAUTH = 'mobConnectAuth';
     public const SSO_PROVIDER_MOBCONNECTBASIC = 'mobConnectBasic';
     public const SSO_PROVIDER_MOBIGO = 'mobigo';
+    public const SSO_PROVIDER_MOBICOOP = 'Mobicoop';
 
     public const AUTHORIZATION_URL = 'Authorization_Url';
     public const TOKEN_URL = 'Token_Url';
@@ -90,6 +91,12 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::USERINFOS_URL => 'connect/userinfo',
             self::LOGOUT_URL => 'connect/endsession?id_token_hint={ID_TOKEN_HINT}&post_logout_redirect_uri={REDIRECT_URI}',
         ],
+        self::SSO_PROVIDER_MOBICOOP => [
+            self::AUTHORIZATION_URL => 'protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
+            self::TOKEN_URL => 'protocol/openid-connect/token/',
+            self::USERINFOS_URL => 'protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => 'protocol/openid-connect/logout&post_logout_redirect_uri={REDIRECT_URI}',
+        ],
     ];
 
     protected $baseUri;
@@ -109,6 +116,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
     private $redirectUrl;
     private $baseSiteUri;
     private $logOutRedirectUri;
+    private $signUpUrl;
 
     private $code;
     private $logger;
@@ -122,8 +130,9 @@ class OpenIdSsoProvider implements SsoProviderInterface
         string $clientId,
         string $clientSecret,
         string $redirectUrl,
-        bool $autoCreateAccount,
+        string $signUpUrl,
         string $logOutRedirectUri = '',
+        bool $autoCreateAccount,
         ?string $codeVerifier = null,
         ?string $responseMode = 'query',
         ?string $responseType = 'code'
@@ -138,6 +147,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->redirectUrl = $redirectUrl;
         $this->baseSiteUri = $baseSiteUri;
         $this->redirectUri = $this->baseSiteUri.'/'.$this->redirectUrl;
+        $this->signUpUrl = $signUpUrl;
         $this->autoCreateAccount = $autoCreateAccount;
         $this->logOutRedirectUri = $logOutRedirectUri;
         $this->codeVerifier = $codeVerifier;
@@ -228,7 +238,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
                 throw new \LogicException('Not enough infos about the User');
             }
 
-            if (!is_null($this->_idToken)) {
+            if (!is_null($this->_idToken) && self::RESPONSE_TYPE_ID_TOKEN_TOKEN == $this->responseType) {
                 $ssoUser->setIdToken($this->_idToken);
             }
 
@@ -255,6 +265,11 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public function getLogoutUrls(): ?string
     {
         return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
+    }
+
+    public function getSignUpUrl(): ?string
+    {
+        return $this->signUpUrl;
     }
 
     protected function getToken($code)

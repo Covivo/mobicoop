@@ -9,6 +9,7 @@
         "logOutRedirectUri":"",
         "codeVerifier": null,
         "response_mode": "query",
-        "response_type": "code"
+        "response_type": "code",
+        "signUpUri":""
     }
 }

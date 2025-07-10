@@ -20,6 +20,7 @@
   "Unable to get an API token.": "Fehler beim Anmelden.",
   "Bad credentials.": "Benutzername oder Passwort falsch.",
   "title": "Anmeldung",
+  "titleSignInSignUp": "Anmeldung / Registrierung",
   "errorSso": "Connexion impossible, car aucun compte utilisateur existant sur {appName} n'est lié à '{service}'",
   "fillEmailAndPass": "Sinon, saisir Email et Mot de passe"
 }

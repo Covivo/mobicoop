@@ -1,5 +1,6 @@
 {
   "title": "Login",
+  "titleSignInSignUp": "Login / Sign up",
   "errorCredentials": "Bad username or password.",
   "errorCredentialsFacebook": "Error in login via Facebook",
   "urlLogin": "/user/login",
