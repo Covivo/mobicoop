@@ -61,6 +61,9 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
             $credentials['ssoProvider'] = $decodeRequest->ssoProvider;
             $this->_ssoProvider = $decodeRequest->ssoProvider;
             $credentials['baseSiteUri'] = $decodeRequest->baseSiteUri;
+            if (isset($decodeRequest->redirectUrl) && !empty($decodeRequest->redirectUrl)) {
+                $credentials['redirectUrl'] = $decodeRequest->redirectUrl;
+            }
         } else {
             return false;
         }
@@ -83,7 +86,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
             return null;
         }
 
-        return $this->ssoManager->getUser($credentials['ssoProvider'], $credentials['ssoId'], $credentials['baseSiteUri']);
+        return $this->ssoManager->getUser($credentials['ssoProvider'], $credentials['ssoId'], $credentials['baseSiteUri'], isset($credentials['redirectUrl']) ? $credentials['redirectUrl'] : null);
     }
 
     public function checkCredentials($credentials, UserInterface $user)
