@@ -407,6 +407,16 @@ class PaymentManager
     public function checkMissingDataToPayElectronically(User $user): array
     {
         $missingData = [];
+
+        $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user, false);
+        if (!is_null($paymentProfiles) && count($paymentProfiles) > 0) {
+            if (1 !== $paymentProfiles[0]->getValidationStatus()) {
+                $missingData[] = 'identity';
+            }
+        } else {
+            $missingData[] = 'bankCoordinates';
+        }
+
         if (is_null($user->getGivenName()) || '' == $user->getGivenName()) {
             $missingData[] = 'givenName';
         }
