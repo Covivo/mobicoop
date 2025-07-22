@@ -7,8 +7,11 @@
   "birthDate": "Birthdate",
   "email": "Email",
   "homeAddress": "Complete home address",
+  "address": "Complete home address",
   "addressLocality": "Home city",
   "countryCode": "Home country",
   "postalCode": "Home postal code",
-  "street": "street"
+  "street": "street",
+  "identity": "Identity piece",
+  "bankCoordinates": "Bank coordinates"
 }

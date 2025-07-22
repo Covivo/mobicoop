@@ -1,12 +1,14 @@
 <template>
   <div>
-    <v-alert type="info" outlined>
+    <v-alert
+      v-if="user.missingDataToPayElectronically.length > 0"
+      type="info"
+      outlined
+    >
       <p>
         <strong>{{ $t("title") }}</strong>
       </p>
-      <p v-if="user.missingDataToPayElectronically.length > 0">
-        {{ $t("text") }} :<br />{{ missingData }}
-      </p>
+      <p>{{ $t("text") }} :<br>{{ missingData }}</p>
     </v-alert>
   </div>
 </template>
