@@ -110,13 +110,14 @@ class SsoManager
     /**
      * Get a User from an SSO connection (existing or new one).
      *
-     * @param string $serviceName Service name (key in sso.json)
-     * @param string $code        Authentification code from SSO service
-     * @param string $baseSiteUri Url of the calling website
+     * @param string      $serviceName Service name (key in sso.json)
+     * @param string      $code        Authentification code from SSO service
+     * @param string      $baseSiteUri Url of the calling website
+     * @param null|string $redirectUri Redirect URI
      */
-    public function getUser(string $serviceName, string $code, string $baseSiteUri): User
+    public function getUser(string $serviceName, string $code, string $baseSiteUri, ?string $redirectUri = null): User
     {
-        $ssoUser = $this->getSsoUserProfile($serviceName, $code, $baseSiteUri);
+        $ssoUser = $this->getSsoUserProfile($serviceName, $code, $baseSiteUri, $redirectUri);
 
         return $this->userManager->getUserFromSso($ssoUser);
     }
