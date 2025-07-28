@@ -80,7 +80,7 @@ class BankTransferEmitterValidator
         return $this;
     }
 
-    public function getHolder(): User
+    public function getHolder(): ?User
     {
         return $this->_holder;
     }
@@ -91,7 +91,9 @@ class BankTransferEmitterValidator
             throw new BankTransferException(BankTransferException::EMITTER_VALIDATOR_NO_TRANSFERT);
         }
 
-        $this->_getHolder();
+        if ($this->_paymentProviderUsesWallet) {
+            $this->_getHolder();
+        }
         $this->_checkPaymentProvider();
         $this->_computeTotalAmount();
         $this->_checkFundsAvailability();
