@@ -121,6 +121,11 @@ class BankTransferEmitterValidator
                         $this->_updateTransfertStatus($BankTransfer, BankTransfer::STATUS_ABANDONNED_RECIPIENT_PAYMENT_PROFILE_INACTIVE);
                     }
                     $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Inactive payment profile for User '.$BankTransfer->getRecipient()->getId());
+                } elseif (is_null($recipientPaymentProfile->getValidatedDate())) {
+                    if (BankTransfer::STATUS_INITIATED == $BankTransfer->getStatus()) {
+                        $this->_updateTransfertStatus($BankTransfer, BankTransfer::STATUS_ABANDONNED_RECIPIENT_PAYMENT_PROFILE_NOT_VALIDATED);
+                    }
+                    $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Identity not validated for User '.$BankTransfer->getRecipient()->getId());
                 }
             }
         }
