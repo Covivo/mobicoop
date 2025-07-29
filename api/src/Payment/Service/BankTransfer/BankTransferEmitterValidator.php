@@ -52,6 +52,7 @@ class BankTransferEmitterValidator
     private $_paymentProfileRepository;
     private $_userManager;
     private $_paymentProviderUsesWallet;
+    private $_paymentProviderName;
 
     public function __construct(
         LoggerInterface $logger,
@@ -61,7 +62,8 @@ class BankTransferEmitterValidator
         UserManager $userManager,
         string $paymentActive,
         string $holderId,
-        bool $paymentProviderUsesWallet
+        bool $paymentProviderUsesWallet,
+        string $paymentProviderName
     ) {
         $this->_logger = $logger;
         $this->_entityManager = $entityManager;
@@ -71,6 +73,7 @@ class BankTransferEmitterValidator
         $this->_paymentProfileRepository = $paymentProfileRepository;
         $this->_userManager = $userManager;
         $this->_paymentProviderUsesWallet = $paymentProviderUsesWallet;
+        $this->_paymentProviderName = $paymentProviderName;
     }
 
     public function setBankTransfers(array $BankTransfers): self
@@ -80,7 +83,7 @@ class BankTransferEmitterValidator
         return $this;
     }
 
-    public function getHolder(): User
+    public function getHolder(): ?User
     {
         return $this->_holder;
     }
@@ -91,7 +94,9 @@ class BankTransferEmitterValidator
             throw new BankTransferException(BankTransferException::EMITTER_VALIDATOR_NO_TRANSFERT);
         }
 
-        $this->_getHolder();
+        if ($this->_paymentProviderUsesWallet) {
+            $this->_getHolder();
+        }
         $this->_checkPaymentProvider();
         $this->_computeTotalAmount();
         $this->_checkFundsAvailability();
@@ -104,7 +109,8 @@ class BankTransferEmitterValidator
     public function _checkRecipientsPaymentProfile()
     {
         foreach ($this->_BankTransfers as $BankTransfer) {
-            if (!$recipientPaymentProfile = $this->_paymentProfileRepository->findOneBy(['user' => $BankTransfer->getRecipient()])) {
+            $this->_logger->info('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Checking payment profile for User '.$BankTransfer->getRecipient()->getId());
+            if (!$recipientPaymentProfile = $this->_paymentProfileRepository->findOneBy(['user' => $BankTransfer->getRecipient(), 'provider' => $this->_paymentProviderName])) {
                 if (BankTransfer::STATUS_INITIATED == $BankTransfer->getStatus()) {
                     $this->_updateTransfertStatus($BankTransfer, BankTransfer::STATUS_ABANDONNED_NO_RECIPIENT_PAYMENT_PROFILE);
                 }
@@ -149,7 +155,7 @@ class BankTransferEmitterValidator
             throw new BankTransferException(BankTransferException::NO_HOLDER_ID);
         }
 
-        if (!$holderPaymenProfile = $this->_paymentProfileRepository->findOneBy(['identifier' => $this->_holderId])) {
+        if (!$holderPaymenProfile = $this->_paymentProfileRepository->findOneBy(['identifier' => $this->_holderId, 'provider' => $this->_paymentProviderName])) {
             $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_NO_HOLDER_FOUND);
             $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No Holder found');
 

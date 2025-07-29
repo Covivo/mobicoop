@@ -359,7 +359,7 @@ class PaymentDataProvider
      *
      * @param null|mixed $carpoolPaymentId
      */
-    public function processElectronicPayment(User $debtor, array $creditors, string $tag = '', $carpoolPaymentId = null): array
+    public function processElectronicPayment(?User $debtor = null, array $creditors, string $tag = '', $carpoolPaymentId = null): array
     {
         $this->checkPaymentConfiguration();
 
