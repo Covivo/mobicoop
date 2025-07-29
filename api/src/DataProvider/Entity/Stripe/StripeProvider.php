@@ -396,7 +396,7 @@ class StripeProvider implements PaymentProviderInterface
      *
      * @param null|mixed $carpoolPaymentId
      */
-    public function processElectronicPayment(User $debtor, array $creditors, string $tag, $carpoolPaymentId = null): array
+    public function processElectronicPayment(?User $debtor = null, array $creditors, string $tag, $carpoolPaymentId = null): array
     {
         foreach ($creditors as $creditor) {
             $stripeTransfer = $this->_stripeTransferToCreditor($creditor, $carpoolPaymentId);
@@ -613,10 +613,12 @@ class StripeProvider implements PaymentProviderInterface
         return $this->_createPaymentLink($paymentLink);
     }
 
-    private function _treatReturn(User $debtor, array $creditor, object $stripeReturn): PaymentResult
+    private function _treatReturn(?User $debtor, array $creditor, object $stripeReturn): PaymentResult
     {
         $return = new PaymentResult();
-        $return->setDebtorId($debtor->getId());
+        if (!is_null($debtor)) {
+            $return->setDebtorId($debtor->getId());
+        }
         $return->setCreditorId($creditor['user']->getId());
         if (isset($creditor['carpoolItemId'])) {
             $return->setCarpoolItemId($creditor['carpoolItemId']);

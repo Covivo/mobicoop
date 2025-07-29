@@ -65,6 +65,7 @@ class BankTransfer
     public const STATUS_ABANDONNED_NO_RECIPIENT_PAYMENT_PROFILE = 18;
     public const STATUS_ABANDONNED_RECIPIENT_PAYMENT_PROFILE_INACTIVE = 19;
     public const STATUS_AMOUNT_AT_ZERO = 20;
+    public const STATUS_ABANDONNED_RECIPIENT_PAYMENT_PROFILE_NOT_VALIDATED = 21;
 
     public const STATUS_TXT = [
         self::STATUS_INVALID => 'bt_invalid',
