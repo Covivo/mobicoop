@@ -1934,7 +1934,13 @@ class UserController extends AbstractController
 
     private function mobileRedirect(string $host, string $path, array $params)
     {
-        $redirectUri = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
+        $origin = 'carpools';
+        if (isset($params['origin'])) {
+            $origin = $params['origin'];
+
+            unset($params['origin']);
+        }
+        $redirectUri = $host.'/#/'.$origin.'/user/sso/'.$path.'?'.http_build_query($params, '', '&');
 
         return $this->redirect($redirectUri);
     }

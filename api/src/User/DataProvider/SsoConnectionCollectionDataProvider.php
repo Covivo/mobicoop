@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -45,17 +46,17 @@ final class SsoConnectionCollectionDataProvider implements CollectionDataProvide
         $this->request = $request->getCurrentRequest();
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports(string $resourceClass, ?string $operationName = null, array $context = []): bool
     {
         return SsoConnection::class === $resourceClass && 'get' === $operationName;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, ?string $operationName = null)
     {
         if ('' == $this->request->get('baseSiteUri')) {
             throw new \LogicException('Parameter missing : baseSiteUri');
         }
 
-        return $this->ssoManager->getSsoConnectionServices($this->request->get('baseSiteUri'), $this->request->get('serviceId'), $this->request->get('redirectUri'));
+        return $this->ssoManager->getSsoConnectionServices($this->request->get('baseSiteUri'), $this->request->get('serviceId'), $this->request->get('redirectUri'), $this->request->get('origin'));
     }
 }

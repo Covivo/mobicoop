@@ -170,7 +170,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->logger = $logger;
     }
 
-    public function getConnectFormUrl(): string
+    public function getConnectFormUrl(?string $origin = null): string
     {
         $url = $this->baseUri.''.str_replace('{CLIENT_ID}', $this->clientId, str_replace(
             '{SERVICE_NAME}',
@@ -184,7 +184,11 @@ class OpenIdSsoProvider implements SsoProviderInterface
 
         $url = str_replace('{RESPONSE_MODE}', $this->responseMode, $url);
 
-        return str_replace('{RESPONSE_TYPE}', $this->responseType, $url);
+        if (!is_null($origin)) {
+            $url .= "?origin={$origin}";
+        }
+
+        return $url;
     }
 
     public function getUserProfile(string $code): SsoUser

@@ -72,7 +72,7 @@ class SsoManager
      *
      * @return SsoConnection[]
      */
-    public function getSsoConnectionServices(string $baseSiteUri, ?string $serviceId, ?string $redirectUri = null): array
+    public function getSsoConnectionServices(string $baseSiteUri, ?string $serviceId, ?string $redirectUri = null, ?string $origin = null): array
     {
         $ssoServices = [];
         if ($this->ssoServicesActive) {
@@ -84,7 +84,7 @@ class SsoManager
 
                 if (!is_null($provider)) {
                     $ssoConnection = new SsoConnection($serviceName);
-                    $ssoConnection->setUri($provider->getConnectFormUrl());
+                    $ssoConnection->setUri($provider->getConnectFormUrl($origin));
                     $ssoConnection->setClientId($ssoService['clientId']);
                     $ssoConnection->setService($ssoService['name']);
                     $ssoConnection->setSsoProvider($serviceName);
