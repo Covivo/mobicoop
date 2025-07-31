@@ -1,64 +1,78 @@
 {
-    "community": {
-        "button": {
-            "label": "Podívejte se na komunity",
-            "route": "/covoiturage-communaute"
-        },
-        "text": "Poznejte členy mého klubu nebo společnosti.",
-        "title": "KOMUNITY"
+  "community": {
+    "button": {
+      "label": "Podívejte se na komunity",
+      "route": "/covoiturage-communaute"
     },
-    "event": {
-        "title": "UDÁLOSTI",
-        "text": "Najděte spolujezdce, kteří jedou na stejnou akci.",
-        "button": {
-            "label": "Podívejte se na události",
-            "route": "/covoiturages-evenements"
-        }
+    "text": "Poznejte členy mého klubu nebo společnosti.",
+    "title": "KOMUNITY"
+  },
+  "event": {
+    "title": "UDÁLOSTI",
+    "text": "Najděte spolujezdce, kteří jedou na stejnou akci.",
+    "button": {
+      "label": "Podívejte se na události",
+      "route": "/covoiturages-evenements"
+    }
+  },
+  "solidary": {
+    "title": "SOLIDÁRNÍ SPOLUJÍZDA",
+    "button": {
+      "label": "Prosím o pomocnou ruku",
+      "route": "/#/carpools/solidary/home/request"
     },
-    "solidary": {
-        "title": "SOLIDÁRNÍ SPOLUJÍZDA",
-        "button": {
-            "label": "Prosím o pomocnou ruku",
-            "route": "/#/carpools/solidary/home/request"
-        },
-        "button2": {
-            "label": "Podání pomocné ruky",
-            "route": "/covoiturage/publierannonce/solidaire"
-        },
-        "text": "Vzájemná pomoc při hledání zaměstnání"
+    "button2": {
+      "label": "Podání pomocné ruky",
+      "route": "/covoiturage/publierannonce/solidaire"
     },
-    "events": {
-        "button1": {
-            "label": "Podívejte se na události",
-            "route": "/evenements"
-        },
-        "button2": {
-            "route": "/evenement/creer",
-            "label": "Přidání události"
-        },
-        "title": "Zorganizujte pro své akce spolujízdu"
+    "text": "Vzájemná pomoc při hledání zaměstnání"
+  },
+  "events": {
+    "button1": {
+      "label": "Podívejte se na události",
+      "route": "/evenements"
     },
-    "items": [
-        {
-            "title": "Spolujízda bez provize",
-            "text": "Služba Mobicoop, která zdědila hodnoty bezplatného sdílení aut, je bezplatnou službou sdílení aut, což znamená, že si neúčtuje žádnou provizi za jízdy a je také bez reklamy! Cesty jsou tak pro spolujezdce, kteří se dělí o náklady, levnější."
-        },
-        {
-            "text": "Základem hodnot společnosti Mobicoop je digitální svoboda. Tím, že jsme se rozhodli vytvořit stránky výhradně ve svobodném softwaru, zaručujeme digitální suverenitu všech uživatelů spolujízdy a ochranu dat. Každý může přispět do zdrojového kódu a učinit sdílenou mobilitu společným dobrem.",
-            "title": "Software s otevřeným zdrojovým kódem"
-        },
-        {
-            "title": "Sdružení pro spolujízdu",
-            "text": "Mobicoop je družstvo, takže platforma patří jeho členům v logice 1 člen = 1 hlas. Tento status umožňuje otevřené řízení mezi členy, zaměstnanci, uživateli platformy a zákazníky. Pro využívání služby spolujízdy však není nutné být jejím členem."
-        }
-    ],
-    "articles": {
-        "title": "Co je nového v Mobicoop?"
+    "button2": {
+      "route": "/evenement/creer",
+      "label": "Přidání události"
     },
-    "routes": {
-        "getList": "/events/getLastEventsCreated"
+    "title": "Zorganizujte pro své akce spolujízdu"
+  },
+  "items": [
+    {
+      "title": "Spolujízda bez provize",
+      "text": "Služba Mobicoop, která zdědila hodnoty bezplatného sdílení aut, je bezplatnou službou sdílení aut, což znamená, že si neúčtuje žádnou provizi za jízdy a je také bez reklamy! Cesty jsou tak pro spolujezdce, kteří se dělí o náklady, levnější."
     },
-    "urlBackground2": "/images/pages/home/background_middle.svg",
-    "urlBackground3": "/images/pages/home/background_bottom.svg",
-    "mustMeLogged": "Musíte být přihlášeni"
+    {
+      "text": "Základem hodnot společnosti Mobicoop je digitální svoboda. Tím, že jsme se rozhodli vytvořit stránky výhradně ve svobodném softwaru, zaručujeme digitální suverenitu všech uživatelů spolujízdy a ochranu dat. Každý může přispět do zdrojového kódu a učinit sdílenou mobilitu společným dobrem.",
+      "title": "Software s otevřeným zdrojovým kódem"
+    },
+    {
+      "title": "Sdružení pro spolujízdu",
+      "text": "Mobicoop je družstvo, takže platforma patří jeho členům v logice 1 člen = 1 hlas. Tento status umožňuje otevřené řízení mezi členy, zaměstnanci, uživateli platformy a zákazníky. Pro využívání služby spolujízdy však není nutné být jejím členem."
+    }
+  ],
+  "articles": {
+    "title": "Co je nového v Mobicoop?"
+  },
+  "routes": {
+    "getList": "/events/getLastEventsCreated"
+  },
+  "urlBackground2": "/images/pages/home/background_middle.svg",
+  "urlBackground3": "/images/pages/home/background_bottom.svg",
+  "mustMeLogged": "Musíte být přihlášeni",
+  "nextClosureMobicoop": {
+    "pass": "Pass",
+    "notConnected": {
+      "p1": "Mobicoop.fr is being replaced by a new app' « <strong>Mobicoop Covoit'</strong> » faster and more modern.",
+      "p2": "It will be indefinitely closed in September. <strong>Log in with your Mobicoop user account or sign up now on Mobicoop Covoit'</strong>.",
+      "p3": "Go to your phone store and download <strong>Mobicoop Covoit'</strong>."
+    },
+    "connected": {
+      "title": "Next closure of Mobicoop.fr",
+      "p1": "Mobicoop.fr is being replaced since the 23rd of July by a new app' <strong>« Mobicoop Covoit' »</strong> faster and more modern (your login credentials remain the same).",
+      "p2": "From September, Mobicoop.fr will no longer be accessible. <strong>More information <a href='http://support.mobicoop.fr/' alt='FAQ' target='_blank'>on the FAQ</a> !</strong>",
+      "p3": "<strong>Discover the new application</strong> by downloading <strong>Mobicoop Covoit'</strong> on your phone store."
+    }
+  }
 }
