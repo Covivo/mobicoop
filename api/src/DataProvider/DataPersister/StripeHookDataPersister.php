@@ -83,11 +83,11 @@ class StripeHookDataPersister implements ContextAwareDataPersisterInterface
             $decodedPayload = json_decode($payload, true);
             $this->logger->info($decodedPayload['type']);
 
-            // if (!$this->_checkWebhookSecret($signature, $payload)) {
-            //     $this->logger->error('Invalid webhook signature: '.$e->getMessage());
+            if (!$this->_checkWebhookSecret($signature, $payload)) {
+                $this->logger->error('Invalid webhook signature: '.$e->getMessage());
 
-            //     return new Response('Invalid webhook signature', Response::HTTP_OK);
-            // }
+                return new Response('Invalid webhook signature', Response::HTTP_OK);
+            }
 
             switch ($decodedPayload['type']) {
                 case StripeHook::TYPE_ACCOUNT_UPDATED:
