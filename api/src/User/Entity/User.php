@@ -79,6 +79,8 @@ use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserUpdateSso;
 use App\User\Filter\CardLetterFilter;
+use App\User\Filter\CardLetterPostedFilter;
+use App\User\Filter\CommunityFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\EmailTokenFilter;
 use App\User\Filter\FamilyAndGivenNameFilter;
@@ -89,7 +91,6 @@ use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\HomeAddressWaypointTerritoryFilter;
 use App\User\Filter\IdentityProofFilter;
 use App\User\Filter\IdentityStatusFilter;
-use App\User\Filter\CommunityFilter;
 use App\User\Filter\IsInCommunityFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\NewsSubscriptionFilter;
@@ -678,10 +679,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(SolidaryExclusiveFilter::class)
  * @ApiFilter(RezoKitFilter::class, properties={"rezoKit"})
  * @ApiFilter(CardLetterFilter::class, properties={"cardLetter"})
+ * @ApiFilter(CardLetterPostedFilter::class, properties={"cardLetter"})
  * @ApiFilter(NewsSubscriptionFilter::class, properties={"newsSubscription"})
  * @ApiFilter(HitchHikerFilter::class)
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter", "cardLetterPosted"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(IdentityProofFilter::class, properties={"identityProofStatus"})
  * @ApiFilter(SelectedFilter::class, properties={"selected"})
@@ -1838,6 +1840,15 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aRead", "aWrite"})
      */
     private $cardLetter;
+
+    /**
+     * @var null|bool If the User has the card letter posted
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     *
+     * @Groups({"aRead", "aWrite"})
+     */
+    private $cardLetterPosted;
 
     /**
      * @var null|string If the User's home address is in a rezopouce Territory
@@ -4157,6 +4168,18 @@ class User implements UserInterface, EquatableInterface
     public function setCardLetter(?bool $cardLetter): self
     {
         $this->cardLetter = $cardLetter;
+
+        return $this;
+    }
+
+    public function hasCardLetterPosted(): ?bool
+    {
+        return $this->cardLetterPosted;
+    }
+
+    public function setCardLetterPosted(?bool $cardLetterPosted): self
+    {
+        $this->cardLetterPosted = $cardLetterPosted;
 
         return $this;
     }
