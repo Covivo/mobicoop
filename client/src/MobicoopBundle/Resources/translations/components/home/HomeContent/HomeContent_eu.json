@@ -1,67 +1,81 @@
 {
-    "mustMeLogged": "Konektatua izan behar zira",
-    "urlBackground3": "/images/pages/home/background_bottom.svg",
-    "urlBackground2": "/images/pages/home/background_middle.svg",
-    "routes": {
-        "getList": "/events/getLastEventsCreated"
+  "mustMeLogged": "Konektatua izan behar zira",
+  "urlBackground3": "/images/pages/home/background_bottom.svg",
+  "urlBackground2": "/images/pages/home/background_middle.svg",
+  "routes": {
+    "getList": "/events/getLastEventsCreated"
+  },
+  "items": [
+    {
+      "text": "Autokidetza aske baten baloreen oinordekoa, Mobiccoop doako autokidetza zerbitzu bat da; hots, webguneak ez du komisiorik hartzen bidaientzat eta ez du publizitaterik egiten! Bidaiak merkeagoak dira gastuak partekatzen dituzten bidaiarientzat.",
+      "title": "Komisiorik gabeko autokidetza"
     },
-    "items": [
-        {
-            "text": "Autokidetza aske baten baloreen oinordekoa, Mobiccoop doako autokidetza zerbitzu bat da; hots, webguneak ez du komisiorik hartzen bidaientzat eta ez du publizitaterik egiten! Bidaiak merkeagoak dira gastuak partekatzen dituzten bidaiarientzat.",
-            "title": "Komisiorik gabeko autokidetza"
-        },
-        {
-            "text": "Libertate numerikoa, Mobicoop-en baloreen muinean dago. Webgunea programa librean ekoiztea hautatuz, autokidetza erabiltzaile guzien nagusitasun numerikoa eta datuen babesa bermatzen dugu. Denek parte har dezakete iturburu-kodean eta mugikortasun partekatua denen ondasuna bilakarazi.",
-            "title": "Programa libre bat"
-        },
-        {
-            "text": "Mobicoop kooperatiba bat da, ondorioz plataforma bere bazkideena da, logikan, bazkide 1 = boz 1. Araudi honek, bazkideen, langileen, plataforma erabiltzaileen eta bezeroen arteko gobernantza ireki bat ahalbidetzen du. Haatik, ez da bortxaz bazkide izan behar autokidetza zerbitzu honen erabiltzeko.",
-            "title": "Autokidetzaren kooperatiba"
-        }
-    ],
-    "articles": {
-        "title": "Zer berri Mobicoop-en?"
+    {
+      "text": "Libertate numerikoa, Mobicoop-en baloreen muinean dago. Webgunea programa librean ekoiztea hautatuz, autokidetza erabiltzaile guzien nagusitasun numerikoa eta datuen babesa bermatzen dugu. Denek parte har dezakete iturburu-kodean eta mugikortasun partekatua denen ondasuna bilakarazi.",
+      "title": "Programa libre bat"
     },
-    "events": {
-        "button2": {
-            "route": "/evenement/creer",
-            "label": "Ekitaldi bat gehitu"
-        },
-        "button1": {
-            "route": "/evenements",
-            "label": "Ekitaldiak ikusi"
-        },
-        "title": "Autokidetza antola ezazu zure ekitaldientzat",
-        "image": {
-            "van":"Dessin d'un van rempli de personnes écoutant de la musique"
-        }
-    },
-    "solidary": {
-        "button2": {
-            "route": "/covoiturage/publierannonce/solidaire",
-            "label": "Esku ukaldi bat eman"
-        },
-        "button": {
-            "route": "/#/carpools/solidary/home/request",
-            "label": "Esku ukaldi bat galdegiten dut"
-        },
-        "text": "Elkar lagundu lan baten atzemateko",
-        "title": "ELKARTASUNEZKO AUTOKIDETZA"
-    },
-    "event": {
-        "button": {
-            "route": "/covoiturages-evenements",
-            "label": "Ekitaldiak ikus"
-        },
-        "title": "EKITALDIAK",
-        "text": "Ekitaldi berdinera dihoazten autokideak atzeman."
-    },
-    "community": {
-        "button": {
-            "route": "/covoiturage-communaute",
-            "label": "Komunitateak ikusi"
-        },
-        "text": "Nire taldeko edo enpresako kideak ezagutu.",
-        "title": "KOMUNITATEAK"
+    {
+      "text": "Mobicoop kooperatiba bat da, ondorioz plataforma bere bazkideena da, logikan, bazkide 1 = boz 1. Araudi honek, bazkideen, langileen, plataforma erabiltzaileen eta bezeroen arteko gobernantza ireki bat ahalbidetzen du. Haatik, ez da bortxaz bazkide izan behar autokidetza zerbitzu honen erabiltzeko.",
+      "title": "Autokidetzaren kooperatiba"
     }
+  ],
+  "articles": {
+    "title": "Zer berri Mobicoop-en?"
+  },
+  "events": {
+    "button2": {
+      "route": "/evenement/creer",
+      "label": "Ekitaldi bat gehitu"
+    },
+    "button1": {
+      "route": "/evenements",
+      "label": "Ekitaldiak ikusi"
+    },
+    "title": "Autokidetza antola ezazu zure ekitaldientzat",
+    "image": {
+      "van": "Dessin d'un van rempli de personnes écoutant de la musique"
+    }
+  },
+  "solidary": {
+    "button2": {
+      "route": "/covoiturage/publierannonce/solidaire",
+      "label": "Esku ukaldi bat eman"
+    },
+    "button": {
+      "route": "/#/carpools/solidary/home/request",
+      "label": "Esku ukaldi bat galdegiten dut"
+    },
+    "text": "Elkar lagundu lan baten atzemateko",
+    "title": "ELKARTASUNEZKO AUTOKIDETZA"
+  },
+  "event": {
+    "button": {
+      "route": "/covoiturages-evenements",
+      "label": "Ekitaldiak ikus"
+    },
+    "title": "EKITALDIAK",
+    "text": "Ekitaldi berdinera dihoazten autokideak atzeman."
+  },
+  "community": {
+    "button": {
+      "route": "/covoiturage-communaute",
+      "label": "Komunitateak ikusi"
+    },
+    "text": "Nire taldeko edo enpresako kideak ezagutu.",
+    "title": "KOMUNITATEAK"
+  },
+  "nextClosureMobicoop": {
+    "pass": "Pass",
+    "notConnected": {
+      "p1": "Mobicoop.fr is being replaced by a new app' « <strong>Mobicoop Covoit'</strong> » faster and more modern.",
+      "p2": "It will be indefinitely closed in September. <strong>Log in with your Mobicoop user account or sign up now on Mobicoop Covoit'</strong>.",
+      "p3": "Go to your phone store and download <strong>Mobicoop Covoit'</strong>."
+    },
+    "connected": {
+      "title": "Next closure of Mobicoop.fr",
+      "p1": "Mobicoop.fr is being replaced since the 23rd of July by a new app' <strong>« Mobicoop Covoit' »</strong> faster and more modern (your login credentials remain the same).",
+      "p2": "From September, Mobicoop.fr will no longer be accessible. <strong>More information <a href='http://support.mobicoop.fr/' alt='FAQ' target='_blank'>on the FAQ</a> !</strong>",
+      "p3": "<strong>Discover the new application</strong> by downloading <strong>Mobicoop Covoit'</strong> on your phone store."
+    }
+  }
 }

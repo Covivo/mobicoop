@@ -1,67 +1,81 @@
 {
-    "community": {
-        "title": "COMMUNITIES",
-        "text": "Recognize members of my club or company.",
-        "button": {
-            "label": "View the communities",
-            "route": "/carpool-community"
-        }
+  "community": {
+    "title": "COMMUNITIES",
+    "text": "Recognize members of my club or company.",
+    "button": {
+      "label": "View the communities",
+      "route": "/carpool-community"
+    }
+  },
+  "event": {
+    "title": "EVENTS",
+    "text": "Find carpoolers going to the same event.",
+    "button": {
+      "label": "View the events",
+      "route": "/carpools-events"
+    }
+  },
+  "solidary": {
+    "title": "SOLIDARITY CARPOOLING",
+    "text": "Help each other to access employment",
+    "button": {
+      "label": "I'm asking for a helping hand",
+      "route": "/#/carpools/solidarity/home/request"
     },
-    "event": {
-        "title": "EVENTS",
-        "text": "Find carpoolers going to the same event.",
-        "button": {
-            "label": "View the events",
-            "route": "/carpools-events"
-        }
+    "button2": {
+      "label": "Give a helping hand",
+      "route": "/carpool/postproposal/solidarity"
+    }
+  },
+  "events": {
+    "title": "Organize carpooling for your events",
+    "image": {
+      "van": "Dessin d'un van rempli de personnes écoutant de la musique"
     },
-    "solidary": {
-        "title": "SOLIDARITY CARPOOLING",
-        "text": "Help each other to access employment",
-        "button": {
-            "label": "I'm asking for a helping hand",
-            "route": "/#/carpools/solidarity/home/request"
-        },
-        "button2": {
-            "label": "Give a helping hand",
-            "route": "/carpool/postproposal/solidarity"
-        }
+    "button1": {
+      "label": "View the events",
+      "route": "/events"
     },
-    "events": {
-        "title": "Organize carpooling for your events",
-        "image": {
-            "van":"Dessin d'un van rempli de personnes écoutant de la musique"
-        },
-        "button1": {
-            "label": "View the events",
-            "route": "/events"
-        },
-        "button2": {
-            "label": "Add an event",
-            "route": "/event/create"
-        }
+    "button2": {
+      "label": "Add an event",
+      "route": "/event/create"
+    }
+  },
+  "articles": {
+    "title": "What's new at Mobicoop?"
+  },
+  "items": [
+    {
+      "title": "Carpool without commission",
+      "text": "Heir to the values of free carpooling, Mobicoop is a free carpooling service, which means that the site takes no commission on journeys, and it is also free of advertising! The journeys are therefore less expensive for the carpoolers who share the costs."
     },
-    "articles": {
-        "title": "What's new at Mobicoop?"
+    {
+      "title": "Free software",
+      "text": "Digital freedom is at the heart of Mobicoop's values. By choosing to produce a site entirely from free software, we guarantee the digital sovereignty of all carpooling users and the protection of data. Everyone can contribute to the source code and make shared mobility a common good."
     },
-    "items": [
-        {
-            "title": "Carpool without commission",
-            "text": "Heir to the values of free carpooling, Mobicoop is a free carpooling service, which means that the site takes no commission on journeys, and it is also free of advertising! The journeys are therefore less expensive for the carpoolers who share the costs."
-        },
-        {
-            "title": "Free software",
-            "text": "Digital freedom is at the heart of Mobicoop's values. By choosing to produce a site entirely from free software, we guarantee the digital sovereignty of all carpooling users and the protection of data. Everyone can contribute to the source code and make shared mobility a common good."
-        },
-        {
-            "title": "The carpooling cooperative",
-            "text": "Mobicoop is a cooperative, so the platform belongs to its members on the principle of 1 member = 1 vote. This status allows for open governance between members, employees, platform users and customers. However, it is not mandatory to be a member to use the carpooling service."
-        }
-    ],
-    "routes": {
-        "getList": "/events/getLastEventsCreated"
+    {
+      "title": "The carpooling cooperative",
+      "text": "Mobicoop is a cooperative, so the platform belongs to its members on the principle of 1 member = 1 vote. This status allows for open governance between members, employees, platform users and customers. However, it is not mandatory to be a member to use the carpooling service."
+    }
+  ],
+  "routes": {
+    "getList": "/events/getLastEventsCreated"
+  },
+  "urlBackground2": "/images/pages/home/background_middle.svg",
+  "urlBackground3": "/images/pages/home/background_bottom.svg",
+  "mustMeLogged": "You have to be logged in",
+  "nextClosureMobicoop": {
+    "pass": "Pass",
+    "notConnected": {
+      "p1": "Mobicoop.fr is being replaced by a new app' « <strong>Mobicoop Covoit'</strong> » faster and more modern.",
+      "p2": "It will be indefinitely closed in September. <strong>Log in with your Mobicoop user account or sign up now on Mobicoop Covoit'</strong>.",
+      "p3": "Go to your phone store and download <strong>Mobicoop Covoit'</strong>."
     },
-    "urlBackground2": "/images/pages/home/background_middle.svg",
-    "urlBackground3": "/images/pages/home/background_bottom.svg",
-    "mustMeLogged": "You have to be logged in"
+    "connected": {
+      "title": "Next closure of Mobicoop.fr",
+      "p1": "Mobicoop.fr is being replaced since the 23rd of July by a new app' <strong>« Mobicoop Covoit' »</strong> faster and more modern (your login credentials remain the same).",
+      "p2": "From September, Mobicoop.fr will no longer be accessible. <strong>More information <a href='http://support.mobicoop.fr/' alt='FAQ' target='_blank'>on the FAQ</a> !</strong>",
+      "p3": "<strong>Discover the new application</strong> by downloading <strong>Mobicoop Covoit'</strong> on your phone store."
+    }
+  }
 }

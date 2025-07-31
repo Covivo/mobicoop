@@ -1,67 +1,81 @@
 {
-    "community": {
-        "title": "COMMUNAUTÉS",
-        "text": "Reconnaître les membres de mon club ou de mon entreprise.",
-        "button": {
-            "label": "Voir les communautés",
-            "route": "/covoiturage-communaute"
-        }
+  "community": {
+    "title": "COMMUNAUTÉS",
+    "text": "Reconnaître les membres de mon club ou de mon entreprise.",
+    "button": {
+      "label": "Voir les communautés",
+      "route": "/covoiturage-communaute"
+    }
+  },
+  "event": {
+    "title": "ÉVÉNEMENTS",
+    "text": "Trouver des covoitureurs allant au même événement.",
+    "button": {
+      "label": "Voir les événements",
+      "route": "/covoiturages-evenements"
+    }
+  },
+  "solidary": {
+    "title": "COVOITURAGE SOLIDAIRE",
+    "text": "S'entraider pour l'accès à l'emploi",
+    "button": {
+      "label": "Je demande un coup de pouce",
+      "route": "/#/carpools/solidary/home/request"
     },
-    "event": {
-        "title": "ÉVÉNEMENTS",
-        "text": "Trouver des covoitureurs allant au même événement.",
-        "button": {
-            "label": "Voir les événements",
-            "route": "/covoiturages-evenements"
-        }
+    "button2": {
+      "label": "Donner un coup de pouce",
+      "route": "/covoiturage/publierannonce/solidaire"
+    }
+  },
+  "events": {
+    "title": "Organisez du covoiturage pour vos événements",
+    "image": {
+      "van": "Dessin d'un van rempli de personnes écoutant de la musique"
     },
-    "solidary": {
-        "title": "COVOITURAGE SOLIDAIRE",
-        "text": "S'entraider pour l'accès à l'emploi",
-        "button": {
-            "label": "Je demande un coup de pouce",
-            "route": "/#/carpools/solidary/home/request"
-        },
-        "button2": {
-            "label": "Donner un coup de pouce",
-            "route": "/covoiturage/publierannonce/solidaire"
-        }
+    "button1": {
+      "label": "Voir les événements",
+      "route": "/evenements"
     },
-    "events": {
-        "title": "Organisez du covoiturage pour vos événements",
-        "image": {
-            "van":"Dessin d'un van rempli de personnes écoutant de la musique"
-        },
-        "button1": {
-            "label": "Voir les événements",
-            "route": "/evenements"
-        },
-        "button2": {
-            "label": "Ajouter un événement",
-            "route": "/evenement/creer"
-        }
+    "button2": {
+      "label": "Ajouter un événement",
+      "route": "/evenement/creer"
+    }
+  },
+  "articles": {
+    "title": "Quoi de neuf chez Mobicoop ?"
+  },
+  "items": [
+    {
+      "title": "Covoiturage sans commission",
+      "text": "Héritière des valeurs du covoiturage libre, Mobicoop est un service de covoiturage gratuit, c'est-à-dire que le site ne prélève aucune commission sur les trajets, et c’est aussi sans publicité ! Les trajets sont donc moins chers pour les covoitureurs qui en partagent les frais."
     },
-    "articles": {
-        "title":"Quoi de neuf chez Mobicoop ?"
+    {
+      "title": "Un logiciel libre",
+      "text": "La liberté numérique est au cœur des valeurs de Mobicoop. En faisant le choix de produire un site entièrement en logiciel libre nous garantissons ainsi la souveraineté numérique de tous les usagers du covoiturage et la protection des données. Chacun peut contribuer au code source et faire de la mobilité partagée un bien commun."
     },
-    "items":[
-        {
-            "title":"Covoiturage sans commission",
-            "text":"Héritière des valeurs du covoiturage libre, Mobicoop est un service de covoiturage gratuit, c'est-à-dire que le site ne prélève aucune commission sur les trajets, et c’est aussi sans publicité ! Les trajets sont donc moins chers pour les covoitureurs qui en partagent les frais."
-        },
-        {
-            "title":"Un logiciel libre",
-            "text":"La liberté numérique est au cœur des valeurs de Mobicoop. En faisant le choix de produire un site entièrement en logiciel libre nous garantissons ainsi la souveraineté numérique de tous les usagers du covoiturage et la protection des données. Chacun peut contribuer au code source et faire de la mobilité partagée un bien commun."
-        },
-        {
-            "title":"La coopérative du covoiturage",
-            "text":"Mobicoop est une coopérative, la plateforme appartient donc à ses sociétaires dans la logique 1 sociétaire = 1 voix. Ce statut permet une gouvernance ouverte entre sociétaires, salariés, utilisateurs de la plateforme et clients. Toutefois il n’est pas obligatoire d’être sociétaire pour utiliser le service de covoiturage."
-        }
-    ],
-    "routes": {
-        "getList": "/events/getLastEventsCreated"
+    {
+      "title": "La coopérative du covoiturage",
+      "text": "Mobicoop est une coopérative, la plateforme appartient donc à ses sociétaires dans la logique 1 sociétaire = 1 voix. Ce statut permet une gouvernance ouverte entre sociétaires, salariés, utilisateurs de la plateforme et clients. Toutefois il n’est pas obligatoire d’être sociétaire pour utiliser le service de covoiturage."
+    }
+  ],
+  "routes": {
+    "getList": "/events/getLastEventsCreated"
+  },
+  "urlBackground2": "/images/pages/home/background_middle.svg",
+  "urlBackground3": "/images/pages/home/background_bottom.svg",
+  "mustMeLogged": "Vous devez être connecté",
+  "nextClosureMobicoop": {
+    "pass": "Passer",
+    "notConnected": {
+      "p1": "Mobicoop.fr est en cours de remplacement par une nouvelle app' « <strong>Mobicoop Covoit'</strong> » plus rapide et plus moderne.",
+      "p2": "Il sera définitivement fermé en septembre. <strong>Connectez-vous avec votre compte utilisateur Mobicoop ou inscrivez-vous dès maintenant sur Mobicoop Covoit'</strong>.",
+      "p3": "Rendez-vous sur le store de votre téléphone et téléchargez <strong>Mobicoop Covoit'</strong>."
     },
-    "urlBackground2": "/images/pages/home/background_middle.svg",
-    "urlBackground3": "/images/pages/home/background_bottom.svg",
-    "mustMeLogged":"Vous devez être connecté"
+    "connected": {
+      "title": "Fermeture prochaine de Mobicoop.fr",
+      "p1": "Mobicoop.fr est en cours de remplacement depuis le 23 juillet par une nouvelle app' <strong>« Mobicoop Covoit' »</strong> plus rapide et plus moderne (vos identifiants de connexion restent les mêmes)..",
+      "p2": "À partir de septembre, Mobicoop.fr ne sera plus accessible. <strong>Plus d'information <a href='http://support.mobicoop.fr/' alt='FAQ' target='_blank'>sur la FAQ</a> !</strong>",
+      "p3": "<strong>Découvrir la nouvelle application</strong> en téléchargeant <strong>Mobicoop Covoit'</strong> sur le store de votre téléphone."
+    }
+  }
 }

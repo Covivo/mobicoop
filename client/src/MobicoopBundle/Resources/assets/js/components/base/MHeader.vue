@@ -157,24 +157,12 @@
       </div>
       <v-toolbar-items
         v-else
-        class="hidden-md-and-down"
+        class="hidden-md-and-down d-flex align-center"
       >
-        <v-btn
-          class="white--text"
-          rounded
-          text
-          :href="$t('buttons.signup.route')"
-        >
-          {{ $t("buttons.signup.label") }}
-        </v-btn>
-        <v-btn
-          class="white--text"
-          rounded
-          text
-          :href="$t('buttons.logIn.route')"
-        >
-          {{ $t("buttons.logIn.label") }}
-        </v-btn>
+        <SsoLogins
+          :specific-sso-services="[{ name: 'Mobicoop' }]"
+          class="justify-self-center"
+        />
       </v-toolbar-items>
       <v-btn
         v-if="user || publishButtonAlwaysActive == true"
@@ -423,6 +411,7 @@ import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
 import MMessageBtn from "@components/base/MMessageBtn.vue";
 import GamificationNotifications from "@components/utilities/gamification/GamificationNotifications";
 import GratuityNotifications from "@components/utilities/gratuity/GratuityNotifications";
+import SsoLogins from "@components/user/SsoLogins";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -445,7 +434,8 @@ export default {
     MHeaderLanguage,
     MMessageBtn,
     GamificationNotifications,
-    GratuityNotifications
+    GratuityNotifications,
+    SsoLogins
   },
   props: {
     appName: {
