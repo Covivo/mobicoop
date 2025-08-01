@@ -210,6 +210,8 @@
                 <div v-else>
                   <EmptyResult
                     :date="date"
+                    :user="user"
+                    :sign-in-sso-oriented="signInSsoOriented"
                     @publishAd="handlePublishAd"
                   />
                 </div>
@@ -246,6 +248,8 @@
               <div v-else-if="!loading">
                 <EmptyResult
                   :date="date"
+                  :user="user"
+                  :sign-in-sso-oriented="signInSsoOriented"
                   @publishAd="handlePublishAd"
                 />
               </div>
@@ -622,6 +626,10 @@ export default {
       default: false
     },
     defaultIncludePassenger: {
+      type: Boolean,
+      default: false
+    },
+    signInSsoOriented: {
       type: Boolean,
       default: false
     }

@@ -79,6 +79,7 @@ class CarpoolController extends AbstractController
     private $defaultRoleToPublish;
     private $bothRoleEnabled;
     private $carpoolTimezone;
+    private $signInSsoOriented;
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
@@ -104,7 +105,8 @@ class CarpoolController extends AbstractController
         bool $specificTerms,
         int $defaultRoleToPublish,
         bool $bothRoleEnabled,
-        string $carpoolTimezone
+        string $carpoolTimezone,
+        bool $signInSsoOriented
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -130,6 +132,7 @@ class CarpoolController extends AbstractController
         $this->defaultRoleToPublish = $defaultRoleToPublish;
         $this->bothRoleEnabled = $bothRoleEnabled;
         $this->carpoolTimezone = $carpoolTimezone;
+        $this->signInSsoOriented = $signInSsoOriented;
     }
 
     private function __originDisplay(array $waypoint)
@@ -448,6 +451,7 @@ class CarpoolController extends AbstractController
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
             'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
             'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
+            'signInSsoOriented' => $this->signInSsoOriented,
         ]);
     }
 
@@ -479,6 +483,7 @@ class CarpoolController extends AbstractController
                 'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
                 'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
                 'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
+                'signInSsoOriented' => $this->signInSsoOriented,
             ]);
         }
 
@@ -573,6 +578,7 @@ class CarpoolController extends AbstractController
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
             'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
             'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
+            'signInSsoOriented' => $this->signInSsoOriented,
         ]);
     }
 
@@ -615,6 +621,7 @@ class CarpoolController extends AbstractController
             'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
             'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
             'includePassenger' => filter_var($request->query->get('includePassenger'), FILTER_VALIDATE_BOOLEAN),
+            'signInSsoOriented' => $this->signInSsoOriented,
         ]);
     }
 
@@ -649,6 +656,7 @@ class CarpoolController extends AbstractController
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
             'carpoolStandardBookingEnabled' => $this->carpoolStandardBookingEnabled,
             'carpoolStandardMessagingEnabled' => $this->carpoolStandardMessagingEnabled,
+            'signInSsoOriented' => $this->signInSsoOriented,
         ]);
     }
 
