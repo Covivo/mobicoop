@@ -116,9 +116,10 @@ class PaymentDataProvider
     {
         if ('' !== $this->paymentProvider) {
             if (isset(self::SUPPORTED_PROVIDERS[$this->paymentProvider])) {
+                $user = $this->security->getUser() instanceof User ? $this->security->getUser() : null;
                 $providerClass = self::SUPPORTED_PROVIDERS[$this->paymentProvider];
                 $this->providerInstance = new $providerClass(
-                    $this->security->getUser(),
+                    $user,
                     $this->clientId,
                     $this->apikey,
                     $this->publicApikey,
