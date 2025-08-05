@@ -3,7 +3,13 @@
     fluid
     pa-0
   >
-    <div :style="'background-image:url(\''+$t('urlBackground2')+'\');background-position-y:bottom;background-size:100% 100%;background-repeat:no-repeat;alt=\'\';'">
+    <div
+      :style="
+        'background-image:url(\'' +
+          $t('urlBackground2') +
+          '\');background-position-y:bottom;background-size:100% 100%;background-repeat:no-repeat;alt=\'\';'
+      "
+    >
       <v-row
         align="center"
         class="mt-2"
@@ -44,7 +50,7 @@
             class="text-left"
           >
             <h2 class="primary--text font-weight-bold">
-              {{ $t('events.title') }}
+              {{ $t("events.title") }}
             </h2>
             <v-btn
               rounded
@@ -52,7 +58,7 @@
               :href="this.$t('events.button1.route')"
               class="white--text mt-2"
             >
-              {{ $t('events.button1.label') }}
+              {{ $t("events.button1.label") }}
             </v-btn>
             <v-btn
               rounded
@@ -60,7 +66,7 @@
               :href="this.$t('events.button2.route')"
               class="white--text mt-4"
             >
-              {{ $t('events.button2.label') }}
+              {{ $t("events.button2.label") }}
             </v-btn>
             <v-img
               class="mt-6"
@@ -100,7 +106,11 @@
 
     <!-- cooperative -->
     <div
-      :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:right;'"
+      :style="
+        'background-image:url(\'' +
+          $t('urlBackground3') +
+          '\');background-size:cover;background-position-y:right;'
+      "
     >
       <v-row
         align="center"
@@ -131,22 +141,79 @@
           class="px-14"
         >
           <h3 class="primary--text  font-weight-bold mt-16">
-            {{ $t('articles.title') }}
+            {{ $t("articles.title") }}
           </h3>
 
-          <m-rss-articles
-            :articles="article"
-          />
+          <m-rss-articles :articles="article" />
         </v-col>
       </v-row>
     </div>
+    <v-row>
+      <v-col cols="6">
+        <v-dialog
+          v-model="nextClosureDialog"
+          persistent
+          no-click-animation
+          max-width="700"
+        >
+          <v-card
+            v-if="!userId"
+            style="background-color: white;"
+            class="mx-auto pa-5"
+          >
+            <!-- contenu de la dialog -->
+            <p v-html="$t('nextClosureMobicoop.notConnected.p1')" />
+            <p v-html="$t('nextClosureMobicoop.notConnected.p2')" />
+            <p v-html="$t('nextClosureMobicoop.notConnected.p3')" />
+            <div class="d-flex justify-center">
+              <v-btn
+                class="secondary"
+                @click="nextClosureDialog = false"
+              >
+                {{ $t("nextClosureMobicoop.pass") }}
+              </v-btn>
+            </div>
+          </v-card>
+          <v-card
+            v-else
+            style="background-color: white;"
+            class="mx-auto pa-5"
+          >
+            <!-- contenu de la dialog -->
+            <h3 class="pb-5 primary--text">
+              {{ $t("nextClosureMobicoop.connected.title") }}
+            </h3>
+            <p v-html="$t('nextClosureMobicoop.connected.p1')" />
+            <p v-html="$t('nextClosureMobicoop.connected.p2')" />
+            <p v-html="$t('nextClosureMobicoop.connected.p3')" />
+            <div class="d-flex justify-center">
+              <v-btn
+                class="secondary"
+                @click="nextClosureDialog = false"
+              >
+                {{ $t("nextClosureMobicoop.pass") }}
+              </v-btn>
+            </div>
+          </v-card>
+        </v-dialog>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
-
 import { merge } from "lodash";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/home/HomeContent/";
-import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/home/HomeContent/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/home/HomeContent/";
+import {
+  messages_client_en,
+  messages_client_fr,
+  messages_client_eu,
+  messages_client_nl
+} from "@clientTranslations/components/home/HomeContent/";
 import MFeatures from "@components/utilities/MFeatures";
 import MEvents from "@components/utilities/event/MEvents";
 import JourneyCityToCity from "@components/journey/JourneyCityToCity";
@@ -168,10 +235,10 @@ export default {
   },
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'nl': MessagesMergedNl,
-      'fr': MessagesMergedFr,
-      'eu': MessagesMergedEu
+      en: MessagesMergedEn,
+      nl: MessagesMergedNl,
+      fr: MessagesMergedFr,
+      eu: MessagesMergedEu
     }
   },
   props: {
@@ -188,23 +255,24 @@ export default {
       default: null
     }
   },
-  data () {
+  data() {
     return {
       mobileUrl: this.urlMobile,
       imageLink: "/images/pages/home/",
-      items:this.$t("items")
-    }
+      items: this.$t("items"),
+      nextClosureDialog: true
+    };
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-h2{
+h2 {
   font-size: 2rem;
   line-height: 1.2;
 }
 
-h3{
+h3 {
   font-size: 1.8rem;
   line-height: 1.2;
 }

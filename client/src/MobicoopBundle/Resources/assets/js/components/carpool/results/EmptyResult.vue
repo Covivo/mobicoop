@@ -1,10 +1,8 @@
 <template>
   <div>
     <v-row>
-      <v-col
-        align="left"
-      >
-        {{ $t('noResultForDate', {date: getSearchedDate}) }}
+      <v-col align="left">
+        {{ $t("noResultForDate", { date: getSearchedDate }) }}
       </v-col>
     </v-row>
     <v-row>
@@ -12,10 +10,11 @@
         <v-btn
           class="mt-5"
           color="secondary"
+          :disabled="!user && signInSsoOriented"
           rounded
           @click="publish()"
         >
-          {{ $t('publishAd') }}
+          {{ $t("publishAd") }}
         </v-btn>
       </v-col>
     </v-row>
@@ -45,24 +44,32 @@ export default {
       type: String,
       default: null
     },
+    user: {
+      type: Object,
+      default: null
+    },
+    signInSsoOriented: {
+      type: Boolean,
+      default: false
+    }
   },
   data: () => {
-    return{}
+    return {};
   },
   computed: {
     getSearchedDate() {
       const dateFormat = "ddd Do MMMM YYYY";
       if (!this.date) {
         return new moment().format(dateFormat);
-      };
+      }
 
       return new moment(this.date).format(dateFormat);
     }
   },
   methods: {
     publish() {
-      this.$emit('publishAd');
-    },
+      this.$emit("publishAd");
+    }
   }
-}
+};
 </script>

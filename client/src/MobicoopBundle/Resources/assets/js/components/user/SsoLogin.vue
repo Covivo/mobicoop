@@ -2,12 +2,10 @@
   <div>
     <div
       v-if="useButtonIcon && buttonIcon"
-      :style="'max-width:'+maxWidth+'px;'"
+      :style="'max-width:' + maxWidth + 'px;'"
       class="mx-auto"
     >
-      <v-tooltip
-        bottom
-      >
+      <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-img
             id="buttonWithImage"
@@ -18,7 +16,7 @@
             @click="click"
           />
         </template>
-        <span>{{ $t('useSsoService', {'service':service}) }}</span>
+        <span>{{ $t("useSsoService", { service: service }) }}</span>
       </v-tooltip>
     </div>
     <v-btn
@@ -30,83 +28,105 @@
       :disabled="!buttonActive"
       @click="click"
     >
-      {{ $t('useSsoService', {'service':service}) }} <span v-if="picto"><img
+      {{ $t("useSsoService", { service: service }) }}
+      <span v-if="showPicto"><img
         :src="picto"
         width="30"
       ></span>
     </v-btn>
   </div>
 </template>
-<script>
 
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/SsoLogin/";
+<script>
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/user/SsoLogin/";
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
     }
   },
-  props:{
-    url:{
+  props: {
+    url: {
       type: String,
       default: null
     },
-    buttonIcon:{
+    buttonIcon: {
       type: String,
       default: null
     },
-    picto:{
+    picto: {
       type: String,
       default: null
     },
-    useButtonIcon:{
+    useButtonIcon: {
       type: Boolean,
       default: null
     },
-    service:{
+    service: {
       type: String,
       default: null
     },
-    ssoProvider:{
+    ssoProvider: {
       type: String,
       default: null
     },
-    maxWidth:{
+    maxWidth: {
       type: Number,
-      default:200
+      default: 200
     },
     defaultButtonsActive: {
       type: Boolean,
       default: true
     }
   },
-  data(){
+  data() {
     return {
-      buttonActive: this.defaultButtonsActive
-    }
+      buttonActive: this.defaultButtonsActive,
+      showPicto: false
+    };
   },
-  computed:{
-    ssoButtonsActiveStatus(){
-      return this.$store.getters['sso/ssoButtonsActiveStatus'];
+  computed: {
+    ssoButtonsActiveStatus() {
+      return this.$store.getters["sso/ssoButtonsActiveStatus"];
     },
-    refreshActiveButtons(){
-      return this.$store.getters['sso/refreshActiveButtons'];
+    refreshActiveButtons() {
+      return this.$store.getters["sso/refreshActiveButtons"];
     }
   },
-  watch:{
-    refreshActiveButtons(){
+  watch: {
+    refreshActiveButtons() {
       this.buttonActive = this.ssoButtonsActiveStatus[this.ssoProvider];
-      this.$store.commit('sso/setRefreshActiveButtons', false);
+      this.$store.commit("sso/setRefreshActiveButtons", false);
     }
   },
-  methods:{
-    click(){
-      window.location.href = ((this.url) ? this.url : '/');
+  mounted() {
+    this.checkImage();
+  },
+  methods: {
+    click() {
+      window.location.href = this.url ? this.url : "/";
+    },
+    checkImage() {
+      if (this.picto) {
+        const img = new Image();
+        img.src = this.picto;
+        img.onload = () => {
+          this.showPicto = true;
+        };
+        img.onerror = () => {
+          this.showPicto = false;
+        };
+      }
     }
   }
-}
+};
 </script>
