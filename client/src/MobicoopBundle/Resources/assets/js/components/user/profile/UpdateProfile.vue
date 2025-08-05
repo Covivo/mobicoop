@@ -26,7 +26,7 @@
 
     <MissingDataToPayElectronically
       v-if="
-        user.missingDataToPayElectronically.length >= 0 &&
+        user.missingDataToPayElectronically.length > 0 &&
           paymentElectronicActive
       "
       :user="user"

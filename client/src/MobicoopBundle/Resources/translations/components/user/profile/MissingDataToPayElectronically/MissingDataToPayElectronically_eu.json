@@ -1,14 +1,17 @@
 {
   "title": "Paiement en ligne",
-  "text": "Pour réaliser des paiements en ligne sur le service, merci de compléter les champs suivants",
+  "text": "Pour recevoir des paiements en ligne et valider des preuves de covoiturage, merci de compléter vos coordonnées bancaires avec",
   "text2": "<b>Attention</b> le service de paiement va changer le 26/06/2025.</br>Renseignez à nouveau vos coordonnées bancaires dès le lendemain pour recevoir des paiements en ligne ou valider des preuves de covoiturage !",
   "givenName": "Prénom",
   "familyName": "Nom de famille",
   "birthDate": "Date de naissance",
   "email": "Adresse email",
   "homeAddress": "Adresse de domicile complète",
+  "address": "Adresse de domicile complète",
   "addressLocality": "Ville de domicile",
   "countryCode": "Pays de domicile",
   "postalCode": "Code postale du domicile",
-  "street": "Rue du domicile"
+  "street": "Rue du domicile",
+  "identity": "Pièce d'identité",
+  "bankCoordinates": "Coordonnées bancaires"
 }
