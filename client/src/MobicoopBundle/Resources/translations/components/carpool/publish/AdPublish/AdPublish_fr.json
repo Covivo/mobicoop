@@ -138,7 +138,7 @@
     "one": "La communauté {communityName} recommande de publier vos trajets gratuitement pour favoriser l'alternance de rôle. Vous êtes libre de modifier le prix.",
     "many": "Une ou plusieurs communautés sélectionnées vous encouragent à partager vos trajets gratuitement pour favoriser l'alternance de rôle. Vous êtes libre de modifier le prix."
   },
-  "closingMobicoopV2": {
+  "adAlertText": {
     "title": "Cette nouvelle annonce ne sera plus visible après la fermeture prochaine de Mobicoop.fr.",
     "text": {
       "l1": "Voulez-vous essayer dès maintenant la nouvelle application où les anciennes annonces ont été copiées ?",
