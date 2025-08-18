@@ -39,5 +39,6 @@
     :default-role-to-publish="{{defaultRoleToPublish}}"
     :both-role-enabled="{{ bothRoleEnabled ? "true" : "false" }}"
     :community-with-free-carpool="{{ communityWithFreeCarpool ? "true" : "false" }}"
+    :carpool-publish-alert="{{ carpoolPublishAlert is defined ? (carpoolPublishAlert ? "true" : "false") : 'false' }}"
   />
 {% endblock %}

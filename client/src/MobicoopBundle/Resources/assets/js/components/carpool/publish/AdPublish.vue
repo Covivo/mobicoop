@@ -18,6 +18,7 @@
     </v-row>
 
     <v-row
+      v-if="carpoolPublishAlert"
       justify="center"
       align="center"
     >
@@ -30,10 +31,10 @@
           outlined
         >
           <h3 class="pb-5">
-            {{ $t("closingMobicoopV2.title") }}
+            {{ $t("adAlertText.title") }}
           </h3>
-          <p>{{ $t("closingMobicoopV2.text.l1") }}</p>
-          <p v-html="$t('closingMobicoopV2.text.l2')" />
+          <p>{{ $t("adAlertText.text.l1") }}</p>
+          <p v-html="$t('adAlertText.text.l2')" />
         </v-alert>
       </v-col>
     </v-row>
@@ -1069,6 +1070,10 @@ export default {
       default: true
     },
     communityWithFreeCarpool: {
+      type: Boolean,
+      default: false
+    },
+    carpoolPublishAlert: {
       type: Boolean,
       default: false
     }
