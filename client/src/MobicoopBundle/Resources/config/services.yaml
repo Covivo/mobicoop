@@ -76,6 +76,7 @@ services:
       $bothRoleEnabled: "%env(bool:CARPOOL_ROLE_BOTH_ENABLED)%"
       $carpoolTimezone: "%env(string:CARPOOL_TIMEZONE)%"
       $signInSsoOriented: "%env(bool:SIGNIN_SSO_ORIENTED)%"
+      $carpoolPublishAlert: "%env(bool:CARPOOL_PUBLISH_ALERT)%"
 
   Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
     resource: "@MobicoopBundle/Carpool/Service/*"
