@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta http-equiv="refresh" content="0; url={{ mobileHost | raw }}">
+  <script>
+    window.location.href = "{{ mobileHost | raw }}";
+    setTimeout(function() {
+      window.location.href = "{{ desktopHost | raw }}";
+    }, 2000);
+  </script>
+</head>
+<body>
+  Redirection vers l'application...
+</body>
+</html>
