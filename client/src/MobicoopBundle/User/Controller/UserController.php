@@ -105,6 +105,7 @@ class UserController extends AbstractController
     private $minorProtectionActivated;
     private $authorizedReferrals;
     private $genderRequired;
+    private $packageIdMobile;
 
     /**
      * Constructor.
@@ -154,7 +155,8 @@ class UserController extends AbstractController
         $phoneCodes,
         bool $minorProtectionActivated,
         array $authorizedReferrals,
-        bool $genderRequired
+        bool $genderRequired,
+        string $packageIdMobile
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -190,6 +192,7 @@ class UserController extends AbstractController
         $this->minorProtectionActivated = $minorProtectionActivated;
         $this->authorizedReferrals = $authorizedReferrals;
         $this->genderRequired = $genderRequired;
+        $this->packageIdMobile = $packageIdMobile;
     }
 
     private function __parsePostParams(string $response): array
@@ -1934,8 +1937,16 @@ class UserController extends AbstractController
 
     private function mobileRedirect(string $host, string $path, array $params)
     {
-        $redirectUri = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
+        $redirectUriDesktop = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
 
-        return $this->redirect($redirectUri);
+        $redirectUriMobile = $redirectUriDesktop;
+        if (!is_null($this->packageIdMobile) && '' !== $this->packageIdMobile) {
+            $redirectUriMobile = $this->packageIdMobile.'://callback/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
+        }
+
+        return $this->render('@Mobicoop/redirectSso.html.twig', [
+            'mobileHost' => $redirectUriMobile,
+            'desktopHost' => $redirectUriDesktop,
+        ]);
     }
 }
