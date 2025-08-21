@@ -100,7 +100,7 @@
     "many": "Une ou plusieurs communautés sélectionnées vous encouragent à partager vos trajets gratuitement pour favoriser l'alternance de rôle. Vous êtes libre de modifier le prix."
   },
   "routeMissingSnackbarText": "Nous n'avons pas trouvé d'itinéraire pour ce trajet.",
-  "closingMobicoopV2": {
+  "adAlertText": {
     "title": "This new ad will no longer be visible after the next closure of mobicoop.fr.",
     "text": {
       "l1": "Do you want to try now the new application where the old ads have been copied?",
