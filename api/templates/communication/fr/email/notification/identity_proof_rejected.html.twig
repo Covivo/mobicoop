@@ -3,11 +3,11 @@
 {% block body %}
     {% set reasonId = context.paymentProfile.refusalReason %}
     <p>Bonjour,</p>
-    <p>Notre prestataire de paiement MANGOPAY a refusé votre document d'identité pour la raison suivante : <strong>{{ "reason#{reasonId}" |trans }}</strong></p>
+    <p>Notre prestataire de paiement Stripe a refusé votre document d'identité pour la raison suivante : <strong>{{ "reason#{reasonId}" |trans }}</strong></p>
     <p>Nous vous rappelons les éléments suivants :</p>
     <ul>
         <li>les pièces d’identité reçues doivent être de bonne qualité visuelle, sans flash ni reflet apparent, et avec une bande MRZ complètement lisible.</li>
         <li>Le recto et verso de votre pièce doivent être sur un même fichier.</li>
         <li>Enfin, votre prénom et nom sur <a href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_URL')}}</a> doivent être les mêmes que sur la pièce d'identité.</li>
-    <p>Pour en savoir plus sur les conditions de validation de la pièce d'identité, vous pouvez vous référer<strong><a href="https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr" title="">ici</a></strong>.</p>
+    <p>Pour en savoir plus sur les conditions de validation de la pièce d'identité, vous pouvez vous référer<strong><a href="https://support.stripe.com/questions/documents-for-identity-and-home-address-verification?locale=fr-FR#:%7E:text=Stripe%20pourra%20exiger%20des%20documents,et%20un%20justificatif%20de%20domicile" title="">ici</a></strong>.</p>
 {% endblock %}
