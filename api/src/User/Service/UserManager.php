@@ -366,7 +366,8 @@ class UserManager
         }
 
         // we check if the user is on the scammer list
-        $this->checkIfScammer($user);
+        // $this->checkIfScammer($user);
+
         //  we check if the user is not underaged
         $this->checkBirthDate($user);
         // we check if the user has an email
