@@ -68,8 +68,8 @@
     "pass": "Passer",
     "notConnected": {
       "p1": "Mobicoop.fr est en cours de remplacement par une nouvelle app' « <strong>Mobicoop Covoit'</strong> » plus rapide et plus moderne.",
-      "p2": "Il sera définitivement fermé en septembre. <strong>Connectez-vous avec votre compte utilisateur Mobicoop ou inscrivez-vous dès maintenant sur Mobicoop Covoit'</strong>.",
-      "p3": "Rendez-vous sur le store de votre téléphone et téléchargez <strong>Mobicoop Covoit'</strong>."
+      "p2": "Rendez-vous donc sur le store de votre téléphone et téléchargez <strong>Mobicoop Covoit'</strong>. Vos identifiants de connexion restent les mêmes, ou inscrivez-vous dès maintenant ! Un site reste également accessible si vous préférez utiliser un navigateur.",
+      "p3": "Plus d'informations sur la <a href='https://zammad.mobicoop.io/help/fr-fr/16-mobicoop-covoit' target='blank_'>FAQ</a>."
     },
     "connected": {
       "title": "Fermeture prochaine de Mobicoop.fr",
