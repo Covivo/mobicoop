@@ -68,8 +68,8 @@
     "pass": "Pass",
     "notConnected": {
       "p1": "Mobicoop.fr is being replaced by a new app' « <strong>Mobicoop Covoit'</strong> » faster and more modern.",
-      "p2": "It will be indefinitely closed in September. <strong>Log in with your Mobicoop user account or sign up now on Mobicoop Covoit'</strong>.",
-      "p3": "Go to your phone store and download <strong>Mobicoop Covoit'</strong>."
+      "p2": "Go to your phone store and download <strong>Mobicoop Covoit'</strong>. Your credentials stay the same or sign up right now ! A website stay online if your rather use a browser.",
+      "p3": "More on <a href='https://zammad.mobicoop.io/help/fr-fr/16-mobicoop-covoit' target='blank_'>FAQ</a>."
     },
     "connected": {
       "title": "Next closure of Mobicoop.fr",
