@@ -1040,8 +1040,8 @@ class UserManager
                 $criteria = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getSolidary()->getProposal()->getCriteria();
                 $currentThread['carpoolInfos'] = [
                     'solidaryAskHistoryId' => $lastSolidaryAskHistory->getId(),
-                    'origin' => $waypoints[0]->getAddress()->getAddressLocality(),
-                    'destination' => $waypoints[count($waypoints) - 1]->getAddress()->getAddressLocality(),
+                    'origin' => (isset($waypoints[0]) && !is_null($waypoints[0]->getAddress())) ? $waypoints[0]->getAddress()->getAddressLocality() : '',
+                    'destination' => (isset($waypoints[count($waypoints) - 1]) && !is_null($waypoints[count($waypoints) - 1]->getAddress())) ? $waypoints[count($waypoints) - 1]->getAddress()->getAddressLocality() : '',
                     'criteria' => [
                         'frequency' => $criteria->getFrequency(),
                         'fromDate' => $criteria->getFromDate(),
@@ -1146,8 +1146,8 @@ class UserManager
                 $criteria = $ask->getCriteria();
                 $currentThread['carpoolInfos'] = [
                     'askHistoryId' => $askHistory->getId(),
-                    'origin' => $waypoints[0]->getAddress()->getAddressLocality(),
-                    'destination' => $waypoints[count($waypoints) - 1]->getAddress()->getAddressLocality(),
+                    'origin' => (isset($waypoints[0]) && !is_null($waypoints[0]->getAddress())) ? $waypoints[0]->getAddress()->getAddressLocality() : '',
+                    'destination' => (isset($waypoints[count($waypoints) - 1]) && !is_null($waypoints[count($waypoints) - 1]->getAddress())) ? $waypoints[count($waypoints) - 1]->getAddress()->getAddressLocality() : '',
                     'criteria' => [
                         'frequency' => $criteria->getFrequency(),
                         'fromDate' => $criteria->getFromDate(),
