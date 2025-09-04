@@ -88,6 +88,8 @@ class BankTransfer
         self::STATUS_NO_AMOUNT => 'bt_noAmount',
         self::STATUS_ABANDONNED_NO_RECIPIENT_PAYMENT_PROFILE => 'bt_noRecipientPaymentProfile',
         self::STATUS_ABANDONNED_RECIPIENT_PAYMENT_PROFILE_INACTIVE => 'bt_recipientPaymentProfileInactive',
+        self::STATUS_AMOUNT_AT_ZERO => 'bt_amountAt0',
+        self::STATUS_ABANDONNED_RECIPIENT_PAYMENT_PROFILE_NOT_VALIDATED => 'bt_recipientPaymentProfileNoteValidated',
     ];
 
     /**
