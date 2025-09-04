@@ -39,7 +39,7 @@
             :display-description="true"
           />
           <p v-if="communityWithFreeCarpool && freeCarpool">
-            {{ $t('freeCarpool') }}
+            {{ $t("freeCarpool") }}
           </p>
           <p>{{ user && user.isCommunityReferrer }}</p>
           <!-- community buttons and map -->
@@ -178,21 +178,31 @@
                   </template>
                   <span>{{ $t("tooltips.connected") }}</span>
                 </v-tooltip>
-                <v-btn
+                <v-tooltip
                   v-if="isSecured == false"
-                  color="secondary"
-                  class="mt-3"
-                  rounded
-                  :loading="loading || (checkValidation && isLogged)"
-                  :disabled="checkValidation"
-                  @click="
-                    isLogged
-                      ? (joinCommunityDialog = true)
-                      : (loginOrRegisterDialog = true)
-                  "
+                  top
+                  color="info"
+                  :disabled="isLogged"
                 >
-                  {{ $t("buttons.join.label") }}
-                </v-btn>
+                  <template v-slot:activator="{ on, attrs }">
+                    <div
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <v-btn
+                        color="secondary"
+                        rounded
+                        :disabled="!isLogged"
+                        :loading="loading"
+                        class="mt-3"
+                        @click="joinCommunityDialog = true"
+                      >
+                        {{ $t("buttons.join.label") }}
+                      </v-btn>
+                    </div>
+                  </template>
+                  <span>{{ $t("tooltips.connected") }}</span>
+                </v-tooltip>
               </div>
 
               <!-- widget -->
@@ -383,12 +393,6 @@
         </v-card>
       </v-dialog>
     </v-container>
-    <LoginOrRegisterFirst
-      :id="community.id"
-      :show-dialog="loginOrRegisterDialog"
-      type="community"
-      @closeLoginOrRegisterDialog="loginOrRegisterDialog = false"
-    />
   </div>
 </template>
 <script>
@@ -409,7 +413,6 @@ import {
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
-import LoginOrRegisterFirst from "@components/utilities/LoginOrRegisterFirst";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap/MMap";
 import L, { LatLng } from "leaflet";
@@ -425,15 +428,14 @@ export default {
     CommunityInfos,
     Search,
     MMap,
-    CommunityLastUsers,
-    LoginOrRegisterFirst
+    CommunityLastUsers
   },
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'nl': MessagesMergedNl,
-      'fr': MessagesMergedFr,
-      'eu': MessagesMergedEu
+      en: MessagesMergedEn,
+      nl: MessagesMergedNl,
+      fr: MessagesMergedFr,
+      eu: MessagesMergedEu
     }
   },
   props: {
@@ -549,7 +551,6 @@ export default {
       directionWay: [],
       leaveCommunityDialog: false,
       joinCommunityDialog: false,
-      loginOrRegisterDialog: false,
       loading: false,
       snackbar: false,
       textSnackbar: null,
@@ -571,7 +572,7 @@ export default {
       isCreator: false,
       selectedDestination: null,
       selectedOrigin: null,
-      canSelectPoint: (this.isMember && this.user) ? true : false
+      canSelectPoint: this.isMember && this.user ? true : false
     };
   },
   computed: {
