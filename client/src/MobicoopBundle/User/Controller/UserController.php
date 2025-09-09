@@ -1937,11 +1937,11 @@ class UserController extends AbstractController
 
     private function mobileRedirect(string $host, string $path, array $params)
     {
-        $redirectUriDesktop = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
+        $redirectUriDesktop = $host.'/#/hitchhiking/user/sso/'.$path.'?'.http_build_query($params, '', '&');
 
         $redirectUriMobile = $redirectUriDesktop;
         if (!is_null($this->packageIdMobile) && '' !== $this->packageIdMobile) {
-            $redirectUriMobile = $this->packageIdMobile.'://callback/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
+            $redirectUriMobile = $this->packageIdMobile.'://callback/#/hitchhiking/user/sso/'.$path.'?'.http_build_query($params, '', '&');
         }
 
         return $this->render('@Mobicoop/redirectSso.html.twig', [
