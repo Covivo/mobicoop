@@ -32,6 +32,12 @@ do
                -regex "\./[a-z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\.log" \
                -and -not -regex "\./[a-z]+-${TODAY}\.log" \
                -exec chmod 774 '{}' \; -exec gzip -9 '{}' \;
+
+		# Rotate prod.log if present
+        if [ -f "prod.log" ]; then
+            : > "prod.log"   # empty the file
+        fi
+
         # Delete files older than 10 days
         find . -maxdepth 1 -name '*.log.gz' -and -mtime "+10" -delete
         cd -
