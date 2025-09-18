@@ -84,8 +84,6 @@ class StripeHookDataPersister implements ContextAwareDataPersisterInterface
             $this->logger->info($decodedPayload['type']);
 
             if (!$this->_checkWebhookSecret($signature, $payload)) {
-                $this->logger->error('Invalid webhook signature: '.$e->getMessage());
-
                 return new Response('Invalid webhook signature', Response::HTTP_OK);
             }
 
@@ -132,6 +130,8 @@ class StripeHookDataPersister implements ContextAwareDataPersisterInterface
                 );
             } catch (SignatureVerificationException $e) {
                 // Signature verification failed
+                $this->logger->error('Invalid webhook signature: '.$e->getMessage());
+
                 continue;
             }
             $signatureIsValid = true;
