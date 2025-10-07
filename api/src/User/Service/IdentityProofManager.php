@@ -76,6 +76,9 @@ class IdentityProofManager
         $identityProof->setFileName($user->getId().'-'.time());
         $identityProof->setStatus(IdentityProof::STATUS_PENDING);
 
+        $this->entityManager->persist($identityProof);
+        $this->entityManager->flush();
+
         return $identityProof;
     }
 
