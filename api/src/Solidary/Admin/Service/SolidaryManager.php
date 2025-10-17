@@ -86,6 +86,9 @@ use Symfony\Component\Security\Core\Security;
  */
 class SolidaryManager
 {
+    const STR_DATE_FORMAT = 'Y-m-d';
+    const STR_TIME_FORMAT = 'H:i';
+
     /**
      * @var User
      */
@@ -1658,21 +1661,21 @@ class SolidaryManager
             if (isset($fields['punctualOutwardMinDate'])) {
                 $params['punctualOutwardMinDate'] = $fields['punctualOutwardMinDate'];
             } else {
-                $params['punctualOutwardMinDate'] = $solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d');
+                $params['punctualOutwardMinDate'] = $solidary->getProposal()->getCriteria()->getFromDate()->format(self::STR_DATE_FORMAT);
             }
             if (isset($fields['punctualOutwardMaxDate'])) {
                 $params['punctualOutwardMaxDate'] = $fields['punctualOutwardMaxDate'];
             } elseif ($solidary->getProposal()->getCriteria()->getToDate()) {
-                $params['punctualOutwardMaxDate'] = $solidary->getProposal()->getCriteria()->getToDate()->format('Y-m-d');
+                $params['punctualOutwardMaxDate'] = $solidary->getProposal()->getCriteria()->getToDate()->format(self::STR_DATE_FORMAT);
             }
             if (isset($fields['punctualOutwardMinTime'])) {
                 $params['punctualOutwardMinTime'] = $fields['punctualOutwardMinTime'];
             } else {
                 // we use the criteria time if it's set, otherwise we use the monTime (as in this case it should be a flexible proposal, all days are checked)
                 if ($solidary->getProposal()->getCriteria()->getFromTime()) {
-                    $params['punctualOutwardMinTime'] = $solidary->getProposal()->getCriteria()->getFromTime()->format('H:i');
+                    $params['punctualOutwardMinTime'] = $solidary->getProposal()->getCriteria()->getFromTime()->format(self::STR_TIME_FORMAT);
                 } else {
-                    $params['punctualOutwardMinTime'] = $solidary->getProposal()->getCriteria()->getMonTime()->format('H:i');
+                    $params['punctualOutwardMinTime'] = $solidary->getProposal()->getCriteria()->getMonTime()->format(self::STR_TIME_FORMAT);
                 }
             }
             if (isset($fields['punctualOutwardDateChoice'])) {
@@ -1680,14 +1683,14 @@ class SolidaryManager
                 $newSolidary->setPunctualOutwardDateChoice($fields['punctualOutwardDateChoice']);
             } else {
                 $params['punctualOutwardDateChoice'] = $newSolidary->getPunctualOutwardDateChoice();
-                $params['punctualOutwardMinDate'] = $solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d');
+                $params['punctualOutwardMinDate'] = $params['punctualOutwardMinDate'] ?? $solidary->getProposal()->getCriteria()->getFromDate()->format(self::STR_DATE_FORMAT);
 
                 switch ($params['punctualOutwardDateChoice']) {
                     case Solidary::PUNCTUAL_OUTWARD_DATE_CHOICE_DATE:
                         break;
 
                     default:
-                        $params['punctualOutwardMaxDate'] = $solidary->getProposal()->getCriteria()->getToDate()->format('Y-m-d');
+                        $params['punctualOutwardMaxDate'] = $params['punctualOutwardMaxDate'] ?? $solidary->getProposal()->getCriteria()->getToDate()->format(self::STR_DATE_FORMAT);
 
                         break;
                 }
@@ -1697,21 +1700,21 @@ class SolidaryManager
                 $newSolidary->setPunctualOutwardTimeChoice($fields['punctualOutwardTimeChoice']);
             } else {
                 $params['punctualOutwardTimeChoice'] = $newSolidary->getPunctualOutwardTimeChoice();
-                $params['punctualOutwardMinTime'] = $solidary->getProposal()->getCriteria()->getFromTime()->format('H:i');
+                $params['punctualOutwardMinTime'] = $params['punctualOutwardMinTime'] ?? $solidary->getProposal()->getCriteria()->getFromTime()->format(self::STR_TIME_FORMAT);
             }
             if (isset($fields['punctualReturnDate'])) {
                 $params['punctualReturnDate'] = $fields['punctualReturnDate'];
             } elseif ($solidary->getProposal()->getProposalLinked()) {
-                $params['punctualReturnDate'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate()->format('Y-m-d');
+                $params['punctualReturnDate'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate()->format(self::STR_DATE_FORMAT);
             }
             if (isset($fields['punctualReturnTime'])) {
                 $params['punctualReturnTime'] = $fields['punctualReturnTime'];
             } elseif ($solidary->getProposal()->getProposalLinked()) {
                 // we use the criteria time if it's set, otherwise we use the monTime (as in this case it should be a flexible proposal, all days are checked)
                 if ($solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()) {
-                    $params['punctualReturnTime'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()->format('H:i');
+                    $params['punctualReturnTime'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()->format(self::STR_TIME_FORMAT);
                 } else {
-                    $params['punctualReturnTime'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getMonTime()->format('H:i');
+                    $params['punctualReturnTime'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getMonTime()->format(self::STR_TIME_FORMAT);
                 }
             }
             if (isset($fields['punctualReturnDateChoice'])) {
@@ -1725,8 +1728,8 @@ class SolidaryManager
                         break;
 
                     default:
-                        $params['punctualReturnDate'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate()->format('Y-m-d');
-                        $params['punctualReturnTime'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()->format('H:i');
+                        $params['punctualReturnDate'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate()->format(self::STR_DATE_FORMAT);
+                        $params['punctualReturnTime'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()->format(self::STR_TIME_FORMAT);
 
                         break;
                 }
@@ -1741,12 +1744,12 @@ class SolidaryManager
             if (isset($fields['regularMinDate'])) {
                 $params['regularMinDate'] = $fields['regularMinDate'];
             } else {
-                $params['regularMinDate'] = $solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d');
+                $params['regularMinDate'] = $solidary->getProposal()->getCriteria()->getFromDate()->format(self::STR_DATE_FORMAT);
             }
             if (isset($fields['regularMaxDate'])) {
                 $params['regularMaxDate'] = $fields['regularMaxDate'];
             } else {
-                $params['regularMaxDate'] = $solidary->getProposal()->getCriteria()->getToDate()->format('Y-m-d');
+                $params['regularMaxDate'] = $solidary->getProposal()->getCriteria()->getToDate()->format(self::STR_DATE_FORMAT);
             }
             if (isset($fields['regularSchedules'])) {
                 $params['regularSchedules'] = $fields['regularSchedules'];
@@ -2522,12 +2525,12 @@ class SolidaryManager
                     if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
                         $now->setTime((int) substr($ad->getOutwardTime(), 0, 2), (int) substr($ad->getOutwardTime(), 3, 2));
                         $now->add(new \DateInterval('PT1H'));
-                        $ad->setReturnTime($now->format('H:i'));
+                        $ad->setReturnTime($now->format(self::STR_TIME_FORMAT));
                         $ad->setReturnDate($ad->getOutwardDate());
                     } else {
                         $now->setTime((int) substr($schedule['outwardTime'], 0, 2), (int) substr($schedule['outwardTime'], 3, 2));
                         $now->add(new \DateInterval('PT1H'));
-                        $schedule['returnTime'] = $now->format('H:i');
+                        $schedule['returnTime'] = $now->format(self::STR_TIME_FORMAT);
                     }
 
                     break;
@@ -2539,12 +2542,12 @@ class SolidaryManager
                     if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
                         $now->setTime((int) substr($ad->getOutwardTime(), 0, 2), (int) substr($ad->getOutwardTime(), 3, 2));
                         $now->add(new \DateInterval('PT2H'));
-                        $ad->setReturnTime($now->format('H:i'));
+                        $ad->setReturnTime($now->format(self::STR_TIME_FORMAT));
                         $ad->setReturnDate($ad->getOutwardDate());
                     } else {
                         $now->setTime((int) substr($schedule['outwardTime'], 0, 2), (int) substr($schedule['outwardTime'], 3, 2));
                         $now->add(new \DateInterval('PT2H'));
-                        $schedule['returnTime'] = $now->format('H:i');
+                        $schedule['returnTime'] = $now->format(self::STR_TIME_FORMAT);
                     }
 
                     break;
@@ -2556,12 +2559,12 @@ class SolidaryManager
                     if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
                         $now->setTime((int) substr($ad->getOutwardTime(), 0, 2), (int) substr($ad->getOutwardTime(), 3, 2));
                         $now->add(new \DateInterval('PT3H'));
-                        $ad->setReturnTime($now->format('H:i'));
+                        $ad->setReturnTime($now->format(self::STR_TIME_FORMAT));
                         $ad->setReturnDate($ad->getOutwardDate());
                     } else {
                         $now->setTime((int) substr($schedule['outwardTime'], 0, 2), (int) substr($schedule['outwardTime'], 3, 2));
                         $now->add(new \DateInterval('PT3H'));
-                        $schedule['returnTime'] = $now->format('H:i');
+                        $schedule['returnTime'] = $now->format(self::STR_TIME_FORMAT);
                     }
 
                     break;
@@ -2603,9 +2606,9 @@ class SolidaryManager
         $eMargin = ($eMaxTime->getTimestamp() - $eMinTime->getTimestamp()) / 2;
 
         return [
-            'mTime' => $mMinTime->add(new \DateInterval('PT'.$mMargin.'S'))->format('H:i'),
-            'aTime' => $aMinTime->add(new \DateInterval('PT'.$aMargin.'S'))->format('H:i'),
-            'eTime' => $eMinTime->add(new \DateInterval('PT'.$eMargin.'S'))->format('H:i'),
+            'mTime' => $mMinTime->add(new \DateInterval('PT'.$mMargin.'S'))->format(self::STR_TIME_FORMAT),
+            'aTime' => $aMinTime->add(new \DateInterval('PT'.$aMargin.'S'))->format(self::STR_TIME_FORMAT),
+            'eTime' => $eMinTime->add(new \DateInterval('PT'.$eMargin.'S'))->format(self::STR_TIME_FORMAT),
             'mMargin' => $mMargin,
             'aMargin' => $aMargin,
             'eMargin' => $eMargin,
