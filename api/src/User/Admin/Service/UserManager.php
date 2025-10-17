@@ -121,11 +121,14 @@ class UserManager
         $this->userNotificationRepository = $userNotificationRepository;
     }
 
-    private function __getLocalityCode(float $lon, float $lat): ?int
+    private function __getLocalityCode(float $lon, float $lat): ?string
     {
-        $result = $this->pointSearcher->reverse($lon, $lat);
-        if (isset($result[0]) && $result[0] instanceof Point) {
-            return $result[0]->getLocalityCode();
+        $results = $this->pointSearcher->reverse($lon, $lat);
+
+        foreach ($results as $result) {
+            if ($result instanceof Point && !is_null($result->getLocalityCode())) {
+                return $result->getLocalityCode();
+            }
         }
 
         return null;
