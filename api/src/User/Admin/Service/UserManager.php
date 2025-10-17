@@ -264,6 +264,7 @@ class UserManager
         if (!is_null($user->getHomeAddress())) {
             $homeAddress = new Address();
             $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
+            $homeAddress->setStreet($user->getHomeAddress()->getStreet());
             $homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
             $homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
             $homeAddress->setAddressCountry($user->getHomeAddress()->getAddressCountry());
