@@ -44,6 +44,7 @@ use App\User\Event\UserDrivingLicenceNumberUpdateEvent;
 use App\User\Event\UserPhoneUpdateEvent;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Repository\UserRepository;
+use App\User\Service\HomeAddressManager;
 use App\User\Service\UserManager as ServiceUserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -74,6 +75,7 @@ class UserManager
     private $rzpPassword;
     private $userDelegateEmailBase;
     private $userNotificationRepository;
+    private $homeAddressManager;
 
     /**
      * Constructor.
@@ -100,7 +102,8 @@ class UserManager
         string $rzpLogin,
         string $rzpPassword,
         string $userDelegateEmailBase,
-        UserNotificationRepository $userNotificationRepository
+        UserNotificationRepository $userNotificationRepository,
+        HomeAddressManager $homeAddressManager
     ) {
         $this->entityManager = $entityManager;
         $this->authItemRepository = $authItemRepository;
@@ -119,6 +122,7 @@ class UserManager
         $this->rzpPassword = $rzpPassword;
         $this->userDelegateEmailBase = $userDelegateEmailBase;
         $this->userNotificationRepository = $userNotificationRepository;
+        $this->homeAddressManager = $homeAddressManager;
     }
 
     private function __getLocalityCode(float $lon, float $lat): ?string
@@ -262,26 +266,7 @@ class UserManager
 
         // check if the home address was set
         if (!is_null($user->getHomeAddress())) {
-            $homeAddress = new Address();
-            $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
-            $homeAddress->setStreet($user->getHomeAddress()->getStreet());
-            $homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
-            $homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
-            $homeAddress->setAddressCountry($user->getHomeAddress()->getAddressCountry());
-            $homeAddress->setLatitude($user->getHomeAddress()->getLatitude());
-            $homeAddress->setLongitude($user->getHomeAddress()->getLongitude());
-            $homeAddress->setHouseNumber($user->getHomeAddress()->getHouseNumber());
-            $homeAddress->setSubLocality($user->getHomeAddress()->getSubLocality());
-            $homeAddress->setLocalAdmin($user->getHomeAddress()->getLocalAdmin());
-            $homeAddress->setCounty($user->getHomeAddress()->getCounty());
-            $homeAddress->setMacroCounty($user->getHomeAddress()->getMacroCounty());
-            $homeAddress->setRegion($user->getHomeAddress()->getRegion());
-            $homeAddress->setMacroRegion($user->getHomeAddress()->getMacroRegion());
-            $homeAddress->setCountryCode($user->getHomeAddress()->getCountryCode());
-            $homeAddress->setHome(true);
-            $homeAddress->setName(Address::HOME_ADDRESS);
-            $homeAddress->setUser($user);
-            $this->entityManager->persist($homeAddress);
+            $this->entityManager->persist($this->homeAddressManager->upsert($user));
             $this->entityManager->flush();
         }
 
@@ -317,41 +302,9 @@ class UserManager
     {
         // check if the home address was updated
         if (in_array('homeAddress', array_keys($fields))) {
-            // home address updated, we search the original home address
-            $homeAddress = null;
-            foreach ($user->getAddresses() as $address) {
-                if ($address->isHome()) {
-                    $homeAddress = $address;
-
-                    break;
-                }
-            }
-            if (!is_null($homeAddress)) {
-                // we have to update each field...
-                // @var Address $homeAddress
-                $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
-                $homeAddress->setStreet($user->getHomeAddress()->getStreet());
-                $homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
-                $homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
-                $homeAddress->setAddressCountry($user->getHomeAddress()->getAddressCountry());
-                $homeAddress->setLatitude($user->getHomeAddress()->getLatitude());
-                $homeAddress->setLongitude($user->getHomeAddress()->getLongitude());
-                $homeAddress->setHouseNumber($user->getHomeAddress()->getHouseNumber());
-                $homeAddress->setSubLocality($user->getHomeAddress()->getSubLocality());
-                $homeAddress->setLocalAdmin($user->getHomeAddress()->getLocalAdmin());
-                $homeAddress->setCounty($user->getHomeAddress()->getCounty());
-                $homeAddress->setMacroCounty($user->getHomeAddress()->getMacroCounty());
-                $homeAddress->setRegion($user->getHomeAddress()->getRegion());
-                $homeAddress->setMacroRegion($user->getHomeAddress()->getMacroRegion());
-                $homeAddress->setCountryCode($user->getHomeAddress()->getCountryCode());
-                $this->entityManager->persist($homeAddress);
-                $this->entityManager->flush();
-
-                // check if the user is also a solidary user
-                if ($user->getSolidaryUser() && $user->getSolidaryUser()->isVolunteer()) {
-                    $user->getSolidaryUser()->setAddress($homeAddress);
-                }
-            }
+            $this->entityManager->persist(
+                $this->homeAddressManager->upsert($user)
+            );
         }
 
         // check if roles were updated
