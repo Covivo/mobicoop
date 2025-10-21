@@ -33,8 +33,6 @@
 								est bien prise en compte.</p>
 							<p style="font-size:13px;">Veuillez cliquer sur ce lien pour confirmer votre email  :
 								<a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-weight: bold;" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">lien</a>.</p>
-							<pstyle="font-size:13px;text-align:justify">Ou utilisez le code de validation directement sur le site :
-								{{ context.user.emailToken }}</p>
 							{% if context.user.passwordSendType == 2 %}
 								<p style="font-size:13px; text-align:justify">Votre mot de passe est :
 									{{ context.user.clearPassword }}</p>
