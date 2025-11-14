@@ -30,6 +30,9 @@
 							<p style="font-size:11px;">Your
 								<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
 									Mobicoop</b>registration has been completed.</p>
+                            {% if api_env('RZP_API_URI') and api_env('RZP_API_URI') is not empty %}
+                            <p id="rzp_cond" style="font-size:13px;">You're almost there! Finalize your registration with Rezo Pouce by following the few steps indicated.</p>
+							{% endif %}
 							{% if context.user.backLink and context.user.backLink is not null %}
 								<p style="font-size:11px;">Please click on this link to confirm your email :
 									<a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}; font-weight: bold;" href="{{ context.user.backLink }}{{ context.user.emailToken }}" title="">{{ context.user.backLink }}{{ context.user.emailToken }}</a>
