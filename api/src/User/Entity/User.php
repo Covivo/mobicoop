@@ -4023,6 +4023,10 @@ class User implements UserInterface, EquatableInterface
 
     public function setHomeAddress(?Address $homeAddress): self
     {
+        if ($homeAddress) {
+            $homeAddress->setHome(true);
+        }
+
         $this->homeAddress = $homeAddress;
 
         return $this;
