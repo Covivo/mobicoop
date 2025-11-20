@@ -187,7 +187,7 @@ class NotificationManager
      * @param User   $recipient The user to be notified
      * @param object $object    The object linked to the notification (if more information is needed to be joined in the notification)
      */
-    public function notifies(string $action, User $recipient, ?object $object = null)
+    public function notifies(string $action, User $recipient, ?object $object = null, ?bool $previewMode = false)
     {
         // check if notification system is enabled
         if (!$this->enabled) {
@@ -239,7 +239,7 @@ class NotificationManager
                             if (!$this->mailsEnabled) {
                                 break;
                             }
-                            $this->notifyByEmail($notification, $recipient, $object);
+                            $this->notifyByEmail($notification, $recipient, $object, $previewMode);
                             $this->createNotified($notification, $recipient, $object);
                             $this->logger->info("Email notification for {$action} / ".$recipient->getEmail());
 
@@ -345,7 +345,7 @@ class NotificationManager
      * Notify a user by email.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
      */
-    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
+    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null, ?bool $previewMode = false)
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
@@ -839,9 +839,9 @@ class NotificationManager
         }
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
-            $this->emailManager->send($email, $this->altCommunicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $this->emailManager->send($email, $this->altCommunicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang, [], $previewMode);
         } else {
-            $this->emailManager->send($email, $this->communicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $this->emailManager->send($email, $this->communicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang, [], $previewMode);
         }
     }
 
