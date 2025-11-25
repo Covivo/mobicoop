@@ -38,13 +38,13 @@ class OpenIdSsoProvider implements SsoProviderInterface
 {
     // Supported Providers names
     public const SSO_PROVIDER_GLCONNECT = 'GLConnect';
-    public const SSO_PROVIDER_PASSMOBILITE = 'PassMobilite';
+    public const SSO_PROVIDER_PASSMOBILITE = 'PassMobilite'; // movici
     public const SSO_PROVIDER_MOBCONNECT = 'mobConnect';
     public const SSO_PROVIDER_MOBCONNECTAUTH = 'mobConnectAuth';
     public const SSO_PROVIDER_MOBCONNECTBASIC = 'mobConnectBasic';
     public const SSO_PROVIDER_MOBIGO = 'mobigo';
     public const SSO_PROVIDER_MOBICOOP = 'Mobicoop';
-    public const SSO_PROVIDER_MODALIS = 'Modalis';
+    public const SSO_PROVIDER_COMPTEUNIQUE = 'CompteUnique'; // modalis
 
     public const AUTHORIZATION_URL = 'Authorization_Url';
     public const TOKEN_URL = 'Token_Url';
@@ -98,7 +98,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::USERINFOS_URL => 'protocol/openid-connect/userinfo',
             self::LOGOUT_URL => 'protocol/openid-connect/logout&post_logout_redirect_uri={REDIRECT_URI}',
         ],
-        self::SSO_PROVIDER_MODALIS => [
+        self::SSO_PROVIDER_COMPTEUNIQUE => [
             self::AUTHORIZATION_URL => 'auth/realms/CompteUnique/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
             self::TOKEN_URL => 'auth/realms/CompteUnique/protocol/openid-connect/token/',
             self::USERINFOS_URL => 'auth/realms/CompteUnique/protocol/openid-connect/userinfo',
