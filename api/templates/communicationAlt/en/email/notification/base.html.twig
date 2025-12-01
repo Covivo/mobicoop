@@ -1,217 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="x-apple-disable-message-reformatting">
-    <link href='https://fonts.googleapis.com/css?family=Poppins:200,300,400,600' rel='stylesheet' type='text/css'>
-</head>
-<body>
-<center>
-<table style="width:640px; font-family:{{api_env('EMAILS_FONT')}}; border-collapse: collapse; border-spacing: 0px; padding:0px;">
-<tbody>
-    <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-        <td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-            <!-- Header -->
-            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; border-collapse: collapse; border-spacing: 0px; padding:0px;">
-                <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-                    <td align="center" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/top-header.png"
-                            style="border:0; height:152px; width:640px; background-color:transparent; display:block"
-                        />
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-        <td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; border-collapse: collapse; border-spacing: 0px; padding:0px;" >
-                <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-                    <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/left-top-header.png"
-                            style="border:0; height:240px; width:80px; background-color:transparent; vertical-align:top; display:block; margin-top: -6px;"
-                        />
-                    </td>
-                    <td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-                        <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:510px;">
-                            <tr>
-                                <td align="center">
-                                    {% block body %}
-                                    {% endblock %}
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/right-top-header.png"
-                            style="border:0; height:252px; width:50px; background-color:transparent; vertical-align:top; display:block; margin-top: -6px;"
-                        />
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</tbody>
-<tfooter>
-    <tr>
-        <td>
-            <!-- Footer-->
-            <table
-                align="center"
-                style="border-spacing:0; text-align:center; vertical-align:top; width:640px; height:158px; background-color:{{api_env('EMAILS_COLOR_PRIMARY')}};"
-            >
-                <tr>
-                    <td>
-                        <table
-                            align="center"
-                        >
-                            <tr>
-                                <td>
-                                    <p> </p>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                     <td>
-                        <table
-                            align="center"
-                            style="border-spacing:0;"
-                        >
-                            <tr>
-                                <td>
-                                    <p style="color:black; font-size:14px;" >Téléchargez l'application Mobicoop</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <table
-                                        align="left"
-                                    >
-                                        <tr>
-                                            <td>
-                                                <a href="https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537">
-                                                    <img
-                                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/appStore.png"
-                                                        style="border:0; height:20px; width:63px; background-color:transparent; "
-                                                    />
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US">
-                                                    <img
-                                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/playStore.png"
-                                                        style="border:0; height:29px; width:75px; background-color:transparent; "
-                                                    />
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <table
-                                        align="left"
-                                    >
-                                        <tr>
-                                            <td>
-                                                <a href="https://www.facebook.com/Mobicoop">
-                                                    <img
-                                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Facebook.png"
-                                                        style="border:0; height:13px; width:7px; background-color:transparent; margin-right: 2px;"
-                                                    />
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="https://twitter.com/Mobicoop">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="x-apple-disable-message-reformatting">
+		<link href='https://fonts.googleapis.com/css?family=Poppins:200,300,400,600' rel='stylesheet' type='text/css'>
+	</head>
+	<body>
+		<center>
+			<table style="width:640px; font-family:{{api_env('EMAILS_FONT')}}; border-collapse: collapse; border-spacing: 0px; padding:0px;">
+				<tbody>
+					<tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+						<td
+							style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+							<!-- Header -->
+							<table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; border-collapse: collapse; border-spacing: 0px; padding:0px;">
+								<tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+									<td align="center" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+										<img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/top-header.png" style="border:0; height:152px; width:640px; background-color:transparent; display:block"/>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+						<td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+							<table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; border-collapse: collapse; border-spacing: 0px; padding:0px;">
+								<tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+									<td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+										<img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/left-top-header.png" style="border:0; height:240px; width:80px; background-color:transparent; vertical-align:top; display:block; margin-top: -6px;"/>
+									</td>
+									<td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+										<table cellpadding="0" cellspacing="0" summary="" border="0" style="width:510px;">
+											<tr>
+												<td align="center"> {% block body %}{% endblock %}
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+											<img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/right-top-header.png" style="border:0; height:252px; width:50px; background-color:transparent; vertical-align:top; display:block; margin-top: -6px;"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+					<tfooter>
+						<tr>
+							<td>
+								<!-- Footer-->
+								<table align="center" style="border-spacing:0; text-align:center; vertical-align:top; width:640px; height:158px; background-color:{{api_env('EMAILS_COLOR_PRIMARY')}};">
+									<tr>
+										<td>
+											<table align="center">
+												<tr>
+													<td>
+														<p></p>
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<table align="center" style="border-spacing:0;">
+												<tr>
+													<td>
+														<p style="color:black; font-size:14px;">Téléchargez l'application Mobicoop</p>
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<table align="left">
+															<tr>
+																<td>
+																	<a href="https://apps.apple.com/fr/app/mobicoop-covoit/id6737623414">
+																		<img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/appStore.png" style="border:0; height:20px; width:63px; background-color:transparent; "/>
+																	</a>
+																</td>
+																<td>
+																	<a href="https://play.google.com/store/search?q=mobicoop%20covoit&c=apps&hl=fr">
+																		<img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/playStore.png" style="border:0; height:29px; width:75px; background-color:transparent; "/>
+																	</a>
+																</td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<table align="left">
+															<tr>
+																<td>
+																	<a href="https://www.facebook.com/Mobicoop">
+																		<img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Facebook.png" style="border:0; height:13px; width:7px; background-color:transparent; margin-right: 2px;"/>
+																	</a>
+																</td>
+																<td>
+																	<a href="https://twitter.com/Mobicoop">
 
-                                                    <img
-                                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Twitter.png"
-                                                        style="border:0; height:13px; width:15px; background-color:transparent; margin-left: 2px; margin-right: 2px;"
-                                                    />
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="https://fr.linkedin.com/company/mobicoopcovoiturage">
-                                                    <img
-                                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Linkedin.png"
-                                                    style="border:0; height:13px; width:13px; background-color:transparent; margin-left: 2px;"
-                                                    />
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <table
-                                        align="left"
-                                    >
-                                        <tr>
-                                            <td>
-                                                <p style="font-size: 8px; line-height: 1.0; word-break: break-word; mso-line-height-alt: 12px; margin: 0; color: white;">
-                                                    Pour gérer vos alertes e-mail <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mon-profil/alertes" style="color: white">click here</a>
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <table
-                                        align="left"
-                                    >
-                                        <tr>
-                                            <td>
-                                                <p style="font-size: 8px; line-height: 1.0; word-break: break-word; mso-line-height-alt: 12px; margin: 0; color: white;">
-                                                    Une question? <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" style="color: white">Consultez la FAQ.</a>
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td>
-                        <table
-                            align="center"
-                        >
-                            <tr>
-                                <td>
-                                    <p> </p>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                     <td>
-                        <table
-                            align="center"
-                        >
-                            <tr>
-                                <td>
-                                    <img
-                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/voiture.png"
-                                        style="border:0; height:101px; width:149px; background-color:transparent; vertical-align:top;"
-                                    />
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</tfooter>
+																		<img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Twitter.png" style="border:0; height:13px; width:15px; background-color:transparent; margin-left: 2px; margin-right: 2px;"/>
+																	</a>
+																</td>
+																<td>
+																	<a href="https://fr.linkedin.com/company/mobicoopcovoiturage">
+																		<img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Linkedin.png" style="border:0; height:13px; width:13px; background-color:transparent; margin-left: 2px;"/>
+																	</a>
+																</td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<table align="left">
+															<tr>
+																<td>
+																	<p style="font-size: 8px; line-height: 1.0; word-break: break-word; mso-line-height-alt: 12px; margin: 0; color: white;">
+																		Pour gérer vos alertes e-mail
+																		<a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mon-profil/alertes" style="color: white">click here</a>
+																	</p>
+																</td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<table align="left">
+															<tr>
+																<td>
+																	<p style="font-size: 8px; line-height: 1.0; word-break: break-word; mso-line-height-alt: 12px; margin: 0; color: white;">
+																		Une question?
+																		<a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" style="color: white">Consultez la FAQ.</a>
+																	</p>
+																</td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<table align="center">
+												<tr>
+													<td>
+														<p></p>
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<table align="center">
+												<tr>
+													<td>
+														<img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/voiture.png" style="border:0; height:101px; width:149px; background-color:transparent; vertical-align:top;"/>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</tfooter>
 
-</table>
-</center>
-</body>
-</html>
+				</table>
+			</center>
+		</body>
+	</html>
