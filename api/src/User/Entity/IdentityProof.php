@@ -273,7 +273,19 @@ class IdentityProof
 
     public function setUser(?User $user): self
     {
+        if ($this->user === $user) {
+            return $this;
+        }
+
+        if ($this->user !== null && $user !== null) {
+            throw new \LogicException('Cannot transfer an identity proof from one user to another. Please cancel this proof and create a new one for the other user.');
+        }
+
         $this->user = $user;
+
+        if ($user !== null) {
+            $user->addIdentityProof($this);
+        }
 
         return $this;
     }
