@@ -2632,6 +2632,55 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    /**
+     * Compute and update the identity status based on all identity proofs.
+     * Priority: ACCEPTED > PENDING > REFUSED > CANCELED > NONE
+     */
+    public function computeIdentityStatus(): self
+    {
+        $proofs = $this->getIdentityProofs();
+
+        if (empty($proofs)) {
+            $this->identityStatus = IdentityProof::STATUS_NONE;
+            return $this;
+        }
+
+        // Priority order: ACCEPTED > PENDING > REFUSED > CANCELED > NONE
+        $hasAccepted = false;
+        $hasPending = false;
+        $hasRefused = false;
+        $hasCanceled = false;
+
+        foreach ($proofs as $proof) {
+            $status = $proof->getStatus();
+
+            if ($status === IdentityProof::STATUS_ACCEPTED) {
+                $hasAccepted = true;
+                break;
+            } elseif ($status === IdentityProof::STATUS_PENDING) {
+                $hasPending = true;
+            } elseif ($status === IdentityProof::STATUS_REFUSED) {
+                $hasRefused = true;
+            } elseif ($status === IdentityProof::STATUS_CANCELED) {
+                $hasCanceled = true;
+            }
+        }
+
+        if ($hasAccepted) {
+            $this->identityStatus = IdentityProof::STATUS_ACCEPTED;
+        } elseif ($hasPending) {
+            $this->identityStatus = IdentityProof::STATUS_PENDING;
+        } elseif ($hasRefused) {
+            $this->identityStatus = IdentityProof::STATUS_REFUSED;
+        } elseif ($hasCanceled) {
+            $this->identityStatus = IdentityProof::STATUS_CANCELED;
+        } else {
+            $this->identityStatus = IdentityProof::STATUS_NONE;
+        }
+
+        return $this;
+    }
+
     public function getImages()
     {
         return $this->images->getValues();

@@ -254,7 +254,11 @@ class IdentityProof
     public function setStatus(int $status)
     {
         $this->status = $status;
-        $this->getUser()->setIdentityStatus($status);
+
+        if ($this->getUser()) {
+            $this->getUser()->computeIdentityStatus();
+        }
+
         if (self::STATUS_ACCEPTED == $this->status) {
             $this->setAcceptedDate(new \DateTime());
         } elseif (self::STATUS_REFUSED == $this->status) {
