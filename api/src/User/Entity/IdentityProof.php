@@ -254,7 +254,11 @@ class IdentityProof
     public function setStatus(int $status)
     {
         $this->status = $status;
-        $this->getUser()->setIdentityStatus($status);
+
+        if ($this->getUser()) {
+            $this->getUser()->computeIdentityStatus();
+        }
+
         if (self::STATUS_ACCEPTED == $this->status) {
             $this->setAcceptedDate(new \DateTime());
         } elseif (self::STATUS_REFUSED == $this->status) {
@@ -269,7 +273,19 @@ class IdentityProof
 
     public function setUser(?User $user): self
     {
+        if ($this->user === $user) {
+            return $this;
+        }
+
+        if ($this->user !== null && $user !== null) {
+            throw new \LogicException('Cannot transfer an identity proof from one user to another. Please cancel this proof and create a new one for the other user.');
+        }
+
         $this->user = $user;
+
+        if ($user !== null) {
+            $user->addIdentityProof($this);
+        }
 
         return $this;
     }

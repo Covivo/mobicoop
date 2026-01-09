@@ -2632,6 +2632,22 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    /**
+     * Compute and update the identity status based on the most recent identity proof.
+     * Uses the latest proof by id (collection is ordered by id DESC).
+     */
+    public function computeIdentityStatus(): self
+    {
+        if ($this->identityProofs->isEmpty()) {
+            $this->identityStatus = IdentityProof::STATUS_NONE;
+            return $this;
+        }
+
+        $this->identityStatus = $this->identityProofs->first()->getStatus();
+
+        return $this;
+    }
+
     public function getImages()
     {
         return $this->images->getValues();
