@@ -252,15 +252,25 @@ class GeoTools
         // street address
         $streetAddressFound = false;
         if (isset($this->params['displayStreetAddress']) && 'true' === trim($this->params['displayStreetAddress'])) {
+            // Determine which street value to use
+            $streetValue = null;
+            if (null !== $address->getStreetAddress() && '' !== trim($address->getStreetAddress())) {
+                $streetValue = $address->getStreetAddress();
+            } elseif (null !== $address->getStreet() && '' !== trim($address->getStreet())) {
+                $streetValue = $address->getStreet();
+            }
+
             if ('' !== trim($address->getHouseNumber())) {
                 $houseNumber = trim($address->getHouseNumber());
-                if (!preg_match("/{$houseNumber}/", trim($address->getStreetAddress()))) {
+                // Check if house number is already in the street value we'll use
+                if (null === $streetValue || !preg_match("/{$houseNumber}/", trim($streetValue))) {
                     $displayLabelTab[0][] = $houseNumber;
                 }
             }
-            if ('' !== trim($address->getStreetAddress())) {
+
+            if (null !== $streetValue) {
                 $streetAddressFound = true;
-                $displayLabelTab[0][] = $address->getStreetAddress();
+                $displayLabelTab[0][] = $streetValue;
             }
         }
 
