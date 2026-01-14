@@ -83,6 +83,45 @@ class GratuityCampaignActionManager
         // Handle ad posted action
     }
 
+    /**
+     * Find GratuityCampaigns for a list of addresses.
+     *
+     * @param array $addressesData Array of address data with latitude/longitude
+     * @param User  $user          The authenticated user
+     *
+     * @return GratuityCampaign[] Array of GratuityCampaign entities
+     */
+    public function findCampaignsByAddresses(array $addressesData, User $user): array
+    {
+        $this->_user = $user;
+        $this->_indexUserGratuityNotifications();
+
+        $allTerritoryIds = [];
+        foreach ($addressesData as $addressData) {
+            if (!isset($addressData['latitude']) || !isset($addressData['longitude'])) {
+                continue;
+            }
+
+            $address = new Address();
+            $address->setLatitude((float) $addressData['latitude']);
+            $address->setLongitude((float) $addressData['longitude']);
+
+            $territoryIds = $this->_findTerritoriesIdOfAddress($address);
+            $allTerritoryIds = array_merge($allTerritoryIds, $territoryIds);
+        }
+
+        $uniqueTerritoryIds = array_unique($allTerritoryIds);
+
+        if (empty($uniqueTerritoryIds)) {
+            return [];
+        }
+
+        return $this->_gratuityCampaignRepository->findPendingForUserWithTerritories(
+            $this->_user,
+            $uniqueTerritoryIds
+        );
+    }
+
     private function _indexUserGratuityNotifications()
     {
         $this->_index_user_gratuity_campaigns_ids = [];

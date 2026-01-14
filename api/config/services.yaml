@@ -781,6 +781,10 @@ services:
     arguments:
       $gratuityActive: "%env(bool:GRATUITY_CAMPAIGN_ACTIVE)%"
 
+  App\Gratuity\Controller\:
+    resource: "../src/Gratuity/Controller"
+    tags: ["controller.service_arguments"]
+
   App\Stats\Admin\Service\AnalyticManager:
     arguments:
       $params: "%env(json:file:resolve:ANALYTICS_PARAMETERS)%"

@@ -79,7 +79,7 @@ class GratuityCampaignManager
         $this->_entityManager->persist($entity);
         $this->_entityManager->flush();
 
-        return $this->_buildGratuityCampaignFromEntity($entity);
+        return $this->buildGratuityCampaignFromEntity($entity);
     }
 
     public function getGratuityCampaign(int $gratuityCampaignId): ?GratuityCampaign
@@ -89,7 +89,7 @@ class GratuityCampaignManager
         }
 
         if ($entity = $this->_gratuityCampaignRepository->find($gratuityCampaignId)) {
-            return $this->_buildGratuityCampaignFromEntity($entity);
+            return $this->buildGratuityCampaignFromEntity($entity);
         }
 
         return null;
@@ -107,7 +107,7 @@ class GratuityCampaignManager
         $campaigns = [];
         if ($entities = $this->_gratuityCampaignRepository->findAll()) {
             foreach ($entities as $entity) {
-                $campaigns[] = $this->_buildGratuityCampaignFromEntity($entity);
+                $campaigns[] = $this->buildGratuityCampaignFromEntity($entity);
             }
         }
 
@@ -128,7 +128,7 @@ class GratuityCampaignManager
                 $this->_tagNewExistingNotificationAsSeen($entity);
             }
 
-            $gratuityCampaign = $this->_buildGratuityCampaignFromEntity($entity);
+            $gratuityCampaign = $this->buildGratuityCampaignFromEntity($entity);
             $gratuityCampaign->setNotifiedForThisUser(true);
 
             return $gratuityCampaign;
@@ -186,7 +186,7 @@ class GratuityCampaignManager
         return $entity;
     }
 
-    private function _buildGratuityCampaignFromEntity(EntityGratuityCampaign $entity): GratuityCampaign
+    public function buildGratuityCampaignFromEntity(EntityGratuityCampaign $entity): GratuityCampaign
     {
         $gratuityCampaign = new GratuityCampaign();
         $gratuityCampaign->setId($entity->getId());
