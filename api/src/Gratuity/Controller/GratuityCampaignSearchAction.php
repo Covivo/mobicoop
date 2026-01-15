@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2023, MOBICOOP. All rights reserved.
+ * Copyright (c) 2026, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -25,8 +25,10 @@ namespace App\Gratuity\Controller;
 
 use App\Gratuity\Service\GratuityCampaignActionManager;
 use App\Gratuity\Service\GratuityCampaignManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Serializer\SerializerInterface;
 
 final class GratuityCampaignSearchAction
 {
@@ -34,25 +36,28 @@ final class GratuityCampaignSearchAction
     private $_gratuityCampaignManager;
     private $_request;
     private $_security;
+    private $_serializer;
 
     public function __construct(
         GratuityCampaignActionManager $gratuityCampaignActionManager,
         GratuityCampaignManager $gratuityCampaignManager,
         RequestStack $requestStack,
-        Security $security
+        Security $security,
+        SerializerInterface $serializer
     ) {
         $this->_gratuityCampaignActionManager = $gratuityCampaignActionManager;
         $this->_gratuityCampaignManager = $gratuityCampaignManager;
         $this->_request = $requestStack->getCurrentRequest();
         $this->_security = $security;
+        $this->_serializer = $serializer;
     }
 
-    public function __invoke(): array
+    public function __invoke(): JsonResponse
     {
         $content = json_decode($this->_request->getContent(), true);
 
         if (!isset($content['addresses']) || !is_array($content['addresses'])) {
-            return [];
+            return new JsonResponse(['gratuityCampaigns' => []]);
         }
 
         $entities = $this->_gratuityCampaignActionManager->findCampaignsByAddresses(
@@ -65,6 +70,12 @@ final class GratuityCampaignSearchAction
             $campaigns[] = $this->_gratuityCampaignManager->buildGratuityCampaignFromEntity($entity);
         }
 
-        return $campaigns;
+        $json = $this->_serializer->serialize(
+            ['gratuityCampaigns' => $campaigns],
+            'json',
+            ['groups' => ['readGratuity', 'readGratuityNotified']]
+        );
+
+        return new JsonResponse($json, 200, [], true);
     }
 }
