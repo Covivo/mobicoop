@@ -4,6 +4,7 @@ namespace App\OAuth\Service\Providers;
 
 use App\DataProvider\Service\DataProvider;
 use App\OAuth\Resource\OAuthCredentials;
+use GuzzleHttp\Psr7\Stream;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OAuthProvider
@@ -12,7 +13,7 @@ class OAuthProvider
 
     public const RESPONSE_ERROR = [401, 404, 500];
 
-    public const RESOURCE_POST = '/auth/token';
+    public const RESOURCE_POST = '/v3.3/auth/access_token';
 
     private $_response;
 
@@ -45,11 +46,7 @@ class OAuthProvider
     private function _returnsResponse(): \stdClass
     {
         if (self::RESPONSE_SUCCESS === $this->_response->getCode()) {
-            // ! Temporary response
-            return json_decode('{"token":  "'.hash('sha256', uniqid(mt_rand(), true)).'", "expires_in": 900}');
-
-            // TODO: Evaluate the response to be returned
-            return $this->_response->getValue();
+            return json_decode($this->_response->getValue()->getContents());
         }
 
         $this->_throwErrors();
