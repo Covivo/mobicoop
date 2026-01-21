@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TokenManager
 {
+    private const EXPIRES_IN = 300; // 5 minutes in seconds
+
     /**
      * @var OAuthToken
      */
@@ -79,7 +81,7 @@ class TokenManager
 
     private function _getOAuthTokenFromPath(): \stdClass
     {
-        return json_decode(file_get_contents($this->_service->file_path), true);
+        return json_decode(file_get_contents($this->_service->file_path));
     }
 
     /**
@@ -88,7 +90,15 @@ class TokenManager
     private function _getOAuthTokenFromQuery()
     {
         try {
-            $response = (new OAuthProvider($this->_service->uri, new OAuthCredentials($this->_service->access_key, $this->_service->secret_key)))->postItem();
+            $response = (
+                new OAuthProvider(
+                    $this->_service->uri,
+                    new OAuthCredentials(
+                        $this->_service->access_key,
+                        $this->_service->secret_key
+                    )
+                )
+            )->postItem();
         } catch (\Throwable $th) {
             $event = new HttpQueryErrorEvent($th);
             $this->_eventDispatcher->dispatch(HttpQueryErrorEvent::NAME, $event);
@@ -96,18 +106,22 @@ class TokenManager
             return false;
         }
 
-        $response->expiration_date = OAuthToken::getExpirationDateFromExpiresIn($response->expires_in);
+        $response->expiration_date = OAuthToken::getExpirationDateFromExpiresIn(self::EXPIRES_IN);
 
         return $response;
     }
 
     private function _setOAuthToken(\stdClass $json): self
     {
-        if (!property_exists($json, 'token') || !property_exists($json, 'expiration_date')) {
+        if ((!property_exists($json, 'access_token') && !property_exists($json, 'token')) || !property_exists($json, 'expiration_date')) {
             throw new \Exception('Authentication data is invalid', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $this->_OAuthToken = new OAuthToken($json->token, new \DateTime($json->expiration_date), $json->expires_in);
+        $this->_OAuthToken = new OAuthToken(
+            property_exists($json, 'access_token') ? $json->access_token : $json->token,
+            new \DateTime($json->expiration_date),
+            self::EXPIRES_IN
+        );
 
         return $this;
     }
