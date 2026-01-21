@@ -50,6 +50,7 @@ use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AskManager;
 use App\Communication\Service\NotificationManager;
+use App\Gratuity\Service\GratuityCampaignActionManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
 use App\User\Event\ConfirmedCarpoolerEvent;
@@ -73,6 +74,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     private $askManager;
     private $userManager;
     private $eventDispatcher;
+    private $gratuityCampaignActionManager;
 
     public function __construct(
         NotificationManager $notificationManager,
@@ -82,7 +84,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
         BlockManager $blockManager,
         AskManager $askManager,
         UserManager $userManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        GratuityCampaignActionManager $gratuityCampaignActionManager
     ) {
         $this->notificationManager = $notificationManager;
         $this->askHistoryRepository = $askHistoryRepository;
@@ -92,6 +95,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $this->askManager = $askManager;
         $this->userManager = $userManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->gratuityCampaignActionManager = $gratuityCampaignActionManager;
     }
 
     public static function getSubscribedEvents()
@@ -148,6 +152,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
 
         // We notify the EEC driver if his passenger does not have his identity validated
         $this->_sendDriverEecNotificationOnAskAccepted($event->getAd());
+
+        // We notify users to certify their carpool if eligible for a gratuity campaign
+        $this->_sendGratuityCertificationNotification($event->getAd());
     }
 
     /**
@@ -642,6 +649,38 @@ class CarpoolSubscriber implements EventSubscriberInterface
 
         if ($driver->getEecStatus() && !$passenger->hasBankingIdentityValidated()) {
             $this->notificationManager->notifies('carpool_ask_accepted_eec', $driver, $ad);
+        }
+    }
+
+    private function _sendGratuityCertificationNotification(Ad $ad): void
+    {
+        $waypoints = $ad->getOutwardWaypoints();
+        if (empty($waypoints)) {
+            return;
+        }
+
+        $addresses = [];
+        foreach ($waypoints as $waypoint) {
+            if (isset($waypoint['latitude'], $waypoint['longitude'])) {
+                $addresses[] = [
+                    'latitude' => $waypoint['latitude'],
+                    'longitude' => $waypoint['longitude'],
+                ];
+            }
+        }
+
+        if (empty($addresses)) {
+            return;
+        }
+
+        $driver = $this->userManager->getUser($ad->getUserIdByType(Ad::ROLE_DRIVER));
+        $passenger = $this->userManager->getUser($ad->getUserIdByType(Ad::ROLE_PASSENGER));
+
+        $campaigns = $this->gratuityCampaignActionManager->findCampaignsByAddresses($addresses, $driver);
+
+        if (!empty($campaigns)) {
+            $this->notificationManager->notifies('gratuity_send_carpool_certification_info', $driver, $ad);
+            $this->notificationManager->notifies('gratuity_send_carpool_certification_info', $passenger, $ad);
         }
     }
 }
