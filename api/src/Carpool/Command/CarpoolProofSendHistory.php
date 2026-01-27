@@ -3,7 +3,7 @@
 namespace App\Carpool\Command;
 
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\DataProvider\Service\RpcApiManager;
+use App\Carpool\Service\ProofManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,16 +16,16 @@ class CarpoolProofSendHistory extends Command
     private $_carpoolProofRepository;
 
     /**
-     * @var RpcApiManager
+     * @var ProofManager
      */
-    private $_rpcApiManager;
+    private $_proofManager;
 
     public function __construct(
         CarpoolProofRepository $carpoolProofRepository,
-        RpcApiManager $rpcApiManager
+        ProofManager $proofManager
     ) {
         $this->_carpoolProofRepository = $carpoolProofRepository;
-        $this->_rpcApiManager = $rpcApiManager;
+        $this->_proofManager = $proofManager;
 
         parent::__construct();
     }
@@ -46,7 +46,6 @@ class CarpoolProofSendHistory extends Command
             $this->_carpoolProofRepository->findProofsToSendAsHistory(false)
         );
 
-        $provider = $this->_rpcApiManager->getProvider();
-        $provider->importProofs($proofs);
+        $this->_proofManager->importProofs($proofs);
     }
 }

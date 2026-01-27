@@ -27,11 +27,6 @@ class RpcApiManager
     /**
      * @var string
      */
-    private $_token;
-
-    /**
-     * @var string
-     */
     private $_uri;
 
     /**
@@ -54,7 +49,6 @@ class RpcApiManager
         Tools $tools,
         string $prefix,
         string $rpcApiVersion,
-        string $token,
         string $uri
     ) {
         $this->_logger = $logger;
@@ -62,7 +56,6 @@ class RpcApiManager
 
         $this->_prefix = $prefix;
         $this->_rpcApiVersion = $rpcApiVersion;
-        $this->_token = $token;
         $this->_uri = $uri;
     }
 
@@ -74,10 +67,10 @@ class RpcApiManager
         return in_array($this->_rpcApiVersion, self::AVAILABLE_RPC_API_VERSIONS)
         ? (
             $this->isVersion(self::RPC_API_V2)
-            ? new CarpoolProofGouvProvider($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger)
-            : new CarpoolProofGouvProviderV3($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger)
+            ? new CarpoolProofGouvProvider($this->_tools, $this->_uri, $this->_prefix, $this->_logger)
+            : new CarpoolProofGouvProviderV3($this->_tools, $this->_uri, $this->_prefix, $this->_logger)
         )
-        : new CarpoolProofGouvProvider($this->_tools, $this->_uri, $this->_token, $this->_prefix, $this->_logger);
+        : new CarpoolProofGouvProvider($this->_tools, $this->_uri, $this->_prefix, $this->_logger);
     }
 
     public function isVersion(string $version): bool

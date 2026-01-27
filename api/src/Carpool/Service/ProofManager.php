@@ -37,6 +37,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\WaypointRepository;
 use App\Carpool\Ressource\ClassicProof;
+use App\DataProvider\Entity\CarpoolProofGouvProvider;
 use App\DataProvider\Service\RpcApiManager;
 use App\DataProvider\Service\RPCv3\Tools;
 use App\Geography\Entity\Direction;
@@ -46,6 +47,7 @@ use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\GeocoderPointProvider;
 use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
 use App\Incentive\Service\Validation\JourneyValidation;
+use App\OAuth\Service\Manager\TokenManager;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\User\Entity\User;
@@ -83,6 +85,11 @@ class ProofManager
      */
     private $_rpcApiManager;
 
+    /**
+     * @var TokenManager
+     */
+    private $_tokenManager;
+
     private $_tools;
 
     /**
@@ -111,6 +118,7 @@ class ProofManager
         JourneyValidation $journeyValidation,
         RpcApiManager $rpcApiManager,
         Tools $tools,
+        TokenManager $tokenManager,
         string $provider,
         int $duration,
         int $minIdentityDistance
@@ -127,6 +135,7 @@ class ProofManager
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->_journeyValidation = $journeyValidation;
         $this->_rpcApiManager = $rpcApiManager;
+        $this->_tokenManager = $tokenManager;
 
         $this->addressCompleter = new AddressCompleter(new GeocoderPointProvider($geocoderFactory->getGeocoder()));
 
@@ -721,11 +730,13 @@ class ProofManager
             $now = new \DateTime();
             $startDateTime = new \DateTime($this->_tools->getStartTimeGeopoint()['datetime']);
 
-            if ($startDateTime > $now) {
+            $OAuthToken = $this->_tokenManager->getOAuthToken(CarpoolProofGouvProvider::SERVICE_DEFINITION);
+
+            if ($startDateTime > $now || is_null($OAuthToken)) {
                 continue;
             }
 
-            $result = $this->provider->postCollection($proof, $this->provider::RESSOURCE_POST);
+            $result = $this->provider->postCollection($proof, $OAuthToken->getToken(), $this->provider::RESSOURCE_POST);
             $this->logger->info('Result of the send for proof #'.$proof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
 
             switch ($result) {
@@ -763,10 +774,16 @@ class ProofManager
         $nbChecked = 0;
 
         foreach ($proofs as $proof) {
+            $OAuthToken = $this->_tokenManager->getOAuthToken(CarpoolProofGouvProvider::SERVICE_DEFINITION);
+
+            if (is_null($OAuthToken)) {
+                continue;
+            }
+
             /**
              * @var CarpoolProof $proof
              */
-            $result = $this->provider->getCarpoolProof($proof, $this->provider::RESSOURCE_GET_ITEM);
+            $result = $this->provider->getCarpoolProof($proof, $OAuthToken->getToken(), $this->provider::RESSOURCE_GET_ITEM);
 
             if (200 == $result->getCode()) {
                 $data = json_decode($result->getValue(), true);
@@ -880,7 +897,12 @@ class ProofManager
                 !is_null($carpoolProof->getAsk())
                 && in_array($carpoolProof->getType(), $types)
             ) {
-                $result = $this->provider->postCollection($carpoolProof, $this->provider::RESSOURCE_POST);
+                $OAuthToken = $this->_tokenManager->getOAuthToken(CarpoolProofGouvProvider::SERVICE_DEFINITION);
+                if (is_null($OAuthToken)) {
+                    continue;
+                }
+
+                $result = $this->provider->postCollection($carpoolProof, $OAuthToken->getToken(), $this->provider::RESSOURCE_POST);
                 $this->logger->info('Result of the send for proof #'.$carpoolProof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
 
                 switch ($result) {
@@ -1037,6 +1059,40 @@ class ProofManager
         }
 
         return true;
+    }
+
+    /**
+     * @param mixed $carpoolProofs
+     */
+    public function importProofs($carpoolProofs): void
+    {
+        $provider = $this->_rpcApiManager->getProvider();
+
+        $serializedProof = array_map(function ($proof) use ($provider) {
+            return $provider->serializeForCeePolicy($proof);
+        }, $carpoolProofs);
+
+        $chunkedProofs = array_chunk($serializedProof, $provider::POLICIES_CEE_IMPORT_LIMIT);
+
+        $this->logger->info('Processing sending '.count($chunkedProofs).' request(s)');
+
+        foreach ($chunkedProofs as $key => $proofs) {
+            $OAuthToken = $this->_tokenManager->getOAuthToken(CarpoolProofGouvProvider::SERVICE_DEFINITION);
+
+            if (is_null($OAuthToken)) {
+                continue;
+            }
+
+            $result = $provider->importProofs($proofs, $OAuthToken->getToken());
+
+            if (201 === $result->getCode()) {
+                $this->logger->info('The processing of the request '.($key + 1).' was successful');
+            } else {
+                $this->logger->info('There was a problem processing the request '.($key + 1));
+            }
+        }
+
+        $this->logger->info('Request processing is complete');
     }
 
     /**

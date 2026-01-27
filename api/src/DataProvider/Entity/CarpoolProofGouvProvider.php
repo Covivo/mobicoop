@@ -37,6 +37,8 @@ use Psr\Log\LoggerInterface;
  */
 class CarpoolProofGouvProvider implements ProviderInterface
 {
+    public const SERVICE_DEFINITION = 'rpc';
+
     public const RESSOURCE_POST = 'v2/journeys';
     public const ISO8601 = 'Y-m-d\TH:i:s\Z';
     public const RESSOURCE_GET_ITEM = 'v2/journeys/';
@@ -47,17 +49,15 @@ class CarpoolProofGouvProvider implements ProviderInterface
     protected $_tools;
 
     protected $uri;
-    protected $token;
     protected $prefix;
     protected $logger;
     protected $testMode;
 
-    public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
+    public function __construct(Tools $tools, string $uri, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
     {
         $this->_tools = $tools;
 
         $this->uri = $uri;
-        $this->token = $token;
         $this->prefix = $prefix;
         $this->logger = $logger;
         $this->testMode = $testMode;
@@ -70,7 +70,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
      *
      * @return Response The result of the send
      */
-    public function postCollection(CarpoolProof $carpoolProof, string $resource = self::RESSOURCE_POST)
+    public function postCollection(CarpoolProof $carpoolProof, string $OauthToken, string $resource = self::RESSOURCE_POST)
     {
         if (is_null($carpoolProof->getAsk())) {
             $carpoolProof->setStatus(CarpoolProof::STATUS_IGNORED);
@@ -80,12 +80,6 @@ class CarpoolProofGouvProvider implements ProviderInterface
 
         // creation of the dataProvider
         $dataProvider = new DataProvider($this->uri, $resource);
-
-        // creation of the headers
-        $headers = [
-            'Authorization' => 'Bearer '.$this->token,
-            'Content-Type' => 'application/json',
-        ];
 
         $journey = $this->serializeProof($carpoolProof);
 
@@ -97,7 +91,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 return new Response(200, '');
             }
 
-            return $dataProvider->postCollection($journey, $headers);
+            return $dataProvider->postCollection($journey, $this->_getHeaders($OauthToken));
         }
 
         $this->logger->info('Proof #'.$carpoolProof->getId().' ignored');
@@ -273,18 +267,12 @@ class CarpoolProofGouvProvider implements ProviderInterface
         return $journey;
     }
 
-    public function getCarpoolProof(CarpoolProof $carpoolProof, string $resource = self::RESSOURCE_GET_ITEM)
+    public function getCarpoolProof(CarpoolProof $carpoolProof, string $OauthToken, string $resource = self::RESSOURCE_GET_ITEM)
     {
         $journeyId = (!is_null($this->prefix) ? $this->prefix : '').(string) $carpoolProof->getId();
         $dataProvider = new DataProvider($this->uri, $resource.$journeyId);
 
-        // creation of the headers
-        $headers = [
-            'Authorization' => 'Bearer '.$this->token,
-            'Content-Type' => 'application/json',
-        ];
-
-        return $dataProvider->getItem([], $headers);
+        return $dataProvider->getItem([], $this->_getHeaders($OauthToken));
     }
 
     public function getCollection(string $class, string $apikey, array $params) {}

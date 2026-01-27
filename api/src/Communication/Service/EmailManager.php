@@ -78,7 +78,7 @@ class EmailManager
      *
      * @return string
      */
-    public function send(Email $mail, $template, $context = [], $lang = 'fr', $attachments = [])
+    public function send(Email $mail, $template, $context = [], $lang = 'fr', $attachments = [], ?bool $previewMode = false)
     {
         $failures = '';
 
@@ -98,18 +98,17 @@ class EmailManager
         }
 
         $senderName = ('' !== $this->emailSenderNameDefault) ? $this->emailSenderNameDefault : $this->emailSenderDefault;
+
+        if ($previewMode === true) {
+            return $this->_previewEmail($template, $context, $mail);
+        }
+
         $message = (new \Swift_Message($mail->getObject()))
             ->setFrom($this->emailSenderDefault, $senderName)
             ->setTo($mail->getRecipientEmail())
             ->setReplyTo($replyToEmail)
             ->setBody(
-                $this->templating->render(
-                    $template.'.html.twig',
-                    [
-                        'context' => $context,
-                        'message' => str_replace(["\r\n", "\r", "\n"], '<br />', $mail->getMessage()),
-                    ]
-                ),
+                $this->_renderTemplate($template, $context, $mail),
                 'text/html'
             )
         ;
@@ -144,5 +143,21 @@ class EmailManager
         $this->translator->setLocale($sessionLocale);
 
         return $this->mailer->send($message, $failures);
+    }
+
+    private function _previewEmail(string $template, array $context, Email $mail): void
+    {
+        echo $this->_renderTemplate($template, $context, $mail);
+    }
+
+    private function _renderTemplate(string $template, array $context, Email $mail)
+    {
+        return $this->templating->render(
+            $template.'.html.twig',
+            [
+                'context' => $context,
+                'message' => str_replace(["\r\n", "\r", "\n"], '<br />', $mail->getMessage()),
+            ]
+        );
     }
 }

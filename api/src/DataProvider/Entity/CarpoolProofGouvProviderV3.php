@@ -34,15 +34,15 @@ use Psr\Log\LoggerInterface;
  */
 class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements ProviderInterface
 {
-    public const RESSOURCE_POST = 'v3.2/journeys';
-    public const RESSOURCE_GET_ITEM = 'v3.2/journeys/';
-    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3.2/policies/cee/import';
+    public const RESSOURCE_POST = 'v3.3/journeys';
+    public const RESSOURCE_GET_ITEM = 'v3.3/journeys/';
+    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3.3/policies/cee/import';
 
     public const POLICIES_CEE_IMPORT_LIMIT = 1000;
 
-    public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
+    public function __construct(Tools $tools, string $uri, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
     {
-        parent::__construct($tools, $uri, $token, $prefix, $logger, $testMode);
+        parent::__construct($tools, $uri, $prefix, $logger, $testMode);
     }
 
     public function serializeProof(CarpoolProof $carpoolProof): ?array
@@ -87,39 +87,15 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
         // }
     }
 
-    public function importProofs(array $carpoolProofs)
+    public function importProofs(array $carpoolProofs, string $OAuthToken): Response
     {
-        $serializedProof = array_map(function ($proof) {
-            return $this->_serializeForCeePolicy($proof);
-        }, $carpoolProofs);
+        // creation of the dataProvider
+        $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
 
-        $chunkedProofs = array_chunk($serializedProof, self::POLICIES_CEE_IMPORT_LIMIT);
-
-        $this->logger->info('Processing sending '.count($chunkedProofs).' request(s)');
-
-        foreach ($chunkedProofs as $key => $proofs) {
-            // creation of the dataProvider
-            $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
-
-            // creation of the headers
-            $headers = [
-                'Authorization' => 'Bearer '.$this->token,
-                'Content-Type' => 'application/json',
-            ];
-
-            $result = $dataProvider->postCollection($proofs, $headers);
-
-            if (201 === $result->getCode()) {
-                $this->logger->info('The processing of the request '.($key + 1).' was successful');
-            } else {
-                $this->logger->info('There was a problem processing the request '.($key + 1));
-            }
-        }
-
-        $this->logger->info('Request processing is complete');
+        return $dataProvider->postCollection($carpoolProofs, $this->_getHeaders($OAuthToken));
     }
 
-    private function _serializeForCeePolicy(CarpoolProof $carpoolProof): array
+    public function serializeForCeePolicy(CarpoolProof $carpoolProof): array
     {
         $this->_tools->setCurrentCarpoolProof($carpoolProof);
 

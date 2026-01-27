@@ -188,12 +188,6 @@ class DataProvider
                 $options[RequestOptions::AUTH] = $auth;
             }
 
-            // var_dump($body);
-            // var_dump($options);
-            // var_dump($this->resource);
-
-            // exit;
-
             $clientResponse = $this->client->post($this->resource, $options);
 
             switch ($clientResponse->getStatusCode()) {
