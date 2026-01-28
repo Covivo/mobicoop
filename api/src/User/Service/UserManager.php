@@ -2190,6 +2190,10 @@ class UserManager
         $user->setFamilyName($ssoUser->getLastname());
         $user->setEmail($ssoUser->getEmail());
 
+        if (!is_null($ssoUser->getHomemobilephone())) {
+            $user->setTelephone($ssoUser->getHomemobilephone());
+        }
+
         $ssoAccount = new SsoAccount();
         $ssoAccount->setSsoId($ssoUser->getSub());
         $ssoAccount->setSsoProvider($ssoUser->getProvider());
