@@ -27,6 +27,7 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
+use App\DataProvider\Service\RPCv3\HTTPHeaders;
 use App\DataProvider\Service\RPCv3\Tools;
 use Psr\Log\LoggerInterface;
 
@@ -282,5 +283,10 @@ class CarpoolProofGouvProvider implements ProviderInterface
     public function deserialize(string $class, array $data)
     {
         $this->logger->info('BetaGouv API return');
+    }
+
+    protected function _getHeaders(string $OauthToken): array
+    {
+        return HTTPHeaders::getHeaders($OauthToken);
     }
 }
