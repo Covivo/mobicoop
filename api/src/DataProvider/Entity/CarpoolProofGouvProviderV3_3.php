@@ -32,17 +32,20 @@ use Psr\Log\LoggerInterface;
 /**
  * Beta gouv carpool proof management service for API v3 effective on June 12, 2023.
  */
-class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements ProviderInterface
+class CarpoolProofGouvProviderV3_3 extends CarpoolProofGouvProvider implements ProviderInterface
 {
-    public const RESSOURCE_POST = 'v3/journeys';
-    public const RESSOURCE_GET_ITEM = 'v3/journeys/';
-    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3/policies/cee/import';
+    public const RESSOURCE_POST = 'v3.2/journeys';
+    public const RESSOURCE_GET_ITEM = 'v3.2/journeys/';
+    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3.2/policies/cee/import';
 
     public const POLICIES_CEE_IMPORT_LIMIT = 1000;
 
-    public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false)
+    private $authenticator;
+
+    public function __construct(Tools $tools, string $uri, string $token, ?string $prefix = null, LoggerInterface $logger, bool $testMode = false, ?\App\DataProvider\Service\RpcApiAuthenticator $authenticator = null)
     {
         parent::__construct($tools, $uri, $token, $prefix, $logger, $testMode);
+        $this->authenticator = $authenticator;
     }
 
     public function serializeProof(CarpoolProof $carpoolProof): ?array
@@ -97,13 +100,15 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
 
         $this->logger->info('Processing sending '.count($chunkedProofs).' request(s)');
 
+        $accessToken = $this->authenticator ? $this->authenticator->getAccessToken() : $this->token;
+
         foreach ($chunkedProofs as $key => $proofs) {
             // creation of the dataProvider
             $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
 
             // creation of the headers
             $headers = [
-                'Authorization' => 'Bearer '.$this->token,
+                'Authorization' => 'Bearer '.$accessToken,
                 'Content-Type' => 'application/json',
             ];
 
@@ -129,5 +134,62 @@ class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements Pro
             'last_name_trunc' => $this->_tools->getFamilyNameTrunc(Tools::DRIVER),
             'datetime' => $this->_tools->getCommitmentDate(),
         ];
+    }
+
+     /**
+     * Send a carpool proof.
+     *
+     * @param CarpoolProof $carpoolProof The carpool proof to send
+     *
+     * @return Response The result of the send
+     */
+    public function postCollection(CarpoolProof $carpoolProof, string $resource = self::RESSOURCE_POST)
+    {
+        if (is_null($carpoolProof->getAsk())) {
+            return new Response(418);
+        }
+
+        $accessToken = $this->authenticator ? $this->authenticator->getAccessToken() : $this->token;
+
+        // creation of the dataProvider
+        $dataProvider = new DataProvider($this->uri, $resource);
+
+        // creation of the headers
+        $headers = [
+            'Authorization' => 'Bearer '.$accessToken,
+            'Content-Type' => 'application/json',
+        ];
+
+        $journey = $this->serializeProof($carpoolProof);
+
+        if (!is_null($journey)) {
+            $this->logger->info('Send Proof #'.$carpoolProof->getId());
+            $this->logger->info(json_encode($journey));
+
+            if ($this->testMode) {
+                return new Response(200, '');
+            }
+
+            return $dataProvider->postCollection($journey, $headers);
+        }
+
+        $this->logger->info('Proof #'.$carpoolProof->getId().' ignored');
+
+        return new Response(200, '');
+    }
+
+    public function getCarpoolProof(CarpoolProof $carpoolProof, string $resource = self::RESSOURCE_GET_ITEM)
+    {
+        $accessToken = $this->authenticator ? $this->authenticator->getAccessToken() : $this->token;
+        $journeyId = (!is_null($this->prefix) ? $this->prefix : '').(string) $carpoolProof->getId();
+        $dataProvider = new DataProvider($this->uri, $resource.$journeyId);
+
+        // creation of the headers
+        $headers = [
+            'Authorization' => 'Bearer '.$accessToken,
+            'Content-Type' => 'application/json',
+        ];
+
+        return $dataProvider->getItem([], $headers);
     }
 }

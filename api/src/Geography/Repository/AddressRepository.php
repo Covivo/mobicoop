@@ -68,13 +68,13 @@ class AddressRepository
      */
     public function findByName(string $name, int $userId)
     {
-        $query = $this->entityManager->createQuery("
-            SELECT a from App\Geography\Entity\Address a
-            where a.name like '%" . $name . "%' and a.user = $userId
-        ");
-        
-        return $query->getResult()
-        ;
+        $query = $this->repository->createQueryBuilder('a')
+            ->where('a.user = :userId')
+            ->setParameter('userId', $userId)
+            ->andWhere('MATCH(a.name) AGAINST(:name) > 0')
+            ->setParameter('name', $name);
+
+        return $query->getQuery()->getResult();
     }
     
     /**

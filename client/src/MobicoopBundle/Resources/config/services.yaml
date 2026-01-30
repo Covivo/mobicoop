@@ -43,6 +43,9 @@ services:
   # Article
   Mobicoop\Bundle\MobicoopBundle\Article\Controller\:
     resource: "@MobicoopBundle/Article/Controller/*"
+    arguments:
+      $articleToolbox: "%env(bool:ARTICLE_TOOLBOX)%"
+      
   Mobicoop\Bundle\MobicoopBundle\Article\Service\:
     resource: "@MobicoopBundle/Article/Service/*"
   Mobicoop\Bundle\MobicoopBundle\Article\Security\:

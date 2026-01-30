@@ -293,8 +293,8 @@ export default {
       dataRegular: this.regular,
       date: this.defaultOutwardDate,
       time: this.defaultOutwardTime,
-      origin: this.determineOrigin(),
       destination: this.defaultDestination,
+      origin: this.determineOrigin(),
       locale: localStorage.getItem("X-LOCALE"),
       role: this.defaultRoleToPublish ? this.defaultRoleToPublish : null,
     };
@@ -312,7 +312,13 @@ export default {
       return this.time
         ? moment(this.time).format(this.$t("urlTime"))
         : null;
-    },
+    }
+  },
+  watch:{
+    defaultOrigin(newValue){
+      this.origin = newValue;
+    }
+
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -374,7 +380,7 @@ export default {
         window.location.href=this.$t("buttons.shareAnAd.route");
       }
     },
-    determineOrigin: function(){
+    determineOrigin: function(address){
       if(this.defaultOrigin){
         return this.defaultOrigin;
       }

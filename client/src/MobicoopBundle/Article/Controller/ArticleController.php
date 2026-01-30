@@ -37,6 +37,8 @@ class ArticleController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private $articleToolbox;
+
     public const CGU = 1;
     public const NEWS = 2;
     public const PROJECT = 3;
@@ -86,6 +88,10 @@ class ArticleController extends AbstractController
     public const SOLIDARY_CARPOOL_ALT = 47;
     public const RPC = 48;
 
+
+    public function __construct($articleToolbox){
+        $this->articleToolbox = $articleToolbox;
+    }
     /**
      * Display of the project page.
      */
@@ -183,12 +189,16 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * Display of the TOOLBOX page.
+     * Display of the TOOLBOX  page.
      */
-    public function showToolbox()
+    public function showToolbox(ArticleManager $articleManager)
     {
-        // Not an 'article' page.
-        return $this->render('@Mobicoop/article/toolbox.html.twig', []);
+        if(!$this->articleToolbox){
+            // Not an 'article' page.
+            return $this->render('@Mobicoop/article/toolbox.html.twig', []);
+        }else{
+            return $this->showArticle($articleManager->getArticle(self::TOOLBOX));
+        }
     }
 
     /**

@@ -1072,10 +1072,17 @@ services:
       $token: "%env(string:CARPOOL_PROOF_TOKEN)%"
       $uri: "%env(string:CARPOOL_PROOF_URI)%"
 
+  App\DataProvider\Service\RpcApiAuthenticator:
+    arguments:
+      $accessKey: '%env(string:CARPOOL_PROOF_ACCESS_KEY)%'
+      $secretKey: '%env(string:CARPOOL_PROOF_SECRET_KEY)%'
+      $authUri: '%env(string:CARPOOL_PROOF_URI)%'
+
   App\DataProvider\Service\RPCv3\Tools:
     arguments:
       $phoneNumberTruncLength: "%env(int:CARPOOL_PROOF_PHONE_TRUNC_LENGTH)%"
       $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
+      $secret: "%env(string:APP_SECRET)%"
 
   App\Carpool\Service\MobicoopMatcher\MobicoopMatcherMatchingBuilder:
     arguments:
@@ -1088,6 +1095,7 @@ services:
     arguments:
       $rpcUri: "%env(string:CARPOOL_PROOF_URI)%"
       $rpcToken: "%env(string:CARPOOL_PROOF_TOKEN)%"
+      $rpcApiVersion: "%env(string:RPC_API_VERSION)%"
 
   mobicoop.monitor.core.application.service.proof_checker:
     class: App\Monitor\Core\Application\Service\ProofChecker

@@ -32,11 +32,11 @@ use Psr\Log\LoggerInterface;
 /**
  * Beta gouv carpool proof management service for API v3 effective on June 12, 2023.
  */
-class CarpoolProofGouvProviderV3 extends CarpoolProofGouvProvider implements ProviderInterface
+class CarpoolProofGouvProviderV3_1 extends CarpoolProofGouvProvider implements ProviderInterface
 {
-    public const RESSOURCE_POST = 'v3/journeys';
-    public const RESSOURCE_GET_ITEM = 'v3/journeys/';
-    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3/policies/cee/import';
+    public const RESSOURCE_POST = 'v3.1/journeys';
+    public const RESSOURCE_GET_ITEM = 'v3.1/journeys/';
+    public const RESOURCE_POLICIES_CEE_IMPORT = 'v3.1/policies/cee/import';
 
     public const POLICIES_CEE_IMPORT_LIMIT = 1000;
 

@@ -84,4 +84,30 @@ export default {
 
 <style lang="scss" scoped>
 
+.article {
+  // background-color: red;
+  .ma-n3{
+    // background-color: yellow;
+  }
+}
+
+.article .ma-n3 ::v-deep table {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  display: table;
+  // background-color: chartreuse;
+}
+
+.article .ma-n3 {
+  overflow-x: auto;
+}
+.article .ma-n3 ::v-deep table {
+  min-width: 600px;
+  width: 100% !important;
+  max-width: 100%;
+  // background-color: chartreuse;
+}
+
+
 </style>

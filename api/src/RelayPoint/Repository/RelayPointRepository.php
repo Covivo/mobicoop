@@ -92,9 +92,9 @@ class RelayPointRepository
             switch ($key) {
                 case 'name':
                     if (true === $value) {
-                        $searchString = "(MATCH(rp.name) AGAINST('".$search."') > 0)";
                         $query
-                            ->orWhere($searchString)
+                            ->orWhere("MATCH(rp.name) AGAINST(:search) > 0")
+                            ->setParameter('search', $search)
                         ;
                     }
 
@@ -102,10 +102,10 @@ class RelayPointRepository
 
                 case 'addressLocality':
                     if (true === $value) {
-                        $searchLocality = "(MATCH(a.addressLocality) AGAINST('".$search."') > 0)";
                         $query
                             ->leftJoin('rp.address', 'a')
-                            ->orwhere($searchLocality)
+                            ->orwhere("MATCH(a.addressLocality) AGAINST(:search) > 0")
+                            ->setParameter('search', $search)
                         ;
                     }
 

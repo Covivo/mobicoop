@@ -299,7 +299,7 @@ class CampaignManager
         switch ($this->mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
                 // Sendinblue uses ip range
-                if (!in_array(ip2long($request->getClientIp()), range(ip2long($this->massEmailProviderIpRange1['minIp']), ip2long($this->massEmailProviderIpRange1['maxIp']))) || !in_array(ip2long($request->getClientIp()), range(ip2long($this->massEmailProviderIpRange2['minIp']), ip2long($this->massEmailProviderIpRange2['maxIp'])))) {
+                if (!in_array(ip2long($request->getClientIp()), range(ip2long($this->massEmailProviderIpRange1['minIp']), ip2long($this->massEmailProviderIpRange1['maxIp']))) && !in_array(ip2long($request->getClientIp()), range(ip2long($this->massEmailProviderIpRange2['minIp']), ip2long($this->massEmailProviderIpRange2['maxIp'])))) {
                     throw new \Exception('Unauthorized');
                 }
                 if (!$email = $hook->getEmail()) {

@@ -28,7 +28,7 @@ use App\Monitor\Core\Application\Port\Checker;
 
 class RPCChecker implements Checker
 {
-    public const RPC_URI_SUFFIX = 'v3/journeys';
+    public const RPC_URI_SUFFIX = '/journeys';
     public const RPC_PROOF_STATUS = 'ok';
     public const PAST_DAYS = '2';
 
@@ -40,7 +40,7 @@ class RPCChecker implements Checker
     private $_rpcUri;
     private $_headers = [];
 
-    public function __construct(CurlDataProvider $curlDataProvider, CarpoolProofService $carpoolProofService, string $rpcUri, string $rpcToken)
+    public function __construct(CurlDataProvider $curlDataProvider, CarpoolProofService $carpoolProofService, string $rpcUri, string $rpcToken, string $rpcApiVersion)
     {
         $this->_curlDataProvider = $curlDataProvider;
         $this->_carpoolProofService = $carpoolProofService;
@@ -48,7 +48,7 @@ class RPCChecker implements Checker
         if ('' !== trim($this->_rpcUri) && '/' !== $this->_rpcUri[strlen($this->_rpcUri) - 1]) {
             $this->_rpcUri .= '/';
         }
-        $this->_curlDataProvider->setUrl($this->_rpcUri.self::RPC_URI_SUFFIX);
+        $this->_curlDataProvider->setUrl($this->_rpcUri.$rpcApiVersion.self::RPC_URI_SUFFIX);
         $this->_headers = [
             'Authorization: Bearer '.$rpcToken,
             'Content-Type: application/json',

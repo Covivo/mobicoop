@@ -145,7 +145,7 @@ class PointSearcher
         }
         $points = [];
         foreach ($this->providers as $provider) {
-            $points = array_merge($points, $provider->search(str_replace(['"', "'"], ' ', $search), $user));
+            $points = array_merge($points, $provider->search($search, $user));
         }
 
         return $this->_fixerEnabled ? $this->_fixer->fix($points) : $points;

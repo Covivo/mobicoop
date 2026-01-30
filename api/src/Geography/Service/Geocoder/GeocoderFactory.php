@@ -37,7 +37,10 @@ class GeocoderFactory
         $this->_geocoder = null;
 
         switch ($type) {
-            case 'MobicoopGeocoder':
+            case 'PeliasGeocoder':
+                $this->_geocoder = new PeliasGeocoder($uri, $maxResultsByType, $maxResultsByGeocoder);
+
+                break;
             default:
                 $this->_geocoder = new MobicoopGeocoder($uri, $maxResultsByType, $maxResultsByGeocoder);
 
