@@ -38,9 +38,8 @@ use Exception;
 class TourinsoftProvider implements EventProviderInterface
 {
     const PROVIDER = "Tourinsoft";
-    const FORMAT = "JSON";
-    const COMMUNICATION_MEDIA_WEBSITE_KEY = "#Site web";
-    const REQUESTED_FIELDS = "SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation";
+    const FORMAT = "json";
+    const COMMUNICATION_MEDIA_WEBSITE_KEY = "Site web";
 
     private $eventProviderServerUrl;
 
@@ -69,10 +68,9 @@ class TourinsoftProvider implements EventProviderInterface
 
         // we set an empty array of tourinsoft events
         $tourinsoftEvents = [];
-        // We call tourinsoft api to get all events
+        // We call tourinsoft api v3 to get all events
         $queryParams = [
-            '$format' => self::FORMAT,
-            '$select' => self::REQUESTED_FIELDS
+            'format' => self::FORMAT
         ];
 
         $response = $dataProvider->getItem($queryParams);
@@ -109,20 +107,15 @@ class TourinsoftProvider implements EventProviderInterface
                 throw new Exception("Event name is mandatory", 1);
             }
 
-            if (isset($event->PeriodeOuverture)) {
-                $dates = $event->PeriodeOuverture;
-                $array = explode('|', $dates);
+            if (isset($event->PeriodeOuvertures) && is_array($event->PeriodeOuvertures) && count($event->PeriodeOuvertures) > 0) {
+                // API v3: PeriodeOuvertures is an array of objects with Datedebut/Datefin in ISO 8601 format
+                $firstPeriod = $event->PeriodeOuvertures[0];
 
-                $startDate = DateTime::createFromFormat('d/m/Y', $array[0]);
-                $endDate = DateTime::createFromFormat('d/m/Y', $array[1]);
-
-                $fromDate = $startDate->format('Y-m-d');
-                $toDate =  $endDate->format('Y-m-d');
+                $startDate = new DateTime($firstPeriod->Datedebut);
+                $endDate = new DateTime($firstPeriod->Datefin);
 
                 // some events are annual so we check first if the year is up to date if not we set the actual year
-                $year = (new \DateTime($fromDate))->format('Y');
-                $startDate = new \DateTime($fromDate);
-                $endDate = new \DateTime($toDate);
+                $year = $startDate->format('Y');
                 $actualYear = (new \DateTime('now'))->format('Y');
                 if ($year < $actualYear) {
                     $newEvent->setFromDate($startDate->setDate($actualYear, $startDate->format('m'), $startDate->format('d')));
@@ -147,20 +140,24 @@ class TourinsoftProvider implements EventProviderInterface
                 throw new Exception("Description is mandatory", 1);
             }
 
-            if (isset($event->Photos)) {
-                $url = $event->Photos;
-                $picture = explode('|', $url);
-                $picture = $picture[0];
-                $newEvent->setExternalImageUrl($picture);
+            if (isset($event->Photoss) && is_array($event->Photoss) && count($event->Photoss) > 0) {
+                // API v3: Photoss is an array of objects with Photo.Url
+                $firstPhoto = $event->Photoss[0];
+                if (isset($firstPhoto->Photo) && isset($firstPhoto->Photo->Url)) {
+                    $newEvent->setExternalImageUrl($firstPhoto->Photo->Url);
+                }
             }
 
-            if (isset($event->MoyenDeCom)) {
-                $informations = $event->MoyenDeCom;
-                $communicationMedia = explode('|', $informations);
-
-                if (in_array(self::COMMUNICATION_MEDIA_WEBSITE_KEY, $communicationMedia)) {
-                    $communicationMediaKey = array_search(self::COMMUNICATION_MEDIA_WEBSITE_KEY, $communicationMedia);
-                    $newEvent->setUrl($communicationMedia[$communicationMediaKey + 1]);
+            if (isset($event->MoyenDeComs) && is_array($event->MoyenDeComs)) {
+                // API v3: MoyenDeComs is an array of objects with TypedaccesTelecom.ThesLibelle and CoordonneesTelecom
+                foreach ($event->MoyenDeComs as $moyenDeCom) {
+                    if (isset($moyenDeCom->TypedaccesTelecom) &&
+                        isset($moyenDeCom->TypedaccesTelecom->ThesLibelle) &&
+                        $moyenDeCom->TypedaccesTelecom->ThesLibelle === self::COMMUNICATION_MEDIA_WEBSITE_KEY &&
+                        isset($moyenDeCom->CoordonneesTelecom)) {
+                        $newEvent->setUrl($moyenDeCom->CoordonneesTelecom);
+                        break;
+                    }
                 }
             }
 
@@ -169,29 +166,30 @@ class TourinsoftProvider implements EventProviderInterface
 
             $fullStreetAddress = [];
 
-            if (isset($event->Adresse1) || trim($event->Adresse1 !== "")) {
-                array_push($fullStreetAddress, $event->Adresse1);
+            if (isset($event->Adresse1) && !empty(trim($event->Adresse1))) {
+                $fullStreetAddress[] = $event->Adresse1;
             }
-            if (isset($event->Adresse2) || trim($event->Adresse2 !== "")) {
-                array_push($fullStreetAddress, $event->Adresse2);
+            if (isset($event->Adresse2) && !empty(trim($event->Adresse2))) {
+                $fullStreetAddress[] = $event->Adresse2;
             }
-
-            if (isset($event->Adresse3) || trim($event->Adresse3 !== "")) {
-                array_push($fullStreetAddress, $event->Adresse3);
+            if (isset($event->Adresse3) && !empty(trim($event->Adresse3))) {
+                $fullStreetAddress[] = $event->Adresse3;
             }
 
             $fullStreetAddressString = implode(" ", $fullStreetAddress);
 
-            if (!is_null($fullStreetAddressString)) {
-                $address->setStreetAddress(isset($fullStreetAddressString) ? $fullStreetAddressString : (isset($event->LieuManifestation) ? $event->LieuManifestation : ""));
+            if (!empty($fullStreetAddressString)) {
+                $address->setStreetAddress($fullStreetAddressString);
+            } elseif (isset($event->LieuManifestation) && !empty($event->LieuManifestation)) {
+                $address->setStreetAddress($event->LieuManifestation);
             }
 
-            if (isset($event->Commune)) {
-                $address->setAddressLocality(isset($event->Commune) ? $event->Commune : null);
+            if (isset($event->Commune) && !empty($event->Commune)) {
+                $address->setAddressLocality($event->Commune);
             }
 
-            if (isset($event->CodePostal)) {
-                $address->setPostalCode(isset($event->CodePostal) ? $event->CodePostal : null);
+            if (isset($event->CodePostal) && !empty($event->CodePostal)) {
+                $address->setPostalCode($event->CodePostal);
             }
 
             if (isset($event->GmapLatitude) && ($event->GmapLongitude)) {
