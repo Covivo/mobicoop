@@ -93,7 +93,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::LOGOUT_URL => 'connect/endsession?id_token_hint={ID_TOKEN_HINT}&post_logout_redirect_uri={REDIRECT_URI}',
         ],
         self::SSO_PROVIDER_MOBICOOP => [
-            self::AUTHORIZATION_URL => 'protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
+            self::AUTHORIZATION_URL => 'protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email phone&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
             self::TOKEN_URL => 'protocol/openid-connect/token/',
             self::USERINFOS_URL => 'protocol/openid-connect/userinfo',
             self::LOGOUT_URL => 'protocol/openid-connect/logout&post_logout_redirect_uri={REDIRECT_URI}',
@@ -235,6 +235,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             $ssoUser->setGender((isset($data['gender'])) ? $data['gender'] : User::GENDER_OTHER);
             $ssoUser->setBirthdate((isset($data['birthdate'])) ? $data['birthdate'] : null);
             $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
+            $ssoUser->setHomeMobilePhone($data['phone_number'] ?? $data['phone'] ?? null);
 
             if (
                 $this->autoCreateAccount
