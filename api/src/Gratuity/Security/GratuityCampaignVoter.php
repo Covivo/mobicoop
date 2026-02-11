@@ -35,6 +35,7 @@ class GratuityCampaignVoter extends Voter
     public const GRATUITY_CAMPAIGN_CREATE = 'gratuity_create';
     public const GRATUITY_CAMPAIGN_READ = 'gratuity_read';
     public const GRATUITY_CAMPAIGN_LIST = 'gratuity_list';
+    public const GRATUITY_CAMPAIGN_SEARCH = 'gratuity_search';
 
     private $authManager;
 
@@ -50,6 +51,7 @@ class GratuityCampaignVoter extends Voter
             self::GRATUITY_CAMPAIGN_CREATE,
             self::GRATUITY_CAMPAIGN_READ,
             self::GRATUITY_CAMPAIGN_LIST,
+            self::GRATUITY_CAMPAIGN_SEARCH,
         ])) {
             return false;
         }
@@ -59,6 +61,7 @@ class GratuityCampaignVoter extends Voter
             self::GRATUITY_CAMPAIGN_CREATE,
             self::GRATUITY_CAMPAIGN_READ,
             self::GRATUITY_CAMPAIGN_LIST,
+            self::GRATUITY_CAMPAIGN_SEARCH,
         ]) && !($subject instanceof Paginator) && !($subject instanceof GratuityCampaign)) {
             return false;
         }
@@ -77,6 +80,9 @@ class GratuityCampaignVoter extends Voter
 
             case self::GRATUITY_CAMPAIGN_LIST:
                 return $this->canList();
+
+            case self::GRATUITY_CAMPAIGN_SEARCH:
+                return $this->canSearch();
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -95,5 +101,10 @@ class GratuityCampaignVoter extends Voter
     private function canList()
     {
         return $this->authManager->isAuthorized(self::GRATUITY_CAMPAIGN_LIST);
+    }
+
+    private function canSearch()
+    {
+        return $this->authManager->isAuthorized(self::GRATUITY_CAMPAIGN_SEARCH);
     }
 }

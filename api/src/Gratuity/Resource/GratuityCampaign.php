@@ -54,6 +54,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Gratuity"}
  *              }
  *           },
+ *           "searchByAddresses"={
+ *              "method"="POST",
+ *              "path"="/gratuity_campaigns/search",
+ *              "controller"=App\Gratuity\Controller\GratuityCampaignSearchAction::class,
+ *              "security"="is_granted('gratuity_search',object)",
+ *              "read"=false,
+ *              "deserialize"=false,
+ *              "validate"=false,
+ *              "swagger_context"={
+ *                  "summary"="Rechercher les GratuityCampaigns par adresses",
+ *                  "tags"={"Gratuity"}
+ *              }
+ *           },
  *       },
  *      itemOperations={
  *          "get"={

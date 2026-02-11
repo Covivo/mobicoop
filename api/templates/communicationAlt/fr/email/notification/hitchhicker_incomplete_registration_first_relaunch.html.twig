@@ -1,57 +1,69 @@
 {# CAREFUL : Some client might need to replicate this template #}
 {% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
 {% block body %}
-<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
-    <tr>
-        <td align="center">
-            <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
-                <tr>
-                    <td style="width:22px">
-                        <p> </p>
-                    </td>
-                    <td align="left">
-                        <p style="font-size:13px; margin-bottom:16px;">Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p style="font-size:13px;">Merci d'avoir débuté une inscription sur notre service de mobilité partagée : Rezo Pouce. Néanmoins, votre inscription n'a pas été finalisée, car votre identité et votre adresse de domicile n'ont pas pu être vérifiée.</p>
-                        <p style="font-size:13px;">Nous vous invitons à vous connecter à votre profil sur l'application <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="https://m.mobicoop.fr" title="Mobicoop">Mobicoop</a>, switcher sur la partie <strong>"Rezo Pouce"</strong> et soumettre votre pièce d'identité pour vérification et compléter votre adresse postale.</p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td align="center">
-            <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
-                <tr>
-                    <td align="center">
-                        <img src="https://www.mobicoop.fr/images/emails/switch-covoit-rezopouce.gif" alt="Mobicoop" width="480" style="width:100%; max-width:480px; height:auto; display:block;" />
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-     <tr>
-        <td style="height:15px">
-            <p> </p>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <table cellpadding="2" cellspacing="2" summary="" border="0">
-                <tr>
-                    <td style="width:23px">
-                        <p> </p>
-                    </td>
-                    <td align="center" style="width:100%;">
-                        <p style="font-size:13px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Mobicoop</b></p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td style="height:15px">
-            <p> </p>
-        </td>
-    </tr>
-</table>
+	<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+		<tr>
+			<td align="center">
+				<table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0">
+					<tr>
+						<td style="width:22px">
+							<p></p>
+						</td>
+						<td align="left">
+							<p style="font-size:13px; margin-bottom:16px;">Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
+									{{context.user.givenName|capitalize}}
+									{{context.user.shortFamilyName|capitalize}}</b>
+							</p>
+							<p style="font-size:13px;">Merci d'avoir débuté une inscription sur notre service de mobilité partagée : Rezo Pouce. Néanmoins, votre inscription n'a pas été finalisée,
+								<b>car votre identité et votre adresse de domicile ne sont pas encore renseignées.</b>
+							</p>
+							<p style="font-size:13px;">Pour terminer votre inscription, rendez-vous sur votre profil en cliquant
+								<a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href=" https://m.mobicoop.fr/#/hitchhiking/home" title="Mobicoop Pouce">ici</a>ou directement sur l'application Mobicoop Pouce.</p>
+							<p style="font-size:13px; margin-bottom:16px;">Une fois cette démarche effectuée et si vous êtes bien sur un territoire adhérent, vous recevrez votre carte de membre Rezo Pouce sous quelques jours. Celle-ci atteste auprès des autres utilisateurs que votre identité est vérifiée et que vous pouvez partager votre trajet en toute sérénité.</p>
+
+							<p style="font-size:13px; margin-bottom:16px;">Votre compte Rezo Pouce vous donne aussi accès à l'application
+								<a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href=" https://covoit.mobicoop.fr" title="Mobicoop Covoit'">Mobicoop Covoit'</a>: avec les mêmes identifiants, publiez une annonce de covoiturage !</p>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0">
+					<tr>
+						<td align="center">
+							<img src="https://www.mobicoop.fr/images/emails/switch-covoit-rezopouce.gif" alt="Mobicoop" width="480" style="width:100%; max-width:480px; height:auto; display:block;"/>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td style="height:15px">
+				<p></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table cellpadding="2" cellspacing="2" summary="" border="0">
+					<tr>
+						<td style="width:23px">
+							<p></p>
+						</td>
+						<td align="center" style="width:100%;">
+							<p style="font-size:13px;">
+								<b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt sur Mobicoop Pouce</b>
+							</p>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td style="height:15px">
+				<p></p>
+			</td>
+		</tr>
+	</table>
 {% endblock %}
