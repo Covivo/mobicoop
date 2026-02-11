@@ -99,10 +99,10 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::LOGOUT_URL => 'protocol/openid-connect/logout&post_logout_redirect_uri={REDIRECT_URI}',
         ],
         self::SSO_PROVIDER_COMPTEUNIQUE => [
-            self::AUTHORIZATION_URL => 'auth/realms/CompteUnique/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
-            self::TOKEN_URL => 'auth/realms/CompteUnique/protocol/openid-connect/token/',
-            self::USERINFOS_URL => 'auth/realms/CompteUnique/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/CompteUnique/protocol/openid-connect/logout&post_logout_redirect_uri={REDIRECT_URI}',
+            self::AUTHORIZATION_URL => 'realms/CompteUnique/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
+            self::TOKEN_URL => 'realms/CompteUnique/protocol/openid-connect/token/',
+            self::USERINFOS_URL => 'realms/CompteUnique/protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => 'realms/CompteUnique/protocol/openid-connect/logout&post_logout_redirect_uri={REDIRECT_URI}',
         ],
     ];
 
