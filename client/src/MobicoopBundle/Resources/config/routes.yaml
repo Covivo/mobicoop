@@ -48,6 +48,14 @@ territory:
     nl: /territories/{id}
   controller: Mobicoop\Bundle\MobicoopBundle\Territory\Controller\TerritoryController::getTerritory
 
+territories_gratuity_active:
+  methods: [GET]
+  path:
+    fr: /territories/gratuity-active
+    en: /territories/gratuity-active
+    nl: /territories/gratuity-active
+  controller: Mobicoop\Bundle\MobicoopBundle\Territory\Controller\TerritoryController::getTerritoriesWithActiveGratuityCampaigns
+
 ###############
 # user routes #
 ###############

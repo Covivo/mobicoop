@@ -25,4 +25,15 @@ class TerritoryManager
 
         return null;
     }
+
+    public function getTerritoriesWithActiveGratuityCampaigns(): ?array
+    {
+        $response = $this->_dataProvider->getSpecialCollection('gratuity_active');
+
+        if (200 == $response->getCode()) {
+            return $response->getValue()->getMember();
+        }
+
+        return null;
+    }
 }
