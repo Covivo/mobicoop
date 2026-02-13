@@ -341,6 +341,7 @@ import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/base/MFooter/";
 import Cookies from "@components/utilities/Cookies";
 import Package from '@root/package.json'
+import maxios from "@utils/maxios";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -375,13 +376,23 @@ export default {
     socialCookies:{
       type: Array,
       default: null
+    },
+    gratuityActive:{
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       version:Package.version,
       imageLink: "/images/pages/home/",
-      showCookies: false
+      showCookies: false,
+      territoriesWithActiveGratuityCampaigns: []
+    }
+  },
+  mounted() {
+    if (this.gratuityActive) {
+      this.getTerritoriesWithActiveGratuityCampaigns();
     }
   },
   methods:{
@@ -390,6 +401,15 @@ export default {
     },
     dialogCookiesClosed(){
       this.showCookies = false;
+    },
+    getTerritoriesWithActiveGratuityCampaigns(){
+      maxios
+        .get("/territories/gratuity-active")
+        .then(res => {
+          if (res.data) {
+            this.territoriesWithActiveGratuityCampaigns = res.data;
+          }
+        });
     }
   }
 };

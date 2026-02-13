@@ -24,4 +24,9 @@ class TerritoryController extends AbstractController
 
         return new JsonResponse();
     }
+
+    public function getTerritoriesWithActiveGratuityCampaigns()
+    {
+        return new JsonResponse($this->_territoryManager->getTerritoriesWithActiveGratuityCampaigns());
+    }
 }

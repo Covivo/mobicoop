@@ -82,7 +82,8 @@
             {% block footer %}
             <m-footer app-name="{{ app_name }}" :cookies-show-auto="{{ cookiesShowAuto ? 'true' : 'false'}}"
                 :social-networks-active="{{ facebookShow ? 'true' : 'false'}}"
-                :social-cookies="{{socialCookies|json_encode}}"></m-footer>
+                :social-cookies="{{socialCookies|json_encode}}"
+                :gratuity-active="{{ gratuityActive ? 'true' : 'false'}}"></m-footer>
             {% endblock %}
         </v-app>
     </div>
