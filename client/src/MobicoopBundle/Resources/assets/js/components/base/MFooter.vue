@@ -1,8 +1,19 @@
 <template>
-  <v-footer height="auto" padless tile color="primary">
-    <v-container fluid class="pa-0">
+  <v-footer
+    height="auto"
+    padless
+    tile
+    color="primary"
+  >
+    <v-container
+      fluid
+      class="pa-0"
+    >
       <v-row justify="center">
-        <a href="/" class="d-flex align-center my-14">
+        <a
+          href="/"
+          class="d-flex align-center my-14"
+        >
           <v-img
             class="logo"
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
@@ -14,9 +25,16 @@
           />
         </a>
       </v-row>
-      <v-row justify="center" dense class="pa-5">
+      <v-row
+        justify="center"
+        dense
+        class="pa-5"
+      >
         <!-- first col -->
-        <v-col cols="12" md="3">
+        <v-col
+          cols="12"
+          md="3"
+        >
           <v-card-text class="my-0 py-0 white--text font-weight-bold">
             <span>{{ $t("category.cooperative") }}<span /></span>
           </v-card-text>
@@ -45,8 +63,7 @@
               :href="$t('cooperative.toolbox.link')"
               style="text-decoration:none;"
               class="white--text"
-              >{{ $t("cooperative.toolbox.title") }}</a
-            >
+            >{{ $t("cooperative.toolbox.title") }}</a>
           </v-card-text>
 
           <v-card-text class="my-0 pt-10 pb-0 white--text font-weight-bold">
@@ -95,7 +112,10 @@
         <!-- end first col -->
 
         <!-- second col -->
-        <v-col cols="12" md="3">
+        <v-col
+          cols="12"
+          md="3"
+        >
           <v-card-text class="my-0 py-0 white--text font-weight-bold">
             <span>{{ $t("category.tools") }}<span /></span>
           </v-card-text>
@@ -104,56 +124,49 @@
               :href="$t('tools.carpoolIncentive.link')"
               style="text-decoration:none;"
               class="white--text"
-              >{{ $t("tools.carpoolIncentive.title") }}</a
-            >
+            >{{ $t("tools.carpoolIncentive.title") }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.map.link')"
               style="text-decoration:none;"
               class="white--text"
-              >{{ $t("tools.map.title") }}</a
-            >
+            >{{ $t("tools.map.title") }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.events.link')"
               style="text-decoration:none;"
               class="white--text"
-              >{{ $t("tools.events.title") }}</a
-            >
+            >{{ $t("tools.events.title") }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.dataPolicy.link')"
               style="text-decoration:none;"
               class="white--text"
-              >{{ $t("tools.dataPolicy.title") }}</a
-            >
+            >{{ $t("tools.dataPolicy.title") }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
               :href="$t('tools.faq.link')"
               style="text-decoration:none;"
               class="white--text"
-              >{{ $t("tools.faq.title") }}</a
-            >
+            >{{ $t("tools.faq.title") }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.cgu.link')"
               style="text-decoration:none;"
               class="white--text"
-              >{{ $t("tools.cgu.title") }}</a
-            >
+            >{{ $t("tools.cgu.title") }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               style="text-decoration:none;"
               class="white--text"
               @click="showCookiesAction()"
-              >{{ $t("tools.cookies.title") }}</a
-            >
+            >{{ $t("tools.cookies.title") }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
@@ -161,8 +174,7 @@
               style="text-decoration:none;"
               class="white--text"
               target="_blank"
-              >{{ $t("tools.accessibility.title") }}</a
-            >
+            >{{ $t("tools.accessibility.title") }}</a>
           </v-card-text>
 
           <v-card-text class="my-0 pt-3 pb-0 white--text font-weight-bold">
@@ -173,22 +185,23 @@
               :href="$t('contacts.hotline.link')"
               style="text-decoration:none;"
               class="white--text"
-              >{{ $t("contacts.hotline.title") }}</a
-            >
+            >{{ $t("contacts.hotline.title") }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('contacts.presse.link')"
               style="text-decoration:none;"
               class="white--text"
-              >{{ $t("contacts.presse.title") }}</a
-            >
+            >{{ $t("contacts.presse.title") }}</a>
           </v-card-text>
         </v-col>
         <!-- end second col -->
 
         <!-- third col -->
-        <v-col cols="12" md="3">
+        <v-col
+          cols="12"
+          md="3"
+        >
           <v-card-text class="my-0 py-0 white--text font-weight-bold">
             <span>{{ $t("category.need") }}<span /></span>
           </v-card-text>
@@ -209,7 +222,10 @@
           </v-card-text>
           <v-card-text class="my-0 py-0">
             <v-row>
-              <a :href="$t('urlIos')" target="_blank">
+              <a
+                :href="$t('urlIos')"
+                target="_blank"
+              >
                 <v-img
                   contain
                   :src="$t('urlIosLogo')"
@@ -218,7 +234,10 @@
                   :alt="$t('logoIosAlt')"
                 />
               </a>
-              <a :href="$t('urlAndroid')" target="_blank">
+              <a
+                :href="$t('urlAndroid')"
+                target="_blank"
+              >
                 <v-img
                   contain
                   :src="$t('urlAndroidLogo')"
@@ -233,10 +252,17 @@
         <!-- end third col -->
 
         <!-- fourth col -->
-        <v-col cols="12" md="1" justify="center">
+        <v-col
+          cols="12"
+          md="1"
+          justify="center"
+        >
           <v-card-text class="my-0 py-0 white--text text-h6">
             <v-row justify="center">
-              <a :href="$t('urlInstagram')" target="_blank">
+              <a
+                :href="$t('urlInstagram')"
+                target="_blank"
+              >
                 <v-img
                   class="ml-2"
                   contain
@@ -247,7 +273,10 @@
                   :alt="$t('logoInstragramAlt')"
                 />
               </a>
-              <a :href="$t('urlFacebook')" target="_blank">
+              <a
+                :href="$t('urlFacebook')"
+                target="_blank"
+              >
                 <v-img
                   contain
                   :src="$t('urlFacebookLogo')"
@@ -257,7 +286,10 @@
                   :alt="$t('logoFacebookAlt')"
                 />
               </a>
-              <a :href="$t('urlTwitter')" target="_blank">
+              <a
+                :href="$t('urlTwitter')"
+                target="_blank"
+              >
                 <v-img
                   contain
                   :src="$t('urlTwitterLogo')"
@@ -280,7 +312,10 @@
         justify="center"
         align="center"
       >
-        <v-col cols="12" class="text-center">
+        <v-col
+          cols="12"
+          class="text-center"
+        >
           <strong>Mobicoop</strong>
           <v-chip class="ma-2 black--text">
             {{ version }}

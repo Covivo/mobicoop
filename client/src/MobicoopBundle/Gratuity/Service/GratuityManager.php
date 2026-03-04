@@ -47,4 +47,16 @@ class GratuityManager
 
         return $this->dataProvider->getSpecialItem($id, 'tagAsNotified');
     }
+
+    public function searchGratuityCampaigns(array $addresses)
+    {
+        $this->dataProvider->setClass(GratuityCampaign::class);
+        $response = $this->dataProvider->simplePost('gratuity_campaigns/search', ['addresses' => $addresses]);
+
+        if (200 == $response->getCode()) {
+            return json_decode($response->getValue(), true);
+        }
+
+        return null;
+    }
 }

@@ -2008,6 +2008,15 @@ gratuity_campaign_as_notified:
     nl: /gratuity/tagGratuityCampaignAsNotified
   controller: Mobicoop\Bundle\MobicoopBundle\Gratuity\Controller\GratuityController::tagGratuityCampaignAsNotified
 
+# Search gratuity campaigns by addresses
+gratuity_campaigns_search:
+  methods: [POST]
+  path:
+    fr: /gratuity-campaigns/search
+    en: /gratuity-campaigns/search
+    nl: /gratuity-campaigns/search
+  controller: Mobicoop\Bundle\MobicoopBundle\Gratuity\Controller\GratuityController::searchGratuityCampaigns
+
 #######################
 # Incentive routes #
 #######################
