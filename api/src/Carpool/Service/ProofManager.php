@@ -741,6 +741,7 @@ class ProofManager
 
             switch ($result) {
                 case 200 == $result->getCode():
+                case 201 == $result->getCode():
                     $proof->setStatus(CarpoolProof::STATUS_SENT);
                     ++$nbSent;
 
