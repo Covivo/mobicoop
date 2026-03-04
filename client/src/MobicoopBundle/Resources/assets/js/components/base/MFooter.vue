@@ -1,21 +1,8 @@
 <template>
-  <v-footer
-    height="auto"
-    padless
-    tile
-    color="primary"
-  >
-    <v-container
-      fluid
-      class="pa-0"
-    >
-      <v-row
-        justify="center"
-      >
-        <a
-          href="/"
-          class="d-flex align-center my-14"
-        >
+  <v-footer height="auto" padless tile color="primary">
+    <v-container fluid class="pa-0">
+      <v-row justify="center">
+        <a href="/" class="d-flex align-center my-14">
           <v-img
             class="logo"
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
@@ -27,18 +14,11 @@
           />
         </a>
       </v-row>
-      <v-row
-        justify="center"
-        dense
-        class="pa-5"
-      >
+      <v-row justify="center" dense class="pa-5">
         <!-- first col -->
-        <v-col
-          cols="12"
-          md="3"
-        >
+        <v-col cols="12" md="3">
           <v-card-text class="my-0 py-0 white--text font-weight-bold">
-            <span>{{ $t('category.cooperative') }}<span /></span>
+            <span>{{ $t("category.cooperative") }}<span /></span>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
@@ -47,7 +27,7 @@
               class="white--text"
               target="_blank"
             >
-              {{ $t('cooperative.talkAboutUs.title') }}
+              {{ $t("cooperative.talkAboutUs.title") }}
             </a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text">
@@ -57,7 +37,7 @@
               class="white--text"
               target="_blank"
             >
-              {{ $t('cooperative.joinUs.title') }}
+              {{ $t("cooperative.joinUs.title") }}
             </a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
@@ -65,11 +45,12 @@
               :href="$t('cooperative.toolbox.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('cooperative.toolbox.title') }}</a>
+              >{{ $t("cooperative.toolbox.title") }}</a
+            >
           </v-card-text>
 
           <v-card-text class="my-0 pt-10 pb-0 white--text font-weight-bold">
-            <span>{{ $t('category.services') }}</span>
+            <span>{{ $t("category.services") }}</span>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
@@ -78,7 +59,7 @@
               class="white--text"
               target="_blank"
             >
-              {{ $t('services.mobicoop.title') }}
+              {{ $t("services.mobicoop.title") }}
             </a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
@@ -87,7 +68,7 @@
               style="text-decoration:none;"
               class="white--text"
             >
-              {{ $t('services.rezoPouce.title') }}
+              {{ $t("services.rezoPouce.title") }}
             </a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
@@ -97,7 +78,7 @@
               class="white--text"
               target="_blank"
             >
-              {{ $t('services.covievent.title') }}
+              {{ $t("services.covievent.title") }}
             </a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
@@ -107,68 +88,72 @@
               class="white--text"
               target="_blank"
             >
-              {{ $t('services.services.title') }}
+              {{ $t("services.services.title") }}
             </a>
           </v-card-text>
         </v-col>
         <!-- end first col -->
 
         <!-- second col -->
-        <v-col
-          cols="12"
-          md="3"
-        >
+        <v-col cols="12" md="3">
           <v-card-text class="my-0 py-0 white--text font-weight-bold">
-            <span>{{ $t('category.tools') }}<span /></span>
+            <span>{{ $t("category.tools") }}<span /></span>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.carpoolIncentive.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('tools.carpoolIncentive.title') }}</a>
+              >{{ $t("tools.carpoolIncentive.title") }}</a
+            >
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.map.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('tools.map.title') }}</a>
+              >{{ $t("tools.map.title") }}</a
+            >
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.events.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('tools.events.title') }}</a>
+              >{{ $t("tools.events.title") }}</a
+            >
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.dataPolicy.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('tools.dataPolicy.title') }}</a>
+              >{{ $t("tools.dataPolicy.title") }}</a
+            >
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
               :href="$t('tools.faq.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('tools.faq.title') }}</a>
+              >{{ $t("tools.faq.title") }}</a
+            >
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.cgu.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('tools.cgu.title') }}</a>
+              >{{ $t("tools.cgu.title") }}</a
+            >
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               style="text-decoration:none;"
               class="white--text"
               @click="showCookiesAction()"
-            >{{ $t('tools.cookies.title') }}</a>
+              >{{ $t("tools.cookies.title") }}</a
+            >
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
@@ -176,36 +161,36 @@
               style="text-decoration:none;"
               class="white--text"
               target="_blank"
-            >{{ $t('tools.accessibility.title') }}</a>
+              >{{ $t("tools.accessibility.title") }}</a
+            >
           </v-card-text>
 
           <v-card-text class="my-0 pt-3 pb-0 white--text font-weight-bold">
-            <span>{{ $t('category.contacts') }}</span>
+            <span>{{ $t("category.contacts") }}</span>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('contacts.hotline.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('contacts.hotline.title') }}</a>
+              >{{ $t("contacts.hotline.title") }}</a
+            >
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
               :href="$t('contacts.presse.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('contacts.presse.title') }}</a>
+              >{{ $t("contacts.presse.title") }}</a
+            >
           </v-card-text>
         </v-col>
         <!-- end second col -->
 
         <!-- third col -->
-        <v-col
-          cols="12"
-          md="3"
-        >
+        <v-col cols="12" md="3">
           <v-card-text class="my-0 py-0 white--text font-weight-bold">
-            <span>{{ $t('category.need') }}<span /></span>
+            <span>{{ $t("category.need") }}<span /></span>
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
@@ -213,19 +198,18 @@
               style="text-decoration:none;"
               class="white--text"
             >
-              {{ $t('need.community.title') }}
+              {{ $t("need.community.title") }}
             </a>
           </v-card-text>
 
-          <v-card-text class="my-0 pt-10 pb-0 white--text subtitle font-weight-black">
-            {{ $t('category.download') }}
+          <v-card-text
+            class="my-0 pt-10 pb-0 white--text subtitle font-weight-black"
+          >
+            {{ $t("category.download") }}
           </v-card-text>
           <v-card-text class="my-0 py-0">
             <v-row>
-              <a
-                :href="$t('urlIos')"
-                target="_blank"
-              >
+              <a :href="$t('urlIos')" target="_blank">
                 <v-img
                   contain
                   :src="$t('urlIosLogo')"
@@ -234,10 +218,7 @@
                   :alt="$t('logoIosAlt')"
                 />
               </a>
-              <a
-                :href="$t('urlAndroid')"
-                target="_blank"
-              >
+              <a :href="$t('urlAndroid')" target="_blank">
                 <v-img
                   contain
                   :src="$t('urlAndroidLogo')"
@@ -252,17 +233,10 @@
         <!-- end third col -->
 
         <!-- fourth col -->
-        <v-col
-          cols="12"
-          md="1"
-          justify="center"
-        >
+        <v-col cols="12" md="1" justify="center">
           <v-card-text class="my-0 py-0 white--text text-h6">
             <v-row justify="center">
-              <a
-                :href="$t('urlInstagram')"
-                target="_blank"
-              >
+              <a :href="$t('urlInstagram')" target="_blank">
                 <v-img
                   class="ml-2"
                   contain
@@ -273,10 +247,7 @@
                   :alt="$t('logoInstragramAlt')"
                 />
               </a>
-              <a
-                :href="$t('urlFacebook')"
-                target="_blank"
-              >
+              <a :href="$t('urlFacebook')" target="_blank">
                 <v-img
                   contain
                   :src="$t('urlFacebookLogo')"
@@ -286,10 +257,7 @@
                   :alt="$t('logoFacebookAlt')"
                 />
               </a>
-              <a
-                :href="$t('urlTwitter')"
-                target="_blank"
-              >
+              <a :href="$t('urlTwitter')" target="_blank">
                 <v-img
                   contain
                   :src="$t('urlTwitterLogo')"
@@ -312,15 +280,12 @@
         justify="center"
         align="center"
       >
-        <v-col
-          cols="12"
-          class="text-center"
-        >
-          <strong>Mobicoop</strong> <v-chip
-            class="ma-2 black--text"
-          >
+        <v-col cols="12" class="text-center">
+          <strong>Mobicoop</strong>
+          <v-chip class="ma-2 black--text">
             {{ version }}
-          </v-chip> by Mobicoop team. The source code is licensed AGPL3.
+          </v-chip>
+          by Mobicoop team. The source code is licensed AGPL3.
         </v-col>
       </v-row>
       <cookies
@@ -337,11 +302,20 @@
 
 <script>
 import { merge } from "lodash";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/base/MFooter/";
-import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/base/MFooter/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/base/MFooter/";
+import {
+  messages_client_en,
+  messages_client_fr,
+  messages_client_eu,
+  messages_client_nl
+} from "@clientTranslations/components/base/MFooter/";
 import Cookies from "@components/utilities/Cookies";
-import Package from '@root/package.json'
-import maxios from "@utils/maxios";
+import Package from "@root/package.json";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -351,77 +325,62 @@ let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'nl': MessagesMergedNl,
-      'fr': MessagesMergedFr,
-      'eu': MessagesMergedEu
+      en: MessagesMergedEn,
+      nl: MessagesMergedNl,
+      fr: MessagesMergedFr,
+      eu: MessagesMergedEu
     }
   },
-  components:{
+  components: {
     Cookies
   },
-  props:{
-    appName:{
+  props: {
+    appName: {
       type: String,
-      default:null
+      default: null
     },
-    cookiesShowAuto:{
+    cookiesShowAuto: {
       type: Boolean,
       default: true
     },
-    socialNetworksActive:{
+    socialNetworksActive: {
       type: Boolean,
       default: false
     },
-    socialCookies:{
+    socialCookies: {
       type: Array,
       default: null
     },
-    gratuityActive:{
+    gratuityActive: {
       type: Boolean,
       default: false
     }
   },
   data() {
     return {
-      version:Package.version,
+      version: Package.version,
       imageLink: "/images/pages/home/",
       showCookies: false,
       territoriesWithActiveGratuityCampaigns: []
-    }
+    };
   },
-  mounted() {
-    if (this.gratuityActive) {
-      this.getTerritoriesWithActiveGratuityCampaigns();
-    }
-  },
-  methods:{
-    showCookiesAction(){
+
+  methods: {
+    showCookiesAction() {
       this.showCookies = true;
     },
-    dialogCookiesClosed(){
+    dialogCookiesClosed() {
       this.showCookies = false;
-    },
-    getTerritoriesWithActiveGratuityCampaigns(){
-      maxios
-        .get("/territories/gratuity-active")
-        .then(res => {
-          if (res.data) {
-            this.territoriesWithActiveGratuityCampaigns = res.data;
-          }
-        });
     }
   }
 };
 </script>
 
-
 <style lang="scss" scoped>
-  span{
-    font-size: 1.3rem;
-  }
-  a{
-    font-size: 1.1rem;
-  }
+span {
+  font-size: 1.3rem;
+}
+a {
+  font-size: 1.1rem;
+}
 </style>
-
