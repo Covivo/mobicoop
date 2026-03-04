@@ -50,4 +50,16 @@ class GratuityController extends AbstractController
 
         return new JsonResponse();
     }
+
+    public function searchGratuityCampaigns(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $addresses = isset($data['addresses']) ? $data['addresses'] : [];
+
+            return new JsonResponse($this->_gratuityManager->searchGratuityCampaigns($addresses));
+        }
+
+        return new JsonResponse();
+    }
 }
