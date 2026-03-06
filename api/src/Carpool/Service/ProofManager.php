@@ -739,27 +739,16 @@ class ProofManager
             $result = $this->provider->postCollection($proof, $OAuthToken->getToken(), $this->provider::RESSOURCE_POST);
             $this->logger->info('Result of the send for proof #'.$proof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
 
-            switch ($result) {
-                case 200 == $result->getCode():
-                    $proof->setStatus(CarpoolProof::STATUS_SENT);
-                    ++$nbSent;
-
-                    break;
-
-                case $result->getCode() >= 400 && $result->getCode() < 500:
-                    $proof->setStatus(CarpoolProof::STATUS_SENT);
-
-                    break;
-
-                case 0 == $result->getCode():
-                    $proof->setStatus(CarpoolProof::STATUS_RPC_NOT_REACHABLE);
-
-                    break;
-
-                default:
-                    $proof->setStatus(CarpoolProof::STATUS_ERROR);
-
-                    break;
+            $code = $result->getCode();
+            if (200 == $code || 201 == $code) {
+                $proof->setStatus(CarpoolProof::STATUS_SENT);
+                ++$nbSent;
+            } elseif ($code >= 400 && $code < 500) {
+                $proof->setStatus(CarpoolProof::STATUS_SENT);
+            } elseif (0 == $code) {
+                $proof->setStatus(CarpoolProof::STATUS_RPC_NOT_REACHABLE);
+            } else {
+                $proof->setStatus(CarpoolProof::STATUS_ERROR);
             }
             $this->entityManager->persist($proof);
         }
@@ -905,26 +894,13 @@ class ProofManager
                 $result = $this->provider->postCollection($carpoolProof, $OAuthToken->getToken(), $this->provider::RESSOURCE_POST);
                 $this->logger->info('Result of the send for proof #'.$carpoolProof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
 
-                switch ($result) {
-                    case 200 == $result->getCode():
-                        $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
-
-                        break;
-
-                    case 409 == $result->getCode():
-                        $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
-
-                        break;
-
-                    case 0 == $result->getCode():
-                        $carpoolProof->setStatus(CarpoolProof::STATUS_RPC_NOT_REACHABLE);
-
-                        break;
-
-                    default:
-                        $carpoolProof->setStatus(CarpoolProof::STATUS_ERROR);
-
-                        break;
+                $code = $result->getCode();
+                if (200 == $code || 409 == $code) {
+                    $carpoolProof->setStatus(CarpoolProof::STATUS_SENT);
+                } elseif (0 == $code) {
+                    $carpoolProof->setStatus(CarpoolProof::STATUS_RPC_NOT_REACHABLE);
+                } else {
+                    $carpoolProof->setStatus(CarpoolProof::STATUS_ERROR);
                 }
                 $this->entityManager->persist($carpoolProof);
             }
