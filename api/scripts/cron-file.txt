@@ -31,6 +31,9 @@
 # each day at 1am : create and send the carpool proofs for the day before
 0 1 * * *   $php $console app:carpool:proof-batch --env=$env
 
+# each day at 6am : poll the RPC for status updates on previously sent proofs
+0 6 * * *   $php $console app:carpool:proof-check-status --env=$env
+
 # each day at 2am : create the payment export
 # 0 2 * * *   $php $console app:payment:export-batch --env=$env
 
