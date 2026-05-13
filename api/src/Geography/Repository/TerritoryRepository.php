@@ -157,4 +157,37 @@ class TerritoryRepository
 
         return $stmt->fetchAll();
     }
+
+    /**
+     * Find all territories that have at least one active gratuity campaign.
+     *
+     * @return Territory[] The territories with active campaigns
+     */
+    public function findTerritoriesWithActiveGratuityCampaigns(): array
+    {
+        $conn = $this->entityManager->getConnection();
+        $today = (new \DateTime('now'))->format('Y-m-d H:i:s');
+
+        $sql = "
+            SELECT DISTINCT t.id
+            FROM territory t
+            INNER JOIN gratuity_campaign_territory gct ON gct.territory_id = t.id
+            INNER JOIN gratuity_campaign gc ON gc.id = gct.gratuity_campaign_id
+            WHERE gc.status = 1
+            AND gc.start_date <= :today
+            AND gc.end_date >= :today
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['today' => $today]);
+        $results = $stmt->fetchAll();
+
+        $territoryIds = array_column($results, 'id');
+
+        if (empty($territoryIds)) {
+            return [];
+        }
+
+        return $this->repository->findBy(['id' => $territoryIds]);
+    }
 }

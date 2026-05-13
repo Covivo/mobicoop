@@ -3,5 +3,6 @@
     "active": "Indarrean diren iragarkiak",
     "no-active-ad": "Ez duzu uneko iragarkirik, partekatu zure bidaiak!",
     "no-archived-ad": "Ez duzu artxibatutako iragarkirik!",
-    "regular-ads": "Ibilbide arrunta"
+    "regular-ads": "Ibilbide arrunta",
+    "routeSearchGratuityCampaigns": "/gratuity-campaigns/search"
 }

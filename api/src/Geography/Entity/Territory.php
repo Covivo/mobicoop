@@ -81,6 +81,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  }
  *              }
  *           },
+ *          "gratuityActive"={
+ *              "method"="GET",
+ *              "path"="/territories/gratuity_active",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"},
+ *                  "summary"="Get all territories with active gratuity campaigns"
+ *              }
+ *          },
  *          "link"={
  *              "method"="GET",
  *              "path"="/territories/link",

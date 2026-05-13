@@ -2640,10 +2640,19 @@ class User implements UserInterface, EquatableInterface
     {
         if ($this->identityProofs->isEmpty()) {
             $this->identityStatus = IdentityProof::STATUS_NONE;
+
             return $this;
         }
 
-        $this->identityStatus = $this->identityProofs->first()->getStatus();
+        // Find the most recent proof by highest id, regardless of collection order in memory
+        $latest = null;
+        foreach ($this->identityProofs as $proof) {
+            if (null === $latest || (null !== $proof->getId() && $proof->getId() > $latest->getId())) {
+                $latest = $proof;
+            }
+        }
+
+        $this->identityStatus = $latest->getStatus();
 
         return $this;
     }

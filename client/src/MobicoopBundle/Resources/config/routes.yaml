@@ -48,6 +48,14 @@ territory:
     nl: /territories/{id}
   controller: Mobicoop\Bundle\MobicoopBundle\Territory\Controller\TerritoryController::getTerritory
 
+territories_gratuity_active:
+  methods: [GET]
+  path:
+    fr: /territories/gratuity-active
+    en: /territories/gratuity-active
+    nl: /territories/gratuity-active
+  controller: Mobicoop\Bundle\MobicoopBundle\Territory\Controller\TerritoryController::getTerritoriesWithActiveGratuityCampaigns
+
 ###############
 # user routes #
 ###############
@@ -1999,6 +2007,15 @@ gratuity_campaign_as_notified:
     en: /gratuity/tagGratuityCampaignAsNotified
     nl: /gratuity/tagGratuityCampaignAsNotified
   controller: Mobicoop\Bundle\MobicoopBundle\Gratuity\Controller\GratuityController::tagGratuityCampaignAsNotified
+
+# Search gratuity campaigns by addresses
+gratuity_campaigns_search:
+  methods: [POST]
+  path:
+    fr: /gratuity-campaigns/search
+    en: /gratuity-campaigns/search
+    nl: /gratuity-campaigns/search
+  controller: Mobicoop\Bundle\MobicoopBundle\Gratuity\Controller\GratuityController::searchGratuityCampaigns
 
 #######################
 # Incentive routes #

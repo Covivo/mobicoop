@@ -18,6 +18,12 @@
       </v-btn>
     </v-snackbar>
 
+    <!-- Gratuity notifications -->
+    <GratuityNotifications
+      v-if="gratuityCampaigns && gratuityCampaigns.length"
+      :user-gratuity-notifications="gratuityCampaigns"
+    />
+
     <!-- Ad list -->
     <v-row justify="center">
       <v-col>
@@ -107,9 +113,11 @@
 <script>
 
 import { omit } from "lodash";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ad/Ads/";
 import Ad from "@components/user/profile/ad/Ad.vue";
 import NoAd from "@components/user/profile/ad/NoAd.vue";
+import GratuityNotifications from "@components/utilities/gratuity/GratuityNotifications";
 
 export default {
   i18n: {
@@ -122,7 +130,8 @@ export default {
   },
   components: {
     Ad,
-    NoAd
+    NoAd,
+    GratuityNotifications
   },
   props: {
     ads: {
@@ -135,6 +144,7 @@ export default {
       localAds: this.ads,
       regularAds: [],
       punctualAds: [],
+      gratuityCampaigns: null,
       snackbar: false,
       alert: {
         type: "success",
@@ -145,6 +155,7 @@ export default {
   watch: {
     ads() {
       this.updateAds();
+      this.searchGratuityCampaigns();
     }
   },
   mounted(){
@@ -182,6 +193,29 @@ export default {
           });
       }
 
+    },
+    searchGratuityCampaigns(){
+      let addresses = [];
+      if (this.ads && this.ads.active && this.ads.active.length) {
+        this.ads.active.forEach(ad => {
+          if (ad.waypoints) {
+            const origin = ad.waypoints.find(wp => wp.position === 0);
+            const destination = ad.waypoints.find(wp => wp.destination === true);
+            if (origin && origin.latitude && origin.longitude) {
+              addresses.push({ latitude: origin.latitude, longitude: origin.longitude });
+            }
+            if (destination && destination.latitude && destination.longitude) {
+              addresses.push({ latitude: destination.latitude, longitude: destination.longitude });
+            }
+          }
+        });
+      }
+      maxios.post(this.$t('routeSearchGratuityCampaigns'), { addresses: addresses })
+        .then(res => {
+          if (res.data && res.data.gratuityCampaigns) {
+            this.gratuityCampaigns = res.data.gratuityCampaigns;
+          }
+        });
     }
   }
 }
