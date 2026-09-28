@@ -816,6 +816,10 @@ class ResultManager
                     continue;
                 }
                 $result = $this->createMatchingResult($proposal, $matchingProposal, $matching, $return);
+                // no compatible carpool day was found with a regular matching proposal
+                if (is_null($result)) {
+                    continue;
+                }
                 $results[$matchingProposalId] = $result;
             }
         }
@@ -831,7 +835,7 @@ class ResultManager
      * @param array    $matching         The array of the matchings of the proposal (an array with the matching proposal as offer and/or request)
      * @param bool     $return           The matching concerns a return (=false if it's the outward)
      *
-     * @return Result The result object
+     * @return null|Result The result object, null if no compatible carpool day was found
      */
     private function createMatchingResult(Proposal $proposal, Proposal $matchingProposal, array $matching, bool $return)
     {
@@ -918,6 +922,9 @@ class ResultManager
                     $item->setDate($matching['request']->getProposalRequest()->getCriteria()->getFromDate());
                 } else {
                     $regularDayInfos = $this->getMatchingRegularDayAsOffer($matching['request'], $item);
+                    if (is_null($regularDayInfos)) {
+                        return null;
+                    }
                     $item = $regularDayInfos['item'];
                     $fromTime = $regularDayInfos['time'];
                 }
@@ -1470,6 +1477,9 @@ class ResultManager
                     $item->setDate($matching['offer']->getProposalOffer()->getCriteria()->getFromDate());
                 } else {
                     $regularDayInfos = $this->getMatchingRegularDayAsRequest($matching['offer'], $item);
+                    if (is_null($regularDayInfos)) {
+                        return null;
+                    }
                     $item = $regularDayInfos['item'];
                     $fromTime = $regularDayInfos['time'];
                 }
@@ -2340,6 +2350,9 @@ class ResultManager
     {
         $proposal = $matching->getProposalRequest();
         $result = $this->getFirstCarpooledRegularDay($proposal, $matching->getProposalOffer(), 'request');
+        if (is_null($result)) {
+            return null;
+        }
         $item->setDate($result['date']);
 
         switch ($result['numday']) {
@@ -2398,6 +2411,9 @@ class ResultManager
     {
         $proposal = $matching->getProposalOffer();
         $result = $this->getFirstCarpooledRegularDay($proposal, $matching->getProposalRequest(), 'offer');
+        if (is_null($result)) {
+            return null;
+        }
         $item->setDate($result['date']);
 
         switch ($result['numday']) {
