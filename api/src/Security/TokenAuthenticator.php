@@ -57,13 +57,13 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         $decodeRequest = json_decode($request->getContent());
-        if (isset($decodeRequest->emailToken) && !empty($decodeRequest->emailToken)) {
+        if (isset($decodeRequest->email, $decodeRequest->emailToken) && is_string($decodeRequest->email) && is_string($decodeRequest->emailToken) && '' !== $decodeRequest->emailToken) {
             $credentials['email'] = $decodeRequest->email;
             $credentials['emailToken'] = $decodeRequest->emailToken;
-        } elseif (isset($decodeRequest->passwordToken) && !empty($decodeRequest->passwordToken)) {
+        } elseif (isset($decodeRequest->passwordToken) && is_string($decodeRequest->passwordToken) && '' !== $decodeRequest->passwordToken) {
             $credentials['passwordToken'] = $decodeRequest->passwordToken;
         } else {
-            return false;
+            return null;
         }
 
         return $credentials;
@@ -77,9 +77,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        if (null === $credentials) {
-            // The token header was empty, authentication fails with HTTP Status
-            // Code 401 "Unauthorized"
+        if (!is_array($credentials)) {
+            // No valid credentials were provided, authentication fails with HTTP
+            // Status Code 401 "Unauthorized"
             return null;
         }
         if (isset($credentials['emailToken'])) {
@@ -91,8 +91,12 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                     return null;
                 }
             }
-        } else {
+        } elseif (isset($credentials['passwordToken']) && is_string($credentials['passwordToken']) && '' !== $credentials['passwordToken']) {
+            // never query by a null/empty token: findOneBy(['pwdToken' => null]) would
+            // return the first account without a pending reset (a privilege escalation)
             $user = $this->em->getRepository(User::class)->findOneBy(['pwdToken' => $credentials['passwordToken']]);
+        } else {
+            return null;
         }
 
         // if a User is returned, checkCredentials() is called
@@ -101,11 +105,25 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        // Check credentials - e.g. make sure the password is valid.
-        // In case of an API token, no credential check is needed.
+        // "User already validated" special case: the user was found by email only
+        // (the email token did not match) and the message is returned in
+        // onAuthenticationSuccess(). No token comparison applies here.
+        if (!is_null($this->specialReturnMessage)) {
+            return true;
+        }
 
-        // Return `true` to cause authentication success
-        return true;
+        // The submitted token must match the one stored on the user, in constant
+        // time. Without this check a forged/empty token would be accepted.
+        if (isset($credentials['emailToken']) && $user instanceof User) {
+            return is_string($user->getEmailToken())
+                && hash_equals($user->getEmailToken(), (string) $credentials['emailToken']);
+        }
+        if (isset($credentials['passwordToken']) && $user instanceof User) {
+            return is_string($user->getPwdToken())
+                && hash_equals($user->getPwdToken(), (string) $credentials['passwordToken']);
+        }
+
+        return false;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)

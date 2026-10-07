@@ -65,7 +65,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
                 $credentials['redirectUrl'] = $decodeRequest->redirectUrl;
             }
         } else {
-            return false;
+            return null;
         }
 
         return $credentials;
@@ -80,9 +80,9 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        if (null === $credentials) {
-            // The token header was empty, authentication fails with HTTP Status
-            // Code 401 "Unauthorized"
+        if (!is_array($credentials)) {
+            // No valid credentials were provided, authentication fails with HTTP
+            // Status Code 401 "Unauthorized"
             return null;
         }
 
