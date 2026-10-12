@@ -241,7 +241,7 @@ class IdentityProof
      */
     private $validator;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

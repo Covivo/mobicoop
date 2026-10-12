@@ -66,9 +66,7 @@ class IdentityProofManager
         $pendingProof = $this->getPendingProofForUser($user);
         if ($pendingProof) {
             $pendingProof->setStatus(IdentityProof::STATUS_CANCELED);
-            $this->removeProofFile($pendingProof);
             $this->entityManager->persist($pendingProof);
-            $this->entityManager->flush();
         }
         $identityProof = new IdentityProof();
         $identityProof->setFile($file);
@@ -76,8 +74,14 @@ class IdentityProofManager
         $identityProof->setFileName($user->getId().'-'.time());
         $identityProof->setStatus(IdentityProof::STATUS_PENDING);
 
+        // Single flush: the pending proof is only canceled if the new one is saved
         $this->entityManager->persist($identityProof);
         $this->entityManager->flush();
+
+        // Remove the old file only once the new proof is safely stored
+        if ($pendingProof) {
+            $this->removeProofFile($pendingProof);
+        }
 
         return $identityProof;
     }

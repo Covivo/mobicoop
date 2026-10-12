@@ -2645,9 +2645,15 @@ class User implements UserInterface, EquatableInterface
         }
 
         // Find the most recent proof by highest id, regardless of collection order in memory
+        // A proof not persisted yet (null id) is being created, so it is the most recent one
         $latest = null;
         foreach ($this->identityProofs as $proof) {
-            if (null === $latest || (null !== $proof->getId() && $proof->getId() > $latest->getId())) {
+            if (null === $proof->getId()) {
+                $latest = $proof;
+
+                break;
+            }
+            if (null === $latest || $proof->getId() > $latest->getId()) {
                 $latest = $proof;
             }
         }
